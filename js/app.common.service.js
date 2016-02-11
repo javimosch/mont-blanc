@@ -15,6 +15,13 @@ srv.service('server', ['$http', 'localdb', function(http, localdb) {
     //var URL = 'http://ujkk558c0c9a.javoche.koding.io:3434';
     var URL = 'http://localhost:5000';
 
+    $.ajax("/serverURL").then(function(r){
+        URL = r.URL; //updates serverURL from express (node env serverURL);
+        console.info('server:url:'+URL);
+    });
+
+    //var URL = 'http://blooming-plateau-64344.herokuapp.com/';
+
     var localData = null;
 
     function getLocalData() {
