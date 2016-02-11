@@ -1,0 +1,38 @@
+ <div class="container " ng-controller="main">
+        <!--
+        <div ng-include="'partials/_tpl.info.html'"></div>
+        -->
+        <div ng-include="'partials/_tpl.info.html'"></div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="center-block form">
+                    <div class="form-group">
+                        <div ng-include="'partials/_tpl.question1.html'"></div>
+                        <div ng-include="'partials/_tpl.question2.html'"></div>
+                        <div ng-include="'partials/_tpl.question3.html'"></div>
+                        <div ng-include="'partials/_tpl.question4.html'"></div>
+                        <div ng-include="'partials/_tpl.question5.address.html'"></div>
+                        <div ng-include="'partials/_tpl.question6.html'"></div>
+                        <div ng-include="'partials/_tpl.diags.html'"></div>
+                        <div ng-include="'partials/_tpl.calendar.html'"></div>
+                    </div>
+                    <div class="form-group" ng-show="false && state == states.CHECKS">
+                        <div class="input-group">
+                            <div class="input-group-addon text-left">$ (eur)</div>
+                            <div class="input-group-addon text-right">{{totalPrice()}}</div>
+                        </div>
+                        <div class="input-group">
+                            <div class="input-group-addon text-left">T (hours)</div>
+                            <div class="input-group-addon text-right">{{totalTime()}}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-info btn-lg" ng-click="continue()" ng-disabled="!continueIsEnabled()">Continue</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div ng-include="'partials/_tpl.shorcuts.html'"></div>
+            </div>
+        </div>
+    </div>

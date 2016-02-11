@@ -1,0 +1,105 @@
+<output ng-controller="fullpage">
+    <modal model="modal"/>
+    <div id="fullpage">
+        <div class="section" data-anchor="question1">
+            <div ng-include="'partials/_tpl.question1.html'"></div>
+        </div>
+        <div class="section" data-anchor="question2">
+            <div ng-include="'partials/_tpl.question2.html'"></div>
+        </div>
+        <div class="section" data-anchor="question3">
+            <div ng-include="'partials/_tpl.question3.html'"></div>
+        </div>
+        <div class="section" data-anchor="question4">
+            <div ng-include="'partials/_tpl.question4.html'"></div>
+        </div>
+        <div class="section" data-anchor="question5">
+            <div ng-include="'partials/_tpl.question5.address.html'"></div>
+        </div>
+        <div class="section" data-anchor="question6">
+            <div ng-include="'partials/_tpl.question6.html'"></div>
+        </div>
+        <div class="section" data-anchor="diags">
+            <div ng-include="'partials/_tpl.diags.html'"></div>
+        </div>
+        <div class="section" data-anchor="calendar-datepicker">
+            <div ng-include="'partials/_tpl.calendar-datepicker.html'"></div>
+        </div>
+        <div class="section" data-anchor="calendar-timepicker">
+            <div ng-include="'partials/_tpl.calendar-timepicker.html'"></div>
+        </div>
+        <div class="section" data-anchor="confirm-order">
+            <div ng-include="'partials/_tpl.confirm-order.html'"></div>
+        </div>
+    </div>
+    <!--
+<ul id="menu">
+    <li data-menuanchor="question1" class="active"><a href="#question1">First section</a></li>
+    <li data-menuanchor="question2"><a href="#question2">Second section</a></li>
+    <li data-menuanchor="question3"><a href="#question3">Third section</a></li>
+    <li data-menuanchor="question4"><a href="#question4">Fourth section</a></li>
+</ul>
+-->
+</output>
+<script type="text/javascript">
+$(document).ready(function() {
+    window.fp = $('#fullpage').fullpage({
+        //Navigation
+        menu: '#menu',
+        lockAnchors: false,
+        anchors: ['question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'diags', 'calendar-datepicker', 'calendar-timepicker', 'confirm-order'],
+        navigation: true,
+        navigationPosition: 'right',
+        navigationTooltips: ['You Sell or Rent', 'House or Apartment', 'Size', 'Date permis de construire', 'Write your address', 'What about gas installation?', 'Select diags', 'Choice a day', 'Pick a time', 'Save your order'],
+        showActiveTooltip: true,
+        slidesNavigation: true,
+        slidesNavPosition: 'bottom',
+
+        //Scrolling
+        css3: true,
+        scrollingSpeed: 700,
+        autoScrolling: true,
+        fitToSection: true,
+        fitToSectionDelay: 1000,
+        scrollBar: false,
+        easing: 'easeInOutCubic',
+        easingcss3: 'ease',
+        loopBottom: false,
+        loopTop: false,
+        loopHorizontal: true,
+        continuousVertical: false,
+        normalScrollElements: '#element1, .element2',
+        scrollOverflow: false,
+        touchSensitivity: 15,
+        normalScrollElementTouchThreshold: 5,
+
+        //Accessibility
+        keyboardScrolling: true,
+        animateAnchor: true,
+        recordHistory: true,
+
+        //Design
+        controlArrows: true,
+        verticalCentered: true,
+        resize: false,
+        //sectionsColor: ['#ccc', '#fff'],
+        paddingTop: '3em',
+        paddingBottom: '10px',
+        fixedElements: '#header, .footer',
+        responsiveWidth: 0,
+        responsiveHeight: 0,
+
+        //Custom selectors
+        sectionSelector: '.section',
+        slideSelector: '.slide',
+
+        //events
+        onLeave: function(index, nextIndex, direction) {},
+        afterLoad: function(anchorLink, index) {},
+        afterRender: function() {},
+        afterResize: function() {},
+        afterSlideLoad: function(anchorLink, index, slideAnchor, slideIndex) {},
+        onSlideLeave: function(anchorLink, index, slideIndex, direction, nextSlideIndex) {}
+    });
+});
+</script>

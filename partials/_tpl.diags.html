@@ -1,0 +1,19 @@
+<div class="panel center-block question panel-info">>
+    <div class="panel-heading">
+        <h4 class="panel-title">Diags</h4>
+    </div>
+    <div class="panel-body">
+        <div ng-repeat="(key,item) in diags" class="input-group">
+            <span class="input-group-addon">
+                <input type="checkbox" ng-model="model.diags[item.name]" ng-value="true">
+            </span>
+            <input type="text" disabled class="form-control" value="{{item.label}}" aria-label="...">
+            <div class="input-group-addon text-left">${{item.price}}</div>
+            <div class="input-group-addon text-left">T{{item.time}}</div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button ng-click="down()" class="btn btn-info">Select a date for inspection</button>
+    </div>
+</div>
+

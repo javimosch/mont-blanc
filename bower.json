@@ -1,0 +1,20 @@
+{
+  "name": "inspectors",
+  "version": "0.0.0",
+  "authors": [
+    "Javi <javi@quadramma.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "eonasdan-bootstrap-datetimepicker": "~4.17.37",
+    "bootstrap": "~3.3.6",
+    "lodash": "~4.3.0"
+  }
+}

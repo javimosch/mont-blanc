@@ -1,0 +1,13 @@
+<div class="center-block form shorcuts">
+    <h4>Questions</h4>
+    <ul>
+        <li
+        	ng-repeat="(k,v) in menuList"
+        	ng-show="menuItemShow(v)"
+        >
+        	<a ng-click="menu(v.params)" ng-class="{link:true,passed:menuItemPassed(v)}">
+        		{{v.label}}
+        	</a>
+        </li>
+    </ul>
+</div>

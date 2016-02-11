@@ -1,0 +1,38 @@
+<div ng-show="state === states.CALENDAR" ng-controller="calendar as c" ng-init="c.init(this)">
+    <div ng-switch="c.panel">
+        <div ng-switch-when="CALENDAR">
+            <h3>Choice Inspection date</h3>
+            <div id="calendar">
+            </div>
+            <div>
+                <h3>{{selectedDate}}</h3>
+            </div>
+            <div ng-repeat="(key,range) in c.availableRanges" class="center-block">
+                <div class="border inline">
+                    <div class="radio">
+                        <input type="radio" name="timeRange" ng-model="c.range" ng-change="c.pickDate(range)" value="{{range._id}}">
+                    </div>
+                    <div>
+                        <div>
+                            {{c.drawRange(range)}}
+                        </div>
+                        <div>
+                            {{totalPrice()}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-switch-when="EMAIL">
+            [EMAL]
+        </div>
+    </div>
+  
+</div>
+<!--
+    <div class="input-group bootstrap-timepicker timepicker">
+        <input id="timepicker1" type="text" class="form-control input-small">
+        <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+    </div>
+    -->
+</div>

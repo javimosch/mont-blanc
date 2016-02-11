@@ -1,0 +1,24 @@
+<div ng-controller="adminInspector as vm">
+    <div class="tab-area" ng-switch on="state">
+        <div class="tab" ng-switch-when="list">
+            <div ng-include="'partials/admin.inspectors.list.html'"></div>
+        </div>
+        <div class="tab" ng-switch-when="edit">
+            <div class="btn-group" role="group" aria-label="...">
+                <button type="button" class="btn btn-default" ng-click="switchTo('list')">Back</button>
+                <button type="button" class="btn btn-default" ng-click="save()">Save</button>
+            </div>
+            <form>
+                <div class="form-group">
+                    <label >FirstName</label>
+                    <input ng-model="vm.item.firstName" type="text" class="form-control" placeholder="FirstName">
+                </div>
+                <div class="form-group">
+                    <label >LastName</label>
+                    <input ng-model="vm.item.lastName" type="text" class="form-control" placeholder="LastName">
+                </div>
+            </form>
+            <my-alerts add="vm.showMessage" />
+        </div>
+    </div>
+</div>

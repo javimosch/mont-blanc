@@ -1,0 +1,36 @@
+{
+    "squareMeters": {
+        "-40m2": "-40m2",
+        "-40 à 80": "40 à 80",
+        "80 à 120": "80 à 120",
+        "120 à 160": "120 à 160",
+        "160 à 200": "160 à 200",
+        "200 à 250": "200 à 250",
+        "250 à 300": "250 à 300",
+        "Plus de 300": "Plus de 300"
+    },
+    "apartamentType": {
+        "1 pièce": "1 pièce",
+        "Studio T1": "Studio T1",
+        "T2": "T2",
+        "T3": "T3",
+        "T4": "T4",
+        "T5": "T5",
+        "T5": "T5",
+        "T6": "T6",
+        "T7": "T7",
+        "T8": "T8",
+        "T9": "T9",
+        "T10": "T10"
+    },
+    "constructionPermissionDate": {
+        "avant le 01/01/1949": "avant le 01/01/1949",
+        "entre 1949 et le 01/07/1997": "entre 1949 et le 01/07/1997",
+        "après le 01/07/1997": "après le 01/07/1997"
+    },
+    "gasInstallation": {
+        "Non": "Non",
+        "Oui, Moins de 15 ans": "Oui, Moins de 15 ans",
+        "Oui, Plus de 15 ans": "Oui, Plus de 15 ans"
+    }
+}

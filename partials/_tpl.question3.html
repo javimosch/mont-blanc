@@ -1,0 +1,30 @@
+<div class="panel center-block question panel-info">
+    <div class="panel-heading" ng-show="model.house">
+        <h4 class="panel-title">House size</h4>
+    </div>
+    <div class="panel-heading" ng-show="!model.house">
+        <h4 class="panel-title">Apartment size</h4>
+    </div>
+    <output ng-show="model.house">
+        <div class="panel-body">
+            <div ng-repeat="(k,v) in squareMeters" class="input-group">
+                <span class="input-group-addon">
+                <input type="radio" ng-model="model.squareMeters" value="{{v}}" ng-change="down()">
+            </span>
+                <input type="text" disabled class="form-control" value="{{v}}" aria-label="...">
+            </div>
+        </div>
+    </output>
+    <output ng-show="!model.house">
+        <div class="panel-body">
+            <div ng-repeat="(k,v) in apartamentType" class="input-group">
+                <span class="input-group-addon">
+                <input type="radio" ng-model="model.apartamentType" value="{{v}}" ng-change="down()">
+            </span>
+                <input type="text" disabled class="form-control" value="{{v}}" aria-label="...">
+            </div>
+        </div>
+    </output>
+    <div class="panel-footer">
+    </div>
+</div>

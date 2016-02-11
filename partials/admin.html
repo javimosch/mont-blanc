@@ -1,0 +1,14 @@
+<div ng-include="'partials/admin.nav.html'"></div>
+<div class="container" ng-controller="admin as s">
+    <div ng-switch="adminRoute()">
+        <div ng-switch-when="DASHBOARD">
+            <div ng-include="'partials/admin.dashboard.html'"></div>
+        </div>
+        <div ng-switch-when="LOGIN">
+            <div ng-include="'partials/admin.login.html'"></div>
+        </div>
+        <div ng-switch-when="INSPECTORS">
+            <div ng-include="'partials/admin.inspectors.html'"></div>
+        </div>
+    </div>
+</div>

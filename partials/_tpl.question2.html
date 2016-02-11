@@ -1,0 +1,21 @@
+<div class="panel center-block question panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">Apartment or House</h4>
+    </div>
+    <div class="panel-body">
+        <div class="input-group">
+            <span class="input-group-addon">
+                <input type="radio" ng-model="model.house" ng-value="true" ng-change="down()">
+            </span>
+            <input type="text" disabled class="form-control" value="House" aria-label="...">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon">
+                <input type="radio" ng-value="false" ng-model="model.house" ng-change="down()">
+            </span>
+            <input type="text" disabled class="form-control" value="Apartment" aria-label="...">
+        </div>
+    </div>
+    <div class="panel-footer">
+    </div>
+</div>

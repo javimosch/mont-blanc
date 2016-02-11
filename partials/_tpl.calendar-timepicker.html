@@ -1,0 +1,22 @@
+<div class="panel center-block question panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">Pick a time</h4>
+    </div>
+    <button class="center-block btn btn-default btn-sm spacing-1" ng-click="up()">Choice a different day</button>
+    <div class="panel-body size-medium">
+        <h3>{{selectedDate()}}</h3>
+        <div ng-repeat="(key,range) in availableTimeRanges" class="center-block">
+            <div class=" inline">
+                <div class="radio">
+                    <input type="radio" name="timeRange" ng-click="pickTimeRange(range)">
+                </div>
+                <div>
+                    {{drawRange(range)}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-success btn-lg" ng-click="down()">Last step</button>
+    </div>
+</div>

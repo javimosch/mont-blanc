@@ -1,0 +1,5 @@
+
+- question form with validations.
+- checkbox based on questions choiced
+- checkbox based on address: validation with french departaments (termite diags)
+- address input : google geocomplete

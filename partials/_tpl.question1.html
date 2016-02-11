@@ -1,0 +1,21 @@
+<div class="panel center-block question panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">Sell or rent</h4>
+    </div>
+    <div class="panel-body">
+        <div class="input-group">
+            <span class="input-group-addon">
+                <input type="radio" ng-model="model.sell" ng-value="true" ng-change="down()">
+            </span>
+            <input type="text" disabled class="form-control" value="You sell" aria-label="...">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon">
+                <input type="radio" ng-value="false" ng-model="model.sell" ng-change="down()">
+            </span>
+            <input type="text" disabled class="form-control" value="You rent" aria-label="...">
+        </div>
+    </div>
+    <div class="panel-footer">
+    </div>
+</div>
