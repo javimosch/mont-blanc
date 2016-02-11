@@ -1,4 +1,4 @@
-<div class="container" ng-show="s.show">
+<div class="container" ng-controller="adminLogin" ng-show="show">
     <form class="form-signin">
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
@@ -10,8 +10,8 @@
                 <input type="checkbox" ng-value="true" ng-model="_login.rememberPass"> Remember password
             </label>
         </div>
-        <button class="btn btn-lg btn-primary btn-block" ng-click="s.login()">Sign in</button>
+        <button class="btn btn-lg btn-primary btn-block" ng-click="login()">Sign in</button>
 
-        <my-alerts add="s.addAlert"/>
+        <my-alerts add="addAlert"/>
     </form>
 </div>

@@ -9,7 +9,7 @@
         <div class="panel-body">
             <div ng-repeat="(k,v) in squareMeters" class="input-group">
                 <span class="input-group-addon">
-                <input type="radio" ng-model="model.squareMeters" value="{{v}}" ng-change="down()">
+                <input type="radio" ng-model="model.squareMeters" value="{{v}}" ng-click="down()">
             </span>
                 <input type="text" disabled class="form-control" value="{{v}}" aria-label="...">
             </div>
@@ -19,7 +19,7 @@
         <div class="panel-body">
             <div ng-repeat="(k,v) in apartamentType" class="input-group">
                 <span class="input-group-addon">
-                <input type="radio" ng-model="model.apartamentType" value="{{v}}" ng-change="down()">
+                <input type="radio" ng-model="model.apartamentType" value="{{v}}" ng-click="down()">
             </span>
                 <input type="text" disabled class="form-control" value="{{v}}" aria-label="...">
             </div>

@@ -1,0 +1,41 @@
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Inspectors</h3>
+        <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-default" ng-click="switchTo('edit')">New</button>
+            <button type="button" class="btn btn-default">Delete selected</button>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>FirstName</th>
+                        <th>LastName</th>
+                        <th>Email</th>
+                        <th>Cellphone</th>
+                        <th>Google Address</th>
+                        <th>Commission</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="(key,item) in vm.list">
+                        <td>
+                            <check-box/ val="item._id" push="vm.selectedItems">
+                        </td>
+                        <td>{{item.firstName}}</td>
+                        <td>{{item.lastName}}</td>
+                        <td>{{item | json }}</td>
+                        <td>Cellphone</td>
+                        <td>Google Address</td>
+                        <td>Commission</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="panel-footer">
+    </div>
+</div>

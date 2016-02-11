@@ -1,43 +1,19 @@
-var app = angular.module('root', ['admin', 'service']).controller('root', ['server', '$timeout', '$scope', '$rootScope', function(db, $timeout, s, r) {
-    //console.warn('ROOT');
+var app = angular.module('app.common.root', []);
 
+
+app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
+    console.info('app.common.root:run');
     window.r = r;
+    r.getHashParams = getHashParams;
 
-    r.getHashParams = function() {
-        var hashParams = {};
-        var e,
-            a = /\+/g, // Regex for replacing addition symbol with a space
-            r = /([^&;=]+)=?([^&;]*)/g,
-            d = function(s) {
-                return decodeURIComponent(s.replace(a, " "));
-            },
-            q = window.location.hash.substring(1);
-
-        while (e = r.exec(q))
-            hashParams[d(e[1])] = d(e[2]);
-
-        return hashParams;
-    }
-    r.route = function(h, cb) {
-        var hash = r.getHashParams();
-        if (typeof hash['/' + h] !== 'undefined') {
-            cb();
-        }
-    };
-
-    r.dom = function(cb) {
+    r.dom = function(cb,timeout) {
         $timeout(function() {
-            cb && cb();
-            s.$apply();
-        });
+            if (cb) {
+                cb();
+            }
+            r.$apply();
+        },timeout || 0);
     };
-
-
-
-
-
-
-
     r.toggleBody = function(val) {
         r.dom(function() {
             var el = document.body;
@@ -92,7 +68,7 @@ var app = angular.module('root', ['admin', 'service']).controller('root', ['serv
     };
     r.logged = function() {
         var ss = r.session();
-        return ss.email != null && ss.pass !== null;
+        return ss.email !== null && ss.pass !== null;
     };
 
 
@@ -103,43 +79,28 @@ var app = angular.module('root', ['admin', 'service']).controller('root', ['serv
     var session = r.session();
     _.each(session, function(val, key) {
         r._login[key] = val;
-    })
+    });
     if (session.pass) r._login.pass = session.pass; //atob(session.pass);
     if (!session.rememberPass) r._login.pass = null;
 
 
 
-    r.logout=function(){
-        r.session({email:null,pass:null});
-        r.adminRoute('LOGIN');
+    r.logout = function() {
+        r.session({
+            email: null,
+            pass: null
+        });
+        r.route('login');
     };
 
 
-    r.route('admin', function() {
-        r.admin = true;
-    });
-
-
-    r.adminRoutes = function(routes, defaultRoute) {
-        r._adminRoute = defaultRoute; // || routes[0];
-        r._adminRouteDefault = defaultRoute;
-        r._adminRoutes = routes;
-        r.adminRoute = function(nr) {
-            if (nr) {
-                // console.log('ROUTE:TO:'+nr);
-                if (!_.includes(r._adminRoutes, nr)) {
-                    throw Error(nr + ' is not a valid route. Valid routes:' + JSON.stringify(r._adminRoutes));
-                }
-                r._adminRoute = nr;
-            }
-            return r._adminRoute;
-        };
-        r.dom();
-        //console.log(//ROUTE:'+r._adminRoute);
+    r.route = function(url, delay) {
+        console.info('r.route:', delay, url);
+        setTimeout(function() {
+            var path = window.location.origin + window.location.pathname;
+            path += '#/' + url;
+            window.location.href = path;
+        }, delay || 0);
     };
-    r.adminRoutes([
-        'DASHBOARD', 'LOGIN', 'INSPECTORS'
-    ], 'INSPECTORS');
-
 
 }]);

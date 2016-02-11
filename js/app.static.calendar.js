@@ -1,4 +1,4 @@
-angular.module('calendar', []).controller('calendar', ['$scope', 'server', '$rootScope', calendar]);
+angular.module('app.static.calendar', []).controller('calendar', ['$scope', 'server', '$rootScope', calendar]);
 
 function calendar(s, server, r) {
     console.info('ctrl.calendar');

@@ -1,5 +1,8 @@
 
 
+.navbar-default a{
+	color:black;
+}
 
 #menu{
 	position: absolute;

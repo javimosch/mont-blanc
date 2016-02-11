@@ -1,14 +1,19 @@
-var app =
-    angular.module('fullpage', ['admin', 'service', 'root'])
+var app = angular.module('app', [
+    'app.common.service',
+    'app.common.root',
+    'app.static.calendar',
+    'ui.bootstrap'
+]);
 
-.controller('fullpage', ['server',
+
+app.controller('fullpage', ['server',
     '$timeout', '$scope', '$rootScope',
     function(db, $timeout, s, r) {
         //
-        console.info('FULLPAGE');
+        //console.info('FULLPAGE');
         db.localData().then(function(data) {
             Object.assign(s, data);
-            console.info('data->', data);
+            //            console.info('data->', data);
         });
         s.model = {
             diags: {}
@@ -19,11 +24,12 @@ var app =
         //----------------------------------------------------------
         s.$watch('model.date', function(date) {
             db.getAvailableRanges(date).then(function(data) {
-                console.info('availableTimeRanges:', data);
+                //                console.info('availableTimeRanges:', data);
                 s.availableTimeRanges = data;
             });
         });
         s.down = function() {
+            console.info('FP:DOWN');
             $.fn.fullpage.moveSectionDown();
         };
         s.up = function() {
@@ -37,7 +43,7 @@ var app =
         };
 
         s.onModelChange = function(a, b, c) {
-            console.info(s.model);
+            //            console.info(s.model);
         };
         s.$watch('model', s.onModelChange, true);
 
@@ -120,7 +126,7 @@ app.directive('modal', function($rootScope, $timeout, $compile) {
         scope: true,
         replace: true,
         restrict: 'AE',
-        templateUrl: "./partials/directive.modal.html",
+        templateUrl: "./views/directives/directive.modal.html",
         link: function(scope, elem, attrs) {
             if (!r.__modalModel) {
                 r.__modalModel = {
@@ -131,7 +137,7 @@ app.directive('modal', function($rootScope, $timeout, $compile) {
                     r.__modalModel.content = msg;
                     toggle(true);
                 };
-                r.showModalUsingTemplate=(templateUrl)=>{
+                r.showModalUsingTemplate = (templateUrl) => {
                     $('output').load(templateUrl, function(html) {
                         setHtml(html);
                     });
@@ -176,7 +182,7 @@ app.directive('address', function($rootScope, $timeout) {
 
                     elem.geocomplete().bind("geocode:result", function(event, result) {
                         scope.model[scope.field] = result.formatted_address;
-                        scope.change(scope.model);
+                        scope.change && scope.change(scope.model);
                     });
                     if (scope.model[scope.field] !== '') {
                         elem.geocomplete("find", scope.model[scope.field]);

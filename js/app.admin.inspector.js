@@ -1,4 +1,4 @@
-var app = angular.module('adminInspector', []);
+var app = angular.module('app.admin.inspector', []);
 
 
 
@@ -6,18 +6,18 @@ app.controller('adminInspector', ['server', '$scope', '$rootScope', function(db,
     console.warn('adminInspector');
 
 
-    if(!r.logged()){
+    if (!r.logged()) {
         r.adminRoute('LOGIN');
     }
 
     var vm = this;
-    vm.selectedItems=[];
+    vm.selectedItems = [];
     vm.list = [];
     s.state = 'list';
     vm.item = {
         firstName: '',
         lastName: '',
-        email:'test@test.com'
+        email: 'test@test.com'
     };
 
     s.switchTo = function(n) {
@@ -38,10 +38,10 @@ app.controller('adminInspector', ['server', '$scope', '$rootScope', function(db,
         }).error(vm.showMessage);
     }
 
-    s.getAll = function(){
-        db.getAll('inspector',{}).then(function(res){
+    s.getAll = function() {
+        db.getAll('inspector', {}).then(function(res) {
             vm.list = res.data.result;
-            console.log('inspectors:retrieved'+res.data.result.length);
+            console.log('inspectors:retrieved' + res.data.result.length);
         }).error(console.error);
     }
 

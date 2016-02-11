@@ -1,11 +1,11 @@
 <div class="panel center-block question panel-info">
     <div class="panel-heading">
-        <h4 class="panel-title">Gas Installation</h4>
+        <h4 class="panel-title">Date permis de construire</h4>
     </div>
     <div class="panel-body">
-        <div ng-repeat="(key,val) in gasInstallation" class="input-group">
+        <div ng-repeat="(key,val) in constructionPermissionDate" class="input-group">
             <span class="input-group-addon">
-                <input type="radio" ng-model="model.gasInstallation" value="{{val}}" ng-change="down()">
+                <input type="radio" ng-model="model.constructionPermissionDate" value="{{val}}" ng-click="down()">
             </span>
             <input type="text" disabled class="form-control" value="{{key}}" aria-label="...">
         </div>

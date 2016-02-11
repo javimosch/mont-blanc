@@ -21,34 +21,32 @@
 </head>
 
 <body data-main class="hiddenn" ng-controller="root">
-    <div ng-if="admin" ng-include="'partials/admin.html'"></div>
-    <div ng-if="!admin" ng-include="'partials/static.fullpage.html'"></div>
-    <script src="js/jquery.js"></script>
-    <script src="js/jquery.fullpage.js"></script>
-    <script src="js/angular.js"></script>
-    
+    <div ng-include="'views/view.static.index.html'"></div>
+    <!--VENDOR-->
+    <script src="js/vendor/vendor.jquery.js"></script>
+    <script src="js/vendor/vendor.jquery.fullpage.js"></script>
+    <script src="js/vendor/vendor.angular.unzip.js"></script>
+    <script src="node_modules/angular-route/angular-route.min.js"></script>
     <script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
-    <script src="js/geocomplete.js"></script>
-    <script src="js/bootstrap.js"></script>
-    <script src="js/moment.js"></script>
-    <script src="js/calendar.js"></script>
-    <script type="text/javascript" src="js/calendar.scheduler.js"></script>
-    <script type="text/javascript" src="js/bootstrap.datetimepicker.js"></script>
-    <script type="text/javascript" src="js/bootstrap.datepicker.js"></script>
-    <script type="text/javascript" src="js/bootstrap.timepicker.js"></script>
-    
-    <script src="js/ui-bootstrap.js"></script>
-    <script src="js/ui-bootstrap-tpls.js"></script>
-
-    <script src="js/lodash.js"></script>
-    <script src="js/db.js"></script>
-    <script src="js/service.js"></script>
-    <script src="js/ctrl.calendar.js"></script>
-    <script src="js/ctrl.fullpage.js"></script>
-    <script src="js/root.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/ctrl.admin.js"></script>
-    <script src="js/ctrl.admin.inspector.js"></script>
+    <script src="js/vendor/vendor.geocomplete.js"></script>
+    <script src="js/vendor/vendor.bootstrap.js"></script>
+    <script src="js/vendor/vendor.moment.js"></script>
+    <script src="js/vendor/vendor.calendar.js"></script>
+    <script type="text/javascript" src="js/vendor/vendor.calendar.scheduler.js"></script>
+    <script type="text/javascript" src="js/vendor/vendor.bootstrap.datetimepicker.js"></script>
+    <script type="text/javascript" src="js/vendor/vendor.bootstrap.datepicker.js"></script>
+    <script type="text/javascript" src="js/vendor/vendor.bootstrap.timepicker.js"></script>
+    <script src="js/vendor/vendor.ui-bootstrap.js"></script>
+    <script src="js/vendor/vendor.ui-bootstrap-tpls.js"></script>
+    <script src="js/vendor/vendor.lodash.js"></script>
+    <script src="js/vendor/vendor.db.js"></script>
+    <!--CUSTOM-->
+    <script src="js/app.common.utils.js"></script>
+    <script src="js/app.common.service.js"></script>
+    <script src="js/app.common.root.js"></script>
+    <script src="js/app.common.directives.js"></script>
+    <script src="js/app.static.calendar.js"></script>
+    <script src="js/app.static.main.js"></script>
     <script>
     //(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
     //function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
