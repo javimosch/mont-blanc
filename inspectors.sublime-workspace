@@ -569,10 +569,17 @@
 	},
 	"expanded_folders":
 	[
-		"/home/javi/git/project-pierre/inspectors"
+		"/home/javi/git/project-pierre/inspectors",
+		"/home/javi/git/project-pierre/blooming-plateau-64344"
 	],
 	"file_history":
 	[
+		"/home/javi/git/project-pierre/inspectors/.env",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/.env",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/app.js",
+		"/home/javi/git/project-pierre/inspectors/Procfile",
+		"/home/javi/git/project-pierre/inspectors/package.json",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/package.json",
 		"/home/javi/git/project-pierre/inspectors/partials/_tpl.diags.html",
 		"/home/javi/git/project-pierre/inspectors/partials/static.fullpage.html",
 		"/home/javi/git/project-pierre/inspectors/partials/directive.modal.html",
@@ -694,13 +701,7 @@
 		"/home/javi/git/project-misitioba/node_modules/bootstrap-sass/test/dummy_rails/tmp/cache/sprockets/v4.0/Wlv3AjJze_gL2wGwNswtC-jbYt3kMqMny0LkUbdzJAw.cache",
 		"/home/javi/git/project-misitioba/src/assets/accrocs/reviews/baan-thai/_data.json",
 		"/home/javi/git/project-misitioba/src/assets/blog/posts/The-30-Best-Pieces-of-Advice-for-Entrepreneurs-in-2014/_data.json",
-		"/home/javi/git/project-misitioba/src/assets/views/partials/_ba.footer.jade",
-		"/home/javi/git/project-misitioba/src/assets/views/_home.jade",
-		"/home/javi/git/project-misitioba/src/styles/ba-slider.scss",
-		"/home/javi/git/project-misitioba/src/styles/ba-header.scss",
-		"/home/javi/git/project-misitioba/src/styles/ba-page.scss",
-		"/home/javi/git/project-misitioba/src/styles/ba-common.scss",
-		"/home/javi/git/project-misitioba/src/assets/views/partials/_ba.header.jade"
+		"/home/javi/git/project-misitioba/src/assets/views/partials/_ba.footer.jade"
 	],
 	"find":
 	{
@@ -983,6 +984,14 @@
 		"selected_items":
 		[
 			[
+				".env",
+				"blooming-plateau-64344/.env"
+			],
+			[
+				"packa",
+				"inspectors/package.json"
+			],
+			[
 				"admin",
 				"js/ctrl.admin.js"
 			],
@@ -1239,10 +1248,6 @@
 				"src/server/routes/routes-user.js"
 			],
 			[
-				"packa",
-				"package.json"
-			],
-			[
 				"vendor",
 				"src/vendor/vendor.js"
 			],
@@ -1269,10 +1274,6 @@
 			[
 				"handlers",
 				"src/scripts/handlers/handler-admin-user-create.js"
-			],
-			[
-				".env",
-				".env"
 			],
 			[
 				"_base",

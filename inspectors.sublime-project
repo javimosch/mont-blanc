@@ -3,6 +3,9 @@
 	[
 		{
 			"path": "."
+		},
+		{
+			"path": "/home/javi/git/project-pierre/blooming-plateau-64344"
 		}
 	]
 }

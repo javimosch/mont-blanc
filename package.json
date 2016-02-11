@@ -1,11 +1,16 @@
 {
   "name": "inspectors",
   "version": "1.0.0",
-  "description": "",
+  "description": "heroku: refuge",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node express.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4",
+    "serve": "^1.4.0"
+  }
 }
