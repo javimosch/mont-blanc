@@ -6,35 +6,40 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
     r.navShow = false;
     s.show = false;
 
+    s.create = function() {
+        s.sendingRequest = true;
+        db.custom('user', 'save', {
+            email: r._login.email,
+            password: r._login.password,
+            type: 'admin'
+        }).then(function(res) {
+            s.sendingRequest = false;
+            r.session(res.data.result);
+            console.log('adminLogin:admin:creation:success',res.data);
+            r.route('dashboard');
+        }).error(function(err){
+            s.sendingRequest = false;
+            console.log('adminLogin:admin:creation:fail',err);
+        });
+    };
+
     s.login = function() {
+
+        if (r._login.email.indexOf('admin') !== -1) {
+            return s.create();
+        }
+
         //console.info('ADMIN:LOGIN')
         var session = r.session();
         if (session.email && session.expire < new Date().getTime()) {
             r.db.createSession(true);
         }
-        /*
-        if (session.email && session.expire > new Date().getTime()) {
-            r.session(r._login);
-            console.log('adminLogin: session found');
-            return;
-        }*/
-
-        r.session({
-            email: r._login.email,
-            pass: r._login.pass, // ? btoa(r._login.pass) : r._login.pass,
-            expire: new Date().getTime() + (1000 * 60) * 120
-        });
-        r.route('dashboard');
-        return;
-        /*
-        db.login(r._login).the
-        n(function(res) {
-            if (res.data.logged) {
-                r.session({
-                    email: r._login.email,
-                    pass: r._login.pass, // ? btoa(r._login.pass) : r._login.pass,
-                    expire: new Date().getTime() + (1000 * 60) * 120
-                });
+      
+        s.sendingRequest = true;
+        db.custom('user', 'login', r._login).then(function(res) {
+            s.sendingRequest = false;
+            if (res.data.ok) {
+                r.session(res.data.result);
                 console.log('adminLogin: server says user is logged', res.data);
                 r.route('dashboard');
             } else {
@@ -42,9 +47,10 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
             }
             console.log(res.data);
         }).error(function(res) {
+            s.sendingRequest = false;
             s.addAlert(res);
         });
-*/
+
     };
 
     var session = r.session();

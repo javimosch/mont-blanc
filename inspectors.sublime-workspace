@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"_save",
+				"_saveAsociatedUser"
+			],
+			[
+				"adminClient",
+				"adminClientsEdit"
+			],
+			[
 				"dire",
 				"directive"
 			],
@@ -570,46 +578,91 @@
 	"expanded_folders":
 	[
 		"/home/javi/git/project-pierre/inspectors",
-		"/home/javi/git/project-pierre/blooming-plateau-64344"
+		"/home/javi/git/project-pierre/inspectors/node_modules/angular-route",
+		"/home/javi/git/project-pierre/blooming-plateau-64344",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers"
 	],
 	"file_history":
 	[
-		"/home/javi/git/project-pierre/inspectors/.env",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/.env",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/app.js",
-		"/home/javi/git/project-pierre/inspectors/Procfile",
+		"/home/javi/git/project-pierre/inspectors/views/view.admin.users.edit.html",
+		"/home/javi/git/project-pierre/inspectors/js/app.admin.user.js",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/push.sh",
+		"/home/javi/git/project-pierre/inspectors/push.sh",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.client.js",
+		"/home/javi/git/project-pierre/inspectors/js/app.admin.js",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.user.js",
+		"/home/javi/git/project-pierre/inspectors/views/view.admin.dashboard.html",
+		"/home/javi/git/project-pierre/inspectors/views/view.admin.clients.edit.html",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.order.js",
+		"/home/javi/git/project-pierre/inspectors/views/view.admin.login.html",
+		"/home/javi/git/project-pierre/inspectors/js/app.admin.login.js",
+		"/home/javi/git/project-pierre/inspectors/views/partials/partial.admin.nav.html",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.diag.js",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/db.js",
+		"/home/javi/git/project-pierre/inspectors/views/vies.admin.diags.edit.html",
+		"/home/javi/git/project-pierre/inspectors/js/app.admin.routes.js",
+		"/home/javi/git/project-pierre/inspectors/views/view.admin.diags.html",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/routes.js",
+		"/home/javi/git/project-pierre/inspectors/views/view.admin.users.html",
+		"/home/javi/git/project-pierre/inspectors/js/app.common.service.js",
+		"/home/javi/git/project-pierre/inspectors/js/app.common.root.js",
+		"/home/javi/git/project-pierre/inspectors/admin.html",
+		"/home/javi/git/project-pierre/inspectors/views/view.admin.clients.html",
+		"/home/javi/git/project-pierre/inspectors/views/directives/directive.modal.ok.html",
+		"/home/javi/git/project-pierre/inspectors/views/directives/directive.modal.sure.html",
+		"/home/javi/git/project-pierre/inspectors/views/partials/partial.confirm-order.html",
+		"/home/javi/git/project-pierre/inspectors/js/app.common.directives.js",
+		"/home/javi/git/project-pierre/inspectors/js/app.static.main.js",
+		"/home/javi/git/project-pierre/inspectors/views/view.static.index.html",
+		"/home/javi/git/project-pierre/inspectors/index.html",
+		"/home/javi/git/project-pierre/inspectors/express.js",
 		"/home/javi/git/project-pierre/inspectors/package.json",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/package.json",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.diags.html",
-		"/home/javi/git/project-pierre/inspectors/partials/static.fullpage.html",
-		"/home/javi/git/project-pierre/inspectors/partials/directive.modal.html",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/utils.js",
+		"/home/javi/git/project-pierre/inspectors/css/style.css",
+		"/home/javi/git/project-pierre/inspectors/css/admin.login.css",
+		"/home/javi/git/project-pierre/inspectors/views/view.admin.html",
+		"/home/javi/git/project-pierre/inspectors/js/app.common.utils.js",
+		"/home/javi/git/project-pierre/inspectors/views/partials/partial.admin.dashboard.html",
+		"/home/javi/git/project-pierre/inspectors/node_modules/serve-static/node_modules/mime/.npmignore",
+		"/home/javi/git/project-pierre/inspectors/node_modules/glob/test/root.js",
+		"/home/javi/git/project-pierre/inspectors/js/app.static.calendar.js",
+		"/home/javi/git/project-pierre/inspectors/js/app.admin.inspector.js",
+		"/home/javi/git/project-pierre/inspectors/js/main.js",
+		"/home/javi/git/project-pierre/inspectors/js/root.js",
+		"/home/javi/git/project-pierre/inspectors/js/ctrl.admin.inspector.js",
 		"/home/javi/git/project-pierre/inspectors/js/ctrl.admin.js",
-		"/home/javi/git/project-pierre/inspectors/partials/modal.email-sended.html",
-		"/home/javi/git/project-pierre/inspectors/js/service.js",
+		"/home/javi/git/project-pierre/inspectors/partials/static.fullpage.html",
+		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question5.address.html",
 		"/home/javi/git/project-pierre/inspectors/js/ctrl.fullpage.js",
+		"/home/javi/git/project-pierre/inspectors/partials/admin.html",
+		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question1.html",
+		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question2.html",
+		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question3.html",
+		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question4.html",
+		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question6.html",
+		"/home/javi/git/project-pierre/inspectors/partials/admin.inspectors.list.html",
+		"/home/javi/git/project-pierre/inspectors/partials/admin.clients.html",
+		"/home/javi/git/project-pierre/inspectors/js/service.js",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/gulpfile.js",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/package.json",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/.env",
+		"/home/javi/git/project-pierre/inspectors/Procfile",
+		"/home/javi/git/project-pierre/inspectors/.env",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/app.js",
+		"/home/javi/git/project-pierre/inspectors/partials/_tpl.diags.html",
+		"/home/javi/git/project-pierre/inspectors/partials/directive.modal.html",
+		"/home/javi/git/project-pierre/inspectors/partials/modal.email-sended.html",
 		"/home/javi/git/project-pierre/inspectors/partials/_tpl.confirm-order.html",
 		"/home/javi/.config/sublime-text-3/Packages/HTML-CSS-JS Prettify/HTMLPrettify.sublime-settings",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question4.html",
 		"/home/javi/git/project-pierre/inspectors/partials/_tpl.calendar-timepicker.html",
 		"/home/javi/Documents/adivina-adivinador.txt",
-		"/home/javi/git/project-pierre/inspectors/partials/admin.inspectors.list.html",
-		"/home/javi/git/project-pierre/inspectors/js/root.js",
-		"/home/javi/git/project-pierre/inspectors/css/style.css",
-		"/home/javi/git/project-pierre/inspectors/js/ctrl.admin.inspector.js",
 		"/home/javi/git/project-pierre/inspectors/partials/admin.nav.html",
 		"/home/javi/git/project-misitioba/src/server/routes/routes-inspectors.js",
 		"/home/javi/git/project-misitioba/src/server/db/db.js",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question1.html",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question6.html",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question5.address.html",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question3.html",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question2.html",
 		"/home/javi/git/project-pierre/inspectors/partials/_tpl.calendar-datepicker.html",
 		"/home/javi/git/project-pierre/inspectors/data.json",
-		"/home/javi/git/project-pierre/inspectors/js/main.js",
 		"/home/javi/git/project-pierre/inspectors/js/ctrl.calendar.js",
 		"/home/javi/git/project-pierre/inspectors/partials/_tpl.calendar.html",
-		"/home/javi/git/project-pierre/inspectors/index.html",
 		"/home/javi/git/project-pierre/inspectors/js/bootstrap.datepicker.js",
 		"/home/javi/git/project-pierre/inspectors/css/bootstrap.datepicker.css",
 		"/home/javi/git/project-pierre/inspectors/partials/static2.html",
@@ -658,50 +711,7 @@
 		"/home/javi/git/project-pierre-inspectors/src/assets/index.jade",
 		"/home/javi/git/project-pierre-inspectors/src/scripts/config/config-angular.js",
 		"/home/javi/git/project-pierre-inspectors/src/scripts/config/routes-middlewares.js",
-		"/home/javi/git/project-pierre-inspectors/src/scripts/config/config-angular-routes.js",
-		"/home/javi/git/project-pierre-inspectors/src/assets/views/home.html",
-		"/home/javi/git/project-pierre-inspectors/src/assets/views/angular/formly.html",
-		"/home/javi/git/project-servicity/src/assets/partials/templates.html",
-		"/home/javi/git/project-pierre-inspectors/src/assets/views/partials/_nav.jade",
-		"/home/javi/git/project-pierre-inspectors/src/assets/views/partials/_header.jade",
-		"/home/javi/git/project-pierre-inspectors/src/assets/views/partials/_footer.jade",
-		"/home/javi/git/project-pierre-inspectors/src/assets/views/partials/_head.jade",
-		"/home/javi/git/project-pierre-inspectors/src/scripts/app.js",
-		"/home/javi/git/project-pierre-inspectors/src/scripts/app.static.js",
-		"/home/javi/git/project-misitioba/src/assets/views/_works.jade",
-		"/home/javi/git/project-misitioba/src/assets/works/_data.json",
-		"/home/javi/git/project-misitioba/src/styles/helpers.scss",
-		"/home/javi/git/project-misitioba/src/styles/app.scss",
-		"/home/javi/git/project-misitioba/src/styles/ba-works.scss",
-		"/home/javi/git/project-misitioba/src/assets/services/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/works/index.jade",
-		"/home/javi/git/project-misitioba/src/server/routes/routes-testing.js",
-		"/home/javi/git/project-misitioba/src/assets/views/_head.jade",
-		"/home/javi/git/project-misitioba/src/server/mailing/mailing.js",
-		"/home/javi/git/project-misitioba/src/assets/javierarancibia/cv-download/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/javierarancibia/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/javierarancibia/cv/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/views/_javi-cv.jade",
-		"/home/javi/git/project-misitioba/src/assets/projects/velopostale/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/projects/servicity/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/projects/meetfood/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/blog/posts/welcome-to-paris/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/projects/matools/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/projects/getabiker/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/blog/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/blog/posts/minimalistic-event-emitter/post.html",
-		"/home/javi/git/project-misitioba/src/assets/blog/posts/minimalistic-event-emitter/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/blog/_data.json",
-		"/home/javi/Downloads/temp/notitle.json",
-		"/home/javi/git/project-misitioba/src/assets/blog/posts/minimalistic-event-emitter/_data.json",
-		"/home/javi/git/project-misitioba/src/assets/projects/matools/html-to-json/html-to-json.js",
-		"/home/javi/git/project-misitioba/src/assets/blog/posts/building-a-blog-from-the-scratch-with-nodejs-gulp-jade-etc/_data.json",
-		"/home/javi/git/project-misitioba/src/assets/blog/posts/The-30-Best-Pieces-of-Advice-for-Entrepreneurs-in-2014/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/blog/posts/building-a-blog-from-the-scratch-with-nodejs-gulp-jade-etc/index.jade",
-		"/home/javi/git/project-misitioba/node_modules/bootstrap-sass/test/dummy_rails/tmp/cache/sprockets/v4.0/Wlv3AjJze_gL2wGwNswtC-jbYt3kMqMny0LkUbdzJAw.cache",
-		"/home/javi/git/project-misitioba/src/assets/accrocs/reviews/baan-thai/_data.json",
-		"/home/javi/git/project-misitioba/src/assets/blog/posts/The-30-Best-Pieces-of-Advice-for-Entrepreneurs-in-2014/_data.json",
-		"/home/javi/git/project-misitioba/src/assets/views/partials/_ba.footer.jade"
+		"/home/javi/git/project-pierre-inspectors/src/scripts/config/config-angular-routes.js"
 	],
 	"find":
 	{
@@ -712,6 +722,8 @@
 		"height": 90.0,
 		"where_history":
 		[
+			"/home/javi/git/project-pierre",
+			"/home/javi/git/project-pierrre",
 			"/home/javi/git/project-misitioba/src/styles",
 			"/home/javi/git/project-misitioba",
 			"/home/javi/git/brunch.one/",
@@ -723,6 +735,68 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"User",
+			"find",
+			"ClientActions",
+			"user",
+			"find",
+			"USER:",
+			"diag",
+			"User",
+			"client",
+			"Diagnostiqueur",
+			"Users",
+			"create",
+			"createSession",
+			"session",
+			"adminClients",
+			"client",
+			"pass",
+			"Client",
+			"Client.",
+			"Client",
+			"login",
+			"handle",
+			"handler",
+			"clients",
+			"route",
+			"Client",
+			"adminUsers",
+			"adminClients",
+			"admin.login",
+			"CLIENT:",
+			"up",
+			"showModal",
+			"root",
+			"read",
+			"handle",
+			"handleError",
+			".route",
+			"showMessa",
+			"vm.",
+			"useNavbar",
+			"useNav",
+			"adminLogin",
+			":adminLogin",
+			".route",
+			"s.",
+			"vm.",
+			"adminRoute",
+			"MyPro",
+			"s.",
+			"toogleB",
+			"partials/direc",
+			"directive.modal",
+			"view.static",
+			"partials/_tpl.",
+			"app.static",
+			"root",
+			"promise",
+			"change",
+			"down",
+			"change",
+			"question2",
+			"node-",
 			"compile",
 			"modal",
 			"expire",
@@ -788,69 +862,7 @@
 			"buildStatic",
 			"build-dev",
 			"replace",
-			"a:hover",
-			"decoration",
-			"underline",
-			"a:hover",
-			"_",
-			"admin-user-login",
-			"argv",
-			"handleUnknownResponse",
-			"jadeLocals",
-			"lang",
-			"-static",
-			"buildDev",
-			"build-dev",
-			"watchOnly",
-			"languageFile",
-			"xhr2",
-			"argv",
-			"model",
-			"HEAD",
-			"<dbuser>",
-			"ractive",
-			"all",
-			".on",
-			"ftp",
-			"uglify",
-			"actions.",
-			"console.log",
-			"ExtendRequire",
-			"DATA_PATHS",
-			"DATA",
-			"DATA_PATHS",
-			"JSON",
-			".current",
-			"onLanguageFileChanged",
-			"jadeLocals",
-			"basedir",
-			"buildInput",
-			"bindEvents",
-			"applyFieldDefaults",
-			"bindEvents",
-			"createEventSystem",
-			"bindEvents",
-			"addField",
-			".add",
-			"append",
-			".append",
-			"proper",
-			"label",
-			"fk",
-			"console",
-			"console.log",
-			"console",
-			"el",
-			"self.wrapp",
-			"togglable",
-			"self.togglable",
-			"ROOT",
-			"article",
-			"social",
-			"vendor",
-			"watch",
-			"vendor",
-			"build-scripts-js"
+			"a:hover"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -858,6 +870,34 @@
 		"regex": false,
 		"replace_history":
 		[
+			"DIAG:",
+			"Diag",
+			"diag",
+			"Diag",
+			"Diags",
+			"adminUsers",
+			"password",
+			"User",
+			"User.",
+			"users",
+			"User",
+			"adminUsers",
+			"admin.user",
+			"USER:",
+			"s.",
+			"toggleNavbar",
+			"useNavbar",
+			"adminDashboard",
+			":adminDashboard",
+			"",
+			"s.",
+			"route",
+			"views/directives/direc",
+			"views/partials/partial.",
+			"view.static.index",
+			"MyPromise",
+			"click",
+			"node_",
 			"euro",
 			"dist",
 			"game.js",
@@ -984,24 +1024,388 @@
 		"selected_items":
 		[
 			[
-				".env",
-				"blooming-plateau-64344/.env"
+				"user.js",
+				"inspectors/js/app.admin.user.js"
+			],
+			[
+				"user.edi",
+				"inspectors/views/view.admin.users.edit.html"
+			],
+			[
+				"app.admin",
+				"inspectors/js/app.admin.js"
+			],
+			[
+				"hander.user",
+				"blooming-plateau-64344/helpers/handlers.user.js"
+			],
+			[
+				"handler.clie",
+				"blooming-plateau-64344/helpers/handlers.client.js"
+			],
+			[
+				"handler.cli",
+				"blooming-plateau-64344/helpers/handlers.client.js"
+			],
+			[
+				"han.user",
+				"blooming-plateau-64344/helpers/handlers.user.js"
+			],
+			[
+				"handler.or",
+				"blooming-plateau-64344/helpers/handlers.order.js"
+			],
+			[
+				"client.edi",
+				"inspectors/views/view.admin.clients.edit.html"
+			],
+			[
+				"dahsboard",
+				"inspectors/views/view.admin.dashboard.html"
+			],
+			[
+				"login.js",
+				"inspectors/js/app.admin.login.js"
+			],
+			[
+				".login",
+				"inspectors/views/view.admin.login.html"
+			],
+			[
+				".nav",
+				"inspectors/views/partials/partial.admin.nav.html"
+			],
+			[
+				"db.js",
+				"blooming-plateau-64344/helpers/db.js"
+			],
+			[
+				"handler",
+				"blooming-plateau-64344/helpers/handlers.user.js"
+			],
+			[
+				"handler.dia",
+				"blooming-plateau-64344/helpers/handlers.diag.js"
+			],
+			[
+				"handlers",
+				"blooming-plateau-64344/helpers/handlers.inspector.js"
+			],
+			[
+				"user.html",
+				"inspectors/views/view.admin.users.html"
+			],
+			[
+				"routes",
+				"inspectors/js/app.admin.routes.js"
+			],
+			[
+				"common.root",
+				"inspectors/js/app.common.root.js"
+			],
+			[
+				"service",
+				"inspectors/js/app.common.service.js"
+			],
+			[
+				".user.html",
+				"inspectors/views/view.admin.users.html"
+			],
+			[
+				"handleruser",
+				"blooming-plateau-64344/helpers/handlers.user.js"
+			],
+			[
+				"login.",
+				"inspectors/views/view.admin.login.html"
+			],
+			[
+				"login",
+				"inspectors/js/app.admin.login.js"
+			],
+			[
+				"helperoutes",
+				"blooming-plateau-64344/helpers/routes.js"
+			],
+			[
+				"rotues",
+				"inspectors/js/app.admin.routes.js"
+			],
+			[
+				"admin.user",
+				"inspectors/js/app.admin.user.js"
+			],
+			[
+				"admin.html",
+				"inspectors/admin.html"
+			],
+			[
+				"direc.modal",
+				"inspectors/views/directives/directive.modal.sure.html"
+			],
+			[
+				"direc",
+				"inspectors/js/app.common.directives.js"
+			],
+			[
+				"app.common",
+				"inspectors/js/app.common.directives.js"
+			],
+			[
+				"app.static",
+				"inspectors/js/app.static.main.js"
+			],
+			[
+				"static",
+				"inspectors/js/app.static.main.js"
+			],
+			[
+				"helpersroutes",
+				"blooming-plateau-64344/helpers/routes.js"
+			],
+			[
+				"index",
+				"inspectors/index.html"
+			],
+			[
+				"static.html",
+				"inspectors/views/view.static.index.html"
+			],
+			[
+				"express",
+				"inspectors/express.js"
 			],
 			[
 				"packa",
 				"inspectors/package.json"
 			],
 			[
+				"helperroutes",
+				"blooming-plateau-64344/helpers/routes.js"
+			],
+			[
+				"handle",
+				"blooming-plateau-64344/helpers/handlers.client.js"
+			],
+			[
+				"view.clie",
+				"inspectors/views/view.admin.clients.html"
+			],
+			[
+				"view",
+				"inspectors/views/view.admin.clients.edit.html"
+			],
+			[
+				".root",
+				"inspectors/js/app.common.root.js"
+			],
+			[
+				"viewadmin",
+				"inspectors/views/view.admin.clients.edit.html"
+			],
+			[
+				".direc",
+				"inspectors/js/app.common.directives.js"
+			],
+			[
 				"admin",
-				"js/ctrl.admin.js"
+				"inspectors/admin.html"
+			],
+			[
+				".admin",
+				"inspectors/js/app.admin.js"
+			],
+			[
+				"utils",
+				"blooming-plateau-64344/helpers/utils.js"
+			],
+			[
+				"handlers.clie",
+				"blooming-plateau-64344/helpers/handlers.client.js"
+			],
+			[
+				".route",
+				"inspectors/js/app.admin.routes.js"
+			],
+			[
+				"clients.",
+				"inspectors/views/view.admin.clients.html"
+			],
+			[
+				".clients",
+				"inspectors/views/view.admin.clients.html"
+			],
+			[
+				"handlers.cli",
+				"blooming-plateau-64344/helpers/handlers.client.js"
+			],
+			[
+				".service",
+				"inspectors/js/app.common.service.js"
+			],
+			[
+				"admin.clien",
+				"inspectors/views/view.admin.clients.html"
+			],
+			[
+				"admin.clie",
+				"inspectors/views/view.admin.clients.html"
+			],
+			[
+				".routes",
+				"inspectors/js/app.admin.routes.js"
+			],
+			[
+				"style",
+				"inspectors/css/style.css"
+			],
+			[
+				"dashboard",
+				"inspectors/views/view.admin.dashboard.html"
+			],
+			[
+				"common.roo",
+				"inspectors/js/app.common.root.js"
+			],
+			[
+				"view.login",
+				"inspectors/views/view.admin.login.html"
+			],
+			[
+				"admin.nav",
+				"inspectors/views/partials/partial.admin.nav.html"
+			],
+			[
+				"view.admin",
+				"inspectors/views/view.admin.html"
+			],
+			[
+				"admin.",
+				"inspectors/admin.html"
+			],
+			[
+				"view.admin.login",
+				"inspectors/views/view.admin.login.html"
+			],
+			[
+				"common.util",
+				"inspectors/js/app.common.utils.js"
+			],
+			[
+				"admin.rou",
+				"inspectors/js/app.admin.routes.js"
+			],
+			[
+				"admin.login",
+				"inspectors/js/app.admin.login.js"
+			],
+			[
+				"view.admin.lo",
+				"inspectors/views/view.admin.login.html"
+			],
+			[
+				"app.static.main",
+				"inspectors/js/app.static.main.js"
+			],
+			[
+				"inde",
+				"inspectors/index.html"
+			],
+			[
+				"view.static",
+				"inspectors/views/view.static.index.html"
+			],
+			[
+				"root",
+				"inspectors/node_modules/glob/test/root.js"
+			],
+			[
+				"app.stati",
+				"inspectors/js/app.static.main.js"
+			],
+			[
+				"commonroot",
+				"inspectors/js/app.common.root.js"
+			],
+			[
+				"roo",
+				"inspectors/js/root.js"
+			],
+			[
+				"ctrl.ad",
+				"inspectors/js/ctrl.admin.inspector.js"
+			],
+			[
+				"main",
+				"inspectors/js/main.js"
+			],
+			[
+				"",
+				"inspectors/js/ctrl.fullpage.js"
+			],
+			[
+				"fullpa",
+				"inspectors/partials/static.fullpage.html"
+			],
+			[
+				"addres",
+				"inspectors/partials/_tpl.question5.address.html"
+			],
+			[
+				"full",
+				"inspectors/js/ctrl.fullpage.js"
+			],
+			[
+				"tion6",
+				"inspectors/partials/_tpl.question6.html"
+			],
+			[
+				"tion5",
+				"inspectors/partials/_tpl.question5.address.html"
+			],
+			[
+				"tion4",
+				"inspectors/partials/_tpl.question4.html"
+			],
+			[
+				"ques",
+				"inspectors/partials/_tpl.question3.html"
+			],
+			[
+				"question",
+				"inspectors/partials/_tpl.question1.html"
+			],
+			[
+				"static.ful",
+				"inspectors/partials/static.fullpage.html"
+			],
+			[
+				"db.",
+				"blooming-plateau-64344/helpers/db.js"
+			],
+			[
+				"servi",
+				"inspectors/js/service.js"
+			],
+			[
+				"gulp",
+				"blooming-plateau-64344/gulpfile.js"
+			],
+			[
+				"pro",
+				"inspectors/Procfile"
+			],
+			[
+				".env",
+				"blooming-plateau-64344/.env"
+			],
+			[
+				"proc",
+				"inspectors/Procfile"
 			],
 			[
 				"stati",
 				"partials/static.fullpage.html"
-			],
-			[
-				"ques",
-				"partials/_tpl.question4.html"
 			],
 			[
 				"diags",
@@ -1020,10 +1424,6 @@
 				"partials/_tpl.calendar-timepicker.html"
 			],
 			[
-				"servi",
-				"js/service.js"
-			],
-			[
 				"inspec",
 				"partials/admin.inspectors.list.html"
 			],
@@ -1032,24 +1432,8 @@
 				"css/style.css"
 			],
 			[
-				"admin.nav",
-				"partials/admin.nav.html"
-			],
-			[
-				"ctrl.ad",
-				"js/ctrl.admin.js"
-			],
-			[
-				"root",
-				"js/root.js"
-			],
-			[
 				"ser",
 				"js/service.js"
-			],
-			[
-				"service",
-				"inspectors/js/service.js"
 			],
 			[
 				"inspeser",
@@ -1060,28 +1444,12 @@
 				"server/db/db.js"
 			],
 			[
-				"static",
-				"partials/static.fullpage.html"
-			],
-			[
 				"cale",
 				"partials/_tpl.calendar-datepicker.html"
 			],
 			[
-				"full",
-				"js/ctrl.fullpage.js"
-			],
-			[
 				"data",
 				"data.json"
-			],
-			[
-				"main",
-				"js/main.js"
-			],
-			[
-				"style",
-				"css/style.css"
 			],
 			[
 				"calenda",
@@ -1100,16 +1468,8 @@
 				"js/bootstrap.datepicker.js"
 			],
 			[
-				"inde",
-				"index.html"
-			],
-			[
 				"da",
 				"data.json"
-			],
-			[
-				"question",
-				"partials/_tpl.question6.html"
 			],
 			[
 				"quest",
@@ -1152,16 +1512,8 @@
 				"partials/admin.inspectors.html"
 			],
 			[
-				"",
-				"css/style.css"
-			],
-			[
 				"_pro",
 				"project-misitioba/src/assets/views/_projects.jade"
-			],
-			[
-				"gulp",
-				"project-misitioba/gulpfile.js"
 			],
 			[
 				"parse-ser",
@@ -1182,318 +1534,6 @@
 			[
 				"_projec",
 				"src/assets/views/_projects.jade"
-			],
-			[
-				"sty",
-				"style.css"
-			],
-			[
-				"ven",
-				"vendor.js"
-			],
-			[
-				"_works",
-				"src/assets/views/_works.jade"
-			],
-			[
-				"langua",
-				"src/assets/files/i18n/language.json"
-			],
-			[
-				"helpe",
-				"src/styles/helpers.scss"
-			],
-			[
-				"routes",
-				"src/server/routes/routes-testing.js"
-			],
-			[
-				"gul",
-				"gulpfile.js"
-			],
-			[
-				"gl",
-				"node_modules/bootstrap-sass/test/dummy_rails/tmp/cache/sprockets/v4.0/Wlv3AjJze_gL2wGwNswtC-jbYt3kMqMny0LkUbdzJAw.cache"
-			],
-			[
-				"slider",
-				"src/styles/ba-slider.scss"
-			],
-			[
-				"helper",
-				"src/styles/helpers.scss"
-			],
-			[
-				"bibli",
-				"documentation/bibliography.txt"
-			],
-			[
-				"i18n",
-				"src/scripts/i18n/i18n.js"
-			],
-			[
-				"_hbs",
-				"src/assets/views/partials/_hbs.misitioba.html"
-			],
-			[
-				"handler",
-				"src/scripts/handlers/handler-admin-user-create.js"
-			],
-			[
-				"handle",
-				"src/scripts/handlers/handler-admin-user-login.js"
-			],
-			[
-				"-user",
-				"src/server/routes/routes-user.js"
-			],
-			[
-				"vendor",
-				"src/vendor/vendor.js"
-			],
-			[
-				"-users",
-				"src/server/routes/routes-user.js"
-			],
-			[
-				"route",
-				"src/server/routes/routes-user.js"
-			],
-			[
-				"languag",
-				"src/assets/files/i18n/language.json"
-			],
-			[
-				"http.",
-				"src/scripts/http/http.js"
-			],
-			[
-				"biblio",
-				"documentation/bibliography.txt"
-			],
-			[
-				"handlers",
-				"src/scripts/handlers/handler-admin-user-create.js"
-			],
-			[
-				"_base",
-				"views/layouts/_base.accrocs.jade"
-			],
-			[
-				"vendor.static",
-				"src/vendor/vendor.static.js"
-			],
-			[
-				"help",
-				"styles/helpers.scss"
-			],
-			[
-				"tags",
-				"views/partials/_accrocs-tags.jade"
-			],
-			[
-				"el.",
-				"src/scripts/dom/el.js"
-			],
-			[
-				"app.stati",
-				"src/scripts/app.static.js"
-			],
-			[
-				"vendor.stati",
-				"src/vendor/vendor.static.js"
-			],
-			[
-				"app.sta",
-				"src/scripts/app.static.js"
-			],
-			[
-				"_acro",
-				"accrocs/_accrocs.js"
-			],
-			[
-				"-tags",
-				"views/partials/_accrocs-tags.jade"
-			],
-			[
-				"re.html",
-				"assets/files/accrocs-articles-raw/Mûre.html"
-			],
-			[
-				"_accro",
-				"views/partials/_accrocs-tags.jade"
-			],
-			[
-				"gu",
-				"project-misitioba/gulpfile.js"
-			],
-			[
-				"gulpfile",
-				"project-misitioba/gulpfile.js"
-			],
-			[
-				"_ba",
-				"src/assets/views/layouts/_base.accrocs.jade"
-			],
-			[
-				"intro.json",
-				"src/assets/files/accrocs-articles-json/intro.json"
-			],
-			[
-				"intro",
-				"dist/files/acrocs-articles-raw/Intro et pitch.html"
-			],
-			[
-				"forms.js",
-				"src/scripts/dom/forms.js"
-			],
-			[
-				"html-to",
-				"src/assets/projects/matools/html-to-json/html-to-json.js"
-			],
-			[
-				"forms",
-				"src/scripts/dom/forms.js"
-			],
-			[
-				"welcometoparis",
-				"ja-misitioba/src/assets/blog/posts/welcome-to-paris/index.jade"
-			],
-			[
-				"_project",
-				"brunch.one/app/views/partials/_projects.jade"
-			],
-			[
-				"projects.jade",
-				"brunch.one/app/projects/index.jade"
-			],
-			[
-				"tinyevt",
-				"brunch.one/node_modules/tinyevt/lib/tinyevt.js"
-			],
-			[
-				"_script",
-				"brunch.one/app/views/partials/_scripts.jade"
-			],
-			[
-				"config.ts",
-				"angular2-seed/tools/config.ts"
-			],
-			[
-				"parse.ts",
-				"angular2-seed/app/services/parse.ts"
-			],
-			[
-				"signal.ts",
-				"angular2-seed/app/services/signal.ts"
-			],
-			[
-				"-details",
-				"angular2-seed/app/components/post-details/post-details.html"
-			],
-			[
-				"config",
-				"angular2-seed/tools/config.ts"
-			],
-			[
-				"post-",
-				"angular2-seed/app/components/posts-list/posts-list.ts"
-			],
-			[
-				"post.ts",
-				"angular2-seed/app/components/posts/posts.ts"
-			],
-			[
-				"app.com",
-				"app/app.component.ts"
-			],
-			[
-				"modelo",
-				"brunch.one/public/docs/modelo_de_negocio.txt"
-			],
-			[
-				"motiva",
-				"brunch.one/public/motivation1.txt"
-			],
-			[
-				"_head",
-				"app/views/partials/_head.jade"
-			],
-			[
-				"_helper",
-				"app/styles/_helper.styl"
-			],
-			[
-				"helpers",
-				"app/styles/_helper.styl"
-			],
-			[
-				"jadeu",
-				"modules/jadeUtils.js"
-			],
-			[
-				"quadr",
-				"app/posts/quadramma.md"
-			],
-			[
-				"index",
-				"app/index.jade"
-			],
-			[
-				"_intro",
-				"app/styles/_intro.styl"
-			],
-			[
-				"console",
-				"app/js/console.js"
-			],
-			[
-				"sele",
-				"app/js/select.js"
-			],
-			[
-				"jadeut",
-				"modules/jadeUtils.js"
-			],
-			[
-				"_header",
-				"app/views/partials/_header-page.jade"
-			],
-			[
-				"_console",
-				"app/styles/_console.styl"
-			],
-			[
-				"index.jade",
-				"app/index.jade"
-			],
-			[
-				"easin",
-				"app/js/easing.js"
-			],
-			[
-				"select",
-				"app/js/select.js"
-			],
-			[
-				"intro.js",
-				"app/js/intro.js"
-			],
-			[
-				"app.js",
-				"app/app.js"
-			],
-			[
-				"_content",
-				"app/styles/_content.styl"
-			],
-			[
-				"_conten",
-				"app/styles/_content.styl"
-			],
-			[
-				"intro.",
-				"app/js/intro.js"
 			]
 		],
 		"width": 0.0

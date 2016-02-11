@@ -44,11 +44,12 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         // if (lib.tableExists('session')) lib.dropTable('session');//DROP SESSION
         db.createSession = function(force) {
             if (force && lib.tableExists('session')) lib.dropTable('session');
-            lib.createTable('session', ['email', 'expire', 'pass', 'rememberPass']);
+            lib.createTable('session', ['email', 'expire','type', 'password', 'rememberPass']);
             db.setUnique('session', {
                 email: null,
                 expire: null,
-                pass: null,
+                password: null,
+                type:null,
                 rememberPass: true
             });
         };
@@ -68,27 +69,27 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     };
     r.logged = function() {
         var ss = r.session();
-        return ss.email !== null && ss.pass !== null;
+        return ss.email !== null && ss.password !== null;
     };
 
 
     r._login = {
         email: '',
-        pass: ''
+        password: ''
     };
     var session = r.session();
     _.each(session, function(val, key) {
         r._login[key] = val;
     });
-    if (session.pass) r._login.pass = session.pass; //atob(session.pass);
-    if (!session.rememberPass) r._login.pass = null;
+    if (session.password) r._login.password = session.password; //atob(session.password);
+    if (!session.rememberPass) r._login.password = null;
 
 
 
     r.logout = function() {
         r.session({
             email: null,
-            pass: null
+            password: null
         });
         r.route('login');
     };

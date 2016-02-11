@@ -1,54 +1,10 @@
-var app = angular.module('app', [
-    'app.admin.routes',
-    'app.admin.login',
-    'app.admin.user',
-    'app.admin.inspector',
-    'app.common.directives',
-    'app.common.service',
-    'app.common.root',
-    'ngRoute',
-    'ui.bootstrap'
-]);
+var app = angular.module('app.admin.user', ['app.common.service']);
 
-app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
-    console.info('app.admin:run');
-
-    r.navShow = true;
-
-    r.toggleNavbar = function(val) {
-        r.navShow = val;
-        r.dom();
-    };
-    r.secureSection = function(_s) {
-        _s.show = false;
-        if (!r.logged()) {
-            console.warn('secureSection:redirecting to login');
-            r.route('login');
-        } else {
-            _s.show = true;
-        }
-    };
-
-}]);
-
-
-app.controller('adminDashboard', [
+app.controller('adminUsers', [
 
     'server', '$scope', '$rootScope',
     function(db, s, r) {
-        console.info('app.admin.login:adminDashboard');
-        //
-        r.toggleNavbar(true);
-        r.secureSection(s);
-    }
-]);
-
-
-app.controller('adminClients', [
-
-    'server', '$scope', '$rootScope',
-    function(db, s, r) {
-        console.info('app.admin.login:adminClients');
+        console.info('app.admin.user:adminUsers');
         //
         r.toggleNavbar(true);
         r.secureSection(s);
@@ -56,24 +12,27 @@ app.controller('adminClients', [
         s.items = [];
         //
         s.click = function(item) {
-            r.route('clients/edit/' + item._id);
+            r.route('users/edit/' + item._id);
         };
         s.create=function(){
-          r.route('clients/edit/-1');  
+          r.route('users/edit/-1');  
         };
         s.delete=function(item){
             s.confirm('Remove '+s.selectedItems.length+' item/s?',function(){
-                console.log('adminClients:removeAll:in-progress');
+                console.log('adminUsers:removeAll:in-progress');
                 s.message('deleting . . .', 'info');
-                db.custom('client', 'removeAll', {
+                s.requesting=true;
+                db.custom('user', 'removeAll', {
                     ids:s.selectedItems
                 }).then(function(res) {
+                    s.requesting=false;
                     s.message('deleted', 'info');
                     read();
-                    console.info('adminClients:removeAll:success', r.data);
+                    console.info('adminUsers:removeAll:success', r.data);
                 }).error(function(err) {
+                    s.requesting=false;
                     s.message('error, try later.', 'danger');
-                    console.warn('adminClients:removeAll:error', err);
+                    console.warn('adminUsers:removeAll:error', err);
                 });
             });
         };
@@ -85,8 +44,8 @@ app.controller('adminClients', [
 
         function read() {
             s.message('loading . . .', 'info');
-            db.custom('client', 'getAll', {}).then(function(r) {
-                console.info('adminClients:read:success');
+            db.custom('user', 'getAll', {}).then(function(r) {
+                console.info('adminUsers:read:success');
                 s.items = r.data.result;
                 s.message('loaded!', 'success',1000);
             });
@@ -96,11 +55,11 @@ app.controller('adminClients', [
     }
 ]);
 
-app.controller('adminClientsEdit', [
+app.controller('adminUsersEdit', [
 
     'server', '$scope', '$rootScope', '$routeParams',
     function(db, s, r, params) {
-        console.info('app.admin.login:adminClientsEdit');
+        console.info('app.admin.user:adminUsersEdit');
         //
         r.toggleNavbar(true);
         r.secureSection(s);
@@ -113,48 +72,49 @@ app.controller('adminClientsEdit', [
         s.original = _.clone(s.item);
         //
         if (params && params.id && params.id.toString() !=='-1') {
-            console.info('adminClientsEdit:params', params);
+            console.info('adminUsersEdit:params', params);
             r.dom(read,1000);
         } else {
-            console.info('adminClientsEdit:reset');
+            console.info('adminUsersEdit:reset');
             reset();
         }
         //
         s.cancel = function() {
-            r.route('clients');
+            r.route('users');
         };
         s.save = function() {
             s.message('saving . . .', 'info');
+
             s.requesting=true;
-            db.custom('client', 'save', s.item).then(function(res) {
+            db.custom('user', 'save', s.item).then(function(res) {
                 s.requesting=false;
-                console.info('adminClientsEdit:save:success');
+                console.info('adminUsersEdit:save:success');
                 s.message('saved', 'success');
-                r.route('clients', 500);
+                r.route('users', 2000);
             }).error(function(err) {
                 s.requesting=false;
                 s.message('error, try later.', 'danger');
-                console.warn('adminClientsEdit:save:error', err);
+                console.warn('adminUsersEdit:save:error', err);
             });
 
         };
         s.delete = function() {
-            s.confirm('Delete Client ' + s.item.email + ' ?', function() {
-                console.log('adminClientsEdit:remove:in-progress');
+            s.confirm('Delete User ' + s.item.email + ' ?', function() {
+                console.log('adminUsersEdit:remove:in-progress');
                 s.message('deleting . . .', 'info');
                 s.requesting=true;
-                db.custom('client', 'remove', {
+                db.custom('user', 'remove', {
                     _id: s.item._id
                 }).then(function(res) {
                     s.requesting=false;
                     s.message('deleted', 'info');
                     reset();
-                    r.route('clients', 500);
-                    console.info('adminClientsEdit:remove:success', r.data);
+                    r.route('users', 2000);
+                    console.info('adminUsersEdit:remove:success', r.data);
                 }).error(function(err) {
                     s.requesting=false;
                     s.message('error, try later.', 'danger');
-                    console.warn('adminClientsEdit:remove:error', err);
+                    console.warn('adminUsersEdit:remove:error', err);
                 });
             });
         };
@@ -165,12 +125,13 @@ app.controller('adminClientsEdit', [
 
         function read() {
             s.message('loading . . .', 'info');
+
             s.requesting=true;
-            db.custom('client', 'get', {
+            db.custom('user', 'get', {
                 _id: params.id
             }).then(function(res) {
                 s.requesting=false;
-                console.info('adminClientsEdit:read:success', res.data);
+                console.info('adminUsersEdit:read:success', res.data);
                 s.item = res.data.result;
                 if(!res.data.ok){
                     s.message('not found, maybe it was deleted!', 'warning',5000);
