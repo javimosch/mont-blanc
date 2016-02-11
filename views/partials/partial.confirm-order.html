@@ -18,6 +18,7 @@
         </div>
     </div>
     <div class="panel-footer">
-        <button ng-disabled="!model.email" class="btn btn-success btn-lg" ng-click="confirm()">Save my order</button>
+        <button ng-disabled="!model.email || sendingEmail" class="btn btn-success btn-lg" ng-click="confirm()">Save my order</button>
     </div>
 </div>
+<output data-message></output>

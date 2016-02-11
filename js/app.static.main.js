@@ -1,15 +1,17 @@
 var app = angular.module('app', [
     'app.common.service',
     'app.common.root',
+    'app.common.directives',
     'app.static.calendar',
     'ui.bootstrap'
 ]);
 
 
 app.controller('fullpage', ['server',
-    '$timeout', '$scope', '$rootScope',
-    function(db, $timeout, s, r) {
-        //
+    '$timeout', '$scope', '$rootScope', '$uibModal',
+    function(db, $timeout, s, r, $uibModal) {
+        window.r = r;
+        window.s = s;
         //console.info('FULLPAGE');
         db.localData().then(function(data) {
             Object.assign(s, data);
@@ -18,7 +20,6 @@ app.controller('fullpage', ['server',
         s.model = {
             diags: {}
         };
-
 
 
         //----------------------------------------------------------
@@ -65,10 +66,41 @@ app.controller('fullpage', ['server',
             s.model.diags[val.name] = (val.mandatory) ? true : false;
         });
 
+
+        function showModal(message, okCallback) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'views/directives/directive.modal.ok.html',
+                controller: function($scope, $uibModalInstance) {
+                    $scope.message = message;
+                    $scope.yes = function() {
+                        $uibModalInstance.close();
+                        if (okCallback) {
+                            okCallback();
+                        }
+                    };
+                },
+                //size: '',
+                //resolve: {}
+            });
+        }
+
         s.confirm = function() {
+            s.sendingEmail = true;
             db.custom('order', 'save', s.model).then(function(res) {
-                console.info('ORDER:SAVE:SUCCESS', res.data);
+                if(res.data.ok){
+                    showModal('Email Sended');
+                    console.info('ORDER:SAVE:SUCCESS', res.data);
+                }else{
+                    if(_.includes(res.data.result),['diagFrom','diagTo','inspectorId']){
+                        showModal('You need to choice an available time for inspection.');
+                        s.up();
+                    }
+                    console.info('ORDER:SAVE:ISSUES', res.data);
+                }
+                s.sendingEmail = false;
             }).error(function(res) {
+                s.sendingEmail = false;
                 console.warn('ORDER:SAVE:ERROR', res);
             });
         };

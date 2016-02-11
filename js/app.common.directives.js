@@ -68,7 +68,7 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                     return JSON.stringify(msg);
                 }
             };
-            //console.info('directive:my-alerts:log-add:', s.add);
+            console.info('directive:my-alerts:log-add:', s.add);
             s.add = function(message, type,timeout) {
                 var msg = s.decodeMessage(message);
                 if (s.el) {
