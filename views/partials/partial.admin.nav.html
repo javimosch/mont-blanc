@@ -11,17 +11,23 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right spacing-1">
-                <output ng-show="logged()">
-
+                <output ng-show="logged() && session().userType=='admin'">
                   <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
-
-                  <!--
-                  <li><a class="link" ng-click="route('inspectors')">Diags</a></li>
-                  -->
-                  
+                  <li><a class="link" ng-click="route('diags')">Diags</a></li>
+                  <li><a class="link" ng-click="route('orders')">Orders</a></li>
                   <li><a class="link" ng-click="route('clients')">Clients</a></li>
                   <li><a class="link" ng-click="route('users')">Users</a></li>
-                  <li><a class="link" ng-click="logout()">Logout</a></li>
+                  <li><a class="link" ng-click="logout()">Logout ({{session().email}})</a></li>
+                </output>
+
+                <output ng-show="logged() && session().userType=='client'">
+                  <li><a class="link" ng-click="route('clientProfile')">My Client profile</a></li>
+                  <li><a class="link" ng-click="logout()">Logout ({{session().email}})</a></li>
+                </output>
+
+                <output ng-show="logged() && session().userType=='diag'">
+                  <li><a class="link" ng-click="route('diagProfile')">My Diag profile</a></li>
+                  <li><a class="link" ng-click="logout()">Logout ({{session().email}})</a></li>
                 </output>
                 
 

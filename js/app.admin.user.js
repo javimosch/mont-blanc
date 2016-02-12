@@ -14,30 +14,30 @@ app.controller('adminUsers', [
         s.click = function(item) {
             r.route('users/edit/' + item._id);
         };
-        s.create=function(){
-          r.route('users/edit/-1');  
+        s.create = function() {
+            r.route('users/edit/-1');
         };
-        s.delete=function(item){
-            s.confirm('Remove '+s.selectedItems.length+' item/s?',function(){
+        s.delete = function(item) {
+            s.confirm('Remove ' + s.selectedItems.length + ' item/s?', function() {
                 console.log('adminUsers:removeAll:in-progress');
                 s.message('deleting . . .', 'info');
-                s.requesting=true;
+                s.requesting = true;
                 db.custom('user', 'removeAll', {
-                    ids:s.selectedItems
+                    ids: s.selectedItems
                 }).then(function(res) {
-                    s.requesting=false;
+                    s.requesting = false;
                     s.message('deleted', 'info');
                     read();
                     console.info('adminUsers:removeAll:success', r.data);
                 }).error(function(err) {
-                    s.requesting=false;
+                    s.requesting = false;
                     s.message('error, try later.', 'danger');
                     console.warn('adminUsers:removeAll:error', err);
                 });
             });
         };
-        s.select=function(){
-            if(window.event){
+        s.select = function() {
+            if (window.event) {
                 window.event.stopPropagation();
             }
         };
@@ -47,10 +47,10 @@ app.controller('adminUsers', [
             db.custom('user', 'getAll', {}).then(function(r) {
                 console.info('adminUsers:read:success');
                 s.items = r.data.result;
-                s.message('loaded!', 'success',1000);
+                s.message('loaded!', 'success', 1000);
             });
         }
-        r.dom(read,0);
+        r.dom(read, 0);
 
     }
 ]);
@@ -71,9 +71,9 @@ app.controller('adminUsersEdit', [
         };
         s.original = _.clone(s.item);
         //
-        if (params && params.id && params.id.toString() !=='-1') {
+        if (params && params.id && params.id.toString() !== '-1') {
             console.info('adminUsersEdit:params', params);
-            r.dom(read,1000);
+            r.dom(read, 1000);
         } else {
             console.info('adminUsersEdit:reset');
             reset();
@@ -85,34 +85,62 @@ app.controller('adminUsersEdit', [
         s.save = function() {
             s.message('saving . . .', 'info');
 
-            s.requesting=true;
-            db.custom('user', 'save', s.item).then(function(res) {
-                s.requesting=false;
-                console.info('adminUsersEdit:save:success');
-                s.message('saved', 'success');
-                r.route('users', 2000);
-            }).error(function(err) {
-                s.requesting=false;
-                s.message('error, try later.', 'danger');
-                console.warn('adminUsersEdit:save:error', err);
+            s.requesting = true;
+
+
+            db.custom('user', 'find', {
+                email: s.item.email
+            }).then(function(res) {
+                var result = res.data.result;
+                s.requesting = false;
+                if (res.data.result.length > 0) {
+                    var _item = res.data.result[0];
+                    if(s.item._id && s.item._id == _item._id){
+                        _save();//same user
+                    }else{
+                        s.message('Email address in use.');
+                    }
+                } else {
+                    _save();//do not exist.
+                }
             });
+
+            function _save() {
+                s.requesting = true;
+                db.custom('user', 'save', s.item).then(function(res) {
+                    s.requesting = false;
+                    var _r = res.data;
+                    if(_r.ok){
+                        console.info('adminUsersEdit:save:success');
+                        s.message('saved', 'success');
+                        r.route('users', 0);
+                    }else{
+                        console.warn('adminUsersEdit:save:fail',_r.err);
+                        s.message('error, try later', 'danger');
+                    }
+                }).error(function(err) {
+                    s.requesting = false;
+                    s.message('error, try later.', 'danger');
+                    console.warn('adminUsersEdit:save:error', err);
+                });
+            }
 
         };
         s.delete = function() {
             s.confirm('Delete User ' + s.item.email + ' ?', function() {
                 console.log('adminUsersEdit:remove:in-progress');
                 s.message('deleting . . .', 'info');
-                s.requesting=true;
+                s.requesting = true;
                 db.custom('user', 'remove', {
                     _id: s.item._id
                 }).then(function(res) {
-                    s.requesting=false;
+                    s.requesting = false;
                     s.message('deleted', 'info');
                     reset();
-                    r.route('users', 2000);
+                    r.route('users', 0);
                     console.info('adminUsersEdit:remove:success', r.data);
                 }).error(function(err) {
-                    s.requesting=false;
+                    s.requesting = false;
                     s.message('error, try later.', 'danger');
                     console.warn('adminUsersEdit:remove:error', err);
                 });
@@ -126,17 +154,17 @@ app.controller('adminUsersEdit', [
         function read() {
             s.message('loading . . .', 'info');
 
-            s.requesting=true;
+            s.requesting = true;
             db.custom('user', 'get', {
                 _id: params.id
             }).then(function(res) {
-                s.requesting=false;
+                s.requesting = false;
                 console.info('adminUsersEdit:read:success', res.data);
                 s.item = res.data.result;
-                if(!res.data.ok){
-                    s.message('not found, maybe it was deleted!', 'warning',5000);
-                }else{
-                    s.message('loaded', 'success',2000);
+                if (!res.data.ok) {
+                    s.message('not found, maybe it was deleted!', 'warning', 5000);
+                } else {
+                    s.message('loaded', 'success', 2000);
                 }
             });
         }

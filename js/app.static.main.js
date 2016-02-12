@@ -40,7 +40,7 @@ app.controller('fullpage', ['server',
             return moment(s.model.date).format('MMMM Do YYYY, dddd');
         };
         s.drawRange = function(rng) {
-            return moment(rng.from).format("HH:mm") + 'h - ' + moment(rng.to).format("HH:mm") + 'h';
+            return moment(rng.diagStart).format("HH:mm") + 'h - ' + moment(rng.diagEnd).format("HH:mm") + 'h';
         };
 
         s.onModelChange = function(a, b, c) {
@@ -82,11 +82,16 @@ app.controller('fullpage', ['server',
                 },
                 //size: '',
                 //resolve: {}
-            });
+            });confirm
         }
 
         s.confirm = function() {
             s.sendingEmail = true;
+
+            downloadJSON('order.model.json',s.model);
+            console.info(ToStringParameters(s.model));
+            return;
+
             db.custom('order', 'save', s.model).then(function(res) {
                 if(res.data.ok){
                     showModal('Email Sended');
@@ -121,9 +126,9 @@ app.controller('fullpage', ['server',
             return total;
         };
         s.pickTimeRange = function(timeRange) {
-            s.model.diagFrom = timeRange.from;
-            s.model.inspectorId = timeRange.inspectorId;
-            s.model.diagTo = timeRange.to;
+            s.model.diagStart = timeRange.diagStart;
+            s.model._diag = timeRange._diag;
+            s.model.diagEnd = timeRange.diagEnd;
         };
         s.totalTime = function() {
             var total = 0;
@@ -196,31 +201,6 @@ app.directive('modal', function($rootScope, $timeout, $compile) {
                 });
             }
             toggle(scope.model.show || false);
-        }
-    };
-});
-
-app.directive('address', function($rootScope, $timeout) {
-    return {
-        scope: {
-            model: "=model",
-            field: "@field",
-            change: "=change"
-        },
-        restrict: 'AE',
-        link: function(scope, elem, attrs) {
-            $timeout(function() {
-                scope.$apply(function() {
-
-                    elem.geocomplete().bind("geocode:result", function(event, result) {
-                        scope.model[scope.field] = result.formatted_address;
-                        scope.change && scope.change(scope.model);
-                    });
-                    if (scope.model[scope.field] !== '') {
-                        elem.geocomplete("find", scope.model[scope.field]);
-                    }
-                });
-            });
         }
     };
 });

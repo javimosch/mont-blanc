@@ -71,6 +71,10 @@
 	width: 100%;
 }
 
+.fullwidth{
+	width: 100%;
+}
+
 .size-medium{
 	min-height:200px;
 }

@@ -1,56 +1,10 @@
-var app = angular.module('app', [
-    'app.admin.routes',
-    'app.admin.login',
-    'app.admin.user',
-    'app.admin.diag',
-    'app.admin.order',
-    'app.admin.inspector',
-    'app.common.directives',
-    'app.common.service',
-    'app.common.root',
-    'ngRoute',
-    'ui.bootstrap'
-]);
+var app = angular.module('app.admin.diag', ['app.common.service']);
 
-app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
-    console.info('app.admin:run');
-
-    r.navShow = true;
-
-    r.toggleNavbar = function(val) {
-        r.navShow = val;
-        r.dom();
-    };
-    r.secureSection = function(_s) {
-        _s.show = false;
-        if (!r.logged()) {
-            console.warn('secureSection:redirecting to login');
-            r.route('login');
-        } else {
-            _s.show = true;
-        }
-    };
-
-}]);
-
-
-app.controller('adminDashboard', [
+app.controller('adminDiags', [
 
     'server', '$scope', '$rootScope',
     function(db, s, r) {
-        console.info('app.admin.login:adminDashboard');
-        //
-        r.toggleNavbar(true);
-        r.secureSection(s);
-    }
-]);
-
-
-app.controller('adminClients', [
-
-    'server', '$scope', '$rootScope',
-    function(db, s, r) {
-        console.info('app.admin.login:adminClients');
+        console.info('app.admin.diag:adminDiags');
         //
         r.toggleNavbar(true);
         r.secureSection(s);
@@ -58,24 +12,27 @@ app.controller('adminClients', [
         s.items = [];
         //
         s.click = function(item) {
-            r.route('clients/edit/' + item._id);
+            r.route('diags/edit/' + item._id);
         };
         s.create = function() {
-            r.route('clients/edit/-1');
+            r.route('diags/edit/-1');
         };
         s.delete = function(item) {
             s.confirm('Remove ' + s.selectedItems.length + ' item/s?', function() {
-                console.log('adminClients:removeAll:in-progress');
+                console.log('adminDiags:removeAll:in-progress');
                 s.message('deleting . . .', 'info');
+                s.requesting = true;
                 db.custom('user', 'removeAll', {
                     ids: s.selectedItems
                 }).then(function(res) {
+                    s.requesting = false;
                     s.message('deleted', 'info');
                     read();
-                    console.info('adminClients:removeAll:success', r.data);
+                    console.info('adminDiags:removeAll:success', r.data);
                 }).error(function(err) {
+                    s.requesting = false;
                     s.message('error, try later.', 'danger');
-                    console.warn('adminClients:removeAll:error', err);
+                    console.warn('adminDiags:removeAll:error', err);
                 });
             });
         };
@@ -87,8 +44,8 @@ app.controller('adminClients', [
 
         function read() {
             s.message('loading . . .', 'info');
-            db.custom('user', 'getAll', {userType:'client'}).then(function(r) {
-                console.info('adminClients:read:success');
+            db.custom('user', 'getAll', {userType:'diag'}).then(function(r) {
+                console.info('adminDiags:read:success',r.data);
                 s.items = r.data.result;
                 s.message('loaded!', 'success', 1000);
             });
@@ -98,11 +55,11 @@ app.controller('adminClients', [
     }
 ]);
 
-app.controller('adminClientsEdit', [
+app.controller('adminDiagsEdit', [
 
     'server', '$scope', '$rootScope', '$routeParams',
     function(db, s, r, params) {
-        console.info('app.admin.login:adminClientsEdit');
+        console.info('app.admin.diag:adminDiagsEdit');
         //
         r.toggleNavbar(true);
         r.secureSection(s);
@@ -110,39 +67,77 @@ app.controller('adminClientsEdit', [
         //
         s.item = {
             email: '',
-            password: ''
+            password: '',
+            address:''
         };
         s.original = _.clone(s.item);
+
+        
+        
+        s.$watch('item.address',(v)=>{
+            console.info('ADDRESS:CHANGE',v);
+        });
+        s.addressChange=(v)=>s.item.address=v;
+
         //
         if (params && params.id && params.id.toString() !== '-1') {
-            console.info('adminClientsEdit:params', params);
+            console.info('adminDiagsEdit:params', params);
             r.dom(read, 1000);
         } else {
-            console.info('adminClientsEdit:reset');
+            console.info('adminDiagsEdit:reset');
             reset();
         }
         //
         s.cancel = function() {
-            r.route('clients');
+            r.route('diags');
         };
         s.save = function() {
             s.message('saving . . .', 'info');
+
             s.requesting = true;
-            db.custom('user', 'save', s.item).then(function(res) {
+
+
+            db.custom('user', 'find', {
+                email: s.item.email
+            }).then(function(res) {
                 s.requesting = false;
-                console.info('adminClientsEdit:save:success');
-                s.message('saved', 'success');
-                r.route('clients', 500);
-            }).error(function(err) {
-                s.requesting = false;
-                s.message('error, try later.', 'danger');
-                console.warn('adminClientsEdit:save:error', err);
+                if (res.data.result.length > 0) {
+                    var _item = res.data.result[0];
+                    if(s.item._id && s.item._id == _item._id){
+                        _save();//same diag
+                    }else{
+                        s.message('Email address in use.');
+                    }
+                } else {
+                    _save();//do not exist.
+                }
             });
+
+            function _save() {
+                s.requesting = true;
+                db.custom('user', 'save', s.item).then(function(res) {
+                    s.requesting = false;
+                    var _r = res.data;
+                    if(_r.ok){
+                        console.info('adminDiagsEdit:save:success');
+                        s.message('saved', 'success');
+                        r.route('diags', 0);    
+                    }else{
+                        console.warn('adminDiagsEdit:save:fail',_r.err);
+                        s.message('error, try later', 'danger');
+                    }
+                    
+                }).error(function(err) {
+                    s.requesting = false;
+                    s.message('error, try later.', 'danger');
+                    console.warn('adminDiagsEdit:save:error', err);
+                });
+            }
 
         };
         s.delete = function() {
-            s.confirm('Delete Client ' + s.item.email + ' ?', function() {
-                console.log('adminClientsEdit:remove:in-progress');
+            s.confirm('Delete Diag ' + s.item.email + ' ?', function() {
+                console.log('adminDiagsEdit:remove:in-progress');
                 s.message('deleting . . .', 'info');
                 s.requesting = true;
                 db.custom('user', 'remove', {
@@ -151,12 +146,12 @@ app.controller('adminClientsEdit', [
                     s.requesting = false;
                     s.message('deleted', 'info');
                     reset();
-                    r.route('clients', 500);
-                    console.info('adminClientsEdit:remove:success', r.data);
+                    r.route('diags', 0);
+                    console.info('adminDiagsEdit:remove:success', r.data);
                 }).error(function(err) {
                     s.requesting = false;
                     s.message('error, try later.', 'danger');
-                    console.warn('adminClientsEdit:remove:error', err);
+                    console.warn('adminDiagsEdit:remove:error', err);
                 });
             });
         };
@@ -167,12 +162,17 @@ app.controller('adminClientsEdit', [
 
         function read() {
             s.message('loading . . .', 'info');
+
             s.requesting = true;
+
+
+
+            
             db.custom('user', 'get', {
                 _id: params.id
             }).then(function(res) {
                 s.requesting = false;
-                console.info('adminClientsEdit:read:success', res.data);
+                console.info('adminDiagsEdit:read:success', res.data);
                 s.item = res.data.result;
                 if (!res.data.ok) {
                     s.message('not found, maybe it was deleted!', 'warning', 5000);

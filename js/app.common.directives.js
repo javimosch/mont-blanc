@@ -1,5 +1,40 @@
 var app = angular.module('app.common.directives', []);
 
+app.directive('address', function($rootScope, $timeout) {
+    return {
+        scope: {
+            model: "=model",
+            field: "@field",
+            change: "=change"
+        },
+        restrict: 'AE',
+        link: function(scope, elem, attrs) {
+            $timeout(function() {
+                elem.geocomplete().bind("geocode:result", function(event, result) {
+                    scope.model[scope.field] = result.formatted_address;
+                    scope.change && scope.change(result.formatted_address);
+                    //console.log('DIRECTIVE:ADDRESS:CHANGE', result.formatted_address);
+                });
+
+                function read() {
+                    $timeout(function() {
+                        //console.log('DIRECTIVE:ADDRESS:READING', scope.model);
+                        if (scope.model[scope.field] !== '') {
+                            elem.geocomplete("find", scope.model[scope.field]);
+                        }
+                        scope.$apply();
+                    });
+                }
+                read();
+                scope.$watch('model.address',read);
+                scope.$apply();
+            });
+        }
+    };
+});
+
+
+
 app.directive('checkBox', function($rootScope, $timeout) {
     return {
         scope: {
@@ -69,7 +104,7 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                 }
             };
             console.info('directive:my-alerts:log-add:', s.add);
-            s.add = function(message, type,timeout) {
+            s.add = function(message, type, timeout) {
                 var msg = s.decodeMessage(message);
                 if (s.el) {
                     s.el.alert('close');
@@ -78,10 +113,10 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                 s.el = el;
                 elem.append(el);
 
-                if(timeout){
-                    r.dom(function(){
+                if (timeout) {
+                    r.dom(function() {
                         elem.html('');
-                    },timeout);
+                    }, timeout);
                 }
             };
             console.log('myAlerts attached');
@@ -90,7 +125,7 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
 });
 
 
-app.directive('modalConfirm', function($rootScope, $timeout, $compile,$uibModal) {
+app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal) {
     return {
         restrict: 'AE',
         replace: true,
@@ -100,11 +135,11 @@ app.directive('modalConfirm', function($rootScope, $timeout, $compile,$uibModal)
         template: '<output></output>',
         link: function(s, elem, attrs) {
             console.info('directive:modalSure:link:start');
-            s.open = function(message,okCallback) {
+            s.open = function(message, okCallback) {
                 var modalInstance = $uibModal.open({
                     animation: true,
                     templateUrl: 'views/directives/directive.modal.sure.html',
-                    controller: function($scope,$uibModalInstance) {
+                    controller: function($scope, $uibModalInstance) {
                         $scope.message = message;
                         $scope.yes = function() {
                             $uibModalInstance.close();

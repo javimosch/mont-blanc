@@ -7,10 +7,10 @@ type: {type:String,default:'Landlord'}, //(Landlord / Agency / Foncière)
     email: String,
     password: String,
     -->
-<div class="container" ng-controller="adminUsers">
+<div class="container" ng-controller="adminOrders">
     <div class="panel panel-info">
         <div class="panel-heading">
-            <h3 class="panel-title">Users</h3>
+            <h3 class="panel-title">Orders</h3>
             <div class="btn-group" role="group" aria-label="...">
                 <button type="button" class="btn btn-default" ng-click="create()">New</button>
                 <!--
@@ -24,9 +24,9 @@ type: {type:String,default:'Landlord'}, //(Landlord / Agency / Foncière)
                     <thead>
                         <tr>
                             <!--<th>#</th>-->
-                            <th>Email</th>
-                            <th>Password</th>
-                            <th>Type</th>
+                            <th>Client</th>
+                            <th>Address</th>
+                            <th>status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,9 +36,9 @@ type: {type:String,default:'Landlord'}, //(Landlord / Agency / Foncière)
                                 <check-box/ val="item._id" push="selectedItems" ng-click="select()">
                             </td>
                             -->
-                            <td>{{item.email}}</td>
-                            <td>{{item.password}}</td>
-                            <td>{{item.userType}}</td>
+                            <td>{{item._client.email}}</td>
+                            <td>{{item.address}}</td>
+                            <td>{{item.status}}</td>
                         </tr>
                     </tbody>
                 </table>

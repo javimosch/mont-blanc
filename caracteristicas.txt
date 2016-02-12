@@ -1,0 +1,19 @@
+BACKOFFICE
+
+ADMIN
+-Admin can see statistics
+-Admin can see all the diagnostiquers calendars and details of each order
+-Admin can add diagnostiquer and give priority order. can deactivate one
+-Admin can see turnover per day/month/year per diagnostiquer and overall
+
+DIAG
+-Each diagnostiqueur, has access to his own calendar in a responsive light back office
+-Diagnostiqueur see the platform fill in their calendar....he has access to his calendar (screenshot) and he can click on a time period and check the detail of the sale. the service is considered done when he has uploaded the PDF (delivery.. )
+-After delivery we update his monthly and yearly turnover wich is displayed on each diagnostiquer calendar
+Le diagnostiqueur has access to his monthly turnover and yearly turnover
+
+CLIENT
+-The Client and the landlord receive the PDF by email... and can see it in his back office
+
+
+

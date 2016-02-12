@@ -15,9 +15,9 @@ srv.service('server', ['$http', 'localdb', function(http, localdb) {
     //var URL = 'http://ujkk558c0c9a.javoche.koding.io:3434';
     var URL = 'http://localhost:5000';
 
-    $.ajax("/serverURL").then(function(r){
+    $.ajax("/serverURL").then(function(r) {
         URL = r.URL; //updates serverURL from express (node env serverURL);
-        console.info('server:url:'+URL);
+        console.info('server:url:' + URL);
     });
 
     //var URL = 'http://blooming-plateau-64344.herokuapp.com/';
@@ -62,25 +62,28 @@ srv.service('server', ['$http', 'localdb', function(http, localdb) {
             data: data,
             url: URL + '/' + relativeUrl
         }).then(function(res) {
+            if(res.data && res.data.ok == false){
+                console.warn('SERVER:REQUEST:WARNING = '+res.data.err || "Unkown error detected");
+            }
             callback(res);
         }, function(res) {
             handleServerError(res);
-            if(error){ error(res);}
+            if (error) {
+                error(res);
+            }
         });
     }
 
     var data = [{
-        _id: '41241212',
         price: 60,
-        from: new Date().getTime() - (1000 * 60) * 30,
-        to: new Date().getTime() + (1000 * 60) * 30,
-        inspectorId: 1
+        diagStart: new Date().getTime() - (1000 * 60) * 30,
+        diagEnd: new Date().getTime() + (1000 * 60) * 30,
+        _diag: 1
     }, {
-        _id: '412412132',
         price: 55,
-        from: new Date().getTime() - (1000 * 60) * 120,
-        to: new Date().getTime() - (1000 * 60) * 60,
-        inspectorId: 1
+        diagStart: new Date().getTime() - (1000 * 60) * 120,
+        diagEnd: new Date().getTime() - (1000 * 60) * 60,
+        _diag: 1
     }];
 
     function login(data) {
@@ -146,6 +149,13 @@ srv.service('server', ['$http', 'localdb', function(http, localdb) {
         get: getSingle,
         getAll: getAll,
         localData: getLocalData,
-        custom: custom
+        custom: custom,
+        post: function(url, data) {
+            return MyPromise(function(resolve, error) {
+                post(url, data, function(res) {
+                    resolve(res);
+                }, error);
+            });
+        }
     };
 }]);

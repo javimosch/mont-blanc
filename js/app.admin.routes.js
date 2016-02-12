@@ -26,6 +26,12 @@ app.config(['$routeProvider',
         when('/diags/edit/:id', {
             templateUrl: 'views/view.admin.diags.edit.html'
         }).
+        when('/orders', {
+            templateUrl: 'views/view.admin.orders.html'
+        }).
+        when('/orders/edit/:id', {
+            templateUrl: 'views/view.admin.orders.edit.html'
+        }).
         otherwise({
             redirectTo: '/'
         });
