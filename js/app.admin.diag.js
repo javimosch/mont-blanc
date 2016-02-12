@@ -68,7 +68,8 @@ app.controller('adminDiagsEdit', [
         s.item = {
             email: '',
             password: '',
-            address:''
+            address:'',
+            userType:'diag'
         };
         s.original = _.clone(s.item);
 

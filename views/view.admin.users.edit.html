@@ -13,6 +13,18 @@
                     <label for="exampleInputPassword1">Password</label>
                     <input type="password" class="form-control" ng-model="item.password" placeholder="Password">
                 </div>
+                <div class="form-group">
+                    <label>FirstName</label>
+                    <input type="text" class="form-control" ng-model="item.firstName" placeholder="FirstName">
+                </div>
+                <div class="form-group">
+                    <label>LastName</label>
+                    <input type="text" class="form-control" ng-model="item.lastName" placeholder="LastName">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" class="form-control" ng-model="item.tel" placeholder="Phone">
+                </div>
             </form>
         </div>
         <div class="panel-footer">
@@ -20,7 +32,6 @@
             <button ng-disabled="requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>
             <button ng-disabled="requesting" class="btn btn-default" ng-click="delete()">Delete</button>
         </div>
-    
     </div>
     <my-alerts add="message"></my-alerts>
     <modal-confirm open="confirm"></modal-confirm>

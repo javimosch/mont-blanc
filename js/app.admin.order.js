@@ -83,6 +83,11 @@ app.controller('adminOrdersEdit', [
             r.route('orders');
         };
         s.save = function() {
+
+            if(!s.item.email){
+                return s.message('Email required', 'warning',5000);
+            }
+
             s.message('saving . . .', 'info');
 
             s.requesting = true;
@@ -91,7 +96,7 @@ app.controller('adminOrdersEdit', [
             db.custom('order', 'find', {
                 email: s.item.email
             }).then(function(res) {
-                s.requesting = falsee;
+                s.requesting = false;
                 if (res.data.result.length > 0) {
                     var _item = res.data.result[0];
                     if(s.item._id && s.item._id == _item._id){
@@ -149,7 +154,8 @@ app.controller('adminOrdersEdit', [
 
             s.requesting = true;
             db.custom('order', 'get', {
-                _id: params.id
+                _id: params.id,
+                __populate:['_client','email']
             }).then(function(res) {
                 s.requesting = false;
                 console.info('adminOrdersEdit:read:success', res.data);

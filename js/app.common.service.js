@@ -74,6 +74,8 @@ srv.service('server', ['$http', 'localdb', function(http, localdb) {
         });
     }
 
+    
+
     var data = [{
         price: 60,
         diagStart: new Date().getTime() - (1000 * 60) * 30,

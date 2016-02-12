@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"passwor",
+				"passwordSended"
+			],
+			[
+				"repla",
+				"replaceParams"
+			],
+			[
 				"conf",
 				"configureTemplateRoutes"
 			],
@@ -618,29 +626,36 @@
 	"expanded_folders":
 	[
 		"/home/javi/git/project-pierre/blooming-plateau-64344",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/templates",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/test"
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers"
 	],
 	"file_history":
 	[
+		"/home/javi/git/project-pierre/inspectors/js/app.static.main.js",
+		"/home/javi/git/project-pierre/inspectors/push.sh",
+		"/home/javi/git/project-pierre/inspectors/js/app.common.utils.js",
+		"/home/javi/git/project-pierre/inspectors/views/view.admin.login.html",
+		"/home/javi/git/project-pierre/inspectors/js/app.admin.login.js",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/templates/email.html",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/utils.mailing.js",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.email.js",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.order.js",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.user.js",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/app.js",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/db.js",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handle.routes.js",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.client.js",
+		"/home/javi/git/project-pierre/blooming-plateau-64344/package.json",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/templates/templates.js",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/utils.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/utils.mailing.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handle.routes.js",
 		"/home/javi/git/project-pierre/inspectors/express.js",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/test/get.sh",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/templates/order.created.client.html",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/test/post.sh",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/package.json",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.order.js",
 		"/home/javi/git/project-misitioba/src/vendor/micro/reqwest.js",
 		"/home/javi/git/project-pierre/inspectors/views/partials/partial.admin.nav.html",
 		"/home/javi/git/project-pierre/inspectors/views/view.admin.dashboard.html",
 		"/home/javi/git/project-misitioba/src/server/mailing/mailing.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.user.js",
 		"/home/javi/git/project-pierre/inspectors/js/app.common.service.js",
-		"/home/javi/git/project-pierre/inspectors/js/app.admin.login.js",
 		"/home/javi/git/project-pierre/inspectors/js/app.common.root.js",
 		"/home/javi/git/project-pierre/inspectors/caracteristicas.txt",
 		"/home/javi/git/project-pierre/inspectors/views/view.admin.users.html",
@@ -648,7 +663,6 @@
 		"/home/javi/git/project-pierre/blooming-plateau-64344/node_modules/localtunnel/client.js",
 		"/home/javi/git/project-pierre/inspectors/views/view.admin.orders.html",
 		"/home/javi/git/project-pierre/inspectors/js/app.admin.order.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/db.js",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handler.actions.js",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.diag.js",
 		"/home/javi/git/project-pierre/inspectors/admin.html",
@@ -658,11 +672,9 @@
 		"/home/javi/git/project-pierre/inspectors/js/app.admin.user.js",
 		"/home/javi/git/project-pierre/inspectors/views/partials/partial.question5.address.html",
 		"/home/javi/git/project-pierre/inspectors/css/style.css",
-		"/home/javi/git/project-pierre/inspectors/js/app.static.main.js",
 		"/home/javi/git/project-pierre/inspectors/views/view.admin.diags.html",
 		"/home/javi/git/project-pierre/inspectors/views/view.admin.users.edit.html",
 		"/home/javi/git/project-misitioba/src/assets/projects/matools/html-to-json/html-to-json.js",
-		"/home/javi/git/project-pierre/inspectors/js/app.common.utils.js",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/test/order.save.sh",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/test/getAll.sh",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/test/order.model.json",
@@ -671,17 +683,14 @@
 		"/home/javi/git/project-pierre/inspectors/views/partials/partial.calendar-timepicker.html",
 		"/home/javi/git/project-pierre/inspectors/views/partials/partial.calendar-datepicker.html",
 		"/home/javi/git/project-pierre/inspectors/views/partials/partial.confirm-order.html",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.client.js",
 		"/home/javi/git/project-pierre/inspectors/views/partials/partial.diags.html",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.testing.js",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/routes.js",
 		"/home/javi/git/project-pierre/inspectors/node_modules/jade/lib/inline-tags.js",
 		"/home/javi/git/project-pierre/inspectors/views/view.admin.orders.edit.html",
 		"/home/javi/git/project-pierre/inspectors/js/app.admin.routes.js",
-		"/home/javi/git/project-pierre/inspectors/push.sh",
 		"/home/javi/git/project-pierre/blooming-plateau-64344/push.sh",
 		"/home/javi/git/project-pierre/inspectors/views/view.admin.clients.edit.html",
-		"/home/javi/git/project-pierre/inspectors/views/view.admin.login.html",
 		"/home/javi/git/project-pierre/inspectors/views/vies.admin.diags.edit.html",
 		"/home/javi/git/project-pierre/inspectors/views/view.admin.clients.html",
 		"/home/javi/git/project-pierre/inspectors/views/directives/directive.modal.ok.html",
@@ -748,9 +757,7 @@
 		"/home/javi/git/project-misitioba/src/assets/views/layouts/_base.inspectors.app.jade",
 		"/home/javi/git/project-misitioba/src/scripts/angular/app.angular.js",
 		"/home/javi/git/project-misitioba/src/scripts/angular/srvs/parse-service.js",
-		"/home/javi/git/project-misitioba/src/vendor/vendor.js",
-		"/home/javi/git/project-misitioba/src/assets/projects/inspectors/_data.json",
-		"/home/javi/git/project-misitioba/src/assets/projects/index.jade"
+		"/home/javi/git/project-misitioba/src/vendor/vendor.js"
 	],
 	"find":
 	{
@@ -774,6 +781,9 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"_client",
+			"env",
+			"passy",
 			".type",
 			"login",
 			"session",
@@ -898,10 +908,7 @@
 			"s.",
 			"toogleB",
 			"partials/direc",
-			"directive.modal",
-			"view.static",
-			"partials/_tpl.",
-			"app.static"
+			"directive.modal"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -909,6 +916,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"_user",
 			".userType",
 			"custom('user",
 			"db.custom('user",
@@ -1085,6 +1093,74 @@
 		"selected_items":
 		[
 			[
+				"static.main",
+				"inspectors/js/app.static.main.js"
+			],
+			[
+				"push.",
+				"inspectors/push.sh"
+			],
+			[
+				"login.html",
+				"inspectors/views/view.admin.login.html"
+			],
+			[
+				"commonutils",
+				"inspectors/js/app.common.utils.js"
+			],
+			[
+				"login.js",
+				"inspectors/js/app.admin.login.js"
+			],
+			[
+				"db.",
+				"blooming-plateau-64344/helpers/db.js"
+			],
+			[
+				"handleruse",
+				"blooming-plateau-64344/helpers/handlers.user.js"
+			],
+			[
+				"handlerclie",
+				"blooming-plateau-64344/helpers/handlers.client.js"
+			],
+			[
+				"handleror",
+				"blooming-plateau-64344/helpers/handlers.order.js"
+			],
+			[
+				"handleruser",
+				"blooming-plateau-64344/helpers/handlers.user.js"
+			],
+			[
+				"handlerclien",
+				"blooming-plateau-64344/helpers/handlers.client.js"
+			],
+			[
+				"utils.mai",
+				"blooming-plateau-64344/helpers/utils.mailing.js"
+			],
+			[
+				"app",
+				"blooming-plateau-64344/app.js"
+			],
+			[
+				"email.html",
+				"blooming-plateau-64344/templates/email.html"
+			],
+			[
+				"handlerou",
+				"blooming-plateau-64344/helpers/handle.routes.js"
+			],
+			[
+				"handleuser",
+				"blooming-plateau-64344/helpers/handlers.user.js"
+			],
+			[
+				"packa",
+				"blooming-plateau-64344/package.json"
+			],
+			[
 				"emailing",
 				"blooming-plateau-64344/helpers/utils.mailing.js"
 			],
@@ -1127,14 +1203,6 @@
 			[
 				"service",
 				"inspectors/js/app.common.service.js"
-			],
-			[
-				"handleuser",
-				"blooming-plateau-64344/helpers/handlers.user.js"
-			],
-			[
-				"login.js",
-				"inspectors/js/app.admin.login.js"
 			],
 			[
 				"commonroot",
@@ -1205,10 +1273,6 @@
 				"inspectors/js/app.admin.user.js"
 			],
 			[
-				"handleruser",
-				"blooming-plateau-64344/helpers/handlers.user.js"
-			],
-			[
 				"styl",
 				"inspectors/css/style.css"
 			],
@@ -1231,10 +1295,6 @@
 			[
 				"handler.user",
 				"blooming-plateau-64344/helpers/handlers.user.js"
-			],
-			[
-				"static.main",
-				"inspectors/js/app.static.main.js"
 			],
 			[
 				"handleraci",
@@ -1277,10 +1337,6 @@
 				"inspectors/js/app.common.service.js"
 			],
 			[
-				"handleror",
-				"blooming-plateau-64344/helpers/handlers.order.js"
-			],
-			[
 				"-timepi",
 				"inspectors/views/partials/partial.calendar-timepicker.html"
 			],
@@ -1315,10 +1371,6 @@
 			[
 				"helperrou",
 				"blooming-plateau-64344/helpers/routes.js"
-			],
-			[
-				"db.",
-				"blooming-plateau-64344/helpers/db.js"
 			],
 			[
 				"db",
@@ -1485,10 +1537,6 @@
 				"inspectors/express.js"
 			],
 			[
-				"packa",
-				"inspectors/package.json"
-			],
-			[
 				"helperroutes",
 				"blooming-plateau-64344/helpers/routes.js"
 			],
@@ -1555,46 +1603,6 @@
 			[
 				".routes",
 				"inspectors/js/app.admin.routes.js"
-			],
-			[
-				"style",
-				"inspectors/css/style.css"
-			],
-			[
-				"dashboard",
-				"inspectors/views/view.admin.dashboard.html"
-			],
-			[
-				"common.roo",
-				"inspectors/js/app.common.root.js"
-			],
-			[
-				"view.login",
-				"inspectors/views/view.admin.login.html"
-			],
-			[
-				"admin.nav",
-				"inspectors/views/partials/partial.admin.nav.html"
-			],
-			[
-				"view.admin",
-				"inspectors/views/view.admin.html"
-			],
-			[
-				"view.admin.login",
-				"inspectors/views/view.admin.login.html"
-			],
-			[
-				"common.util",
-				"inspectors/js/app.common.utils.js"
-			],
-			[
-				"admin.rou",
-				"inspectors/js/app.admin.routes.js"
-			],
-			[
-				"admin.login",
-				"inspectors/js/app.admin.login.js"
 			]
 		],
 		"width": 0.0

@@ -7,11 +7,35 @@
             <form>
                 <div class="form-group">
                     <label>Client</label>
-                    <input disabled type="text" class="form-control" ng-model="item.client.email" placeholder="Client">
+                    <input disabled type="text" class="form-control" ng-model="item._client.email" placeholder="Client">
+                </div>
+                <div class="form-group">
+                    <label >Observations</label>
+                    <input type="text" class="form-control" ng-model="item.obs" placeholder="Observations">
+                </div>
+                <div class="form-group">
+                    <label >Start</label>
+                    <input type="text" disabled class="form-control" ng-model="item.diagStart" placeholder="Start Date">
+                </div>
+                <div class="form-group">
+                    <label >End</label>
+                    <input type="text" disabled class="form-control" ng-model="item.diagEnd" placeholder="End Date">
                 </div>
                 <div class="form-group">
                     <label >Price</label>
                     <input type="text" class="form-control" ng-model="item.price" placeholder="Price">
+                </div>
+                <div class="form-group">
+                    <label >Comission for fast diag</label>
+                    <input type="text" disabled class="form-control" ng-model="item.fastDiagComm" placeholder="Comission">
+                </div>
+                <div class="form-group">
+                    <label >Pdf</label>
+                    <input type="file" disabled class="form-control" placeholder="Diag Pdf">
+                </div>
+                <div class="form-group">
+                    <label >Status</label>
+                    <input type="text" disabled class="form-control" ng-model="item.status" placeholder="Status">
                 </div>
             </form>
         </div>

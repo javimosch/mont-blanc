@@ -27,6 +27,17 @@ app.controller('fullpage', ['server',
             db.getAvailableRanges(date).then(function(data) {
                 //                console.info('availableTimeRanges:', data);
                 s.availableTimeRanges = data;
+
+                //fill _diag with a random _diag for now
+                db.custom('user','get', {
+                        userType:'diag'
+                }).then(function(res) {
+                    s.availableTimeRanges.forEach(function(v,k){
+                        v._diag = res.data.result._id;
+                    });
+                    console.log('FIX: ranges filled with _diag=',res.data.result._id);
+                });
+
             });
         });
         s.down = function() {
@@ -82,22 +93,23 @@ app.controller('fullpage', ['server',
                 },
                 //size: '',
                 //resolve: {}
-            });confirm
+            });
+            confirm
         }
 
         s.confirm = function() {
             s.sendingEmail = true;
 
-            downloadJSON('order.model.json',s.model);
-            console.info(ToStringParameters(s.model));
-            return;
+            //downloadJSON('order.model.json',s.model);
+            //console.info(ToStringParameters(s.model));
+            //return;
 
-            db.custom('order', 'save', s.model).then(function(res) {
-                if(res.data.ok){
+            db.custom('order', 'saveWithEmail', s.model).then(function(res) {
+                if (res.data.ok) {
                     showModal('Email Sended');
                     console.info('ORDER:SAVE:SUCCESS', res.data);
-                }else{
-                    if(_.includes(res.data.result),['diagFrom','diagTo','inspectorId']){
+                } else {
+                    if (_.includes(res.data.result), ['diagFrom', 'diagTo', 'inspectorId']) {
                         showModal('You need to choice an available time for inspection.');
                         s.up();
                     }
