@@ -1,5 +1,156 @@
 var app = angular.module('app.admin.diag', ['app.common.service']);
 
+app.directive('timeRangeExceptions', function(
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile, server) {
+    return {
+        restrict: 'AE',
+        replace: true,
+        scope: {
+            //model: "=model"
+        },
+        templateUrl: 'views/directives/directive.section.exceptions.html',
+        link: function(s, elem, attrs) {
+            var r = $rootScope;
+            var ws = server;
+            var n = attrs.name;
+            //s.open //=> automatic
+            function update() {
+                ws.ctrl('TimeRange', 'getAll', {}).then((res) => {
+                    if (res.ok) {
+                        res.result.forEach((v)=>{
+                            v.day = moment(v.start).format('dddd');
+                            v.start = moment(v.start).format('HH:mm');
+                            v.end = moment(v.end).format('HH:mm');
+                        });
+                        s.model.update(res.result);
+                    }
+                });
+            }
+            s.model = {
+                //update //arg: items
+                buttons: [{
+                    label: "Refresh",
+                    type: () => "btn btn-primary",
+                    click: () => update()
+                }, {
+                    label: "New",
+                    type: () => "btn btn-default",
+                    click: () => {
+                        s.open({
+                            title: 'New Exception',
+                            action: 'new',
+                            type: 'work-exception',
+                            callback: (timeRange) => {
+                                timeRange._user = r.session()._id;
+                                ws.ctrl('TimeRange', 'create', timeRange).then((result) => {
+                                    update();
+                                });
+                            }
+                        })
+                    }
+                }],
+                columns: [{
+                    label: "Description",
+                    name: 'description'
+                }, {
+                    label: "Day",
+                    name: 'day'
+                }, {
+                    label: "Start",
+                    name: 'start'
+                }, , {
+                    label: "End",
+                    name: 'end'
+                }, {
+                    label: "Repeat rule",
+                    name: 'repeat'
+                }],
+                items: [{
+                    description: 'working #1',
+                    day: moment().date(1).format('dddd'),
+                    start: moment().date(1).format('HH:mm'),
+                    end: moment().date(2).format('HH:mm'),
+                    repeat: 'day'
+                }]
+            };
+            console.log('directive.exceptions.linked');
+        }
+    };
+});
+
+
+app.controller('diagDashboard', [
+
+    'server', '$scope', '$rootScope',
+    function(db, s, r) {
+        console.info('app.admin.diag:diagDashboard');
+
+        var m = moment();
+        var y = m.year();
+        var mo = m.month();
+        window.s = s;
+
+
+
+
+        s.calendarView = 'year';
+
+        s.views = {
+            label: 'View Type',
+            selected: s.calendarView,
+            click: (x) => {
+                s.calendarView = x.label.toLowerCase();
+                s.views.selected = s.calendarView;
+                r.dom();
+            },
+            items: [
+                { label: 'Day' },
+                { label: 'Week' },
+                { label: 'Month' },
+                { label: 'Year' },
+            ]
+        };
+
+
+        s.calendarDate = new Date();
+
+        s.events = [{
+            title: 'Order #2384', // The title of the event
+            type: 'info', // The type of the event (determines its color). Can be important, warning, info, inverse, success or special
+            startsAt: new Date(y, mo, 15, 1), // A javascript date object for when the event starts
+            endsAt: new Date(y, mo, 15, 15), // Optional - a javascript date object for when the event ends
+            editable: false, // If edit-event-html is set and this field is explicitly set to false then dont make it editable.
+            deletable: false, // If delete-event-html is set and this field is explicitly set to false then dont make it deleteable
+            draggable: true, //Allow an event to be dragged and dropped
+            resizable: true, //Allow an event to be resizable
+            incrementsBadgeTotal: true, //If set to false then will not count towards the badge total amount on the month and year view
+            recursOn: 'year', // If set the event will recur on the given period. Valid values are year or month
+            cssClass: 'a-css-class-name' //A CSS class (or more, just separate with spaces) that will be added to the event when it is displayed on each view. Useful for marking an event as selected / active etc
+        }, {
+            title: "I can't work",
+            type: 'warning',
+            startsAt: new Date(y, mo, 15, 16),
+            endsAt: new Date(y, mo, 15, 18),
+            //editable: true, 
+            //deletable: true,
+            draggable: true, //Allow an event to be dragged and dropped
+            //resizable: false, //Allow an event to be resizable
+            incrementsBadgeTotal: false,
+            //recursOn: 'year', // If set the event will recur on the given period. Valid values are year or month
+            cssClass: 'a-css-class-name'
+        }];
+
+        s.eventClicked = (calendarEvent) => {
+            console.log(calendarEvent);
+        };
+        s.eventEdited = (evt) => {
+            console.log(evt);
+        };
+
+    }
+]);
+
+
 app.controller('adminDiags', [
 
     'server', '$scope', '$rootScope',
@@ -44,8 +195,8 @@ app.controller('adminDiags', [
 
         function read() {
             s.message('loading . . .', 'info');
-            db.custom('user', 'getAll', {userType:'diag'}).then(function(r) {
-                console.info('adminDiags:read:success',r.data);
+            db.custom('user', 'getAll', { userType: 'diag' }).then(function(r) {
+                console.info('adminDiags:read:success', r.data);
                 s.items = r.data.result;
                 s.message('loaded!', 'success', 1000);
             });
@@ -68,17 +219,17 @@ app.controller('adminDiagsEdit', [
         s.item = {
             email: '',
             password: '',
-            address:'',
-            userType:'diag'
+            address: '',
+            userType: 'diag'
         };
         s.original = _.clone(s.item);
 
-        
-        
-        s.$watch('item.address',(v)=>{
-            console.info('ADDRESS:CHANGE',v);
+
+
+        s.$watch('item.address', (v) => {
+            console.info('ADDRESS:CHANGE', v);
         });
-        s.addressChange=(v)=>s.item.address=v;
+        s.addressChange = (v) => s.item.address = v;
 
         //
         if (params && params.id && params.id.toString() !== '-1') {
@@ -104,13 +255,13 @@ app.controller('adminDiagsEdit', [
                 s.requesting = false;
                 if (res.data.result.length > 0) {
                     var _item = res.data.result[0];
-                    if(s.item._id && s.item._id == _item._id){
-                        _save();//same diag
-                    }else{
+                    if (s.item._id && s.item._id == _item._id) {
+                        _save(); //same diag
+                    } else {
                         s.message('Email address in use.');
                     }
                 } else {
-                    _save();//do not exist.
+                    _save(); //do not exist.
                 }
             });
 
@@ -119,15 +270,15 @@ app.controller('adminDiagsEdit', [
                 db.custom('user', 'save', s.item).then(function(res) {
                     s.requesting = false;
                     var _r = res.data;
-                    if(_r.ok){
+                    if (_r.ok) {
                         console.info('adminDiagsEdit:save:success');
                         s.message('saved', 'success');
-                        r.route('diags', 0);    
-                    }else{
-                        console.warn('adminDiagsEdit:save:fail',_r.err);
+                        r.route('diags', 0);
+                    } else {
+                        console.warn('adminDiagsEdit:save:fail', _r.err);
                         s.message('error, try later', 'danger');
                     }
-                    
+
                 }).error(function(err) {
                     s.requesting = false;
                     s.message('error, try later.', 'danger');
@@ -168,7 +319,7 @@ app.controller('adminDiagsEdit', [
 
 
 
-            
+
             db.custom('user', 'get', {
                 _id: params.id
             }).then(function(res) {

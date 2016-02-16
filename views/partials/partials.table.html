@@ -1,0 +1,20 @@
+<div>
+    <div class="table-reponsive">
+        <table class="table">
+            <caption ng-show="caption">{{caption}}</caption>
+            <thead>
+                <tr>
+                    <th ng-repeat="c in columns">{{c.label||c}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="(key,item) in items" ng-click="click(item,$index)">
+                    <td ng-repeat="c in columns">{{item[c.name||c]}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div ng-if="buttons">
+        <button ng-repeat="(k,v) in buttons" ng-class="v.type()||''" ng-click="v.click()">{{v.label}}</button>
+    </div>
+</div>

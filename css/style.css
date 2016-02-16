@@ -1,3 +1,59 @@
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+.rotating {
+  -webkit-animation: rotating 2s linear infinite;
+  -moz-animation: rotating 2s linear infinite;
+  -ms-animation: rotating 2s linear infinite;
+  -o-animation: rotating 2s linear infinite;
+  animation: rotating 2s linear infinite;
+}
+
+
+.absolute{
+  position:absolute;
+}
+.fixed{
+  position: fixed;
+}
+.right-1{
+  right:5px;
+}
+.bottom-1{
+  bottom:5px;
+}
+
+
+
 
 
 .navbar-default a{
@@ -83,8 +139,22 @@
 	padding:0px!important;
 }
 
+.margin-r-1{
+  margin-right: 5px;
+}
 .spacing-1{
 	margin:5px;
+}
+
+.flex{
+  display:flex;
+}
+
+.timeLabel{
+  height: 102px;
+}
+.label-4{
+  width:90px
 }
 
 .info{

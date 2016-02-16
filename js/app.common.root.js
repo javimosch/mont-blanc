@@ -44,8 +44,9 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         // if (lib.tableExists('session')) lib.dropTable('session');//DROP SESSION
         db.createSession = function(force) {
             if (force && lib.tableExists('session')) lib.dropTable('session');
-            lib.createTable('session', ['email', 'expire','userType', 'password', 'rememberPass']);
+            lib.createTable('session', ['_id','email', 'expire','userType', 'password', 'rememberPass']);
             db.setUnique('session', {
+                _id:null,
                 email: null,
                 expire: null,
                 password: null,

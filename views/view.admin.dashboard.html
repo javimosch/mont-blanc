@@ -3,4 +3,8 @@
         <h1>Welcome {{session().email}}</h1>
         <h4>You are an {{session().userType}}.</h4>
     </div>
+    <div ng-if="session().userType=='diag'" ng-include=" 'views/view.admin.dashboard.diag.html' ">
+    </div>
+    <div ng-if="session().userType=='client'" ng-include=" 'views/view.admin.dashboard.client.html' ">
+    </div>
 </div>

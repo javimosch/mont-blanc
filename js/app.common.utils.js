@@ -58,19 +58,21 @@ function MyPromise(cb) {
         if (_scope.cb) {
             _scope.cb(res);
         }
-        _scope.res = res;
+        //console.info('PROMISE RES',res,_scope.cb);
+        _scope.res = res || {};
     };
     var error = function(errorRes) {
         if (_scope.errorCb) {
             _scope.errorCb(errorRes);
         }
-        _scope.errorRes = errorRes;
+        _scope.errorRes = errorRes || {};
     };
     cb(resolve, error);
     rta = {
         then: function(cb) {
             if (_scope.res) cb(_scope.res);
             else _scope.cb = cb;
+            //console.info('PROMISE THEN: ',cb);
             return rta;
         },
         error: function(errorCb) {

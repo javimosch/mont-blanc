@@ -11,7 +11,7 @@ srv.service('localdb', ['$http', function(http) {
         });
     };
 }]);
-srv.service('server', ['$http', 'localdb', function(http, localdb) {
+srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb, r) {
     //var URL = 'http://ujkk558c0c9a.javoche.koding.io:3434';
     var URL = 'http://localhost:5000';
 
@@ -23,6 +23,59 @@ srv.service('server', ['$http', 'localdb', function(http, localdb) {
     //var URL = 'http://blooming-plateau-64344.herokuapp.com/';
 
     var localData = null;
+
+    var spinner = (() => {
+        return (v) => {
+            r.showSpinner = v;
+            r.dom();
+        }
+    })();
+    var logger = (() => {
+        var _errors = {};
+        var _logs = {};
+        var fn = (req) => {
+            var _id = new Date() + '#' + Object.keys(_logs).length;
+            var item = {
+                req: req
+            };
+            _logs[_id] = item;
+            setTimeout(()=>{
+                if(_logs[_id]!==undefined){
+                   item.err = "Logger: request timeout.";
+                   delete _logs[_id];
+                }
+            },1000*30);
+
+            r.$emit('logger.working');
+            return (res) => {
+                if (!res.data) {
+                    return console.warn('logger expects res.data. got:', res.data);
+                }else{
+                    //console.info('LOGGER: ',res.data);
+                }
+                if (res.data.ok !== true) {
+                    item.err = res.data.err || res.data;
+                    item.message = res.data.message || null;
+                    _errors[_id] = item;
+                }
+                if(_logs[_id]!==undefined){
+                    delete _logs[_id];
+                }
+                if (Object.keys(_logs).length === 0) {
+                    r.$emit('logger.clear');
+                }
+            };
+        }
+        return fn;
+    })();
+    r.$on('logger.working', () => {
+        spinner(true);
+        //console.info('LOGGER:WORKING');
+    });
+    r.$on('logger.clear', () => {
+        spinner(false);
+        //console.info('LOGGER:CLEAR');
+    });
 
     function getLocalData() {
         return MyPromise(function(resolve, error) {
@@ -45,36 +98,46 @@ srv.service('server', ['$http', 'localdb', function(http, localdb) {
         console.warn(err);
     }
 
+    function handleError(_log, err) {
+        _log(err);
+        console.warn(err);
+    }
+
     function get(relativeUrl, data, callback) {
-        console.warn('URL ' + URL + '/' + relativeUrl);
+//        console.warn('URL ' + URL + '/' + relativeUrl);
+        var _log = logger(relativeUrl);
         http({
             method: 'GET',
             data: data,
             url: URL + '/' + relativeUrl
         }).then(function(res) {
-            callback(res);
-        }, handleServerError);
+            _log(res);
+            if (callback) { callback(res); }
+        }, (err) => handleError(_log, err));
     }
+    r.get = get;
 
     function post(relativeUrl, data, callback, error) {
+        _log = logger(data);
         http({
             method: 'POST',
             data: data,
             url: URL + '/' + relativeUrl
         }).then(function(res) {
-            if(res.data && res.data.ok == false){
-                console.warn('SERVER:REQUEST:WARNING = '+res.data.err || "Unkown error detected");
+            _log(res);
+            if (res.data && res.data.ok == false) {
+                console.warn('SERVER:REQUEST:WARNING = ', res.data.err || "Unkown error detected");
             }
             callback(res);
-        }, function(res) {
-            handleServerError(res);
+        }, (err) => {
+            handleError(_log, err)
             if (error) {
-                error(res);
+                error(err);
             }
         });
     }
 
-    
+
 
     var data = [{
         price: 60,
@@ -152,6 +215,14 @@ srv.service('server', ['$http', 'localdb', function(http, localdb) {
         getAll: getAll,
         localData: getLocalData,
         custom: custom,
+        ctrl: function(ctrl, action, data) {
+            return MyPromise(function(resolve, error) {
+                post('ctrl/'+ctrl + '/' + action, data, function(res) {
+                    //console.info('CTRL: ',res.data);
+                    resolve(res.data);
+                }, error);
+            });
+        },
         post: function(url, data) {
             return MyPromise(function(resolve, error) {
                 post(url, data, function(res) {
