@@ -1,3 +1,60 @@
+(function(exports){
+  var BASE64URICHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'.split(''); 
+
+  exports.newId = function(len, radix) {
+    var chars = BASE64URICHARS, newId = [], i=0;
+    radix = radix || chars.length;
+    len = len || 22;
+
+    for (i = 0; i < len; i++) newId[i] = chars[0 | Math.random()*radix];
+
+    return newId.join('');
+  };
+
+})(typeof exports === 'undefined'? this: exports);;
+
+function ifThenMessage(comparisons, messagesCallback, noMessagesCallback) {
+    var messages = [];
+    comparisons.forEach((comparison) => {
+        var v1 = comparison[0];
+
+        if (typeof v1 === 'function') {
+            if (v1()) {
+                messages.push(comparison[1]);
+            }
+        } else {
+            var operator = comparison[1];
+            var v2 = comparison[2];
+            var m = comparison[3];
+            var cb = comparison[4] || undefined; //custom cb for field when msg exists.
+            if (operator == COMPARISON.eq) {
+                if (v1 == v2) messages.push(m);
+            }
+            if (operator == COMPARISON.ne) {
+                if (v1 != v2) messages.push(m);
+            }
+            if (operator == COMPARISON.gt) {
+                if (v1 > v2) messages.push(m);
+            }
+            if (operator == COMPARISON.lt) {
+                if (v1 < v2) messages.push(m);
+            }
+            if (operator == COMPARISON.ge) {
+                if (v1 >= v2) messages.push(m);
+            }
+            if (operator == COMPARISON.le) {
+                if (v1 <= v2) messages.push(m);
+            }
+        }
+        if (messages.filter((_m) => _m == m).length > 0 && cb) cb();
+    });
+    if (messages.length > 0) {
+        messagesCallback(messages);
+    } else {
+        noMessagesCallback();
+    }
+}
+
 var downloadFile = (filename, encodedData, mimeType) => {
     var link = document.createElement('a');
     mimeType = mimeType || 'text/plain';
@@ -87,8 +144,10 @@ if (typeof exports !== 'undefined') {
     exports.MyPromise = MyPromise;
     exports.getHashParams = getHashParams;
     exports.getParameterByName = getParameterByName;
+    exports.ifThenMessage = ifThenMessage;
 } else {
     window.MyPromise = MyPromise;
     window.getHashParams = getHashParams;
     window.getParameterByName = getParameterByName;
+    window.ifThenMessage = ifThenMessage;
 }

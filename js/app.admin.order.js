@@ -44,8 +44,8 @@ app.controller('adminOrders', [
 
         function read() {
             s.message('loading . . .', 'info');
-            db.custom('order', 'getAll', {__populate:['_client','email']}).then(function(r) {
-                console.info('adminOrders:read:success',r.data.result);
+            db.custom('order', 'getAll', { __populate: ['_client', 'email'] }).then(function(r) {
+                console.info('adminOrders:read:success', r.data.result);
                 s.items = r.data.result;
                 s.message('loaded!', 'success', 1000);
             });
@@ -84,8 +84,8 @@ app.controller('adminOrdersEdit', [
         };
         s.save = function() {
 
-            if(!s.item.email){
-                return s.message('Email required', 'warning',5000);
+            if (!s.item.email) {
+                return s.message('Email required', 'warning', 5000);
             }
 
             s.message('saving . . .', 'info');
@@ -99,13 +99,13 @@ app.controller('adminOrdersEdit', [
                 s.requesting = false;
                 if (res.data.result.length > 0) {
                     var _item = res.data.result[0];
-                    if(s.item._id && s.item._id == _item._id){
-                        _save();//same order
-                    }else{
+                    if (s.item._id && s.item._id == _item._id) {
+                        _save(); //same order
+                    } else {
                         s.message('Email address in use.');
                     }
                 } else {
-                    _save();//do not exist.
+                    _save(); //do not exist.
                 }
             });
 
@@ -155,7 +155,7 @@ app.controller('adminOrdersEdit', [
             s.requesting = true;
             db.custom('order', 'get', {
                 _id: params.id,
-                __populate:['_client','email']
+                __populate: ['_client', 'email']
             }).then(function(res) {
                 s.requesting = false;
                 console.info('adminOrdersEdit:read:success', res.data);
@@ -170,3 +170,63 @@ app.controller('adminOrdersEdit', [
 
     }
 ]);
+
+app.directive('orderModal', function($rootScope, $timeout, $compile, $uibModal) {
+    return {
+        restrict: 'AE',
+        replace: true,
+        scope: {
+            open: '=open'
+        },
+        template: '<output></output>',
+        link: function(s, elem, attrs) {
+            s.open = function(opt) {
+                var modalInstance = $uibModal.open({
+                    animation: true,
+                    templateUrl: opt.templateUrl || 'views/partials/partial.modal.order.edit.html',
+                    controller: function($scope, $uibModalInstance) {
+                        var s = $scope;
+                        s.title = opt.title;
+                        if (!s.title) {
+                            s.title = "Order";
+                            if (opt.action && opt.action === 'edit') {
+                                s.title += ' - Edition';
+                            } else {
+                                s.title = 'New ' + s.title;
+                            }
+                        }
+
+                        s.save = () => {
+                            ifThenMessage([
+                                //[s.item., OPR.eq, '', '')],
+                            ], (m) => {
+                                //r.set('message', m[0]);
+                            }, () => {
+                                $uibModalInstance.close();
+                                var rta = _.clone(s.item);
+                                if (opt.action == 'edit') {
+                                    rta._user = opt.item._user;
+                                    rta._id = opt.item._id;
+                                }
+                                opt.callback(rta);
+                            });
+                        };
+                        s.cancel = function() {
+                            $uibModalInstance.dismiss('cancel');
+                        };
+                        if (!opt.action) {
+                            throw Error('directive timeRange open require arg.action');
+                        }
+                        if (opt.action == 'new') {
+
+                        }
+                        if (opt.action === 'edit') {
+                            s.item = opt.item;
+                        }
+                    }
+                });
+            };
+            console.log('directive:diag-order:linked');
+        }
+    };
+});

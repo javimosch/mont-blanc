@@ -17,10 +17,10 @@ app.directive('timeRangeExceptions', function(
             function update() {
                 ws.ctrl('TimeRange', 'getAll', {}).then((res) => {
                     if (res.ok) {
-                        res.result.forEach((v)=>{
-                            v.day = moment(v.start).format('dddd');
-                            v.start = moment(v.start).format('HH:mm');
-                            v.end = moment(v.end).format('HH:mm');
+                        res.result.forEach((v) => {
+                            v.dayFormat = moment(v.start).format('dddd');
+                            v.startFormat = moment(v.start).format('HH:mm');
+                            v.endFormat = moment(v.end).format('HH:mm');
                         });
                         s.model.update(res.result);
                     }
@@ -28,13 +28,33 @@ app.directive('timeRangeExceptions', function(
             }
             s.model = {
                 //update //arg: items
+                remove: (item, index) => {
+                    var msg = 'Delete ' + item.description + ' ' + item.startFormat + ' - ' + item.endFormat + ' (' + item.dayFormat + ')';
+                    s.confirm(msg, () => {
+                        ws.ctrl('TimeRange', 'remove', { _id: item._id }).then(() => {
+                            update();
+                        });
+                    });
+                },
+                click: (item, index) => {
+                    s.open({
+                        title: 'Edit Exception',
+                        action: 'edit',
+                        item: item,
+                        callback: (timeRange) => {
+                            ws.ctrl('TimeRange', 'createUpdate', timeRange).then((result) => {
+                                update();
+                            });
+                        }
+                    })
+                },
                 buttons: [{
                     label: "Refresh",
-                    type: () => "btn btn-primary",
+                    type: () => "btn btn-primary spacing-h-1",
                     click: () => update()
                 }, {
                     label: "New",
-                    type: () => "btn btn-default",
+                    type: () => "btn btn-default spacing-h-1",
                     click: () => {
                         s.open({
                             title: 'New Exception',
@@ -54,13 +74,13 @@ app.directive('timeRangeExceptions', function(
                     name: 'description'
                 }, {
                     label: "Day",
-                    name: 'day'
+                    name: 'dayFormat'
                 }, {
                     label: "Start",
-                    name: 'start'
+                    name: 'startFormat'
                 }, , {
                     label: "End",
-                    name: 'end'
+                    name: 'endFormat'
                 }, {
                     label: "Repeat rule",
                     name: 'repeat'
@@ -73,7 +93,141 @@ app.directive('timeRangeExceptions', function(
                     repeat: 'day'
                 }]
             };
+            update();
             console.log('directive.exceptions.linked');
+        }
+    };
+});
+
+app.directive('diagOrders', function(
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile, server) {
+    return {
+        restrict: 'AE',
+        replace: true,
+        scope: {
+            //model: "=model"
+        },
+        templateUrl: 'views/directives/directive.diag.orders.html',
+        link: function(s, elem, attrs) {
+            var r = $rootScope;
+            var ws = server;
+            var n = attrs.name;
+            //s.open //=> automatic
+            function update() {
+                ws.ctrl('Order', 'getAll', {__populate:['_client','email']}).then((res) => {
+                    if (res.ok) {
+                        res.result.forEach((v) => {
+                            v.start = moment(v.diagStart).format('HH:mm');
+                            v.end = moment(v.diagEnd).format('HH:mm');
+                        });
+                        s.model.update(res.result);
+                    }
+                });
+            }
+            s.model = {
+                click: (item, index) => {
+                    s.open({
+                        //title: 'Edit Exception',
+                        action: 'edit',
+                        item: item,
+                        templateUrl: 'views/partials/partial.modal.diag.order.html',
+                        callback: (item) => {
+                            ws.ctrl('Order', 'createUpdate', item).then((result) => {
+                                update();
+                            });
+                        }
+                    })
+                },
+                buttons: [{
+                    label: "Refresh",
+                    type: () => "btn btn-primary spacing-h-1",
+                    click: () => update()
+                }],
+                columns: [{
+                    label: "Address",
+                    name: 'address'
+                }, {
+                    label: "Status",
+                    name: 'status'
+                },{
+                    label:"Start",
+                    name:"start"
+                },{
+                    label:"End",
+                    name:"end"
+                }],
+                items: []
+            };
+            update();
+            console.log('directive.exceptions.linked');
+        }
+    };
+});
+
+app.directive('diagCalendar', function(
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile, server) {
+    return {
+        restrict: 'AE',
+        replace: true,
+        scope: {
+            //model: "=model"
+        },
+        templateUrl: 'views/directives/directive.diag.calendar.html',
+        link: function(s, elem, attrs) {
+            var r = $rootScope;
+            var ws = server;
+            //
+            var m = moment();
+            var y = m.year();
+            var mo = m.month();
+            window.s = s;
+
+
+
+
+            s.calendarView = 'year';
+
+            s.views = {
+                label: 'View Type',
+                selected: s.calendarView,
+                click: (x) => {
+                    s.calendarView = x.label.toLowerCase();
+                    s.views.selected = s.calendarView;
+                    r.dom();
+                },
+                items: [
+                    { label: 'Day' },
+                    { label: 'Week' },
+                    { label: 'Month' },
+                    { label: 'Year' },
+                ]
+            };
+
+
+            s.calendarDate = new Date();
+
+            s.events = [{
+                title: 'Order #2384', // The title of the event
+                type: 'info', // The type of the event (determines its color). Can be important, warning, info, inverse, success or special
+                startsAt: new Date(y, mo, 15, 1), // A javascript date object for when the event starts
+                endsAt: new Date(y, mo, 15, 15), // Optional - a javascript date object for when the event ends
+                editable: false, // If edit-event-html is set and this field is explicitly set to false then dont make it editable.
+                deletable: false, // If delete-event-html is set and this field is explicitly set to false then dont make it deleteable
+                draggable: true, //Allow an event to be dragged and dropped
+                resizable: true, //Allow an event to be resizable
+                incrementsBadgeTotal: true, //If set to false then will not count towards the badge total amount on the month and year view
+                recursOn: 'year', // If set the event will recur on the given period. Valid values are year or month
+                cssClass: 'a-css-class-name' //A CSS class (or more, just separate with spaces) that will be added to the event when it is displayed on each view. Useful for marking an event as selected / active etc
+            }];
+
+            s.eventClicked = (calendarEvent) => {
+                console.log(calendarEvent);
+            };
+            s.eventEdited = (evt) => {
+                console.log(evt);
+            };
+            //
+            console.log('directive.diag-calendar.linked');
         }
     };
 });
@@ -85,67 +239,7 @@ app.controller('diagDashboard', [
     function(db, s, r) {
         console.info('app.admin.diag:diagDashboard');
 
-        var m = moment();
-        var y = m.year();
-        var mo = m.month();
-        window.s = s;
 
-
-
-
-        s.calendarView = 'year';
-
-        s.views = {
-            label: 'View Type',
-            selected: s.calendarView,
-            click: (x) => {
-                s.calendarView = x.label.toLowerCase();
-                s.views.selected = s.calendarView;
-                r.dom();
-            },
-            items: [
-                { label: 'Day' },
-                { label: 'Week' },
-                { label: 'Month' },
-                { label: 'Year' },
-            ]
-        };
-
-
-        s.calendarDate = new Date();
-
-        s.events = [{
-            title: 'Order #2384', // The title of the event
-            type: 'info', // The type of the event (determines its color). Can be important, warning, info, inverse, success or special
-            startsAt: new Date(y, mo, 15, 1), // A javascript date object for when the event starts
-            endsAt: new Date(y, mo, 15, 15), // Optional - a javascript date object for when the event ends
-            editable: false, // If edit-event-html is set and this field is explicitly set to false then dont make it editable.
-            deletable: false, // If delete-event-html is set and this field is explicitly set to false then dont make it deleteable
-            draggable: true, //Allow an event to be dragged and dropped
-            resizable: true, //Allow an event to be resizable
-            incrementsBadgeTotal: true, //If set to false then will not count towards the badge total amount on the month and year view
-            recursOn: 'year', // If set the event will recur on the given period. Valid values are year or month
-            cssClass: 'a-css-class-name' //A CSS class (or more, just separate with spaces) that will be added to the event when it is displayed on each view. Useful for marking an event as selected / active etc
-        }, {
-            title: "I can't work",
-            type: 'warning',
-            startsAt: new Date(y, mo, 15, 16),
-            endsAt: new Date(y, mo, 15, 18),
-            //editable: true, 
-            //deletable: true,
-            draggable: true, //Allow an event to be dragged and dropped
-            //resizable: false, //Allow an event to be resizable
-            incrementsBadgeTotal: false,
-            //recursOn: 'year', // If set the event will recur on the given period. Valid values are year or month
-            cssClass: 'a-css-class-name'
-        }];
-
-        s.eventClicked = (calendarEvent) => {
-            console.log(calendarEvent);
-        };
-        s.eventEdited = (evt) => {
-            console.log(evt);
-        };
 
     }
 ]);

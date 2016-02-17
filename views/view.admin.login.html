@@ -1,4 +1,7 @@
 <div class="container" ng-controller="adminLogin" ng-show="show">
+    <div class="jumbotron">
+        <h1 class="text-center">Diags Back-office</h1>
+    </div>
     <form class="form-signin">
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
@@ -11,8 +14,6 @@
             </label>
         </div>
         <button ng-disabled="sendingRequest" class="btn btn-lg btn-primary btn-block" ng-click="login()">Sign in</button>
-
-        <my-alerts add="addAlert"/>
+        <my-alerts add="addAlert" />
     </form>
 </div>
-

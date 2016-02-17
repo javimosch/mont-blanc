@@ -187,13 +187,18 @@ app.directive('dynamicTable', function(
                 console.error('directive.table: no model present');
                 return
             }
+            s.click = (item, index) => {
+                if (s.model.click) {
+                    s.model.click(item, index);
+                }
+            };
             s.buttons = s.model.buttons || null;
             s.columns = s.model.columns || [];
             s.items = s.model.items || [];
-            s.model.update = (items)=>{
+            s.model.update = (items) => {
                 s.items = items;
                 r.dom();
-                console.log('directive.dynamic-table.set:'+items.length);
+                console.log('directive.dynamic-table.set:' + items.length);
             };
             console.log('directive.dynamic-table.linked');
         }
@@ -231,9 +236,9 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                                 selected: '',
                                 items: [],
                                 val: null,
-                                select:(val)=>{
-                                    o.items.forEach((v)=>{
-                                        if(v.val.toString()==val.toString()){
+                                select: (val) => {
+                                    o.items.forEach((v) => {
+                                        if (v.val.toString() == val.toString()) {
                                             o.click(v);
                                         }
                                     });
@@ -241,13 +246,13 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                                 click: (v) => {
                                     o.selected = v.label || v;
                                     o.val = v.val;
-                                    if(s.start.val){
+                                    if (s.start.val) {
                                         s.start.val = moment(s.start.val);
-                                        s.start.val.day((o.val.toString()==='-1')?1:o.val);
+                                        s.start.val.day((o.val.toString() === '-1') ? 1 : o.val);
                                     }
-                                    if(s.end.val){
+                                    if (s.end.val) {
                                         s.end.val = moment(s.end.val);
-                                        s.end.val.day((o.val.toString()==='-1')?1:o.val);
+                                        s.end.val.day((o.val.toString() === '-1') ? 1 : o.val);
                                     }
                                 }
                             };
@@ -255,9 +260,9 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                             o.items.push({
                                 label: "(Choice a day)",
                                 val: ''
-                            },{
-                                label:"Every day",
-                                val:'-1'
+                            }, {
+                                label: "Every day",
+                                val: '-1'
                             });
                             for (var x = 1; x <= 7; x++) {
                                 m.day(x);
@@ -283,8 +288,8 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                         s.start = timePickerData(opt.start);
                         s.end = timePickerData(opt.end);
                         s.repeat = 'none';
-                        s.$watch('repeat',(v)=>{
-                            if(v==='day') s.days.select(-1);
+                        s.$watch('repeat', (v) => {
+                            if (v === 'day') s.days.select(-1);
                         })
                         s.validate = () => {
 
@@ -296,7 +301,7 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                                 s.message('Choice a day', 'warning', 2000);
                                 return false;
                             }
-                            if(s.repeat!=='day' && s.days.val.toString() === '-1'){
+                            if (s.repeat !== 'day' && s.days.val.toString() === '-1') {
                                 s.message('Choice a day', 'warning', 2000);
                                 return false;
                             }
@@ -312,13 +317,18 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                         s.save = function() {
                             if (!s.validate()) return;
                             $uibModalInstance.close();
-                            opt.callback({
+                            var rta = {
                                 description: s.description || '',
                                 start: s.start.val,
                                 end: s.end.val,
                                 type: opt.type,
                                 repeat: s.repeat
-                            });
+                            };
+                            if (opt.action == 'edit') {
+                                rta._user = opt.item._user;
+                                rta._id = opt.item._id;
+                            }
+                            opt.callback(rta);
                         };
                         s.cancel = function() {
                             $uibModalInstance.dismiss('cancel');
@@ -328,6 +338,19 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                         }
                         if (opt.action == 'new') {
 
+                        }
+                        if (opt.action === 'edit') {
+                            var start = moment(opt.item.start);
+                            s.repeat = opt.item.repeat;
+                            s.description = opt.item.description;
+                            s.start.val = opt.item.start;
+                            s.end.val = opt.item.end;
+                            opt.type = opt.item.type;
+                            s.days.val = start.day();
+                            s.days.select(s.days.val);
+                            if (s.repeat == 'day') {
+                                s.days.val = -1;
+                            }
                         }
                     }
                 });

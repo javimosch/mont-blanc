@@ -1,0 +1,136 @@
+.link:hover {
+    cursor: pointer;
+}
+
+.small {
+    font-size: 1.3rem;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.fixed {
+    position: fixed;
+}
+
+.right-1 {
+    right: 5px;
+}
+
+.bottom-1 {
+    bottom: 5px;
+}
+
+.vertical-center {
+    min-height: 100%;
+    /* Fallback for browsers do NOT support vh unit */
+    min-height: 100vh;
+    /* These two lines are counted as one :-)       */
+    display: flex;
+    align-items: center;
+}
+
+.inline {
+    display: inline-flex;
+}
+
+@media (max-width: 568px) {
+    .inline.table {
+        display: table;
+    }
+}
+
+.spacing-1 {
+    padding: 5px;
+}
+
+.spacing-1 {
+    padding: 5px;
+}
+
+.spacing-2 {
+    padding: 10px;
+}
+
+.vspacing-1 {
+    padding: 5px 0px;
+}
+
+.vspacing-2 {
+    padding: 10px 0px;
+}
+
+.relative {
+    position: relative;
+}
+
+.fullwidth {
+    width: 100%;
+}
+
+.size-medium {
+    min-height: 200px;
+}
+
+.padding-0 {
+    padding: 0px!important;
+}
+
+.margin-r-1 {
+    margin-right: 5px;
+}
+
+.spacing-1 {
+    margin: 5px;
+}
+
+.spacing-h-1 {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.spacing-v-1 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.flex {
+    display: flex;
+}
+
+.text-left {
+    text-align: justify;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.width70p {
+    width: 70%;
+}
+
+.width50p {
+    width: 50%;
+}
+
+.width30p {
+    width: 30%;
+}
+
+.width20p {
+    width: 20%;
+}
+
+.width10p {
+    width: 10%;
+}

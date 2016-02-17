@@ -33,39 +33,54 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
     var logger = (() => {
         var _errors = {};
         var _logs = {};
-        var fn = (req) => {
-            var _id = new Date() + '#' + Object.keys(_logs).length;
-            var item = {
-                req: req
-            };
-            _logs[_id] = item;
-            setTimeout(()=>{
-                if(_logs[_id]!==undefined){
-                   item.err = "Logger: request timeout.";
-                   delete _logs[_id];
-                }
-            },1000*30);
+        var fn = new function() {
+            var self = this;
+            self.id = newId(20); //new Date() + '#' + Object.keys(_logs).length;
+            return (url, req) => {
+                var item = {
+                    url: url,
+                    req: req
+                };
+                _logs[self.id] = item;
+                setTimeout(() => {
+                    if (_logs[self.id] !== undefined) {
+                        item.err = "Logger: request timeout.";
+                        delete _logs[self.id];
+                    }
+                }, 1000 * 30);
+                r.$emit('logger.working');
+                return (res) => {
+                    if (!res.data) {
+                        return console.warn('logger expects res.data. got:', res.data);
+                    } else {
+                        //console.info('LOGGER: ',res.data);
+                    }
+                    if (res.data.ok !== true) {
+                        item.err = res.data.err || res.data;
+                        item.message = res.data.message || null;
+                        _errors[self.id] = item;
+                    }
 
-            r.$emit('logger.working');
-            return (res) => {
-                if (!res.data) {
-                    return console.warn('logger expects res.data. got:', res.data);
-                }else{
-                    //console.info('LOGGER: ',res.data);
+                    if (!_.isUndefined(_logs[self.id])) {
+                        delete _logs[self.id];
+                    }
+                    if (Object.keys(_logs).length === 0) {
+                        r.$emit('logger.clear');
+                    }
                 }
-                if (res.data.ok !== true) {
-                    item.err = res.data.err || res.data;
-                    item.message = res.data.message || null;
-                    _errors[_id] = item;
-                }
-                if(_logs[_id]!==undefined){
-                    delete _logs[_id];
-                }
-                if (Object.keys(_logs).length === 0) {
-                    r.$emit('logger.clear');
-                }
-            };
+            }
+        };
+        fn.pending = () => {
+            _.each(_logs, (v, k) => {
+                console.info(v.url);
+            });
         }
+        fn.errors = () => {
+            _.each(_errors, (v, k) => {
+                console.info(v);
+            });
+        }
+        r.logger = fn;
         return fn;
     })();
     r.$on('logger.working', () => {
@@ -104,8 +119,8 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
     }
 
     function get(relativeUrl, data, callback) {
-//        console.warn('URL ' + URL + '/' + relativeUrl);
-        var _log = logger(relativeUrl);
+        //        console.warn('URL ' + URL + '/' + relativeUrl);
+        var _log = logger(relativeUrl, data);
         http({
             method: 'GET',
             data: data,
@@ -118,7 +133,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
     r.get = get;
 
     function post(relativeUrl, data, callback, error) {
-        _log = logger(data);
+        _log = logger(relativeUrl, data);
         http({
             method: 'POST',
             data: data,
@@ -217,7 +232,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
         custom: custom,
         ctrl: function(ctrl, action, data) {
             return MyPromise(function(resolve, error) {
-                post('ctrl/'+ctrl + '/' + action, data, function(res) {
+                post('ctrl/' + ctrl + '/' + action, data, function(res) {
                     //console.info('CTRL: ',res.data);
                     resolve(res.data);
                 }, error);

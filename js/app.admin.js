@@ -35,7 +35,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 }]);
 
 app.config(function(calendarConfig) {
-    console.log(calendarConfig); //view all available config
+//    console.log(calendarConfig); //view all available config
     //calendarConfig.templates.calendarMonthView = 'path/to/custom/template.html'; //change the month view template to a custom template
     calendarConfig.dateFormatter = 'moment'; //use either moment or angular to format dates on the calendar. Default angular. Setting this will override any date formats you have already set.
     //calendarConfig.allDateFormats.moment.date.hour = 'HH:mm'; //this will configure times on the day view to display in 24 hour format rather than the default of 12 hour

@@ -1,0 +1,21 @@
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">Your Calendar</h4>
+    </div>
+    <div class="panel-body">
+        <span uib-dropdown>
+      <button id="single-button" type="button" class="btn btn-primary" uib-dropdown-toggle ng-disabled="disabled">
+        {{views.label}}: {{views.selected}}<span class="caret"></span>
+        </button>
+        <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
+            <li ng-repeat="choice in views.items">
+                <a href ng-click="views.click(choice)">{{choice.label}}</a>
+            </li>
+        </ul>
+        </span>
+        <mwl-calendar view="calendarView" view-date="calendarDate" events="events" view-title="calendarTitle" on-event-click="eventClicked(calendarEvent)" edit-event-html="'<i class=\'glyphicon glyphicon-pencil\'></i>'" delete-event-html="'<i class=\'glyphicon glyphicon-remove\'></i>'" on-edit-event-click="eventEdited(calendarEvent)" on-delete-event-click="eventDeleted(calendarEvent)" cell-is-open="true">
+        </mwl-calendar>
+    </div>
+    <div class="panel-footer">
+    </div>
+</div>
