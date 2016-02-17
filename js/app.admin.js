@@ -10,7 +10,8 @@ var app = angular.module('app', [
     'app.common.root',
     'ngRoute',
     'mwl.calendar',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'ui.bootstrap.datetimepicker'
 ]);
 
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {

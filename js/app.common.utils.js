@@ -27,22 +27,22 @@ function ifThenMessage(comparisons, messagesCallback, noMessagesCallback) {
             var v2 = comparison[2];
             var m = comparison[3];
             var cb = comparison[4] || undefined; //custom cb for field when msg exists.
-            if (operator == COMPARISON.eq) {
+            if (operator == '==') {
                 if (v1 == v2) messages.push(m);
             }
-            if (operator == COMPARISON.ne) {
+            if (operator == '!=') {
                 if (v1 != v2) messages.push(m);
             }
-            if (operator == COMPARISON.gt) {
+            if (operator == '>') {
                 if (v1 > v2) messages.push(m);
             }
-            if (operator == COMPARISON.lt) {
+            if (operator == '<') {
                 if (v1 < v2) messages.push(m);
             }
-            if (operator == COMPARISON.ge) {
+            if (operator == '>=') {
                 if (v1 >= v2) messages.push(m);
             }
-            if (operator == COMPARISON.le) {
+            if (operator == '<=') {
                 if (v1 <= v2) messages.push(m);
             }
         }
@@ -127,7 +127,7 @@ function MyPromise(cb) {
     cb(resolve, error);
     rta = {
         then: function(cb) {
-            if (_scope.res) cb(_scope.res);
+            if (_scope.res) _scope.res = cb(_scope.res);
             else _scope.cb = cb;
             //console.info('PROMISE THEN: ',cb);
             return rta;
@@ -136,6 +136,10 @@ function MyPromise(cb) {
             if (_scope.errorRes) errorCb(_scope.errorRes);
             else _scope.errorCb = errorCb;
             return rta;
+        },
+        arr:function(){
+            _scope.res = _scope.res || [];
+            return _scope.res;
         }
     };
     return rta;

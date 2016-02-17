@@ -71,6 +71,31 @@ app.controller('adminUsersEdit', [
         };
         s.original = _.clone(s.item);
         //
+        s.types = {
+            selected: '(Choice a user type)',
+            items: [{
+                label: 'Admin',
+            },{
+                label: 'Diag',
+            },{
+                label:'Client'
+            }],
+            click: (choice) => {
+                if(typeof choice ==='string'){
+                    for(var x in s.types.items){
+                        if(s.types.items[x].label.toString().toLowerCase()==choice.toString().toLowerCase()){
+                            s.types.selected = s.types.items[x].label;
+                            s.item.userType = s.types.items[x].label.toString().toLowerCase();
+                        }
+                    }
+                    return;
+                }else{
+                    s.item.userType = choice.label.toString().toLowerCase();
+                    s.types.selected = choice.label;
+                }
+            }
+        };
+        //
         if (params && params.id && params.id.toString() !== '-1') {
             console.info('adminUsersEdit:params', params);
             r.dom(read, 1000);
@@ -81,6 +106,15 @@ app.controller('adminUsersEdit', [
         //
         s.cancel = function() {
             r.route('users');
+        };
+        s.validate = () => {
+            ifThenMessage([
+                [s.item.userType, '==', undefined, "User type required"],
+                [s.item.email, '==', '', "Email cannot be empty"],
+                [s.item.password, '==', '', "Password cannot be empty"]
+            ], (m) => {
+                s.message(m[0], 'warning', 0, true);
+            }, s.save);
         };
         s.save = function() {
             s.message('saving . . .', 'info');
@@ -95,13 +129,13 @@ app.controller('adminUsersEdit', [
                 s.requesting = false;
                 if (res.data.result.length > 0) {
                     var _item = res.data.result[0];
-                    if(s.item._id && s.item._id == _item._id){
-                        _save();//same user
-                    }else{
+                    if (s.item._id && s.item._id == _item._id) {
+                        _save(); //same user
+                    } else {
                         s.message('Email address in use.');
                     }
                 } else {
-                    _save();//do not exist.
+                    _save(); //do not exist.
                 }
             });
 
@@ -110,18 +144,15 @@ app.controller('adminUsersEdit', [
                 db.custom('user', 'save', s.item).then(function(res) {
                     s.requesting = false;
                     var _r = res.data;
-                    if(_r.ok){
-                        console.info('adminUsersEdit:save:success');
+                    if (_r.ok) {
                         s.message('saved', 'success');
                         r.route('users', 0);
-                    }else{
-                        console.warn('adminUsersEdit:save:fail',_r.err);
+                    } else {
                         s.message('error, try later', 'danger');
                     }
                 }).error(function(err) {
                     s.requesting = false;
                     s.message('error, try later.', 'danger');
-                    console.warn('adminUsersEdit:save:error', err);
                 });
             }
 
@@ -159,11 +190,11 @@ app.controller('adminUsersEdit', [
                 _id: params.id
             }).then(function(res) {
                 s.requesting = false;
-                console.info('adminUsersEdit:read:success', res.data);
                 s.item = res.data.result;
                 if (!res.data.ok) {
                     s.message('not found, maybe it was deleted!', 'warning', 5000);
                 } else {
+                    s.types.click(s.item.userType);
                     s.message('loaded', 'success', 2000);
                 }
             });

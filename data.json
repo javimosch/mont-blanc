@@ -32,5 +32,148 @@
         "Non": "Non",
         "Oui, Moins de 15 ans": "Oui, Moins de 15 ans",
         "Oui, Plus de 15 ans": "Oui, Plus de 15 ans"
-    }
+    },
+    "diags": [
+
+        {
+
+            "label": "DPE - Diagnostic Performance Energétique",
+
+            "name": "dpe",
+
+            "mandatory": true,
+
+            "comments": "Mandatory",
+
+            "time": 20,
+
+            "price": 15
+
+        },
+
+        {
+
+            "label": "Diagnostic amiante avant vente",
+
+            "name": "dta",
+
+            "comments": "Before 01/07/1997",
+
+            "time": 30,
+
+            "price": 25
+
+        },
+
+        {
+
+            "label": "Diagnostic Plomb",
+
+            "name": "crep",
+
+            "comments": "Before 01/01/1949",
+
+            "time": 60,
+
+            "price": 40
+
+        },
+
+        {
+
+            "label": "Diagnostic loi Carrez",
+
+            "name": "loiCarrez",
+
+            "mandatory": true,
+
+            "comments": "Mandatory",
+
+            "time": 30,
+
+            "price": 25
+
+        },
+
+        {
+
+            "label": "Diagnostic ERNT - ERNMT",
+
+            "name": "ernt",
+
+            "mandatory": true,
+
+            "comments": "Mandatory",
+
+            "time": 15,
+
+            "price": 30
+
+        },
+
+        {
+
+            "label": "Diagnostic Termites",
+
+            "name": "termites",
+
+            "mandatory": false,
+
+            "comments": "depends on postcode 2 first figures : http://www.developpement-durable.gouv.fr/IMG/pdf/Dpts_termites_2015.pdf",
+
+            "time": 25,
+
+            "price": 75
+
+        },
+
+        {
+
+            "label": "Diagnostic Gaz",
+
+            "name": "gaz",
+
+            "mandatory": false,
+
+            "comments": "IF Oui, plus de 15 ans",
+
+            "time": 30,
+
+            "price": 50
+
+        },
+
+        {
+
+            "label": "Diagnostic Electricité",
+
+            "name": "electricity",
+
+            "mandatory": false,
+
+            "comments": "IF Oui, plus de 15 ans",
+
+            "time": 10,
+
+            "price": 30
+
+        },
+
+        {
+
+            "label": "Diagnostic Etat Parasitaire",
+
+            "name": "parasitaire",
+
+            "mandatory": false,
+
+            "comments": "Always optional",
+
+            "time": 45,
+
+            "price": 60
+
+        }
+
+    ]
 }

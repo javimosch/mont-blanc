@@ -3,9 +3,13 @@
 </div>
 <div class="modal-body">
     <form>
-        <div class="form-group">
+        <div class="form-group" ng-show="item._id">
             <label>Client</label>
-            <input disabled type="text" class="form-control" ng-model="item._client.email" placeholder="Client">
+            <input type="text" disabled class="form-control" ng-model="item._client.email" placeholder="Client" typeahead="email for client in clients | filter:$viewValue | limitTo:8">
+        </div>
+        <div class="form-group" ng-show="item._id == undefined">
+            <label>Select a Client</label>
+            <input type="text" class="form-control" ng-model="item._client" placeholder="Client" typeahead="email for client in clients | filter:$viewValue | limitTo:8">
         </div>
         <div class="form-group">
             <label>Observations</label>

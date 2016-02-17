@@ -15,6 +15,7 @@
   "dependencies": {
     "eonasdan-bootstrap-datetimepicker": "~4.17.37",
     "bootstrap": "~3.3.6",
-    "lodash": "~4.3.0"
+    "lodash": "~4.3.0",
+    "bootstrap-ui-datetime-picker": "~2.2.0"
   }
 }

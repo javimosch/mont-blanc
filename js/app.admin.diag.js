@@ -114,7 +114,7 @@ app.directive('diagOrders', function(
             var n = attrs.name;
             //s.open //=> automatic
             function update() {
-                ws.ctrl('Order', 'getAll', {__populate:['_client','email']}).then((res) => {
+                ws.ctrl('Order', 'getAll', { __populate: ['_client', 'email'] }).then((res) => {
                     if (res.ok) {
                         res.result.forEach((v) => {
                             v.start = moment(v.diagStart).format('HH:mm');
@@ -149,12 +149,12 @@ app.directive('diagOrders', function(
                 }, {
                     label: "Status",
                     name: 'status'
-                },{
-                    label:"Start",
-                    name:"start"
-                },{
-                    label:"End",
-                    name:"end"
+                }, {
+                    label: "Start",
+                    name: "start"
+                }, {
+                    label: "End",
+                    name: "end"
                 }],
                 items: []
             };
@@ -220,13 +220,54 @@ app.directive('diagCalendar', function(
                 cssClass: 'a-css-class-name' //A CSS class (or more, just separate with spaces) that will be added to the event when it is displayed on each view. Useful for marking an event as selected / active etc
             }];
 
+            function update() {
+                ws.ctrl('Order', 'getAll', { __populate: ['_client', 'email'] }).then((res) => {
+                    if (res.ok) {
+                        var evts = [];
+                        res.result.forEach((v) => {
+                            v.start = moment(v.diagStart).format('HH:mm');
+                            v.end = moment(v.diagEnd).format('HH:mm');
+                            evts.push({
+                                item: v,
+                                title: 'Order ',
+                                type: 'info',
+                                startsAt: new Date(v.diagStart),
+                                endsAt: new Date(v.diagEnd),
+                                editable: false,
+                                deletable: false,
+                                draggable: false,
+                                resizable: false,
+                                incrementsBadgeTotal: true,
+                                //recursOn: 'year', // If set the event will recur on the given period. Valid values are year or month
+                                cssClass: 'a-css-class-name' //A CSS class (or more, just separate with spaces) that will be added to the event when it is displayed on each view. Useful for marking an event as selected / active etc
+
+                            });
+                            s.events = evts;
+                        });
+
+                    }
+                });
+            }
+
             s.eventClicked = (calendarEvent) => {
+                s.open({
+                    //title: 'Edit Exception',
+                    action: 'edit',
+                    item: calendarEvent.item,
+                    templateUrl: 'views/partials/partial.modal.diag.order.html',
+                    callback: (item) => {
+                        ws.ctrl('Order', 'createUpdate', item).then((result) => {
+                            update();
+                        });
+                    }
+                })
                 console.log(calendarEvent);
             };
             s.eventEdited = (evt) => {
                 console.log(evt);
             };
             //
+            update();
             console.log('directive.diag-calendar.linked');
         }
     };
@@ -337,6 +378,21 @@ app.controller('adminDiagsEdit', [
         s.cancel = function() {
             r.route('diags');
         };
+
+        function handleErrors(err) {
+            s.requesting = false;
+            s.message('error, try later.', 'danger');
+        }
+
+        s.validate = () => {
+            ifThenMessage([
+                [s.item.email, '==', '', "Email cannot be empty"],
+                [s.item.password, '==', '', "Password cannot be empty"]
+            ], (m) => {
+                s.message(m[0],'warning',0,true);
+            }, s.save);
+        };
+
         s.save = function() {
             s.message('saving . . .', 'info');
 
@@ -344,7 +400,8 @@ app.controller('adminDiagsEdit', [
 
 
             db.custom('user', 'find', {
-                email: s.item.email
+                email: s.item.email,
+                userType: 'diag'
             }).then(function(res) {
                 s.requesting = false;
                 if (res.data.result.length > 0) {
@@ -357,13 +414,14 @@ app.controller('adminDiagsEdit', [
                 } else {
                     _save(); //do not exist.
                 }
-            });
+            }).error(handleErrors);
 
             function _save() {
                 s.requesting = true;
-                db.custom('user', 'save', s.item).then(function(res) {
+
+                db.ctrl('User', 'save', s.item).then((res) => {
                     s.requesting = false;
-                    var _r = res.data;
+                    var _r = res;
                     if (_r.ok) {
                         console.info('adminDiagsEdit:save:success');
                         s.message('saved', 'success');
@@ -372,12 +430,8 @@ app.controller('adminDiagsEdit', [
                         console.warn('adminDiagsEdit:save:fail', _r.err);
                         s.message('error, try later', 'danger');
                     }
+                }).error(handleErrors);
 
-                }).error(function(err) {
-                    s.requesting = false;
-                    s.message('error, try later.', 'danger');
-                    console.warn('adminDiagsEdit:save:error', err);
-                });
             }
 
         };

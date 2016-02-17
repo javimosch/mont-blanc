@@ -65,11 +65,107 @@ app.controller('adminOrdersEdit', [
         r.secureSection(s);
         r.dom();
         //
+        db.localData().then(function(data) {
+            Object.assign(s, data);
+        });
+        //
         s.item = {
             email: '',
-            password: ''
+            password: '',
+            status: 'ordered',
+            diagStart: moment().add('day', 1).hour(9).minutes(0),
+            diagEnd: moment().add('day', 1).hour(10).minutes(30),
+            fastDiagComm: 0,
+            price: 0
         };
         s.original = _.clone(s.item);
+        //
+        s.noResults = "No results found";
+        s.LoadingClients = "Loading Clients";
+        s.getClients = function(val) {
+            return db.http('User', 'getAll', {
+                userType: 'client',
+                __regexp: {
+                    email: val
+                }
+            }).then(function(res) {
+                return res.data.result;
+            });
+        };
+        s.getDiags = function(val) {
+            return db.http('User', 'getAll', {
+                userType: 'diag',
+                __regexp: {
+                    email: val
+                }
+            }).then(function(res) {
+                return res.data.result;
+            });
+        };
+
+        function dtpData() {
+            var o = {
+                isOpen: false,
+                openCalendar: function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    o.isOpen = true;
+                }
+            };
+            return o;
+        }
+        s.start = dtpData();
+        s.end = dtpData();
+
+        s.totalPrice = function() {
+            var total = 0;
+            s.item.diags = s.item.diags || {};
+            Object.keys(s.item.diags).forEach(function(mkey) {
+                if (!s.item.diags[mkey]) return;
+                s.diags.forEach(function(dval, dkey) {
+                    if (dval.name == mkey) {
+                        total += dval.price || 0;
+                        return false;
+                    }
+                });
+            });
+            s.item.price = total;
+            return total;
+        };
+
+        s.$watch('item.diags',(v)=>{
+            console.info('DIAGS',v);
+        },true)
+
+
+        function createSelect(opt) {
+            var o = {
+                label: opt.label,
+                click: (x) => {
+                    opt.change(x);
+                    o.label = x.label || x;
+                    r.dom();
+                },
+                items: opt.items
+            };
+            s.$watch(opt.model, (v) => {
+                if(v!==undefined){
+                    o.label = v.substring(0, 1).toUpperCase() + v.slice(1);
+                }else{
+                    o.label = opt.label;
+                }
+            });
+            return o;
+        }
+        s.status = createSelect({
+            model: 'item.status',
+            label: '(Select an status)',
+            items: ['Ordered', 'Prepaid', 'Delivery', 'Complete'],
+            change: (selected) => {
+                s.item.status = selected.toString().toLowerCase();
+            }
+        });
+
         //
         if (params && params.id && params.id.toString() !== '-1') {
             console.info('adminOrdersEdit:params', params);
@@ -82,47 +178,40 @@ app.controller('adminOrdersEdit', [
         s.cancel = function() {
             r.route('orders');
         };
+        s.validate = () => {
+            ifThenMessage([
+                [typeof s.item._client, '!=', 'object', "Client required"],
+                [_.isUndefined(s.item.address) || _.isNull(s.item.address) || s.item.address === '', '==', true, 'Address required'],
+                [_.isNull(s.item.diagStart) || _.isUndefined(s.item.diagStart), '==', 'true', 'Start date required'],
+                [_.isNull(s.item.diagEnd) || _.isUndefined(s.item.diagEnd), '==', 'true', 'Start date required'],
+                [moment(s.item.diagStart || null).isValid(), '==', false, "Start date invalid"],
+                [moment(s.item.diagEnd || null).isValid(), '==', false, "End date invalid"],
+                //[s.item.fastDiagComm.toString(),'==','','Comission required'],
+                [isNaN(s.item.fastDiagComm), '==', true, 'Comission need to be a number'],
+                //[s.item.price.toString(),'==','','Price required'],
+                [isNaN(s.item.price), '==', true, 'Price need to be a number'],
+                [s.item.status, '==', '', 'Status required']
+            ], (m) => {
+                s.message(m[0], 'warning', 0, true);
+            }, s.save);
+        };
         s.save = function() {
-
-            if (!s.item.email) {
-                return s.message('Email required', 'warning', 5000);
-            }
-
             s.message('saving . . .', 'info');
-
             s.requesting = true;
-
-
-            db.custom('order', 'find', {
-                email: s.item.email
-            }).then(function(res) {
+            db.ctrl('Order', 'save', s.item).then(function(data) {
                 s.requesting = false;
-                if (res.data.result.length > 0) {
-                    var _item = res.data.result[0];
-                    if (s.item._id && s.item._id == _item._id) {
-                        _save(); //same order
-                    } else {
-                        s.message('Email address in use.');
-                    }
-                } else {
-                    _save(); //do not exist.
-                }
-            });
-
-            function _save() {
-                s.requesting = true;
-                db.custom('order', 'save', s.item).then(function(res) {
-                    s.requesting = false;
-                    console.info('adminOrdersEdit:save:success');
+                if(data.ok){
                     s.message('saved', 'success');
-                    r.route('orders', 0);
-                }).error(function(err) {
-                    s.requesting = false;
-                    s.message('error, try later.', 'danger');
-                    console.warn('adminOrdersEdit:save:error', err);
-                });
-            }
-
+                    s.item = data.result;
+                    read();
+                }else{
+                    s.message('error, try later.', 'danger',0,true);
+                }
+                //r.route('orders', 0);
+            }).error(function(err) {
+                s.requesting = false;
+                s.message('error, try later.', 'danger',0,true);
+            });
         };
         s.delete = function() {
             s.confirm('Delete Order ' + s.item.email + ' ?', function() {
@@ -149,18 +238,16 @@ app.controller('adminOrdersEdit', [
             s.item = _.clone(s.original);
         }
 
-        function read() {
+        function read(id) {
             s.message('loading . . .', 'info');
-
             s.requesting = true;
-            db.custom('order', 'get', {
-                _id: params.id,
+            db.ctrl('Order', 'get', {
+                _id: id || params.id,
                 __populate: ['_client', 'email']
-            }).then(function(res) {
+            }).then(function(data) {
                 s.requesting = false;
-                console.info('adminOrdersEdit:read:success', res.data);
-                s.item = res.data.result;
-                if (!res.data.ok) {
+                s.item = data.result;
+                if (!data.ok) {
                     s.message('not found, maybe it was deleted!', 'warning', 5000);
                 } else {
                     s.message('loaded', 'success', 2000);

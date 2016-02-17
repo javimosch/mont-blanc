@@ -51,16 +51,15 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
                 r.$emit('logger.working');
                 return (res) => {
                     if (!res.data) {
-                        return console.warn('logger expects res.data. got:', res.data);
-                    } else {
-                        //console.info('LOGGER: ',res.data);
-                    }
-                    if (res.data.ok !== true) {
-                        item.err = res.data.err || res.data;
-                        item.message = res.data.message || null;
+                        item.err = 'logger expects res.data.';
                         _errors[self.id] = item;
+                    } else {
+                        if (res.data.ok !== true) {
+                            item.err = res.data.err || res.data;
+                            item.message = res.data.message || null;
+                            _errors[self.id] = item;
+                        }
                     }
-
                     if (!_.isUndefined(_logs[self.id])) {
                         delete _logs[self.id];
                     }
@@ -70,15 +69,26 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
                 }
             }
         };
+        fn.clearErrors = () => _errors = {};
+        fn.hasErrors = () => Object.keys(_errors).length > 0;
+        fn.hasPending = () => Object.keys(_log).length > 0;
         fn.pending = () => {
+            var msg = 'Pending<br>';
             _.each(_logs, (v, k) => {
                 console.info(v.url);
+                if (msg !== '') msg += '<br>';
+                msg += v.url + ': ' + JSON.stringify(v.req);
             });
+            return msg;
         }
         fn.errors = () => {
+            var msg = 'Errors<br>';
             _.each(_errors, (v, k) => {
                 console.info(v);
+                if (msg !== '') msg += '<br>';
+                msg += v.url + ': ' + JSON.stringify(v.err);
             });
+            return msg;
         }
         r.logger = fn;
         return fn;
@@ -115,7 +125,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
 
     function handleError(_log, err) {
         _log(err);
-        console.warn(err);
+        //console.warn(err);
     }
 
     function get(relativeUrl, data, callback) {
@@ -143,12 +153,10 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
             if (res.data && res.data.ok == false) {
                 console.warn('SERVER:REQUEST:WARNING = ', res.data.err || "Unkown error detected");
             }
-            callback(res);
+            return callback(res);
         }, (err) => {
-            handleError(_log, err)
-            if (error) {
-                error(err);
-            }
+            handleError(_log, err);
+            error(err);
         });
     }
 
@@ -223,6 +231,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
         };
     }
     return {
+        URL: URL,
         getAvailableRanges: getAvailableRanges,
         login: login,
         save: save,
@@ -230,12 +239,17 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
         getAll: getAll,
         localData: getLocalData,
         custom: custom,
+        http: function(ctrl, action, data) {
+            return http.post(URL + '/' + 'ctrl/' + ctrl + '/' + action,data);
+        },
         ctrl: function(ctrl, action, data) {
             return MyPromise(function(resolve, error) {
+
                 post('ctrl/' + ctrl + '/' + action, data, function(res) {
                     //console.info('CTRL: ',res.data);
-                    resolve(res.data);
+                    return resolve(res.data);
                 }, error);
+
             });
         },
         post: function(url, data) {

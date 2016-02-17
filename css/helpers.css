@@ -1,3 +1,8 @@
+
+.overlay{
+    overflow:overlay;
+}
+
 .link:hover {
     cursor: pointer;
 }
@@ -16,6 +21,9 @@
 
 .right-1 {
     right: 5px;
+}
+.left-1{
+    left:5px;
 }
 
 .bottom-1 {
@@ -71,6 +79,14 @@
 
 .size-medium {
     min-height: 200px;
+}
+
+.limit-h-200{
+    max-height: 200px;
+}
+
+.top-1{
+    top: 5px;
 }
 
 .padding-0 {

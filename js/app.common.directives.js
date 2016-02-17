@@ -13,12 +13,9 @@ app.directive('address', function($rootScope, $timeout) {
                 elem.geocomplete().bind("geocode:result", function(event, result) {
                     scope.model[scope.field] = result.formatted_address;
                     scope.change && scope.change(result.formatted_address);
-                    //console.log('DIRECTIVE:ADDRESS:CHANGE', result.formatted_address);
                 });
-
                 function read() {
                     $timeout(function() {
-                        //console.log('DIRECTIVE:ADDRESS:READING', scope.model);
                         if (scope.model[scope.field] !== '') {
                             elem.geocomplete("find", scope.model[scope.field]);
                         }
@@ -26,7 +23,7 @@ app.directive('address', function($rootScope, $timeout) {
                     });
                 }
                 read();
-                scope.$watch('model.address', read);
+                scope.$watch('model.'+scope.field, read);
                 scope.$apply();
             });
         }
@@ -34,6 +31,83 @@ app.directive('address', function($rootScope, $timeout) {
 });
 
 
+app.directive('debug', function($rootScope, $timeout, server, $compile) {
+    return {
+        scope: {
+            show: "=show"
+        },
+        restrict: 'AE',
+        replace: true,
+        template: '<div><i ng-show="show" ng-click="click()" class="link fa fa-bug fa-lg fixed left-1 bottom-1"><input type="checkbox" ng-click="stop()" ng-model="check"></i><span data-output></span></div>',
+        link: function(s, elem, attrs) {
+            var r = $rootScope;
+            s.check = false;
+            s.opt = {
+                onClose : () => {
+                    r.logger.clearErrors();
+                }
+            };
+
+            s.stop = () => window.event.stopPropagation();
+            s.click = () => {
+                var log = r.logger.pending();
+                if (log) {
+                    s.create(log, 'info');
+                }
+
+                var err = r.logger.errors();
+                if (err) {
+                    s.create(err, 'danger');
+                }
+
+            };
+
+
+
+            s.$watch('check', (v) => {
+                if (v) {
+                    if (s.checking) clearInterval(s.checking);
+                    s.checking = setInterval(() => {
+                        if (r.logger.hasErrors()) {
+                            r.dom(() => {
+                                if (elem.find('[data-output] .alert-danger').length === 0) {
+                                    s.create(r.logger.errors(), 'danger');
+                                }
+                            });
+                        }
+                    }, 1000);
+                    window.onerror = (err) => {
+                        s.create(err, 'danger');
+                    };
+                } else {
+                    if (s.checking) clearInterval(s.checking);
+                    window.onerror = (err) => {};
+                }
+            });
+
+
+
+            s.create = (msg, type) => {
+                //msg = JSON.stringify(msg);
+                s.msgs = s.msgs || {};
+                var cls = "fixed overlay limit-h-200 fullwidth " + ((type === 'danger') ? 'bottom-1' : 'top-1');
+                var el = $compile("<my-alert opt='opt' message='" + msg + "' type='alert-" + (type || 'danger') + "' cls='" + cls + "' />")(s);
+                if (s.msgs[type] !== undefined) {
+                    s.msgs[type].alert('close')
+                }
+                s.msgs[type] = el;
+                r.dom(() => {
+                    elem.find('[data-output]').append(el);
+                });
+            }
+            if (server.URL.indexOf('localhost')) {
+                s.show = true;
+                r.dom();
+            }
+            console.log('directive.debug.linked');
+        }
+    };
+});
 app.directive('spinner', function($rootScope, $timeout) {
     return {
         scope: {
@@ -84,7 +158,10 @@ app.directive('myAlert', function($rootScope, $timeout) {
     return {
         scope: {
             message: "@message",
-            type: "@type"
+            type: "@type",
+            cls: "@cls",
+            scroll: "=scroll",
+            opt: "=opt"
         },
         restrict: 'AE',
         replace: true,
@@ -93,7 +170,26 @@ app.directive('myAlert', function($rootScope, $timeout) {
             $timeout(function() {
                 scope.$apply(function() {
                     elem.addClass(scope.type || 'alert-danger');
+                    if (scope.cls) {
+                        elem.addClass(scope.cls);
+                    }
                 });
+            });
+            scope.dismiss = () => {
+                elem.alert('close');
+                if (scope.opt.onClose) {
+                    scope.opt.onClose();
+                }
+            };
+            scope.$watch('message', (v) => {
+                elem.find('[data-message]').html(v);
+                if (v && scope.scroll) {
+                    r.dom(() => {
+                        $('html, body').animate({
+                            scrollTop: elem.offset().top
+                        }, 500);
+                    });
+                }
             });
 
         }
@@ -117,12 +213,12 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                 }
             };
             console.info('directive:my-alerts:log-add:', s.add);
-            s.add = function(message, type, timeout) {
+            s.add = function(message, type, timeout, scroll) {
                 var msg = s.decodeMessage(message);
                 if (s.el) {
                     s.el.alert('close');
                 }
-                var el = $compile("<my-alert message='" + msg + "' type='alert-" + (type || 'danger') + "'/>")(s);
+                var el = $compile("<my-alert scroll='" + scroll + "' message='" + msg + "' type='alert-" + (type || 'danger') + "'/>")(s);
                 s.el = el;
                 elem.append(el);
 
