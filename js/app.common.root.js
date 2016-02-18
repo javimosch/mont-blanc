@@ -2,17 +2,30 @@ var app = angular.module('app.common.root', []);
 
 
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
-    console.info('app.common.root:run');
+    //console.info('app.common.root:run');
     window.r = r;
     r.getHashParams = getHashParams;
 
-    r.dom = function(cb,timeout) {
+
+    r.__cache = {};
+    r.cache = function(n, o) {
+        if (o) {
+            return r.__cache[n] = o;
+        } else {
+            if (!_.isUndefined(r.__cache[n]) && !_.isNull(r.__cache[n])) {
+                //console.info('CACHE: retrieving ' + n + ' (' + typeof r.__cache[n] + ')');
+            }
+            return r.__cache[n] || null;
+        }
+    };
+
+    r.dom = function(cb, timeout) {
         $timeout(function() {
             if (cb) {
                 cb();
             }
             r.$apply();
-        },timeout || 0);
+        }, timeout || 0);
     };
     r.toggleBody = function(val) {
         r.dom(function() {
@@ -44,13 +57,13 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         // if (lib.tableExists('session')) lib.dropTable('session');//DROP SESSION
         db.createSession = function(force) {
             if (force && lib.tableExists('session')) lib.dropTable('session');
-            lib.createTable('session', ['_id','email', 'expire','userType', 'password', 'rememberPass']);
+            lib.createTable('session', ['_id', 'email', 'expire', 'userType', 'password', 'rememberPass']);
             db.setUnique('session', {
-                _id:null,
+                _id: null,
                 email: null,
                 expire: null,
                 password: null,
-                userType:null,
+                userType: null,
                 rememberPass: true
             });
         };
@@ -97,12 +110,18 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
 
     r.route = function(url, delay) {
-        console.info('r.route:', delay, url);
+        //console.info('r.route:', delay, url);
         setTimeout(function() {
             var path = window.location.origin + window.location.pathname;
             path += '#/' + url;
             window.location.href = path;
         }, delay || 0);
     };
+
+    r.userIs = (arr) => {
+        var type = r.session().userType;
+        return _.includes(arr, type);
+    };
+
 
 }]);

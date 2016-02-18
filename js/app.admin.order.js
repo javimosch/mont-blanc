@@ -11,30 +11,15 @@ app.controller('adminOrders', [
         s.selectedItems = [];
         s.items = [];
         //
+        if (r.userIs(['diag', 'client'])) {
+            return r.handleSecurityRouteViolation();
+        }
+        //
         s.click = function(item) {
             r.route('orders/edit/' + item._id);
         };
         s.create = function() {
             r.route('orders/edit/-1');
-        };
-        s.delete = function(item) {
-            s.confirm('Remove ' + s.selectedItems.length + ' item/s?', function() {
-                console.log('adminOrders:removeAll:in-progress');
-                s.message('deleting . . .', 'info');
-                s.requesting = true;
-                db.custom('order', 'removeAll', {
-                    ids: s.selectedItems
-                }).then(function(res) {
-                    s.requesting = false;
-                    s.message('deleted', 'info');
-                    read();
-                    console.info('adminOrders:removeAll:success', r.data);
-                }).error(function(err) {
-                    s.requesting = false;
-                    s.message('error, try later.', 'danger');
-                    console.warn('adminOrders:removeAll:error', err);
-                });
-            });
         };
         s.select = function() {
             if (window.event) {
@@ -59,8 +44,6 @@ app.controller('adminOrdersEdit', [
 
     'server', '$scope', '$rootScope', '$routeParams',
     function(db, s, r, params) {
-        console.info('app.admin.order:adminOrdersEdit');
-        //
         r.toggleNavbar(true);
         r.secureSection(s);
         r.dom();
@@ -69,6 +52,10 @@ app.controller('adminOrdersEdit', [
             Object.assign(s, data);
         });
         //
+        s.message = r.message;
+        //
+        s.type = r.session().userType;
+        s.is = (arr) => _.includes(arr, s.type);
         s.item = {
             email: '',
             password: '',
@@ -76,7 +63,8 @@ app.controller('adminOrdersEdit', [
             diagStart: moment().add('day', 1).hour(9).minutes(0),
             diagEnd: moment().add('day', 1).hour(10).minutes(30),
             fastDiagComm: 0,
-            price: 0
+            price: 0,
+            diags: {}
         };
         s.original = _.clone(s.item);
         //
@@ -119,7 +107,6 @@ app.controller('adminOrdersEdit', [
 
         s.totalPrice = function() {
             var total = 0;
-            s.item.diags = s.item.diags || {};
             Object.keys(s.item.diags).forEach(function(mkey) {
                 if (!s.item.diags[mkey]) return;
                 s.diags.forEach(function(dval, dkey) {
@@ -133,11 +120,6 @@ app.controller('adminOrdersEdit', [
             return total;
         };
 
-        s.$watch('item.diags',(v)=>{
-            console.info('DIAGS',v);
-        },true)
-
-
         function createSelect(opt) {
             var o = {
                 label: opt.label,
@@ -149,9 +131,9 @@ app.controller('adminOrdersEdit', [
                 items: opt.items
             };
             s.$watch(opt.model, (v) => {
-                if(v!==undefined){
+                if (v !== undefined) {
                     o.label = v.substring(0, 1).toUpperCase() + v.slice(1);
-                }else{
+                } else {
                     o.label = opt.label;
                 }
             });
@@ -165,18 +147,29 @@ app.controller('adminOrdersEdit', [
                 s.item.status = selected.toString().toLowerCase();
             }
         });
+        //
 
         //
         if (params && params.id && params.id.toString() !== '-1') {
-            console.info('adminOrdersEdit:params', params);
             r.dom(read, 1000);
         } else {
-            console.info('adminOrdersEdit:reset');
             reset();
         }
         //
+        s.back = () => {
+            if (s.is(['diag', 'client'])) {
+                r.route('dashboard');
+            } else {
+                if (r.params && r.params.prevRoute) {
+                    return r.route(r.params.prevRoute);
+                } else {
+                    r.route('orders');
+                }
+
+            }
+        }
         s.cancel = function() {
-            r.route('orders');
+            s.back();
         };
         s.validate = () => {
             ifThenMessage([
@@ -200,37 +193,36 @@ app.controller('adminOrdersEdit', [
             s.requesting = true;
             db.ctrl('Order', 'save', s.item).then(function(data) {
                 s.requesting = false;
-                if(data.ok){
+                if (data.ok) {
                     s.message('saved', 'success');
-                    s.item = data.result;
-                    read();
-                }else{
-                    s.message('error, try later.', 'danger',0,true);
+                    s.back();
+                } else {
+                    handleError(data);
                 }
-                //r.route('orders', 0);
-            }).error(function(err) {
-                s.requesting = false;
-                s.message('error, try later.', 'danger',0,true);
-            });
+            }).error(handleError);
         };
+
+        function handleError(err) {
+            s.requesting = false;
+            s.message('error, try later.', 'danger', 0, true);
+        }
         s.delete = function() {
-            s.confirm('Delete Order ' + s.item.email + ' ?', function() {
-                console.log('adminOrdersEdit:remove:in-progress');
+            var time = (d)=>moment(d).format('HH:mm');
+            var descr=  s.item.address + ' (' + time(s.item.diagStart) + ' - ' + time(s.item.diagEnd) + ')';
+            s.confirm('Delete Order ' + descr + ' ?', function() {
                 s.message('deleting . . .', 'info');
                 s.requesting = true;
-                db.custom('order', 'remove', {
+                db.ctrl('Order', 'remove', {
                     _id: s.item._id
-                }).then(function(res) {
+                }).then(function(data) {
                     s.requesting = false;
-                    s.message('deleted', 'info');
-                    reset();
-                    r.route('orders', 0);
-                    console.info('adminOrdersEdit:remove:success', r.data);
-                }).error(function(err) {
-                    s.requesting = false;
-                    s.message('error, try later.', 'danger');
-                    console.warn('adminOrdersEdit:remove:error', err);
-                });
+                    if (data.ok) {
+                        s.message('deleted', 'info');
+                        s.back();
+                    } else {
+                        handleError(data);
+                    }
+                }).error(handleError);
             });
         };
 
@@ -239,81 +231,32 @@ app.controller('adminOrdersEdit', [
         }
 
         function read(id) {
+            if (r.params && r.params.item && r.params.item._diag) {
+                s.item = r.params.item; //partial loading
+                delete r.params.item;
+            }
+
             s.message('loading . . .', 'info');
             s.requesting = true;
             db.ctrl('Order', 'get', {
                 _id: id || params.id,
-                __populate: ['_client', 'email']
+                __populate: {
+                    '_client': 'email',
+                    '_diag': 'email'
+                }
             }).then(function(data) {
                 s.requesting = false;
-                s.item = data.result;
-                if (!data.ok) {
-                    s.message('not found, maybe it was deleted!', 'warning', 5000);
-                } else {
+                if (data.ok && data.result !== null) {
+                    s.item = data.result;
+                    console.info('READ', s.item);
                     s.message('loaded', 'success', 2000);
+                } else {
+                    handleError(data);
                 }
-            });
+            }).error(handleError);
         }
+
+
 
     }
 ]);
-
-app.directive('orderModal', function($rootScope, $timeout, $compile, $uibModal) {
-    return {
-        restrict: 'AE',
-        replace: true,
-        scope: {
-            open: '=open'
-        },
-        template: '<output></output>',
-        link: function(s, elem, attrs) {
-            s.open = function(opt) {
-                var modalInstance = $uibModal.open({
-                    animation: true,
-                    templateUrl: opt.templateUrl || 'views/partials/partial.modal.order.edit.html',
-                    controller: function($scope, $uibModalInstance) {
-                        var s = $scope;
-                        s.title = opt.title;
-                        if (!s.title) {
-                            s.title = "Order";
-                            if (opt.action && opt.action === 'edit') {
-                                s.title += ' - Edition';
-                            } else {
-                                s.title = 'New ' + s.title;
-                            }
-                        }
-
-                        s.save = () => {
-                            ifThenMessage([
-                                //[s.item., OPR.eq, '', '')],
-                            ], (m) => {
-                                //r.set('message', m[0]);
-                            }, () => {
-                                $uibModalInstance.close();
-                                var rta = _.clone(s.item);
-                                if (opt.action == 'edit') {
-                                    rta._user = opt.item._user;
-                                    rta._id = opt.item._id;
-                                }
-                                opt.callback(rta);
-                            });
-                        };
-                        s.cancel = function() {
-                            $uibModalInstance.dismiss('cancel');
-                        };
-                        if (!opt.action) {
-                            throw Error('directive timeRange open require arg.action');
-                        }
-                        if (opt.action == 'new') {
-
-                        }
-                        if (opt.action === 'edit') {
-                            s.item = opt.item;
-                        }
-                    }
-                });
-            };
-            console.log('directive:diag-order:linked');
-        }
-    };
-});

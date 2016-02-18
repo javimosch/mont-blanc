@@ -17,7 +17,12 @@ app.controller('fullpage', ['server',
             Object.assign(s, data);
             //            console.info('data->', data);
         });
+
+        var param = (n)=> getParameterByName(n).toString();
+        var paramTrue = (n)=> getParameterByName(n).toString()==='1';
+
         s.model = {
+            sell: paramTrue('sell') || undefined,
             diags: {}
         };
 
@@ -61,6 +66,7 @@ app.controller('fullpage', ['server',
 
 
         //----------------------------------------------------------
+        /*
         //DEFAULTS
         s.model = Object.assign(s.model, {
             sell: true,
@@ -71,6 +77,7 @@ app.controller('fullpage', ['server',
             gasInstallation: "Oui, Moins de 15 ans",
             date: new Date()
         });
+*/
         //-------
         s.diags = DIAGS;
         s.diags.forEach(function(val, key) {

@@ -71,7 +71,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
         };
         fn.clearErrors = () => _errors = {};
         fn.hasErrors = () => Object.keys(_errors).length > 0;
-        fn.hasPending = () => Object.keys(_log).length > 0;
+        fn.hasPending = () => Object.keys(_logs).length > 0;
         fn.pending = () => {
             var msg = 'Pending<br>';
             _.each(_logs, (v, k) => {
@@ -90,6 +90,10 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
             });
             return msg;
         }
+        r.state={
+            working:()=> fn.hasPending(),
+            data:_logs
+        };
         r.logger = fn;
         return fn;
     })();

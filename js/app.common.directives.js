@@ -1,5 +1,58 @@
 var app = angular.module('app.common.directives', []);
 
+app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
+    return {
+        restrict: 'AE',
+        replace: true,
+        scope: {
+            open: '=open'
+        },
+        template: '<output></output>',
+        link: function(s, elem, attrs) {
+            s.open = function(opt) {
+
+                if (!opt.templateUrl) {
+                    throw Error('crudModal needs templateUrl');
+                }
+                var modalInstance = $uibModal.open({
+                    animation: true,
+                    templateUrl: opt.templateUrl,
+                    controller: function($scope, $uibModalInstance) {
+                        var s = $scope;
+                        Object.assign(s, opt);
+                        s.save = s.validate = () => {
+                            if (s.validate && s.validate.when && s.validate.fail) {
+                                ifThenMessage(s.validate.when(s), s.validate.fail(s), () => {
+                                    s.close();
+                                });
+                            } else {
+                                s.close();
+                            }
+                        };
+                        s.close = () => {
+                            $uibModalInstance.close();
+                            opt.callback(s.item);
+                        };
+                        s.closeSilent = () => {
+                            $uibModalInstance.close();
+                        };
+                        s.redirect = (url) => {
+                            r.params = {
+                                item: s.item
+                            };
+                            r.route(url);
+                            s.closeSilent();
+                        };
+                        s.cancel = function() {
+                            $uibModalInstance.dismiss('cancel');
+                        };
+                    }
+                });
+            };
+        }
+    };
+});
+
 app.directive('address', function($rootScope, $timeout) {
     return {
         scope: {
@@ -14,6 +67,7 @@ app.directive('address', function($rootScope, $timeout) {
                     scope.model[scope.field] = result.formatted_address;
                     scope.change && scope.change(result.formatted_address);
                 });
+
                 function read() {
                     $timeout(function() {
                         if (scope.model[scope.field] !== '') {
@@ -23,7 +77,7 @@ app.directive('address', function($rootScope, $timeout) {
                     });
                 }
                 read();
-                scope.$watch('model.'+scope.field, read);
+                scope.$watch('model.' + scope.field, read);
                 scope.$apply();
             });
         }
@@ -41,9 +95,9 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
         template: '<div><i ng-show="show" ng-click="click()" class="link fa fa-bug fa-lg fixed left-1 bottom-1"><input type="checkbox" ng-click="stop()" ng-model="check"></i><span data-output></span></div>',
         link: function(s, elem, attrs) {
             var r = $rootScope;
-            s.check = false;
+            s.check = true;
             s.opt = {
-                onClose : () => {
+                onClose: () => {
                     r.logger.clearErrors();
                 }
             };
@@ -90,7 +144,7 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
             s.create = (msg, type) => {
                 //msg = JSON.stringify(msg);
                 s.msgs = s.msgs || {};
-                var cls = "fixed overlay limit-h-200 fullwidth " + ((type === 'danger') ? 'bottom-1' : 'top-1');
+                var cls = "always-on-top fixed overlay limit-h-200 fullwidth " + ((type === 'danger') ? 'bottom-1' : 'top-1');
                 var el = $compile("<my-alert opt='opt' message='" + msg + "' type='alert-" + (type || 'danger') + "' cls='" + cls + "' />")(s);
                 if (s.msgs[type] !== undefined) {
                     s.msgs[type].alert('close')
@@ -104,7 +158,7 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
                 s.show = true;
                 r.dom();
             }
-            console.log('directive.debug.linked');
+            //console.log('directive.debug.linked');
         }
     };
 });
@@ -117,7 +171,7 @@ app.directive('spinner', function($rootScope, $timeout) {
         replace: true,
         templateUrl: './views/directives/directive.spinner.html',
         link: function(scope, elem, attrs) {
-            console.log('directive.spinner.linked');
+            //console.log('directive.spinner.linked');
         }
     };
 });
@@ -145,11 +199,59 @@ app.directive('checkBox', function($rootScope, $timeout) {
                                 return e === scope.val;
                             });
                         }
-                        console.log(scope.arr);
+                        //console.log(scope.arr);
                     });
                 });
             });
 
+        }
+    };
+});
+
+
+app.directive('notify', function($rootScope, $timeout) {
+    return {
+        scope: {
+            message: "@message",
+            type: "@type",
+            cls: "@cls",
+            scroll: "=scroll",
+            opt: "=opt"
+        },
+        restrict: 'AE',
+        replace: true,
+        templateUrl: './views/directives/directive.alert.notify.html',
+        link: function(scope, elem, attrs) {
+            var r = $rootScope;
+            var s = scope;
+            $timeout(function() {
+                scope.$apply(function() {
+                    elem.find('.alert').addClass(scope.type || 'alert-danger');
+                    if (scope.cls) {
+                        elem.find('.alert').addClass(scope.cls);
+                    }
+                });
+            });
+            scope.dismiss = () => {
+                if (s.dismissed) return;
+                s.dismissed = true;
+                elem.find('.alert').alert('close');
+                elem.remove()
+                if (scope.opt && scope.opt.onClose) {
+                    scope.opt.onClose();
+                }
+            };
+            scope.$watch('message', (v) => {
+                elem.find('[data-message]').html(v);
+            });
+
+
+            if (s.opt && s.opt.duration) {
+                r.dom(s.dismiss, s.opt.duration);
+            } else {
+                if (_.includes(['alert-info', 'alert-success'], s.type)) r.dom(scope.dismiss, 2000);
+                if (_.includes(['alert-danger', 'alert-warning'], s.type)) r.dom(scope.dismiss, 10000);
+            }
         }
     };
 });
@@ -177,7 +279,7 @@ app.directive('myAlert', function($rootScope, $timeout) {
             });
             scope.dismiss = () => {
                 elem.alert('close');
-                if (scope.opt.onClose) {
+                if (scope.opt && scope.opt.onClose) {
                     scope.opt.onClose();
                 }
             };
@@ -201,7 +303,8 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
         restrict: 'AE',
         replace: true,
         scope: {
-            add: '=add'
+            add: '=add',
+            directive: '@directive' //custom directive to be created
         },
         template: '<output></output>',
         link: function(s, elem, attrs) {
@@ -212,15 +315,17 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                     return JSON.stringify(msg);
                 }
             };
-            console.info('directive:my-alerts:log-add:', s.add);
-            s.add = function(message, type, timeout, scroll) {
+            //console.info('directive:my-alerts:log-add:', s.add);
+            s.add = function(message, type, timeout, scroll, opt) {
                 var msg = s.decodeMessage(message);
                 if (s.el) {
                     s.el.alert('close');
                 }
-                var el = $compile("<my-alert scroll='" + scroll + "' message='" + msg + "' type='alert-" + (type || 'danger') + "'/>")(s);
+                var directive = s.directive || 'my-alert';
+                s.opt = opt;
+                var el = $compile("<" + directive + " opt='opt' scroll='" + scroll + "' message='" + msg + "' type='alert-" + (type || 'danger') + "'/>")(s);
                 s.el = el;
-                elem.append(el);
+                elem.html('').append(el);
 
                 if (timeout) {
                     r.dom(function() {
@@ -228,7 +333,7 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                     }, timeout);
                 }
             };
-            console.log('directive:my-alerts:linked');
+            //console.log('directive:my-alerts:linked');
         }
     };
 });
@@ -243,7 +348,7 @@ app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal
         },
         template: '<output></output>',
         link: function(s, elem, attrs) {
-            console.info('directive:modalSure:link:start');
+            //console.info('directive:modalSure:link:start');
             s.open = function(message, okCallback) {
                 var modalInstance = $uibModal.open({
                     animation: true,
@@ -262,7 +367,7 @@ app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal
                     //resolve: {}
                 });
             };
-            console.log('directive:modalSure:linked');
+            //console.log('directive:modalSure:linked');
         }
     };
 });
@@ -294,9 +399,9 @@ app.directive('dynamicTable', function(
             s.model.update = (items) => {
                 s.items = items;
                 r.dom();
-                console.log('directive.dynamic-table.set:' + items.length);
+                //console.log('directive.dynamic-table.set:' + items.length);
             };
-            console.log('directive.dynamic-table.linked');
+            //console.log('directive.dynamic-table.linked');
         }
     };
 });
@@ -451,7 +556,7 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                     }
                 });
             };
-            console.log('directive:timeRange:linked');
+            //console.log('directive:timeRange:linked');
         }
     };
 });

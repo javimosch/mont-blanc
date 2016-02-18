@@ -4,7 +4,7 @@ var app = angular.module('app', [
     'app.admin.user',
     'app.admin.diag',
     'app.admin.order',
-    'app.admin.inspector',
+    'app.admin.calendar',
     'app.common.directives',
     'app.common.service',
     'app.common.root',
@@ -15,7 +15,7 @@ var app = angular.module('app', [
 ]);
 
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
-    console.info('app.admin:run');
+//    console.info('app.admin:run');
 
     r.navShow = true;
 
@@ -31,6 +31,11 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         } else {
             _s.show = true;
         }
+    };
+
+    r.handleSecurityRouteViolation=()=>{
+        r.route('dashboard');    
+        console.warn('SECURITY: YOU-DONT-BELONG-HERE');
     };
 
 }]);

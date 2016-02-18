@@ -8,6 +8,9 @@ app.config(['$routeProvider',
         when('/dashboard', {
             templateUrl: 'views/view.admin.dashboard.html'
         }).
+        when('/global-calendar', {
+            templateUrl: 'views/view.admin.calendar.html'
+        }).
         when('/clients', {
             templateUrl: 'views/view.admin.clients.html'
         }).
@@ -35,6 +38,6 @@ app.config(['$routeProvider',
         otherwise({
             redirectTo: '/'
         });
-        console.info('app.admin.routes:config');
+        //console.info('app.admin.routes:config');
     }
 ]);

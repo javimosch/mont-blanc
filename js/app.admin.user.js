@@ -11,6 +11,10 @@ app.controller('adminUsers', [
         s.selectedItems = [];
         s.items = [];
         //
+        if(r.userIs(['diag','client'])){
+            return r.handleSecurityRouteViolation();
+        }
+        //
         s.click = function(item) {
             r.route('users/edit/' + item._id);
         };
@@ -100,7 +104,12 @@ app.controller('adminUsersEdit', [
             console.info('adminUsersEdit:params', params);
             r.dom(read, 1000);
         } else {
-            console.info('adminUsersEdit:reset');
+            
+            if(r.userIs(['diag','client'])){
+                //can't create an user
+                return r.handleSecurityRouteViolation();
+            }
+
             reset();
         }
         //
@@ -122,13 +131,14 @@ app.controller('adminUsersEdit', [
             s.requesting = true;
 
 
-            db.custom('user', 'find', {
-                email: s.item.email
-            }).then(function(res) {
-                var result = res.data.result;
+            db.ctrl('User', 'getAll', {
+                email: s.item.email,
+                userType: s.item.userType
+            }).then(function(data) {
+                var result = data.result;
                 s.requesting = false;
-                if (res.data.result.length > 0) {
-                    var _item = res.data.result[0];
+                if (data.result.length > 0) {
+                    var _item = data.result[0];
                     if (s.item._id && s.item._id == _item._id) {
                         _save(); //same user
                     } else {
@@ -183,6 +193,14 @@ app.controller('adminUsersEdit', [
         }
 
         function read() {
+
+            if(r.userIs(['diag','client'])){
+                //only can see his own info
+                if(params.id !== r.session()._id){
+                    return r.handleSecurityRouteViolation();
+                }
+            }
+
             s.message('loading . . .', 'info');
 
             s.requesting = true;

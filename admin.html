@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="css/fullpage.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/calendar.css">
+    <link rel="stylesheet" type="text/css" href="css/animate.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="css/helpers.css">
     <link rel="stylesheet" type="text/css" href="css/admin.login.css">
@@ -32,6 +33,7 @@
             <div ng-view></div>
         </div>
     </div>
+    <my-alerts add="message" directive="notify"></my-alerts>
     <span data-spinner show="showSpinner"></span> <!-- spinner -->
     <span data-debug show="showDebug"></span>
     <!--VENDOR-->
@@ -63,7 +65,7 @@
     <script src="js/app.common.directives.js"></script>
     <script src="js/app.admin.js"></script>
     <script src="js/app.admin.routes.js"></script>
-    <script src="js/app.admin.inspector.js"></script>
+    <script src="js/app.admin.calendar.js"></script>
     <script src="js/app.admin.login.js"></script>
     <script src="js/app.admin.user.js"></script>
     <script src="js/app.admin.diag.js"></script>

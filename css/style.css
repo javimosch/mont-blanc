@@ -38,8 +38,39 @@
   animation: rotating 2s linear infinite;
 }
 
+.diags-checkbox{
+  border: none;
+}
+.check-label{
+  width: 100%;
+    background: none;
+    border: none;
+}
 
+.navbar-brand{
+  font-size: 2rem;
+}
 
+.nav li a{
+    font-size: 20px;
+    font-family: inherit;
+}
+
+.nav li {
+  padding: 5px;
+}
+
+@media screen and (min-width: 768px) {
+     .nav{
+       width: 100%;
+    }
+}
+@media screen and (min-width: 1200px) {
+ 
+    .nav > output{
+      display: flex;
+    }
+}
 
 .navbar-default a{
 	color:black;
@@ -59,6 +90,9 @@
 .panel.question{
 	max-width:300px;
 	margin:0 auto;
+}
+.panel-footer{
+  padding: 0px 15px;
 }
 
 .inline-flex{

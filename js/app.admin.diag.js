@@ -99,6 +99,8 @@ app.directive('timeRangeExceptions', function(
     };
 });
 
+
+//------------------------------------------------------------ ORDER MODAL READONLY
 app.directive('diagOrders', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile, server) {
     return {
@@ -114,9 +116,24 @@ app.directive('diagOrders', function(
             var n = attrs.name;
             //s.open //=> automatic
             function update() {
-                ws.ctrl('Order', 'getAll', { __populate: ['_client', 'email'] }).then((res) => {
+                var data = {
+                    __populate: {
+                        '_client': 'email userType',
+                        '_diag': 'email userType'
+                    }
+                };
+
+                if(r.userIs(['diag'])){
+                    data['_diag'] = r.session()._id;
+                }
+                if(r.userIs(['client'])){
+                    data['_client'] = r.session()._id;
+                }
+
+                ws.ctrl('Order', 'getAll', data).then((res) => {
                     if (res.ok) {
                         res.result.forEach((v) => {
+                            v.date = moment(v.diagStart).format('dddd, DD MMMM')
                             v.start = moment(v.diagStart).format('HH:mm');
                             v.end = moment(v.diagEnd).format('HH:mm');
                         });
@@ -126,9 +143,13 @@ app.directive('diagOrders', function(
             }
             s.model = {
                 click: (item, index) => {
+                    var data = {};
+                    ws.localData().then(function(d) {
+                        Object.assign(data, d);
+                    });
                     s.open({
-                        //title: 'Edit Exception',
-                        action: 'edit',
+                        title: 'Order View',
+                        data:data,
                         item: item,
                         templateUrl: 'views/partials/partial.modal.diag.order.html',
                         callback: (item) => {
@@ -136,7 +157,7 @@ app.directive('diagOrders', function(
                                 update();
                             });
                         }
-                    })
+                    });
                 },
                 buttons: [{
                     label: "Refresh",
@@ -221,7 +242,21 @@ app.directive('diagCalendar', function(
             }];
 
             function update() {
-                ws.ctrl('Order', 'getAll', { __populate: ['_client', 'email'] }).then((res) => {
+                var conditions = {
+                    __populate: {
+                        '_client': 'email userType',
+                        '_diag': 'email userType'
+                    }
+                };
+
+                if(r.userIs(['diag'])){
+                    conditions['_diag'] = r.session()._id;
+                }
+                if(r.userIs(['client'])){
+                    conditions['_client'] = r.session()._id;
+                }
+
+                ws.ctrl('Order', 'getAll', conditions).then((res) => {
                     if (res.ok) {
                         var evts = [];
                         res.result.forEach((v) => {
@@ -389,7 +424,7 @@ app.controller('adminDiagsEdit', [
                 [s.item.email, '==', '', "Email cannot be empty"],
                 [s.item.password, '==', '', "Password cannot be empty"]
             ], (m) => {
-                s.message(m[0],'warning',0,true);
+                s.message(m[0], 'warning', 0, true);
             }, s.save);
         };
 
