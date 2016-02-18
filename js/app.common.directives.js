@@ -154,10 +154,13 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
                     elem.find('[data-output]').append(el);
                 });
             }
-            if (server.URL.indexOf('localhost')!==-1) {
-                s.show = true;
-                r.dom();
-            }
+
+            setTimeout(()=>{
+                if (server.URL().indexOf('localhost')!==-1) {
+                    s.show = true;
+                    r.dom();
+                }
+            },5000);
             //console.log('directive.debug.linked');
         }
     };

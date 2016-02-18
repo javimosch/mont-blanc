@@ -235,7 +235,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
         };
     }
     return {
-        URL: URL,
+        URL: ()=>URL,
         getAvailableRanges: getAvailableRanges,
         login: login,
         save: save,
