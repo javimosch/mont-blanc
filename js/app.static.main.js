@@ -15,16 +15,79 @@ app.controller('fullpage', ['server',
         //console.info('FULLPAGE');
         db.localData().then(function(data) {
             Object.assign(s, data);
-            //            console.info('data->', data);
+            loadDefaults();
+            updateChecksVisibilityOnDemand();
         });
 
-        var param = (n)=> getParameterByName(n).toString();
-        var paramTrue = (n)=> getParameterByName(n).toString()==='1';
+        var param = (n, validate) => {
+            var val = (getParameterByName(n) || '').toString();
+            if (!validate) {
+                return val;
+            } else {
+                var vals = Object.keys(validate).map((v) => {
+                    return validate[v]
+                }); //valid vals
+                if (vals.length > 0 && !_.includes(vals, val)) {
+                    console.warn(n + ' has the follow valid values:' + JSON.stringify(vals));
+                    return undefined;
+                }else{
+                    return val;   
+                }
+            }
+        };
+        var paramDate =(n)=>{
+            var v = (getParameterByName(n) || '').toString()
+            if(isFinite(new Date(v))){
+                return new Date(v);
+            }
+            return undefined;
+        }
+        var paramBool = (n) => {
+            var v = (getParameterByName(n) || '').toString()
+            if (_.includes(['1', '0'], v)) {
+                return v === '1';
+            } else {
+                return undefined;
+            }
+        }
 
         s.model = {
-            sell: paramTrue('sell') || undefined,
+            sell: paramBool('sell'),
+            house: paramBool('house'),
             diags: {}
         };
+
+
+        function updateChecksVisibilityOnDemand(){
+            var toggle = (n,val)=>{
+                s.diags.forEach((diag)=>{
+                    if((n && diag.name==n) || !n){
+                        diag.show = val;
+                    }
+                });
+            };
+            s.$watch('model',(v)=>{
+                if(v.gasInstallation==='Non') toggle('gaz',false);
+            });
+            toggle(undefined,true);//all checks visibles.
+        }
+        function loadDefaults() {
+            s.model = Object.assign(s.model, {
+                squareMeters: param('squareMeters', s.squareMeters) || undefined,
+                apartamentType: param('apartamentType', s.apartamentType) || undefined,
+                constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined,
+                address: param('address') || undefined,
+                gasInstallation: param('gasInstallation', s.gasInstallation) || undefined,
+                date: paramDate('date')
+            });
+
+            s.diags.forEach((diag)=>{
+                var val = paramBool(diag.name);
+                if(!_.isUndefined(val) && !_.isNull(val)){
+                    s.model.diags[diag.name]= val;
+                }
+            });
+        }
 
 
         //----------------------------------------------------------
@@ -34,13 +97,13 @@ app.controller('fullpage', ['server',
                 s.availableTimeRanges = data;
 
                 //fill _diag with a random _diag for now
-                db.custom('user','get', {
-                        userType:'diag'
+                db.custom('user', 'get', {
+                    userType: 'diag'
                 }).then(function(res) {
-                    s.availableTimeRanges.forEach(function(v,k){
+                    s.availableTimeRanges.forEach(function(v, k) {
                         v._diag = res.data.result._id;
                     });
-                    console.log('FIX: ranges filled with _diag=',res.data.result._id);
+                    console.log('FIX: ranges filled with _diag=', res.data.result._id);
                 });
 
             });

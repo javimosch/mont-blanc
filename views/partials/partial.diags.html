@@ -1,9 +1,9 @@
-<div class="panel center-block question panel-info">>
+<div class="panel center-block question panel-info">
     <div class="panel-heading">
         <h4 class="panel-title">Diags</h4>
     </div>
     <div class="panel-body">
-        <div ng-repeat="(key,item) in diags" class="input-group">
+        <div ng-repeat="(key,item) in diags" class="input-group" ng-show="item.show">
             <span class="input-group-addon">
                 <input type="checkbox" ng-model="model.diags[item.name]" ng-value="true">
             </span>
