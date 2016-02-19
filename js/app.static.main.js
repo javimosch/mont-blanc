@@ -24,6 +24,17 @@ app.controller('fullpage', ['server',
             diags: {}
         };
 
+        s.validModel=()=>{
+            var isValid = true &&
+                (true&&s.model.diagStart)&&
+                (true&&s.model.diagEnd)&&
+                (true&&!_.isUndefined(s.model.address))&&
+                (true&&!_.isNull(s.model.address))&&
+                (true&&s.model.address!='')&&
+                true
+            ;
+            return isValid;
+        };
 
 
         var waitForProperties = (cbArray, props) => {
@@ -193,9 +204,15 @@ app.controller('fullpage', ['server',
 
             if(!isFinite(new Date(date))) return;//invalid
 
-            db.getAvailableRanges(date).then(function(data) {
+            var time = s.totalTime();
+            var order={
+                day:date,
+                time:time
+            };
+
+            db.getAvailableRanges(order).then(function(data) {
                 //                console.info('availableTimeRanges:', data);
-                s.availableTimeRanges = data;
+                s.availableTimeRanges = data.length > 0 && data || null;
 
                 /*
                 //fill _diag with a random _diag for now
@@ -221,7 +238,8 @@ app.controller('fullpage', ['server',
             return moment(s.model.date).format('MMMM Do YYYY, dddd');
         };
         s.drawRange = function(rng) {
-            return moment(rng.diagStart).format("HH:mm") + 'h - ' + moment(rng.diagEnd).format("HH:mm") + 'h';
+            return moment(rng.start).format("HH:mm") + 'h - ' 
+            + moment(rng.end).format("HH:mm") + 'h';
         };
 
         s.onModelChange = function(a, b, c) {
@@ -297,10 +315,11 @@ app.controller('fullpage', ['server',
             return total;
         };
         s.pickTimeRange = function(timeRange) {
-            s.model.diagStart = timeRange.diagStart;
+            s.model.diagStart = timeRange.start;
             s.model._diag = timeRange._diag;
-            s.model.diagEnd = timeRange.diagEnd;
+            s.model.diagEnd = timeRange.end;
         };
+
         s.totalTime = function() {
             var total = 0;
             s.model.diags = s.model.diags || {};
@@ -315,14 +334,21 @@ app.controller('fullpage', ['server',
             });
             var hours = Math.floor(total / 60);
             var minutes = total % 60;
-            s.model.time = hours + ':' + minutes;
+            var t = {
+                hours:hours,
+                minutes:minutes
+            };
+            return normalizeOrderTime(t);
+        };
+        s.totalTime.formatted=()=>{
+            var time = s.totalTime();
+            var hours=time.hours,minutes=time.minutes;
             minutes = (minutes < 10) ? '0' + minutes : minutes;
             if (hours > 0) {
                 return hours + ':' + minutes + ' hours';
             } else {
                 return minutes + ' minutes';
             }
-
         };
 
     }

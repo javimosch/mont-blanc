@@ -2,8 +2,11 @@
     <div class="panel-heading">
         <h4 class="panel-title">Pick a time</h4>
     </div>
-    <button class="center-block btn btn-default btn-sm spacing-1" ng-click="up()">Choice a different day</button>
-    <div class="panel-body size-medium">
+    <div class="panel-body size-medium" ng-show="!availableTimeRanges">
+        <h3>{{selectedDate()}}</h3>
+        <p>There are not available slots in this date.</p>
+    </div>
+    <div class="panel-body size-medium" ng-show="availableTimeRanges">
         <h3>{{selectedDate()}}</h3>
         <div ng-repeat="(key,range) in availableTimeRanges" class="center-block">
             <div class=" inline">
@@ -17,6 +20,7 @@
         </div>
     </div>
     <div class="panel-footer">
-        <button class="btn btn-success btn-lg" ng-click="down()">Last step</button>
+        <button ng-show="availableTimeRanges" class="btn btn-info" ng-click="down()"> Continue </button>
+        <button ng-show="!availableTimeRanges" class="center-block btn btn-info spacing-1" ng-click="up()">Back</button>
     </div>
 </div>

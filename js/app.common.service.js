@@ -227,12 +227,17 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
         }
     }
 
+
+    ///--------------------------------------- DIAGS RELATED---------BEGIN
+    ///--------------------------------------- DIAGS RELATED---------BEGIN
+    ///--------------------------------------- DIAGS RELATED---------BEGIN
+    ///--------------------------------------- DIAGS RELATED---------BEGIN
     function diagsPriority(cb) {
         ctrl('User', 'getAll', {
             userType: 'diag',
             __select: 'diagPriority'
         }).then((data) => {
-            cb(data.result.map((v) => ({_id:v._id,priority:v.diagPriority})));
+            cb(data.result.map((v) => ({ _id: v._id, priority: v.diagPriority })));
         })
     }
 
@@ -252,11 +257,13 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
                 status: { $ne: 'complete' }
             }
         }).then((data) => {
-            cb(data.result.map((v) => ({_user:v._diag, start: v.diagStart, end: v.diagEnd })));
+            cb(data.result.map((v) => ({ _user: v._diag, start: v.diagStart, end: v.diagEnd })));
         })
     }
 
-    function getAvailableRanges(orderDay) {
+    function getAvailableRanges(order) {
+        if (!isFinite(new Date(order.day))) throw Error('getAvailableRanges Invalid order day');
+
         function _data(cb) {
             timeRangesDiagIsWorking((working) => {
                 timeRangesDiagSayHeCantWorktype((exceptions) => {
@@ -266,8 +273,9 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
                 });
             });
         }
-        function calc(orderDay,working, exceptions, diags){
-            //orderDay: moment() // the time that the order last.
+
+        function calc(order, working, exceptions, diags) {
+            //order: {day:moment(),time{hours,minutes}} // the time that the order last.
             //working: [{_user,start,end}] // the times that a diag is occupied.
             //exceptions: [{_user,start,end,repeat}] // the times that the diag can't work.
             //diags: [{_user, priority}] //a list of diags.
@@ -289,39 +297,136 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
             //console.info('DIAGS',diags)
 
             //_.orderBy([{p:1},{p:5},{p:2}],(v)=>v.p) //rta: [{p:1},{p:2},{p:5}]
-            var diags = _.orderBy(diags,(v)=>v.priority);
-            diags.forEach((diag)=>{
+            order.time = normalizeOrderTime(order.time);
+            var diags = _.orderBy(diags, (v) => v.priority);
+            var slots = []; //{_diag,start,end};
+            var covered = {
+                morning: false,
+                afternoon: false
+            };
+            diags.forEach((diag) => {
                 //diag: A diag with the lowerst priority.
-                if(diagMorningEmpty(orderDay, diag, working)){
-                    console.warn(diag._id+'-MORNING-EMPTY');
-                }else{
-                    console.warn(diag._id+'-MORNING-OCCUPIED');
+
+                //MORNING
+                if (!covered.morning) {
+                    if (diagMorningEmpty(order, diag, working)) {
+                        if (!diagExceptionsCollide(order, diag, exceptions, isBeforeMidDay)) {
+                            console.warn(diag._id + '-MORNING-EMPTY');
+                            slots.push({
+                                _diag: diag._id,
+                                start: moment(new Date(order.day)).hour(9).minutes(0),
+                                end: moment(new Date(order.day)).hour(9 + order.time.hours).minutes(0 + order.time.minutes)
+                            });
+                            slots.push({
+                                _diag: diag._id,
+                                start: moment(new Date(order.day)).hour(10).minutes(0),
+                                end: moment(new Date(order.day)).hour(10 + order.time.hours).minutes(0 + order.time.minutes)
+                            });
+                            covered.morning = true;
+                        } else {
+                            console.warn(diag._id + '-MORNING-COMPLEX-(EXCEPTIONS)');
+                        }
+
+
+                    } else {
+                        console.warn(diag._id + '-MORNING-COMPLEX');
+                        //var _slots = tryGetSlotsForTheMorning(order,)
+                    }
                 }
-                return false;//cut
+
+                //AFTERNOON
+                if (!covered.afternoon) {
+                    if (diagAfternoonEmpty(order, diag, working)) {
+                        if (!diagExceptionsCollide(order, diag, exceptions, isAfterMidDay)) {
+                            console.warn(diag._id + '-AFTERNOON-EMPTY');
+                            slots.push({
+                                _diag: diag._id,
+                                start: moment(new Date(order.day)).hour(14).minutes(0),
+                                end: moment(new Date(order.day)).hour(14 + order.time.hours).minutes(0 + order.time.minutes)
+                            });
+                            slots.push({
+                                _diag: diag._id,
+                                start: moment(new Date(order.day)).hour(15).minutes(0),
+                                end: moment(new Date(order.day)).hour(15 + order.time.hours).minutes(0 + order.time.minutes)
+                            });
+                            covered.afternoon = true;
+                        } else {
+                            console.warn(diag._id + '-AFTERNOON-COMPLEX-(EXCEPTIONS)');
+                        }
+                    } else {
+                        console.warn(diag._id + '-AFTERNOON-COMPLEX');
+                    }
+                }
+
+                return false; //cut
             });
-            return _dataAvailableRangeDummy;
+            return slots;
         }
         return MyPromise(function(resolve, error) {
-            _data((working, exceptions, diags)=>{
-                resolve(calc(moment(orderDay),working, exceptions, diags));
+            _data((working, exceptions, diags) => {
+                resolve(calc(order, working, exceptions, diags));
             });
         });
     }
 
-    function diagMorningEmpty(orderDay,diag,workRanges){
+    
+
+    var isAfterMidDay = (d1) => moment(d1).isAfter(moment(d1).hour(13), 'hour');
+    var isBeforeMidDay = (d1) => moment(d1).isBefore(moment(d1).hour(12), 'hour');
+    var isSameDay = (d1, d2) => moment(d1).isSame(moment(d2), 'day');
+    var isSameDayOfWeek = (d1, d2) => moment(d1).day() == moment(d2).day();
+
+    function diagMorningEmpty(order, diag, workRanges) {
         var rta = true;
-        var isBeforeMidDay = (d1)=>moment(d1).isBefore(moment(d1).hour(12),'hour');
-        var isSameDay = (d1,d2)=>moment(d1).isSame(moment(d2),'day');
-        workRanges.forEach((workRange)=>{
-            if(workRange._user!==diag._id) return;
-            if(isSameDay(workRange.start,orderDay)){
-                if(isBeforeMidDay(workRange.start)){
+        workRanges.forEach((workRange) => {
+            if (workRange._user !== diag._id) return;
+            if (isSameDay(workRange.start, order.day)) {
+                if (isBeforeMidDay(workRange.start)) {
                     rta = false;
                 }
             }
         });
         return rta;
     }
+
+
+
+    function diagAfternoonEmpty(order, diag, workRanges) {
+        var rta = true;
+        workRanges.forEach((workRange) => {
+            if (workRange._user !== diag._id) return;
+            if (isSameDay(workRange.start, order.day)) {
+                if (isAfterMidDay(workRange.start)) {
+                    rta = false;
+                }
+            }
+        });
+        return rta;
+    }
+
+    function diagExceptionsCollide(order, diag, exceptions, isBeforeAfterFn) {
+        var rta = false;
+        exceptions.forEach((range) => {
+            if (range._user !== diag._id) return;
+            var collide =
+                (true && isBeforeAfterFn(range.start)) &&
+                (
+                    (true && isSameDay(range.start, order.day)) ||
+                    (true && range.repeat == 'day') ||
+                    (true && range.repeat == 'week' && isSameDayOfWeek(order.day, range.start))
+                );
+            if (collide) {
+                rta = true;
+            }
+        });
+        return rta;
+    }
+
+    ///--------------------------------------- DIAGS RELATED------------ END
+    ///--------------------------------------- DIAGS RELATED------------ END
+    ///--------------------------------------- DIAGS RELATED------------ END
+    ///--------------------------------------- DIAGS RELATED------------ END
+    ///--------------------------------------- DIAGS RELATED------------ END
 
     function ctrl(ctrl, action, data) {
         return MyPromise(function(resolve, error) {

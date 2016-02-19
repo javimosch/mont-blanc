@@ -1,14 +1,25 @@
-<div class="panel center-block question panel-success">
+<div class="panel center-block question panel-info">
     <div class="panel-heading">
-        <h4 class="panel-title">Save your order</h4>
+        <h4 class="panel-title">Confirm your order</h4>
     </div>
-    <div class="panel-body size-medium">
+    <div class="panel-body size-medium"
+    ng-show="!validModel()"
+    >
+        <ul>
+            <li ng-show="!model.diagStart"><h5>Order Time required.</h5></li>
+            <li ng-show="model.address!==''"><h5>Order Address required.</h5></li>
+        </ul>
+    </div>
+    <div class="panel-body size-medium"
+    ng-show="validModel()"
+    >
         <div class="spacing-1">
             <h4>
+            Total price: 
             <span class="glyphicon glyphicon-euro" aria-hidden="true"></span>
 			{{totalPrice()}}
 			</h4>
-			<h4>Estimated time: {{totalTime()}}</h4>
+			<h4>Estimated time: {{totalTime.formatted()}}</h4>
         </div>
         <div class="spacing-1">
             <input id="email" type="email" ng-model="model.email" placeholder="Write your email">
@@ -18,7 +29,11 @@
         </div>
     </div>
     <div class="panel-footer">
-        <button ng-disabled="!model.email || sendingEmail" class="btn btn-success btn-lg" ng-click="confirm()">Save my order</button>
+        <button ng-show="!validModel()" class="center-block btn btn-info spacing-1" ng-click="up()">Back</button>
+
+        <button 
+        ng-show="validModel()"
+        ng-disabled="!model.email || sendingEmail || !validModel()" class="btn btn-primary btn-lg" ng-click="confirm()">Confirm</button>
     </div>
 </div>
 <output data-message></output>
