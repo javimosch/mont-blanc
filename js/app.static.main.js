@@ -12,12 +12,44 @@ app.controller('fullpage', ['server',
     function(db, $timeout, s, r, $uibModal) {
         window.r = r;
         window.s = s;
-        //console.info('FULLPAGE');
+        r.dom(); //compile directives
+        
+
+        var waitForProperties=(cb,props)=>{
+            var i =  setInterval(function(){
+                var rta = true;
+                props.forEach((v)=>{
+                    if(_.isUndefined(s[v])){
+                        rta = false;
+                    }
+                }) ;
+                if(rta){
+                    clearInterval(i);
+                    cb();
+                }
+            },200);
+        };
+
         db.localData().then(function(data) {
             Object.assign(s, data);
-            loadDefaults();
+            
             updateChecksVisibilityOnDemand();
+
+            waitForProperties(loadDefaults,['notify']);
+            
         });
+
+
+        var diagDescription = (n) => {
+            var rta = n;
+            s.diags.forEach((diag) => {
+                if ((n && diag.name == n)) {
+                    rta = diag.label;
+                }
+            });
+            if (n === 'cpd') rta = 'constructionPermissionDate';
+            return rta;
+        }
 
         var param = (n, validate) => {
             var val = (getParameterByName(n) || '').toString();
@@ -28,17 +60,23 @@ app.controller('fullpage', ['server',
                     return validate[v]
                 }); //valid vals
                 if (vals.length > 0 && !_.includes(vals, val)) {
-                    console.warn(n + ' has the follow valid values:' + JSON.stringify(vals));
+                    var msg = 'Parameter ' + diagDescription(n) + ' has the follow valid values:' + JSON.stringify(vals);
+                    console.warn(msg);
+                    s.notify(msg, 'warning', 0, true, { duration: 99999 })
                     return undefined;
-                }else{
-                    return val;   
+                } else {
+                    return val;
                 }
             }
         };
-        var paramDate =(n)=>{
+        var paramDate = (n) => {
             var v = (getParameterByName(n) || '').toString()
-            if(isFinite(new Date(v))){
+            if (isFinite(new Date(v))) {
                 return new Date(v);
+            } else {
+                if (getParameterByName(n) !== null) {
+                    s.notify('Parameter ' + n + ' needs to be a valid date', 'warning', 0, true, { duration: 99999 })
+                }
             }
             return undefined;
         }
@@ -47,32 +85,57 @@ app.controller('fullpage', ['server',
             if (_.includes(['1', '0'], v)) {
                 return v === '1';
             } else {
+                if (getParameterByName(n) !== null) {
+                    s.notify('Parameter ' + n + ' needs to be a 1/0', 'warning', 0, true, { duration: 99999 })
+                }
                 return undefined;
             }
         }
 
         s.model = {
-            sell: paramBool('sell'),
-            house: paramBool('house'),
             diags: {}
         };
 
 
-        function updateChecksVisibilityOnDemand(){
-            var toggle = (n,val)=>{
-                s.diags.forEach((diag)=>{
-                    if((n && diag.name==n) || !n){
+        function updateChecksVisibilityOnDemand() {
+            var toggle = (n, val) => {
+                s.diags.forEach((diag) => {
+                    if ((n && diag.name == n) || !n) {
                         diag.show = val;
                     }
                 });
             };
-            s.$watch('model',(v)=>{
-                if(v.gasInstallation==='Non') toggle('gaz',false);
-            });
-            toggle(undefined,true);//all checks visibles.
+            s.$watch('model', (v) => {
+                //if(v.gasInstallation==='Non') toggle('gaz',false);
+
+                if (v.constructionPermissionDate !== 'Before le 01/01/1949') {
+                    toggle('crep', true);
+                } else {
+                    toggle('crep', false);
+                }
+
+                if (_.includes(['Before le 01/01/1949', 'entre 1949 et le 01/07/1997'], v.constructionPermissionDate)) {
+                    toggle('dta', true);
+                } else {
+                    toggle('dta', false);
+                }
+
+                if (v.gasInstallation === 'Oui, Plus de 15 ans') {
+                    toggle('gaz', true);
+                    toggle('electricity', true);
+                } else {
+                    toggle('gaz', false);
+                    toggle('electricity', false);
+                }
+
+            }, true);
+            toggle(undefined, true); //all checks visibles.
         }
+
         function loadDefaults() {
             s.model = Object.assign(s.model, {
+                sell: paramBool('sell'),
+                house: paramBool('house'),
                 squareMeters: param('squareMeters', s.squareMeters) || undefined,
                 apartamentType: param('apartamentType', s.apartamentType) || undefined,
                 constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined,
@@ -81,10 +144,10 @@ app.controller('fullpage', ['server',
                 date: paramDate('date')
             });
 
-            s.diags.forEach((diag)=>{
+            s.diags.forEach((diag) => {
                 var val = paramBool(diag.name);
-                if(!_.isUndefined(val) && !_.isNull(val)){
-                    s.model.diags[diag.name]= val;
+                if (!_.isUndefined(val) && !_.isNull(val)) {
+                    s.model.diags[diag.name] = val;
                 }
             });
         }
@@ -198,6 +261,9 @@ app.controller('fullpage', ['server',
             Object.keys(s.model.diags).forEach(function(mkey) {
                 if (!s.model.diags[mkey]) return;
                 s.diags.forEach(function(dval, dkey) {
+                    if (!dval.show) {
+                        return;
+                    }
                     if (dval.name == mkey) {
                         total += dval.price || 0;
                         return false;

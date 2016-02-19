@@ -155,12 +155,12 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
                 });
             }
 
-            setTimeout(()=>{
-                if (server.URL().indexOf('localhost')!==-1) {
+            setTimeout(() => {
+                if (server.URL().indexOf('localhost') !== -1) {
                     s.show = true;
                     r.dom();
                 }
-            },5000);
+            }, 5000);
             //console.log('directive.debug.linked');
         }
     };
@@ -219,7 +219,9 @@ app.directive('notify', function($rootScope, $timeout) {
             type: "@type",
             cls: "@cls",
             scroll: "=scroll",
-            opt: "=opt"
+            opt: "=opt",
+            evts: "=evts",
+            settings: "=settings"
         },
         restrict: 'AE',
         replace: true,
@@ -227,6 +229,21 @@ app.directive('notify', function($rootScope, $timeout) {
         link: function(scope, elem, attrs) {
             var r = $rootScope;
             var s = scope;
+
+            if(s.settings){
+                var fixedJSON = s.settings.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": ');
+                s.settings = JSON.parse(fixedJSON);
+            }
+
+            console.info('NOTIFY', s.settings);
+            var fireEvent = (n) => {
+                if (s.evts) {
+                    s.evts[n] = s.evts[n] || [];
+                    s.evts[n].forEach((cb) => {
+                        cb();
+                    })
+                }
+            };
             $timeout(function() {
                 scope.$apply(function() {
                     elem.find('.alert').addClass(scope.type || 'alert-danger');
@@ -236,10 +253,12 @@ app.directive('notify', function($rootScope, $timeout) {
                 });
             });
             scope.dismiss = () => {
+                if (s.settings && s.settings.clickDismissable === false) return;
                 if (s.dismissed) return;
                 s.dismissed = true;
                 elem.find('.alert').alert('close');
                 elem.remove()
+                fireEvent('close');
                 if (scope.opt && scope.opt.onClose) {
                     scope.opt.onClose();
                 }
@@ -266,12 +285,22 @@ app.directive('myAlert', function($rootScope, $timeout) {
             type: "@type",
             cls: "@cls",
             scroll: "=scroll",
-            opt: "=opt"
+            opt: "=opt",
+            evts: "=evts"
         },
         restrict: 'AE',
         replace: true,
         templateUrl: './views/directives/directive.alert.html',
         link: function(scope, elem, attrs) {
+            var s = scope;
+            var fireEvent = (n) => {
+                if (s.evts) {
+                    s.evts[n] = s.evts[n] || [];
+                    s.evts[n].forEach((cb) => {
+                        cb();
+                    })
+                }
+            };
             $timeout(function() {
                 scope.$apply(function() {
                     elem.addClass(scope.type || 'alert-danger');
@@ -281,7 +310,9 @@ app.directive('myAlert', function($rootScope, $timeout) {
                 });
             });
             scope.dismiss = () => {
+                //
                 elem.alert('close');
+                fireEvent('close');
                 if (scope.opt && scope.opt.onClose) {
                     scope.opt.onClose();
                 }
@@ -307,10 +338,13 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
         replace: true,
         scope: {
             add: '=add',
-            directive: '@directive' //custom directive to be created
+            directive: '@directive', //custom directive to be created
+            stacked: '@stacked',
+            settings: '@settings'
         },
         template: '<output></output>',
         link: function(s, elem, attrs) {
+            s.stacked = s.stacked === 'true';
             s.decodeMessage = function(msg) {
                 if (typeof msg == 'string') {
                     return msg;
@@ -318,24 +352,60 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                     return JSON.stringify(msg);
                 }
             };
-            //console.info('directive:my-alerts:log-add:', s.add);
+            s._stacked = [];
+            s.evts = {
+                'close': [onClose]
+            };
+            var fireEvent = (n) => {
+                if (s.evts) {
+                    s.evts[n] = s.evts[n] || [];
+                    s.evts[n].forEach((cb) => {
+                        cb();
+                    })
+                }
+            };
+
+            function onClose() {
+                if (s.stacked) {
+                    s.el = null;
+                    if (s._stacked.length === 0) return;
+                    var p = s._stacked[0];
+                    s._stacked = s._stacked.slice(1);
+                    s.add(p.message, p.type, p.timeout, p.scroll, p.opt);
+                }
+            }
+
             s.add = function(message, type, timeout, scroll, opt) {
                 var msg = s.decodeMessage(message);
-                if (s.el) {
-                    s.el.alert('close');
+                if (s.stacked) {
+                    if (s.el) {
+                        return s._stacked.push({
+                            message: message,
+                            type: type,
+                            timeout: timeout,
+                            scroll: scroll,
+                            opt: opt
+                        });
+                    }
+                } else {
+                    if (s.el) {
+                        s.el.alert('close');
+                    }
                 }
+
                 var directive = s.directive || 'my-alert';
                 s.opt = opt;
-                var el = $compile("<" + directive + " opt='opt' scroll='" + scroll + "' message='" + msg + "' type='alert-" + (type || 'danger') + "'/>")(s);
+                var el = $compile("<" + directive + " settings='settings' evts='evts' opt='opt' scroll='" + scroll + "' message='" + msg + "' type='alert-" + (type || 'danger') + "'/>")(s);
                 s.el = el;
                 elem.html('').append(el);
-
                 if (timeout) {
                     r.dom(function() {
                         elem.html('');
+                        fireEvent('close');
                     }, timeout);
                 }
             };
+            window.ss = s;
             //console.log('directive:my-alerts:linked');
         }
     };

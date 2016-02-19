@@ -24,7 +24,7 @@
         "T10": "T10"
     },
     "constructionPermissionDate": {
-        "avant le 01/01/1949": "avant le 01/01/1949",
+        "Before le 01/01/1949": "Before le 01/01/1949",
         "entre 1949 et le 01/07/1997": "entre 1949 et le 01/07/1997",
         "après le 01/07/1997": "après le 01/07/1997"
     },
