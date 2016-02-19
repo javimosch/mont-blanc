@@ -7,26 +7,38 @@
             <form>
                 <div class="form-group">
                     <label>Email address</label>
-                    <input type="email" class="form-control" ng-model="item.email" placeholder="Email">
+                    <input 
+disabled
+                    type="email" class="form-control" ng-model="item.email" placeholder="Email">
                 </div>
                 <div class="form-group">
                     <label for="exampleInputPassword1">Password</label>
-                    <input type="password" class="form-control" ng-model="item.password" placeholder="Password">
+                    <input 
+ng-disabled="state.working()"
+                    type="password" class="form-control" ng-model="item.password" placeholder="Password">
                 </div>
                 <div class="form-group">
                     <label>FirstName</label>
-                    <input type="text" class="form-control" ng-model="item.firstName" placeholder="FirstName">
+                    <input 
+ng-disabled="state.working()"
+                    type="text" class="form-control" ng-model="item.firstName" placeholder="FirstName">
                 </div>
                 <div class="form-group">
                     <label>LastName</label>
-                    <input type="text" class="form-control" ng-model="item.lastName" placeholder="LastName">
+                    <input 
+ng-disabled="state.working()"
+                    type="text" class="form-control" ng-model="item.lastName" placeholder="LastName">
                 </div>
                 <div class="form-group">
                     <label>Phone</label>
-                    <input type="text" class="form-control" ng-model="item.tel" placeholder="Phone">
+                    <input 
+ng-disabled="state.working()"
+                    type="text" class="form-control" ng-model="item.tel" placeholder="Phone">
                 </div>
                 <div class="form-group">
-                    <input data-address model="item" field="address" change="addressChange" class="fullwidth" type="address" placeholder="address line" >
+                    <input 
+ng-disabled="state.working()"
+                    data-address model="item" field="address" change="addressChange" class="fullwidth" type="address" placeholder="address line" >
                 </div>
                 <!--
                 <div class="form-group">
@@ -35,23 +47,39 @@
                 </div>-->
                 <div class="form-group">
                     <label>Postcode</label>
-                    <input type="text" class="form-control" ng-model="item.postCode" placeholder="PostCode">
+                    <input 
+ng-disabled="state.working()"
+                    type="text" class="form-control" ng-model="item.postCode" placeholder="PostCode">
                 </div>
                 <div class="form-group">
                     <label>Department</label>
-                    <input type="text" class="form-control" ng-model="item.department" placeholder="Department">
+                    <input 
+ng-disabled="state.working()"
+                    type="text" class="form-control" ng-model="item.department" placeholder="Department">
                 </div>
                 <div class="form-group">
                     <label>Region</label>
-                    <input type="text" class="form-control" ng-model="item.region" placeholder="Region">
+                    <input 
+ng-disabled="state.working()"
+                    type="text" class="form-control" ng-model="item.region" placeholder="Region">
                 </div>
                 <div class="form-group">
                     <label>City</label>
-                    <input type="text" class="form-control" ng-model="item.city" placeholder="City">
+                    <input 
+ng-disabled="state.working()"
+                    type="text" class="form-control" ng-model="item.city" placeholder="City">
                 </div>
                 <div class="form-group">
                     <label>Comission</label>
-                    <input type="text" class="form-control" ng-model="item.comission" placeholder="Comission">
+                    <input 
+ng-disabled="state.working()"
+                    type="text" class="form-control" ng-model="item.comission" placeholder="Comission">
+                </div>
+                <div class="form-group">
+                    <label>Priority</label>
+                    <input
+ng-disabled="state.working()"
+                    type="number" class="form-control" ng-model="item.diagPriority" placeholder="Priority">
                 </div>
                 <div class="form-group">
                     <label>Updated At</label>
@@ -60,9 +88,12 @@
             </form>
         </div>
         <div class="panel-footer">
-            <button ng-disabled="requesting" class="btn btn-default" ng-click="validate()">Save</button>
-            <button ng-disabled="requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>
-            <button ng-disabled="requesting" class="btn btn-default" ng-click="delete()">Delete</button>
+            <button 
+ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="validate()">Save</button>
+            <button 
+ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>
+            <button 
+ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="delete()">Delete</button>
         </div>
     </div>
     <my-alerts add="message"></my-alerts>

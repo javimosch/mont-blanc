@@ -390,11 +390,23 @@ app.controller('adminDiagsEdit', [
             email: '',
             password: '',
             address: '',
-            userType: 'diag'
+            userType: 'diag',
+            diagPriority:undefined
         };
         s.original = _.clone(s.item);
 
 
+        s.$watch('item.diagPriority',(v)=>{
+            if(!_.isUndefined(v)&&!_.isNull(v) && isFinite(v)){
+                if(v===s.original.diagPriority) return;
+                db.ctrl('User','get',{userType:'diag',diagPriority:v,__select:"email"}).then((data)=>{
+                    if(data.result!==null){
+                        s.item.diagPriority = s.original.diagPriority;
+                        r.message('Priority '+v+' is alredy assigned to '+data.result.email,'warning',5000,true);
+                    }
+                });
+            }
+        });
 
         s.$watch('item.address', (v) => {
             console.info('ADDRESS:CHANGE', v);
@@ -508,6 +520,7 @@ app.controller('adminDiagsEdit', [
             }).then(function(res) {
                 s.requesting = false;
                 console.info('adminDiagsEdit:read:success', res.data);
+                s.original = _.clone(res.data.result);
                 s.item = res.data.result;
                 if (!res.data.ok) {
                     s.message('not found, maybe it was deleted!', 'warning', 5000);

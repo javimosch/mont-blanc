@@ -398,7 +398,7 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                 var el = $compile("<" + directive + " settings='settings' evts='evts' opt='opt' scroll='" + scroll + "' message='" + msg + "' type='alert-" + (type || 'danger') + "'/>")(s);
                 s.el = el;
                 elem.html('').append(el);
-                if (timeout) {
+                if (timeout && directive === 'my-alert') {
                     r.dom(function() {
                         elem.html('');
                         fireEvent('close');
