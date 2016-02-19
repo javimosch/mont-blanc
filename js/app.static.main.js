@@ -13,31 +13,49 @@ app.controller('fullpage', ['server',
         window.r = r;
         window.s = s;
         r.dom(); //compile directives
-        
 
-        var waitForProperties=(cb,props)=>{
-            var i =  setInterval(function(){
+        s.datepicker = {
+            minDate: moment().add(1, 'day'),
+            maxDate: moment().add(60, 'day'),
+            initDate: new Date()
+        };
+        s.model = {
+            date: undefined,
+            diags: {}
+        };
+
+
+
+        var waitForProperties = (cbArray, props) => {
+            var i = setInterval(function() {
                 var rta = true;
-                props.forEach((v)=>{
-                    if(_.isUndefined(s[v])){
+                props.forEach((v) => {
+                    if (_.isUndefined(s[v])) {
                         rta = false;
                     }
-                }) ;
-                if(rta){
+                });
+                if (rta) {
                     clearInterval(i);
-                    cb();
+                    cbArray.forEach((cb) => {
+                        cb();
+                    });
                 }
-            },200);
+            }, 200);
         };
 
         db.localData().then(function(data) {
             Object.assign(s, data);
-            
             updateChecksVisibilityOnDemand();
-
-            waitForProperties(loadDefaults,['notify']);
-            
+            waitForProperties([loadDefaults, scrollToAnchor, r.dom], ['notify']);
         });
+
+        function scrollToAnchor() {
+            try {
+                $.fn.fullpage.moveTo($.hrefAnchor());
+            } catch (e) {
+
+            }
+        }
 
 
         var diagDescription = (n) => {
@@ -69,10 +87,22 @@ app.controller('fullpage', ['server',
                 }
             }
         };
-        var paramDate = (n) => {
+        var paramDate = s.paramDate =  (n) => {
             var v = (getParameterByName(n) || '').toString()
-            if (isFinite(new Date(v))) {
-                return new Date(v);
+            var d = new Date(v);
+            if (isFinite(d)) {
+                var fail = false;
+                if (moment(d).isBefore(s.datepicker.minDate, 'day')) {
+                    fail = true;
+                }
+                if (moment(d).isAfter(s.datepicker.maxDate, 'day')) {
+                    fail = true;
+                }
+                if (fail) {
+                    s.notify('Parameter ' + n + ' needs to be a valid date between ' + s.datepicker.minDate.format("DD/MM/YY") + ' and ' + s.datepicker.maxDate.format('DD/MM/YY'), 'warning', 0, true, { duration: 99999 })
+                    return undefined;
+                }
+                return d;
             } else {
                 if (getParameterByName(n) !== null) {
                     s.notify('Parameter ' + n + ' needs to be a valid date', 'warning', 0, true, { duration: 99999 })
@@ -92,9 +122,7 @@ app.controller('fullpage', ['server',
             }
         }
 
-        s.model = {
-            diags: {}
-        };
+
 
 
         function updateChecksVisibilityOnDemand() {
@@ -105,6 +133,9 @@ app.controller('fullpage', ['server',
                     }
                 });
             };
+            s.diags.forEach(function(val, key) {
+                s.model.diags[val.name] = (val.mandatory) ? true : false;
+            });
             s.$watch('model', (v) => {
                 //if(v.gasInstallation==='Non') toggle('gaz',false);
 
@@ -153,6 +184,9 @@ app.controller('fullpage', ['server',
         }
 
 
+
+
+
         //----------------------------------------------------------
         s.$watch('model.date', function(date) {
             db.getAvailableRanges(date).then(function(data) {
@@ -172,7 +206,6 @@ app.controller('fullpage', ['server',
             });
         });
         s.down = function() {
-            console.info('FP:DOWN');
             $.fn.fullpage.moveSectionDown();
         };
         s.up = function() {
@@ -192,23 +225,7 @@ app.controller('fullpage', ['server',
 
 
         //----------------------------------------------------------
-        /*
-        //DEFAULTS
-        s.model = Object.assign(s.model, {
-            sell: true,
-            house: true,
-            squareMeters: "-40m2",
-            constructionPermissionDate: "avant le 01/01/1949",
-            address: '15 Boulevard Voltaire, París, Francia',
-            gasInstallation: "Oui, Moins de 15 ans",
-            date: new Date()
-        });
-*/
-        //-------
-        s.diags = DIAGS;
-        s.diags.forEach(function(val, key) {
-            s.model.diags[val.name] = (val.mandatory) ? true : false;
-        });
+
 
 
         function showModal(message, okCallback) {
@@ -352,68 +369,3 @@ app.directive('modal', function($rootScope, $timeout, $compile) {
         }
     };
 });
-
-
-
-var DIAGS = [{
-    label: "DPE - Diagnostic Performance Energétique",
-    name: 'dpe',
-    mandatory: true,
-    comments: 'Mandatory',
-    time: 20,
-    price: 15
-}, {
-    label: "Diagnostic amiante avant vente",
-    name: 'dta',
-    comments: 'Before 01/07/1997',
-    time: 30,
-    price: 25
-}, {
-    label: "Diagnostic Plomb",
-    name: 'crep',
-    comments: 'Before 01/01/1949',
-    time: 60,
-    price: 40
-}, {
-    label: 'Diagnostic loi Carrez',
-    name: 'loiCarrez',
-    mandatory: true,
-    comments: 'Mandatory',
-    time: 30,
-    price: 25
-}, {
-    label: 'Diagnostic ERNT - ERNMT',
-    name: 'ernt',
-    mandatory: true,
-    comments: 'Mandatory',
-    time: 15,
-    price: 30
-}, {
-    label: 'Diagnostic Termites',
-    name: 'termites',
-    mandatory: false,
-    comments: 'depends on postcode 2 first figures : http://www.developpement-durable.gouv.fr/IMG/pdf/Dpts_termites_2015.pdf',
-    time: 25,
-    price: 75
-}, {
-    label: 'Diagnostic Gaz',
-    name: 'gaz',
-    mandatory: false,
-    comments: 'IF Oui, plus de 15 ans',
-    time: 30,
-    price: 50
-}, {
-    label: 'Diagnostic Electricité',
-    name: 'electricity',
-    mandatory: false,
-    comments: 'IF Oui, plus de 15 ans',
-    time: 10,
-    price: 30
-}, {
-    label: 'Diagnostic Etat Parasitaire',
-    name: 'parasitaire',
-    mandatory: false,
-    comments: 'Always optional',
-    time: 45,
-    price: 60
-}];

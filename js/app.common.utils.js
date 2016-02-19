@@ -1,17 +1,41 @@
-(function(exports){
-  var BASE64URICHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'.split(''); 
+$(function() {
 
-  exports.newId = function(len, radix) {
-    var chars = BASE64URICHARS, newId = [], i=0;
-    radix = radix || chars.length;
-    len = len || 22;
+    $.hrefAnchor = () => {
+        var url = window.location.href;
+        var idx = url.indexOf("#");
+        var hash = idx != -1 ? url.substring(idx + 1) : "";
+        return hash.replace('/','');
+    };
+    $.scrollToAnchor = () => {
+        var elem = $('#'+$.hrefAnchor());
+        console.info(elem);
+        $('html, body').animate({
+            scrollTop: elem.offset().top
+        }, 500);
+    };
 
-    for (i = 0; i < len; i++) newId[i] = chars[0 | Math.random()*radix];
+    
+    
 
-    return newId.join('');
-  };
+});
 
-})(typeof exports === 'undefined'? this: exports);;
+
+(function(exports) {
+    var BASE64URICHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'.split('');
+
+    exports.newId = function(len, radix) {
+        var chars = BASE64URICHARS,
+            newId = [],
+            i = 0;
+        radix = radix || chars.length;
+        len = len || 22;
+
+        for (i = 0; i < len; i++) newId[i] = chars[0 | Math.random() * radix];
+
+        return newId.join('');
+    };
+
+})(typeof exports === 'undefined' ? this : exports);;
 
 function ifThenMessage(comparisons, messagesCallback, noMessagesCallback) {
     var messages = [];
@@ -137,7 +161,7 @@ function MyPromise(cb) {
             else _scope.errorCb = errorCb;
             return rta;
         },
-        arr:function(){
+        arr: function() {
             _scope.res = _scope.res || [];
             return _scope.res;
         }

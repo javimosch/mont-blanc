@@ -1,9 +1,9 @@
-<div class="panel center-block question panel-info">
+<div class="panel center-block question panel-info" id="calendar-datepicker">
     <div class="panel-heading">
         <h4 class="panel-title">Choice a day</h4>
     </div>
     <div class="panel-body padding-0">
-        <uib-datepicker ng-model="model.date" show-weeks="true" class="well well-sm" initDate="new Date()"></uib-datepicker>
+        <uib-datepicker ng-model="model.date" min-date="datepicker.minDate" max-date="datepicker.maxDate" show-weeks="true" show-button-bar="false" class="well well-sm" init-date="datepicker.initDate"></uib-datepicker>
     </div>
     <div class="panel-footer">
         <button class="btn btn-info" ng-click="down()">Pick an available time</button>
