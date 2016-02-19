@@ -7,27 +7,19 @@
             <form>
                 <div class="form-group">
                     <label>Client</label>
-                    <input
-ng-disabled="state.working() || item._id"
-                     type="text" class="form-control" ng-model="item._client" placeholder="Client" uib-typeahead="client as client.email for client in getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients" typeahead-no-results="noResults">
+                    <input ng-disabled="state.working() || item._id" type="text" class="form-control" ng-model="item._client" placeholder="Client" uib-typeahead="client as client.email for client in getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients" typeahead-no-results="noResults">
                 </div>
                 <div class="form-group">
                     <label>Diag</label>
-                    <input 
-ng-disabled="state.working() || item._id"
-                    type="text" class="form-control" ng-model="item._diag" placeholder="Diag" uib-typeahead="diag as diag.email for diag in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingDiags" typeahead-no-results="noResults">
+                    <input ng-disabled="state.working() || item._id" type="text" class="form-control" ng-model="item._diag" placeholder="Diag" uib-typeahead="diag as diag.email for diag in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingDiags" typeahead-no-results="noResults">
                 </div>
                 <div class="from-group v-spacing-1">
                     <label for="address">Diag Address</label>
-                    <input 
-ng-disabled="state.working() || is(['client','diag'])"
-                    data-address model="item" field="address" name="address" type="text" placeholder="Diag Address" class="fullwidth">
+                    <input ng-disabled="state.working() || is(['client','diag'])" data-address model="item" field="address" name="address" type="text" placeholder="Diag Address" class="fullwidth">
                 </div>
                 <div class="form-group">
                     <label>Observations</label>
-                    <input 
-ng-disabled="state.working()"
-                    type="text" class="form-control" ng-model="item.obs" placeholder="Observations">
+                    <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.obs" placeholder="Observations">
                 </div>
                 <div class="form-group">
                     <label>Inspections</label>
@@ -46,39 +38,32 @@ ng-disabled="state.working() || is(['client','diag'])"
                     <label>Start Date</label>
                     <input 
 ng-disabled="state.working() || is(['client','diag'])"
-                    type="text" class="form-control" datetime-picker="dd MMM yyyy HH:mm" ng-model="item.diagStart" is-open="start.isOpen" />
+                     type="text" class="form-control focus-1" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.diagStart" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
                     <span class="input-group-btn">
-                        <button 
+<button 
 ng-disabled="state.working() || is(['client','diag'])"
-                        type="button" class="btn btn-default" ng-click="start.openCalendar($event, prop)">
-                            <i class="fa fa-calendar"></i>
-                        </button>
-                    </span>
+type="button" class="btn btn-default" ng-click="start.opened = !start.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+</span>
                 </div>
                 <div class="form-group relative">
                     <label>End Date</label>
                     <input
 ng-disabled="state.working() || is(['client','diag'])"
-                     type="text" class="form-control" datetime-picker="dd MMM yyyy HH:mm" ng-model="item.diagEnd" is-open="end.isOpen" />
+                     type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy HH:mm " ng-model="item.diagEnd" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="end.opened=false" is-open="end.opened" date-disabled="false" close-text="Close" />
                     <span class="input-group-btn">
-                        <button 
+<button 
 ng-disabled="state.working() || is(['client','diag'])"
-                        type="button" class="btn btn-default" ng-click="end.openCalendar($event, prop)">
-                            <i class="fa fa-calendar"></i>
-                        </button>
-                    </span>
+type="button" class="btn btn-default" ng-click="end.opened = !end.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+</span>
+                   
                 </div>
                 <div class="form-group">
                     <label>Price</label>
-                    <input 
-ng-disabled="state.working() || is(['client','diag'])"
-                     type="number" class="form-control" placeholder="Price" ng-value="totalPrice()">
+                    <input  ng-disabled="state.working() || is(['client','diag'])" type="number" class="form-control" placeholder="Price" ng-value="totalPrice()">
                 </div>
                 <div class="form-group">
                     <label>Comission for fast diag</label>
-                    <input 
-ng-disabled="state.working() || is(['client','diag'])"
-                    type="number" class="form-control" ng-model="item.fastDiagComm" placeholder="Comission">
+                    <input ng-disabled="state.working() || is(['client','diag'])" type="number" class="form-control" ng-model="item.fastDiagComm" placeholder="Comission">
                 </div>
                 <div class="form-group">
                     <label>Pdf</label>
@@ -104,14 +89,11 @@ ng-disabled="state.working() || is(['client','diag'])"
             </form>
         </div>
         <div class="panel-footer">
-            <button 
-ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="validate()">Save</button>
-            <button 
-ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>
-            <button 
-ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="delete()">Delete</button>
+            <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="validate()">Save</button>
+            <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>
+            <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="delete()">Delete</button>
         </div>
     </div>
-<!--    <my-alerts add="message"></my-alerts> -->
+    <!--    <my-alerts add="message"></my-alerts> -->
     <modal-confirm open="confirm"></modal-confirm>
 </div>

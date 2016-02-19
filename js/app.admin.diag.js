@@ -41,6 +41,7 @@ app.directive('timeRangeExceptions', function(
                         title: 'Edit Exception',
                         action: 'edit',
                         item: item,
+                        type: 'work-exception',
                         callback: (timeRange) => {
                             ws.ctrl('TimeRange', 'createUpdate', timeRange).then((result) => {
                                 update();

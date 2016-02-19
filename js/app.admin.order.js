@@ -2,10 +2,12 @@ var app = angular.module('app.admin.order', ['app.common.service']);
 
 app.controller('adminOrders', [
 
-    'server', '$scope', '$rootScope',
-    function(db, s, r) {
+    'server', '$scope', '$rootScope','focus',
+    function(db, s, r,focus) {
         console.info('app.admin.order:adminOrders');
         //
+        window.s = s;
+        s.focus = focus;
         r.toggleNavbar(true);
         r.secureSection(s);
         s.selectedItems = [];
@@ -42,8 +44,10 @@ app.controller('adminOrders', [
 
 app.controller('adminOrdersEdit', [
 
-    'server', '$scope', '$rootScope', '$routeParams',
-    function(db, s, r, params) {
+    'server', '$scope', '$rootScope', '$routeParams','focus',
+    function(db, s, r, params,focus) {
+        s.focus = focus;
+        window.s = s;
         r.toggleNavbar(true);
         r.secureSection(s);
         r.dom();
@@ -60,13 +64,19 @@ app.controller('adminOrdersEdit', [
             email: '',
             password: '',
             status: 'ordered',
-            diagStart: moment().add('day', 1).hour(9).minutes(0),
-            diagEnd: moment().add('day', 1).hour(10).minutes(30),
+            diagStart: moment().add(1, 'day').hour(9).minutes(0).toDate(),
+            diagEnd: moment().add(1, 'day').hour(10).minutes(30).toDate(),
             fastDiagComm: 0,
             price: 0,
             diags: {}
         };
         s.original = _.clone(s.item);
+        //
+        s.datepicker = {
+            minDate: moment().toDate(), //.add(1, 'day') //today!
+            maxDate: moment().add(60, 'day').toDate(),
+            initDate: new Date()
+        };
         //
         s.noResults = "No results found";
         s.LoadingClients = "Loading Clients";
@@ -142,7 +152,7 @@ app.controller('adminOrdersEdit', [
         s.status = createSelect({
             model: 'item.status',
             label: '(Select an status)',
-            items: ['Ordered', 'Prepaid', 'Delivery', 'Complete'],
+            items: ['Ordered', 'Prepaid', 'Delivered', 'Completed'],
             change: (selected) => {
                 s.item.status = selected.toString().toLowerCase();
             }
@@ -179,6 +189,11 @@ app.controller('adminOrdersEdit', [
                 [_.isNull(s.item.diagEnd) || _.isUndefined(s.item.diagEnd), '==', 'true', 'Start date required'],
                 [moment(s.item.diagStart || null).isValid(), '==', false, "Start date invalid"],
                 [moment(s.item.diagEnd || null).isValid(), '==', false, "End date invalid"],
+                [moment(s.item.diagEnd).isValid() && moment(s.item.diagEnd).isBefore(moment(s.item.diagStart),'hour'),'==',true,'End date cannot be greater than Start date'],
+
+[moment(s.item.diagEnd).isValid() && moment(s.item.diagStart).isValid() 
+&& !moment(s.item.diagEnd).isSame(moment(s.item.diagStart),'day'),'==',true,'Start / End dates need to be in the same day.'],
+
                 //[s.item.fastDiagComm.toString(),'==','','Comission required'],
                 [isNaN(s.item.fastDiagComm), '==', true, 'Comission need to be a number'],
                 //[s.item.price.toString(),'==','','Price required'],
@@ -207,8 +222,8 @@ app.controller('adminOrdersEdit', [
             s.message('error, try later.', 'danger', 0, true);
         }
         s.delete = function() {
-            var time = (d)=>moment(d).format('HH:mm');
-            var descr=  s.item.address + ' (' + time(s.item.diagStart) + ' - ' + time(s.item.diagEnd) + ')';
+            var time = (d) => moment(d).format('HH:mm');
+            var descr = s.item.address + ' (' + time(s.item.diagStart) + ' - ' + time(s.item.diagEnd) + ')';
             s.confirm('Delete Order ' + descr + ' ?', function() {
                 s.message('deleting . . .', 'info');
                 s.requesting = true;
@@ -247,6 +262,10 @@ app.controller('adminOrdersEdit', [
             }).then(function(data) {
                 s.requesting = false;
                 if (data.ok && data.result !== null) {
+                    data.result = Object.assign(data.result,{
+                        diagStart:new Date(data.result.diagStart),
+                        diagEnd:new Date(data.result.diagEnd)
+                    });
                     s.item = data.result;
                     console.info('READ', s.item);
                     s.message('loaded', 'success', 2000);

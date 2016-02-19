@@ -90,9 +90,9 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
             });
             return msg;
         }
-        r.state={
-            working:()=> fn.hasPending(),
-            data:_logs
+        r.state = {
+            working: () => fn.hasPending(),
+            data: _logs
         };
         r.logger = fn;
         return fn;
@@ -166,7 +166,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
 
 
 
-    var data = [{
+    var _dataAvailableRangeDummy = [{
         price: 60,
         diagStart: new Date().getTime() - (1000 * 60) * 30,
         diagEnd: new Date().getTime() + (1000 * 60) * 30,
@@ -227,15 +227,114 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
         }
     }
 
-    function getAvailableRanges() {
-        return {
-            then: function(callback) {
-                callback(data);
-            }
-        };
+    function diagsPriority(cb) {
+        ctrl('User', 'getAll', {
+            userType: 'diag',
+            __select: 'diagPriority'
+        }).then((data) => {
+            cb(data.result.map((v) => ({_id:v._id,priority:v.diagPriority})));
+        })
     }
-    return {
-        URL: ()=>URL,
+
+    function timeRangesDiagSayHeCantWorktype(cb) {
+        ctrl('TimeRange', 'getAll', {
+            type: 'work-exception',
+            __select: '_user start end repeat'
+        }).then((data) => {
+            cb(data.result.map((v) => (v)));
+        })
+    }
+
+    function timeRangesDiagIsWorking(cb) {
+        ctrl('Order', 'getAll', {
+            __select: 'diagStart diagEnd _diag',
+            __rules: {
+                status: { $ne: 'complete' }
+            }
+        }).then((data) => {
+            cb(data.result.map((v) => ({_user:v._diag, start: v.diagStart, end: v.diagEnd })));
+        })
+    }
+
+    function getAvailableRanges(orderDay) {
+        function _data(cb) {
+            timeRangesDiagIsWorking((working) => {
+                timeRangesDiagSayHeCantWorktype((exceptions) => {
+                    diagsPriority((diags) => {
+                        cb(working, exceptions, diags);
+                    });
+                });
+            });
+        }
+        function calc(orderDay,working, exceptions, diags){
+            //orderDay: moment() // the time that the order last.
+            //working: [{_user,start,end}] // the times that a diag is occupied.
+            //exceptions: [{_user,start,end,repeat}] // the times that the diag can't work.
+            //diags: [{_user, priority}] //a list of diags.
+            //
+            //RULES
+            //-book the whole day of the diag with Priority = 1 then 2 then 3 
+            //-Working day is from 8h to 19h (8am to 7pm)
+            //-diagnositquer do not work on sunday
+            //We propose Two rendez vous in the morning and two in the afternoon 
+            //9h and 10h are proposed by default when calendat is empty for the morning
+            //14h and 15h are proposed by default for the afternoon is empty
+            //Last beginning time for morning : 11h30
+            //Last diag of the day has to finish at 19h  7pm max
+            //A diag can start at 00min or 30 ex: 9H30 10H 10h30
+            //The diagnostiquer need 30 minutes. Its minimum time between to mission.
+            //one hour minimum between each diag beginning
+            //console.info('WORKING',working);
+            //console.info('EXCEPTIONS',exceptions);
+            //console.info('DIAGS',diags)
+
+            //_.orderBy([{p:1},{p:5},{p:2}],(v)=>v.p) //rta: [{p:1},{p:2},{p:5}]
+            var diags = _.orderBy(diags,(v)=>v.priority);
+            diags.forEach((diag)=>{
+                //diag: A diag with the lowerst priority.
+                if(diagMorningEmpty(orderDay, diag, working)){
+                    console.warn(diag._id+'-MORNING-EMPTY');
+                }else{
+                    console.warn(diag._id+'-MORNING-OCCUPIED');
+                }
+                return false;//cut
+            });
+            return _dataAvailableRangeDummy;
+        }
+        return MyPromise(function(resolve, error) {
+            _data((working, exceptions, diags)=>{
+                resolve(calc(moment(orderDay),working, exceptions, diags));
+            });
+        });
+    }
+
+    function diagMorningEmpty(orderDay,diag,workRanges){
+        var rta = true;
+        var isBeforeMidDay = (d1)=>moment(d1).isBefore(moment(d1).hour(12),'hour');
+        var isSameDay = (d1,d2)=>moment(d1).isSame(moment(d2),'day');
+        workRanges.forEach((workRange)=>{
+            if(workRange._user!==diag._id) return;
+            if(isSameDay(workRange.start,orderDay)){
+                if(isBeforeMidDay(workRange.start)){
+                    rta = false;
+                }
+            }
+        });
+        return rta;
+    }
+
+    function ctrl(ctrl, action, data) {
+        return MyPromise(function(resolve, error) {
+
+            post('ctrl/' + ctrl + '/' + action, data, function(res) {
+                //console.info('CTRL: ',res.data);
+                return resolve(res.data);
+            }, error);
+
+        });
+    }
+    var ws = {
+        URL: () => URL,
         getAvailableRanges: getAvailableRanges,
         login: login,
         save: save,
@@ -244,18 +343,9 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
         localData: getLocalData,
         custom: custom,
         http: function(ctrl, action, data) {
-            return http.post(URL + '/' + 'ctrl/' + ctrl + '/' + action,data);
+            return http.post(URL + '/' + 'ctrl/' + ctrl + '/' + action, data);
         },
-        ctrl: function(ctrl, action, data) {
-            return MyPromise(function(resolve, error) {
-
-                post('ctrl/' + ctrl + '/' + action, data, function(res) {
-                    //console.info('CTRL: ',res.data);
-                    return resolve(res.data);
-                }, error);
-
-            });
-        },
+        ctrl: ctrl,
         post: function(url, data) {
             return MyPromise(function(resolve, error) {
                 post(url, data, function(res) {
@@ -264,4 +354,6 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
             });
         }
     };
+    r.ws = ws;
+    return ws;
 }]);

@@ -1,5 +1,23 @@
 var app = angular.module('app.common.directives', []);
 
+app.directive('focusOn', function() {
+   return function(scope, elem, attr) {
+      scope.$on('focusOn', function(e, name) {
+        if(name === attr.focusOn) {
+          elem[0].focus();
+        }
+      });
+   };
+});
+
+app.factory('focus', function ($rootScope, $timeout) {
+  return function(name) {
+    $timeout(function (){
+      $rootScope.$broadcast('focusOn', name);
+    });
+  }
+});
+
 app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
     return {
         restrict: 'AE',
@@ -235,7 +253,7 @@ app.directive('notify', function($rootScope, $timeout) {
                 s.settings = JSON.parse(fixedJSON);
             }
 
-            console.info('NOTIFY', s.settings);
+//            console.info('NOTIFY', s.settings);
             var fireEvent = (n) => {
                 if (s.evts) {
                     s.evts[n] = s.evts[n] || [];

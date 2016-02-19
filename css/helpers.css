@@ -1,5 +1,9 @@
 
 
+.focus-1:focus{
+    outline: 5px solid blue;
+}
+
 
 .always-on-top{
     z-index: 9999;

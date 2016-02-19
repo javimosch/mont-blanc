@@ -70,7 +70,8 @@ app.controller('fullpage', ['server',
         }
 
         var param = (n, validate) => {
-            var val = (getParameterByName(n) || '').toString();
+            var val = getParameterByName(n);
+            if(!val) return undefined;
             if (!validate) {
                 return val;
             } else {
@@ -189,10 +190,14 @@ app.controller('fullpage', ['server',
 
         //----------------------------------------------------------
         s.$watch('model.date', function(date) {
+
+            if(!isFinite(new Date(date))) return;//invalid
+
             db.getAvailableRanges(date).then(function(data) {
                 //                console.info('availableTimeRanges:', data);
                 s.availableTimeRanges = data;
 
+                /*
                 //fill _diag with a random _diag for now
                 db.custom('user', 'get', {
                     userType: 'diag'
@@ -202,6 +207,7 @@ app.controller('fullpage', ['server',
                     });
                     console.log('FIX: ranges filled with _diag=', res.data.result._id);
                 });
+*/
 
             });
         });
