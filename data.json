@@ -1,5 +1,6 @@
 {
-    "squareMeters": {
+    "basePrice":35,
+    "squareMetersOLD": {
         "-40m2": "-40m2",
         "-40 à 80": "40 à 80",
         "80 à 120": "80 à 120",
@@ -8,6 +9,38 @@
         "200 à 250": "200 à 250",
         "250 à 300": "250 à 300",
         "Plus de 300": "Plus de 300"
+    },
+    "squareMeters": {
+        "-20": "-20",
+        "20-30m2": "20-30m2",
+        "30-50": "30-50",
+        "50-70": "50-70",
+        "70-90": "70-90",
+        "90-110": "90-110",
+        "110-130": "110-130",
+        "130-160": "130-160",
+        "160-200": "160-200",
+        "200-250": "200-250",
+        "250-300": "250-300",
+        "300-400": "300-400",
+        "400-500": "400-500",
+        "500+": "500+"
+    },
+    "squareMetersPrice": {
+        "-20": "0",
+        "20-30m2": "10",
+        "30-50": "15",
+        "50-70": "20",
+        "70-90": "30",
+        "90-110": "45",
+        "110-130": "60",
+        "130-160": "70",
+        "160-200": "85",
+        "200-250": "100",
+        "250-300": "120",
+        "300-400": "140",
+        "400-500": "160",
+        "500+": "200"
     },
     "apartamentType": {
         "1 pièce": "1 pièce",
@@ -33,147 +66,90 @@
         "Oui, Moins de 15 ans": "Oui, Moins de 15 ans",
         "Oui, Plus de 15 ans": "Oui, Plus de 15 ans"
     },
-    "diags": [
+    "diagsNames": [
+        "DPE",
+        "Amiante",
+        "Plomb",
+        "Carrez",
+        "ERNT",
+        "Termites",
+        "Gaz",
+        "Electricite"
+    ],
+    "diags": [{
 
-        {
-
-            "label": "DPE - Diagnostic Performance Energétique",
-
+            "label": "DPE",
+            "label2": "DPE - Diagnostic Performance Energétique",
             "name": "dpe",
-
             "mandatory": true,
-
             "comments": "Mandatory",
-
-            "time": 20,
-
-            "price": 15
-
-        },
-
-        {
-
-            "label": "Diagnostic amiante avant vente",
-
-            "name": "dta",
-
-            "comments": "Before 01/07/1997",
-
-            "time": 30,
-
-            "price": 25
-
-        },
-
-        {
-
-            "label": "Diagnostic Plomb",
-
-            "name": "crep",
-
-            "comments": "Before 01/01/1949",
-
-            "time": 60,
-
-            "price": 40
-
-        },
-
-        {
-
-            "label": "Diagnostic loi Carrez",
-
-            "name": "loiCarrez",
-
-            "mandatory": true,
-
-            "comments": "Mandatory",
-
-            "time": 30,
-
-            "price": 25
-
-        },
-
-        {
-
-            "label": "Diagnostic ERNT - ERNMT",
-
-            "name": "ernt",
-
-            "mandatory": true,
-
-            "comments": "Mandatory",
-
             "time": 15,
-
             "price": 30
-
         },
 
         {
-
-            "label": "Diagnostic Termites",
-
-            "name": "termites",
-
-            "mandatory": false,
-
-            "comments": "depends on postcode 2 first figures : http://www.developpement-durable.gouv.fr/IMG/pdf/Dpts_termites_2015.pdf",
-
-            "time": 25,
-
-            "price": 75
-
-        },
-
-        {
-
-            "label": "Diagnostic Gaz",
-
-            "name": "gaz",
-
-            "mandatory": false,
-
-            "comments": "IF Oui, plus de 15 ans",
-
+            "label": "Amiante",
+            "label2": "Diagnostic amiante avant vente",
+            "name": "dta",
+            "comments": "Before 01/07/1997",
+            "time": 15,
+            "price": 30
+        }, {
+            "label": "Plomb",
+            "label2": "Diagnostic Plomb",
+            "name": "crep",
+            "comments": "Before 01/01/1949",
             "time": 30,
-
             "price": 50
-
-        },
-
-        {
-
-            "label": "Diagnostic Electricité",
-
-            "name": "electricity",
-
-            "mandatory": false,
-
-            "comments": "IF Oui, plus de 15 ans",
-
-            "time": 10,
-
+        }, {
+            "label": "Carrez",
+            "label2": "Diagnostic loi Carrez",
+            "name": "loiCarrez",
+            "mandatory": true,
+            "comments": "Mandatory",
+            "time": 15,
             "price": 30
-
-        },
-
-        {
-
-            "label": "Diagnostic Etat Parasitaire",
-
-            "name": "parasitaire",
-
+        }, {
+            "label": "ERNT",
+            "label2": "Diagnostic ERNT - ERNMT",
+            "name": "ernt",
+            "mandatory": true,
+            "comments": "Mandatory",
+            "time": 15,
+            "price": 10
+        }, {
+            "label": "Termites",
+            "label2": "Diagnostic Termites",
+            "name": "termites",
             "mandatory": false,
-
+            "comments": "depends on postcode 2 first figures : http://www.developpement-durable.gouv.fr/IMG/pdf/Dpts_termites_2015.pdf",
+            "time": 15,
+            "price": 30
+        }, {
+            "label": "Gaz",
+            "label2": "Diagnostic Gaz",
+            "name": "gaz",
+            "mandatory": false,
+            "comments": "IF Oui, plus de 15 ans",
+            "time": 15,
+            "price": 30
+        }, {
+            "label": "Electricite",
+            "label2": "Diagnostic Electricité",
+            "name": "electricity",
+            "mandatory": false,
+            "comments": "IF Oui, plus de 15 ans",
+            "time": 30,
+            "price": 40
+        }, {
+            "label": "Parasitaire",
+            "label2": "Diagnostic Etat Parasitaire",
+            "name": "parasitaire",
+            "mandatory": false,
+            "disabled": true,
             "comments": "Always optional",
-
             "time": 45,
-
-            "price": 60
-
+            "price": 30
         }
-
     ]
 }

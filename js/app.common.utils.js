@@ -4,20 +4,69 @@ $(function() {
         var url = window.location.href;
         var idx = url.indexOf("#");
         var hash = idx != -1 ? url.substring(idx + 1) : "";
-        return hash.replace('/','');
+        return hash.replace('/', '');
     };
     $.scrollToAnchor = () => {
-        var elem = $('#'+$.hrefAnchor());
+        var elem = $('#' + $.hrefAnchor());
         console.info(elem);
         $('html, body').animate({
             scrollTop: elem.offset().top
         }, 500);
     };
 
-    
-    
+
+
 
 });
+
+
+function createDateTimePickerData() {
+    var o = {
+        isOpen: false,
+        openCalendar: function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            o.isOpen = true;
+        }
+    };
+    return o;
+}
+
+function createSelect(opt) { //s:scope r:rootscope
+    var o = {
+        label: opt.label,
+        click: (x) => {
+            o.label = x.label || x;
+            opt.change(x);
+        },
+        items: opt.items
+    };
+    opt.scope.$watch(opt.model, (v) => {
+        if (v !== undefined) {
+            o.label = v.substring(0, 1).toUpperCase() + v.slice(1);
+        } else {
+            o.label = opt.label;
+        }
+    });
+    return o;
+}
+
+var whenProperties = (o, props, cbArray) => {
+    var i = setInterval(function() {
+        var rta = true;
+        props.forEach((v) => {
+            if (_.isUndefined(o[v])) {
+                rta = false;
+            }
+        });
+        if (rta) {
+            clearInterval(i);
+            cbArray.forEach((cb) => {
+                cb();
+            });
+        }
+    }, 200);
+};
 
 
 (function(exports) {

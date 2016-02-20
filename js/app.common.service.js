@@ -51,7 +51,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
                 r.$emit('logger.working');
                 return (res) => {
                     if (!res.data) {
-                        item.err = 'logger expects res.data.';
+                        item.err = 'Server down, try later.';
                         _errors[self.id] = item;
                     } else {
                         if (res.data.ok !== true) {

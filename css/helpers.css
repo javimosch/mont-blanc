@@ -1,4 +1,11 @@
 
+.no-bg{
+    background:none;
+}
+
+.borderless{
+    border: none;
+}
 
 .focus-1:focus{
     outline: 5px solid blue;

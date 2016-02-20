@@ -2,8 +2,8 @@ var app = angular.module('app.admin.order', ['app.common.service']);
 
 app.controller('adminOrders', [
 
-    'server', '$scope', '$rootScope','focus',
-    function(db, s, r,focus) {
+    'server', '$scope', '$rootScope', 'focus',
+    function(db, s, r, focus) {
         console.info('app.admin.order:adminOrders');
         //
         window.s = s;
@@ -44,202 +44,199 @@ app.controller('adminOrders', [
 
 app.controller('adminOrdersEdit', [
 
-    'server', '$scope', '$rootScope', '$routeParams','focus',
-    function(db, s, r, params,focus) {
-        s.focus = focus;
-        window.s = s;
-        r.toggleNavbar(true);
-        r.secureSection(s);
-        r.dom();
-        //
-        db.localData().then(function(data) {
-            Object.assign(s, data);
-        });
-        //
-        s.message = r.message;
-        //
-        s.type = r.session().userType;
-        s.is = (arr) => _.includes(arr, s.type);
-        s.item = {
-            email: '',
-            password: '',
-            status: 'ordered',
-            diagStart: moment().add(1, 'day').hour(9).minutes(0).toDate(),
-            diagEnd: moment().add(1, 'day').hour(10).minutes(30).toDate(),
-            fastDiagComm: 0,
-            price: 0,
-            diags: {}
-        };
-        s.original = _.clone(s.item);
-        //
-        s.datepicker = {
-            minDate: moment().toDate(), //.add(1, 'day') //today!
-            maxDate: moment().add(60, 'day').toDate(),
-            initDate: new Date()
-        };
-        //
-        s.noResults = "No results found";
-        s.LoadingClients = "Loading Clients";
-        s.getClients = function(val) {
-            return db.http('User', 'getAll', {
-                userType: 'client',
-                __regexp: {
-                    email: val
-                }
-            }).then(function(res) {
-                return res.data.result;
-            });
-        };
-        s.getDiags = function(val) {
-            return db.http('User', 'getAll', {
-                userType: 'diag',
-                __regexp: {
-                    email: val
-                }
-            }).then(function(res) {
-                return res.data.result;
-            });
-        };
+    'server', '$scope', '$rootScope', '$routeParams', 'focus',
+    function(db, s, r, params, focus) {
 
-        function dtpData() {
-            var o = {
-                isOpen: false,
-                openCalendar: function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    o.isOpen = true;
-                }
-            };
-            return o;
-        }
-        s.start = dtpData();
-        s.end = dtpData();
-
-        s.totalPrice = function() {
-            var total = 0;
-            Object.keys(s.item.diags).forEach(function(mkey) {
-                if (!s.item.diags[mkey]) return;
-                s.diags.forEach(function(dval, dkey) {
-                    if (dval.name == mkey) {
-                        total += dval.price || 0;
-                        return false;
-                    }
-                });
-            });
-            s.item.price = total;
-            return total;
-        };
-
-        function createSelect(opt) {
-            var o = {
-                label: opt.label,
-                click: (x) => {
-                    opt.change(x);
-                    o.label = x.label || x;
-                    r.dom();
-                },
-                items: opt.items
-            };
-            s.$watch(opt.model, (v) => {
-                if (v !== undefined) {
-                    o.label = v.substring(0, 1).toUpperCase() + v.slice(1);
-                } else {
-                    o.label = opt.label;
-                }
-            });
-            return o;
-        }
-        s.status = createSelect({
-            model: 'item.status',
-            label: '(Select an status)',
-            items: ['Ordered', 'Prepaid', 'Delivered', 'Completed'],
-            change: (selected) => {
-                s.item.status = selected.toString().toLowerCase();
-            }
-        });
-        //
-
-        //
-        if (params && params.id && params.id.toString() !== '-1') {
-            r.dom(read, 1000);
-        } else {
-            reset();
-        }
-        //
-        s.back = () => {
-            if (s.is(['diag', 'client'])) {
-                r.route('dashboard');
+        function init() {
+            r.toggleNavbar(true);
+            r.secureSection(s);
+            r.dom();
+            //
+            setHelpers();
+            setDefaults();
+            setBindings();
+            setActions();
+            whenProperties(s, ['diags'], [setDefaultsDiags]);
+            //
+            if (params && params.id && params.id.toString() !== '-1') {
+                r.dom(read, 0);
             } else {
-                if (r.params && r.params.prevRoute) {
-                    return r.route(r.params.prevRoute);
-                } else {
-                    r.route('orders');
-                }
-
+                reset();
             }
         }
-        s.cancel = function() {
-            s.back();
-        };
-        s.validate = () => {
-            ifThenMessage([
-                [typeof s.item._client, '!=', 'object', "Client required"],
-                [_.isUndefined(s.item.address) || _.isNull(s.item.address) || s.item.address === '', '==', true, 'Address required'],
-                [_.isNull(s.item.diagStart) || _.isUndefined(s.item.diagStart), '==', 'true', 'Start date required'],
-                [_.isNull(s.item.diagEnd) || _.isUndefined(s.item.diagEnd), '==', 'true', 'Start date required'],
-                [moment(s.item.diagStart || null).isValid(), '==', false, "Start date invalid"],
-                [moment(s.item.diagEnd || null).isValid(), '==', false, "End date invalid"],
-                [moment(s.item.diagEnd).isValid() && moment(s.item.diagEnd).isBefore(moment(s.item.diagStart),'hour'),'==',true,'End date cannot be greater than Start date'],
 
-[moment(s.item.diagEnd).isValid() && moment(s.item.diagStart).isValid() 
-&& !moment(s.item.diagEnd).isSame(moment(s.item.diagStart),'day'),'==',true,'Start / End dates need to be in the same day.'],
-
-                //[s.item.fastDiagComm.toString(),'==','','Comission required'],
-                [isNaN(s.item.fastDiagComm), '==', true, 'Comission need to be a number'],
-                //[s.item.price.toString(),'==','','Price required'],
-                [isNaN(s.item.price), '==', true, 'Price need to be a number'],
-                [s.item.status, '==', '', 'Status required']
-            ], (m) => {
-                s.message(m[0], 'warning', 0, true);
-            }, s.save);
-        };
-        s.save = function() {
-            s.message('saving . . .', 'info');
-            s.requesting = true;
-            db.ctrl('Order', 'save', s.item).then(function(data) {
-                s.requesting = false;
-                if (data.ok) {
-                    s.message('saved', 'success');
-                    s.back();
-                } else {
-                    handleError(data);
-                }
-            }).error(handleError);
-        };
-
-        function handleError(err) {
-            s.requesting = false;
-            s.message('error, try later.', 'danger', 0, true);
+        function setHelpers() {
+            s.message = r.message;
+            s.type = r.session().userType;
+            s.is = (arr) => _.includes(arr, s.type);
+            s.focus = focus;
+            window.s = s;
         }
-        s.delete = function() {
-            var time = (d) => moment(d).format('HH:mm');
-            var descr = s.item.address + ' (' + time(s.item.diagStart) + ' - ' + time(s.item.diagEnd) + ')';
-            s.confirm('Delete Order ' + descr + ' ?', function() {
-                s.message('deleting . . .', 'info');
+
+        function setDefaults() {
+            s.item = {
+                email: '',
+                password: '',
+                status: 'ordered',
+                diagStart: moment().add(1, 'day').hour(9).minutes(0).toDate(),
+                diagEnd: moment().add(1, 'day').hour(10).minutes(30).toDate(),
+                fastDiagComm: 0,
+                price: 0,
+                diags: {}
+            };
+            s.original = _.clone(s.item);
+        }
+
+        function setDefaultsDiags() {
+            s.diags.forEach(function(val, key) {
+                s.item.diags[val.name] = (val.mandatory) ? true : false;
+            });
+        }
+
+
+        function setBindings() {
+            db.localData().then(function(data) {
+                Object.assign(s, data);
+            });
+            //
+            s.datepicker = {
+                minDate: moment().toDate(), //.add(1, 'day') //today!
+                maxDate: moment().add(60, 'day').toDate(),
+                initDate: new Date()
+            };
+            //
+            s.noResults = "No results found";
+            s.LoadingClients = "Loading Clients";
+            s.getClients = function(val) {
+                return db.http('User', 'getAll', {
+                    userType: 'client',
+                    __regexp: {
+                        email: val
+                    }
+                }).then(function(res) {
+                    return res.data.result;
+                });
+            };
+            s.getDiags = function(val) {
+                return db.http('User', 'getAll', {
+                    userType: 'diag',
+                    __regexp: {
+                        email: val
+                    }
+                }).then(function(res) {
+                    return res.data.result;
+                });
+            };
+
+
+            s.start = createDateTimePickerData();
+            s.end = createDateTimePickerData();
+
+            s.totalPrice = function() {
+                var total = 0;
+                Object.keys(s.item.diags).forEach(function(mkey) {
+                    if (!s.item.diags[mkey]) return;
+                    s.diags.forEach(function(dval, dkey) {
+                        if (dval.name == mkey) {
+                            total += dval.price || 0;
+                            return false;
+                        }
+                    });
+                });
+                s.item.price = total;
+                return total;
+            };
+
+
+            s.status = createSelect({
+                scope: s,
+                model: 'item.status',
+                label: '(Select an status)',
+                items: ['Ordered', 'Prepaid', 'Delivered', 'Completed'],
+                change: (selected) => {
+                    s.item.status = selected.toString().toLowerCase();
+                    r.dom();
+                }
+            });
+        }
+
+        function setActions() {
+            s.back = () => {
+                if (s.is(['diag', 'client'])) {
+                    r.route('dashboard');
+                } else {
+                    if (r.params && r.params.prevRoute) {
+                        return r.route(r.params.prevRoute);
+                    } else {
+                        r.route('orders');
+                    }
+
+                }
+            }
+            s.cancel = function() {
+                s.back();
+            };
+            s.validate = () => {
+                ifThenMessage([
+                    [typeof s.item._client, '!=', 'object', "Client required"],
+                    [_.isUndefined(s.item.address) || _.isNull(s.item.address) || s.item.address === '', '==', true, 'Address required'],
+                    [_.isNull(s.item.diagStart) || _.isUndefined(s.item.diagStart), '==', 'true', 'Start date required'],
+                    [_.isNull(s.item.diagEnd) || _.isUndefined(s.item.diagEnd), '==', 'true', 'Start date required'],
+                    [moment(s.item.diagStart || null).isValid(), '==', false, "Start date invalid"],
+                    [moment(s.item.diagEnd || null).isValid(), '==', false, "End date invalid"],
+                    [moment(s.item.diagEnd).isValid() && moment(s.item.diagEnd).isBefore(moment(s.item.diagStart), 'hour'), '==', true, 'End date cannot be greater than Start date'],
+
+                    [moment(s.item.diagEnd).isValid() && moment(s.item.diagStart).isValid() && !moment(s.item.diagEnd).isSame(moment(s.item.diagStart), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
+
+                    //[s.item.fastDiagComm.toString(),'==','','Comission required'],
+                    [isNaN(s.item.fastDiagComm), '==', true, 'Comission need to be a number'],
+                    //[s.item.price.toString(),'==','','Price required'],
+                    [isNaN(s.item.price), '==', true, 'Price need to be a number'],
+                    [s.item.status, '==', '', 'Status required']
+                ], (m) => {
+                    s.message(m[0], 'warning', 0, true);
+                }, s.save);
+            };
+            s.save = function() {
+                s.message('saving . . .', 'info');
                 s.requesting = true;
-                db.ctrl('Order', 'remove', {
-                    _id: s.item._id
-                }).then(function(data) {
+                db.ctrl('Order', 'save', s.item).then(function(data) {
                     s.requesting = false;
                     if (data.ok) {
-                        s.message('deleted', 'info');
+                        s.message('saved', 'success');
                         s.back();
                     } else {
                         handleError(data);
                     }
                 }).error(handleError);
-            });
-        };
+            };
+
+
+            s.delete = function() {
+                var time = (d) => moment(d).format('HH:mm');
+                var descr = s.item.address + ' (' + time(s.item.diagStart) + ' - ' + time(s.item.diagEnd) + ')';
+                s.confirm('Delete Order ' + descr + ' ?', function() {
+                    s.message('deleting . . .', 'info');
+                    s.requesting = true;
+                    db.ctrl('Order', 'remove', {
+                        _id: s.item._id
+                    }).then(function(data) {
+                        s.requesting = false;
+                        if (data.ok) {
+                            s.message('deleted', 'info');
+                            s.back();
+                        } else {
+                            handleError(data);
+                        }
+                    }).error(handleError);
+                });
+            };
+        }
+
+        function handleError(err) {
+            s.requesting = false;
+            s.message('error, try later.', 'danger', 0, true);
+        }
 
         function reset() {
             s.item = _.clone(s.original);
@@ -262,9 +259,9 @@ app.controller('adminOrdersEdit', [
             }).then(function(data) {
                 s.requesting = false;
                 if (data.ok && data.result !== null) {
-                    data.result = Object.assign(data.result,{
-                        diagStart:new Date(data.result.diagStart),
-                        diagEnd:new Date(data.result.diagEnd)
+                    data.result = Object.assign(data.result, {
+                        diagStart: new Date(data.result.diagStart),
+                        diagEnd: new Date(data.result.diagEnd)
                     });
                     s.item = data.result;
                     console.info('READ', s.item);
@@ -275,7 +272,6 @@ app.controller('adminOrdersEdit', [
             }).error(handleError);
         }
 
-
-
+        init();
     }
 ]);

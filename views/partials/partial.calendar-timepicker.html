@@ -4,7 +4,10 @@
     </div>
     <div class="panel-body size-medium" ng-show="!availableTimeRanges">
         <h3>{{selectedDate()}}</h3>
-        <p>There are not available slots in this date.</p>
+        
+        <div class="alert alert-warning" role="alert">
+            <p>There are not available slots in this date.</p>
+        </div>
     </div>
     <div class="panel-body size-medium" ng-show="availableTimeRanges">
         <h3>{{selectedDate()}}</h3>
@@ -20,7 +23,7 @@
         </div>
     </div>
     <div class="panel-footer">
-        <button ng-show="availableTimeRanges" class="btn btn-info" ng-click="down()"> Continue </button>
-        <button ng-show="!availableTimeRanges" class="center-block btn btn-info spacing-1" ng-click="up()">Back</button>
+        <button ng-show="availableTimeRanges" class="btn btn-success center-block text-center" ng-click="down()"> Continue </button>
+        <button ng-show="!availableTimeRanges" class="center-block btn btn-warning text-center" ng-click="up()">Back</button>
     </div>
 </div>

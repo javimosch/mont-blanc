@@ -4,19 +4,19 @@
     </div>
     <div class="panel-body">
         <div class="input-group">
-            <span class="input-group-addon">
+            <span class="input-group-addon no-bg borderless">
                 <input type="radio" ng-model="model.sell" ng-value="true" ng-click="downn()">
             </span>
-            <input type="text" disabled class="form-control" value="You sell" aria-label="...">
+            <input type="text" disabled class="check-label" value="You sell" aria-label="...">
         </div>
         <div class="input-group">
-            <span class="input-group-addon">
+            <span class="input-group-addon no-bg borderless">
                 <input type="radio" ng-value="false" ng-model="model.sell" ng-click="downn()">
             </span>
-            <input type="text" disabled class="form-control" value="You rent" aria-label="...">
+            <input type="text" disabled class="check-label" value="You rent" aria-label="...">
         </div>
     </div>
     <div class="panel-footer">
-            <button class="btn btn-info" ng-click="down()"> Continue </button>
+<button class="btn btn-success center-block text-center" ng-click="down()"> Continue </button>
     </div>
 </div>

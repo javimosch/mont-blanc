@@ -2,38 +2,114 @@
     <div class="panel-heading">
         <h4 class="panel-title">Confirm your order</h4>
     </div>
-    <div class="panel-body size-medium"
-    ng-show="!validModel()"
-    >
-        <ul>
-            <li ng-show="!model.diagStart"><h5>Order Time required.</h5></li>
-            <li ng-show="model.address!==''"><h5>Order Address required.</h5></li>
-        </ul>
+    <div class="panel-body size-medium" ng-show="!validModel()">
+        <div class="well well-lg">
+            <p>Resolve the follow points first.</p>
+            <ul>
+                <li ng-show="!model.diagStart">
+                    <h5>Order Time required.</h5></li>
+                <li ng-show="model.address==''">
+                    <h5>Order 
+        <a ng-click="moveTo('question5')" class="link">Address</a>
+                     required.</h5></li>
+            </ul>
+        </div>
     </div>
-    <div class="panel-body size-medium"
-    ng-show="validModel()"
-    >
-        <div class="spacing-1">
+    <div class="panel-body2 size-medium" ng-show="validModel()">
+        <div class="">
+            <div class="table-responsive order">
+                <table class="table order">
+                    <thead>
+                        <tr>
+                            <th>Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                {{model.address}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-responsive order">
+                <table class="table order">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Start</th>
+                            <th>End</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                {{getDate().date}}
+                            </td>
+                            <td>
+                                {{getDate().start}}
+                            </td>
+                            <td>
+                                {{getDate().end}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-responsive order">
+                <table class="table order">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Base</td>
+                            <td>{{basePrice}}</td>
+                        </tr>
+                        <tr ng-repeat="(k,x) in model.diags" ng-show="x">
+                            <td>{{diagLabel(k,x)}}</td>
+                            <td>{{diagPrice(k,x)}}</td>
+                        </tr>
+                        <tr>
+                            <td>House dimensions</td>
+                            <td>{{sizePrice()}}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Sub</td>
+                            <td>{{totalPrice()}}</td>
+                        </tr>
+                        <tr>
+                            <td>TOTAL</td>
+                            <td>{{totalPrice(true)}}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <!--
             <h4>
             Total price: 
             <span class="glyphicon glyphicon-euro" aria-hidden="true"></span>
-			{{totalPrice()}}
-			</h4>
-			<h4>Estimated time: {{totalTime.formatted()}}</h4>
+            {{totalPrice()}}
+            </h4>
+            <h4>Estimated time: {{totalTime.formatted()}}</h4>
+            -->
+        </div>
+        <div class="spacing-1 ">
+            <input id="email" class="borderless text-center" type="email" ng-model="model.email" placeholder="WRITE YOUR EMAIL HERE">
         </div>
         <div class="spacing-1">
-            <input id="email" type="email" ng-model="model.email" placeholder="Write your email">
-        </div>
-        <div class="spacing-1">
-            <label>We will send you an email with detailed information about billing and access to your order. You will be able to see information about the inspector that is going to visit you.</label>
+            <label>We will send you an email with detailed information about billing and access to your order.</label>
         </div>
     </div>
     <div class="panel-footer">
-        <button ng-show="!validModel()" class="center-block btn btn-info spacing-1" ng-click="up()">Back</button>
-
-        <button 
-        ng-show="validModel()"
-        ng-disabled="!model.email || sendingEmail || !validModel()" class="btn btn-primary btn-lg" ng-click="confirm()">Confirm</button>
+        <button ng-show="!validModel()" class="center-block btn btn-warning text-center" ng-click="up()">Back</button>
+        <button ng-show="validModel()" ng-disabled="!model.email || sendingEmail || !validModel()" class="btn btn-success btn-lg center-block text-center" ng-click="confirm()">Confirm</button>
     </div>
 </div>
 <output data-message></output>

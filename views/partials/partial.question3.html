@@ -8,24 +8,24 @@
     <output ng-show="model.house">
         <div class="panel-body">
             <div ng-repeat="(k,v) in squareMeters" class="input-group">
-                <span class="input-group-addon">
+                <span class="input-group-addon no-bg borderless">
                 <input type="radio" ng-model="model.squareMeters" value="{{v}}" ng-click="down()">
             </span>
-                <input type="text" disabled class="form-control" value="{{v}}" aria-label="...">
+                <input type="text" disabled class="check-label" value="{{v}}" aria-label="...">
             </div>
         </div>
     </output>
     <output ng-show="!model.house">
         <div class="panel-body">
             <div ng-repeat="(k,v) in apartamentType" class="input-group">
-                <span class="input-group-addon">
+                <span class="input-group-addon no-bg borderless">
                 <input type="radio" ng-model="model.apartamentType" value="{{v}}" ng-click="down()">
             </span>
-                <input type="text" disabled class="form-control" value="{{v}}" aria-label="...">
+                <input type="text" disabled class="check-label" value="{{v}}" aria-label="...">
             </div>
         </div>
     </output>
     <div class="panel-footer">
-            <button class="btn btn-info" ng-click="down()"> Continue </button>
+<button class="btn btn-success center-block text-center" ng-click="down()"> Continue </button>
     </div>
 </div>

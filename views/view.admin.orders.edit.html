@@ -23,22 +23,18 @@
                 </div>
                 <div class="form-group">
                     <label>Inspections</label>
-                    <div ng-repeat="(key,x) in diags" class="input-group">
-                        <span class="input-group-addon">
-                            <input 
+                    <div ng-repeat="(key,x) in diags" class="input-group" ng-show="!x.disabled">
+                        <span class="input-group-addon diags-checkbox">
+                    <input 
 ng-disabled="state.working() || is(['client','diag'])"
-                            type="checkbox" ng-model="item.diags[x.name]" ng-value="true">
-                        </span>
-                        <input type="text" disabled class="form-control" value="{{x.label}}" aria-label="...">
-                        <div class="input-group-addon text-left">${{x.price}}</div>
-                        <div class="input-group-addon text-left">T{{x.time}}</div>
+                     type="checkbox" ng-model="item.diags[x.name]" ng-value="true">
+                </span>
+                        <input type="text" disabled class="check-label" value="{{x.label}}" aria-label="...">
                     </div>
                 </div>
                 <div class="form-group relative">
                     <label>Start Date</label>
-                    <input 
-ng-disabled="state.working() || is(['client','diag'])"
-                     type="text" class="form-control focus-1" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.diagStart" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
+                    <input ng-disabled="state.working() || is(['client','diag'])" type="text" class="form-control focus-1" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.diagStart" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
                     <span class="input-group-btn">
 <button 
 ng-disabled="state.working() || is(['client','diag'])"
@@ -47,19 +43,16 @@ type="button" class="btn btn-default" ng-click="start.opened = !start.opened"><i
                 </div>
                 <div class="form-group relative">
                     <label>End Date</label>
-                    <input
-ng-disabled="state.working() || is(['client','diag'])"
-                     type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy HH:mm " ng-model="item.diagEnd" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="end.opened=false" is-open="end.opened" date-disabled="false" close-text="Close" />
+                    <input ng-disabled="state.working() || is(['client','diag'])" type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy HH:mm " ng-model="item.diagEnd" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="end.opened=false" is-open="end.opened" date-disabled="false" close-text="Close" />
                     <span class="input-group-btn">
 <button 
 ng-disabled="state.working() || is(['client','diag'])"
 type="button" class="btn btn-default" ng-click="end.opened = !end.opened"><i class="glyphicon glyphicon-calendar"></i></button>
 </span>
-                   
                 </div>
                 <div class="form-group">
                     <label>Price</label>
-                    <input  ng-disabled="state.working() || is(['client','diag'])" type="number" class="form-control" placeholder="Price" ng-value="totalPrice()">
+                    <input ng-disabled="state.working() || is(['client','diag'])" type="number" class="form-control" placeholder="Price" ng-value="totalPrice()">
                 </div>
                 <div class="form-group">
                     <label>Comission for fast diag</label>

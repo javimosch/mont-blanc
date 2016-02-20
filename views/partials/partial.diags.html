@@ -4,16 +4,18 @@
     </div>
     <div class="panel-body">
         <div ng-repeat="(key,item) in diags" class="input-group" ng-show="item.show">
-            <span class="input-group-addon">
-                <input type="checkbox" ng-model="model.diags[item.name]" ng-value="true">
+            <span class="input-group-addon borderless">
+                <input type="checkbox" class="no-bg" ng-model="model.diags[item.name]" ng-value="true">
             </span>
-            <input type="text" disabled class="form-control" value="{{item.label}}" aria-label="...">
-            <div class="input-group-addon text-left">${{item.price}}</div>
+            <input type="text" disabled class="check-label" value="{{item.label}}" aria-label="...">
+            <!--
+            <div class="input-group-addon text-left ">${{item.price}}</div>
             <div class="input-group-addon text-left">T{{item.time}}</div>
+            -->
         </div>
     </div>
     <div class="panel-footer">
-        <button ng-click="down()" class="btn btn-info">Select a date for inspection</button>
+        <button ng-click="down()" class="btn btn-success center-block text-center">Continue</button>
     </div>
 </div>
 

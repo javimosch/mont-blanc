@@ -4,13 +4,13 @@
     </div>
     <div class="panel-body">
         <div ng-repeat="(key,val) in gasInstallation" class="input-group">
-            <span class="input-group-addon">
-                <input type="radio" ng-model="model.gasInstallation" value="{{val}}" ng-click="down()">
+            <span class="input-group-addon borderless no-bg">
+                <input type="radio" class="" ng-model="model.gasInstallation" value="{{val}}" ng-click="down()">
             </span>
-            <input type="text" disabled class="form-control" value="{{key}}" aria-label="...">
+            <input type="text" disabled class="check-label" value="{{key}}" aria-label="...">
         </div>
     </div>
     <div class="panel-footer">
-            <button class="btn btn-info" ng-click="down()"> Continue </button>
+            <button class="btn btn-success center-block text-center" ng-click="down()"> Continue </button>
     </div>
 </div>

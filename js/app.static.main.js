@@ -24,15 +24,14 @@ app.controller('fullpage', ['server',
             diags: {}
         };
 
-        s.validModel=()=>{
+        s.validModel = () => {
             var isValid = true &&
-                (true&&s.model.diagStart)&&
-                (true&&s.model.diagEnd)&&
-                (true&&!_.isUndefined(s.model.address))&&
-                (true&&!_.isNull(s.model.address))&&
-                (true&&s.model.address!='')&&
-                true
-            ;
+                (true && s.model.diagStart) &&
+                (true && s.model.diagEnd) &&
+                (true && !_.isUndefined(s.model.address)) &&
+                (true && !_.isNull(s.model.address)) &&
+                (true && s.model.address != '') &&
+                true;
             return isValid;
         };
 
@@ -69,6 +68,7 @@ app.controller('fullpage', ['server',
         }
 
 
+
         var diagDescription = (n) => {
             var rta = n;
             s.diags.forEach((diag) => {
@@ -79,10 +79,27 @@ app.controller('fullpage', ['server',
             if (n === 'cpd') rta = 'constructionPermissionDate';
             return rta;
         }
+        var diag = (n) => {
+            var rta = null;
+            s.diags.forEach((diag) => {
+                if ((n && diag.name == n)) {
+                    rta = diag;
+                }
+            });
+            return rta;
+        }
+        s.diagLabel = (n, v) => {
+            if (!v) return;
+            return diag(n).label;
+        };
+        s.diagPrice = (n, v) => {
+            if (!v) return;
+            return diag(n).price;
+        };
 
         var param = (n, validate) => {
             var val = getParameterByName(n);
-            if(!val) return undefined;
+            if (!val) return undefined;
             if (!validate) {
                 return val;
             } else {
@@ -99,7 +116,7 @@ app.controller('fullpage', ['server',
                 }
             }
         };
-        var paramDate = s.paramDate =  (n) => {
+        var paramDate = s.paramDate = (n) => {
             var v = (getParameterByName(n) || '').toString()
             var d = new Date(v);
             if (isFinite(d)) {
@@ -184,7 +201,8 @@ app.controller('fullpage', ['server',
                 constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined,
                 address: param('address') || undefined,
                 gasInstallation: param('gasInstallation', s.gasInstallation) || undefined,
-                date: paramDate('date')
+                date: paramDate('date'),
+                time: param('time', ['any'])
             });
 
             s.diags.forEach((diag) => {
@@ -202,17 +220,23 @@ app.controller('fullpage', ['server',
         //----------------------------------------------------------
         s.$watch('model.date', function(date) {
 
-            if(!isFinite(new Date(date))) return;//invalid
+            if (!isFinite(new Date(date))) return; //invalid
 
             var time = s.totalTime();
-            var order={
-                day:date,
-                time:time
+            var order = {
+                day: date,
+                time: time
             };
 
             db.getAvailableRanges(order).then(function(data) {
                 //                console.info('availableTimeRanges:', data);
                 s.availableTimeRanges = data.length > 0 && data || null;
+
+                if (s.model.time == 'any') {
+                    if (s.availableTimeRanges && s.availableTimeRanges.length > 0) {
+                        s.pickTimeRange(s.availableTimeRanges[0]);
+                    }
+                }
 
                 /*
                 //fill _diag with a random _diag for now
@@ -228,6 +252,7 @@ app.controller('fullpage', ['server',
 
             });
         });
+        s.moveTo = (n) => { $.fn.fullpage.moveTo(n); };
         s.down = function() {
             $.fn.fullpage.moveSectionDown();
         };
@@ -238,8 +263,7 @@ app.controller('fullpage', ['server',
             return moment(s.model.date).format('MMMM Do YYYY, dddd');
         };
         s.drawRange = function(rng) {
-            return moment(rng.start).format("HH:mm") + 'h - ' 
-            + moment(rng.end).format("HH:mm") + 'h';
+            return moment(rng.start).format("HH:mm") + 'h - ' + moment(rng.end).format("HH:mm") + 'h';
         };
 
         s.onModelChange = function(a, b, c) {
@@ -280,12 +304,19 @@ app.controller('fullpage', ['server',
 
             db.custom('order', 'saveWithEmail', s.model).then(function(res) {
                 if (res.data.ok) {
-                    showModal('Email Sended');
+                    showModal('Detailed information was send to ' + s.model.email);
                     console.info('ORDER:SAVE:SUCCESS', res.data);
                 } else {
-                    if (_.includes(res.data.result), ['diagFrom', 'diagTo', 'inspectorId']) {
-                        showModal('You need to choice an available time for inspection.');
-                        s.up();
+
+                    if (res.data.err === 'ORDER_EXISTS') {
+                        showModal('An order with same address / start/ end is alredy associated to ' + s.model.email);
+                    } else {
+
+                        if (_.includes(res.data.result), ['diagFrom', 'diagTo', 'inspectorId']) {
+                            showModal('You need to choice an available time for inspection.');
+                            s.up();
+                        }
+
                     }
                     console.info('ORDER:SAVE:ISSUES', res.data);
                 }
@@ -296,7 +327,15 @@ app.controller('fullpage', ['server',
             });
         };
 
-        s.totalPrice = function() {
+
+        s.getDate = () => {
+            return {
+                date: moment(s.model.diagStart).format('DD-MM-YY'),
+                start: moment(s.model.diagStart).format('HH:mm'),
+                end: moment(s.model.diagEnd).format('HH:mm')
+            };
+        };
+        s.subTotal = function() {
             var total = 0;
             s.model.diags = s.model.diags || {};
             Object.keys(s.model.diags).forEach(function(mkey) {
@@ -311,8 +350,27 @@ app.controller('fullpage', ['server',
                     }
                 });
             });
-            s.model.price = total;
-            return total;
+            return s.basePrice + total;
+        };
+        s.sizePrice = () => {
+            var rta = s.subTotal();
+            if (s.model.house && s.model.squareMeters) {
+                var porcent = s.squareMetersPrice[s.model.squareMeters];
+                if (parseInt(porcent) === 0) {
+                    rta = 0;
+                } else {
+                    rta = (rta * parseInt(porcent)) / 100;
+                }
+            }
+            return rta;
+        }
+        s.totalPrice = (showRounded) => {
+            var tot = s.subTotal() + s.sizePrice();
+
+            var realTot = parseInt(parseInt(tot) / 10, 10) * 10;
+            s.model.price = realTot;
+
+            return showRounded ? realTot : tot;
         };
         s.pickTimeRange = function(timeRange) {
             s.model.diagStart = timeRange.start;
@@ -335,14 +393,15 @@ app.controller('fullpage', ['server',
             var hours = Math.floor(total / 60);
             var minutes = total % 60;
             var t = {
-                hours:hours,
-                minutes:minutes
+                hours: hours,
+                minutes: minutes
             };
             return normalizeOrderTime(t);
         };
-        s.totalTime.formatted=()=>{
+        s.totalTime.formatted = () => {
             var time = s.totalTime();
-            var hours=time.hours,minutes=time.minutes;
+            var hours = time.hours,
+                minutes = time.minutes;
             minutes = (minutes < 10) ? '0' + minutes : minutes;
             if (hours > 0) {
                 return hours + ':' + minutes + ' hours';

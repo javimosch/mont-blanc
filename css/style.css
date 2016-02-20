@@ -72,6 +72,22 @@
     }
 }
 
+table.order{
+  
+}
+table.order tr{
+  
+}
+table.order td{
+    margin: 0px;
+    padding: 2px 10px 2px 10px!important;
+}
+.table-responsive.order{
+  padding: 0px;
+  margin: 0px;
+  border:none;
+}
+
 .navbar-default a{
 	color:black;
 }
@@ -88,11 +104,20 @@
 }
 
 .panel.question{
-	max-width:300px;
+	max-width:400px;
 	margin:0 auto;
 }
 .panel-footer{
   padding: 0px 15px;
+}
+
+
+#calendar-datepicker table{
+      display: block;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+    max-width: 285px;
 }
 
 .inline-flex{
