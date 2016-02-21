@@ -66,6 +66,9 @@ app.controller('adminOrdersEdit', [
         }
 
         function setHelpers() {
+            s.subTotal = ()=>subTotal(s.item,s.diags,s.basePrice);
+            s.sizePrice = () => sizePrice(s.item,s.diags,s.squareMetersPrice,s.basePrice);
+            s.totalPrice = (showRounded) => totalPrice(showRounded,s.item,s.diags,s.squareMetersPrice,s.basePrice);
             s.message = r.message;
             s.type = r.session().userType;
             s.is = (arr) => _.includes(arr, s.type);
@@ -97,7 +100,13 @@ app.controller('adminOrdersEdit', [
         function setBindings() {
             db.localData().then(function(data) {
                 Object.assign(s, data);
+
+                s.diags.forEach((diag) => {
+                    diag.show = true;
+                });
             });
+            //
+            
             //
             s.datepicker = {
                 minDate: moment().toDate(), //.add(1, 'day') //today!
@@ -131,23 +140,6 @@ app.controller('adminOrdersEdit', [
 
             s.start = createDateTimePickerData();
             s.end = createDateTimePickerData();
-
-            s.totalPrice = function() {
-                var total = 0;
-                Object.keys(s.item.diags).forEach(function(mkey) {
-                    if (!s.item.diags[mkey]) return;
-                    s.diags.forEach(function(dval, dkey) {
-                        if (dval.name == mkey) {
-                            total += dval.price || 0;
-                            return false;
-                        }
-                    });
-                });
-                s.item.price = total;
-                return total;
-            };
-
-
             s.status = createSelect({
                 scope: s,
                 model: 'item.status',

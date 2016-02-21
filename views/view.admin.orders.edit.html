@@ -17,21 +17,6 @@
                     <label for="address">Diag Address</label>
                     <input ng-disabled="state.working() || is(['client','diag'])" data-address model="item" field="address" name="address" type="text" placeholder="Diag Address" class="fullwidth">
                 </div>
-                <div class="form-group">
-                    <label>Observations</label>
-                    <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.obs" placeholder="Observations">
-                </div>
-                <div class="form-group">
-                    <label>Inspections</label>
-                    <div ng-repeat="(key,x) in diags" class="input-group" ng-show="!x.disabled">
-                        <span class="input-group-addon diags-checkbox">
-                    <input 
-ng-disabled="state.working() || is(['client','diag'])"
-                     type="checkbox" ng-model="item.diags[x.name]" ng-value="true">
-                </span>
-                        <input type="text" disabled class="check-label" value="{{x.label}}" aria-label="...">
-                    </div>
-                </div>
                 <div class="form-group relative">
                     <label>Start Date</label>
                     <input ng-disabled="state.working() || is(['client','diag'])" type="text" class="form-control focus-1" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.diagStart" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
@@ -51,13 +36,29 @@ type="button" class="btn btn-default" ng-click="end.opened = !end.opened"><i cla
 </span>
                 </div>
                 <div class="form-group">
-                    <label>Price</label>
-                    <input ng-disabled="state.working() || is(['client','diag'])" type="number" class="form-control" placeholder="Price" ng-value="totalPrice()">
+                    <label>Observations</label>
+                    <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.obs" placeholder="Observations">
+                </div>
+                <div class="form-group">
+                    <label>Diags</label>
+                    <div ng-repeat="(key,x) in diags" class="input-group" ng-show="!x.disabled">
+                        <span class="input-group-addon diags-checkbox">
+                    <input 
+ng-disabled="state.working() || is(['client','diag'])"
+                     type="checkbox" ng-model="item.diags[x.name]" ng-value="true">
+                </span>
+                        <input type="text" disabled class="check-label" value="{{x.label}}" aria-label="...">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Comission for fast diag</label>
                     <input ng-disabled="state.working() || is(['client','diag'])" type="number" class="form-control" ng-model="item.fastDiagComm" placeholder="Comission">
                 </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input ng-disabled="state.working() || is(['client','diag'])" type="number" class="form-control" placeholder="Price" ng-value="totalPrice(true)">
+                </div>
+                
                 <div class="form-group">
                     <label>Pdf</label>
                     <input type="file" disabled class="form-control" placeholder="Diag Pdf">

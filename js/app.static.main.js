@@ -335,43 +335,11 @@ app.controller('fullpage', ['server',
                 end: moment(s.model.diagEnd).format('HH:mm')
             };
         };
-        s.subTotal = function() {
-            var total = 0;
-            s.model.diags = s.model.diags || {};
-            Object.keys(s.model.diags).forEach(function(mkey) {
-                if (!s.model.diags[mkey]) return;
-                s.diags.forEach(function(dval, dkey) {
-                    if (!dval.show) {
-                        return;
-                    }
-                    if (dval.name == mkey) {
-                        total += dval.price || 0;
-                        return false;
-                    }
-                });
-            });
-            return s.basePrice + total;
-        };
-        s.sizePrice = () => {
-            var rta = s.subTotal();
-            if (s.model.house && s.model.squareMeters) {
-                var porcent = s.squareMetersPrice[s.model.squareMeters];
-                if (parseInt(porcent) === 0) {
-                    rta = 0;
-                } else {
-                    rta = (rta * parseInt(porcent)) / 100;
-                }
-            }
-            return rta;
-        }
-        s.totalPrice = (showRounded) => {
-            var tot = s.subTotal() + s.sizePrice();
+        
+        s.subTotal = ()=>subTotal(s.model,s.diags,s.basePrice);
+        s.sizePrice = () => sizePrice(s.model,s.diags,s.squareMetersPrice,s.basePrice);
+        s.totalPrice = (showRounded) => totalPrice(showRounded,s.model,s.diags,s.squareMetersPrice,s.basePrice);
 
-            var realTot = parseInt(parseInt(tot) / 10, 10) * 10;
-            s.model.price = realTot;
-
-            return showRounded ? realTot : tot;
-        };
         s.pickTimeRange = function(timeRange) {
             s.model.diagStart = timeRange.start;
             s.model._diag = timeRange._diag;
