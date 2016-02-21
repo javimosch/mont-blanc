@@ -86,7 +86,11 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
             _.each(_errors, (v, k) => {
                 console.info(v);
                 if (msg !== '') msg += '<br>';
-                msg += v.url + ': ' + JSON.stringify(v.err);
+                try {
+                    msg += v.url + ': ' + JSON.stringify(v.err);
+                } catch (e) {
+                    msg += v.url + ': ' + 'Unparseable error. See the console.';
+                }
             });
             return msg;
         }
@@ -369,7 +373,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
         });
     }
 
-    
+
 
     var isAfterMidDay = (d1) => moment(d1).isAfter(moment(d1).hour(13), 'hour');
     var isBeforeMidDay = (d1) => moment(d1).isBefore(moment(d1).hour(12), 'hour');
@@ -451,6 +455,42 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
             return http.post(URL + '/' + 'ctrl/' + ctrl + '/' + action, data);
         },
         ctrl: ctrl,
+        $get: (url, config) => {
+            return MyPromise(function(resolve, error) {
+                var _log = logger(url, data);
+                http.get(url, config).then((res) => {
+                    _log({
+                        ok: true,
+                        result: res
+                    });
+                    resolve(res);
+                }, (err) => {
+                    _log({
+                        ok: false,
+                        err: err
+                    });
+                    error(err);
+                })
+            });
+        },
+        $post: (url, data, config) => {
+            return MyPromise(function(resolve, error) {
+                var _log = logger(url, data);
+                http.post(url, data, config).then((res) => {
+                    _log({
+                        ok: true,
+                        result: res
+                    });
+                    resolve(res);
+                }, (err) => {
+                    _log({
+                        ok: false,
+                        err: err
+                    });
+                    error(err);
+                })
+            });
+        },
         post: function(url, data) {
             return MyPromise(function(resolve, error) {
                 post(url, data, function(res) {

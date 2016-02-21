@@ -13,7 +13,7 @@
                     <td ng-if="model.remove" ng-click="model.remove(item,$index)" class="link">
                         <i class="fa fa-times"></i>
                     </td>
-                    <td class="link" ng-repeat="c in columns">{{item[c.name||c]}}</td>
+                    <td class="link" ng-repeat="c in columns" html-content html="item[c.name||c]"></td>
                 </tr>
             </tbody>
         </table>

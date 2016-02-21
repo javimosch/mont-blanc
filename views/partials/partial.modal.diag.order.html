@@ -57,7 +57,12 @@
 </div>
 <div class="modal-footer">
     <button class="btn btn-default" type="button" ng-click="redirect('orders/edit/' + item._id)">View in fullscreen</button>
-    <button class="btn btn-primary" type="button" ng-click="save()">Save</button>
+
+    <button 
+    ng-show="userIs(['client']) && item.status!=='completed' && item.status!=='prepaid'"
+    class="btn btn-success" type="button" ng-click="fire('pay',item)">Pay now</button>
+
+    <button class="btn btn-primary" type="button" ng-click="save()">Ok</button>
     <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
 </div>
 <my-alerts add="message"></my-alerts>

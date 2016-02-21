@@ -27,8 +27,16 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
         },
         template: '<output></output>',
         link: function(s, elem, attrs) {
+            var fire = (n,p) => {
+                if (s.evts) {
+                    s.evts[n] = s.evts[n] || [];
+                    s.evts[n].forEach((cb) => {
+                        cb(p);
+                    })
+                }
+            };
             s.open = function(opt) {
-
+                s.evts = opt.evts;
                 if (!opt.templateUrl) {
                     throw Error('crudModal needs templateUrl');
                 }
@@ -37,6 +45,7 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
                     templateUrl: opt.templateUrl,
                     controller: function($scope, $uibModalInstance) {
                         var s = $scope;
+                        s.fire = fire;
                         Object.assign(s, opt);
                         s.save = s.validate = () => {
                             if (s.validate && s.validate.when && s.validate.fail) {
@@ -64,6 +73,7 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
                         s.cancel = function() {
                             $uibModalInstance.dismiss('cancel');
                         };
+                        fire('init',null);
                     }
                 });
             };
@@ -496,6 +506,25 @@ app.directive('dynamicTable', function(
         }
     };
 });
+
+app.directive('htmlContent', function(
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile) {
+    return {
+        restrict: 'AE',
+        replace: false,
+        scope: {
+            html:"=html"
+        },
+        link: function(s, elem, attrs) {
+            r.dom(()=>{
+                //var el = $compile(s.html)(s);
+                elem.html(s.html);//.append(el);
+                //console.log(s.html);
+            });
+        }
+    };
+}
+);
 
 app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
     return {

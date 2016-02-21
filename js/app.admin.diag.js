@@ -110,12 +110,12 @@ app.directive('diagOrders', function(
         scope: {
             //model: "=model"
         },
-        templateUrl: 'views/directives/directive.diag.orders.html',
+        templateUrl: 'views/directives/directive.fast-crud.html',
         link: function(s, elem, attrs) {
             var r = $rootScope;
             var ws = server;
             var n = attrs.name;
-            //s.open //=> automatic
+            s.title = "Your Orders";
             function update() {
                 var data = {
                     __populate: {

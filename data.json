@@ -1,5 +1,8 @@
 {
-    "basePrice":35,
+    "config":{
+        "companyName":"Pierre Diags S.A"
+    },
+    "basePrice": 35,
     "squareMetersOLD": {
         "-40m2": "-40m2",
         "-40 à 80": "40 à 80",
