@@ -13,6 +13,10 @@ type: {type:String,default:'Landlord'}, //(Landlord / Agency / Foncière)
             <h3 class="panel-title">Orders</h3>
             <div class="btn-group" role="group" aria-label="...">
                 <button type="button" class="btn btn-default" ng-click="create()">New</button>
+<button type="button" class="btn btn-default" ng-click="refresh()">Refresh</button>
+<button
+ng-show="userIs(['admin'])"
+ type="button" class="btn btn-default" ng-click="syncStripe()">Sync Payment status</button>                
                 <!--
                 <button ng-disabled="s.selectedItems===0" type="button" class="btn btn-default" ng-click="delete()">Delete</button>
                 -->

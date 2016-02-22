@@ -13,7 +13,9 @@
                     <td ng-if="model.remove" ng-click="model.remove(item,$index)" class="link">
                         <i class="fa fa-times"></i>
                     </td>
-                    <td class="link" ng-repeat="c in columns" html-content html="item[c.name||c]"></td>
+                    <td  ng-repeat="c in columns" 
+                        ng-class="{link:true,'text-left':c.align==='left','text-right':c.align==='right','text-center':c.align==='center'}"
+                     html-content html="item[c.name||c]"></td>
                 </tr>
             </tbody>
         </table>

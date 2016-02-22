@@ -4,19 +4,19 @@ app.controller('adminUsers', [
 
     'server', '$scope', '$rootScope',
     function(db, s, r) {
-        console.info('app.admin.user:adminUsers');
+//        console.info('app.admin.user:adminUsers');
         //
         r.toggleNavbar(true);
         r.secureSection(s);
         s.selectedItems = [];
         s.items = [];
         //
-        if(r.userIs(['diag','client'])){
+        if (r.userIs(['diag', 'client'])) {
             return r.handleSecurityRouteViolation();
         }
         //
-        s.click = function(item) {
-            r.route('users/edit/' + item._id);
+        s.click = function(item,optionalRouteForEdition) {
+            r.route((optionalRouteForEdition||'users/edit/') + item._id);
         };
         s.create = function() {
             r.route('users/edit/-1');
@@ -49,7 +49,7 @@ app.controller('adminUsers', [
         function read() {
             s.message('loading . . .', 'info');
             db.custom('user', 'getAll', {}).then(function(r) {
-                console.info('adminUsers:read:success');
+//                console.info('adminUsers:read:success');
                 s.items = r.data.result;
                 s.message('loaded!', 'success', 1000);
             });
@@ -63,7 +63,7 @@ app.controller('adminUsersEdit', [
 
     'server', '$scope', '$rootScope', '$routeParams',
     function(db, s, r, params) {
-        console.info('app.admin.user:adminUsersEdit');
+//        console.info('app.admin.user:adminUsersEdit');
         //
         r.toggleNavbar(true);
         r.secureSection(s);
@@ -79,21 +79,21 @@ app.controller('adminUsersEdit', [
             selected: '(Choice a user type)',
             items: [{
                 label: 'Admin',
-            },{
+            }, {
                 label: 'Diag',
-            },{
-                label:'Client'
+            }, {
+                label: 'Client'
             }],
             click: (choice) => {
-                if(typeof choice ==='string'){
-                    for(var x in s.types.items){
-                        if(s.types.items[x].label.toString().toLowerCase()==choice.toString().toLowerCase()){
+                if (typeof choice === 'string') {
+                    for (var x in s.types.items) {
+                        if (s.types.items[x].label.toString().toLowerCase() == choice.toString().toLowerCase()) {
                             s.types.selected = s.types.items[x].label;
                             s.item.userType = s.types.items[x].label.toString().toLowerCase();
                         }
                     }
                     return;
-                }else{
+                } else {
                     s.item.userType = choice.label.toString().toLowerCase();
                     s.types.selected = choice.label;
                 }
@@ -101,20 +101,32 @@ app.controller('adminUsersEdit', [
         };
         //
         if (params && params.id && params.id.toString() !== '-1') {
-            console.info('adminUsersEdit:params', params);
+//            console.info('adminUsersEdit:params', params);
             r.dom(read, 1000);
         } else {
-            
-            if(r.userIs(['diag','client'])){
+
+            if (r.userIs(['diag', 'client'])) {
                 //can't create an user
                 return r.handleSecurityRouteViolation();
             }
 
             reset();
         }
+        s.back = () => {
+            if (r.userIs(['diag', 'client'])) {
+                r.route('dashboard');
+            } else {
+                if (r.params && r.params.prevRoute) {
+                    return r.route(r.params.prevRoute);
+                } else {
+                    r.route('users');
+                }
+
+            }
+        };
         //
         s.cancel = function() {
-            r.route('users');
+            s.back();
         };
         s.validate = () => {
             ifThenMessage([
@@ -155,8 +167,16 @@ app.controller('adminUsersEdit', [
                     s.requesting = false;
                     var _r = res.data;
                     if (_r.ok) {
+
+                        //if current user, update session.
+                        if(_r.result){
+                            if(_r.result._id == r.session()._id){
+                                r.session(_r.result);
+                            }
+                        }
+
                         s.message('saved', 'success');
-                        r.route('users', 0);
+                        s.back();
                     } else {
                         s.message('error, try later', 'danger');
                     }
@@ -178,7 +198,7 @@ app.controller('adminUsersEdit', [
                     s.requesting = false;
                     s.message('deleted', 'info');
                     reset();
-                    r.route('users', 0);
+                    s.back();
                     console.info('adminUsersEdit:remove:success', r.data);
                 }).error(function(err) {
                     s.requesting = false;
@@ -194,9 +214,9 @@ app.controller('adminUsersEdit', [
 
         function read() {
 
-            if(r.userIs(['diag','client'])){
+            if (r.userIs(['diag', 'client'])) {
                 //only can see his own info
-                if(params.id !== r.session()._id){
+                if (params.id !== r.session()._id) {
                     return r.handleSecurityRouteViolation();
                 }
             }

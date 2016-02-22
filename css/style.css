@@ -47,6 +47,14 @@
     border: none;
 }
 
+.clientTypeWrapper{
+    display: inline-flex;
+    padding: 0px 20px 0px 80px;
+}
+.clientTypeWrapper > div{
+  width:50%;
+}
+
 .navbar-brand{
   font-size: 2rem;
 }
@@ -77,6 +85,10 @@ table.order{
 }
 table.order tr{
   
+}
+table.order th{
+    margin: 0px;
+    padding: 0px 10px 0px 10px!important
 }
 table.order td{
     margin: 0px;

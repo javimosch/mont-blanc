@@ -1,21 +1,45 @@
 var app = angular.module('app.common.directives', []);
 
 app.directive('focusOn', function() {
-   return function(scope, elem, attr) {
-      scope.$on('focusOn', function(e, name) {
-        if(name === attr.focusOn) {
-          elem[0].focus();
-        }
-      });
-   };
+    return function(scope, elem, attr) {
+        scope.$on('focusOn', function(e, name) {
+            if (name === attr.focusOn) {
+                elem[0].focus();
+            }
+        });
+    };
 });
 
-app.factory('focus', function ($rootScope, $timeout) {
-  return function(name) {
-    $timeout(function (){
-      $rootScope.$broadcast('focusOn', name);
-    });
-  }
+app.directive('collapseNav', function($timeout, $rootScope) {
+    return {
+        restrict: 'AE',
+        replace: false,
+        //scope:false,
+        link: (s, elem, attr) => {
+            var r = $rootScope;
+            r.dom(() => {
+                elem.find('li').on('click', () => {
+                    r.dom(() => {
+                        var w = $(window).width();
+                        if (w < 768) {
+                            elem.collapse('hide');
+                        }
+                    });
+                });
+            });
+        }
+    }
+});
+
+
+
+
+app.factory('focus', function($rootScope, $timeout) {
+    return function(name) {
+        $timeout(function() {
+            $rootScope.$broadcast('focusOn', name);
+        });
+    }
 });
 
 app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
@@ -23,18 +47,24 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
         restrict: 'AE',
         replace: true,
         scope: {
-            open: '=open'
+            open: '=open',
+            close:'=close'
         },
         template: '<output></output>',
         link: function(s, elem, attrs) {
-            var fire = (n,p) => {
+            var fire = (n, p,ctx) => {
                 if (s.evts) {
                     s.evts[n] = s.evts[n] || [];
                     s.evts[n].forEach((cb) => {
-                        cb(p);
+                        if(ctx){
+                            cb.call(ctx,p);
+                        }else{
+                            cb(p);
+                        }
                     })
                 }
             };
+            var crudModal = s;
             s.open = function(opt) {
                 s.evts = opt.evts;
                 if (!opt.templateUrl) {
@@ -45,7 +75,7 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
                     templateUrl: opt.templateUrl,
                     controller: function($scope, $uibModalInstance) {
                         var s = $scope;
-                        s.fire = fire;
+                        s.fire = (n,p)=>fire(n,p,s);
                         Object.assign(s, opt);
                         s.save = s.validate = () => {
                             if (s.validate && s.validate.when && s.validate.fail) {
@@ -73,7 +103,7 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
                         s.cancel = function() {
                             $uibModalInstance.dismiss('cancel');
                         };
-                        fire('init',null);
+                        fire('init', null,s);
                     }
                 });
             };
@@ -258,12 +288,12 @@ app.directive('notify', function($rootScope, $timeout) {
             var r = $rootScope;
             var s = scope;
 
-            if(s.settings){
+            if (s.settings) {
                 var fixedJSON = s.settings.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": ');
                 s.settings = JSON.parse(fixedJSON);
             }
 
-//            console.info('NOTIFY', s.settings);
+            //            console.info('NOTIFY', s.settings);
             var fireEvent = (n) => {
                 if (s.evts) {
                     s.evts[n] = s.evts[n] || [];
@@ -450,15 +480,28 @@ app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal
         template: '<output></output>',
         link: function(s, elem, attrs) {
             //console.info('directive:modalSure:link:start');
-            s.open = function(message, okCallback) {
+            s.open = function(opt, okCallback) {
+                opt = opt || {};
+                var message = '';
+                if (typeof opt === 'string') {
+                    message = opt;
+                    //opt = undefined;
+                } else {
+                    message = opt.message || '';
+                }
+
+                //
                 var modalInstance = $uibModal.open({
                     animation: true,
-                    templateUrl: 'views/directives/directive.modal.sure.html',
+                    templateUrl: opt.templateUrl || 'views/directives/directive.modal.sure.html',
                     controller: function($scope, $uibModalInstance) {
+                        $scope.data = opt.data;
                         $scope.message = message;
                         $scope.yes = function() {
                             $uibModalInstance.close();
-                            okCallback();
+                            if (okCallback) {
+                                okCallback();
+                            }
                         };
                         $scope.cancel = function() {
                             $uibModalInstance.dismiss('cancel');
@@ -513,18 +556,17 @@ app.directive('htmlContent', function(
         restrict: 'AE',
         replace: false,
         scope: {
-            html:"=html"
+            html: "=html"
         },
         link: function(s, elem, attrs) {
-            r.dom(()=>{
+            r.dom(() => {
                 //var el = $compile(s.html)(s);
-                elem.html(s.html);//.append(el);
+                elem.html(s.html); //.append(el);
                 //console.log(s.html);
             });
         }
     };
-}
-);
+});
 
 app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
     return {

@@ -21,7 +21,8 @@ app.controller('fullpage', ['server',
         };
         s.model = {
             date: undefined,
-            diags: {}
+            diags: {},
+            clientType: 'agency'
         };
 
         s.validModel = () => {
@@ -31,6 +32,7 @@ app.controller('fullpage', ['server',
                 (true && !_.isUndefined(s.model.address)) &&
                 (true && !_.isNull(s.model.address)) &&
                 (true && s.model.address != '') &&
+                //(true && s.model.clientType) &&
                 true;
             return isValid;
         };
@@ -202,7 +204,8 @@ app.controller('fullpage', ['server',
                 address: param('address') || undefined,
                 gasInstallation: param('gasInstallation', s.gasInstallation) || undefined,
                 date: paramDate('date'),
-                time: param('time', ['any'])
+                time: param('time', ['any']),
+                clientType: param('clientType', ['agency', 'landlord'])
             });
 
             s.diags.forEach((diag) => {
@@ -276,55 +279,100 @@ app.controller('fullpage', ['server',
 
 
 
-        function showModal(message, okCallback) {
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'views/directives/directive.modal.ok.html',
-                controller: function($scope, $uibModalInstance) {
-                    $scope.message = message;
-                    $scope.yes = function() {
-                        $uibModalInstance.close();
-                        if (okCallback) {
-                            okCallback();
-                        }
-                    };
-                },
-                //size: '',
-                //resolve: {}
-            });
-            confirm
-        }
+        
+
+        var isLandlord = () => s.model.clientType === 'landlord';
 
         s.confirm = function() {
-            s.sendingEmail = true;
 
-            //downloadJSON('order.model.json',s.model);
-            //console.info(ToStringParameters(s.model));
-            //return;
+            db.ctrl('User', 'get', {
+                email: s.model.email,
+                userType: 'client',
+                clientType: 'landlord'
+            }).then(_modal)
 
-            db.custom('order', 'saveWithEmail', s.model).then(function(res) {
-                if (res.data.ok) {
-                    showModal('Detailed information was send to ' + s.model.email);
-                    console.info('ORDER:SAVE:SUCCESS', res.data);
-                } else {
 
-                    if (res.data.err === 'ORDER_EXISTS') {
-                        showModal('An order with same address / start/ end is alredy associated to ' + s.model.email);
-                    } else {
-
-                        if (_.includes(res.data.result), ['diagFrom', 'diagTo', 'inspectorId']) {
-                            showModal('You need to choice an available time for inspection.');
-                            s.up();
-                        }
-
-                    }
-                    console.info('ORDER:SAVE:ISSUES', res.data);
+            function _modal(_userResponse) {
+                var url = 'views/directives/directive.modal.confirm.order.as.agency.html'
+                if (s.model.clientType === 'landlord') {
+                    url = url.replace('agency', 'landlord');
                 }
-                s.sendingEmail = false;
-            }).error(function(res) {
-                s.sendingEmail = false;
-                console.warn('ORDER:SAVE:ERROR', res);
-            });
+                s.openConfirm({
+                    templateUrl: url,
+                    data: {
+                        total: s.totalPrice(true),
+                        clientType: s.clientType[s.model.clientType],
+                        hasUser: _userResponse.ok && _userResponse.result !== null,
+                        _user: _userResponse.result
+                    }
+                }, () => {
+                    _saveOrder(isLandlord());
+                });
+            }
+
+            function _modalSuccess(){
+                s.openConfirm({
+                    templateUrl: 'views/directives/directive.modal.order.created.html',
+                    data: {
+                        email: s.model.email
+                    }
+                }, () => {
+                    window.location.href = window.location.origin;//reset
+                });
+            }
+
+            function _modalInfo(msg,cb){
+                s.openConfirm({
+                    templateUrl: 'views/directives/directive.modal.ok.html',
+                    message:msg
+                });
+            }
+
+            function _payOrder(order) {
+                openStripeModalPayOrder(order, (token) => {
+                    order.stripeToken = token.id;
+                    db.ctrl('Order', 'pay', order).then((data) => {
+                        if (data.ok) {
+                            _modalSuccess();
+                            console.info('PAY-OK', data.result);
+                        } else {
+                            console.info('PAY-FAIL', data.err);
+                        }
+                    });
+                });
+            }
+
+            function _saveOrder(payAfterSave) {
+                db.custom('order', 'saveWithEmail', s.model).then(function(res) {
+                    if (res.data.ok) {
+                        //showModal('Detailed information was send to ' + s.model.email);
+                        if (payAfterSave) {
+                            _payOrder(res.data.result);
+                        }
+                        console.info('ORDER:SAVE:SUCCESS', res.data);
+                    } else {
+                        if (res.data.err === 'ORDER_EXISTS') {
+                            //if landlord && if payment pending (paymodal)
+                            var _order = res.data.result;
+                            if (isLandlord() && !_.includes(['prepaid', 'completed'], _order.status)) {
+                                return _payOrder(_order);
+                            } else {
+                                var backOffice = '<a target="_blank" href="'+location.origin+'/admin#/orders/edit/'+_order._id+'">View Order</a>';
+                                _modalInfo('A similar order is alredy associated to the email you enter: ' + s.model.email + '.<br>'+backOffice+' in back-office.');
+                            }
+
+                            //_modalInfo('An order with same address / start/ end is alredy associated to ' + s.model.email);
+                        }
+                        console.info('ORDER:SAVE:ISSUES', res.data);
+                    }
+                }).error(function(res) {
+                    console.warn('ORDER:SAVE:ERROR', res);
+                });
+            }
+
+            function _after() {
+
+            }
         };
 
 
@@ -335,10 +383,10 @@ app.controller('fullpage', ['server',
                 end: moment(s.model.diagEnd).format('HH:mm')
             };
         };
-        
-        s.subTotal = ()=>subTotal(s.model,s.diags,s.basePrice);
-        s.sizePrice = () => sizePrice(s.model,s.diags,s.squareMetersPrice,s.basePrice);
-        s.totalPrice = (showRounded) => totalPrice(showRounded,s.model,s.diags,s.squareMetersPrice,s.basePrice);
+
+        s.subTotal = () => subTotal(s.model, s.diags, s.basePrice);
+        s.sizePrice = () => sizePrice(s.model, s.diags, s.squareMetersPrice, s.basePrice);
+        s.totalPrice = (showRounded) => totalPrice(showRounded, s.model, s.diags, s.squareMetersPrice, s.basePrice);
 
         s.pickTimeRange = function(timeRange) {
             s.model.diagStart = timeRange.start;
@@ -382,49 +430,3 @@ app.controller('fullpage', ['server',
 
 ]);
 
-app.directive('modal', function($rootScope, $timeout, $compile) {
-    return {
-        scope: true,
-        replace: true,
-        restrict: 'AE',
-        templateUrl: "./views/directives/directive.modal.html",
-        link: function(scope, elem, attrs) {
-            if (!r.__modalModel) {
-                r.__modalModel = {
-                    content: '',
-                    show: false
-                };
-                r.showModal = (msg) => {
-                    r.__modalModel.content = msg;
-                    toggle(true);
-                };
-                r.showModalUsingTemplate = (templateUrl) => {
-                    $('output').load(templateUrl, function(html) {
-                        setHtml(html);
-                    });
-                };
-                window.r = r;
-            }
-            scope.model = r.__modalModel;
-            //
-            function setHtml(html) {
-                $timeout(() => {
-                    var el = $compile(html)($rootScope);
-                    elem.find('.modal-content').html('').append(el);
-                    scope.$apply();
-                });
-            }
-
-            function toggle(_show) {
-                $timeout(function() {
-                    scope.$apply(function() {
-                        elem.modal({
-                            show: _show
-                        });
-                    });
-                });
-            }
-            toggle(scope.model.show || false);
-        }
-    };
-});

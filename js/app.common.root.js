@@ -6,6 +6,9 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     window.r = r;
     r.getHashParams = getHashParams;
 
+    r.config = {};
+    db.localData().then((data) => Object.assign(r.config, data.config || {}));
+
 
     r.__cache = {};
     r.cache = function(n, o) {
@@ -77,9 +80,9 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     r.session = function(data) {
         if (data) {
             r.db.setUnique('session', data);
-            //console.warn('SESSION:Updated');
+            r._session = data;
         }
-        return r.db.getUnique('session');
+        return Object.assign(r.db.getUnique('session'), r._session || {});
     };
     r.logged = function() {
         var ss = r.session();
@@ -121,6 +124,10 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     r.userIs = (arr) => {
         var type = r.session().userType;
         return _.includes(arr, type);
+    };
+
+    r.routeParams = (obj) => {
+        r.params = Object.assign(r.params || {}, obj);
     };
 
 

@@ -1,8 +1,12 @@
 {
-    "config":{
-        "companyName":"Pierre Diags S.A"
+    "config": {
+        "companyName": "Pierre Diags S.A"
     },
     "basePrice": 35,
+    "clientType": {
+        "landlord": "Landlord",
+        "agency": "Agency"
+    },
     "squareMetersOLD": {
         "-40m2": "-40m2",
         "-40 à 80": "40 à 80",

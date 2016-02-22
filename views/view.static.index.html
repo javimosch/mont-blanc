@@ -1,6 +1,7 @@
 <output ng-controller="fullpage">
 <my-alerts add="notify" directive="notify" stacked="true" settings="{clickDismissable:false}"></my-alerts>
-    <modal model="modal"/>
+    
+    <modal-confirm open="openConfirm"></modal-confirm>
     <div id="fullpage">
         <div class="section" data-anchor="question1">
             <div ng-include="'views/partials/partial.question1.html'"></div>

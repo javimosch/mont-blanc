@@ -16,6 +16,7 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
     });
 */
 
+    s.loginFailedTimes = 0;
     
 
 
@@ -66,18 +67,30 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
             s.sendingRequest = false;
             if (res.data.ok && res.data.result!=null) {
                 r.session(res.data.result);
-                console.log('adminLogin: server says user is logged', res.data);
+//                console.log('adminLogin: server says user is logged', res.data);
                 r.route('dashboard');
             } else {
+                s.loginFailedTimes++;
                 s.addAlert('Incorrect login','warning');
             }
-            console.log(res.data);
+//            console.log(res.data);
         }).error(function(res) {
             s.sendingRequest = false;
             s.addAlert(res);
         });
 
     };
+
+    s.resetPassword=()=>{
+        db.ctrl('User','passwordReset',{email:r._login.email}).then((res)=>{
+            if(res.ok){
+                r.message('A new password has been send to '+r._login.email
+                    ,'info',undefined,undefined,{duration:10000})
+                s.loginFailedTimes = 0;
+                r.dom();
+            }
+        });
+    }
 
 
     //fill _login with query string parameters
@@ -92,12 +105,25 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
         s.login();
     }
 
+
+
     var session = r.session();
     if (session.email && session.expire > new Date().getTime()) {
         r.session(r._login);
         console.log('adminLogin: session found at initial check');
+        _asyncUpdateSession();
         r.route('dashboard');
     } else {
         s.show = true;
+    }
+
+
+
+    function _asyncUpdateSession(){
+        db.ctrl('User','get',{_id:session()._id}).then((err,data)=>{
+            if(!err && data.ok && data.result){
+                r.session(data.result);
+            }
+        })
     }
 }]);

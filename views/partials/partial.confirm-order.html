@@ -100,16 +100,24 @@
             <h4>Estimated time: {{totalTime.formatted()}}</h4>
             -->
         </div>
-        <div class="spacing-1 ">
+        <div class="spacing-133 ">
             <input id="email" class="borderless text-center" type="email" ng-model="model.email" placeholder="WRITE YOUR EMAIL HERE">
         </div>
-        <div class="spacing-1">
+        <div class="clientTypeWrapper">
+            <div ng-repeat="(key,val) in clientType" class="input-group">
+                <span class="input-group-addon no-bg borderless">
+                <input type="radio" name="clientType" ng-model="model.clientType" value="{{key}}">
+            </span>
+                <input type="text" disabled class="check-label" value="{{val}}" aria-label="...">
+            </div>
+        </div>
+        <div class="spacing-133" ng-show="false">
             <label>We will send you an email with detailed information about billing and access to your order.</label>
         </div>
     </div>
     <div class="panel-footer">
         <button ng-show="!validModel()" class="center-block btn btn-warning text-center" ng-click="up()">Back</button>
-        <button ng-show="validModel()" ng-disabled="!model.email || sendingEmail || !validModel()" class="btn btn-success btn-lg center-block text-center" ng-click="confirm()">Confirm</button>
+        <button ng-show="validModel()" ng-disabled="!model.email || !model.clientType || state.working() || !validModel()" class="btn btn-success btn-lg center-block text-center" ng-click="confirm()">Confirm</button>
     </div>
 </div>
 <output data-message></output>

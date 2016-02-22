@@ -7,4 +7,6 @@
     </div>
     <div ng-if="session().userType=='client'" ng-include=" 'views/view.admin.dashboard.client.html' ">
     </div>
+    <div ng-if="session().userType=='admin'" ng-include=" 'views/view.admin.dashboard.admin.html' ">
+    </div>
 </div>

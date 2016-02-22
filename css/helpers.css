@@ -1,4 +1,7 @@
 
+.no-resize{
+    resize:none;
+}
 .no-bg{
     background:none;
 }

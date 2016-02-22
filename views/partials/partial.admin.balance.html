@@ -1,0 +1,68 @@
+<div container-fluid>
+    <div class="row">
+        <div class="col-md-4">
+            <li class="list-group-item list-group-item-success">
+                <h1>Users</h1></li>
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-info">
+                    <h3>Clients (Landlords)</h3></li>
+                <li class="list-group-item list-group-item-default">
+                    <h4>{{g.nroLandlords}}</h4></li>
+                <li class="list-group-item list-group-item-info">
+                    <h3>Clients (Agencies)</h3></li>
+                <li class="list-group-item list-group-item-default">
+                    <h4>{{g.nroAgencies}}</h4></li>
+                <li class="list-group-item list-group-item-info">
+                    <h3>Active Diags</h3></li>
+                <li class="list-group-item list-group-item-default">
+                    <h4>{{g.nroDiags}}</h4></li>
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <li class="list-group-item list-group-item-success">
+                <h1>Orders</h1></li>
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-info">
+                    <h3>Ordered</h3></li>
+                <li class="list-group-item list-group-item-default">
+                    <h4>{{g.nroOrdersOrdered}}</h4></li>
+                <li class="list-group-item list-group-item-info">
+                    <h3>Prepaid</h3></li>
+                <li class="list-group-item list-group-item-default">
+                    <h4>{{g.nroOrdersPrepaid}}</h4></li>
+                <li class="list-group-item list-group-item-info">
+                    <h3>Delivered</h3></li>
+                <li class="list-group-item list-group-item-default">
+                    <h4>{{g.nroOrdersDelivered}}</h4></li>
+                <li class="list-group-item list-group-item-info">
+                    <h3>Completed</h3></li>
+                <li class="list-group-item list-group-item-default">
+                    <h4>{{g.nroOrdersCompleted}}</h4></li>
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <li class="list-group-item list-group-item-success">
+                <h1>Balance</h1></li>
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-info">
+                    <h3>Available</h3></li>
+                <li class="list-group-item list-group-item-default">
+                    <h4>{{b.available}} eur</h4></li>
+                <li class="list-group-item list-group-item-info">
+                    <h3>Pending</h3></li>
+                <li class="list-group-item list-group-item-default">
+                    <h4>{{b.pending}} eur</h4></li>
+                <li class="list-group-item list-group-item-success">
+                    <h3>Live Mode (Stripe)</h3></li>
+                <li class="list-group-item list-group-item-primary" ng-show="b.livemode">
+                    <h4>Yes</h4></li>
+                <li class="list-group-item list-group-item-default" ng-show="!b.livemode">
+                    <h4>No</h4></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <admin-turnover></admin-turnover>
+        </div>
+</div>

@@ -4,7 +4,7 @@ app.controller('adminOrders', [
 
     'server', '$scope', '$rootScope', 'focus',
     function(db, s, r, focus) {
-        console.info('app.admin.order:adminOrders');
+        //        console.info('app.admin.order:adminOrders');
         //
         window.s = s;
         s.focus = focus;
@@ -28,15 +28,22 @@ app.controller('adminOrders', [
                 window.event.stopPropagation();
             }
         };
+        s.syncStripe = () => {
+            db.ctrl('Order', 'syncStripe'); //async 
+            setTimeout(read,5000);
+            setTimeout(read,20000);
+        };
 
         function read() {
             s.message('loading . . .', 'info');
             db.custom('order', 'getAll', { __populate: ['_client', 'email'] }).then(function(r) {
-                console.info('adminOrders:read:success', r.data.result);
+                //                console.info('adminOrders:read:success', r.data.result);
                 s.items = r.data.result;
                 s.message('loaded!', 'success', 1000);
             });
         }
+        s.refresh = read;
+        
         r.dom(read, 0);
 
     }
@@ -66,9 +73,9 @@ app.controller('adminOrdersEdit', [
         }
 
         function setHelpers() {
-            s.subTotal = ()=>subTotal(s.item,s.diags,s.basePrice);
-            s.sizePrice = () => sizePrice(s.item,s.diags,s.squareMetersPrice,s.basePrice);
-            s.totalPrice = (showRounded) => totalPrice(showRounded,s.item,s.diags,s.squareMetersPrice,s.basePrice);
+            s.subTotal = () => subTotal(s.item, s.diags, s.basePrice);
+            s.sizePrice = () => sizePrice(s.item, s.diags, s.squareMetersPrice, s.basePrice);
+            s.totalPrice = (showRounded) => totalPrice(showRounded, s.item, s.diags, s.squareMetersPrice, s.basePrice);
             s.message = r.message;
             s.type = r.session().userType;
             s.is = (arr) => _.includes(arr, s.type);
@@ -106,7 +113,7 @@ app.controller('adminOrdersEdit', [
                 });
             });
             //
-            
+
             //
             s.datepicker = {
                 minDate: moment().toDate(), //.add(1, 'day') //today!
@@ -153,6 +160,11 @@ app.controller('adminOrdersEdit', [
         }
 
         function setActions() {
+
+
+
+
+
             s.back = () => {
                 if (s.is(['diag', 'client'])) {
                     r.route('dashboard');
@@ -256,7 +268,7 @@ app.controller('adminOrdersEdit', [
                         diagEnd: new Date(data.result.diagEnd)
                     });
                     s.item = data.result;
-                    console.info('READ', s.item);
+                    //                    console.info('READ', s.item);
                     s.message('loaded', 'success', 2000);
                 } else {
                     handleError(data);
