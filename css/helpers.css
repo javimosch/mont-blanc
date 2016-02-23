@@ -1,9 +1,27 @@
 
+
+table.minimal{
+    margin: 0px!important;
+    padding: 0px!important;
+}
+table.minimal tr{
+    margin: 0px!important;
+    padding: 0px!important;
+}
+table.minimal td{
+    margin: 0px!important;
+    padding: 0px!important;
+}
+
 .no-resize{
     resize:none;
 }
 .no-bg{
     background:none;
+}
+
+.lineThrough{
+    text-decoration: line-through;
 }
 
 .borderless{

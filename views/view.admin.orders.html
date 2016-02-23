@@ -30,6 +30,8 @@ ng-show="userIs(['admin'])"
                             <!--<th>#</th>-->
                             <th>Client</th>
                             <th>Address</th>
+                            <th>Start</th>
+                            <th>Price</th>
                             <th>status</th>
                         </tr>
                     </thead>
@@ -42,6 +44,8 @@ ng-show="userIs(['admin'])"
                             -->
                             <td>{{item._client.email}}</td>
                             <td>{{item.address}}</td>
+                            <td>{{momentFormat(item.diagStart,'HH:mm')}}</td>
+                            <td>{{item.price}}</td>
                             <td>{{item.status}}</td>
                         </tr>
                     </tbody>

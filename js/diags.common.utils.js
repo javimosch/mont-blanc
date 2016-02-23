@@ -45,27 +45,49 @@ function normalizeOrderTime(t) {
     return t;
 }
 
-var subTotal = function(model, diags, basePrice) {
+var subTotal = function(model, diags, basePrice,opt) {
+    opt = opt || {}; //s:scope
+    if(opt.s){
+        opt.s.priceInfo = opt.s.priceInfo || {};
+        opt.s.priceInfo.basePrice = opt.s.priceInfo.basePrice;
+    }
     var total = 0;
     model.diags = model.diags || {};
     Object.keys(model.diags).forEach(function(mkey) {
-        if (!model.diags[mkey]) return;
+        if (!model.diags[mkey]) {
+            if(opt.s && opt.s.priceInfo[mkey]){
+                delete opt.s.priceInfo[mkey]
+            }
+            return;
+        }
         diags.forEach(function(dval, dkey) {
             if (!dval.show) {
                 return;
             }
             if (dval.name == mkey) {
+                if(opt.s)opt.s.priceInfo[mkey] = dval.price;
                 total += dval.price || 0;
                 return false;
             }
         });
     });
-    return basePrice + total;
+    var rta = basePrice + total;
+    if(total===0){
+        if(opt.s)opt.s.priceInfo.basePrice = 0;
+        rta = 0;
+    }else{
+        if(opt.s)opt.s.priceInfo.basePrice = basePrice;
+    }
+    return rta;
 };
-var sizePrice = (model, diags, squareMetersPrice, basePrice) => {
+var sizePrice = (model, diags, squareMetersPrice, basePrice,opt) => {
     var rta = 0;
-    if (model.house && model.squareMeters) {
-        var porcent = squareMetersPrice[model.squareMeters];
+    //
+    var isHouse = model.info?model.info.house:model.house; 
+    var squareMeters = model.info?model.info.squareMeters:model.squareMeters;
+    //
+    if (isHouse && squareMeters) {
+        var porcent = squareMetersPrice[squareMeters];
         if (_.isUndefined(porcent) || _.isNull(porcent)) {
             console.warn('sizePrice: squareMeters missing in model.');
             porcent = 0;
@@ -73,14 +95,32 @@ var sizePrice = (model, diags, squareMetersPrice, basePrice) => {
         if (parseInt(porcent) === 0) {
             rta = 0;
         } else {
-            rta = (subTotal(model, diags, basePrice) * parseInt(porcent)) / 100;
+            var sub = subTotal(model, diags, basePrice,opt);
+            rta = sub * parseInt(porcent);
+            rta = rta / 100;
         }
+    }
+    if(opt && opt.s){
+        opt.s.priceInfo = opt.s.priceInfo || {};
+        opt.s.priceInfo.sizePrice = rta;
     }
     return rta;
 }
-var totalPrice = (showRounded, model, diags, squareMetersPrice, basePrice) => {
-    var tot = subTotal(model, diags, basePrice) + sizePrice(model, diags, squareMetersPrice, basePrice);
+var totalPrice = (showRounded, model, diags, squareMetersPrice, basePrice,opt) => {
+    var tot = subTotal(model, diags, basePrice,opt) + sizePrice(model, diags, squareMetersPrice, basePrice,opt);
     var realTot = parseInt(parseInt(tot) / 10, 10) * 10;
-    model.price = realTot;
+
+    opt = opt||{};
+    if(opt.s){
+        opt.s.priceInfo = opt.s.priceInfo || {};
+        opt.s.priceInfo['Round-to-near-10']= (tot-realTot) * -1;
+    }
+
+    if(opt.overwriteModel === false){
+
+    }else{
+        model.price = realTot;    
+    }
+    
     return showRounded ? realTot : tot;
 };

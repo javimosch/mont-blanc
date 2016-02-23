@@ -129,7 +129,7 @@
         <div class="spacing-133 ">
             <input id="email" class="borderless text-center" type="email" ng-model="model.email" placeholder="WRITE YOUR EMAIL HERE">
         </div>
-        <div class="clientTypeWrapper">
+        <div class="clientTypeWrapper" ng-show="!_user">
             <div ng-repeat="(key,val) in clientType" class="input-group">
                 <span class="input-group-addon no-bg borderless">
                 <input type="radio" name="clientType" ng-model="model.clientType" value="{{key}}">
@@ -137,13 +137,13 @@
                 <input type="text" disabled class="check-label" value="{{val}}" aria-label="...">
             </div>
         </div>
-        <div class="spacing-133" ng-show="false">
-            <label>We will send you an email with detailed information about billing and access to your order.</label>
+        <div class="well well-sm text-center" ng-show="_user">
+            Welcome back {{(_user.firstName || _user.email)}}
         </div>
     </div>
     <div class="panel-footer">
         <button ng-show="!validModel()" class="center-block btn btn-warning text-center" ng-click="up()">Back</button>
-        <button ng-show="validModel()" ng-disabled="!model.email || !model.clientType || state.working() || !validModel()" class="btn btn-success btn-lg center-block text-center" ng-click="confirm()">Confirm</button>
+        <button ng-show="validModel()" ng-disabled="!model.email || !model.clientType || state.working() || !validModel() || _orderSAVED" class="btn btn-success btn-lg center-block text-center" ng-click="confirm()">Confirm</button>
     </div>
 </div>
 <output data-message></output>

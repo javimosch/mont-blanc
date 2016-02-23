@@ -3,11 +3,15 @@
         <h4 class="panel-title">Diags</h4>
     </div>
     <div class="panel-body">
-        <div ng-repeat="(key,item) in diags" class="input-group" ng-show="item.show">
+        <div ng-repeat="(key,item) in diags"  
+            ng-class="{'input-group':true}"
+        >
             <span class="input-group-addon borderless">
-                <input type="checkbox" class="no-bg" ng-model="model.diags[item.name]" ng-value="true">
+                <input type="checkbox" 
+ng-disabled="item.show==false"
+                class="no-bg" ng-model="model.diags[item.name]" ng-value="true">
             </span>
-            <input type="text" disabled class="check-label" value="{{item.label}}" aria-label="...">
+            <input type="text" disabled  value="{{item.label}}" aria-label="..." ng-class="{'check-label':true,'lineThrough':lineThrough(item)}">
             <!--
             <div class="input-group-addon text-left ">${{item.price}}</div>
             <div class="input-group-addon text-left">T{{item.time}}</div>

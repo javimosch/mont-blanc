@@ -161,13 +161,16 @@ app.controller('fullpage', ['server',
         }
 
 
-
+        s.lineThrough = (item)=>(item.show==false);
 
         function updateChecksVisibilityOnDemand() {
             var toggle = (n, val) => {
                 s.diags.forEach((diag) => {
                     if ((n && diag.name == n) || !n) {
                         diag.show = val;
+                        if(diag.show==false){
+                            s.model.diags[diag.name] = false;
+                        }
                     }
                 });
             };
@@ -321,14 +324,24 @@ app.controller('fullpage', ['server',
             db.ctrl('User', 'get', {
                 email: s.model.email,
                 userType: 'client',
-                clientType: 'landlord'
+                //clientType: 'landlord'
             }).then(_modal)
 
 
             function _modal(_userResponse) {
+                var _user = _userResponse.ok && _userResponse.result || null;
+                if (_user) {
+                    s._user = _user;
+                    s.model.clientType = _user.clientType;
+                }
+
                 var url = 'views/directives/directive.modal.confirm.order.as.agency.html'
-                if (s.model.clientType === 'landlord') {
+                if (!_user && s.model.clientType === 'landlord') {
                     url = url.replace('agency', 'landlord');
+                } else {
+                    if (_user.clientType === 'landlord') {
+                        url = url.replace('agency', 'landlord');
+                    }
                 }
                 s.openConfirm({
                     templateUrl: url,
@@ -368,9 +381,22 @@ app.controller('fullpage', ['server',
                         if (data.ok) {
                             _modalSuccess();
                             console.info('PAY-OK', data.result);
+                            s.notify('Order created and paid. We send you an email.', {
+                                type: 'success',
+                                duration: 100000
+                            });
                         } else {
                             console.info('PAY-FAIL', data.err);
+                            s.notify('There was a server issue during the payment proccess, but your Order has been created. Check your email for more information.', {
+                                type: 'warning',
+                                duration: 100000
+                            });
                         }
+                    }).error(() => {
+                        s.notify('There was a server issue during the payment proccess, but your Order has been created. Check your email for more information.', {
+                            type: 'warning',
+                            duration: 100000
+                        });
                     });
                 });
             }
@@ -381,7 +407,14 @@ app.controller('fullpage', ['server',
                         //showModal('Detailed information was send to ' + s.model.email);
                         if (payAfterSave) {
                             _payOrder(res.data.result);
+                        } else {
+                            //agency
+                            s.notify('Order created. We send you an email.', {
+                                type: 'success',
+                                duration: 100000
+                            });
                         }
+                        s._orderSAVED = true;
                         console.info('ORDER:SAVE:SUCCESS', res.data);
                     } else {
                         if (res.data.err === 'ORDER_EXISTS') {
@@ -391,15 +424,25 @@ app.controller('fullpage', ['server',
                                 return _payOrder(_order);
                             } else {
                                 var backOffice = '<a target="_blank" href="' + location.origin + '/admin#/orders/edit/' + _order._id + '">View Order</a>';
-                                _modalInfo('A similar order is alredy associated to the email you enter: ' + s.model.email + '.<br>' + backOffice + ' in back-office.');
+                                _modalInfo('A similar order is alredy associated to the email you enter: ' + s.model.email + '.<br>' + backOffice + ' in our back-office.');
                             }
 
                             //_modalInfo('An order with same address / start/ end is alredy associated to ' + s.model.email);
+                        } else {
+                            console.info('ORDER:SAVE:ISSUES', res.data);
+                            s.notify('There was a server issue. Try again later.', {
+                                type: 'warning',
+                                duration: 10000
+                            });
                         }
-                        console.info('ORDER:SAVE:ISSUES', res.data);
+
                     }
                 }).error(function(res) {
                     console.warn('ORDER:SAVE:ERROR', res);
+                    s.notify('There was a server issue. Try again later.', {
+                        type: 'warning',
+                        duration: 10000
+                    });
                 });
             }
 
@@ -419,7 +462,9 @@ app.controller('fullpage', ['server',
 
         s.subTotal = () => subTotal(s.model, s.diags, s.basePrice);
         s.sizePrice = () => sizePrice(s.model, s.diags, s.squareMetersPrice, s.basePrice);
-        s.totalPrice = (showRounded) => totalPrice(showRounded, s.model, s.diags, s.squareMetersPrice, s.basePrice);
+        s.totalPrice = (showRounded) => totalPrice(showRounded, s.model, s.diags, s.squareMetersPrice, s.basePrice,{
+            s:s
+        });
 
         s.pickTimeRange = function(timeRange) {
             s.model.diagStart = timeRange.start;

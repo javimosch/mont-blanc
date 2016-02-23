@@ -22,6 +22,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         }
     };
 
+    r.momentFormat=(d,f)=>(moment(d).format(f));
+
     r.dom = function(cb, timeout) {
         $timeout(function() {
             if (cb) {

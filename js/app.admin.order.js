@@ -75,7 +75,10 @@ app.controller('adminOrdersEdit', [
         function setHelpers() {
             s.subTotal = () => subTotal(s.item, s.diags, s.basePrice);
             s.sizePrice = () => sizePrice(s.item, s.diags, s.squareMetersPrice, s.basePrice);
-            s.totalPrice = (showRounded) => totalPrice(showRounded, s.item, s.diags, s.squareMetersPrice, s.basePrice);
+            s.totalPrice = (showRounded) => totalPrice(showRounded, s.item, s.diags, s.squareMetersPrice, s.basePrice,{
+                overwriteModel:false,
+                s:s //with the scope, a priceInfo object is created to debug price calc.
+            });
             s.message = r.message;
             s.type = r.session().userType;
             s.is = (arr) => _.includes(arr, s.type);

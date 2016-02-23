@@ -41,7 +41,7 @@ type="button" class="btn btn-default" ng-click="end.opened = !end.opened"><i cla
                 </div>
                 <div class="form-group">
                     <label>Diags</label>
-                    <div ng-repeat="(key,x) in diags" class="input-group" ng-show="!x.disabled">
+                    <div ng-repeat="(key,x) in diags" class="input-group" ng-show="!x.disabled" ng-if="userIs(['admin']) || !item._id || (item._id && item.diags[x.name]==true)">
                         <span class="input-group-addon diags-checkbox">
                     <input 
 ng-disabled="state.working() || is(['client','diag'])"
@@ -56,7 +56,33 @@ ng-disabled="state.working() || is(['client','diag'])"
                 </div>
                 <div class="form-group">
                     <label>Price</label>
-                    <input ng-disabled="state.working() || is(['client','diag'])" type="number" class="form-control" placeholder="Price" ng-value="totalPrice(true)">
+                    <input ng-disabled="state.working() || is(['client','diag'])" type="number" class="form-control" placeholder="Price" ng-model="item.price">
+                </div>
+                <div class="form-group well well-sm"
+ng-show="userIs(['admin'])"
+                >
+                    <label>Automatic Price (Price Rules)</label>
+                    <input disabled type="number" class="form-control" ng-value="totalPrice(true)">
+
+                    <table class="table minimal">
+                        <tr ng-repeat="(k,v) in priceInfo">
+                            <td>{{k}}</td>
+                            <td>{{v}}</td>
+                        </tr>
+                        <tr>
+                            <td>Total</td>
+                            <td>{{totalPrice(true)}}</td>
+                        </tr>
+                        <tr>
+                            <td>- House size % for {{item.info.squareMeters}} is {{squareMetersPrice[item.info.squareMeters]}}%.</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>- House size formula is {{subTotal()}}*{{squareMetersPrice[item.info.squareMeters]}}/100</td>
+                            <td></td>
+                        </tr>
+                    </table>
+
                 </div>
                 <div class="form-group">
                     <label>Pdf {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||""}}</label>
