@@ -13,9 +13,15 @@
         <style type="text/css">
 		a{
 			display: block;
+			padding: 20px;
+			font-size: 30px;
+			font-weight: bold;
+			text-decoration: none;
 		}
 		span{
-			font-size: 12px;
+			    text-decoration: overline;
+    font-size: 25px;
+    font-weight: lighter;
 		}
         </style>
     </head>
@@ -33,13 +39,13 @@ console.info('LINKS');
 var links = [
 	['INDEX',''],
 	['ADMIN','/admin'],
-	['SELL','?sell=1'],
-	['squareMeters','?squareMeters=badValue'],
-	['apartamentType','?apartamentType=asdasd'],
-	['gasInstallation bad value','?gasInstallation=yes'],
+	//['SELL','?sell=1'],
+	//['squareMeters','?squareMeters=badValue'],
+	//['apartamentType','?apartamentType=asdasd'],
+	//['gasInstallation bad value','?gasInstallation=yes'],
 
 	//VALID
-	['sell,house,squareMeters, apartamentType, constructionPermissionDate, address','?sell=0&house=1&squareMeters=20-30m2&apartamentType=T5&cpd=Before le 01/01/1949&address=15 Boulevard Voltaire, París, Francia&gasInstallation=Non&crep=1&date=Thu Feb 23 2016 15:39:26 GMT+0100&time=any#/confirm-order']
+	['QUESTIONS (WITH ANSWERS)','?sell=0&house=1&squareMeters=20-30m2&apartamentType=T5&cpd=Before le 01/01/1949&address=15 Boulevard Voltaire, París, Francia&gasInstallation=Non&crep=1&date=Thu Feb 28 2016 15:39:26 GMT+0100&time=any#/confirm-order']
 ];
 
 for(var x in links){
