@@ -35,11 +35,11 @@ app.controller('adminOrders', [
         };
 
         function read() {
-            s.message('loading . . .', 'info');
+            s.message('Loading . . .', 'info');
             db.custom('order', 'getAll', { __populate: ['_client', 'email'] }).then(function(r) {
                 //                console.info('adminOrders:read:success', r.data.result);
                 s.items = r.data.result;
-                s.message('loaded!', 'success', 1000);
+                s.message('Loaded', 'success', 1000);
             });
         }
         s.refresh = read;
@@ -347,7 +347,7 @@ app.controller('adminOrdersEdit', [
                     s.item = data.result;
                     _readFile();
                     //                    console.info('READ', s.item);
-                    s.message('loaded', 'success', 2000);
+                    s.message('Loaded', 'success', 2000);
                 } else {
                     handleError(data);
                 }

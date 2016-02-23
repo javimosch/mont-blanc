@@ -47,11 +47,11 @@ app.controller('adminUsers', [
         };
 
         function read() {
-            s.message('loading . . .', 'info');
+            s.message('Loading . . .', 'info');
             db.custom('user', 'getAll', {}).then(function(r) {
 //                console.info('adminUsers:read:success');
                 s.items = r.data.result;
-                s.message('loaded!', 'success', 1000);
+                s.message('Loaded', 'success', 1000);
             });
         }
         r.dom(read, 0);
@@ -118,6 +118,7 @@ app.controller('adminUsersEdit', [
             } else {
                 if (r.params && r.params.prevRoute) {
                     return r.route(r.params.prevRoute);
+                    delete r.params.prevRoute;
                 } else {
                     r.route('users');
                 }
@@ -221,7 +222,7 @@ app.controller('adminUsersEdit', [
                 }
             }
 
-            s.message('loading . . .', 'info');
+            s.message('Loading . . .', 'info');
 
             s.requesting = true;
             db.custom('user', 'get', {
@@ -233,7 +234,7 @@ app.controller('adminUsersEdit', [
                     s.message('not found, maybe it was deleted!', 'warning', 5000);
                 } else {
                     s.types.click(s.item.userType);
-                    s.message('loaded', 'success', 2000);
+                    s.message('Loaded', 'success', 2000);
                 }
             });
         }

@@ -441,7 +441,7 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                     type = opt.type || undefined;
                 }
 
-                if(timeout && typeof timeout !== 'string'){
+                if(timeout && typeof timeout === 'object'){
                     opt = timeout;
                     timeout = undefined;
                 }
