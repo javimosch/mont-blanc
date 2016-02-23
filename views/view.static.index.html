@@ -24,9 +24,10 @@
         <div class="section" data-anchor="diags">
             <div ng-include="'views/partials/partial.diags.html'"></div>
         </div>
+        <!--
         <div class="section" data-anchor="calendar-datepicker">
             <div ng-include="'views/partials/partial.calendar-datepicker.html'"></div>
-        </div>
+        </div>-->
         <div class="section" data-anchor="calendar-timepicker">
             <div ng-include="'views/partials/partial.calendar-timepicker.html'"></div>
         </div>
@@ -51,10 +52,14 @@ $(document).ready(function() {
         //Navigation
         menu: '#menu',
         lockAnchors: false,
-        anchors: ['question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'diags', 'calendar-datepicker', 'calendar-timepicker', 'confirm-order'],
+        anchors: ['question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'diags'
+        //, 'calendar-datepicker'
+        , 'calendar-timepicker'
+        , 'confirm-order'],
         navigation: true,
         navigationPosition: 'right',
-        navigationTooltips: ['You Sell or Rent', 'House or Apartment', 'Size', 'Date permis de construire', 'Write your address', 'What about gas installation?', 'Select diags', 'Choice a day', 'Pick a time', 'Save your order'],
+        navigationTooltips: ['You Sell or Rent', 'House or Apartment', 'Size', 'Date permis de construire', 'Write your address', 'What about gas installation?', 'Select diags'//, 'Choice a day'
+        , 'Pick a time', 'Save your order'],
         showActiveTooltip: true,
         slidesNavigation: true,
         slidesNavPosition: 'bottom',

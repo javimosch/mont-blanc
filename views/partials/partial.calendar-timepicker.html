@@ -2,28 +2,38 @@
     <div class="panel-heading">
         <h4 class="panel-title">Pick a time</h4>
     </div>
-    <div class="panel-body size-medium" ng-show="!availableTimeRanges">
-        <h3>{{selectedDate()}}</h3>
-        
-        <div class="alert alert-warning" role="alert">
-            <p>There are not available slots in this date.</p>
-        </div>
-    </div>
-    <div class="panel-body size-medium" ng-show="availableTimeRanges">
-        <h3>{{selectedDate()}}</h3>
-        <div ng-repeat="(key,range) in availableTimeRanges" class="center-block">
-            <div class=" inline">
-                <div class="radio">
-                    <input type="radio" name="timeRange" ng-click="pickTimeRange(range)">
+    <div class="panel-body size-medium">
+        <div class="row">
+            <div class="col-sm-6">
+                <uib-datepicker ng-model="model.date" min-date="datepicker.minDate" max-date="datepicker.maxDate" show-weeks="true" show-button-bar="false" class="center-block text-center" init-date="datepicker.initDate"></uib-datepicker>
+            </div>
+            <div class="col-sm-6">
+                <div ng-show="!availableTimeRanges">
+                    <h3>{{selectedDate()}}</h3>
+                    <div class="alert alert-warning" role="alert">
+                        <p>There are not available slots in this date.</p>
+                    </div>
                 </div>
-                <div>
-                    {{drawRange(range)}}
+                <div ng-show="availableTimeRanges">
+                    <h3>{{selectedDate()}}</h3>
+                    <div ng-repeat="(key,range) in availableTimeRanges" class="center-block">
+                        <div class=" inline">
+                            <div class="radio">
+                                <input type="radio" name="timeRange" ng-click="pickTimeRange(range)">
+                            </div>
+                            <div>
+                                {{drawRange(range)}}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="panel-footer">
-        <button ng-show="availableTimeRanges" class="btn btn-success center-block text-center" ng-click="down()"> Continue </button>
+        <button ng-show="true" class="btn btn-success center-block text-center" ng-click="down()" ng-disabled="!availableTimeRanges || !model.diagStart"> Continue </button>
+        <!--
         <button ng-show="!availableTimeRanges" class="center-block btn btn-warning text-center" ng-click="up()">Back</button>
+        -->
     </div>
 </div>

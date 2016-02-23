@@ -5,18 +5,20 @@
     <div class="panel-body">
         <div class="input-group">
             <span class="input-group-addon no-bg borderless">
-                <input type="radio" ng-model="model.sell" ng-value="true" ng-click="downn()">
+                <input type="radio" ng-model="model.sell" ng-value="true" ng-click="down()">
             </span>
             <input type="text" disabled class="check-label" value="You sell" aria-label="...">
         </div>
         <div class="input-group">
             <span class="input-group-addon no-bg borderless">
-                <input type="radio" ng-value="false" ng-model="model.sell" ng-click="downn()">
+                <input type="radio" ng-value="false" ng-model="model.sell" ng-click="down()">
             </span>
             <input type="text" disabled class="check-label" value="You rent" aria-label="...">
         </div>
     </div>
     <div class="panel-footer">
-<button class="btn btn-success center-block text-center" ng-click="down()"> Continue </button>
+<button class="btn btn-success center-block text-center" ng-click="down()"
+ng-disabled="model.sell===undefined"
+> Continue </button>
     </div>
 </div>

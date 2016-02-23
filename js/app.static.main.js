@@ -27,12 +27,19 @@ app.controller('fullpage', ['server',
 
         s.validModel = () => {
             var isValid = true &&
+                (true && s.model.sell !== undefined) &&
+                (true && s.model.house !== undefined) &&
+                //
+                //(true && s.model.house && s.model.squareMeters) &&
+                //(true && s.model.house == false && !s.model.apartamentType) &&
+                ((true && s.model.house == true && s.model.squareMeters) ||
+                    (true && s.model.house == false && s.model.apartamentType)) &&
+                //
+                (true && s.model.constructionPermissionDate) &&
+                (true && s.model.gasInstallation) &&
+                (true && s.model.address) &&
                 (true && s.model.diagStart) &&
                 (true && s.model.diagEnd) &&
-                (true && !_.isUndefined(s.model.address)) &&
-                (true && !_.isNull(s.model.address)) &&
-                (true && s.model.address != '') &&
-                //(true && s.model.clientType) &&
                 true;
             return isValid;
         };
@@ -257,7 +264,33 @@ app.controller('fullpage', ['server',
         });
         s.moveTo = (n) => { $.fn.fullpage.moveTo(n); };
         s.down = function() {
-            $.fn.fullpage.moveSectionDown();
+
+            var curr = $.hrefAnchor();
+            var anchors = ['question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'diags', 'calendar-timepicker', 'confirm-order'];
+            var req = {
+                'question1': () => (true && s.model.sell !== undefined),
+                'question2': () => (true && s.model.house !== undefined),
+                'question3': () => ((true && s.model.house == true && s.model.squareMeters) ||
+                    (true && s.model.house == false && s.model.apartamentType)),
+                'question4': () => (true && s.model.constructionPermissionDate),
+                'question5': () => (true && s.model.address),
+                'question6': () => (true && s.model.gasInstallation),
+                'diags': () => false,
+                'calendar-timepicker': () => (true && s.model.diagStart) && (true && s.model.diagEnd),
+                'confirm-order': () => false
+            };
+            var nextInvalidAnchor = (curr) => {
+                var index = _.indexOf(anchors, curr);
+                if (index + 1 == anchors.length) return curr;
+                index++;
+                for (var section in req) {
+                    if (req[anchors[index]]()) index++;
+                    else return anchors[index];
+                }
+            };
+
+            s.moveTo(nextInvalidAnchor(curr));
+            //$.fn.fullpage.moveSectionDown();
         };
         s.up = function() {
             $.fn.fullpage.moveSectionUp();
@@ -279,7 +312,7 @@ app.controller('fullpage', ['server',
 
 
 
-        
+
 
         var isLandlord = () => s.model.clientType === 'landlord';
 
@@ -310,21 +343,21 @@ app.controller('fullpage', ['server',
                 });
             }
 
-            function _modalSuccess(){
+            function _modalSuccess() {
                 s.openConfirm({
                     templateUrl: 'views/directives/directive.modal.order.created.html',
                     data: {
                         email: s.model.email
                     }
                 }, () => {
-                    window.location.href = window.location.origin;//reset
+                    window.location.href = window.location.origin; //reset
                 });
             }
 
-            function _modalInfo(msg,cb){
+            function _modalInfo(msg, cb) {
                 s.openConfirm({
                     templateUrl: 'views/directives/directive.modal.ok.html',
-                    message:msg
+                    message: msg
                 });
             }
 
@@ -357,8 +390,8 @@ app.controller('fullpage', ['server',
                             if (isLandlord() && !_.includes(['prepaid', 'completed'], _order.status)) {
                                 return _payOrder(_order);
                             } else {
-                                var backOffice = '<a target="_blank" href="'+location.origin+'/admin#/orders/edit/'+_order._id+'">View Order</a>';
-                                _modalInfo('A similar order is alredy associated to the email you enter: ' + s.model.email + '.<br>'+backOffice+' in back-office.');
+                                var backOffice = '<a target="_blank" href="' + location.origin + '/admin#/orders/edit/' + _order._id + '">View Order</a>';
+                                _modalInfo('A similar order is alredy associated to the email you enter: ' + s.model.email + '.<br>' + backOffice + ' in back-office.');
                             }
 
                             //_modalInfo('An order with same address / start/ end is alredy associated to ' + s.model.email);
@@ -429,4 +462,3 @@ app.controller('fullpage', ['server',
     }
 
 ]);
-

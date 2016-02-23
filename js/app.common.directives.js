@@ -124,6 +124,7 @@ app.directive('address', function($rootScope, $timeout) {
                 elem.geocomplete().bind("geocode:result", function(event, result) {
                     scope.model[scope.field] = result.formatted_address;
                     scope.change && scope.change(result.formatted_address);
+                    r.dom();
                 });
 
                 function read() {

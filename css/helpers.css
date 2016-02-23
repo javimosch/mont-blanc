@@ -69,6 +69,11 @@
     }
 }
 
+.h-padding-2{
+    padding-left:10px;
+    padding-right:10px;
+}
+
 .spacing-1 {
     padding: 5px;
 }

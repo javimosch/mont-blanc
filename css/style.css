@@ -38,6 +38,8 @@
   animation: rotating 2s linear infinite;
 }
 
+
+
 .diags-checkbox{
   border: none;
 }
@@ -116,7 +118,7 @@ table.order td{
 }
 
 .panel.question{
-	max-width:400px;
+	max-width:600px;
 	margin:0 auto;
 }
 .panel-footer{

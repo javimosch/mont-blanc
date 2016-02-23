@@ -6,11 +6,37 @@
         <div class="well well-lg">
             <p>Resolve the follow points first.</p>
             <ul>
-                <li ng-show="!model.diagStart">
-                    <h5>Order Time required.</h5></li>
-                <li ng-show="model.address==''">
+                <li ng-show="model.sell===undefined">
+                    <h5>Question 
+        <a ng-click="moveTo('question1')" class="link">Sell or Rent</a>
+                     required.</h5></li>
+                <li ng-show="model.house === undefined">
+                    <h5>Question 
+        <a ng-click="moveTo('question2')" class="link">House or Apartament</a>
+                     required.</h5></li>
+                <li ng-show="model.house===true && !model.squareMeters">
+                    <h5>Question 
+        <a ng-click="moveTo('question3')" class="link">House Square Meters</a>
+                     required.</h5></li>
+                <li ng-show="model.house==false && !model.apartamentType">
+                    <h5>Question 
+        <a ng-click="moveTo('question3')" class="link">Apartament Type</a>
+                     required.</h5></li>
+                <li ng-show="!model.constructionPermissionDate">
+                    <h5>Question 
+        <a ng-click="moveTo('question4')" class="link">Date permis de construire</a>
+                     required.</h5></li>
+                <li ng-show="!model.address">
                     <h5>Order 
         <a ng-click="moveTo('question5')" class="link">Address</a>
+                     required.</h5></li>
+                <li ng-show="!model.diagStart || !availableTimeRanges">
+                    <h5> 
+<a ng-click="moveTo('calendar-timepicker')" class="link">Order Time</a>
+                     required.</h5></li>
+                     <li ng-show="!model.gasInstallation">
+                    <h5> 
+<a ng-click="moveTo('question6')" class="link">Gas Installation</a>
                      required.</h5></li>
             </ul>
         </div>
