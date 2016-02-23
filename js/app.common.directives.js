@@ -435,6 +435,20 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
 
             s.add = function(message, type, timeout, scroll, opt) {
                 var msg = s.decodeMessage(message);
+
+                if(type && typeof type!=='string'){
+                    opt = type;
+                    type = opt.type || undefined;
+                }
+
+                if(timeout && typeof timeout !== 'string'){
+                    opt = timeout;
+                    timeout = undefined;
+                }
+                if(opt && opt.scroll === true){
+                    scroll = true;
+                }
+
                 if (s.stacked) {
                     if (s.el) {
                         return s._stacked.push({

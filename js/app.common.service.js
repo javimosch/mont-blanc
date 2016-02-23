@@ -11,7 +11,37 @@ srv.service('localdb', ['$http', function(http) {
         });
     };
 }]);
-srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb, r) {
+srv.directive('fileModel', ['$parse', function($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
+
+            element.bind('change', function() {
+                scope.$apply(function() {
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);
+srv.service('fileUpload', ['$http', function($http) {
+    this.single = function(opt,success,err) {
+        var fd = new FormData();
+        Object.keys(opt.data).forEach((key) => {
+            fd.append(key, opt.data[key]);
+        });
+        fd.append('file', opt.file);
+        $http.post(opt.url, fd, {
+                transformRequest: angular.identity,
+                headers: { 'Content-Type': undefined }
+            })
+            .success(success)
+            .error(err);
+    };
+}]);
+srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(http, localdb, r, fileUpload) {
     //var URL = 'http://ujkk558c0c9a.javoche.koding.io:3434';
     var URL = 'http://localhost:5000';
 
@@ -453,6 +483,18 @@ srv.service('server', ['$http', 'localdb', '$rootScope', function(http, localdb,
         custom: custom,
         http: function(ctrl, action, data) {
             return http.post(URL + '/' + 'ctrl/' + ctrl + '/' + action, data);
+        },
+        form: (relativeURL, data) => {
+            if (!data.file) throw Error('form: file arg required');
+            return MyPromise((r, err) => {
+                var file = data.file;
+                delete data.file;
+                fileUpload.single({
+                    url: URL + '/' + relativeURL,
+                    file: file,
+                    data: data
+                },r,err);
+            });
         },
         ctrl: ctrl,
         $get: (url, config) => {

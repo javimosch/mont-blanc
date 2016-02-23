@@ -30,8 +30,8 @@ app.controller('adminOrders', [
         };
         s.syncStripe = () => {
             db.ctrl('Order', 'syncStripe'); //async 
-            setTimeout(read,5000);
-            setTimeout(read,20000);
+            setTimeout(read, 5000);
+            setTimeout(read, 20000);
         };
 
         function read() {
@@ -43,7 +43,7 @@ app.controller('adminOrders', [
             });
         }
         s.refresh = read;
-        
+
         r.dom(read, 0);
 
     }
@@ -214,6 +214,71 @@ app.controller('adminOrdersEdit', [
                     }
                 }).error(handleError);
             };
+            s.downloadFile = () => {
+                if (!s.item.pdfId) {
+                    return s.message("File required", 'warning', {
+                        duration: 5000,
+                        scroll: true
+                    });
+                }else{
+                    window.open(db.URL()+'/File/get/'+s.item.pdfId,'_newtab');
+                }
+            };
+            s.saveFile = () => {
+                if (!s.pdfFile) {
+                    saveFile
+                    return s.message("File required", 'warning', {
+                        duration: 5000,
+                        scroll: true
+                    });
+                }
+                var pdfId_prev = s.item.pdfId;
+                _uploadNew(); //starts here
+
+                function _deletePrev() {
+                    if (pdfId_prev) {
+                        db.ctrl('File', 'remove', { _id: pdfId_prev });
+                    }
+                }
+
+                function _uploadNew() {
+                    s.message('Uploading (Do not touch anything)', {
+                        type: 'info',
+                        duration: 99999,
+                        scroll: true
+                    });
+                    db.form('File/save/', {
+                        name: s.pdfFile.name,
+                        file: s.pdfFile
+                    }).then((data) => {
+                        //console.info('INFO', data);
+                        if (data.ok) {
+                            s.item.pdfId = data.result._id;
+                            db.ctrl('Order', 'update', {
+                                _id: s.item._id,
+                                pdfId: data.result._id,
+                                status: (s.item.status === 'prepaid') ? 'completed' : 'delivered'
+                            }).then(data => {
+                                _deletePrev();
+                                //_readFile();
+                                read(s.item._id);
+                                s.message('File upload success.', {
+                                    type: 'info',
+                                    duration: 5000,
+                                    scroll: true
+                                });
+                            });
+                        } else {
+                            s.message('Upload fail, try later.', {
+                                type: 'warning',
+                                duration: 99999,
+                                scroll: true
+                            });
+                        }
+                    });
+                }
+            };
+
 
 
             s.delete = function() {
@@ -246,6 +311,18 @@ app.controller('adminOrdersEdit', [
             s.item = _.clone(s.original);
         }
 
+        function _readFile() {
+            if (s.item.pdfId) {
+                db.ctrl('File', 'find', {
+                    _id: s.item.pdfId
+                }).then(data => {
+                    if (data.ok) {
+                        s.pdfFileInfo = (data.result.length > 0 && data.result[0]) || null;
+                    }
+                });
+            }
+        }
+
         function read(id) {
             if (r.params && r.params.item && r.params.item._diag) {
                 s.item = r.params.item; //partial loading
@@ -255,7 +332,7 @@ app.controller('adminOrdersEdit', [
             s.message('loading . . .', 'info');
             s.requesting = true;
             db.ctrl('Order', 'get', {
-                _id: id || params.id,
+                _id: id || params.id || s.item._id,
                 __populate: {
                     '_client': 'email',
                     '_diag': 'email'
@@ -268,6 +345,7 @@ app.controller('adminOrdersEdit', [
                         diagEnd: new Date(data.result.diagEnd)
                     });
                     s.item = data.result;
+                    _readFile();
                     //                    console.info('READ', s.item);
                     s.message('loaded', 'success', 2000);
                 } else {

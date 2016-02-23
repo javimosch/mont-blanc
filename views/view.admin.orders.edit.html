@@ -58,10 +58,13 @@ ng-disabled="state.working() || is(['client','diag'])"
                     <label>Price</label>
                     <input ng-disabled="state.working() || is(['client','diag'])" type="number" class="form-control" placeholder="Price" ng-value="totalPrice(true)">
                 </div>
-                
                 <div class="form-group">
-                    <label>Pdf</label>
-                    <input type="file" disabled class="form-control" placeholder="Diag Pdf">
+                    <label>Pdf {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||""}}</label>
+                    <input type="file" file-model="pdfFile" 
+                    ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working()" class="form-control" placeholder="Diag Pdf">
+                    <button ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working() || !pdfFile" class="btn btn-default" ng-click="saveFile()">Upload</button>
+                    <button ng-disabled="!item.pdfId" class="btn btn-default" ng-click="downloadFile()">Download</button>
+                    <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
                 </div>
                 <div class="form-group">
                     <label for="status">Status:</label>
@@ -85,7 +88,7 @@ ng-disabled="state.working() || is(['client','diag'])"
         <div class="panel-footer">
             <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="validate()">Save</button>
             <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>
-            <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="delete()">Delete</button>
+            <button ng-disabled="state.working() || requesting || userIs(['client','diag'])" class="btn btn-default" ng-click="delete()">Delete</button>
         </div>
     </div>
     <!--    <my-alerts add="message"></my-alerts> -->
