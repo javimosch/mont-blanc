@@ -116,6 +116,7 @@ app.directive('diagOrders', function(
             var ws = server;
             var n = attrs.name;
             s.title = "Your Orders";
+
             function update() {
                 var data = {
                     __populate: {
@@ -124,10 +125,10 @@ app.directive('diagOrders', function(
                     }
                 };
 
-                if(r.userIs(['diag'])){
+                if (r.userIs(['diag'])) {
                     data['_diag'] = r.session()._id;
                 }
-                if(r.userIs(['client'])){
+                if (r.userIs(['client'])) {
                     data['_client'] = r.session()._id;
                 }
 
@@ -150,7 +151,7 @@ app.directive('diagOrders', function(
                     });
                     s.open({
                         title: 'Order View',
-                        data:data,
+                        data: data,
                         item: item,
                         templateUrl: 'views/partials/partial.modal.diag.order.html',
                         callback: (item) => {
@@ -203,7 +204,7 @@ app.directive('diagCalendar', function(
             var mo = m.month();
             window.s = s;
 
-            s.open = ()=>{};
+            s.open = () => {};
 
 
             s.calendarView = 'year';
@@ -249,10 +250,10 @@ app.directive('diagCalendar', function(
                     }
                 };
 
-                if(r.userIs(['diag'])){
+                if (r.userIs(['diag'])) {
                     conditions['_diag'] = r.session()._id;
                 }
-                if(r.userIs(['client'])){
+                if (r.userIs(['client'])) {
                     conditions['_client'] = r.session()._id;
                 }
 
@@ -286,10 +287,10 @@ app.directive('diagCalendar', function(
 
             s.eventClicked = (calendarEvent) => {
                 r.params = {
-                    item:calendarEvent.item,
-                    prevRoute:'dashboard'
+                    item: calendarEvent.item,
+                    prevRoute: 'dashboard'
                 };
-                r.route('orders/edit/'+calendarEvent.item._id);
+                r.route('orders/edit/' + calendarEvent.item._id);
                 /*
                 s.open({
                     //title: 'Edit Exception',
@@ -335,6 +336,12 @@ app.controller('adminDiags', [
         //
         r.toggleNavbar(true);
         r.secureSection(s);
+        //
+        var isClientOrDiag = r.userIs(['client', 'diag']);
+        if (isClientOrDiag) {
+            return r.handleSecurityRouteViolation();
+        }
+        //
         s.selectedItems = [];
         s.items = [];
         //
@@ -390,6 +397,13 @@ app.controller('adminDiagsEdit', [
         //
         r.toggleNavbar(true);
         r.secureSection(s);
+        //
+        var isClient = r.userIs(['client']);
+        var notCurrentDiag = (r.userIs(['diag']) && r.sesson()._id !== params.id);
+        if (isClient || notCurrentDiag) {
+            return r.handleSecurityRouteViolation();
+        }
+        //
         r.dom();
         //
         s.item = {
@@ -397,18 +411,35 @@ app.controller('adminDiagsEdit', [
             password: '',
             address: '',
             userType: 'diag',
-            diagPriority:undefined
+            diagPriority: undefined
         };
         s.original = _.clone(s.item);
+        window.edit = s;
 
 
-        s.$watch('item.diagPriority',(v)=>{
-            if(!_.isUndefined(v)&&!_.isNull(v) && isFinite(v)){
-                if(v===s.original.diagPriority) return;
-                db.ctrl('User','get',{userType:'diag',diagPriority:v,__select:"email"}).then((data)=>{
-                    if(data.result!==null){
+        s.$watch('item.disabled', (v) => {
+            if (v && s.item._id) {
+                db.ctrl('Order', 'count', {
+                    _diag: { $eq: s.item._id }
+                }).then(d => {
+                    if (d.ok && d.result > 0) {
+                        s.item.disabled = false;
+                        r.message('Diag can only be disabled when there are not orders assigned.', {
+                            type: 'warning',
+                            duration: 5000
+                        });
+                    }
+                });
+            }
+        });
+
+        s.$watch('item.diagPriority', (v) => {
+            if (!_.isUndefined(v) && !_.isNull(v) && isFinite(v)) {
+                if (v === s.original.diagPriority) return;
+                db.ctrl('User', 'get', { userType: 'diag', diagPriority: v, __select: "email" }).then((data) => {
+                    if (data.result !== null) {
                         s.item.diagPriority = s.original.diagPriority;
-                        r.message('Priority '+v+' is alredy assigned to '+data.result.email,'warning',5000,true);
+                        r.message('Priority ' + v + ' is alredy assigned to ' + data.result.email, 'warning', 5000, true);
                     }
                 });
             }

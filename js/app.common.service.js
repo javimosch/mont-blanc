@@ -269,6 +269,9 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     function diagsPriority(cb) {
         ctrl('User', 'getAll', {
             userType: 'diag',
+            __rules:{
+                disabled:{$ne:true}//exclude disabled diags
+            },
             __select: 'diagPriority'
         }).then((data) => {
             cb(data.result.map((v) => ({ _id: v._id, priority: v.diagPriority })));

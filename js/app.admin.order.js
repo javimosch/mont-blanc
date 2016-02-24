@@ -13,6 +13,8 @@ app.controller('adminOrders', [
         s.selectedItems = [];
         s.items = [];
         //
+
+        //
         if (r.userIs(['diag', 'client'])) {
             return r.handleSecurityRouteViolation();
         }
@@ -57,6 +59,9 @@ app.controller('adminOrdersEdit', [
         function init() {
             r.toggleNavbar(true);
             r.secureSection(s);
+            //
+
+            //
             r.dom();
             //
             setHelpers();
@@ -75,9 +80,9 @@ app.controller('adminOrdersEdit', [
         function setHelpers() {
             s.subTotal = () => subTotal(s.item, s.diags, s.basePrice);
             s.sizePrice = () => sizePrice(s.item, s.diags, s.squareMetersPrice, s.basePrice);
-            s.totalPrice = (showRounded) => totalPrice(showRounded, s.item, s.diags, s.squareMetersPrice, s.basePrice,{
-                overwriteModel:false,
-                s:s //with the scope, a priceInfo object is created to debug price calc.
+            s.totalPrice = (showRounded) => totalPrice(showRounded, s.item, s.diags, s.squareMetersPrice, s.basePrice, {
+                overwriteModel: false,
+                s: s //with the scope, a priceInfo object is created to debug price calc.
             });
             s.message = r.message;
             s.type = r.session().userType;
@@ -139,6 +144,9 @@ app.controller('adminOrdersEdit', [
             s.getDiags = function(val) {
                 return db.http('User', 'getAll', {
                     userType: 'diag',
+                    __rules: {
+                        disabled: { $ne: true },
+                    },
                     __regexp: {
                         email: val
                     }
@@ -194,7 +202,7 @@ app.controller('adminOrdersEdit', [
                     [moment(s.item.diagEnd).isValid() && moment(s.item.diagStart).isValid() && !moment(s.item.diagEnd).isSame(moment(s.item.diagStart), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
                     [moment(s.item.diagEnd).isValid() && moment(s.item.diagEnd).isBefore(moment(s.item.diagStart), 'hour'), '==', true, 'End date cannot be lower than Start date'],
 
-                    
+
 
                     //[s.item.fastDiagComm.toString(),'==','','Comission required'],
                     [isNaN(s.item.fastDiagComm), '==', true, 'Comission need to be a number'],
@@ -224,8 +232,8 @@ app.controller('adminOrdersEdit', [
                         duration: 5000,
                         scroll: true
                     });
-                }else{
-                    window.open(db.URL()+'/File/get/'+s.item.pdfId,'_newtab');
+                } else {
+                    window.open(db.URL() + '/File/get/' + s.item.pdfId, '_newtab');
                 }
             };
             s.saveFile = () => {
