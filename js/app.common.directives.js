@@ -1,10 +1,11 @@
 var app = angular.module('app.common.directives', []);
 
-app.directive('includeReplace', function () {
+app.directive('includeReplace', function() {
     return {
         require: 'ngInclude',
-        restrict: 'A', /* optional */
-        link: function (scope, el, attrs) {
+        restrict: 'A',
+        /* optional */
+        link: function(scope, el, attrs) {
             el.replaceWith(el.children());
         }
     };
@@ -58,17 +59,17 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
         replace: true,
         scope: {
             open: '=open',
-            close:'=close'
+            close: '=close'
         },
         template: '<output></output>',
         link: function(s, elem, attrs) {
-            var fire = (n, p,ctx) => {
+            var fire = (n, p, ctx) => {
                 if (s.evts) {
                     s.evts[n] = s.evts[n] || [];
                     s.evts[n].forEach((cb) => {
-                        if(ctx){
-                            cb.call(ctx,p);
-                        }else{
+                        if (ctx) {
+                            cb.call(ctx, p);
+                        } else {
                             cb(p);
                         }
                     })
@@ -85,7 +86,7 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
                     templateUrl: opt.templateUrl,
                     controller: function($scope, $uibModalInstance) {
                         var s = $scope;
-                        s.fire = (n,p)=>fire(n,p,s);
+                        s.fire = (n, p) => fire(n, p, s);
                         Object.assign(s, opt);
                         s.save = s.validate = () => {
                             if (s.validate && s.validate.when && s.validate.fail) {
@@ -113,7 +114,7 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
                         s.cancel = function() {
                             $uibModalInstance.dismiss('cancel');
                         };
-                        fire('init', null,s);
+                        fire('init', null, s);
                     }
                 });
             };
@@ -447,16 +448,16 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
             s.add = function(message, type, timeout, scroll, opt) {
                 var msg = s.decodeMessage(message);
 
-                if(type && typeof type!=='string'){
+                if (type && typeof type !== 'string') {
                     opt = type;
                     type = opt.type || undefined;
                 }
 
-                if(timeout && typeof timeout === 'object'){
+                if (timeout && typeof timeout === 'object') {
                     opt = timeout;
                     timeout = undefined;
                 }
-                if(opt && opt.scroll === true){
+                if (opt && opt.scroll === true) {
                     scroll = true;
                 }
 
@@ -565,7 +566,7 @@ app.directive('dynamicTable', function(
             s.buttons = s.model.buttons || null;
             s.columns = s.model.columns || [];
             s.items = s.model.items || [];
-            s.model.update = (items,data) => {
+            s.model.update = (items, data) => {
                 s.items = items;
                 s.data = data;
                 r.dom();
@@ -619,6 +620,8 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                                 s.title = 'New ' + s.title;
                             }
                         }
+                        s._opt = opt;
+                        window.edit = s;
                         s.days = (() => {
                             var o = {
                                 label: 'Day',
@@ -677,6 +680,13 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                         s.start = timePickerData(opt.start);
                         s.end = timePickerData(opt.end);
                         s.repeat = 'none';
+                        s.daySelection = () => s.repeat !== 'none';
+                        s.datepicker = {
+                            val: undefined,
+                            minDate: moment().add(1, 'day'),
+                            maxDate: moment().add(2, 'month'),
+                            initDate: new Date()
+                        };
                         s.$watch('repeat', (v) => {
                             if (v === 'day') s.days.select(-1);
                         })
@@ -694,13 +704,25 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                                 s.message('Choice a day', 'warning', 2000);
                                 return false;
                             }
+                            if (s.repeat === 'none' && s.datepicker.val == undefined) {
+                                s.message('Choice a day in the calendar', 'warning', 2000)
+                                return;
+                            }
                             try {
                                 var _d = moment(s.start.val);
                                 _d = moment(s.end.val);
+
+                                if (s.repeat === 'none') {
+                                    s.start.val = moment(s.datepicker.val).hour(moment(s.start.val).hour()).minutes(moment(s.start.val).minutes()).toDate();
+                                    s.end.val = moment(s.datepicker.val).hour(moment(s.end.val).hour()).minutes(moment(s.end.val).minutes()).toDate()
+                                }
+
                             } catch (e) {
                                 s.message('Invalid time', 'warning', 2000);
                                 return false;
                             }
+
+
                             return true;
                         };
                         s.save = function() {

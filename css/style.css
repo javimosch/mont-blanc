@@ -38,6 +38,15 @@
   animation: rotating 2s linear infinite;
 }
 
+.modal-dialog{
+    width: initial;
+    max-width: 90%;
+}
+
+
+.modal-body.row-fluid{
+      min-height: 300px;
+}
 
 
 .diags-checkbox{
