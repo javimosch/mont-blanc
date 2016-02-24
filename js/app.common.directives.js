@@ -1,5 +1,15 @@
 var app = angular.module('app.common.directives', []);
 
+app.directive('includeReplace', function () {
+    return {
+        require: 'ngInclude',
+        restrict: 'A', /* optional */
+        link: function (scope, el, attrs) {
+            el.replaceWith(el.children());
+        }
+    };
+});
+
 app.directive('focusOn', function() {
     return function(scope, elem, attr) {
         scope.$on('focusOn', function(e, name) {
@@ -555,8 +565,9 @@ app.directive('dynamicTable', function(
             s.buttons = s.model.buttons || null;
             s.columns = s.model.columns || [];
             s.items = s.model.items || [];
-            s.model.update = (items) => {
+            s.model.update = (items,data) => {
                 s.items = items;
+                s.data = data;
                 r.dom();
                 //console.log('directive.dynamic-table.set:' + items.length);
             };

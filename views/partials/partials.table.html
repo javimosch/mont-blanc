@@ -18,10 +18,13 @@
                      html-content html="item[c.name||c]"></td>
                 </tr>
             </tbody>
+            <tfoot ng-if="model.tfoot" ng-include="model.tfoot">
+            </tfoot>
         </table>
     </div>
     <div ng-if="buttons">
-        <button ng-repeat="(k,v) in buttons" ng-class="v.type()||''" ng-click="v.click()">{{v.label}}</button>
+        <button ng-repeat="(k,v) in buttons" ng-if="v.show==undefined || v.show==true" ng-class="v.type()||''" ng-click="v.click()">{{v.label}}</button>
+        <out ng-if="model.buttonsTpl" ng-include="model.buttonsTpl" include-replace></out>
         <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Double click on a row to edit"></i>
     </div>
 </div>

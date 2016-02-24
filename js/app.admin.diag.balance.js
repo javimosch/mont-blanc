@@ -14,38 +14,54 @@
                 var ws = server;
                 var n = attrs.name;
                 s.title = "Balance details";
+                window.balance = s;
 
-                function update() {
+                function update(recalc) {
                     var data = {
-                        __populate: {
-                            '_client': 'email userType',
-                            '_diag': 'email userType'
-                        }
+                        _id: r.session()._id,
+
                     };
-
-                    if (r.userIs(['diag'])) {
-                        data['_diag'] = r.session()._id;
+                    if (recalc) {
+                        data._calculate = true;
                     }
-                    if (r.userIs(['client'])) {
-                        data['_client'] = r.session()._id;
-                    }
-
-                    ws.ctrl('Payment', 'diagBalance', data).then((res) => {
+                    data.period = s.model.periodSelected || 'year';
+                    
+                    ws.ctrl('User', 'balance', data).then((res) => {
                         if (res.ok) {
-                            res.result = [res.result];
-                            res.result.forEach((v) => {
-                                v.balance = v.balance / 100;
-                                //v.created = moment(v.created).format('DD/MM/YY HH:MM');
-                                //v.created = new Date(v.created);
-                            });
-                            console.info('TRANSACTIONS', res.result);
-                            s.model.update(res.result);
+                            console.info('balance', res.result);
+                            s.balance = res.result;
+                            s.model.update(res.result.items, s.balance);
                         }
                     });
                 }
 
 
                 s.model = {
+                    /*remove: (item, index) => {
+                        var rule = {
+                            //_user: r.session().id
+                            _id:item._id
+                        };
+                        ws.ctrl('BalanceItem', 'removeAll', rule, (d) => {
+                            if (d.ok) {
+                                //ws.ctrl('Balance', 'removeAll', rule, () => update(true));
+                                update(true);
+                            }
+                        })
+                    },*/
+                    periodSelected:'year',
+                    periods: createSelect({
+                        label: '(Select a period)',
+                        model: 'model.periodSelected',
+                        scope: s,
+                        change: x => {
+                            console.info(x);
+                            update(true)
+                        },
+                        items: ['month', 'year']
+                    }),
+                    buttonsTpl: 'views/partials/partial.diag.balance.buttons.html',
+                    tfoot: 'views/partials/partial.diag.balance.footer.html',
                     click: (item, index) => {
                         var data = {};
                         ws.localData().then(function(d) {
@@ -75,14 +91,19 @@
                     buttons: [{
                         label: "Refresh",
                         type: () => "btn btn-primary spacing-h-1",
-                        click: () => update()
+                        click: () => update(true)
+                    }, {
+                        label: "Recalc",
+                        show: false,
+                        type: () => "btn btn-primary spacing-h-1",
+                        click: () => update(true)
                     }],
                     columns: [{
                         label: "Description",
-                        name: 'email'
+                        name: 'description'
                     }, {
                         label: "Amount (eur)",
-                        name: 'balance',
+                        name: 'amount',
                         align: 'right'
                     }],
                     items: []

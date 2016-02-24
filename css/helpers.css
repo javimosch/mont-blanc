@@ -29,7 +29,7 @@ table.minimal td{
 }
 
 .focus-1:focus{
-    outline: 5px solid blue;
+    /*outline: 5px solid blue;*/
 }
 
 

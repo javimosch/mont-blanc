@@ -191,9 +191,10 @@ app.controller('adminOrdersEdit', [
                     [_.isNull(s.item.diagEnd) || _.isUndefined(s.item.diagEnd), '==', 'true', 'Start date required'],
                     [moment(s.item.diagStart || null).isValid(), '==', false, "Start date invalid"],
                     [moment(s.item.diagEnd || null).isValid(), '==', false, "End date invalid"],
-                    [moment(s.item.diagEnd).isValid() && moment(s.item.diagEnd).isBefore(moment(s.item.diagStart), 'hour'), '==', true, 'End date cannot be greater than Start date'],
-
                     [moment(s.item.diagEnd).isValid() && moment(s.item.diagStart).isValid() && !moment(s.item.diagEnd).isSame(moment(s.item.diagStart), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
+                    [moment(s.item.diagEnd).isValid() && moment(s.item.diagEnd).isBefore(moment(s.item.diagStart), 'hour'), '==', true, 'End date cannot be lower than Start date'],
+
+                    
 
                     //[s.item.fastDiagComm.toString(),'==','','Comission required'],
                     [isNaN(s.item.fastDiagComm), '==', true, 'Comission need to be a number'],

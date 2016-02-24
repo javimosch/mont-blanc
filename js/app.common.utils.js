@@ -37,18 +37,33 @@ function createSelect(opt) { //s:scope r:rootscope
         label: opt.label,
         click: (x) => {
             o.label = x.label || x;
+            setPropByGivenPath(opt.scope,opt.model,x);
             opt.change(x);
         },
         items: opt.items
     };
     opt.scope.$watch(opt.model, (v) => {
         if (v !== undefined) {
-            o.label = v.substring(0, 1).toUpperCase() + v.slice(1);
+            o.label = v.label || (v.substring(0, 1).toUpperCase() + v.slice(1));
         } else {
             o.label = opt.label;
         }
     });
     return o;
+}
+
+function setPropByGivenPath(obj, propertyPath, val) {
+    var split = propertyPath.split('.');
+    var lastIndex = split.length - 1;
+    split.forEach((chunk, index) => {
+        var isLast = lastIndex == index;
+        if (isLast) return false;
+        obj = obj[chunk] || null;
+        if (!obj) return false;
+    });
+    if (obj) {
+        obj[split[lastIndex]] = val;
+    }
 }
 
 var whenProperties = (o, props, cbArray) => {

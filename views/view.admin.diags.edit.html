@@ -72,7 +72,7 @@ ng-disabled="state.working()"
                 <div class="form-group">
                     <label>Comission</label>
                     <input 
-ng-disabled="state.working()"
+ng-disabled="state.working() || !userIs(['admin'])"
                     type="text" class="form-control" ng-model="item.comission" placeholder="Comission">
                 </div>
                 <div class="form-group">
