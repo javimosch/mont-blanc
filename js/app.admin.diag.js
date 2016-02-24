@@ -181,7 +181,6 @@ app.directive('diagOrders', function(
                 items: []
             };
             update();
-            console.log('directive.exceptions.linked');
         }
     };
 });
@@ -204,7 +203,7 @@ app.directive('diagCalendar', function(
             var mo = m.month();
             window.s = s;
 
-
+            s.open = ()=>{};
 
 
             s.calendarView = 'year';
@@ -286,6 +285,12 @@ app.directive('diagCalendar', function(
             }
 
             s.eventClicked = (calendarEvent) => {
+                r.params = {
+                    item:calendarEvent.item,
+                    prevRoute:'dashboard'
+                };
+                r.route('orders/edit/'+calendarEvent.item._id);
+                /*
                 s.open({
                     //title: 'Edit Exception',
                     action: 'edit',
@@ -298,13 +303,13 @@ app.directive('diagCalendar', function(
                     }
                 })
                 console.log(calendarEvent);
+                */
             };
             s.eventEdited = (evt) => {
-                console.log(evt);
+                //console.log(evt);
             };
             //
             update();
-            console.log('directive.diag-calendar.linked');
         }
     };
 });

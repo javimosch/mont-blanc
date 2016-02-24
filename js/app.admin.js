@@ -3,6 +3,7 @@ var app = angular.module('app', [
     'app.admin.login',
     'app.admin.user',
     'app.admin.diag',
+    'app.admin.diag.balance',
     'app.admin.order',
     'app.admin.client',
     'app.admin.calendar',

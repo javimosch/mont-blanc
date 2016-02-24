@@ -23,6 +23,9 @@ app.config(['$routeProvider',
         when('/users/edit/:id', {
             templateUrl: 'views/view.admin.users.edit.html'
         }).
+        when('/diag/balance', {
+            templateUrl: 'views/view.admin.diag.balance.html'
+        }).
         when('/diags', {
             templateUrl: 'views/view.admin.diags.html'
         }).

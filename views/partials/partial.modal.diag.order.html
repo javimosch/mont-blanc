@@ -17,10 +17,12 @@
             </textarea>
         </div>
         <div class="form-group">
-            <label>Inspections</label>
-            <div ng-repeat="(key,x) in data.diags" class="input-group">
+            <label>Diags</label>
+            <div ng-repeat="(key,x) in data.diags" class="input-group"
+            ng-if="item.diags[x.name]==true"
+            >
                 <span class="input-group-addon diags-checkbox">
-                    <input disabled type="checkbox" ng-model="item.diags[x.name]" ng-value="true">
+                    <input disabled type="checkbox" ng-model="item.diags[x.name]" ng-value="true" >
                 </span>
                 <input type="text" disabled class="check-label" value="{{x.label}}" aria-label="...">
             </div>
