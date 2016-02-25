@@ -14,7 +14,12 @@ $(function() {
         }, 500);
     };
 
-
+    $.onGlobalError = cb => {
+        $('html').on('error',()=>{
+            console.log('ERROR.DETECTED');
+            //cb();
+        });
+    };
 
 
 });
@@ -37,7 +42,7 @@ function createSelect(opt) { //s:scope r:rootscope
         label: opt.label,
         click: (x) => {
             o.label = x.label || x;
-            setPropByGivenPath(opt.scope,opt.model,x);
+            setPropByGivenPath(opt.scope, opt.model, x);
             opt.change(x);
         },
         items: opt.items

@@ -161,14 +161,14 @@ app.controller('fullpage', ['server',
         }
 
 
-        s.lineThrough = (item)=>(item.show==false);
+        s.lineThrough = (item) => (item.show == false);
 
         function updateChecksVisibilityOnDemand() {
             var toggle = (n, val) => {
                 s.diags.forEach((diag) => {
                     if ((n && diag.name == n) || !n) {
                         diag.show = val;
-                        if(diag.show==false){
+                        if (diag.show == false) {
                             s.model.diags[diag.name] = false;
                         }
                     }
@@ -251,17 +251,18 @@ app.controller('fullpage', ['server',
                     }
                 }
 
-                /*
-                //fill _diag with a random _diag for now
-                db.custom('user', 'get', {
-                    userType: 'diag'
-                }).then(function(res) {
-                    s.availableTimeRanges.forEach(function(v, k) {
-                        v._diag = res.data.result._id;
+                //retrieve diag names.
+                s.availableTimeRanges.forEach(r => {
+                    db.ctrl('User', 'get', { _id: r._diag }).then(d => {
+                        if (d.ok && d.result) {
+                            r.name = d.result.firstName;
+                            if (d.result.diagPriority) {
+                                r.name+= ' (' + d.result.diagPriority + ')';
+                            }
+                        }
                     });
-                    console.log('FIX: ranges filled with _diag=', res.data.result._id);
                 });
-*/
+
 
             });
         });
@@ -302,7 +303,13 @@ app.controller('fullpage', ['server',
             return moment(s.model.date).format('MMMM Do YYYY, dddd');
         };
         s.drawRange = function(rng) {
-            return moment(rng.start).format("HH:mm") + 'h - ' + moment(rng.end).format("HH:mm") + 'h';
+            var rta = moment(rng.start).format("HH:mm") + 'h - ' + moment(rng.end).format("HH:mm") + 'h';
+
+            if (rng.name) {
+                rta+= ' by ' + rng.name;
+            }
+
+            return rta;
         };
 
         s.onModelChange = function(a, b, c) {
@@ -462,8 +469,8 @@ app.controller('fullpage', ['server',
 
         s.subTotal = () => subTotal(s.model, s.diags, s.basePrice);
         s.sizePrice = () => sizePrice(s.model, s.diags, s.squareMetersPrice, s.basePrice);
-        s.totalPrice = (showRounded) => totalPrice(showRounded, s.model, s.diags, s.squareMetersPrice, s.basePrice,{
-            s:s
+        s.totalPrice = (showRounded) => totalPrice(showRounded, s.model, s.diags, s.squareMetersPrice, s.basePrice, {
+            s: s
         });
 
         s.pickTimeRange = function(timeRange) {

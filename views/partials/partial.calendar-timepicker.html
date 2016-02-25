@@ -16,7 +16,7 @@
                 </div>
                 <div ng-show="availableTimeRanges" >
                     <h3>{{selectedDate()}}</h3>
-                    <div ng-repeat="(key,range) in availableTimeRanges" class="center-block">
+                    <div ng-repeat="(key,range) in availableTimeRanges track by $index" class="center-block">
                         <div class=" inline">
                             <div class="radio">
                                 <input type="radio" name="timeRange" ng-click="pickTimeRange(range)">

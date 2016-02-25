@@ -191,6 +191,10 @@ app.controller('adminOrdersEdit', [
             s.cancel = function() {
                 s.back();
             };
+
+            s.mm = (d)=> moment(d).minutes();
+            s.mmOK = (d)=>_.includes([0,30],s.mm(d));
+
             s.validate = () => {
                 ifThenMessage([
                     [typeof s.item._client, '!=', 'object', "Client required"],
@@ -199,6 +203,10 @@ app.controller('adminOrdersEdit', [
                     [_.isNull(s.item.diagEnd) || _.isUndefined(s.item.diagEnd), '==', 'true', 'Start date required'],
                     [moment(s.item.diagStart || null).isValid(), '==', false, "Start date invalid"],
                     [moment(s.item.diagEnd || null).isValid(), '==', false, "End date invalid"],
+                    
+                    [s.mmOK(s.item.diagStart), '==', false, "Start date minutes need to be 0 or 30."],
+                    [s.mmOK(s.item.diagEnd), '==', false, "End date minutes need to be 0 or 30."],
+
                     [moment(s.item.diagEnd).isValid() && moment(s.item.diagStart).isValid() && !moment(s.item.diagEnd).isSame(moment(s.item.diagStart), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
                     [moment(s.item.diagEnd).isValid() && moment(s.item.diagEnd).isBefore(moment(s.item.diagStart), 'hour'), '==', true, 'End date cannot be lower than Start date'],
 

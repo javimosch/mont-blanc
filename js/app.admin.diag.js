@@ -420,7 +420,7 @@ app.controller('adminDiagsEdit', [
         s.$watch('item.disabled', (v) => {
             if (v && s.item._id) {
                 db.ctrl('Order', 'count', {
-                    _diag: { $eq: s.item._id }
+                    _diag: s.item._id //{ $eq: s.item._id }
                 }).then(d => {
                     if (d.ok && d.result > 0) {
                         s.item.disabled = false;

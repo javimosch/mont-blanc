@@ -27,7 +27,7 @@ srv.directive('fileModel', ['$parse', function($parse) {
     };
 }]);
 srv.service('fileUpload', ['$http', function($http) {
-    this.single = function(opt,success,err) {
+    this.single = function(opt, success, err) {
         var fd = new FormData();
         Object.keys(opt.data).forEach((key) => {
             fd.append(key, opt.data[key]);
@@ -269,8 +269,8 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     function diagsPriority(cb) {
         ctrl('User', 'getAll', {
             userType: 'diag',
-            __rules:{
-                disabled:{$ne:true}//exclude disabled diags
+            __rules: {
+                disabled: { $ne: true } //exclude disabled diags
             },
             __select: 'diagPriority'
         }).then((data) => {
@@ -335,63 +335,103 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
 
             //_.orderBy([{p:1},{p:5},{p:2}],(v)=>v.p) //rta: [{p:1},{p:2},{p:5}]
             order.time = normalizeOrderTime(order.time);
+            window.t = order.time;
             var diags = _.orderBy(diags, (v) => v.priority);
             var slots = []; //{_diag,start,end};
             var covered = {
-                morning: false,
-                afternoon: false
+                morning: [],
+                afternoon: []
             };
+
+            function _pushSlot(slot, isMorning) {
+                if (slots.length < 4) {
+                    slots.push(slot);
+                    if (isMorning) {
+                        covered.morning.push(1);
+                    } else {
+                        covered.afternoon.push(1);
+                    }
+                }
+            }
+
             diags.forEach((diag) => {
                 //diag: A diag with the lowerst priority.
 
                 //MORNING
-                if (!covered.morning) {
+                if (covered.morning.length < 2) {
                     if (diagMorningEmpty(order, diag, working)) {
                         if (!diagExceptionsCollide(order, diag, exceptions, isBeforeMidDay)) {
                             console.warn(diag._id + '-MORNING-EMPTY');
-                            slots.push({
+                            _pushSlot({
                                 _diag: diag._id,
                                 start: moment(new Date(order.day)).hour(9).minutes(0),
                                 end: moment(new Date(order.day)).hour(9 + order.time.hours).minutes(0 + order.time.minutes)
-                            });
-                            slots.push({
+                            }, true);
+                            _pushSlot({
                                 _diag: diag._id,
                                 start: moment(new Date(order.day)).hour(10).minutes(0),
                                 end: moment(new Date(order.day)).hour(10 + order.time.hours).minutes(0 + order.time.minutes)
-                            });
-                            covered.morning = true;
+                            }, true);
                         } else {
                             console.warn(diag._id + '-MORNING-COMPLEX-(EXCEPTIONS)');
+                            var slot = diagMorningCollisionAllocateBefore(order, diag, working, slots, exceptions);
+                            if (slot) {
+                                _pushSlot(slot, true);
+                                slot = null;
+                            }
+                            slot = diagMorningCollisionAllocateAfter(order, diag, working, slots);
+                            if (slot) {
+                                _pushSlot(slot, true);
+                            }
                         }
 
 
                     } else {
                         console.warn(diag._id + '-MORNING-COMPLEX');
-                        //var _slots = tryGetSlotsForTheMorning(order,)
+                        var slot = diagMorningCollisionAllocateBefore(order, diag, working, slots);
+                        if (slot) {
+                            _pushSlot(slot, true);
+                            slot = null;
+                        }
+                        slot = diagMorningCollisionAllocateAfter(order, diag, working, slots);
+                        if (slot) _pushSlot(slot, true);
                     }
                 }
 
                 //AFTERNOON
-                if (!covered.afternoon) {
+                if (covered.afternoon.length < 2) {
                     if (diagAfternoonEmpty(order, diag, working)) {
                         if (!diagExceptionsCollide(order, diag, exceptions, isAfterMidDay)) {
                             console.warn(diag._id + '-AFTERNOON-EMPTY');
-                            slots.push({
+                            _pushSlot({
                                 _diag: diag._id,
                                 start: moment(new Date(order.day)).hour(14).minutes(0),
                                 end: moment(new Date(order.day)).hour(14 + order.time.hours).minutes(0 + order.time.minutes)
-                            });
-                            slots.push({
+                            }, false);
+                            _pushSlot({
                                 _diag: diag._id,
                                 start: moment(new Date(order.day)).hour(15).minutes(0),
                                 end: moment(new Date(order.day)).hour(15 + order.time.hours).minutes(0 + order.time.minutes)
-                            });
-                            covered.afternoon = true;
+                            }, false);
                         } else {
                             console.warn(diag._id + '-AFTERNOON-COMPLEX-(EXCEPTIONS)');
+                            var slot = diagAfternoonCollisionAllocateBefore(order, diag, working, slots, exceptions);
+                            if (slot) {
+                                _pushSlot(slot, false);
+                                slot = null;
+                            }
+                            slot = diagAfternoonCollisionAllocateAfter(order, diag, working, slots);
+                            if (slot) _pushSlot(slot, false);
                         }
                     } else {
                         console.warn(diag._id + '-AFTERNOON-COMPLEX');
+                        var slot = diagAfternoonCollisionAllocateBefore(order, diag, working, slots);
+                        if (slot) {
+                            _pushSlot(slot, false);
+                            slot = null;
+                        }
+                        slot = diagAfternoonCollisionAllocateAfter(order, diag, working, slots);
+                        if (slot) _pushSlot(slot, false);
                     }
                 }
 
@@ -413,20 +453,169 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     var isSameDay = (d1, d2) => moment(d1).isSame(moment(d2), 'day');
     var isSameDayOfWeek = (d1, d2) => moment(d1).day() == moment(d2).day();
 
-    function diagMorningEmpty(order, diag, workRanges) {
-        var rta = true;
-        workRanges.forEach((workRange) => {
-            if (workRange._user !== diag._id) return;
-            if (isSameDay(workRange.start, order.day)) {
-                if (isBeforeMidDay(workRange.start)) {
-                    rta = false;
+
+    //Try to find an slot in the morning before colliding orders.
+    function diagMorningCollisionAllocateBefore(order, diag, working, slots, exceptions) {
+        var ms = (d, h, m) => moment(d).subtract(h, 'hour').subtract(m, 'minutes');
+        var sameAfter = (d1, d2) => moment(d1).isSameOrAfter(moment(d2), 'minutes');
+        var morningOrders = exceptions || diagMorningOrdersCollisions(order, diag, working);
+        var rta = null;
+        morningOrders.forEach(wr => {
+            //            
+            if (exceptions && !isExceptionColliding(wr, order.day)) return;
+            //
+            var end = ms(wr.start, 1, 30); //1hour, 30min ago
+            var start = ms(end, order.time.hours, order.time.minutes);
+            var t = normalizeOrderStartTime({
+                hours: start.hours(),
+                minutes: start.minutes()
+            }, false, true); //allocate backwards only. Ex: 9:15 becomes 9:00
+            start.hours(t.hours);
+            start.minutes(t.minutes);
+            end = moment(start).add(order.time.hours, 'hours').add(order.time.minutes, 'minutes'); //fix according start. Ex: 9:45 -> 9:30
+            
+            var assignSameDate=(d1,d2)=>moment(d1).date(moment(d2).date());
+            if (sameAfter(start, moment(start).hours(8).minutes(0))) {
+                rta = {
+                    _diag: diag._id,
+                    start: assignSameDate(start,order.day),
+                    end: assignSameDate(end,order.day)
+                };
+            }
+        });
+        return rta;
+    }
+
+    function diagAfternoonCollisionAllocateBefore(order, diag, working, slots, exceptions) {
+        var ms = (d, h, m) => moment(d).subtract(h, 'hour').subtract(m, 'minutes');
+        var after = (d1, d2) => moment(d1).isAfter(moment(d2), 'minutes');
+        var workRanges = exceptions || diagAfternoonOrdersCollisions(order, diag, working);
+        var rta = null;
+        workRanges.forEach(wr => {
+            //
+            if (exceptions && !isExceptionColliding(wr, order.day)) return;
+            //ex: wr.start 15:00
+            ///ex: 13:30
+            var limit = ms(wr.start, 1, 30); //1hour, 30min ago
+
+            //ex: 13:00 (an order of 30min)
+            var start = ms(limit, order.time.hours, order.time.minutes);
+            var t = normalizeOrderStartTime({
+                hours: start.hours(),
+                minutes: start.minutes()
+            }, false, true);
+            start.hours(t.hours);
+            start.minutes(t.minutes);
+
+            //adjust end
+            limit = moment(start).add(order.time.hours, 'hours').add(order.time.minutes, 'minutes');
+
+            //ex: 11:30
+            var slotBefore = ms(start, 1, 30);
+            //collisions of slotBefore with a morning order finishing after.
+            var morningOrders = diagMorningOrdersCollisions(order, diag, working);
+            if (morningOrders.filter(o => after(o.end, slotBefore)).length == 0) {
+                if (slots.filter(o => after(o.end, slotBefore)).length == 0) {
+                    rta = {
+                        _diag: diag._id,
+                        start: start,
+                        end: limit
+                    };
                 }
             }
         });
         return rta;
     }
 
+    function diagMorningCollisionAllocateAfter(order, diag, working, slots, exceptions) {
+        var ms = (d, h, m) => moment(d).add(h, 'hour').add(m, 'minutes');
+        var before = (d1, d2) => moment(d1).isBefore(moment(d2), 'minutes');
+        var sameAfter = (d1, d2) => moment(d1).isSameOrAfter(moment(d2), 'minutes');
+        var rta = null;
+        var tardeOrders = diagAfternoonOrdersCollisions(order, diag, working);
+        var morningOrders = exceptions || diagMorningOrdersCollisions(order, diag, working);
+        morningOrders.forEach(wr => {
+            //
+            if (exceptions && !isExceptionColliding(wr, order.day)) return;
+            //
+            var start = ms(wr.end, 1, 30); //1hour, 30min after
+            var t = normalizeOrderStartTime({
+                hours: start.hours(),
+                minutes: start.minutes()
+            }, true);
+            start.hours(t.hours);
+            start.minutes(t.minutes);
+            var end = ms(start, order.time.hours, order.time.minutes);
+            //
+            var valid = true && morningOrders.filter(o => sameAfter(o.start, end)).length == 0 && morningOrders.filter(o => sameAfter(o.end, end)).length == 0 && morningOrders.filter(o => before(o.start, end)).length == 0;
+            //
+            if (valid) {
+                rta = {
+                    _diag: diag._id,
+                    start: start,
+                    end: end
+                };
+            }
 
+        });
+        return rta;
+    }
+
+    function diagAfternoonCollisionAllocateAfter(order, diag, working, slots, exceptions) {
+        var ms = (d, h, m) => moment(d).add(h, 'hour').add(m, 'minutes');
+        var before = (d1, d2) => moment(d1).isBefore(moment(d2), 'minutes');
+        var sameAfter = (d1, d2) => moment(d1).isSameOrAfter(moment(d2), 'minutes');
+        var rta = null;
+        var workRanges = exceptions || diagAfternoonOrdersCollisions(order, diag, working);
+        workRanges.forEach(wr => {
+            //
+            if (exceptions && !isExceptionColliding(wr, order.day)) return;
+            //
+            //ex: wr.start 15:00
+            ///ex: 16:30
+            var limit = ms(wr.end, 1, 30); //1hour, 30min after
+            var t = normalizeOrderStartTime({
+                hours: limit.hours(),
+                minutes: limit.minutes()
+            }, true);
+            limit.hours(t.hours);
+            limit.minutes(t.minutes);
+            //ex: 16:45 (an order of 45min)
+            var end = ms(limit, order.time.hours, order.time.minutes);
+
+            //end = limit.add(order.time.hours, 'hours').add(order.time.minutes);
+
+            //ex: 18:15
+            //var slotAfter = ms(end, 1, 30);
+            //collisions of slotBefore with a morning order finishing after.
+            var tardeOrders = diagAfternoonOrdersCollisions(order, diag, working);
+            if (tardeOrders.filter(o => sameAfter(o.start, end)).length == 0) {
+                if (slots.filter(o => sameAfter(o.start, end)).length == 0) {
+                    if (before(end, moment(end).hour(19).minutes(0))) {
+                        rta = {
+                            _diag: diag._id,
+                            start: limit,
+                            end: end
+                        };
+                    }
+                }
+            }
+        });
+        return rta;
+    }
+
+    function diagAfternoonOrdersCollisions(order, diag, workRanges) {
+        var rta = [];
+        workRanges.forEach((workRange) => {
+            if (workRange._user !== diag._id) return;
+            if (isSameDay(workRange.start, order.day)) {
+                if (isAfterMidDay(workRange.start)) {
+                    rta.push(workRange);
+                }
+            }
+        });
+        return rta;
+    }
 
     function diagAfternoonEmpty(order, diag, workRanges) {
         var rta = true;
@@ -434,6 +623,32 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
             if (workRange._user !== diag._id) return;
             if (isSameDay(workRange.start, order.day)) {
                 if (isAfterMidDay(workRange.start)) {
+                    rta = false;
+                }
+            }
+        });
+        return rta;
+    }
+
+    function diagMorningOrdersCollisions(order, diag, workRanges) {
+        var rta = [];
+        workRanges.forEach((workRange) => {
+            if (workRange._user !== diag._id) return;
+            if (isSameDay(workRange.start, order.day)) {
+                if (isBeforeMidDay(workRange.start)) {
+                    rta.push(workRange);
+                }
+            }
+        });
+        return rta;
+    }
+
+    function diagMorningEmpty(order, diag, workRanges) {
+        var rta = true;
+        workRanges.forEach((workRange) => {
+            if (workRange._user !== diag._id) return;
+            if (isSameDay(workRange.start, order.day)) {
+                if (isBeforeMidDay(workRange.start)) {
                     rta = false;
                 }
             }
@@ -457,6 +672,12 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
             }
         });
         return rta;
+    }
+
+    function isExceptionColliding(range, date) {
+        return (true && isSameDay(range.start, date)) ||
+            (true && range.repeat == 'day') ||
+            (true && range.repeat == 'week' && isSameDayOfWeek(date, range.start));
     }
 
     ///--------------------------------------- DIAGS RELATED------------ END
@@ -496,7 +717,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                     url: URL + '/' + relativeURL,
                     file: file,
                     data: data
-                },r,err);
+                }, r, err);
             });
         },
         ctrl: ctrl,
