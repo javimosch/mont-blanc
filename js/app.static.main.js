@@ -180,22 +180,30 @@ app.controller('fullpage', ['server',
             s.$watch('model', (v) => {
                 //if(v.gasInstallation==='Non') toggle('gaz',false);
 
-                if (v.constructionPermissionDate !== 'Before le 01/01/1949') {
+                if (v.constructionPermissionDate === 'Before le 01/01/1949') {
                     toggle('crep', true);
+                    s.model.diags.crep = true; //mandatory
                 } else {
-                    toggle('crep', false);
+                    s.model.diags.crep = false;//
+                    toggle('crep', true);
                 }
 
                 if (_.includes(['Before le 01/01/1949', 'entre 1949 et le 01/07/1997'], v.constructionPermissionDate)) {
                     toggle('dta', true);
+                    s.model.diags.dta = true; //mandatory
                 } else {
-                    toggle('dta', false);
+                    toggle('dta', true); 
+                    s.model.diags.dta = false;
                 }
 
                 if (v.gasInstallation === 'Oui, Plus de 15 ans') {
                     toggle('gaz', true);
                     if(s.model.sell==true){
                         s.model.diags.gaz = true;
+                        s.model.diags.electricity = true;
+                    }else{
+                        s.model.diags.gaz = false;
+                        s.model.diags.electricity = false;
                     }
                     toggle('electricity', true);
                 } else {
