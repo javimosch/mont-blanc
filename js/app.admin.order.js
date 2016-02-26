@@ -121,6 +121,93 @@ app.controller('adminOrdersEdit', [
                 });
             });
             //
+            s.keysWhereTime = {
+                invalidKeysTimeMessage : () => {
+                    var startTime = () => moment(s.item.diagStart).format('HH:mm');
+                    return 'Keys time should be between 8:00 and ' + startTime();
+                },
+                invalidKeysTime : () => {
+                    var before = (d1, h) => moment(d1).isBefore(moment(d1).hours(8));
+                    var after = (d1) => moment(d1).isAfter(moment(s.item.diagStart))
+                    var v = s.item.keysTime;
+                    if (s.item && s.item.diagStart) {
+                        if (before(v) || after(v)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                },
+                init: (self) => {
+                },
+                mstep: 15,
+                hstep: 1,
+                address: '',
+                scope: s,
+                val: undefined,
+                disabled: () => r.state.working(),
+                cls: () => ({ btn: true, 'btn-primary': true }),
+                filter: (v) => {
+                    if (s.item && s.item._client && s.item._client.clientType) {
+                        if (s.item._client.clientType !== 'agency') {
+                            if (v.val == 'agency') {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                },
+                label: '(Select where)',
+                modelPath: 'item.keysWhere',
+                items: ['diag', 'landlord', 'agency'].map(v => ({ label: v, val: v })),
+                addressMising: (email) => {
+                    r.notify(email + ' do not have an address assigned.', {
+                        type: 'warning',
+                        duration: 5000,
+                        clickDismissable: true
+                    });
+                },
+                change: (v, self) => {
+                    if(!v) return;
+                    if(s.item.keysWhere && s.item.keysAddress && s.item.keysTime){
+                        if(v==s.item.keysWhere){
+                            self.address = s.item.keysAddress;
+                            return;
+                        }
+                    }
+
+                    if (v.val == 'diag') {
+                        if (s.item && s.item._diag) {
+                            self.address = s.item._diag.address;
+                            if (!self.address) {
+                                self.addressMising(s.item._diag.address);
+                            }
+                        }
+                    }
+                    if (v.val == 'landlord') {
+                        if (s.item && s.item._client) {
+                            self.address = s.item._client.address;
+                            if (!self.address) {
+                                self.addressMising(s.item._client.address);
+                            }
+                        }
+                    }
+                    if (v.val == 'agency') {
+                        if (s.item && s.item._client) {
+                            self.address = s.item._client.address;
+                            if (!self.address) {
+                                self.addressMising(s.item._client.address);
+                            }
+                        }
+                    }
+                    s.item.keysAddress = self.address;
+                    if (!s.item.keysTime) {
+                        s.item.keysTime = moment(s.item.diagStart).hours(8).minutes(0)._d;
+                    }
+                }
+            };
+
+
+
 
             //
             s.datepicker = {
@@ -192,25 +279,25 @@ app.controller('adminOrdersEdit', [
                 s.back();
             };
 
-            s.mm = (d)=> moment(d).minutes();
-            s.mmOK = (d)=>_.includes([0,30],s.mm(d));
+            s.mm = (d) => moment(d).minutes();
+            s.mmOK = (d) => _.includes([0, 30], s.mm(d));
 
             s.validate = () => {
                 ifThenMessage([
                     [typeof s.item._client, '!=', 'object', "Client required"],
                     [_.isUndefined(s.item.address) || _.isNull(s.item.address) || s.item.address === '', '==', true, 'Address required'],
-                    [_.isNull(s.item.diagStart) || _.isUndefined(s.item.diagStart), '==', 'true', 'Start date required'],
-                    [_.isNull(s.item.diagEnd) || _.isUndefined(s.item.diagEnd), '==', 'true', 'Start date required'],
+                    [_.isNull(s.item.diagStart) || _.isUndefined(s.item.diagStart), '==', true, 'Start date required'],
+                    [_.isNull(s.item.diagEnd) || _.isUndefined(s.item.diagEnd), '==', true, 'Start date required'],
                     [moment(s.item.diagStart || null).isValid(), '==', false, "Start date invalid"],
                     [moment(s.item.diagEnd || null).isValid(), '==', false, "End date invalid"],
-                    
+
                     [s.mmOK(s.item.diagStart), '==', false, "Start date minutes need to be 0 or 30."],
                     [s.mmOK(s.item.diagEnd), '==', false, "End date minutes need to be 0 or 30."],
 
                     [moment(s.item.diagEnd).isValid() && moment(s.item.diagStart).isValid() && !moment(s.item.diagEnd).isSame(moment(s.item.diagStart), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
                     [moment(s.item.diagEnd).isValid() && moment(s.item.diagEnd).isBefore(moment(s.item.diagStart), 'hour'), '==', true, 'End date cannot be lower than Start date'],
 
-
+                    [s.keysWhereTime.invalidKeysTime(),'==',true,s.keysWhereTime.invalidKeysTimeMessage],
 
                     //[s.item.fastDiagComm.toString(),'==','','Comission required'],
                     [isNaN(s.item.fastDiagComm), '==', true, 'Comission need to be a number'],
@@ -218,7 +305,11 @@ app.controller('adminOrdersEdit', [
                     [isNaN(s.item.price), '==', true, 'Price need to be a number'],
                     [s.item.status, '==', '', 'Status required']
                 ], (m) => {
-                    s.message(m[0], 'warning', 0, true);
+                    if(typeof m[0] !== 'string'){
+                        s.message(m[0](), 'warning', 0, true);
+                    }else{
+                        s.message(m[0], 'warning', 0, true);
+                    }
                 }, s.save);
             };
             s.save = function() {
@@ -354,8 +445,8 @@ app.controller('adminOrdersEdit', [
             db.ctrl('Order', 'get', {
                 _id: id || params.id || s.item._id,
                 __populate: {
-                    '_client': 'email',
-                    '_diag': 'email'
+                    '_client': 'email clientType address',
+                    '_diag': 'email address'
                 }
             }).then(function(data) {
                 s.requesting = false;

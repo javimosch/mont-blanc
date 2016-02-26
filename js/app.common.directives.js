@@ -1,5 +1,153 @@
 var app = angular.module('app.common.directives', []);
 
+
+app.directive('ctrlDtp', function($rootScope) {
+    /*
+    <ctrl-dtp options="timePickerKeys"></ctrl-dtp>
+    */
+    /*
+            s.datePickerKeys = {
+                scope: s,
+                modelPath: 'item.keysDateTime',
+                minDate: moment().toDate(),
+                maxDate: moment().toDate(),
+                cls: () => ({ 'form-ctrl': true }),
+                disabled: () => r.state.working(),
+                show: () => true,
+                digest: (self) => {
+                    if (!self._set && s.item) {
+                        self.minDate = moment(s.item.diagStart).hours(8).minutes(0)._d;
+                        self.maxDate = moment(s.item.digStart).subtract(1,'days')._d;
+                        //s.item.keyDateTime = 
+                        self._set = true;
+                    }
+                }
+            };*/
+    return {
+        restrict: 'AE',
+        scope: {
+            opt: "=options"
+        },
+        replace: true,
+        templateUrl: './views/directives/directive.ctrl.datetimepicker.html',
+        link: function(s, el, attrs) {
+            var r = $rootScope;
+            var opt = s.opt;
+
+            if (expose) {
+                expose(opt.name || 'dtp', s);
+            }
+
+            if (!opt.modelPath) throw Error('ctrlDtp require opt.modelPath');
+            if (!opt.scope) throw Error('ctrlDtp require opt.scope');
+            if (!opt.cls) throw Error('ctrlDtp require opt.cls (function)');
+            if (!opt.disabled) throw Error('ctrlDtp require opt.disabled (function)');
+            s = Object.assign(s, {
+                scope: opt.scope,
+                opened: false,
+                disabled: () => opt.disabled(),
+                cls: () => opt.cls(),
+                model: opt.initDate || new Date()
+            });
+            opt.scope.$watch(() => {
+                if (opt.digest) opt.digest(opt);
+            })
+            opt.scope.$watch(opt.modelPath, (v) => {
+                if (v !== undefined && v !== s.model)
+                    s.model = v;
+            });
+            s.$watch('model', (v) => {
+                setVal(opt.scope, opt.modelPath, v);
+            });
+
+            function setVal(obj, propertyPath, val) {
+                var split = propertyPath.split('.');
+                var lastIndex = split.length - 1;
+                split.forEach((chunk, index) => {
+                    var isLast = lastIndex == index;
+                    if (isLast) return false;
+                    obj = obj[chunk] || null;
+                    if (!obj) return false;
+                });
+                if (obj) {
+                    if (val) obj[split[lastIndex]] = val;
+                    return obj[split[lastIndex]];
+                }
+            }
+        }
+    };
+});
+
+app.directive('ctrlSelect', function($rootScope) {
+    return {
+        restrict: 'AE',
+        scope: {
+            opt: "=options"
+        },
+        replace: true,
+        templateUrl: './views/directives/directive.ctrl.select.html',
+        link: function(s, el, attrs) {
+            var r = $rootScope;
+            var opt = s.opt;
+            if (!opt.modelPath) throw Error('ctrlSelect require opt.modelPath');
+            if (!opt.scope) throw Error('ctrlSelect require opt.scope');
+            if (!opt.items) throw Error('ctrlSelect require opt.items');
+            if (!opt.cls) throw Error('ctrlSelect require opt.cls (function)');
+            if (!opt.disabled) throw Error('ctrlSelect require opt.disabled (function)');
+            s = Object.assign(s, {
+                scope: opt.scope,
+                label: opt.label || '(Select Item)',
+                items: opt.items,
+                disabled: () => opt.disabled(),
+                cls: () => opt.cls(),
+                click: (x) => {
+                    setVal(opt.scope, opt.modelPath, x.val || x);
+                }
+            });
+            s.scope.$watch(() => {
+                if (opt.filter) {
+                    s.items = _.filter(s.items, (v) => opt.filter(v));
+                }
+            });
+            opt.scope.$watch(opt.modelPath, (v) => {
+                var arr = s.items.filter(item => ((item.val || item) == v));
+                if (arr.length > 1) {
+                    throw Error('ctrlSelect items val need to be unique.');
+                }
+                if (arr.length == 1) {
+                    s.label = arr[0].label || arr[0];
+                    if (opt.change) {
+                        opt.change(v, opt);
+                    }
+                    r.dom();
+                } else {
+                    if (opt.label) {
+                        s.label = opt.label || '(Select Item)'
+                    }
+                    console.warn('ctrlSelect model has an invalid value. Values expected: ' + JSON.stringify(s.items.map(item => (item.val || item))));
+                }
+            });
+
+
+            function setVal(obj, propertyPath, val) {
+                var split = propertyPath.split('.');
+                var lastIndex = split.length - 1;
+                split.forEach((chunk, index) => {
+                    var isLast = lastIndex == index;
+                    if (isLast) return false;
+                    obj = obj[chunk] || null;
+                    if (!obj) return false;
+                });
+                if (obj) {
+                    if (val) obj[split[lastIndex]] = val;
+                    return obj[split[lastIndex]];
+                }
+            }
+            if (opt.init) opt.init(opt);
+        }
+    };
+});
+
 app.directive('includeReplace', function() {
     return {
         require: 'ngInclude',
@@ -323,7 +471,11 @@ app.directive('notify', function($rootScope, $timeout) {
                 });
             });
             scope.dismiss = () => {
-                if (s.settings && s.settings.clickDismissable === false) return;
+
+                if (s.settings && s.settings.clickDismissable === false) {
+                    if (opt && !opt.clickDismissable) return;
+                }
+
                 if (s.dismissed) return;
                 s.dismissed = true;
                 elem.find('.alert').alert('close');

@@ -1,3 +1,22 @@
+function expose(path, val) {
+    setVal(window,path,val);
+    function setVal(obj, propertyPath, val) {
+        var split = propertyPath.split('.');
+        var lastIndex = split.length - 1;
+        split.forEach((chunk, index) => {
+            var isLast = lastIndex == index;
+            if (isLast) return false;
+            obj = obj[chunk] || {};
+            if (!obj) return false;
+        });
+        if (obj) {
+            if (val) obj[split[lastIndex]] = val;
+            return obj[split[lastIndex]];
+        }
+    }
+}
+
+
 $(function() {
 
     $.hrefAnchor = () => {
@@ -15,7 +34,7 @@ $(function() {
     };
 
     $.onGlobalError = cb => {
-        $('html').on('error',()=>{
+        $('html').on('error', () => {
             console.log('ERROR.DETECTED');
             //cb();
         });

@@ -80,13 +80,16 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                 }, 1000 * 30);
                 r.$emit('logger.working');
                 return (res) => {
-                    if (!res.data) {
+                    //data for $http, result for others
+                    //add more validations for detect a fail here.
+                    if (!res.data && !res.result) {
                         item.err = 'Server down, try later.';
                         _errors[self.id] = item;
                     } else {
-                        if (res.data.ok !== true) {
-                            item.err = res.data.err || res.data;
-                            item.message = res.data.message || null;
+                        var data = res.data || res;
+                        if (data.ok !== true) {
+                            item.err = data.err || data;
+                            item.message = data.message || null;
                             _errors[self.id] = item;
                         }
                     }
@@ -713,11 +716,18 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
             return MyPromise((r, err) => {
                 var file = data.file;
                 delete data.file;
+                var _log = logger(relativeURL, data);
                 fileUpload.single({
                     url: URL + '/' + relativeURL,
                     file: file,
                     data: data
-                }, r, err);
+                }, res=>{
+                    _log(res);
+                    r(res);
+                }, res=>{
+                    _log(res);
+                    err(res);
+                });
             });
         },
         ctrl: ctrl,

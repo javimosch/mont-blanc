@@ -43,6 +43,20 @@
     max-width: 90%;
 }
 
+input [type='file']{
+  height: 33px;
+}
+i.file-button{
+    line-height: 33px;
+    width: 16px;
+}
+i.file-button:hover{
+  cursor: pointer;
+}
+i.file-button[disabled]:hover{
+  cursor: not-allowed;
+}
+
 
 .modal-body.row-fluid{
       min-height: 300px;

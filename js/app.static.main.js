@@ -486,11 +486,13 @@ app.controller('fullpage', ['server',
                 if (!s.model.diags[mkey]) return;
                 s.diags.forEach(function(dval, dkey) {
                     if (dval.name == mkey) {
+                        dval.time = dval.price /4;  
                         total += dval.time || 0;
                         return false;
                     }
                 });
             });
+            total = parseInt(parseInt(total) / 10, 10) * 10 + 10;
             var hours = Math.floor(total / 60);
             var minutes = total % 60;
             var t = {

@@ -1,0 +1,8 @@
+<div class="relative">
+    <input ng-show="opt.show && opt.show || true" ng-disabled="disabled()" type="text" ng-class="cls()" datetime-picker="dd/MM/yyyy HH:mm " ng-model="model" min-date="opt.minDate" max-date="opt.maxDate" init-date="model" ng-init="opened=false" is-open="opened" date-disabled="false" close-text="Close" />
+    <span class="input-group-btn">
+<button ng-show="opt.show && opt.show || true"
+ng-disabled="disabled()"
+type="button" class="btn btn-default" ng-click="opened = !opened"><i class="glyphicon glyphicon-calendar"></i></button>
+</span>
+</div>

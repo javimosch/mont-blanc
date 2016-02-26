@@ -342,6 +342,8 @@ app.controller('adminDiags', [
             return r.handleSecurityRouteViolation();
         }
         //
+
+        //
         s.selectedItems = [];
         s.items = [];
         //
@@ -393,7 +395,7 @@ app.controller('adminDiagsEdit', [
 
     'server', '$scope', '$rootScope', '$routeParams',
     function(db, s, r, params) {
-        console.info('app.admin.diag:adminDiagsEdit');
+//        console.info('app.admin.diag:adminDiagsEdit');
         //
         r.toggleNavbar(true);
         r.secureSection(s);
@@ -403,6 +405,8 @@ app.controller('adminDiagsEdit', [
         if (isClient || notCurrentDiag) {
             return r.handleSecurityRouteViolation();
         }
+        //
+        expose('s', s);
         //
         r.dom();
         //
@@ -446,7 +450,7 @@ app.controller('adminDiagsEdit', [
         });
 
         s.$watch('item.address', (v) => {
-            console.info('ADDRESS:CHANGE', v);
+//            console.info('ADDRESS:CHANGE', v);
         });
         s.addressChange = (v) => s.item.address = v;
 
@@ -475,6 +479,139 @@ app.controller('adminDiagsEdit', [
             ], (m) => {
                 s.message(m[0], 'warning', 0, true);
             }, s.save);
+        };
+
+
+        s.diplomesUpdate = () => {
+            if (s.item && s.item.diplomes && s.item.diplomes.length > 0) {
+                s.diplomesData = {};
+                s.item.diplomes.forEach((_id,k) => {
+                    db.ctrl('File', 'find', {
+                        _id: _id
+                    }).then(data => {
+                        var file = data.result;
+                        var _id = file._id;
+                        if (data.ok && data.result) {
+                            s.diplomesData[_id] = s.diplomesData[_id] || {};
+                            s.diplomesData[_id].info = (data.result.length > 0 && data.result) || null;
+                        } else {
+                            //if is unable to fetch the diplome, we assume that was removed from the db, so we delete the reference.
+                            s.item.diplomes = _.pull(s.item.diplomes, _id);
+                            if (s.diplomesData[_id]) {
+                                delete s.diplomesData[_id];
+                            }
+                            if (Object.keys(s.diplomesData).length === 0) {
+                                s.diplomesNew();
+                            }
+                            db.ctrl('User', 'update', {
+                                _id: s.item._id,
+                                diplomes: s.item.diplomes,
+                            });
+                        }
+                    });
+                });
+            } else {
+                s.item.diplomes = s.item.diplomes || [];
+                s.diplomesNew();
+            }
+        };
+        s.diplomesFile = {
+
+        };
+        s.diplomesData = {};
+        s.diplomesDelete = (_id) => {
+            if (!s.diplomesExists(_id)) return;
+            if (window.confirm('Sure?')) {
+                db.ctrl('File', 'remove', { _id: _id }).then((d) => {
+                    if (d.ok) {
+                        s.item.diplomes = _.pull(s.item.diplomes, _id);
+                        if (s.diplomesData[_id]) {
+                            delete s.diplomesData[_id];
+                        }
+                        if (Object.keys(s.diplomesData).length === 0) {
+                            s.diplomesNew();
+                        }
+                        s.diplomesUpdate();
+                    }
+                });
+            }
+        };
+        s.diplomesExists = (_id) => s.item && s.item.diplomes && _.includes(s.item.diplomes, _id);
+        s.diplomesDownload = (_id) => {
+            window.open(db.URL() + '/File/get/' + _id, '_newtab');
+        };
+        s.diplomesNew = () => {
+            if (s.item && s.item.diplomes.length !== Object.keys(s.diplomesData).length) {
+                return;
+            }
+
+            s.diplomesData[new Date().getTime()] = {
+                info: {
+                    filename: 'select a file and click the upload button'
+                }
+            };
+        };
+
+
+        s.diplomesSave = (_id) => {
+            if (!s.diplomesFile[_id]) return;
+            var curr = _id;
+
+
+            _uploadNew(); //starts here
+
+
+            function _deleteCurr() {
+                db.ctrl('File', 'remove', { _id: curr });
+            }
+
+            function _uploadNew() {
+                s.message('Uploading (Do not touch anything)', {
+                    type: 'info',
+                    duration: 99999,
+                    scroll: true
+                });
+                db.form('File/save/', {
+                    name: s.diplomesFile[_id].name,
+                    file: s.diplomesFile[_id]
+                }).then((data) => {
+                    if (data.ok) {
+                        var newId = data.result._id;
+                        s.item.diplomes.push(newId);
+                        if (s.diplomesExists(curr)) {
+                            s.item.diplomes = _.pull(s.item.diplomes, curr);
+                        }
+                        db.ctrl('User', 'update', {
+                            _id: s.item._id,
+                            diplomes: s.item.diplomes,
+                        }).then(data => {
+                            if (data.ok) {
+                                if (s.diplomesExists(curr)) {
+                                    _deleteCurr();
+                                }
+                                s.message('File upload success.', {
+                                    type: 'info',
+                                    duration: 5000,
+                                    scroll: true
+                                });
+                            } else {
+                                s.message('Upload fail, try later.', {
+                                    type: 'warning',
+                                    duration: 99999,
+                                    scroll: true
+                                });
+                            }
+                            read(s.item._id);
+                        });
+                    } else {
+                        s.message('Upload fail, try later.', {
+                            type: 'warning',
+                            duration: 99999,
+                            scroll: true
+                        });
+                    }
+                });
+            }
         };
 
         s.save = function() {
@@ -544,6 +681,7 @@ app.controller('adminDiagsEdit', [
             s.item = _.clone(s.original);
         }
 
+        s.update = read;
         function read() {
             s.message('loading . . .', 'info');
 
@@ -556,9 +694,10 @@ app.controller('adminDiagsEdit', [
                 _id: params.id
             }).then(function(res) {
                 s.requesting = false;
-                console.info('adminDiagsEdit:read:success', res.data);
+//                console.info('adminDiagsEdit:read:success', res.data);
                 s.original = _.clone(res.data.result);
                 s.item = res.data.result;
+                s.diplomesUpdate();
                 if (!res.data.ok) {
                     s.message('not found, maybe it was deleted!', 'warning', 5000);
                 } else {

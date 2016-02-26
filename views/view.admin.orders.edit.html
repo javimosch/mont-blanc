@@ -85,6 +85,15 @@ ng-show="userIs(['admin'])"
 
                 </div>
                 <div class="form-group">
+                    <label>Where to take the keys</label>
+                    <ctrl-select options="keysWhereTime"></ctrl-select>
+                    <input type="text" disabled ng-model="keysWhereTime.address" class="fullwidth v-margin-1" placeholder='Choice where to get the address' />
+                    <uib-timepicker
+ng-show="keysWhereTime.address"
+ng-disabled="state.working() || !item.keysWhere"
+                     name='timePickerKeys' ng-model="item.keysTime" hour-step="keysWhereTime.hstep" minute-step="keysWhereTime.mstep" show-meridian="true"></uib-timepicker>
+                </div>
+                <div class="form-group">
                     <label>Pdf {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||""}}</label>
                     <input type="file" file-model="pdfFile" 
                     ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working()" class="form-control" placeholder="Diag Pdf">

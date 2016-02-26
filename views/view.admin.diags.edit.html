@@ -60,9 +60,30 @@
                 <div class="form-group">
                     <div class="input-group">
                         <span class="input-group-addon no-bg borderless">
-                            <input type="checkbox" ng-model="item.disabled" ng-value="true">
+                            <input 
+ng-disabled="state.working()"
+                            type="checkbox" ng-model="item.disabled" ng-value="true">
                         </span>
                         <input type="text" disabled class="check-label" value="Disable Diag" aria-label="...">
+                    </div>
+                </div>
+                <!--DIPLOMAS-->
+                <div ng-repeat="(id,d) in diplomesData" class="form-group relative ">
+                    <label>Pdf {{(d.info && "("+d.info.filename+")")||""}}</label>
+                    <div class="inline childs-margin-1">
+                        <!--DELETE-->
+                        <i ng-show="diplomesExists(id)" ng-click="diplomesDelete(id)" class="fa fa-times file-button"></i>
+                        <!--UPLOAD-->
+                        <i ng-show="!diplomesExists(id)" class="fa fa-cloud-upload file-button" ng-disabled="!item._id || state.working() || !diplomesFile[id]" ng-click="!diplomesFile[id] || diplomesSave(id)"></i>
+                        <!--FILE-->
+                        <input class="form-control " type="file" file-model="diplomesFile[id]" ng-disabled="!item._id || state.working()">
+                        <!--DOWNLOAD-->
+                        <i ng-disabled="!item._id || state.working() || !diplomesExists(id)" ng-click="!diplomesExists(id) || diplomesDownload(id)" class="fa fa-download file-button"></i>
+                        <i class="fa fa-question file-button" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
+                        <!--ADD-->
+                        <i ng-show="$last"
+                        ng-disabled="!item._id || state.working()"
+                         ng-click="!item._id || diplomesNew()" class="fa fa-plus file-button"></i> 
                     </div>
                 </div>
                 <div class="form-group">

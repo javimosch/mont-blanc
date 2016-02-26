@@ -1,4 +1,7 @@
 
+.childs-margin-1 > *{
+    margin:5px;
+}
 
 table.minimal{
     margin: 0px!important;
