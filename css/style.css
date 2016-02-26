@@ -46,6 +46,34 @@
 input [type='file']{
   height: 33px;
 }
+
+
+/*DIPLOMES FILES*/
+.diplome{
+  border-left:1px solid black;
+}
+.diplome-info{
+  padding-left:27px;
+  font-size: x-small;
+}
+.diplome-info label{
+  width: 80px;
+}
+.diplome-info input{
+    border: none;
+    width: 100px;
+    background: transparent;
+    border-right: 3px solid rgba(0,0,0,0);
+}
+.diplome-info input:hover{
+    border-right: 3px solid rgba(0,0,0,.2);
+}
+.diplome i.file-button{
+  opacity:0;
+}
+.diplome:hover i.file-button{
+  opacity:1;
+}
 i.file-button{
     line-height: 33px;
     width: 16px;
@@ -56,6 +84,10 @@ i.file-button:hover{
 i.file-button[disabled]:hover{
   cursor: not-allowed;
 }
+.file-label{
+  line-height: 33px;
+}
+/* ---------- */
 
 
 .modal-body.row-fluid{

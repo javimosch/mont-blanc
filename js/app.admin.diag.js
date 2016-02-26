@@ -395,7 +395,7 @@ app.controller('adminDiagsEdit', [
 
     'server', '$scope', '$rootScope', '$routeParams',
     function(db, s, r, params) {
-//        console.info('app.admin.diag:adminDiagsEdit');
+        //        console.info('app.admin.diag:adminDiagsEdit');
         //
         r.toggleNavbar(true);
         r.secureSection(s);
@@ -450,7 +450,7 @@ app.controller('adminDiagsEdit', [
         });
 
         s.$watch('item.address', (v) => {
-//            console.info('ADDRESS:CHANGE', v);
+            //            console.info('ADDRESS:CHANGE', v);
         });
         s.addressChange = (v) => s.item.address = v;
 
@@ -485,18 +485,19 @@ app.controller('adminDiagsEdit', [
         s.diplomesUpdate = () => {
             if (s.item && s.item.diplomes && s.item.diplomes.length > 0) {
                 s.diplomesData = {};
-                s.item.diplomes.forEach((_id,k) => {
+                s.item.diplomes.forEach((_id, k) => {
                     db.ctrl('File', 'find', {
                         _id: _id
                     }).then(data => {
                         var file = data.result;
-                        var _id = file._id;
-                        if (data.ok && data.result) {
-                            s.diplomesData[_id] = s.diplomesData[_id] || {};
-                            s.diplomesData[_id].info = (data.result.length > 0 && data.result) || null;
+                        if (data.ok && file) {
+                            var _id = file._id;
+                            file = Object.assign(file, s.item.diplomesInfo && s.item.diplomesInfo[_id] || {});
+                            s.diplomesData[_id] = s.diplomesDataCreate(file);
                         } else {
                             //if is unable to fetch the diplome, we assume that was removed from the db, so we delete the reference.
                             s.item.diplomes = _.pull(s.item.diplomes, _id);
+                            s.item.diplomesInfo = _.pull(s.item.diplomesInfo, _id);
                             if (s.diplomesData[_id]) {
                                 delete s.diplomesData[_id];
                             }
@@ -521,10 +522,12 @@ app.controller('adminDiagsEdit', [
         s.diplomesData = {};
         s.diplomesDelete = (_id) => {
             if (!s.diplomesExists(_id)) return;
-            if (window.confirm('Sure?')) {
+            var name = s.diplomesData[_id] && s.diplomesData[_id].info.filename || "File";
+            s.confirm('Delete ' + name + ' ?', () => {
                 db.ctrl('File', 'remove', { _id: _id }).then((d) => {
                     if (d.ok) {
                         s.item.diplomes = _.pull(s.item.diplomes, _id);
+                        s.item.diplomesInfo = _.pull(s.item.diplomesInfo, _id);
                         if (s.diplomesData[_id]) {
                             delete s.diplomesData[_id];
                         }
@@ -534,7 +537,7 @@ app.controller('adminDiagsEdit', [
                         s.diplomesUpdate();
                     }
                 });
-            }
+            });
         };
         s.diplomesExists = (_id) => s.item && s.item.diplomes && _.includes(s.item.diplomes, _id);
         s.diplomesDownload = (_id) => {
@@ -545,11 +548,29 @@ app.controller('adminDiagsEdit', [
                 return;
             }
 
-            s.diplomesData[new Date().getTime()] = {
-                info: {
-                    filename: 'select a file and click the upload button'
+            s.diplomesData[new Date().getTime()] = s.diplomesDataCreate();
+        };
+        s.diplomesDataCreate = (info) => {
+            var o = {
+                obtentionMaxDate: new Date(),
+                obtentionDateOpen: false,
+                obtentionDateClick: () => o.obtentionDateOpen = !o.obtentionDateOpen,
+                //
+                expirationMinDate: new Date(),
+                expirationDateOpen: false,
+                expirationDateClick: () => o.expirationDateOpen = !o.expirationDateOpen,
+                //
+                dateOptions: {
+                    formatYear: 'yy',
+                    startingDay: 1
+                },
+                info: info || {
+                    filename: 'select a file and click the upload button',
                 }
             };
+            o.info.obtentionDate = new Date(o.info.obtentionDate) || new Date();
+            o.info.expirationDate = new Date(o.info.expirationDate) || new Date();
+            return o;
         };
 
 
@@ -571,6 +592,9 @@ app.controller('adminDiagsEdit', [
                     duration: 99999,
                     scroll: true
                 });
+
+
+
                 db.form('File/save/', {
                     name: s.diplomesFile[_id].name,
                     file: s.diplomesFile[_id]
@@ -578,8 +602,12 @@ app.controller('adminDiagsEdit', [
                     if (data.ok) {
                         var newId = data.result._id;
                         s.item.diplomes.push(newId);
+
+                        s.item.diplomesInfo[newId] = s.diplomesData[_id].info;
+
                         if (s.diplomesExists(curr)) {
                             s.item.diplomes = _.pull(s.item.diplomes, curr);
+                            s.item.diplomesInfo = _.pull(s.item.diplomesInfo, curr);
                         }
                         db.ctrl('User', 'update', {
                             _id: s.item._id,
@@ -640,6 +668,19 @@ app.controller('adminDiagsEdit', [
             function _save() {
                 s.requesting = true;
 
+                s.item.diplomesInfo = s.item.diplomesInfo || {};
+                Object.keys(s.diplomesData).forEach(id => {
+                    if (s.diplomesExists(id)) {
+                        var data = s.diplomesData[id];
+                        s.item.diplomesInfo[id] = {
+                            obtentionDate: data.info.obtentionDate,
+                            expirationDate: data.info.expirationDate,
+                            filename: data.info.filename
+                        };
+                    }
+                });
+
+
                 db.ctrl('User', 'save', s.item).then((res) => {
                     s.requesting = false;
                     var _r = res;
@@ -658,7 +699,7 @@ app.controller('adminDiagsEdit', [
         };
         s.delete = function() {
             s.confirm('Delete Diag ' + s.item.email + ' ?', function() {
-                console.log('adminDiagsEdit:remove:in-progress');
+                //console.log('adminDiagsEdit:remove:in-progress');
                 s.message('deleting . . .', 'info');
                 s.requesting = true;
                 db.custom('user', 'remove', {
@@ -682,6 +723,7 @@ app.controller('adminDiagsEdit', [
         }
 
         s.update = read;
+
         function read() {
             s.message('loading . . .', 'info');
 
@@ -694,7 +736,7 @@ app.controller('adminDiagsEdit', [
                 _id: params.id
             }).then(function(res) {
                 s.requesting = false;
-//                console.info('adminDiagsEdit:read:success', res.data);
+                //                console.info('adminDiagsEdit:read:success', res.data);
                 s.original = _.clone(res.data.result);
                 s.item = res.data.result;
                 s.diplomesUpdate();

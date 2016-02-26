@@ -68,23 +68,37 @@ ng-disabled="state.working()"
                     </div>
                 </div>
                 <!--DIPLOMAS-->
-                <div ng-repeat="(id,d) in diplomesData" class="form-group relative ">
-                    <label>Pdf {{(d.info && "("+d.info.filename+")")||""}}</label>
-                    <div class="inline childs-margin-1">
-                        <!--DELETE-->
-                        <i ng-show="diplomesExists(id)" ng-click="diplomesDelete(id)" class="fa fa-times file-button"></i>
-                        <!--UPLOAD-->
-                        <i ng-show="!diplomesExists(id)" class="fa fa-cloud-upload file-button" ng-disabled="!item._id || state.working() || !diplomesFile[id]" ng-click="!diplomesFile[id] || diplomesSave(id)"></i>
+                <div class="v-margin-2">
+                    <hr/>
+                    <label>Diplomas</label>
+                    <div ng-repeat="(id,d) in diplomesData" class="form-group relative diplome">
                         <!--FILE-->
-                        <input class="form-control " type="file" file-model="diplomesFile[id]" ng-disabled="!item._id || state.working()">
-                        <!--DOWNLOAD-->
-                        <i ng-disabled="!item._id || state.working() || !diplomesExists(id)" ng-click="!diplomesExists(id) || diplomesDownload(id)" class="fa fa-download file-button"></i>
-                        <i class="fa fa-question file-button" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
-                        <!--ADD-->
-                        <i ng-show="$last"
-                        ng-disabled="!item._id || state.working()"
-                         ng-click="!item._id || diplomesNew()" class="fa fa-plus file-button"></i> 
+                        <input id="{{'file_'+id}}" class="form-control hidden" type="file" file-model="diplomesFile[id]" ng-disabled="!item._id || state.working()">
+                        <div class="inline childs-margin-1">
+                            <!--DELETE-->
+                            <i ng-show="diplomesExists(id)" ng-click="diplomesDelete(id)" class="fa fa-times file-button"></i>
+                            <!--UPLOAD-->
+                            <i ng-show="!diplomesExists(id)" class="fa fa-cloud-upload file-button" ng-disabled="!item._id || state.working() || !diplomesFile[id]" ng-click="!diplomesFile[id] || diplomesSave(id)"></i>
+                            <!--LABEL-->
+                            <label class="link file-label" for="{{'file_'+id}}">Pdf {{(d.info && "("+d.info.filename+")")||""}}</label>
+                            <!--DOWNLOAD-->
+                            <i ng-disabled="!item._id || state.working() || !diplomesExists(id)" ng-click="!diplomesExists(id) || diplomesDownload(id)" class="fa fa-download file-button"></i>
+                            <i class="fa fa-question file-button" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
+                        </div>
+                        <div>
+                            <p class="input-group diplome-info">
+                                <label>Obtention Date</label>
+                                <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.obtentionDate" is-open="d.obtentionDateOpen" max-date="d.obtentionMaxDate" datepicker-options="d.dateOptions" date-disabled="false" ng-required="true" close-text="Close" ng-click="d.obtentionDateClick()" />
+                            </p>
+                            <p class="input-group diplome-info" ng-if="userIs(['admin'])">
+                                <label>Expiration Date</label>
+                                <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.expirationDate" is-open="d.expirationDateOpen" min-date="d.expirationMinDate" datepicker-options="d.dateOptions" date-disabled="false" ng-required="true" close-text="Close" ng-click="d.expirationDateClick()" />
+                            </p>
+                        </div>
                     </div>
+                    <!--ADD-->
+                    <button ng-disabled="!item._id || state.working()" ng-click="!item._id || diplomesNew()" class="btn btn-default fa fa-plus file-button">Add</button>
+                    <hr/>
                 </div>
                 <div class="form-group">
                     <label>Updated At</label>
