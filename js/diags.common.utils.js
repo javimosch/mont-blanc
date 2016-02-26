@@ -145,3 +145,26 @@ var totalPrice = (showRounded, model, diags, squareMetersPrice, basePrice, opt) 
 
     return showRounded ? realTot : tot;
 };
+
+function OrderTotalTime(selectedDiags,diags) {
+    var total = 0;
+    if(!selectedDiags)return 0;
+    Object.keys(selectedDiags).forEach(function(mkey) {
+        if (!selectedDiags[mkey]) return;
+        diags.forEach(function(dval, dkey) {
+            if (dval.name == mkey) {
+                dval.time = dval.price / 4;
+                total += dval.time || 0;
+                return false;
+            }
+        });
+    });
+    total = parseInt(parseInt(total) / 10, 10) * 10 + 10;
+    var hours = Math.floor(total / 60);
+    var minutes = total % 60;
+    var t = {
+        hours: hours,
+        minutes: minutes
+    };
+    return t;
+};

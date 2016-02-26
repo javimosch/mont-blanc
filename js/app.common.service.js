@@ -337,7 +337,10 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
             //console.info('DIAGS',diags)
 
             //_.orderBy([{p:1},{p:5},{p:2}],(v)=>v.p) //rta: [{p:1},{p:2},{p:5}]
-            order.time = normalizeOrderTime(order.time);
+            
+            //is alredy normalized with next tenth calc.
+            //order.time = normalizeOrderTime(order.time);
+
             window.t = order.time;
             var diags = _.orderBy(diags, (v) => v.priority);
             var slots = []; //{_diag,start,end};

@@ -84,6 +84,23 @@ app.controller('adminOrdersEdit', [
                 overwriteModel: false,
                 s: s //with the scope, a priceInfo object is created to debug price calc.
             });
+            s.totalTime = () => OrderTotalTime(s.item.diags, s.diags);
+            s.totalTimeFormated = () => {
+                var t = OrderTotalTime(s.item.diags, s.diags);
+                var m = moment().hours(t.hours).minutes(t.minutes).format('HH:mm');
+                return m;
+            };
+            s.applyTotalPrice=()=>{
+                s.item.price = s.totalPrice(true);
+            };
+            s.applyTotalTime = () => {
+                var t = OrderTotalTime(s.item.diags, s.diags);
+                if (s.item && s.item.diagStart) {
+                    s.item.diagEnd = moment(s.item.diagStart)
+                    .add(t.hours,'hours').add(t.minutes,'minutes')._d;
+                    r.dom();
+                }
+            };
             s.message = r.message;
             s.type = r.session().userType;
             s.is = (arr) => _.includes(arr, s.type);
@@ -122,11 +139,11 @@ app.controller('adminOrdersEdit', [
             });
             //
             s.keysWhereTime = {
-                invalidKeysTimeMessage : () => {
+                invalidKeysTimeMessage: () => {
                     var startTime = () => moment(s.item.diagStart).format('HH:mm');
                     return 'Keys time should be between 8:00 and ' + startTime();
                 },
-                invalidKeysTime : () => {
+                invalidKeysTime: () => {
                     var before = (d1, h) => moment(d1).isBefore(moment(d1).hours(8));
                     var after = (d1) => moment(d1).isAfter(moment(s.item.diagStart))
                     var v = s.item.keysTime;
@@ -137,8 +154,7 @@ app.controller('adminOrdersEdit', [
                     }
                     return false;
                 },
-                init: (self) => {
-                },
+                init: (self) => {},
                 mstep: 15,
                 hstep: 1,
                 address: '',
@@ -167,9 +183,9 @@ app.controller('adminOrdersEdit', [
                     });
                 },
                 change: (v, self) => {
-                    if(!v) return;
-                    if(s.item.keysWhere && s.item.keysAddress && s.item.keysTime){
-                        if(v==s.item.keysWhere){
+                    if (!v) return;
+                    if (s.item.keysWhere && s.item.keysAddress && s.item.keysTime) {
+                        if (v == s.item.keysWhere) {
                             self.address = s.item.keysAddress;
                             return;
                         }
@@ -297,7 +313,7 @@ app.controller('adminOrdersEdit', [
                     [moment(s.item.diagEnd).isValid() && moment(s.item.diagStart).isValid() && !moment(s.item.diagEnd).isSame(moment(s.item.diagStart), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
                     [moment(s.item.diagEnd).isValid() && moment(s.item.diagEnd).isBefore(moment(s.item.diagStart), 'hour'), '==', true, 'End date cannot be lower than Start date'],
 
-                    [s.keysWhereTime.invalidKeysTime(),'==',true,s.keysWhereTime.invalidKeysTimeMessage],
+                    [s.keysWhereTime.invalidKeysTime(), '==', true, s.keysWhereTime.invalidKeysTimeMessage],
 
                     //[s.item.fastDiagComm.toString(),'==','','Comission required'],
                     [isNaN(s.item.fastDiagComm), '==', true, 'Comission need to be a number'],
@@ -305,9 +321,9 @@ app.controller('adminOrdersEdit', [
                     [isNaN(s.item.price), '==', true, 'Price need to be a number'],
                     [s.item.status, '==', '', 'Status required']
                 ], (m) => {
-                    if(typeof m[0] !== 'string'){
+                    if (typeof m[0] !== 'string') {
                         s.message(m[0](), 'warning', 0, true);
-                    }else{
+                    } else {
                         s.message(m[0], 'warning', 0, true);
                     }
                 }, s.save);

@@ -502,7 +502,8 @@ app.controller('fullpage', ['server',
                 hours: hours,
                 minutes: minutes
             };
-            return normalizeOrderTime(t);
+            //return normalizeOrderTime(t);
+            return t;
         };
         s.totalTime.formatted = () => {
             var time = s.totalTime();
