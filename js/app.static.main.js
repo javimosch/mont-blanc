@@ -194,6 +194,9 @@ app.controller('fullpage', ['server',
 
                 if (v.gasInstallation === 'Oui, Plus de 15 ans') {
                     toggle('gaz', true);
+                    if(s.model.sell==true){
+                        s.model.diags.gaz = true;
+                    }
                     toggle('electricity', true);
                 } else {
                     toggle('gaz', false);

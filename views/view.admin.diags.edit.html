@@ -26,29 +26,27 @@
                     <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.tel" placeholder="Phone">
                 </div>
                 <div class="form-group">
-                    <input ng-disabled="state.working()" data-address model="item" field="address" change="addressChange" class="fullwidth" type="address" placeholder="address line">
-                </div>
-                <!--
-                <div class="form-group">
-                    <label>Address</label>
-                    <input type="text" class="form-control" ng-model="item.address" placeholder="Address">
-                </div>-->
-                <div class="form-group">
-                    <label>Postcode</label>
-                    <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.postCode" placeholder="PostCode">
-                </div>
-                <div class="form-group">
-                    <label>Department</label>
-                    <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.department" placeholder="Department">
-                </div>
-                <div class="form-group">
-                    <label>Region</label>
-                    <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.region" placeholder="Region">
+                    <label for="address">Street Address</label>
+                    <input ng-disabled="state.working()" data-address post-code="postCode" department="department" region="region" city="city" model="item" field="address" change="addressChange" class="fullwidth" type="address" placeholder="address line">
                 </div>
                 <div class="form-group">
                     <label>City</label>
-                    <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.city" placeholder="City">
+                    <input ng-disabled="true" type="text" class="form-control" ng-model="item.city" placeholder="City">
                 </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    <input ng-disabled="true"type="text" class="form-control" ng-model="item.department" placeholder="Department">
+                </div>
+                <div class="form-group">
+                    <label>Region</label>
+                    <input ng-disabled="true" type="text" class="form-control" ng-model="item.region" placeholder="Region">
+                </div>
+                <div class="form-group">
+                    <label>Postcode</label>
+                    <input ng-disabled="true" type="text" class="form-control" ng-model="item.postCode" placeholder="PostCode">
+                </div>
+
+                
                 <div class="form-group">
                     <label>Comission</label>
                     <input ng-disabled="state.working() || !userIs(['admin'])" type="text" class="form-control" ng-model="item.comission" placeholder="Comission">

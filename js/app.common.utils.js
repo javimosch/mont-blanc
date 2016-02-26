@@ -1,3 +1,6 @@
+
+
+
 function expose(path, val) {
     setVal(window,path,val);
     function setVal(obj, propertyPath, val) {

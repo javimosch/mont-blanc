@@ -275,7 +275,14 @@ app.directive('address', function($rootScope, $timeout) {
         scope: {
             model: "=model",
             field: "@field",
-            change: "=change"
+            change: "=change",
+            number:"@number",
+            street:"@street",
+            city:"@city",
+            department:"@department",
+            region:"@region",
+            country:"@country",
+            postCode:"@postCode"
         },
         restrict: 'AE',
         link: function(scope, elem, attrs) {
@@ -283,8 +290,60 @@ app.directive('address', function($rootScope, $timeout) {
                 elem.geocomplete().bind("geocode:result", function(event, result) {
                     scope.model[scope.field] = result.formatted_address;
                     scope.change && scope.change(result.formatted_address);
+                    var data = result.address_components.map(v=>(v.long_name));
+                    var number, street, city, department, region, country, postCode;
+                    if (data.length == 4) {
+                        number = '';
+                        street = data[0];
+                        city = data[1];
+                        department = data[1];
+                        region = '';
+                        country = data[2];
+                        postCode = data[3];
+                    }
+                    if (data.length == 5) {
+                        number = '';
+                        street = data[0];
+                        city = data[0];
+                        department = data[1];
+                        region = data[2];
+                        country = data[3];
+                        postCode = data[4];
+                    }
+                    if (data.length === 7) {
+                        number = data[0];
+                        street = data[1];
+                        city = data[2]
+                        department = data[3];
+                        region = data[4];
+                        country = data[5];
+                        postCode = data[6];
+                    }
+                    if (scope.number) setVal(scope.model, scope.number, number);
+                    if (scope.street) setVal(scope.model, scope.street, street);
+                    if (scope.city) setVal(scope.model, scope.city, city);
+                    if (scope.department) setVal(scope.model, scope.department, department);
+                    if (scope.region) setVal(scope.model, scope.region, region);
+                    if (scope.country) setVal(scope.model, scope.country, country);
+                    if (scope.postCode) setVal(scope.model, scope.postCode, postCode);
+                    expose('address', result);
                     r.dom();
                 });
+
+                function setVal(obj, propertyPath, val) {
+                    var split = propertyPath.split('.');
+                    var lastIndex = split.length - 1;
+                    split.forEach((chunk, index) => {
+                        var isLast = lastIndex == index;
+                        if (isLast) return false;
+                        obj = obj[chunk] || null;
+                        if (!obj) return false;
+                    });
+                    if (obj) {
+                        if (val) obj[split[lastIndex]] = val;
+                        return obj[split[lastIndex]];
+                    }
+                }
 
                 function read() {
                     $timeout(function() {

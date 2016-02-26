@@ -35,6 +35,12 @@ ng-disabled="state.working() || is(['client','diag'])"
 type="button" class="btn btn-default" ng-click="end.opened = !end.opened"><i class="glyphicon glyphicon-calendar"></i></button>
 </span>
                 </div>
+                <div class="form-group well well-sm"
+ng-show="userIs(['admin'])"
+                >
+                    <label>Automatic Time (Time Rules)</label>
+                    
+                </div>
                 <div class="form-group">
                     <label>Observations</label>
                     <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.obs" placeholder="Observations">
