@@ -5,7 +5,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <label>Diagnostiquer</label>
             <div class="form-group">
                 <input class="form-control max-w-300" type="text" disabled ng-value="item._diag.firstName && item._diag.firstName + ' ' + item._diag.lastName || item._diag.email">
@@ -32,7 +32,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-8">
             <div class="form-group">
                 <label for="address">Address</label>
                 <input ng-disabled="true" data-address model="item" field="address" name="address" type="text" placeholder="Diag Address" class="fullwidth form-control">
@@ -62,22 +62,22 @@ ng-disabled="true"
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6">
-            <div class="form-group">
-                <label for="status">Status</label>
-                <input type="text" disabled class="form-control max-w-100" ng-value="item.status" />
-            </div>
-        </div>
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <div class="form-group">
                 <label>Price (eur)</label>
                 <input ng-disabled="true" type="number" class="form-control max-w-60 text-right" placeholder="Price" ng-model="item.price">
             </div>
         </div>
+        <div class="col-sm-8">
+            <div class="form-group">
+                <label for="status">Status</label>
+                <input type="text" disabled class="form-control max-w-100" ng-value="item.status" />
+            </div>
+        </div>
     </div>
-    <div class="row-fluid">
+    <div class="row">
         <div class="col-sm-12">
-            <button ng-disabled="state.working() || requesting" class="btn btn-success" ng-click="pay()">Pay now</button>
+            <button ng-show="item._id && item.status!=='prepaid' && item.status !=='completed'" ng-disabled="state.working() || requesting" class="btn btn-success" ng-click="pay()">Pay now</button>
         </div>
     </div>
 </div>

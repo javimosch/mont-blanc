@@ -1,4 +1,5 @@
-function openStripeModalPayOrder(order, cb) {
+function openStripeModalPayOrder(order, cb,opt) {
+    opt = opt || {};
     var handler = StripeCheckout.configure({
         key: 'pk_test_MDkxtBLcBpHwMCgkqX2dJHjO',
         image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
@@ -17,7 +18,7 @@ function openStripeModalPayOrder(order, cb) {
     handler.open({
         name: r.config.companyName || "[r.config.companyName]",
         description: 'Order payment',
-        email: order._client.email,
+        email: opt.email || order._client.email,
         currency: "eur",
         amount: order.price * 100,
         //billingAddress:true,

@@ -30,9 +30,16 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-6">
                 <ng-include src="'views/partials/partial.order.list-of-diags.html'" includeReplace>
                 </ng-include>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Observations</label>
+                    <textarea ng-disabled="state.working()" type="text" class="form-control min-height-200 no-resize" ng-model="item.obs" placeholder="Observations">
+                    </textarea>
+                </div>
             </div>
         </div>
         <div class="row">
@@ -41,15 +48,6 @@
             </div>
             <div class="col-sm-6">
                 <ng-include src="'views/partials/partial.order.price-rules.html'" includeReplace></ng-include>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="form-group">
-                    <label>Observations</label>
-                    <textarea ng-disabled="state.working()" type="text" class="form-control min-height-200 no-resize" ng-model="item.obs" placeholder="Observations">
-                    </textarea>
-                </div>
             </div>
         </div>
         <div class="row">

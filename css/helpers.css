@@ -1,4 +1,8 @@
 
+.disable-childs > *{
+    pointer-events: none;
+    tab-index: -1;
+}
 
 .min-width-120{
     min-width:120px;

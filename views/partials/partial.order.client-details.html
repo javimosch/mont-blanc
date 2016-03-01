@@ -26,4 +26,7 @@
 		data-address model="item" field="landLordAddress"
         >
     </div>
+    <button 
+ng-disabled="state.working()"
+    class="btn btn-default btn-sm" ng-click="sendPaymentLink()">Send Payment link</button>
 </div>

@@ -66,7 +66,6 @@ app.controller('adminOrdersEdit', [
             if (window.location.href.indexOf('orders/view') !== -1) {
                 //no login needed
                 r.toggleNavbar(false);
-                setTimeout(autoPay, 2000);
             } else {
                 r.secureSection(s);
             }
@@ -90,13 +89,29 @@ app.controller('adminOrdersEdit', [
         }
 
         function autoPay() {
+            if (window.location.href.indexOf('orders/view') === -1) return;
             if (s.pay && getParameterByName('pay') === '1') {
-                s.pay();
+                if (s.item && !_.includes(['prepaid', 'completed'], s.item.status)) {
+                    s.pay();
+                }
             }
         }
 
 
         function setHelpers() {
+
+            s.successMsg = (msg) => {
+                r.message(msg, {
+                    type: 'success',
+                    duration: 10000
+                });
+            }
+            s.infoMsg = (msg) => {
+                r.message(msg, {
+                    duration: 5000,
+                    type: 'info'
+                });
+            }
 
             s.currentClientType = () =>
                 s.item && s.item._client && '(' + s.item._client.clientType + ')' || '';
@@ -319,8 +334,30 @@ app.controller('adminOrdersEdit', [
         function setActions() {
 
 
+            s.sendPaymentLink = () => {
+                s.confirm('You want to send a payment link to ' + s.item.landLordEmail + ' ?', () => {
+                    s.infoMsg("Sending email.");
+                    db.ctrl('Email', 'orderPaymentLink', s.item).then(data => {
+                        s.infoMsg("Email sended.");
+                    });
+                });
+            };
+
             s.pay = () => {
-                console.info('pay order');
+                var order = s.item;
+                openStripeModalPayOrder(order, (token) => {
+                    order.stripeToken = token.id;
+                    db.ctrl('Order', 'pay', order).then((data) => {
+                        if (data.ok) {
+                            console.info('PAY-OK', data.result);
+                            s.successMsg('The order was paid successfully');
+                            r.dom(read, 5000);
+                        } else {
+                            s.successMsg('There was a server error, try later.', 'warning');
+                            console.info('PAY-FAIL', data.err);
+                        }
+                    });
+                });
             };
 
 
@@ -505,7 +542,7 @@ app.controller('adminOrdersEdit', [
                 delete r.params.item;
             }
 
-            s.message('loading . . .', 'info');
+            //s.message('loading . . .', 'info');
             s.requesting = true;
             db.ctrl('Order', 'get', {
                 _id: id || params.id || s.item._id,
@@ -522,6 +559,7 @@ app.controller('adminOrdersEdit', [
                     });
                     s.item = data.result;
                     onItem(s.item);
+                    autoPay();
                     _readFile();
                     //                    console.info('READ', s.item);
                     s.message('Loaded', 'success', 2000);
