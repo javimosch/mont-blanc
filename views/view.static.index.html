@@ -1,6 +1,5 @@
 <output ng-controller="fullpage">
-<my-alerts add="notify" directive="notify" stacked="true" settings="{clickDismissable:false}"></my-alerts>
-    
+    <my-alerts add="notify" directive="notify" stacked="true" settings="{clickDismissable:false}"></my-alerts>
     <modal-confirm open="openConfirm"></modal-confirm>
     <div id="fullpage">
         <div class="section" data-anchor="question1">
@@ -34,9 +33,19 @@
         <div class="section" data-anchor="calendar-timepicker">
             <div ng-include="'views/partials/partial.calendar-timepicker.html'"></div>
         </div>
+        <div class="section" data-anchor="confirm-and-save">
+            <div class="slide" ng-include="'views/partials/confirm-and-save-details.html'">
+            </div>
+            <div class="slide" ng-include="'views/partials/confirm-and-save-auth.html'">
+            </div>
+            <div class="slide" ng-include="'views/partials/confirm-and-save-pay.html'">
+            </div>
+        </div>
+        <!--
         <div class="section" data-anchor="confirm-order">
             <div ng-include="'views/partials/partial.confirm-order.html'"></div>
         </div>
+        -->
     </div>
     <!--
 <ul id="menu">
@@ -46,7 +55,8 @@
     <li data-menuanchor="question4"><a href="#question4">Fourth section</a></li>
 </ul>
 -->
-<span data-spinner show="showSpinner"></span> <!-- spinner -->
+    <span data-spinner show="showSpinner"></span>
+    <!-- spinner -->
     <span data-debug show="showDebug"></span>
 </output>
 <script type="text/javascript">
@@ -55,25 +65,27 @@ $(document).ready(function() {
         //Navigation
         menu: '#menu',
         lockAnchors: false,
-        anchors: ['question1', 'question2', 'question3', 'question4', 'question5', 'question6','question7', 'diags'
-        //, 'calendar-datepicker'
-        , 'calendar-timepicker'
-        , 'confirm-order'],
+        anchors: ['question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'question7', 'diags'
+            //, 'calendar-datepicker'
+            , 'calendar-timepicker', 'confirm-and-save'
+            //, 'confirm-order'
+        ],
         navigation: true,
         navigationPosition: 'right',
-        navigationTooltips: ['You Sell or Rent', 'House or Apartment', 'Size', 'Date permis de construire', 'Write your address', 'What about gas installation?','Electricity Installation?', 'Select diags'//, 'Choice a day'
-        , 'Pick a time', 'Save your order'],
+        navigationTooltips: ['You Sell or Rent', 'House or Apartment', 'Size', 'Date permis de construire', 'Write your address', 'What about gas installation?', 'Electricity Installation?', 'Select diags' //, 'Choice a day'
+            , 'Pick a time', 'Confirmation and Save'
+        ],
         showActiveTooltip: true,
         slidesNavigation: true,
         slidesNavPosition: 'bottom',
 
         //Scrolling
-        css3: false,
+        css3: true,
         scrollingSpeed: 700,
-        autoScrolling: false,
+        autoScrolling: true,
         fitToSection: true,
         fitToSectionDelay: 500,
-        scrollBar: true,
+        scrollBar: false,
         easing: 'easeInOutCubic',
         easingcss3: 'ease',
         loopBottom: false,
@@ -86,12 +98,12 @@ $(document).ready(function() {
         normalScrollElementTouchThreshold: 5,
 
         //Accessibility
-        keyboardScrolling: true,
+        keyboardScrolling: false,
         animateAnchor: true,
         recordHistory: true,
 
         //Design
-        controlArrows: true,
+        controlArrows: false,
         verticalCentered: true,
         resize: false,
         //sectionsColor: ['#ccc', '#fff'],

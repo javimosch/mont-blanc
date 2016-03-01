@@ -537,7 +537,7 @@ app.directive('notify', function($rootScope, $timeout) {
             });
             scope.clickDismiss = () => {
                 if (s.settings && s.settings.clickDismissable === false) {
-                    if (s.opt && !opt.clickDismissable) return;
+                    if (s.opt && !s.opt.clickDismissable) return;
                 }
                 scope.dismiss();
             };

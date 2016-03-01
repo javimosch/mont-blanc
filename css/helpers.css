@@ -131,6 +131,10 @@ table.minimal td{
     margin-top:5px;
     margin-bottom:5px;
 }
+.v-margin-2{
+    margin-top:10px;
+    margin-bottom:10px;
+}
 
 .vspacing-2 {
     padding: 10px 0px;

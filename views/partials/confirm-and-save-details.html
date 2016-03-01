@@ -1,0 +1,131 @@
+<div class="panel center-block question panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">Confirm and Save: Order Details</h4>
+    </div>
+    <div class="panel-body size-medium" ng-show="!validModel()">
+        <div class="well well-lg">
+            <p>Resolve the follow points first.</p>
+            <ul>
+                <li ng-show="model.sell===undefined">
+                    <h5>Question 
+        <a ng-click="moveTo('question1')" class="link">Sell or Rent</a>
+                     required.</h5></li>
+                <li ng-show="model.house === undefined">
+                    <h5>Question 
+        <a ng-click="moveTo('question2')" class="link">House or Apartament</a>
+                     required.</h5></li>
+                <li ng-show="model.house===true && !model.squareMeters">
+                    <h5>Question 
+        <a ng-click="moveTo('question3')" class="link">House Square Meters</a>
+                     required.</h5></li>
+                <li ng-show="model.house==false && !model.apartamentType">
+                    <h5>Question 
+        <a ng-click="moveTo('question3')" class="link">Apartament Type</a>
+                     required.</h5></li>
+                <li ng-show="!model.constructionPermissionDate">
+                    <h5>Question 
+        <a ng-click="moveTo('question4')" class="link">Date permis de construire</a>
+                     required.</h5></li>
+                <li ng-show="!model.address">
+                    <h5>Order 
+        <a ng-click="moveTo('question5')" class="link">Address</a>
+                     required.</h5></li>
+                <li ng-show="!model.diagStart || !availableTimeRanges">
+                    <h5> 
+<a ng-click="moveTo('calendar-timepicker')" class="link">Order Time</a>
+                     required.</h5></li>
+                     <li ng-show="!model.gasInstallation">
+                    <h5> 
+<a ng-click="moveTo('question6')" class="link">Gas Installation</a>
+                     required.</h5></li>
+                     <li ng-show="!model.electricityInstallation">
+                    <h5> 
+<a ng-click="moveTo('question7')" class="link">Electricity Installation</a>
+                     required.</h5></li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel-body2 size-medium" ng-show="validModel()">
+        <div class="">
+            <div class="table-responsive order">
+                <table class="table order">
+                    <thead>
+                        <tr>
+                            <th>Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                {{model.address}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-responsive order">
+                <table class="table order">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Start</th>
+                            <th>End</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                {{getDate().date}}
+                            </td>
+                            <td>
+                                {{getDate().start}}
+                            </td>
+                            <td>
+                                {{getDate().end}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-responsive order">
+                <table class="table order">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Base</td>
+                            <td>{{basePrice}}</td>
+                        </tr>
+                        <tr ng-repeat="(k,x) in model.diags" ng-show="x">
+                            <td>{{diagLabel(k,x)}}</td>
+                            <td>{{diagPrice(k,x)}}</td>
+                        </tr>
+                        <tr>
+                            <td>House dimensions</td>
+                            <td>{{sizePrice()}}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Sub</td>
+                            <td>{{totalPrice()}}</td>
+                        </tr>
+                        <tr>
+                            <td>TOTAL</td>
+                            <td>{{totalPrice(true)}}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button ng-show="!validModel()" class="center-block btn btn-warning text-center" ng-click="up()">Back</button>
+        <button ng-show="validModel()" ng-disabled="state.working() || !validModel() || _orderSAVED" class="btn btn-success btn-lg center-block text-center" ng-click="goRightAndHideNav()">Next</button>
+    </div>
+</div>
+<output data-message></output>

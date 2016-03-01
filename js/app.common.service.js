@@ -353,9 +353,9 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                 if (slots.length < 4) {
                     slots.push(slot);
                     if (isMorning) {
-                        covered.morning.push(1);
+                        covered.morning.push(slot);
                     } else {
-                        covered.afternoon.push(1);
+                        covered.afternoon.push(slot);
                     }
                 }
             }
@@ -385,7 +385,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                                 _pushSlot(slot, true);
                                 slot = null;
                             }
-                            slot = diagMorningCollisionAllocateAfter(order, diag, working, slots);
+                            slot = diagMorningCollisionAllocateAfter(order, diag, working, slots,exceptions);
                             if (slot) {
                                 _pushSlot(slot, true);
                             }
@@ -426,7 +426,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                                 _pushSlot(slot, false);
                                 slot = null;
                             }
-                            slot = diagAfternoonCollisionAllocateAfter(order, diag, working, slots);
+                            slot = diagAfternoonCollisionAllocateAfter(order, diag, working, slots,exceptions);
                             if (slot) _pushSlot(slot, false);
                         }
                     } else {
@@ -443,6 +443,9 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
 
                 return false; //cut
             });
+
+//slots = covered.morning + covered.afternoon
+            slots = _.union(covered.morning,covered.afternoon);
             return slots;
         }
         return MyPromise(function(resolve, error) {
@@ -535,14 +538,14 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
 
     function diagMorningCollisionAllocateAfter(order, diag, working, slots, exceptions) {
         var ms = (d, h, m) => moment(d).add(h, 'hour').add(m, 'minutes');
-        var before = (d1, d2) => moment(d1).isBefore(moment(d2), 'minutes');
+        var sameBefore = (d1, d2) => moment(d1).isSameOrBefore(moment(d2), 'minutes');
         var sameAfter = (d1, d2) => moment(d1).isSameOrAfter(moment(d2), 'minutes');
         var rta = null;
         var tardeOrders = diagAfternoonOrdersCollisions(order, diag, working);
         var morningOrders = exceptions || diagMorningOrdersCollisions(order, diag, working);
         morningOrders.forEach(wr => {
             //
-            if (exceptions && !isExceptionColliding(wr, order.day)) return;
+            if (exceptions && !isExceptionColliding(wr, order.day))return;
             //
             var start = ms(wr.end, 1, 30); //1hour, 30min after
             var t = normalizeOrderStartTime({
@@ -553,7 +556,12 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
             start.minutes(t.minutes);
             var end = ms(start, order.time.hours, order.time.minutes);
             //
-            var valid = true && morningOrders.filter(o => sameAfter(o.start, end)).length == 0 && morningOrders.filter(o => sameAfter(o.end, end)).length == 0 && morningOrders.filter(o => before(o.start, end)).length == 0;
+            var startLimit = moment(end).hours(11).minutes(30);
+            //
+            var valid = true && morningOrders.filter(o => sameAfter(o.start, end)).length == 0 && morningOrders.filter(o => sameAfter(o.end, end)).length == 0 && 
+            //
+            sameBefore(start,startLimit)
+            //morningOrders.filter(o => sameBefore(o.start, startLimit)).length == 0;
             //
             if (valid) {
                 rta = {
@@ -575,7 +583,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
         var workRanges = exceptions || diagAfternoonOrdersCollisions(order, diag, working);
         workRanges.forEach(wr => {
             //
-            if (exceptions && !isExceptionColliding(wr, order.day)) return;
+            if (exceptions && !isExceptionColliding(wr, order.day))return;
             //
             //ex: wr.start 15:00
             ///ex: 16:30

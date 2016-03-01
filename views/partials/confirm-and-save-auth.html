@@ -1,0 +1,36 @@
+<div class="panel center-block question panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">Confirm and Save: Authentification</h4>
+    </div>
+    <div class="panel-body size-medium">
+        <div class="center-block text-center v-margin-2">
+            <span class='medium'>Complete</span>
+        </div>
+        <div class="center-block text-center v-margin-2">
+            <input class="big" placeholder="email" ng-model="auth.email" />
+            <div>
+                <input type="password" class="big" ng-model="auth.pass" placeholder="password" />
+            </div>
+        </div>
+        <div class="center-block text-center v-margin-2">
+            <button 
+ng-disabled="state.working()"
+            class="btn btn-primary" ng-click="login()">Sign-In</button>
+        </div>
+        <div class="center-block text-center v-margin-2">
+            or
+            <br>
+            <span class='medium'>Subscribe</span>
+        </div>
+        <div class="center-block text-center v-margin-2">
+            <button
+ng-disabled="state.working()"
+             class="btn btn-info" ng-click="subscribeLandlord()">as a Landlord</button>
+            <div class="v-margin-1">
+                <button 
+ng-disabled="state.working()"
+                class="btn btn-info" ng-click="subscribeAgency()">as an Agency</button>
+            </div>
+        </div>
+    </div>
+</div>

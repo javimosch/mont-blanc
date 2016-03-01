@@ -178,7 +178,7 @@ app.controller('fullpage', ['server',
             s.diags.forEach(function(val, key) {
                 s.model.diags[val.name] = (val.mandatory) ? true : false;
             });
-            
+
             s.$watch('model.constructionPermissionDate', updateChecks);
             s.$watch('model.sell', updateChecks);
             s.$watch('model.gasInstallation', updateChecks);
@@ -290,10 +290,12 @@ app.controller('fullpage', ['server',
             });
         });
         s.moveTo = (n) => { $.fn.fullpage.moveTo(n); };
+        s.left = () => ($.fn.fullpage.moveSlideLeft());
+        s.right = () => ($.fn.fullpage.moveSlideRight());
         s.down = function() {
 
             var curr = $.hrefAnchor();
-            var anchors = ['question1', 'question2', 'question3', 'question4', 'question5', 'question6','question7', 'diags', 'calendar-timepicker', 'confirm-order'];
+            var anchors = ['question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'question7', 'diags', 'calendar-timepicker', 'confirm-order'];
             var req = {
                 'question1': () => (true && s.model.sell !== undefined),
                 'question2': () => (true && s.model.house !== undefined),
@@ -302,7 +304,7 @@ app.controller('fullpage', ['server',
                 'question4': () => (true && s.model.constructionPermissionDate),
                 'question5': () => (true && s.model.address),
                 'question6': () => (true && s.model.gasInstallation),
-                'question7':()  => (true && s.model.electricityInstallation) ,
+                'question7': () => (true && s.model.electricityInstallation),
                 'diags': () => false,
                 'calendar-timepicker': () => (true && s.model.diagStart) && (true && s.model.diagEnd),
                 'confirm-order': () => false
@@ -343,12 +345,262 @@ app.controller('fullpage', ['server',
 
 
         //----------------------------------------------------------
+        s.infoMsg = (msg) => {
 
+            s.notify(msg, {
+                type: 'info',
+                duration: 5000
+            });
+
+        };
+        s.warningMsg = (msg) => {
+            s.notify(msg, {
+                type: 'warning',
+                duration: 5000
+            });
+        };
+        s.successMsg = (msg) => {
+            s.notify(msg, {
+                type: 'success',
+                duration: 5000
+            });
+        };
+
+        s.auth = {
+            email: undefined,
+            pass: undefined
+        };
+        s.validateAuthInput = (cb) => {
+
+            ifThenMessage([
+                [!s.auth.email, '==', true, "Email required."],
+                [!s.auth.pass, '==', true, "Password required."],
+            ], (m) => {
+                if (typeof m[0] !== 'string') {
+                    s.warningMsg(m[0]())
+                } else {
+                    s.warningMsg(m[0]);
+                }
+            }, cb);
+
+        }
+
+        s.login = () => {
+            s.validateAuthInput(() => {
+                db.ctrl('User', 'get', {
+                    email: s.auth.email,
+                    password: s.auth.pass,
+                    userType: 'client'
+                }).then(_user => {
+                    _user = _user.ok && _user.result || null;
+                    if (_user) {
+                        s.model.clientType = _user.clientType;
+                        s._user = _user;
+                        s.saveAsync();
+                        s.right();
+                    } else {
+                        s.warningMsg('Invalid credentials');
+                    }
+                });
+            });
+        }
+
+        s.landlord = {
+            name:undefined,
+            email:undefined
+        };
+
+        s.sendPaymentLink = () => {
+
+            ifThenMessage([
+                [!s.landlord.email, '==', true, "Landlord Email required."],
+                [!s.landlord.name, '==', true, "Landlord Name required."],
+            ], (m) => {
+                if (typeof m[0] !== 'string') {
+                    s.warningMsg(m[0]());
+                } else {
+                    s.warningMsg(m[0]);
+                }
+            }, _sendPaymentLink);
+
+            function _sendPaymentLink() {
+
+                s._order.landLordFullName = s.landlord.name;
+                s._order.landLordEmail = s.landlord.email;
+
+                db.ctrl('Order','update',s._order);//async
+
+                s.openConfirm('You want to send a payment link to ' + s.landlord.email + ' ?', () => {
+                    s.infoMsg("Sending email.");
+                    db.ctrl('Email', 'orderPaymentLink', s._order).then(data => {
+                        s.infoMsg("Email sended to the landlord. Check the back-office to track your order status.");
+                        s.landlord.emailsended = true;
+                    });
+                });
+            }
+        };
+
+        s.subscribeLandlord = () => {
+            s.validateAuthInput(() => {
+                db.ctrl('User', 'exists', {
+                    email: s.auth.email,
+                    userType: 'client',
+                    clientType: 'landlord'
+                }).then(exists => {
+                    exists = exists.ok && exists.result == true;
+                    if (exists) {
+                        s.warningMsg('This email address belongs to an existing member.');
+                    } else {
+                        db.ctrl('User', 'createClient', {
+                            email: s.auth.email,
+                            clientType: 'landlord'
+                        }).then(data => {
+                            if (data.ok) {
+                                s._user = data.result;
+                                s.saveAsync();
+                                s.rigth();
+                            }
+                        })
+                    }
+                });
+            });
+        };
+        s.subscribeAgency = () => {
+            s.validateAuthInput(() => {
+                db.ctrl('User', 'exists', {
+                    email: s.auth.email,
+                    userType: 'client',
+                    clientType: 'agency'
+                }).then(exists => {
+                    exists = exists.ok && exists.result == true;
+                    if (exists) {
+                        s.warningMsg('This email address belongs to an existing member.');
+                    } else {
+                        db.ctrl('User', 'createClient', {
+                            email: s.auth.email,
+                            clientType: 'agency'
+                        }).then(data => {
+                            if (data.ok) {
+                                s._user = data.result;
+                                s.saveAsync();
+                                s.rigth();
+                            }
+                        })
+                    }
+                });
+            });
+        };
+
+
+        s.goRightAndHideNav = () => {
+            s.openConfirm('You are sure to continue?. You cannot modified Order details after this point', () => {
+                s.hideNav();
+                s.right();
+            });
+        };
+
+        s.hideNav = () => {
+            r.dom(() => {
+                $('#fp-nav').toggle(false);
+            })
+        };
+        s.showNav = () => {
+            r.dom(() => {
+                $('#fp-nav').toggle(true);
+            })
+        };
+
+
+        s.saveAsync = () => {
+            if (s._user) {
+                s.model._client = s._user._id;
+                s.model.email = s._user.email;
+                s.model.clientType = s._user.clientType;
+            }
+            db.ctrl('Order', 'saveWithEmail', s.model).then(data => {
+                var saved = data.ok;
+                var exists = (data.err === 'ORDER_EXISTS');
+                s._order = data.result;
+                //
+                if (saved) {
+                    s.successMsg('Order saved.');
+                }
+                if (exists) {
+                    s.warningMsg('Order already exists.');
+                }
+                s._orderSAVED = saved || exists;
+            }).error(err => {
+                s.notify('There was a server issue during the order saving proccess. Retrying in 10 seconds. Wait.', {
+                    type: 'warning',
+                    duration: 100000
+                });
+                setTimeout(saveAsync, 10000);
+            });
+
+        };
 
 
 
 
         var isLandlord = () => s.model.clientType === 'landlord';
+
+        //require an order to be saved (s._order)
+        s.payNOW = (success) => {
+            var order = s._order;
+            openStripeModalPayOrder(order, (token) => {
+                order.stripeToken = token.id;
+                db.ctrl('Order', 'pay', order).then((data) => {
+                    if (data.ok) {
+                        if (success) {
+                            success();
+                        }
+                        console.info('PAY-OK', data.result);
+                        s.notify('Order payment success. We send you an email.', {
+                            type: 'success',
+                            duration: 100000
+                        });
+                    } else {
+                        console.info('PAY-FAIL', data.err);
+                        s.notify('There was a server issue during the payment proccess. You pay later from the back-office.', {
+                            type: 'warning',
+                            duration: 100000
+                        });
+                    }
+                }).error(() => {
+                    s.notify('There was a server issue during the payment proccess. You pay later from the back-office.', {
+                        type: 'warning',
+                        duration: 100000
+                    });
+                });
+            });
+        };
+
+        function _payOrder(order) {
+            openStripeModalPayOrder(order, (token) => {
+                order.stripeToken = token.id;
+                db.ctrl('Order', 'pay', order).then((data) => {
+                    if (data.ok) {
+                        _modalSuccess();
+                        console.info('PAY-OK', data.result);
+                        s.notify('Order created and paid. We send you an email.', {
+                            type: 'success',
+                            duration: 100000
+                        });
+                    } else {
+                        console.info('PAY-FAIL', data.err);
+                        s.notify('There was a server issue during the payment proccess, but your Order has been created. Check your email for more information.', {
+                            type: 'warning',
+                            duration: 100000
+                        });
+                    }
+                }).error(() => {
+                    s.notify('There was a server issue during the payment proccess, but your Order has been created. Check your email for more information.', {
+                        type: 'warning',
+                        duration: 100000
+                    });
+                });
+            });
+        }
 
         s.confirm = function() {
 
@@ -405,32 +657,7 @@ app.controller('fullpage', ['server',
                 });
             }
 
-            function _payOrder(order) {
-                openStripeModalPayOrder(order, (token) => {
-                    order.stripeToken = token.id;
-                    db.ctrl('Order', 'pay', order).then((data) => {
-                        if (data.ok) {
-                            _modalSuccess();
-                            console.info('PAY-OK', data.result);
-                            s.notify('Order created and paid. We send you an email.', {
-                                type: 'success',
-                                duration: 100000
-                            });
-                        } else {
-                            console.info('PAY-FAIL', data.err);
-                            s.notify('There was a server issue during the payment proccess, but your Order has been created. Check your email for more information.', {
-                                type: 'warning',
-                                duration: 100000
-                            });
-                        }
-                    }).error(() => {
-                        s.notify('There was a server issue during the payment proccess, but your Order has been created. Check your email for more information.', {
-                            type: 'warning',
-                            duration: 100000
-                        });
-                    });
-                });
-            }
+
 
             function _saveOrder(payAfterSave) {
                 db.custom('order', 'saveWithEmail', s.model).then(function(res) {
