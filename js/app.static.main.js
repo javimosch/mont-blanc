@@ -37,6 +37,7 @@ app.controller('fullpage', ['server',
                 //
                 (true && s.model.constructionPermissionDate) &&
                 (true && s.model.gasInstallation) &&
+                (true && s.model.electricityInstallation) &&
                 (true && s.model.address) &&
                 (true && s.model.diagStart) &&
                 (true && s.model.diagEnd) &&
@@ -177,41 +178,51 @@ app.controller('fullpage', ['server',
             s.diags.forEach(function(val, key) {
                 s.model.diags[val.name] = (val.mandatory) ? true : false;
             });
-            s.$watch('model', (v) => {
-                //if(v.gasInstallation==='Non') toggle('gaz',false);
+            
+            s.$watch('model.constructionPermissionDate', updateChecks);
+            s.$watch('model.sell', updateChecks);
+            s.$watch('model.gasInstallation', updateChecks);
+            s.$watch('model.electricityInstallation', updateChecks);
 
-                if (v.constructionPermissionDate === 'Before le 01/01/1949') {
+            function updateChecks() {
+                if (s.model.constructionPermissionDate === 'Before le 01/01/1949') {
                     toggle('crep', true);
                     s.model.diags.crep = true; //mandatory
                 } else {
-                    s.model.diags.crep = false;//
+                    s.model.diags.crep = false; //
                     toggle('crep', true);
                 }
 
-                if (_.includes(['Before le 01/01/1949', 'entre 1949 et le 01/07/1997'], v.constructionPermissionDate)) {
+                if (_.includes(['Before le 01/01/1949', 'entre 1949 et le 01/07/1997'], s.model.constructionPermissionDate)) {
                     toggle('dta', true);
                     s.model.diags.dta = true; //mandatory
                 } else {
-                    toggle('dta', true); 
+                    toggle('dta', true);
                     s.model.diags.dta = false;
                 }
 
-                if (v.gasInstallation === 'Oui, Plus de 15 ans') {
+                if (s.model.gasInstallation === 'Oui, Plus de 15 ans') {
                     toggle('gaz', true);
-                    if(s.model.sell==true){
+                    if (s.model.sell == true) {
                         s.model.diags.gaz = true;
-                        s.model.diags.electricity = true;
-                    }else{
+                    } else {
                         s.model.diags.gaz = false;
-                        s.model.diags.electricity = false;
                     }
-                    toggle('electricity', true);
                 } else {
                     toggle('gaz', false);
+                }
+                if (s.model.electricityInstallation === 'Oui, Plus de 15 ans') {
+                    toggle('electricity', true);
+                    if (s.model.sell == true) {
+                        s.model.diags.electricity = true;
+                    } else {
+                        s.model.diags.electricity = false;
+                    }
+                } else {
                     toggle('electricity', false);
                 }
 
-            }, true);
+            }
             toggle(undefined, true); //all checks visibles.
         }
 
@@ -224,6 +235,7 @@ app.controller('fullpage', ['server',
                 constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined,
                 address: param('address') || undefined,
                 gasInstallation: param('gasInstallation', s.gasInstallation) || undefined,
+                electricityInstallation: param('gasInstallation', s.gasInstallation) || undefined,
                 date: paramDate('date'),
                 time: param('time', ['any']),
                 clientType: param('clientType', ['agency', 'landlord'])
@@ -268,7 +280,7 @@ app.controller('fullpage', ['server',
                         if (d.ok && d.result) {
                             r.name = d.result.firstName;
                             if (d.result.diagPriority) {
-                                r.name+= ' (' + d.result.diagPriority + ')';
+                                r.name += ' (' + d.result.diagPriority + ')';
                             }
                         }
                     });
@@ -281,7 +293,7 @@ app.controller('fullpage', ['server',
         s.down = function() {
 
             var curr = $.hrefAnchor();
-            var anchors = ['question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'diags', 'calendar-timepicker', 'confirm-order'];
+            var anchors = ['question1', 'question2', 'question3', 'question4', 'question5', 'question6','question7', 'diags', 'calendar-timepicker', 'confirm-order'];
             var req = {
                 'question1': () => (true && s.model.sell !== undefined),
                 'question2': () => (true && s.model.house !== undefined),
@@ -290,6 +302,7 @@ app.controller('fullpage', ['server',
                 'question4': () => (true && s.model.constructionPermissionDate),
                 'question5': () => (true && s.model.address),
                 'question6': () => (true && s.model.gasInstallation),
+                'question7':()  => (true && s.model.electricityInstallation) ,
                 'diags': () => false,
                 'calendar-timepicker': () => (true && s.model.diagStart) && (true && s.model.diagEnd),
                 'confirm-order': () => false
@@ -317,7 +330,7 @@ app.controller('fullpage', ['server',
             var rta = moment(rng.start).format("HH:mm") + 'h - ' + moment(rng.end).format("HH:mm") + 'h';
 
             if (rng.name) {
-                rta+= ' by ' + rng.name;
+                rta += ' by ' + rng.name;
             }
 
             return rta;
@@ -497,7 +510,7 @@ app.controller('fullpage', ['server',
                 if (!s.model.diags[mkey]) return;
                 s.diags.forEach(function(dval, dkey) {
                     if (dval.name == mkey) {
-                        dval.time = dval.price /4;  
+                        dval.time = dval.price / 4;
                         total += dval.time || 0;
                         return false;
                     }

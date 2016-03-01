@@ -1,4 +1,3 @@
-
 (() => {
     //
     var app = angular.module('app.admin.client', []);
@@ -21,7 +20,7 @@
                     var data = {
                         __populate: {
                             '_client': 'email userType',
-                            '_diag': 'email userType'
+                            '_diag': 'email userType firstName lastName'
                         }
                     };
 
@@ -46,19 +45,19 @@
 
                 function payOrder(order) {
                     var modal = this;
-                    
+
                     openStripeModalPayOrder(order, (token) => {
                         order.stripeToken = token.id;
                         ws.ctrl('Order', 'pay', order).then((data) => {
                             if (data.ok) {
                                 modal.closeSilent();
                                 update();
-                                setTimeout(update,10000);
-                                setTimeout(update,20000);
+                                setTimeout(update, 10000);
+                                setTimeout(update, 20000);
                                 console.info('PAY-OK', data.result);
-                                r.message('Your order was paid successfully','success',undefined,undefined,{duration:20000});
+                                r.message('Your order was paid successfully', 'success', undefined, undefined, { duration: 20000 });
                             } else {
-                                r.message('There was a server error, try later.','warning',undefined,undefined,{duration:20000});
+                                r.message('There was a server error, try later.', 'warning', undefined, undefined, { duration: 20000 });
                                 console.info('PAY-FAIL', data.err);
                             }
                             modal.closeSilent();
@@ -71,6 +70,14 @@
                         ws.localData().then(function(d) {
                             Object.assign(data, d);
                         });
+
+                        r.params = {
+                            item: item,
+                            prevRoute: 'dashboard'
+                        };
+                        r.route('orders/edit/' + item._id);
+
+                        /*
                         s.open({
                             title: 'Order View',
                             data: data,
@@ -78,13 +85,13 @@
                                 'pay': [payOrder]
                             },
                             item: item,
-                            templateUrl: 'views/partials/partial.modal.diag.order.html',
+                            templateUrl: 'views/partials/partial.modal.client.order.html',
                             callback: (item) => {
                                 ws.ctrl('Order', 'createUpdate', item).then((result) => {
                                     update();
                                 });
                             }
-                        });
+                        });*/
                     },
                     buttons: [{
                         label: "Refresh",
@@ -107,7 +114,7 @@
                     items: []
                 };
                 update();
-//                console.log('directive.exceptions.linked');
+                //                console.log('directive.exceptions.linked');
             }
         };
     });

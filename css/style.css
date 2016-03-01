@@ -1,222 +1,267 @@
-@-webkit-keyframes rotating /* Safari and Chrome */ {
-  from {
-    -ms-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  to {
-    -ms-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -webkit-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-@keyframes rotating {
-  from {
-    -ms-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  to {
-    -ms-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -webkit-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-.rotating {
-  -webkit-animation: rotating 2s linear infinite;
-  -moz-animation: rotating 2s linear infinite;
-  -ms-animation: rotating 2s linear infinite;
-  -o-animation: rotating 2s linear infinite;
-  animation: rotating 2s linear infinite;
+@-webkit-keyframes rotating
+/* Safari and Chrome */
+
+{
+    from {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }
 
-.modal-dialog{
+@keyframes rotating {
+    from {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+.rotating {
+    -webkit-animation: rotating 2s linear infinite;
+    -moz-animation: rotating 2s linear infinite;
+    -ms-animation: rotating 2s linear infinite;
+    -o-animation: rotating 2s linear infinite;
+    animation: rotating 2s linear infinite;
+}
+
+.form-group{
+    
+}
+.form-group label{
+    
+}
+.form-group input{
+    display: inline-flex;
+}
+.form-group .input-group-btn{
+    
+}
+
+.admin.info.small:before{
+    content: "Visibility: "
+}
+.admin.info.small {
+    border: none;
+    font-weight: 800;
+    font-family: inherit;
+    font-size: xx-small;
+    text-decoration: underline;
+}
+
+.modal-dialog {
     width: initial;
     max-width: 90%;
 }
 
-input [type='file']{
-  height: 33px;
+input [type='file'] {
+    height: 33px;
 }
 
+.login-info{
+    line-height: 50px;   
+}
 
 /*DIPLOMES FILES*/
-.diplome{
-  border-left:1px solid black;
+
+.diplome {
+    border-left: 1px solid black;
 }
-.diplome-info{
-  padding-left:27px;
-  font-size: x-small;
+
+.diplome-info {
+    padding-left: 27px;
+    font-size: x-small;
 }
-.diplome-info label{
-  width: 80px;
+
+.diplome-info label {
+    width: 80px;
 }
-.diplome-info input{
+
+.diplome-info input {
     border: none;
     width: 100px;
     background: transparent;
-    border-right: 3px solid rgba(0,0,0,0);
+    border-right: 3px solid rgba(0, 0, 0, 0);
 }
-.diplome-info input:hover{
-    border-right: 3px solid rgba(0,0,0,.2);
+
+.diplome-info input:hover {
+    border-right: 3px solid rgba(0, 0, 0, .2);
 }
-.diplome i.file-button{
-  opacity:0;
+
+.diplome i.file-button {
+    opacity: 0;
 }
-.diplome:hover i.file-button{
-  opacity:1;
+
+.diplome:hover i.file-button {
+    opacity: 1;
 }
-i.file-button{
+
+i.file-button {
     line-height: 33px;
     width: 16px;
 }
-i.file-button:hover{
-  cursor: pointer;
+
+i.file-button:hover {
+    cursor: pointer;
 }
-i.file-button[disabled]:hover{
-  cursor: not-allowed;
+
+i.file-button[disabled]:hover {
+    cursor: not-allowed;
 }
-.file-label{
-  line-height: 33px;
+
+.file-label {
+    line-height: 33px;
 }
+
+
 /* ---------- */
 
-
-.modal-body.row-fluid{
-      min-height: 300px;
+.modal-body.row-fluid {
+    min-height: 300px;
 }
 
-
-.diags-checkbox{
-  border: none;
+.diags-checkbox {
+    border: none;
 }
-.check-label{
-  width: 100%;
+
+.check-label {
+    width: 100%;
     background: none;
     border: none;
 }
 
-.clientTypeWrapper{
+.clientTypeWrapper {
     display: inline-flex;
     padding: 0px 20px 0px 80px;
 }
-.clientTypeWrapper > div{
-  width:50%;
+
+.clientTypeWrapper > div {
+    width: 50%;
 }
 
-.navbar-brand{
-  font-size: 2rem;
+.navbar-brand {
+    font-size: 2rem;
 }
 
-.nav li a{
+.nav li a {
     font-size: 20px;
     font-family: inherit;
 }
 
 .nav li {
-  padding: 5px;
+    padding: 5px;
 }
 
 @media screen and (min-width: 768px) {
-     .nav{
-       width: 100%;
-    }
-}
-@media screen and (min-width: 1200px) {
- 
-    .nav > output{
-      display: flex;
+    .nav {
+        width: 100%;
     }
 }
 
-table.order{
-  
+@media screen and (min-width: 1200px) {
+    .nav > output {
+        display: flex;
+    }
 }
-table.order tr{
-  
-}
-table.order th{
+
+table.order {}
+
+table.order tr {}
+
+table.order th {
     margin: 0px;
     padding: 0px 10px 0px 10px!important
 }
-table.order td{
+
+table.order td {
     margin: 0px;
     padding: 2px 10px 2px 10px!important;
 }
-.table-responsive.order{
-  padding: 0px;
-  margin: 0px;
-  border:none;
+
+.table-responsive.order {
+    padding: 0px;
+    margin: 0px;
+    border: none;
 }
 
-.navbar-default a{
-	color:black;
+.navbar-default a {
+    color: black;
 }
 
-#menu{
-	position: absolute;
-	background: white;
-	top:1px;
-	right:1px;
+#menu {
+    position: absolute;
+    background: white;
+    top: 1px;
+    right: 1px;
 }
 
-.fp-tooltip,.fp-tooltip:hover{
-	color:black!important;
+.fp-tooltip,
+.fp-tooltip:hover {
+    color: black!important;
 }
 
-.panel.question{
-	max-width:600px;
-	margin:0 auto;
-}
-.panel-footer{
-  padding: 0px 15px;
+.panel.question {
+    max-width: 600px;
+    margin: 0 auto;
 }
 
+.panel-footer {
+    padding: 0px 15px;
+}
 
-#calendar-datepicker table{
-      display: block;
+#calendar-datepicker table {
+    display: block;
     margin-right: auto;
     margin-left: auto;
     text-align: center;
     max-width: 285px;
 }
 
-.inline-flex{
-	
-}
-.inline-flex .child{
-	
+.inline-flex {}
+
+.inline-flex .child {}
+
+.fc-day:hover,
+.fc-day-number:hover {
+    cursor: pointer;
 }
 
-.fc-day:hover,.fc-day-number:hover{
-	cursor:pointer;
+.shorcuts a {
+    color: black;
 }
 
-.shorcuts a{
-	color:black;
-}
-.shorcuts a:hover{
-	text-decoration:none;
+.shorcuts a:hover {
+    text-decoration: none;
 }
 
-.form{
-	max-width: 370px;
+.form {
+    max-width: 370px;
 }
 
-.border{
-	border: 1px solid rgba(0,0,0,.2);
+.border {
+    border: 1px solid rgba(0, 0, 0, .2);
 }
 
-.radio{
-	    min-width: 50px;
+.radio {
+    min-width: 50px;
     margin: 0 auto;
     text-align: center;
     vertical-align: middle;
@@ -224,23 +269,29 @@ table.order td{
     background: whitesmoke;
 }
 
-.passed{
-	text-decoration: line-through;
+.passed {
+    text-decoration: line-through;
 }
 
-#address,#email{
-	width: 100%;
+#address,
+#email {
+    width: 100%;
 }
 
-.timeLabel{
-  height: 102px;
-}
-.label-4{
-  width:90px
+.timeLabel {
+    height: 102px;
 }
 
-.info{
-	background: white;
+.label{
+    margin-top: 10px;
+}
+
+.label-4 {
+    width: 90px
+}
+
+.info {
+    background: white;
     color: black;
     font-size: smaller;
     border-bottom: 5px solid;

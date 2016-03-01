@@ -1,0 +1,34 @@
+<div class="form-group well well-sm childs-margin-1" ng-show="userIs(['admin'])">
+    <div ng-if="debug && userIs(['admin'])" class="admin info small">ADMIN</div>
+    <label>Automatic Price (Price Rules)</label>
+    <div>
+        <input disabled type="number" class="form-control" ng-value="totalPrice(true)">
+    </div>
+    <div>
+        <div>
+            <table class="table minimal">
+                <tr ng-repeat="(k,v) in priceInfo">
+                    <td>{{k}}</td>
+                    <td>{{v}}</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>{{totalPrice(true)}}</td>
+                </tr>
+                <tr>
+                    <td>- House size % for {{item.info.squareMeters}} is {{squareMetersPrice[item.info.squareMeters]}}%.</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>- House size formula is {{subTotal()}}*{{squareMetersPrice[item.info.squareMeters]}}/100</td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <button class="btn btn-default" ng-click="applyTotalPrice()">
+                Apply
+            </button>
+        </div>
+    </div>
+</div>

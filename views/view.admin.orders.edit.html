@@ -1,144 +1,93 @@
-<div class="container" ng-controller="adminOrdersEdit">
-    <div class="panel panel-info">
-        <div class="panel-heading">
+<div class="container panel panel-info" ng-controller="adminOrdersEdit">
+    <div class="row-fluid">
+        <div class="col-sm-12 panel-heading">
             <h3 class="panel-title">Order Details</h3>
         </div>
-        <div class="panel-body">
-            <form>
-                <div class="form-group">
-                    <label>Client</label>
-                    <input ng-disabled="state.working() || item._id" type="text" class="form-control" ng-model="item._client" placeholder="Client" uib-typeahead="client as client.email for client in getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients" typeahead-no-results="noResults">
-                </div>
-                <div class="form-group">
-                    <label>Diag</label>
-                    <input ng-disabled="state.working() || item._id" type="text" class="form-control" ng-model="item._diag" placeholder="Diag" uib-typeahead="diag as diag.email for diag in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingDiags" typeahead-no-results="noResults">
-                </div>
-                <div class="from-group v-spacing-1">
+    </div>
+    <div class="container-fluid panel-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <ng-include src="'views/partials/partial.order.client-details.html'" includeReplace></ng-include>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <ng-include src="'views/partials/partial.order.diag-details.html'" includeReplace></ng-include>
+            </div>
+            <div class="col-sm-6">
+                <div class="from-group">
                     <label for="address">Diag Address</label>
                     <input ng-disabled="state.working() || is(['client','diag'])" data-address model="item" field="address" name="address" type="text" placeholder="Diag Address" class="fullwidth">
                 </div>
-                <div class="form-group relative">
-                    <label>Start Date</label>
-                    <input ng-disabled="state.working() || is(['client','diag'])" type="text" class="form-control focus-1" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.diagStart" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
-                    <span class="input-group-btn">
-<button 
-ng-disabled="state.working() || is(['client','diag'])"
-type="button" class="btn btn-default" ng-click="start.opened = !start.opened"><i class="glyphicon glyphicon-calendar"></i></button>
-</span>
-                </div>
-                <div class="form-group relative">
-                    <label>End Date</label>
-                    <input ng-disabled="state.working() || is(['client','diag'])" type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy HH:mm " ng-model="item.diagEnd" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="end.opened=false" is-open="end.opened" date-disabled="false" close-text="Close" />
-                    <span class="input-group-btn">
-<button 
-ng-disabled="state.working() || is(['client','diag'])"
-type="button" class="btn btn-default" ng-click="end.opened = !end.opened"><i class="glyphicon glyphicon-calendar"></i></button>
-</span>
-                </div>
-                <div class="form-group well well-sm childs-margin-1" ng-show="userIs(['admin']) && item && item.diagStart">
-                    <label>Automatic Time (Time Rules)</label>
-                    <div>
-                        <input type="text" class="form-control" disabled ng-value="totalTimeFormated()" />
-                    </div>
-                    <div>
-                        <button class="btn btn-default" ng-click="applyTotalTime()">
-                            Apply
-                        </button>
-                    </div>
-                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <ng-include src="'views/partials/partial.order.date-time.html'" includeReplace></ng-include>
+            </div>
+            <div class="col-sm-6">
+                <ng-include src="'views/partials/partial.order.date-time.rules.html'" includeReplace></ng-include>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <ng-include src="'views/partials/partial.order.list-of-diags.html'" includeReplace>
+                </ng-include>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <ng-include src="'views/partials/partial.order.prices.html'" includeReplace></ng-include>
+            </div>
+            <div class="col-sm-6">
+                <ng-include src="'views/partials/partial.order.price-rules.html'" includeReplace></ng-include>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
                 <div class="form-group">
                     <label>Observations</label>
-                    <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.obs" placeholder="Observations">
+                    <textarea ng-disabled="state.working()" type="text" class="form-control min-height-200 no-resize" ng-model="item.obs" placeholder="Observations">
+                    </textarea>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <ng-include src="'views/partials/partial.order.keys-details.html'" includeReplace></ng-include>
+            </div>
+            <div class="col-sm-6">
+                <ng-include src="'views/partials/partial.order.pdf.html'" includeReplace></ng-include>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
                 <div class="form-group">
-                    <label>Diags</label>
-                    <div ng-repeat="(key,x) in diags" class="input-group" ng-show="!x.disabled" ng-if="userIs(['admin']) || !item._id || (item._id && item.diags[x.name]==true)">
-                        <span class="input-group-addon diags-checkbox">
-                    <input 
-ng-disabled="state.working() || is(['client','diag'])"
-                     type="checkbox" ng-model="item.diags[x.name]" ng-value="true">
-                </span>
-                        <input type="text" disabled class="check-label" value="{{x.label}}" aria-label="...">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Comission for fast diag</label>
-                    <input ng-disabled="state.working() || is(['client','diag'])" type="number" class="form-control" ng-model="item.fastDiagComm" placeholder="Comission">
-                </div>
-                <div class="form-group">
-                    <label>Price</label>
-                    <input ng-disabled="state.working() || is(['client','diag'])" type="number" class="form-control" placeholder="Price" ng-model="item.price">
-                </div>
-                <div class="form-group well well-sm childs-margin-1" ng-show="userIs(['admin'])">
-                    <label>Automatic Price (Price Rules)</label>
-                    <div>
-                        <input disabled type="number" class="form-control" ng-value="totalPrice(true)">
-                    </div>
-                    <div>
-                        <div>
-                            <table class="table minimal">
-                                <tr ng-repeat="(k,v) in priceInfo">
-                                    <td>{{k}}</td>
-                                    <td>{{v}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Total</td>
-                                    <td>{{totalPrice(true)}}</td>
-                                </tr>
-                                <tr>
-                                    <td>- House size % for {{item.info.squareMeters}} is {{squareMetersPrice[item.info.squareMeters]}}%.</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>- House size formula is {{subTotal()}}*{{squareMetersPrice[item.info.squareMeters]}}/100</td>
-                                    <td></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div>
-                            <button class="btn btn-default" ng-click="applyTotalPrice()">
-                                Apply
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Where to take the keys</label>
-                        <ctrl-select options="keysWhereTime"></ctrl-select>
-                        <input type="text" disabled ng-model="keysWhereTime.address" class="fullwidth v-margin-1" placeholder='Choice where to get the address' />
-                        <uib-timepicker ng-show="keysWhereTime.address" ng-disabled="state.working() || !item.keysWhere" name='timePickerKeys' ng-model="item.keysTime" hour-step="keysWhereTime.hstep" minute-step="keysWhereTime.mstep" show-meridian="true"></uib-timepicker>
-                    </div>
-                    <div class="form-group">
-                        <label>Pdf {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||""}}</label>
-                        <input type="file" file-model="pdfFile" ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working()" class="form-control" placeholder="Diag Pdf">
-                        <button ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working() || !pdfFile" class="btn btn-default" ng-click="saveFile()">Upload</button>
-                        <button ng-disabled="!item.pdfId" class="btn btn-default" ng-click="downloadFile()">Download</button>
-                        <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
-                    </div>
-                    <div class="form-group">
-                        <label for="status">Status:</label>
-                        <span uib-dropdown name='status'>
+                    <label for="status">Status:</label>
+                    <span uib-dropdown name='status'>
                         <button 
 ng-disabled="state.working() || is(['client','diag'])"
                         id="single-button" type="button" class="btn btn-primary"    uib-dropdown-toggle ng-disabled="disabled">
                             {{status.label}}
                             <span class="caret">
                             </span>
-                        </button>
-                        <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
-                            <li ng-repeat="choice in status.items">
-                                <a href ng-click="status.click(choice)">{{choice.label || choice}}</a>
-                            </li>
-                        </ul>
-                        </span>
-                    </div>
-            </form>
-            </div>
-            <div class="panel-footer">
-                <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="validate()">Save</button>
-                <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>
-                <button ng-disabled="state.working() || requesting || userIs(['client','diag'])" class="btn btn-default" ng-click="delete()">Delete</button>
+                    </button>
+                    <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
+                        <li ng-repeat="choice in status.items">
+                            <a href ng-click="status.click(choice)">{{choice.label || choice}}</a>
+                        </li>
+                    </ul>
+                    </span>
+                </div>
             </div>
         </div>
-        <!--    <my-alerts add="message"></my-alerts> -->
-        <modal-confirm open="confirm"></modal-confirm>
     </div>
+    <div class="row-fluid">
+        <div class="col-sm-12 panel-footer">
+            <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="validate()">Save</button>
+            <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>
+            <button ng-disabled="state.working() || requesting || userIs(['client','diag'])" class="btn btn-default" ng-click="delete()">Delete</button>
+        </div>
+    </div>
+    <modal-confirm open="confirm"></modal-confirm>
+</div>

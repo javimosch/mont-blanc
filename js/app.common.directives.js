@@ -97,7 +97,7 @@ app.directive('ctrlSelect', function($rootScope) {
             s = Object.assign(s, {
                 scope: opt.scope,
                 label: opt.label || '(Select Item)',
-                items: opt.items,
+                //items: opt.items,
                 disabled: () => opt.disabled(),
                 cls: () => opt.cls(),
                 click: (x) => {
@@ -106,25 +106,30 @@ app.directive('ctrlSelect', function($rootScope) {
             });
             s.scope.$watch(() => {
                 if (opt.filter) {
-                    s.items = _.filter(s.items, (v) => opt.filter(v));
+                    s.opt.items = _.filter(s.opt.items, (v) => opt.filter(v));
                 }
             });
-            opt.scope.$watch(opt.modelPath, (v) => {
-                var arr = s.items.filter(item => ((item.val || item) == v));
+            opt.scope.$watch(opt.modelPath, (v,oldV) => {
+                var arr = s.opt.items.filter(item => ((item.val || item) == v));
                 if (arr.length > 1) {
                     throw Error('ctrlSelect items val need to be unique.');
                 }
                 if (arr.length == 1) {
                     s.label = arr[0].label || arr[0];
                     if (opt.change) {
-                        opt.change(v, opt);
+                        opt.change(arr[0], opt,()=>{
+                            //console.info('OLD',oldV);
+                            if(v!==oldV){
+                                setVal(opt.scope, opt.modelPath, oldV);
+                            }
+                        });
                     }
                     r.dom();
                 } else {
                     if (opt.label) {
                         s.label = opt.label || '(Select Item)'
                     }
-                    console.warn('ctrlSelect model has an invalid value. Values expected: ' + JSON.stringify(s.items.map(item => (item.val || item))));
+                    console.warn('ctrlSelect model has an invalid value. Values expected: ' + JSON.stringify(s.opt.items.map(item => (item.val || item))));
                 }
             });
 
@@ -211,6 +216,7 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
         },
         template: '<output></output>',
         link: function(s, elem, attrs) {
+
             var fire = (n, p, ctx) => {
                 if (s.evts) {
                     s.evts[n] = s.evts[n] || [];
@@ -276,13 +282,13 @@ app.directive('address', function($rootScope, $timeout) {
             model: "=model",
             field: "@field",
             change: "=change",
-            number:"@number",
-            street:"@street",
-            city:"@city",
-            department:"@department",
-            region:"@region",
-            country:"@country",
-            postCode:"@postCode"
+            number: "@number",
+            street: "@street",
+            city: "@city",
+            department: "@department",
+            region: "@region",
+            country: "@country",
+            postCode: "@postCode"
         },
         restrict: 'AE',
         link: function(scope, elem, attrs) {
@@ -290,7 +296,7 @@ app.directive('address', function($rootScope, $timeout) {
                 elem.geocomplete().bind("geocode:result", function(event, result) {
                     scope.model[scope.field] = result.formatted_address;
                     scope.change && scope.change(result.formatted_address);
-                    var data = result.address_components.map(v=>(v.long_name));
+                    var data = result.address_components.map(v => (v.long_name));
                     var number, street, city, department, region, country, postCode;
                     if (data.length == 4) {
                         number = '';
@@ -507,7 +513,7 @@ app.directive('notify', function($rootScope, $timeout) {
             var r = $rootScope;
             var s = scope;
 
-            if (s.settings) {
+            if (s.settings && typeof s.settings == 'string') {
                 var fixedJSON = s.settings.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": ');
                 s.settings = JSON.parse(fixedJSON);
             }
@@ -529,11 +535,15 @@ app.directive('notify', function($rootScope, $timeout) {
                     }
                 });
             });
+            scope.clickDismiss = () => {
+                if (s.settings && s.settings.clickDismissable === false) {
+                    if (s.opt && !opt.clickDismissable) return;
+                }
+                scope.dismiss();
+            };
             scope.dismiss = () => {
 
-                if (s.settings && s.settings.clickDismissable === false) {
-                    if (opt && !opt.clickDismissable) return;
-                }
+
 
                 if (s.dismissed) return;
                 s.dismissed = true;
@@ -764,6 +774,13 @@ app.directive('dynamicTable', function(
         templateUrl: 'views/partials/partials.table.html',
         link: function(s, elem, attrs) {
             var r = $rootScope;
+
+            //
+            $rootScope.$watch('hasMouse', (v) => {
+                s.hasMouse = v;
+            });
+            //
+
             var n = attrs.name;
             if (!s.model) {
                 console.error('directive.table: no model present');

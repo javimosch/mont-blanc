@@ -6,6 +6,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     window.r = r;
     r.getHashParams = getHashParams;
 
+    r.debug = true;
+
     r.config = {};
     db.localData().then((data) => Object.assign(r.config, data.config || {}));
 
@@ -22,7 +24,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         }
     };
 
-    r.momentFormat=(d,f)=>(moment(d).format(f));
+    r.momentFormat = (d, f) => (moment(d).format(f));
 
     r.dom = function(cb, timeout) {
         $timeout(function() {
@@ -62,13 +64,14 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         // if (lib.tableExists('session')) lib.dropTable('session');//DROP SESSION
         db.createSession = function(force) {
             if (force && lib.tableExists('session')) lib.dropTable('session');
-            lib.createTable('session', ['_id', 'email', 'expire', 'userType', 'password', 'rememberPass']);
+            lib.createTable('session', ['_id', 'email', 'expire', 'userType', 'password', 'rememberPass', 'clientType']);
             db.setUnique('session', {
                 _id: null,
                 email: null,
                 expire: null,
                 password: null,
                 userType: null,
+                clientType: null,
                 rememberPass: true
             });
         };
@@ -89,6 +92,23 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     r.logged = function() {
         var ss = r.session();
         return ss.email !== null && ss.password !== null;
+    };
+
+
+    r.viewAsClient = () => {
+        r._session = r._session || {};
+        r._session.userType = 'client';
+        r.dom();
+    };
+    r.viewAsDiag = () => {
+        r._session = r._session || {};
+        r._session.userType = 'diag';
+        r.dom();
+    };
+    r.viewAsAdmin = () => {
+        r._session = r._session || {};
+        r._session.userType = 'admin';
+        r.dom();
     };
 
 
@@ -131,6 +151,14 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     r.routeParams = (obj) => {
         r.params = Object.assign(r.params || {}, obj);
     };
+
+
+
+    r.hasMouse = false;
+    $hasMouse((v) => {
+        r.hasMouse = v;
+        r.dom();
+    });
 
 
 }]);

@@ -1,8 +1,6 @@
-
-
-
 function expose(path, val) {
-    setVal(window,path,val);
+    setVal(window, path, val);
+
     function setVal(obj, propertyPath, val) {
         var split = propertyPath.split('.');
         var lastIndex = split.length - 1;
@@ -19,6 +17,14 @@ function expose(path, val) {
     }
 }
 
+
+var $hasMouse = (change) => {
+    $('html').on('mousemove', (e) => {
+        change(true);
+        $('html').off('mousemove');
+    });
+    change(false);
+};
 
 $(function() {
 
@@ -42,6 +48,28 @@ $(function() {
             //cb();
         });
     };
+
+
+
+
+    $.downloadPNG = (elem, name) => {
+        html2canvas(elem, {
+            onrendered: function(canvas) {
+
+                //
+                var imgData = canvas.toDataURL("image/jpeg", 1.0);
+                var pdf = new jsPDF();
+                pdf.addImage(imgData, 'JPEG', 25, 20);
+                pdf.save("download.pdf");
+
+                //canvas.toBlob(function(blob) {
+                //    saveAs(blob, name + ".png");
+                //});
+            }
+        });
+    };
+
+
 
 
 });

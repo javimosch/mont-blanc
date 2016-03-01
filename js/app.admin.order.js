@@ -20,6 +20,9 @@ app.controller('adminOrders', [
         }
         //
         s.click = function(item) {
+            r.routeParams({
+                prevRoute: 'orders'
+            });
             r.route('orders/edit/' + item._id);
         };
         s.create = function() {
@@ -55,10 +58,19 @@ app.controller('adminOrdersEdit', [
 
     'server', '$scope', '$rootScope', '$routeParams', 'focus',
     function(db, s, r, params, focus) {
+        r.setCurrentCtrl(s);
 
         function init() {
             r.toggleNavbar(true);
-            r.secureSection(s);
+
+            if (window.location.href.indexOf('orders/view') !== -1) {
+                //no login needed
+                r.toggleNavbar(false);
+                setTimeout(autoPay, 2000);
+            } else {
+                r.secureSection(s);
+            }
+
             //
 
             //
@@ -77,7 +89,18 @@ app.controller('adminOrdersEdit', [
             }
         }
 
+        function autoPay() {
+            if (s.pay && getParameterByName('pay') === '1') {
+                s.pay();
+            }
+        }
+
+
         function setHelpers() {
+
+            s.currentClientType = () =>
+                s.item && s.item._client && '(' + s.item._client.clientType + ')' || '';
+
             s.subTotal = () => subTotal(s.item, s.diags, s.basePrice);
             s.sizePrice = () => sizePrice(s.item, s.diags, s.squareMetersPrice, s.basePrice);
             s.totalPrice = (showRounded) => totalPrice(showRounded, s.item, s.diags, s.squareMetersPrice, s.basePrice, {
@@ -90,14 +113,14 @@ app.controller('adminOrdersEdit', [
                 var m = moment().hours(t.hours).minutes(t.minutes).format('HH:mm');
                 return m;
             };
-            s.applyTotalPrice=()=>{
+            s.applyTotalPrice = () => {
                 s.item.price = s.totalPrice(true);
             };
             s.applyTotalTime = () => {
                 var t = OrderTotalTime(s.item.diags, s.diags);
                 if (s.item && s.item.diagStart) {
                     s.item.diagEnd = moment(s.item.diagStart)
-                    .add(t.hours,'hours').add(t.minutes,'minutes')._d;
+                        .add(t.hours, 'hours').add(t.minutes, 'minutes')._d;
                     r.dom();
                 }
             };
@@ -154,7 +177,19 @@ app.controller('adminOrdersEdit', [
                     }
                     return false;
                 },
-                init: (self) => {},
+                init: function(self) {
+
+                },
+                emit: function(n) {
+                    var self = this;
+                    var arr = self.evts[n] || [];
+                    arr.forEach(evt => (evt(self)))
+                },
+                evts: {
+                    onItem: [(self) => {
+                        s.keysWhereTime.updateItems(self);
+                    }]
+                },
                 mstep: 15,
                 hstep: 1,
                 address: '',
@@ -174,51 +209,59 @@ app.controller('adminOrdersEdit', [
                 },
                 label: '(Select where)',
                 modelPath: 'item.keysWhere',
-                items: ['diag', 'landlord', 'agency'].map(v => ({ label: v, val: v })),
-                addressMising: (email) => {
-                    r.notify(email + ' do not have an address assigned.', {
-                        type: 'warning',
-                        duration: 5000,
-                        clickDismissable: true
-                    });
-                },
-                change: (v, self) => {
+                items: [],
+                updateItems: ((self) => {
+                    var o = [{
+                        label: 'Order Address',
+                        val: 1,
+                        get: () => s.item && s.item.address
+                    }, {
+                        label: 'Diag Address',
+                        val: 2,
+                        get: () => s.item._diag.address || ''
+                    }];
+                    if (s.item._client && s.item._client.clientType == 'agency') {
+                        o.push({
+                            label: 'Agency address',
+                            val: 3,
+                            get: () => s.item._client.address || ''
+                        }, {
+                            label: 'Landlord address',
+                            val: 4,
+                            get: () => s.item.landLordAddress || ''
+                        });
+                    }
+                    if (s.item._client && s.item._client.clientType == 'landlord') {
+                        o.push({
+                            label: 'Client address',
+                            val: 3,
+                            get: () => s.item._client.address || ''
+                        });
+                    }
+                    self.items = o;
+                }),
+                change: (v, self, setOldValue) => {
                     if (!v) return;
-                    if (s.item.keysWhere && s.item.keysAddress && s.item.keysTime) {
-                        if (v == s.item.keysWhere) {
-                            self.address = s.item.keysAddress;
-                            return;
+                    var address = v.get();
+                    if (!address) {
+                        r.notify('Address not found', {
+                            type: 'warning',
+                            duration: 5000,
+                            clickDismissable: true
+                        });
+                        self.val = undefined;
+                        setOldValue();
+                        return;
+                    }
+                    if (s.item.keysAddress && s.item.keysAddress == address) {
+                        if (!s.item.keysTime) {
+                            s.item.keysTime = moment(s.item.diagStart).hours(8).minutes(0)._d;
                         }
+                        return;
+                    } else {
+                        s.item.keysAddress = address;
                     }
 
-                    if (v.val == 'diag') {
-                        if (s.item && s.item._diag) {
-                            self.address = s.item._diag.address;
-                            if (!self.address) {
-                                self.addressMising(s.item._diag.address);
-                            }
-                        }
-                    }
-                    if (v.val == 'landlord') {
-                        if (s.item && s.item._client) {
-                            self.address = s.item._client.address;
-                            if (!self.address) {
-                                self.addressMising(s.item._client.address);
-                            }
-                        }
-                    }
-                    if (v.val == 'agency') {
-                        if (s.item && s.item._client) {
-                            self.address = s.item._client.address;
-                            if (!self.address) {
-                                self.addressMising(s.item._client.address);
-                            }
-                        }
-                    }
-                    s.item.keysAddress = self.address;
-                    if (!s.item.keysTime) {
-                        s.item.keysTime = moment(s.item.diagStart).hours(8).minutes(0)._d;
-                    }
                 }
             };
 
@@ -276,7 +319,9 @@ app.controller('adminOrdersEdit', [
         function setActions() {
 
 
-
+            s.pay = () => {
+                console.info('pay order');
+            };
 
 
             s.back = () => {
@@ -450,6 +495,10 @@ app.controller('adminOrdersEdit', [
             }
         }
 
+        function onItem(item) {
+            s.keysWhereTime.emit('onItem');
+        }
+
         function read(id) {
             if (r.params && r.params.item && r.params.item._diag) {
                 s.item = r.params.item; //partial loading
@@ -472,6 +521,7 @@ app.controller('adminOrdersEdit', [
                         diagEnd: new Date(data.result.diagEnd)
                     });
                     s.item = data.result;
+                    onItem(s.item);
                     _readFile();
                     //                    console.info('READ', s.item);
                     s.message('Loaded', 'success', 2000);

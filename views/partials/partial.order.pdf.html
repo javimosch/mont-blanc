@@ -1,0 +1,10 @@
+<div class="form-group"
+	ng-show="!userIs(['client'])"
+>
+    <div ng-if="debug && userIs(['admin'])" class="admin info small">ADMIN, CLIENT (read-only), DIAG (can upload).</div>
+    <label>Pdf {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||""}}</label>
+    <input type="file" file-model="pdfFile" ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working()" class="form-control" placeholder="Diag Pdf">
+    <button ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working() || !pdfFile" class="btn btn-default" ng-click="saveFile()">Upload</button>
+    <button ng-disabled="!item.pdfId" class="btn btn-default" ng-click="downloadFile()">Download</button>
+    <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
+</div>

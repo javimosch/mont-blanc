@@ -1,4 +1,9 @@
 
+
+.min-width-120{
+    min-width:120px;
+}
+
 .childs-margin-1 > *{
     margin:5px;
 }
@@ -143,8 +148,39 @@ table.minimal td{
     max-width: 300px;
 }
 
+.max-w-100{
+    max-width: 100px;
+}
+.max-w-80{
+    max-width: 80px;
+}
+.max-w-60{
+    max-width: 60px;
+}
+.max-w-120{
+    max-width: 120px;
+}
+.max-w-150{
+    max-width: 150px;
+}
+.max-w-200{
+    max-width: 200px;
+}
+.max-w-300{
+    max-width: 300px;
+}
+.max-w-350{
+    max-width: 350px;
+}
+
 .limit-h-200{
     max-height: 200px;
+}
+.min-height-200{
+   min-height: 200px; 
+}
+.min-height-100{
+   min-height: 100px; 
 }
 
 .top-1{

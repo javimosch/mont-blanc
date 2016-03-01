@@ -1,0 +1,29 @@
+<div class="form-group" ng-if="userIs(['admin'])">
+    <label>Client {{currentClientType && currentClientType()}}</label>
+    <input ng-disabled="state.working() || item._id" type="text" class="form-control" ng-model="item._client" placeholder="Client" uib-typeahead="client as client.email for client in getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients" typeahead-no-results="noResults">
+</div>
+
+<div class="form-group" ng-if="userIs(['diag','client']) && item._id" >
+    <label ng-show="item._client.clientType == 'agency'">Agency</label>
+    <label ng-show="item._client.clientType == 'landlord'">Landlord</label>
+    <input ng-disabled="true" type="text" class="form-control" ng-value="item._client.email">
+</div>
+
+
+<div class="well well-sm" ng-if="userIs(['admin','diag','client'])" ng-show="item._client.clientType == 'agency'">
+    <label>Landlord</label>
+    <div class="form-group">
+        <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.landLordFullName" placeholder="Full Name">
+    </div>
+    <div class="form-group">
+        <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.landLordEmail" placeholder="Email" >
+    </div>
+    <div class="form-group">
+        <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.landLordPhone" placeholder="Phone" >
+    </div>
+    <div class="form-group">
+        <input ng-disabled="state.working()" type="text" class="form-control"  placeholder="Address" 
+		data-address model="item" field="landLordAddress"
+        >
+    </div>
+</div>

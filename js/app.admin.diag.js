@@ -149,6 +149,13 @@ app.directive('diagOrders', function(
                     ws.localData().then(function(d) {
                         Object.assign(data, d);
                     });
+
+                    r.params = {
+                        item: item,
+                        prevRoute: 'dashboard'
+                    };
+                    r.route('orders/edit/' + item._id);
+                    /*
                     s.open({
                         title: 'Order View',
                         data: data,
@@ -159,7 +166,7 @@ app.directive('diagOrders', function(
                                 update();
                             });
                         }
-                    });
+                    });*/
                 },
                 buttons: [{
                     label: "Refresh",

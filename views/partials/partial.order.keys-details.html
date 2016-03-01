@@ -1,0 +1,7 @@
+<div class="form-group">
+	<div ng-if="userIs(['admin'])" class="admin info small">ADMIN, CLIENT (AGENCY).</div>
+    <label>Where to take the keys</label>
+    <ctrl-select options="keysWhereTime"></ctrl-select>
+    <input type="text" disabled ng-model="item.keysAddress" class="fullwidth v-margin-1" placeholder='Choice where to get the address' />
+    <uib-timepicker ng-show="keysWhereTime.address" ng-disabled="state.working() || !item.keysWhere" name='timePickerKeys' ng-model="item.keysTime" hour-step="keysWhereTime.hstep" minute-step="keysWhereTime.mstep" show-meridian="true"></uib-timepicker>
+</div>

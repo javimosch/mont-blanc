@@ -8,8 +8,15 @@
                     <th ng-repeat="c in columns">{{c.label||c}}</th>
                 </tr>
             </thead>
+            <!--ng-click="!hasMouse && console.log(hasMouse)"-->
             <tbody>
-                <tr ng-repeat="(key,item) in items" ng-dblclick="click(item,$index)">
+                
+                <tr ng-repeat="(key,item) in items" 
+
+                ng-click="(!hasMouse && click(item,$index))"
+                ng-dblclick="(hasMouse && click(item,$index))"
+
+                >
                     <td ng-if="model.remove" ng-click="model.remove(item,$index)" class="link">
                         <i class="fa fa-times"></i>
                     </td>

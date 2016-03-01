@@ -42,7 +42,28 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     };
 
 
+    //go back (escape key)
+    $('html').keydown(function(event) {
+        if ('27' == event.keyCode) {
+            if (r.params && r.params.prevRoute && r.__currentCtrlScope) {
+                if(r.__currentCtrlScope.back){
+                    if(r.state.working()){
+                        r.message('Loading...',{
+                            type:'warning',
+                            duration:2000
+                        });
+                        return;
+                    }
+                    var fn = r.__currentCtrlScope.back;
+                    r.__currentCtrlScope = null;
+                    fn();
+                }
+                //return r.route(r.params.prevRoute);
+            }
+        };
+    });
 
+    r.setCurrentCtrl = (_s)=>{r.__currentCtrlScope = _s};
 
 }]);
 
@@ -89,9 +110,11 @@ app.directive('adminBalance', function(
                 var b = {};
                 var out = data.result;
                 b.available = _.sumBy(out.available, function(o) {
-                    return o.amount; }) / 100; //eur
+                    return o.amount;
+                }) / 100; //eur
                 b.pending = _.sumBy(out.pending, function(o) {
-                    return o.amount; }) / 100; //eur
+                    return o.amount;
+                }) / 100; //eur
                 b.livemode = out.livemode;
                 s.b = b;
             })
@@ -165,9 +188,9 @@ app.directive('adminTurnover', function(
                         Object.assign(data, d);
                     });
 
-                    ws.ctrl('Payment','associatedOrder',{
-                        source:item.source
-                    }).then((data)=>{
+                    ws.ctrl('Payment', 'associatedOrder', {
+                        source: item.source
+                    }).then((data) => {
                         item = Object.assign(data.result);
                         _open();
                     });
@@ -196,7 +219,7 @@ app.directive('adminTurnover', function(
                 }, {
                     label: "Amount (eur)",
                     name: 'amount',
-                    align:'right'
+                    align: 'right'
                 }, {
                     label: "Created",
                     name: "created"
