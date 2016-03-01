@@ -335,12 +335,26 @@ app.controller('adminOrdersEdit', [
 
 
             s.sendPaymentLink = () => {
-                s.confirm('You want to send a payment link to ' + s.item.landLordEmail + ' ?', () => {
-                    s.infoMsg("Sending email.");
-                    db.ctrl('Email', 'orderPaymentLink', s.item).then(data => {
-                        s.infoMsg("Email sended.");
+
+                ifThenMessage([
+                    [!s.item.landLordEmail, '==', true, "Landlord Email required."],
+                    [!s.item.landLordFullName, '==', true, "Landlord Name required."],
+                ], (m) => {
+                    if (typeof m[0] !== 'string') {
+                        s.message(m[0](), 'warning', 0, true);
+                    } else {
+                        s.message(m[0], 'warning', 0, true);
+                    }
+                }, _sendPaymentLink);
+
+                function _sendPaymentLink() {
+                    s.confirm('You want to send a payment link to ' + s.item.landLordEmail + ' ?', () => {
+                        s.infoMsg("Sending email.");
+                        db.ctrl('Email', 'orderPaymentLink', s.item).then(data => {
+                            s.infoMsg("Email sended.");
+                        });
                     });
-                });
+                }
             };
 
             s.pay = () => {
