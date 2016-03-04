@@ -65,6 +65,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
     r.setCurrentCtrl = (_s)=>{r.__currentCtrlScope = _s};
 
+    
+
 }]);
 
 app.config(function(calendarConfig) {

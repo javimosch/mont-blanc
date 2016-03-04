@@ -14,6 +14,11 @@ app.controller('fullpage', ['server',
         window.s = s;
         r.dom(); //compile directives
 
+        //
+        r.logger.addControlledErrors([
+            "ORDER_EXISTS"
+        ]);
+
         s.datepicker = {
             minDate: moment().add(1, 'day'),
             maxDate: moment().add(60, 'day'),
@@ -440,12 +445,11 @@ app.controller('fullpage', ['server',
             }
         };
 
-        s.subscribeLandlord = () => {
+        s.subscribe = (clientType) => {
             s.validateAuthInput(() => {
                 db.ctrl('User', 'exists', {
                     email: s.auth.email,
                     userType: 'client',
-                    clientType: 'landlord'
                 }).then(exists => {
                     exists = exists.ok && exists.result == true;
                     if (exists) {
@@ -453,44 +457,19 @@ app.controller('fullpage', ['server',
                     } else {
                         db.ctrl('User', 'createClient', {
                             email: s.auth.email,
-                            clientType: 'landlord'
+                            clientType: clientType
                         }).then(data => {
                             if (data.ok) {
                                 s._user = data.result;
                                 s.saveAsync();
-                                s.rigth();
+                                s.right();
                             }
                         })
                     }
                 });
             });
         };
-        s.subscribeAgency = () => {
-            s.validateAuthInput(() => {
-                db.ctrl('User', 'exists', {
-                    email: s.auth.email,
-                    userType: 'client',
-                    clientType: 'agency'
-                }).then(exists => {
-                    exists = exists.ok && exists.result == true;
-                    if (exists) {
-                        s.warningMsg('This email address belongs to an existing member.');
-                    } else {
-                        db.ctrl('User', 'createClient', {
-                            email: s.auth.email,
-                            clientType: 'agency'
-                        }).then(data => {
-                            if (data.ok) {
-                                s._user = data.result;
-                                s.saveAsync();
-                                s.rigth();
-                            }
-                        })
-                    }
-                });
-            });
-        };
-
+       
 
         s.goRightAndHideNav = () => {
             s.openConfirm('You are sure to continue?. You cannot modified Order details after this point', () => {

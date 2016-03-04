@@ -1,3 +1,6 @@
+"use strict";
+
+
 function expose(path, val) {
     setVal(window, path, val);
 
@@ -268,7 +271,7 @@ function MyPromise(cb) {
         _scope.errorRes = errorRes || {};
     };
     cb(resolve, error);
-    rta = {
+    var rta = {
         then: function(cb) {
             if (_scope.res) _scope.res = cb(_scope.res);
             else _scope.cb = cb;

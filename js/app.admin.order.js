@@ -41,7 +41,12 @@ app.controller('adminOrders', [
 
         function read() {
             s.message('Loading . . .', 'info');
-            db.custom('order', 'getAll', { __populate: ['_client', 'email'] }).then(function(r) {
+            db.custom('order', 'getAll', { 
+                __populate: {
+                    '_client':'email',
+                    '_diag':'email'
+                } 
+            }).then(function(r) {
                 //                console.info('adminOrders:read:success', r.data.result);
                 s.items = r.data.result;
                 s.message('Loaded', 'success', 1000);

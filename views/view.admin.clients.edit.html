@@ -3,61 +3,58 @@
         <div class="panel-heading">
             <h3 class="panel-title">Client Details</h3>
         </div>
-        <div class="panel-body">
-            <form>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Email address</label>
-                    <input type="email" class="form-control" ng-model="item.email" placeholder="Email">
+        <div class="panel-body childs-labels">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Email address</label>
+                        <input type="email" class="form-control max-w-300" ng-model="item.email" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="form-control max-w-300" ng-model="item.password" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                        <label>FirstName</label>
+                        <input type="text" class="form-control max-w-300" ng-model="item.firstName" placeholder="FirstName">
+                    </div>
+                    <div class="form-group">
+                        <label>LastName</label>
+                        <input type="text" class="form-control max-w-300" ng-model="item.lastName" placeholder="LastName">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Password</label>
-                    <input type="password" class="form-control" ng-model="item.password" placeholder="Password">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" class="form-control max-w-150" ng-model="item.tel" placeholder="Phone">
+                    </div>
+                    <div class="form-group">
+                        <label>Siret</label>
+                        <input type="text" class="form-control max-w-150" ng-model="item.siret" placeholder="Siret">
+                    </div>
+                    <div class="form-group">
+                        <label>Your discount %</label>
+                        <input type="text" class="form-control max-w-100" ng-model="item.discount" disabled>
+                    </div>
+                    <div class="form-group" ng-show="userIs(['client']) && item.userType=='client'">
+                        <label>You represents a</label>
+                        <input type="text" class="form-control max-w-150" ng-value="item.clientType" disabled>
+                    </div>
+                    <div class="form-group " ng-show="userIs(['admin']) && item.userType=='client'">
+                        <label>Client type</label>
+                        <select ng-model="item.clientType" class="max-w-150">
+                            <option value='landlord'>LandLord</option>
+                            <option value='agency'>Agency</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label >FirstName</label>
-                    <input type="text" class="form-control" ng-model="item.firstName" placeholder="FirstName">
-                </div>
-                <div class="form-group">
-                    <label >LastName</label>
-                    <input type="text" class="form-control" ng-model="item.lastName" placeholder="LastName">
-                </div>
-                <div class="form-group">
-                    <label >Phone</label>
-                    <input type="text" class="form-control" ng-model="item.tel" placeholder="Phone">
-                </div>
-                <div class="form-group">
-                    <label >Siret</label>
-                    <input type="text" class="form-control" ng-model="item.siret" placeholder="Siret">
-                </div>
-                <div class="form-group">
-                    <label >Your discount %</label>
-                    <input type="text" class="form-control" ng-model="item.discount" disabled>
-                </div>
-
-
-                <div class="form-group"
-                    ng-show="userIs(['client']) && item.userType=='client'"
-                >
-                    <label>You represents a</label>
-                    <input type="text" class="form-control" ng-value="item.clientType" disabled>
-                </div>
-
-                <div class="form-group" ng-show="userIs(['admin']) && item.userType=='client'">
-                    <label>Client type</label>
-                    <select ng-model="item.clientType">
-                        <option value='landlord'>LandLord</option>
-                        <option value='agency'>Agency</option>
-                    </select>
-                </div>
-
-            </form>
+            </div>
         </div>
         <div class="panel-footer">
             <button ng-disabled="requesting" class="btn btn-default" ng-click="save()">Save</button>
             <button ng-disabled="requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>
-        <button ng-disabled="requesting" class="btn btn-default" ng-click="delete()">Delete</button>
+            <button ng-disabled="requesting" class="btn btn-default" ng-click="delete()">Delete</button>
         </div>
-    
     </div>
     <!-- <my-alerts add="message"></my-alerts> -->
     <modal-confirm open="confirm"></modal-confirm>

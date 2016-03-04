@@ -15,7 +15,9 @@ app.directive('timeRangeExceptions', function(
             var n = attrs.name;
             //s.open //=> automatic
             function update() {
-                ws.ctrl('TimeRange', 'getAll', {}).then((res) => {
+                ws.ctrl('TimeRange', 'getAll', {
+                    _user: r.session()._id
+                }).then((res) => {
                     if (res.ok) {
                         res.result.forEach((v) => {
                             v.dayFormat = moment(v.start).format('dddd');

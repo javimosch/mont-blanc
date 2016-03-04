@@ -56,7 +56,7 @@ input.big {
     border: 1px solid rgba(0, 0, 0, .1);
     color: black;
     font-family: serif;
-    font-variant: small-caps;
+        font-variant: inherit;
     padding: 0px 10px;
 }
 
@@ -73,6 +73,14 @@ input.big:focus {
 
 .fp-slidesNav {
     display: none;
+}
+
+
+.childs-labels label{
+    width:150px!important;
+}
+.subscribe-input-group button{
+    width:226px;
 }
 
 .form-group {}
