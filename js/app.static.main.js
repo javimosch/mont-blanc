@@ -14,6 +14,15 @@ app.controller('fullpage', ['server',
         window.s = s;
         r.dom(); //compile directives
 
+        //user (when auth success)
+        s._user = {};
+
+        s.booking = {
+            payment:{
+                delegate:false
+            }
+        };
+
         //
         r.logger.addControlledErrors([
             "ORDER_EXISTS"
@@ -452,6 +461,7 @@ app.controller('fullpage', ['server',
                     db.ctrl('Email', 'orderPaymentLink', s._order).then(data => {
                         s.infoMsg("Email sended to the landlord. Check the back-office to track your order status.");
                         s.landlord.emailsended = true;
+                        s.booking.payment.delegate = false;
                     });
                 });
             }

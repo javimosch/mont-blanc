@@ -292,6 +292,9 @@ app.directive('address', function($rootScope, $timeout) {
         },
         restrict: 'AE',
         link: function(scope, elem, attrs) {
+            if(!scope.model){
+                throw Error("directive address require a valid model.");
+            }
             $timeout(function() {
                 elem.geocomplete().bind("geocode:result", function(event, result) {
                     scope.model[scope.field] = result.formatted_address;

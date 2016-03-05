@@ -72,7 +72,7 @@ input.big:focus {
 }
 
 .form-tiny{
-list-style: none;max-width: 400px;padding: 0px;}
+list-style: none;/* max-width: 400px; */padding: 0px;}
 .form-tiny li{}
 .form-tiny label{
     min-width: 135px;
