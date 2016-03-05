@@ -2,7 +2,7 @@
     global.diagsCalculateAvailableSlots = diagsCalculateAvailableSlots;
     //////////////////
     function diagsCalculateAvailableSlots(order, working, exceptions, diags) {
-        console.log('diagsCalculateAvailableSlots');
+       //console.log('diagsCalculateAvailableSlots');
         var slots = {
             morning: [],
             afternoon: []
@@ -72,7 +72,7 @@
             _cols = [],
             c = 0;
         //rangeCollisions4(start, order, collisions);
-        console.log('allocate[' + diag._id + ']:start=' + start.format('HH:mm'));
+        //console.log('allocate[' + diag._id + ']:start=' + start.format('HH:mm'));
         do {
             //------------------
             //rangeCollision4: start, end: order duration.
@@ -82,7 +82,7 @@
                 if (_cols.length == 0) {
                     //available!
                     var _s = slot(start.hours(), start.minutes(), order, diag);
-                    console.info('allocate:success=' + JSON.stringify(_s));
+                   //console.info('allocate:success=' + JSON.stringify(_s));
                     arr[propName].push(_s);
                     return true;
                 } else {
@@ -91,15 +91,15 @@
             } else {
                 start = moment(_cols[_cols.length - 1].end).add(1, 'hours').add(30, 'minutes');
             }
-            console.log('allocate:moving=' + start.format('HH:mm'));
+            //console.log('allocate:moving=' + start.format('HH:mm'));
             //------------------
             c++;
             if (c > 20) cut = true;
         } while (moment(start).isBefore(moment(startMax)) || cut);
         if (cut) {
-            console.warn('allocate while warning.');
+           //console.warn('allocate while warning.');
         } else {
-            console.log('allocate:not-posible');
+           //console.log('allocate:not-posible');
         }
         return false;
     }
@@ -161,11 +161,12 @@
             moment(r.end).isSameOrBefore(end)
         )));
         //
-        console.info('rangeCollisions ' + moment(start).format('HH:mm') + ' - ' + moment(end).format('HH:mm') + ' collisions:' + JSON.stringify(collisions.map(v => {
+       /*
+       console.info('rangeCollisions ' + moment(start).format('HH:mm') + ' - ' + moment(end).format('HH:mm') + ' collisions:' + JSON.stringify(collisions.map(v => {
             return
             moment(v.start).format('HH:mm') + ' - ' + moment(v.end).format('HH:mm');
 
-        })) + ' == Collisions: ' + (rta.length));
+        })) + ' == Collisions: ' + (rta.length));*/
         return rta;
     }
 

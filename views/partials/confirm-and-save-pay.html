@@ -1,6 +1,6 @@
 <div class="panel center-block question panel-info">
     <div class="panel-heading">
-        <h4 class="panel-title">Confirm and Save: Payment</h4>
+        <h4 class="panel-title">Booking: Payment</h4>
     </div>
     <div class="panel-body size-medium">
         <div class="">
@@ -65,16 +65,23 @@
     <div class="center-block text-center v-margin-2">
         <button ng-disabled="state.working() || !_orderSAVED || landlord.emailsended" class="btn btn-primary" ng-click="payNOW()">Pay now</button>
     </div>
-    <div ng-show="model.clientType == 'agency'" class="center-block text-center v-margin-2">
+    <div class="center-block text-center v-margin-1">
+        or
+    </div>
+    <div ng-show="model.clientType == 'agency'" class="center-block text-center v-margin-2 well well-sm">
         <div class="center-block text-center v-margin-1">
-            or
-            <br>
             <span class='medium'>Delegate to a Landlord</span>
         </div>
-        <input class="small" ng-model="landlord.name" placeholder="Landlord Fullname">
-        <div>
-            <input class="small" ng-model="landlord.email" placeholder="Landlord Email">
-        </div>
+        <ul class="form-tiny center-block">
+            <li>
+                <label>Name</label>
+                <input type="text" ng-model="landlord.name" placeholder="Landlord Fullname">
+            </li>
+            <li>
+                <label>Email</label>
+                <input type="email" ng-model="landlord.email" placeholder="Landlord Email">
+            </li>
+        </ul>
         <div class="v-margin-1">
             <button ng-disabled="state.working() || !_orderSAVED || s.landlord.emailsended" class="btn btn-primary" ng-click="sendPaymentLink()">Send Payment link</button>
         </div>

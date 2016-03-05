@@ -371,9 +371,18 @@ app.controller('fullpage', ['server',
             });
         };
 
+        s.auto = () => {
+            r.dom(() => s.moveTo('confirm-and-save'), 0000);
+            r.dom(() => s.right(), 2000);
+            r.dom(() => s.login(), 4000);
+        };
+
+
         s.auth = {
-            email: undefined,
-            pass: undefined
+            //email: undefined,
+            //pass: undefined
+            email: 'javiermosch@gmail.com',
+            pass: 'client'
         };
         s.validateAuthInput = (cb) => {
 
@@ -402,7 +411,8 @@ app.controller('fullpage', ['server',
                         s.model.clientType = _user.clientType;
                         s._user = _user;
                         s.saveAsync();
-                        s.right();
+                        s.subscribeMode = true;
+                        //s.right();
                     } else {
                         s.warningMsg('Invalid credentials');
                     }
@@ -411,8 +421,8 @@ app.controller('fullpage', ['server',
         }
 
         s.landlord = {
-            name:undefined,
-            email:undefined
+            name: undefined,
+            email: undefined
         };
 
         s.sendPaymentLink = () => {
@@ -433,7 +443,7 @@ app.controller('fullpage', ['server',
                 s._order.landLordFullName = s.landlord.name;
                 s._order.landLordEmail = s.landlord.email;
 
-                db.ctrl('Order','update',s._order);//async
+                db.ctrl('Order', 'update', s._order); //async
 
                 s.openConfirm('You want to send a payment link to ' + s.landlord.email + ' ?', () => {
                     s.infoMsg("Sending email.");
@@ -445,6 +455,10 @@ app.controller('fullpage', ['server',
             }
         };
 
+        s.subscribeMode = false;
+        s.subscribeConfirm = () => {
+            db.ctrl('User', 'update', s._user).then(() => s.right());
+        };
         s.subscribe = (clientType) => {
             s.validateAuthInput(() => {
                 db.ctrl('User', 'exists', {
@@ -462,14 +476,15 @@ app.controller('fullpage', ['server',
                             if (data.ok) {
                                 s._user = data.result;
                                 s.saveAsync();
-                                s.right();
+                                s.subscribeMode = true;
+                                //s.right();
                             }
                         })
                     }
                 });
             });
         };
-       
+
 
         s.goRightAndHideNav = () => {
             s.openConfirm('You are sure to continue?. You cannot modified Order details after this point', () => {
@@ -505,7 +520,8 @@ app.controller('fullpage', ['server',
                     s.successMsg('Order saved.');
                 }
                 if (exists) {
-                    s.warningMsg('Order already exists.');
+                    //s.warningMsg('Order already exists.');
+                    s.successMsg('Order saved.');
                 }
                 s._orderSAVED = saved || exists;
             }).error(err => {

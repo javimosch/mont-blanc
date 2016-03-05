@@ -1,30 +1,34 @@
 <div class="panel center-block question panel-info">
     <div class="panel-heading">
-        <h4 class="panel-title">Confirm and Save: Authentification</h4>
+        <h4 class="panel-title">Booking: Client details</h4>
     </div>
     <div class="panel-body size-medium">
-        <div class="center-block text-center v-margin-2">
-            <span class='medium'>Login or Subscribe</span>
+        <div ng-show="subscribeMode" ng-include="'views/partials/confirm-and-save-subscription.html'" includeReplace>
+            
         </div>
-        <div class="center-block text-center v-margin-2">
-            <input class="big" placeholder="email" ng-model="auth.email" />
-            <div>
-                <input type="password" class="big" ng-model="auth.pass" placeholder="password" />
+        <div ng-show="!subscribeMode" <div>
+            <div class="center-block text-center v-margin-2">
+                <span class='medium'>Sign-In or Subscribe</span>
             </div>
-        </div>
-        <div class="center-block text-center v-margin-2 subscribe-input-group">
-            <div>
-                <button ng-disabled="state.working()" class="btn btn-primary v-margin-1" ng-click="login()">Sign-In</button>
+            <div class="center-block text-center v-margin-2">
+                <input class="big" placeholder="email" ng-model="auth.email" />
+                <div>
+                    <input type="password" class="big" ng-model="auth.pass" placeholder="password" />
+                </div>
             </div>
-            <div>
+            <div class="center-block text-center v-margin-2 subscribe-input-group">
+                <div>
+                    <button ng-disabled="state.working()" class="btn btn-primary v-margin-1" ng-click="login()">Sign-In</button>
+                </div>
                 <button ng-disabled="state.working()" class="btn btn-info v-margin-1" ng-click="subscribe('landlord')">Subscribe as 'Landlord'</button>
-            </div>
-            <div>
-                <button ng-disabled="state.working()" class="btn btn-info v-margin-1" ng-click="subscribe('agency')">Subscribe as 'Agency'</button>
-            </div>
-            <div>
-                <button ng-disabled="state.working()" class="btn btn-info v-margin-1" ng-click="subscribe('other')">Subscribe as 'Other companies'</button>
+                <div>
+                    <button ng-disabled="state.working()" class="btn btn-info v-margin-1" ng-click="subscribe('agency')">Subscribe as 'Agency'</button>
+                </div>
+                <div>
+                    <button ng-disabled="state.working()" class="btn btn-info v-margin-1" ng-click="subscribe('other')">Subscribe as 'Other companies'</button>
+                </div>
             </div>
         </div>
     </div>
+</div>
 </div>

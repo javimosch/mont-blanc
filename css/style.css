@@ -45,26 +45,22 @@
 
 input.small {
     font-size: 13px;
-    /*border: 1px solid rgba(0, 0, 0, .1);*/
+    /* border: 1px solid rgba(0, 0, 0, .1); */
     border:0px;
     color: black;
     font-family: serif;
     padding: 0px 5px;
 }
 input.big {
-    font-size: x-large;
+    font-size: 2rem;
     border: 1px solid rgba(0, 0, 0, .1);
-    color: black;
-    font-family: serif;
-        font-variant: inherit;
-    padding: 0px 10px;
 }
 
 
 span.medium{
         font-size: x-large;
-    font-weight: 300;
-    color: black;
+        /* font-weight: 300; */
+        /* color: black; */
 }
 input.big:focus {
     text-decoration: none;
@@ -74,6 +70,21 @@ input.big:focus {
 .fp-slidesNav {
     display: none;
 }
+
+.form-tiny{
+list-style: none;max-width: 400px;padding: 0px;}
+.form-tiny li{}
+.form-tiny label{
+    min-width: 135px;
+}
+.form-tiny button{}
+.form-tiny div{}
+.form-tiny input{
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,.2);
+}
+.form-tiny a{}
+.form-tiny a:hover{}
 
 
 .childs-labels label{
@@ -258,7 +269,7 @@ table.order td {
 }
 
 .panel.question {
-    max-width: 600px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 

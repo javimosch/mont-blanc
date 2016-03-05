@@ -1,0 +1,29 @@
+<ul class="form-tiny center-block">
+    <li>
+        <label>Email</label>
+        <input type="email" ng-model="_user.email" placeholder="Email">
+    </li>
+    <li>
+        <label>Password</label>
+        <input type="password" ng-model="_user.password" placeholder="Password">
+    </li>
+    <li>
+        <label>First name</label>
+        <input type="text" ng-model="_user.firstName" placeholder="First Name">
+    </li>
+    <li>
+        <label>Last name</label>
+        <input type="text" ng-model="_user.lastName" placeholder="Last Name">
+    </li>
+    <li>
+        <label>Fixed Phone</label>
+        <input type="text" ng-model="_user.fixedTel" placeholder="Fixed phone">
+    </li>
+    <li>
+        <label>Cell Phone</label>
+        <input type="text" ng-model="_user.cellPhone" placeholder="CellPhone">
+    </li>
+</ul>
+<div class="center-block text-center v-margin-2">
+    <button ng-disabled="state.working()" class="btn btn-primary" ng-click="subscribeConfirm()">Continue</button>
+</div>
