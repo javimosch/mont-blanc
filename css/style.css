@@ -79,6 +79,10 @@ list-style: none;max-width: 400px;padding: 0px;}
 }
 .form-tiny button{}
 .form-tiny div{}
+.form-tiny input:hover,.form-tiny input:focus{
+    outline: none;
+    border-bottom: 1px solid rgba(0,0,0,.5);
+}
 .form-tiny input{
     border: none;
     border-bottom: 1px solid rgba(0,0,0,.2);

@@ -375,14 +375,16 @@ app.controller('fullpage', ['server',
             r.dom(() => s.moveTo('confirm-and-save'), 0000);
             r.dom(() => s.right(), 2000);
             r.dom(() => s.login(), 4000);
+            s.auth = {
+                email: 'javiermosch@gmail.com',
+                pass: 'client'
+            };
         };
 
 
         s.auth = {
-            //email: undefined,
-            //pass: undefined
-            email: 'javiermosch@gmail.com',
-            pass: 'client'
+            email: undefined,
+            pass: undefined
         };
         s.validateAuthInput = (cb) => {
 
