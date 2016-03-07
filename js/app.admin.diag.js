@@ -1,7 +1,7 @@
 var app = angular.module('app.admin.diag', ['app.common.service']);
 
 app.directive('timeRangeExceptions', function(
-    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile, server) {
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
     return {
         restrict: 'AE',
         replace: true,
@@ -105,7 +105,7 @@ app.directive('timeRangeExceptions', function(
 
 //------------------------------------------------------------ ORDER MODAL READONLY
 app.directive('diagOrders', function(
-    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile, server) {
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
     return {
         restrict: 'AE',
         replace: true,
@@ -196,7 +196,7 @@ app.directive('diagOrders', function(
 });
 
 app.directive('diagCalendar', function(
-    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile, server) {
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
     return {
         restrict: 'AE',
         replace: true,
@@ -577,8 +577,8 @@ app.controller('adminDiagsEdit', [
                     filename: 'select a file and click the upload button',
                 }
             };
-            o.info.obtentionDate = new Date(o.info.obtentionDate) || new Date();
-            o.info.expirationDate = new Date(o.info.expirationDate) || new Date();
+            o.info.obtentionDate = isFinite(new Date(o.info.obtentionDate)) && new Date(o.info.obtentionDate) || new Date();
+            o.info.expirationDate = isFinite(new Date(o.info.expirationDate)) && new Date(o.info.expirationDate) || new Date();
             return o;
         };
 

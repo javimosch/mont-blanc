@@ -69,6 +69,8 @@ app.controller('adminUsersEdit', [
         r.secureSection(s);
         r.dom();
         //
+        expose('s',s);
+        //
         s.item = {
             email: '',
             password: ''
@@ -144,9 +146,11 @@ app.controller('adminUsersEdit', [
             s.requesting = true;
 
 
+
             db.ctrl('User', 'getAll', {
                 email: s.item.email,
-                userType: s.item.userType
+                userType: s.item.userType,
+                clientType:s.item.clientType
             }).then(function(data) {
                 var result = data.result;
                 s.requesting = false;

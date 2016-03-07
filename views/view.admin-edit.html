@@ -1,7 +1,7 @@
 <div class="container" ng-controller="adminUsersEdit">
     <div class="panel panel-info">
         <div class="panel-heading">
-            <h3 class="panel-title">Client Details</h3>
+            <h3 class="panel-title">Admin Details</h3>
         </div>
         <div class="panel-body childs-labels">
             <div class="row">
@@ -61,25 +61,6 @@
                         </li>
                     </ul>
                 </div>
-                <div class="col-sm-6">
-                    <ul class="form-tiny center-block">
-                        <li>
-                            <label>Siret</label>
-                            <input type="text" ng-model="item.siret" placeholder="Siret">
-                        </li>
-                        <li>
-                            <label>Discount %</label>
-                            <input type="text" ng-model="item.discount" placeholder="Discount">
-                        </li>
-                        <li>
-                            <label>Type</label>
-                            <select ng-model="item.clientType" class="max-w-150 nice">
-                                <option value='landlord'>LandLord</option>
-                                <option value='agency'>Agency</option>
-                            </select>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </div>
         <div class="panel-footer">
@@ -88,6 +69,5 @@
             <button ng-disabled="requesting" class="btn btn-default" ng-click="delete()">Delete</button>
         </div>
     </div>
-    <!-- <my-alerts add="message"></my-alerts> -->
     <modal-confirm open="confirm"></modal-confirm>
 </div>

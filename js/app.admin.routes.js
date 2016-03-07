@@ -11,12 +11,21 @@ app.config(['$routeProvider',
         when('/global-calendar', {
             templateUrl: 'views/view.admin.calendar.html'
         }).
+
+        when('/administrators', {
+            templateUrl: 'views/view.admin-list.html'
+        }).
+        when('/administrators/edit/:id', {
+            templateUrl: 'views/view.admin-edit.html'
+        }).
+
         when('/clients', {
             templateUrl: 'views/view.admin.clients.html'
         }).
         when('/clients/edit/:id', {
             templateUrl: 'views/view.admin.clients.edit.html'
         }).
+
         when('/users', {
             templateUrl: 'views/view.admin.users.html'
         }).

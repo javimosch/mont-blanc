@@ -35,6 +35,11 @@
     }
 }
 
+select.nice{
+    padding: 5px;
+    border: 1px solid #ccc;
+}
+
 .rotating {
     -webkit-animation: rotating 2s linear infinite;
     -moz-animation: rotating 2s linear infinite;

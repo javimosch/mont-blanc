@@ -109,7 +109,7 @@ app.directive('ctrlSelect', function($rootScope) {
                     s.opt.items = _.filter(s.opt.items, (v) => opt.filter(v));
                 }
             });
-            opt.scope.$watch(opt.modelPath, (v,oldV) => {
+            opt.scope.$watch(opt.modelPath, (v, oldV) => {
                 var arr = s.opt.items.filter(item => ((item.val || item) == v));
                 if (arr.length > 1) {
                     throw Error('ctrlSelect items val need to be unique.');
@@ -117,9 +117,9 @@ app.directive('ctrlSelect', function($rootScope) {
                 if (arr.length == 1) {
                     s.label = arr[0].label || arr[0];
                     if (opt.change) {
-                        opt.change(arr[0], opt,()=>{
+                        opt.change(arr[0], opt, () => {
                             //console.info('OLD',oldV);
-                            if(v!==oldV){
+                            if (v !== oldV) {
                                 setVal(opt.scope, opt.modelPath, oldV);
                             }
                         });
@@ -292,7 +292,7 @@ app.directive('address', function($rootScope, $timeout) {
         },
         restrict: 'AE',
         link: function(scope, elem, attrs) {
-            if(!scope.model){
+            if (!scope.model) {
                 throw Error("directive address require a valid model.");
             }
             $timeout(function() {
@@ -767,7 +767,7 @@ app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal
 });
 
 app.directive('dynamicTable', function(
-    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile) {
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce) {
     return {
         restrict: 'AE',
         replace: true,
@@ -809,7 +809,7 @@ app.directive('dynamicTable', function(
 });
 
 app.directive('htmlContent', function(
-    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile) {
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce) {
     return {
         restrict: 'AE',
         replace: false,

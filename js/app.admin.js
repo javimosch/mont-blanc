@@ -95,7 +95,7 @@ app.controller('adminDashboard', [
 
 
 app.directive('adminBalance', function(
-    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile, server) {
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
     return {
         restrict: 'AE',
         replace: true,
@@ -132,7 +132,7 @@ app.directive('adminBalance', function(
 
 
 app.directive('adminTurnover', function(
-    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile, server) {
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
     return {
         restrict: 'AE',
         replace: true,
@@ -176,7 +176,7 @@ app.directive('adminTurnover', function(
                             //v.start = moment(v.diagStart).format('HH:mm');
                             //v.end = moment(v.diagEnd).format('HH:mm');
                         });
-                        console.info('TRANSACTIONS', res.result.data);
+//                        console.info('TRANSACTIONS', res.result.data);
                         s.model.update(res.result.data);
                     }
                 });

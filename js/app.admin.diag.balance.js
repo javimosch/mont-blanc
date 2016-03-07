@@ -1,7 +1,7 @@
 (() => {
     var app = angular.module('app.admin.diag.balance', []);
     app.directive('diagBalance', function(
-        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile, server) {
+        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
         return {
             restrict: 'AE',
             replace: true,

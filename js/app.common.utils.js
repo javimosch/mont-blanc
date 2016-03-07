@@ -157,7 +157,7 @@ var whenProperties = (o, props, cbArray) => {
         return newId.join('');
     };
 
-})(typeof exports === 'undefined' ? this : exports);;
+})(typeof exports === 'undefined' ? window : exports);;
 
 function ifThenMessage(comparisons, messagesCallback, noMessagesCallback) {
     var messages = [];

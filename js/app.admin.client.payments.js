@@ -2,7 +2,7 @@ var app = angular.module('app.admin.client.payments', ['app.common.service']);
 
 
 app.directive('clientPayments', function(
-    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, $compile, server) {
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
     return {
         restrict: 'AE',
         replace: true,

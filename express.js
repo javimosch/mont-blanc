@@ -1,9 +1,13 @@
 var express = require('express');
 var path    = require("path");
 var app = express();
+
+var PROD = process.env.PROD || false;
+
 app.use('/', express.static('./'));
 app.get('/admin',function(req,res){
-	res.sendFile(path.join(__dirname+'/admin.html'));
+	var n = (PROD?'admin-min':'admin');
+	res.sendFile(path.join(__dirname+'/'+n+'.html'));
 });
 
 app.get('/serverURL',function(req,res){
@@ -14,6 +18,7 @@ app.get('/serverURL',function(req,res){
 
 var port = process.env.PORT || 3000;
 app.listen(port, function () {
-  console.log('Example app listening on port '+port+'!');
+  console.log('Production? '+(PROD?'Oui!':'Non!'));
+  console.log('diags-project-frontend app listening on port '+port+'!');
 });
 

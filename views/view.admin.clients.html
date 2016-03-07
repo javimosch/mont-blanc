@@ -25,6 +25,7 @@ type: {type:String,default:'Landlord'}, //(Landlord / Agency / Foncière)
                     <thead>
                         <tr>
                             <!--<th>#</th>-->
+                            <th>Type</th>
                             <th>Email</th>
                             <th>Tel</th>
                             <th>Siret</th>
@@ -37,6 +38,7 @@ type: {type:String,default:'Landlord'}, //(Landlord / Agency / Foncière)
                                 <check-box/ val="item._id" push="selectedItems" ng-click="select()">
                             </td>
                             -->
+                            <td>{{item.clientType}}</td>
                             <td>{{item.email}}</td>
                             <td>{{item.tel}}</td>
                             <td>{{item.siret}}</td>

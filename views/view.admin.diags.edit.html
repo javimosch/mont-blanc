@@ -4,107 +4,72 @@
             <h3 class="panel-title">Diag Details</h3>
         </div>
         <div class="panel-body">
-            <form>
-                <div class="form-group">
-                    <label>Email address</label>
-                    <input 
-ng-disabled="state.working() || item._id"
-                     type="email" class="form-control" ng-model="item.email" placeholder="Email">
+            <div class="row">
+                <div class="col-sm-6">
+                    <ul class="form-tiny center-block">
+                        <li>
+                            <label>Email</label>
+                            <input ng-disabled="state.working()" type="email" ng-value="item.email" placeholder="Email">
+                        </li>
+                        <li>
+                            <label>Password</label>
+                            <input ng-disabled="state.working()" type="password" ng-model="item.password" placeholder="Password">
+                        </li>
+                        <li>
+                            <label>First name</label>
+                            <input type="text" ng-model="item.firstName" placeholder="First Name">
+                        </li>
+                        <li>
+                            <label>Last name</label>
+                            <input ng-disabled="state.working()" type="text" ng-model="item.lastName" placeholder="Last Name">
+                        </li>
+                        <li>
+                            <label>Fixed Phone</label>
+                            <input ng-disabled="state.working()" type="text" ng-model="item.fixedTel" placeholder="Fixed phone">
+                        </li>
+                        <li>
+                            <label>Cell Phone</label>
+                            <input ng-disabled="state.working()" type="text" ng-model="item.cellPhone" placeholder="CellPhone">
+                        </li>
+                        <li>
+                            <label>Street Address</label>
+                            <input ng-disabled="state.working()" type="text" data-address model="item" field="address" placeholder="Street Address" city="city" department="department" region="region" country="country" post-code="postCode">
+                        </li>
+                        <li>
+                            <label>City</label>
+                            <input ng-disabled="state.working()" type="text" disabled ng-model="item.city">
+                        </li>
+                        <li>
+                            <label>Department</label>
+                            <input ng-disabled="state.working()" type="text" disabled ng-model="item.department">
+                        </li>
+                        <li>
+                            <label>Region</label>
+                            <input ng-disabled="state.working()" type="text" disabled ng-model="item.region">
+                        </li>
+                        <li>
+                            <label>Country</label>
+                            <input ng-disabled="state.working()" type="text" disabled ng-model="item.country">
+                        </li>
+                        <li>
+                            <label>Post Code</label>
+                            <input ng-disabled="state.working()" type="text" disabled ng-model="item.postCode">
+                        </li>
+                    </ul>
                 </div>
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Password</label>
-                    <input ng-disabled="state.working()" type="password" class="form-control" ng-model="item.password" placeholder="Password">
+                <div class="col-sm-6">
+                    <ul class="form-tiny center-block">
+                        <li>
+                            <label>Commission</label>
+                            <input ng-disabled="state.working() || !userIs(['admin'])" type="text" ng-model="item.commission" placeholder="Commission">
+                        </li>
+                        <li>
+                            <label>Priority</label>
+                            <input ng-disabled="state.working() || !userIs(['admin'])" type="text" ng-model="item.priority" placeholder="priority">
+                        </li>
+                    </ul>
                 </div>
-                <div class="form-group">
-                    <label>FirstName</label>
-                    <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.firstName" placeholder="FirstName">
-                </div>
-                <div class="form-group">
-                    <label>LastName</label>
-                    <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.lastName" placeholder="LastName">
-                </div>
-                <div class="form-group">
-                    <label>Phone</label>
-                    <input ng-disabled="state.working()" type="text" class="form-control" ng-model="item.tel" placeholder="Phone">
-                </div>
-                <div class="form-group">
-                    <label for="address">Street Address</label>
-                    <input ng-disabled="state.working()" data-address post-code="postCode" department="department" region="region" city="city" model="item" field="address" change="addressChange" class="fullwidth" type="address" placeholder="address line">
-                </div>
-                <div class="form-group">
-                    <label>City</label>
-                    <input ng-disabled="true" type="text" class="form-control" ng-model="item.city" placeholder="City">
-                </div>
-                <div class="form-group">
-                    <label>Department</label>
-                    <input ng-disabled="true"type="text" class="form-control" ng-model="item.department" placeholder="Department">
-                </div>
-                <div class="form-group">
-                    <label>Region</label>
-                    <input ng-disabled="true" type="text" class="form-control" ng-model="item.region" placeholder="Region">
-                </div>
-                <div class="form-group">
-                    <label>Postcode</label>
-                    <input ng-disabled="true" type="text" class="form-control" ng-model="item.postCode" placeholder="PostCode">
-                </div>
-
-                
-                <div class="form-group">
-                    <label>Comission</label>
-                    <input ng-disabled="state.working() || !userIs(['admin'])" type="text" class="form-control" ng-model="item.comission" placeholder="Comission">
-                </div>
-                <div class="form-group">
-                    <label>Priority</label>
-                    <input ng-disabled="state.working()" type="number" class="form-control" ng-model="item.diagPriority" placeholder="Priority">
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <span class="input-group-addon no-bg borderless">
-                            <input 
-ng-disabled="state.working()"
-                            type="checkbox" ng-model="item.disabled" ng-value="true">
-                        </span>
-                        <input type="text" disabled class="check-label" value="Disable Diag" aria-label="...">
-                    </div>
-                </div>
-                <!--DIPLOMAS-->
-                <div class="v-margin-2">
-                    <hr/>
-                    <label>Diplomas</label>
-                    <div ng-repeat="(id,d) in diplomesData" class="form-group relative diplome">
-                        <!--FILE-->
-                        <input id="{{'file_'+id}}" class="form-control hidden" type="file" file-model="diplomesFile[id]" ng-disabled="!item._id || state.working()">
-                        <div class="inline childs-margin-1">
-                            <!--DELETE-->
-                            <i ng-show="diplomesExists(id)" ng-click="diplomesDelete(id)" class="fa fa-times file-button"></i>
-                            <!--UPLOAD-->
-                            <i ng-show="!diplomesExists(id)" class="fa fa-cloud-upload file-button" ng-disabled="!item._id || state.working() || !diplomesFile[id]" ng-click="!diplomesFile[id] || diplomesSave(id)"></i>
-                            <!--LABEL-->
-                            <label class="link file-label" for="{{'file_'+id}}">Pdf {{(d.info && "("+d.info.filename+")")||""}}</label>
-                            <!--DOWNLOAD-->
-                            <i ng-disabled="!item._id || state.working() || !diplomesExists(id)" ng-click="!diplomesExists(id) || diplomesDownload(id)" class="fa fa-download file-button"></i>
-                            <i class="fa fa-question file-button" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
-                        </div>
-                        <div>
-                            <p class="input-group diplome-info">
-                                <label>Obtention Date</label>
-                                <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.obtentionDate" is-open="d.obtentionDateOpen" max-date="d.obtentionMaxDate" datepicker-options="d.dateOptions" date-disabled="false" ng-required="true" close-text="Close" ng-click="d.obtentionDateClick()" />
-                            </p>
-                            <p class="input-group diplome-info" ng-if="userIs(['admin'])">
-                                <label>Expiration Date</label>
-                                <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.expirationDate" is-open="d.expirationDateOpen" min-date="d.expirationMinDate" datepicker-options="d.dateOptions" date-disabled="false" ng-required="true" close-text="Close" ng-click="d.expirationDateClick()" />
-                            </p>
-                        </div>
-                    </div>
-                    <!--ADD-->
-                    <button ng-disabled="!item._id || state.working()" ng-click="!item._id || diplomesNew()" class="btn btn-default fa fa-plus file-button">Add</button>
-                    <hr/>
-                </div>
-                <div class="form-group">
-                    <label>Updated At</label>
-                    <input disabled type="text" class="form-control" ng-value="momentFormat(item.updatedAt,'HH:mm')" placeholder="UpdateTime">
-                </div>
-            </form>
+            </div>
         </div>
         <div class="panel-footer">
             <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="validate()">Save</button>

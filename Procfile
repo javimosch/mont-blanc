@@ -1,1 +1,1 @@
-web: node express.js
+web: node express.js | node ./tools/node_bundle.js
