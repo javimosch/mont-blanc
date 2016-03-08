@@ -308,7 +308,7 @@ app.controller('fullpage', ['server',
         s.moveTo = (n) => { $.fn.fullpage.moveTo(n); };
         s.left = () => ($.fn.fullpage.moveSlideLeft());
         s.right = () => ($.fn.fullpage.moveSlideRight());
-        s.down = function() {
+        s.down = function(force) {
 
             var curr = $.hrefAnchor();
             var anchors = ['question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'question7', 'diags', 'calendar-timepicker', 'confirm-order'];
@@ -334,8 +334,12 @@ app.controller('fullpage', ['server',
                     else return anchors[index];
                 }
             };
-
-            s.moveTo(nextInvalidAnchor(curr));
+            if(force==true){
+                $.fn.fullpage.moveSectionDown();
+            }else{
+                s.moveTo(nextInvalidAnchor(curr));    
+            }
+            
             //$.fn.fullpage.moveSectionDown();
         };
         s.up = function() {

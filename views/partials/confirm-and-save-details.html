@@ -104,15 +104,17 @@
                             <td>{{diagLabel(k,x)}}</td>
                             <td>{{diagPrice(k,x)}}</td>
                         </tr>
-                        <tr>
-                            <td>House dimensions</td>
-                            <td>{{sizePrice()}}</td>
-                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <td>Sub</td>
-                            <td>{{totalPrice()}}</td>
+                            <td>{{subTotal()}}</td>
+                        </tr>
+                        <tr>
+                            <td>House dimensions (+{{squareMetersPrice[model.squareMeters]}}%)</td>
+                            <td>{{sizePrice()-
+                            (totalPrice()-totalPrice(true))
+                            }}</td>
                         </tr>
                         <tr>
                             <td>TOTAL</td>
