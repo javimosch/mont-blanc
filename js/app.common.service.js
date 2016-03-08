@@ -197,7 +197,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     r.get = get;
 
     function post(relativeUrl, data, callback, error) {
-        _log = logger(relativeUrl, data);
+        var _log = logger(relativeUrl, data);
         http({
             method: 'POST',
             data: data,

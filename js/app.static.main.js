@@ -85,7 +85,9 @@ app.controller('fullpage', ['server',
 
         function scrollToAnchor() {
             try {
-                $.fn.fullpage.moveTo($.hrefAnchor());
+                if($.hrefAnchor()){
+                    $.fn.fullpage.moveTo($.hrefAnchor());
+                }
             } catch (e) {
 
             }
@@ -381,6 +383,7 @@ app.controller('fullpage', ['server',
         };
 
         s.auto = () => {
+            console.log('auto');
             r.dom(() => s.moveTo('confirm-and-save'), 0000);
             r.dom(() => s.right(), 2000);
             r.dom(() => s.login(), 4000);

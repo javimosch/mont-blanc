@@ -35,9 +35,11 @@ $(function() {
         var url = window.location.href;
         var idx = url.indexOf("#");
         var hash = idx != -1 ? url.substring(idx + 1) : "";
+        console.log('hrefAnchor '+hash.replace('/', '')+' | type '+typeof hash.replace('/', ''));
         return hash.replace('/', '');
     };
-    $.scrollToAnchor = () => {
+    $.scrollToAnchor = () => {  
+        console.log('scrollToAnchor '+$.hrefAnchor());
         var elem = $('#' + $.hrefAnchor());
         console.info(elem);
         $('html, body').animate({
