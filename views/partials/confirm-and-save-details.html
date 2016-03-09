@@ -34,11 +34,11 @@
                     <h5> 
 <a ng-click="moveTo('calendar-timepicker')" class="link">Order Time</a>
                      required.</h5></li>
-                     <li ng-show="!model.gasInstallation">
+                <li ng-show="!model.gasInstallation">
                     <h5> 
 <a ng-click="moveTo('question6')" class="link">Gas Installation</a>
                      required.</h5></li>
-                     <li ng-show="!model.electricityInstallation">
+                <li ng-show="!model.electricityInstallation">
                     <h5> 
 <a ng-click="moveTo('question7')" class="link">Electricity Installation</a>
                      required.</h5></li>
@@ -47,46 +47,24 @@
     </div>
     <div class="panel-body2 size-medium" ng-show="validModel()">
         <div class="">
-            <div class="table-responsive order">
-                <table class="table order">
-                    <thead>
-                        <tr>
-                            <th>Address</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                {{model.address}}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="table-responsive order">
-                <table class="table order">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Start</th>
-                            <th>End</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                {{getDate().date}}
-                            </td>
-                            <td>
-                                {{getDate().start}}
-                            </td>
-                            <td>
-                                {{getDate().end}}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <ul class="form-tiny center-block">
+                <li>
+                    <label>Diag Address</label>
+                    <input type="text" disabled ng-value="model.address" class="fullwidth max-w-500">
+                </li>
+                <li>
+                    <label>Date</label>
+                    <input type="text" disabled ng-value="getDate().date">
+                </li>
+                <li>
+                    <label>Time Start</label>
+                    <input type="text" disabled ng-value="getDate().start">
+                </li>
+                <li>
+                    <label>Time End</label>
+                    <input type="text" disabled ng-value="getDate().end">
+                </li>
+            </ul>
             <div class="table-responsive order">
                 <table class="table order">
                     <thead>
@@ -112,9 +90,8 @@
                         </tr>
                         <tr>
                             <td>House dimensions (+{{squareMetersPrice[model.squareMeters]}}%)</td>
-                            <td>{{sizePrice()-
-                            (totalPrice()-totalPrice(true))
-                            }}</td>
+                            <td>{{sizePrice()- (totalPrice()-totalPrice(true)) }}
+                            </td>
                         </tr>
                         <tr>
                             <td>TOTAL</td>

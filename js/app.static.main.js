@@ -551,7 +551,7 @@ app.controller('fullpage', ['server',
 
 
         s.goRightAndHideNav = () => {
-            s.openConfirm('You are sure to continue?. You cannot modified Order details after this point', () => {
+            s.openConfirm('You are sure to continue?. You cannot modified Order time and selected inspections after this point', () => {
                 s.hideNav();
                 s.right();
             });

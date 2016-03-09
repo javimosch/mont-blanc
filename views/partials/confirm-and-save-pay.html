@@ -15,7 +15,9 @@
         <ul class="form-tiny center-block">
             <li>
                 <label>Diag Address</label>
-                <input type="text" disabled ng-value="model.address">
+                <input type="text" disabled ng-value="model.address"
+                class="fullwidth max-w-500"
+                >
             </li>
             <li ng-show="isAgency()">
                 <label>Landlord Name</label>
@@ -31,7 +33,9 @@
             </li>
             <li ng-show="isAgency()">
                 <label>Landlord Address</label>
-                <input type="text" data-address model="_order" field="landLordAddress" placeholder="Landlord Address">
+                <input type="text" data-address model="_order" field="landLordAddress" placeholder="Landlord Address"
+                class="fullwidth max-w-500"
+                >
             </li>
             <li>
                 <label>Date</label>

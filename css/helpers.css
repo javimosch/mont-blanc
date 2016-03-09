@@ -183,6 +183,9 @@ table.minimal td{
 .max-w-350{
     max-width: 350px;
 }
+.max-w-500{
+    max-width: 350px;
+}
 
 .limit-h-200{
     max-height: 200px;
