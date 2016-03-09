@@ -1,55 +1,80 @@
 <div class="panel center-block question panel-info">
     <div class="panel-heading">
-        <h4 class="panel-title">Booking: Payment</h4>
+        <h4 class="panel-title" ng-show="booking.complete"></h4>
+        <h4 class="panel-title" ng-show="!booking.complete">Booking: Payment</h4>
     </div>
-    <div class="panel-body size-medium">
-        <div ng-show="!booking.payment.delegate">
-            <ul class="form-tiny center-block">
-                <li>
-                    <label>Address</label>
-                    <input type="text" disabled ng-value="model.address">
-                </li>
-                <li>
-                    <label>Date</label>
-                    <input type="text" disabled ng-value="getDate().date">
-                </li>
-                <li>
-                    <label>Time Start</label>
-                    <input type="text" disabled ng-value="getDate().start">
-                </li>
-                <li>
-                    <label>Time End</label>
-                    <input type="text" disabled ng-value="getDate().end">
-                </li>
-                <li>
-                    <label>Total</label>
-                    <input type="text" disabled ng-value="totalPrice(true)">
-                </li>
-            </ul>
-            <div class="v-margin-2">
-                <button ng-disabled="state.working() || !_orderSAVED || landlord.emailsended" class="btn btn-primary" ng-click="payNOW()">Pay now</button>
-                <out ng-show="model.clientType == 'agency'">
-                    or
-                    <button ng-disabled="state.working() || landlord.emailsended" class="btn btn-primary"
-        ng-click="booking.payment.delegate=!booking.payment.delegate"
-                    >Delegate to Landlord</button>
-                </out>
-            </div>
+    <div class="panel-body size-medium" ng-show="booking.complete">
+        <div class="panel-body size-medium text-center" ng-show="booking.complete">
+            <i class="fa fa-check animated bounceInDown" style="
+    font-size: 10rem;
+    color: pink;
+"></i>
+            <br><span class="elegant">Booking Complete</span></div>
+    </div>
+    <div class="panel-body size-medium" ng-show="!booking.complete">
+        <ul class="form-tiny center-block">
+            <li>
+                <label>Diag Address</label>
+                <input type="text" disabled ng-value="model.address">
+            </li>
+            <li ng-show="isAgency()">
+                <label>Landlord Name</label>
+                <input type="text" ng-model="_order.landLordFullName" placeholder="Landlord Fullname">
+            </li>
+            <li ng-show="isAgency()">
+                <label>Landlord Email</label>
+                <input type="email" ng-model="_order.landLordEmail" placeholder="Landlord Email">
+            </li>
+            <li ng-show="isAgency()">
+                <label>Landlord Phone</label>
+                <input type="text" ng-model="_order.landLordPhone" placeholder="Landlord Phone">
+            </li>
+            <li ng-show="isAgency()">
+                <label>Landlord Address</label>
+                <input type="text" data-address model="_order" field="landLordAddress" placeholder="Landlord Address">
+            </li>
+            <li>
+                <label>Date</label>
+                <input type="text" disabled ng-value="getDate().date">
+            </li>
+            <li>
+                <label>Time Start</label>
+                <input type="text" disabled ng-value="getDate().start">
+            </li>
+            <li>
+                <label>Time End</label>
+                <input type="text" disabled ng-value="getDate().end">
+            </li>
+            <li>
+                <label>Total</label>
+                <input type="text" disabled ng-value="totalPrice(true)">
+            </li>
+            <li ng-show="booking.order.exists">
+                <label>Status</label>
+                <input type="text" disabled ng-value="_order.status">
+            </li>
+        </ul>
+        <div class="v-margin-2" ng-show="!orderPaid()">
+            <button ng-disabled="state.working() || !orderSaved() || paymentDelegated()" class="btn btn-primary" ng-click="payNOW()">Pay now</button>
+            or
+            <button ng-disabled="state.working() || booking.payment.complete" class="btn btn-primary" ng-click="invoiceEndOfTheMonth()">
+                Invoice end of the month
+            </button>
         </div>
-        <div ng-show="booking.payment.delegate">
-            <ul class="form-tiny center-block">
-                <li>
-                    <label>Name</label>
-                    <input type="text" ng-model="landlord.name" placeholder="Landlord Fullname">
-                </li>
-                <li>
-                    <label>Email</label>
-                    <input type="email" ng-model="landlord.email" placeholder="Landlord Email">
-                </li>
-            </ul>
-            <div class="v-margin-2">
-                <button ng-disabled="state.working() || !_orderSAVED || landlord.emailsended" class="btn btn-primary" ng-click="sendPaymentLink()">Send email</button>
+        <div class="v-margin-2" ng-show="isAgency() && !orderPaid()">
+            <div class="v-margin-2">Optional
+                <br>
             </div>
+            <button ng-disabled="state.working() || _order.landLordPaymentEmailSended" class="btn btn-primary" ng-click="sendPaymentLink()">Delegate to Landlord</button>
         </div>
+        <div ng-show="booking.order.exists" class="alert alert-info v-margin-2">
+            {{orderExistsNote()}}
+        </div>
+        <div class="v-margin-2" ng-show="orderPaid()">
+            <button ng-disabled="state.working() || booking.payment.complete" class="btn btn-primary" ng-click="invoiceEndOfTheMonth()">
+                Done
+            </button>
+        </div>
+        
     </div>
 </div>

@@ -13,13 +13,41 @@ app.controller('fullpage', ['server',
         window.r = r;
         window.s = s;
         r.dom(); //compile directives
-
-        //user (when auth success)
-        s._user = {};
-
+        //
+        s._user = {}; //user (when auth success)
+        s._order = {}; //order (when saved)
         s.booking = {
-            payment:{
-                delegate:false
+            order: {
+                saved: false,
+                exists: false
+            },
+            complete: false,
+            payment: {
+                complete: false
+            }
+        };
+
+        s.orderPaid=()=>{
+            return _.includes(['prepaid','completed'],s._order.status);
+        }
+
+        s.orderExistsNote=()=>{
+            if(!s.booking.order.exists)return;
+            if(!s.booking.order.saved)return;
+            if(s._order.landLordPaymentEmailSended == true){
+                if(!s.booking.order.delegatedTo){
+                    s.booking.order.delegatedTo = s._order.landLordEmail;
+                }
+            }
+            var delegated = 'The payment of this order was delegated to '+s.booking.order.delegatedTo;
+            if(_.includes(['prepaid','completed'],s._order.status)){
+                if(s._order.landLordPaymentEmailSended == true){
+                    return "This order was delegated to "+s.booking.order.delegatedTo +' and is already paid.';
+                }else{
+                    return "This order is already paid"
+                }
+            }else{
+                return delegatedTo;
             }
         };
 
@@ -37,6 +65,10 @@ app.controller('fullpage', ['server',
             date: undefined,
             diags: {},
             clientType: 'agency'
+        };
+
+        s.isAgency = () => {
+            return s.model.clientType == 'agency' || false;
         };
 
         s.validModel = () => {
@@ -85,7 +117,7 @@ app.controller('fullpage', ['server',
 
         function scrollToAnchor() {
             try {
-                if($.hrefAnchor()){
+                if ($.hrefAnchor()) {
                     $.fn.fullpage.moveTo($.hrefAnchor());
                 }
             } catch (e) {
@@ -334,12 +366,12 @@ app.controller('fullpage', ['server',
                     else return anchors[index];
                 }
             };
-            if(force==true){
+            if (force == true) {
                 $.fn.fullpage.moveSectionDown();
-            }else{
-                s.moveTo(nextInvalidAnchor(curr));    
+            } else {
+                s.moveTo(nextInvalidAnchor(curr));
             }
-            
+
             //$.fn.fullpage.moveSectionDown();
         };
         s.up = function() {
@@ -366,12 +398,10 @@ app.controller('fullpage', ['server',
 
         //----------------------------------------------------------
         s.infoMsg = (msg) => {
-
             s.notify(msg, {
                 type: 'info',
                 duration: 5000
             });
-
         };
         s.warningMsg = (msg) => {
             s.notify(msg, {
@@ -382,7 +412,7 @@ app.controller('fullpage', ['server',
         s.successMsg = (msg) => {
             s.notify(msg, {
                 type: 'success',
-                duration: 5000
+                duration: 2000
             });
         };
 
@@ -391,6 +421,7 @@ app.controller('fullpage', ['server',
             r.dom(() => s.moveTo('confirm-and-save'), 0000);
             r.dom(() => s.right(), 2000);
             r.dom(() => s.login(), 4000);
+            s.hideNav();
             s.auth = {
                 email: 'javiermosch@gmail.com',
                 pass: 'client'
@@ -417,6 +448,13 @@ app.controller('fullpage', ['server',
 
         }
 
+        s.orderSaved = () => {
+            return s.booking.order.saved;
+        };
+        s.paymentDelegated = () => {
+            return s._order.landLordPaymentEmailSended == true;
+        };
+
         s.login = () => {
             s.validateAuthInput(() => {
                 db.ctrl('User', 'get', {
@@ -438,37 +476,44 @@ app.controller('fullpage', ['server',
             });
         }
 
-        s.landlord = {
-            name: undefined,
-            email: undefined
-        };
-
-        s.sendPaymentLink = () => {
-
+        s.validateBooking = (cb) => {
             ifThenMessage([
-                [!s.landlord.email, '==', true, "Landlord Email required."],
-                [!s.landlord.name, '==', true, "Landlord Name required."],
+                [!s.isAgency() || (s.isAgency() && !s._order.landLordEmail), '==', true, "Landlord Email required."],
+                [!s.isAgency() || (s.isAgency() && !s._order.landLordFullName), '==', true, "Landlord Name required."],
             ], (m) => {
                 if (typeof m[0] !== 'string') {
                     s.warningMsg(m[0]());
                 } else {
                     s.warningMsg(m[0]);
                 }
-            }, _sendPaymentLink);
+            }, cb);
+        }
 
+        s.invoiceEndOfTheMonth = () => {
+            s.validateBooking(() => {
+                db.ctrl('Order', 'confirm', s._order).then((d) => {
+                    if (d.ok) {
+                        s.booking.complete = true;
+                        db.ctrl('Order', 'update', s._order); //async
+                    }
+                });
+            });
+        };
+        s.sendPaymentLink = () => {
+            s.validateBooking(_sendPaymentLink);
+            //
             function _sendPaymentLink() {
-
-                s._order.landLordFullName = s.landlord.name;
-                s._order.landLordEmail = s.landlord.email;
-
                 db.ctrl('Order', 'update', s._order); //async
 
-                s.openConfirm('You want to send a payment link to ' + s.landlord.email + ' ?', () => {
+                s.openConfirm('You want to send a payment link to ' + s._order.landLordEmail + ' ?', () => {
                     s.infoMsg("Sending email.");
                     db.ctrl('Email', 'orderPaymentLink', s._order).then(data => {
                         s.infoMsg("Email sended to the landlord. Check the back-office to track your order status.");
-                        s.landlord.emailsended = true;
-                        s.booking.payment.delegate = false;
+                        s._order.landLordPaymentEmailSended = true;
+                        db.ctrl('Order', 'update', {
+                            _id: s._order._id,
+                            landLordPaymentEmailSended: true
+                        }); //async
                     });
                 });
             }
@@ -536,13 +581,15 @@ app.controller('fullpage', ['server',
                 s._order = data.result;
                 //
                 if (saved) {
-                    s.successMsg('Order saved.');
+                    s.successMsg('Order created');
                 }
                 if (exists) {
                     //s.warningMsg('Order already exists.');
-                    s.successMsg('Order saved.');
+                    s.successMsg('Order retaken');
                 }
                 s._orderSAVED = saved || exists;
+                s.booking.order.saved = saved || exists;
+                s.booking.order.exists = exists;
             }).error(err => {
                 s.notify('There was a server issue during the order saving proccess. Retrying in 10 seconds. Wait.', {
                     type: 'warning',
@@ -568,6 +615,9 @@ app.controller('fullpage', ['server',
                         if (success) {
                             success();
                         }
+                        s.booking.complete = true;
+                        s.booking.payment.complete = true;
+                        db.ctrl('Order', 'update', s._order); //async
                         console.info('PAY-OK', data.result);
                         s.notify('Order payment success. We send you an email.', {
                             type: 'success',
