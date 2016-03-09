@@ -327,6 +327,15 @@ app.directive('address', function($rootScope, $timeout) {
                         country = data[3];
                         postCode = data[4];
                     }
+                    if (data.length === 6) {
+                        number = '';
+                        street = data[0];
+                        city = data[1]
+                        department = data[2];
+                        region = data[3];
+                        country = data[4];
+                        postCode = data[5];
+                    }
                     if (data.length === 7) {
                         number = data[0];
                         street = data[1];
@@ -343,7 +352,7 @@ app.directive('address', function($rootScope, $timeout) {
                     if (scope.region) setVal(scope.model, scope.region, region);
                     if (scope.country) setVal(scope.model, scope.country, country);
                     if (scope.postCode) setVal(scope.model, scope.postCode, postCode);
-                    expose('address', result);
+                    expose('address', Object.assign(result,scope));
                     r.dom();
                 });
 

@@ -34,6 +34,14 @@ app.controller('fullpage', ['server',
             return _.includes(['prepaid', 'completed'], s._order.status);
         }
 
+        s.departmentHasTermites=()=>{
+            if(s.model.department){
+                if(s.model.department.toString().toLowerCase()=='paris') return true;
+                var code = s.model.postCode.substring(0,2);
+                return _.includes(s.termitesDepartments.map(v=>(v.toString())),code);
+            }
+        };
+
         s.orderExistsNote = () => {
             if (!s.booking.order.exists) return;
             if (!s.booking.order.saved) return;
@@ -331,6 +339,7 @@ app.controller('fullpage', ['server',
             s.$watch('model.constructionPermissionDate', updateChecks);
             s.$watch('model.sell', updateChecks);
             s.$watch('model.gasInstallation', updateChecks);
+            s.$watch('model.address', updateChecks);
             s.$watch('model.electricityInstallation', updateChecks);
 
             function updateChecks() {
@@ -340,6 +349,12 @@ app.controller('fullpage', ['server',
                 } else {
                     s.model.diags.crep = false; //
                     toggle('crep', true);
+                }
+
+                if(s.departmentHasTermites()){
+                    toggle('termites', true);   
+                }else{
+                    toggle('termites', false);   
                 }
 
                 if (_.includes(['Before le 01/01/1949', 'entre 1949 et le 01/07/1997'], s.model.constructionPermissionDate)) {
