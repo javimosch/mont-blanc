@@ -14,12 +14,15 @@ app.controller('fullpage', ['server',
         window.s = s;
         r.dom(); //compile directives
         //
-        s._user = {}; //user (when auth success)
+        s._user = {
+            address: null
+        }; //user (when auth success)
         s._order = {}; //order (when saved)
         s.booking = {
             order: {
                 saved: false,
-                exists: false
+                exists: false,
+                taken: false
             },
             complete: false,
             payment: {
@@ -27,33 +30,131 @@ app.controller('fullpage', ['server',
             }
         };
 
-        s.orderPaid=()=>{
-            return _.includes(['prepaid','completed'],s._order.status);
+        s.orderPaid = () => {
+            return _.includes(['prepaid', 'completed'], s._order.status);
         }
 
-        s.orderExistsNote=()=>{
-            if(!s.booking.order.exists)return;
-            if(!s.booking.order.saved)return;
-            if(s._order.landLordPaymentEmailSended == true){
-                if(!s.booking.order.delegatedTo){
+        s.orderExistsNote = () => {
+            if (!s.booking.order.exists) return;
+            if (!s.booking.order.saved) return;
+            if (s._order.landLordPaymentEmailSended == true) {
+                if (!s.booking.order.delegatedTo) {
                     s.booking.order.delegatedTo = s._order.landLordEmail;
                 }
+            }else{
+                return "The payment of this order is pending.";
             }
-            var delegated = 'The payment of this order was delegated to '+s.booking.order.delegatedTo;
-            if(_.includes(['prepaid','completed'],s._order.status)){
-                if(s._order.landLordPaymentEmailSended == true){
-                    return "This order was delegated to "+s.booking.order.delegatedTo +' and is already paid.';
-                }else{
+            var delegated = 'The payment of this order was delegated to ' + s.booking.order.delegatedTo;
+            if (_.includes(['prepaid', 'completed'], s._order.status)) {
+                if (s._order.landLordPaymentEmailSended == true) {
+                    return "This order was delegated to " + s.booking.order.delegatedTo + ' and is already paid.';
+                } else {
                     return "This order is already paid"
                 }
-            }else{
-                return delegatedTo;
+            } else {
+                return delegated;
+            }
+        };
+
+        s.keysWhereTime = {
+            invalidKeysTimeMessage: () => {
+                var startTime = () => moment(s._order.diagStart).format('HH:mm');
+                return 'Keys time should be between 8:00 and ' + startTime();
+            },
+            invalidKeysTime: () => {
+                var before = (d1, h) => moment(d1).isBefore(moment(d1).hours(8));
+                var after = (d1) => moment(d1).isAfter(moment(s._order.diagStart))
+                var v = s._order.keysTime;
+                if (!v || before(v) || after(v)) {
+                    return true;
+                }
+
+                return false;
+            },
+            emit: function(n) {
+                var self = this;
+                var arr = self.evts[n] || [];
+                arr.forEach(evt => (evt(self)))
+            },
+            evts: {
+                onItem: [(self) => {
+                    s.keysWhereTime.updateItems(self);
+                }]
+            },
+            mstep: 15,
+            hstep: 1,
+            address: '',
+            scope: s,
+            val: undefined,
+            disabled: () => r.state.working(),
+            cls: () => ({ btn: true, 'btn-default': true }),
+            filterWatch: '_order',
+            filter: (v) => {
+                if (s._order && s._order._client && s._order._client.clientType) {
+                    if (s._order._client.clientType !== 'agency') {
+                        if (v.val == 'agency') {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            },
+            label: '(Select where)',
+            modelPath: '_order.keysWhere',
+            items: [],
+            updateItems: ((self) => {
+                var o = [{
+                    label: 'Diag Address',
+                    val: 1,
+                    get: () => s._order && s._order.address
+                }];
+                if (s._order._client && s._order._client.clientType == 'agency') {
+                    o.push({
+                        label: 'Agency address',
+                        val: 3,
+                        get: () => s._user.address || ''
+                    }, {
+                        label: 'Landlord address',
+                        val: 4,
+                        get: () => s._order.landLordAddress || ''
+                    }); //when agency / other
+                } else {
+                    o.push({
+                        label: 'Client address',
+                        val: 3,
+                        get: () => s._user.address || ''
+                    }); //when landlord
+                }
+                self.items = o;
+            }),
+            change: (v, self, setOldValue) => {
+                if (!v) return;
+                var address = v.get();
+                if (!address) {
+                    r.notify('Address not found', {
+                        type: 'warning',
+                        duration: 5000,
+                        clickDismissable: true
+                    });
+                    self.val = undefined;
+                    setOldValue();
+                    return;
+                }
+                if (s._order.keysAddress && s._order.keysAddress == address) {
+                    if (!s._order.keysTime) {
+                        s._order.keysTime = moment(s._order.diagStart).hours(8).minutes(0)._d;
+                    }
+                    return;
+                } else {
+                    s._order.keysAddress = address;
+                }
+
             }
         };
 
         //
         r.logger.addControlledErrors([
-            "ORDER_EXISTS"
+            "ORDER_EXISTS", "ORDER_TAKEN"
         ]);
 
         s.datepicker = {
@@ -478,8 +579,13 @@ app.controller('fullpage', ['server',
 
         s.validateBooking = (cb) => {
             ifThenMessage([
-                [!s.isAgency() || (s.isAgency() && !s._order.landLordEmail), '==', true, "Landlord Email required."],
-                [!s.isAgency() || (s.isAgency() && !s._order.landLordFullName), '==', true, "Landlord Name required."],
+                [s.isAgency() && !s._order.landLordEmail, '==', true, "Landlord Email required."],
+                [s.isAgency() && !s._order.landLordFullName, '==', true, "Landlord Name required."],
+                [!s._order.keysAddress, '==', true, 'Keys Address required.'],
+                [!s._order.keysAddress, '==', true, 'Keys Time required.'],
+
+                [s.keysWhereTime.invalidKeysTime(), '==', true, s.keysWhereTime.invalidKeysTimeMessage],
+
             ], (m) => {
                 if (typeof m[0] !== 'string') {
                     s.warningMsg(m[0]());
@@ -578,7 +684,24 @@ app.controller('fullpage', ['server',
             db.ctrl('Order', 'saveWithEmail', s.model).then(data => {
                 var saved = data.ok;
                 var exists = (data.err === 'ORDER_EXISTS');
+                var taken = (data.err === 'ORDER_TAKEN');
+                //
                 s._order = data.result;
+                //
+
+                db.ctrl('Order', 'getById', Object.assign(s._order, {
+                        __populate: {
+                            _client: 'email clientType address',
+                            _diag: 'email clientType address'
+                        }
+                    }))
+                    .then(d => {
+                        if (d.ok) s._order = d.result;
+                        s.keysWhereTime.emit('onItem');
+                    });
+
+
+
                 //
                 if (saved) {
                     s.successMsg('Order created');
@@ -587,9 +710,20 @@ app.controller('fullpage', ['server',
                     //s.warningMsg('Order already exists.');
                     s.successMsg('Order retaken');
                 }
+                if (taken) {
+                    //s.successMsg("An order with the same address and time is taken by another client. You can't proceed until you change order time or address.");
+                }
+
+
+
                 s._orderSAVED = saved || exists;
                 s.booking.order.saved = saved || exists;
                 s.booking.order.exists = exists;
+
+
+
+                s.booking.order.taken = (taken == true);
+
             }).error(err => {
                 s.notify('There was a server issue during the order saving proccess. Retrying in 10 seconds. Wait.', {
                     type: 'warning',
@@ -607,36 +741,43 @@ app.controller('fullpage', ['server',
 
         //require an order to be saved (s._order)
         s.payNOW = (success) => {
-            var order = s._order;
-            openStripeModalPayOrder(order, (token) => {
-                order.stripeToken = token.id;
-                db.ctrl('Order', 'pay', order).then((data) => {
-                    if (data.ok) {
-                        if (success) {
-                            success();
+            s.validateBooking(() => {
+                //
+                db.ctrl('Order', 'update', s._order); //async
+                //
+                var order = s._order;
+                openStripeModalPayOrder(order, (token) => {
+                    order.stripeToken = token.id;
+                    db.ctrl('Order', 'pay', order).then((data) => {
+                        if (data.ok) {
+                            if (success) {
+                                success();
+                            }
+                            s.booking.complete = true;
+                            s.booking.payment.complete = true;
+                            db.ctrl('Order', 'update', s._order); //async
+                            console.info('PAY-OK', data.result);
+                            s.notify('Order payment success. We send you an email.', {
+                                type: 'success',
+                                duration: 100000
+                            });
+                        } else {
+                            console.info('PAY-FAIL', data.err);
+                            s.notify('There was a server issue during the payment proccess. You pay later from the back-office.', {
+                                type: 'warning',
+                                duration: 100000
+                            });
                         }
-                        s.booking.complete = true;
-                        s.booking.payment.complete = true;
-                        db.ctrl('Order', 'update', s._order); //async
-                        console.info('PAY-OK', data.result);
-                        s.notify('Order payment success. We send you an email.', {
-                            type: 'success',
-                            duration: 100000
-                        });
-                    } else {
-                        console.info('PAY-FAIL', data.err);
+                    }).error(() => {
                         s.notify('There was a server issue during the payment proccess. You pay later from the back-office.', {
                             type: 'warning',
                             duration: 100000
                         });
-                    }
-                }).error(() => {
-                    s.notify('There was a server issue during the payment proccess. You pay later from the back-office.', {
-                        type: 'warning',
-                        duration: 100000
                     });
                 });
+                //
             });
+            //------
         };
 
         function _payOrder(order) {

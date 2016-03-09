@@ -64,6 +64,18 @@
         return allocate(13, 0, startMax.hours(), startMax.minutes(), diag, order, collisions, arr, 'afternoon');
     }
 
+    function normalizeStart(start){
+        start = moment(start);
+        var h = start.hours();
+        var m = start.minutes();
+        if(m>0 && m<30) m = 30;
+        if(m>30){
+             m = 0;
+             h++;
+        }
+        return start.hours(h).minutes(m);
+    }
+
     function allocate(startMinH, startMinM, startMaxH, startMaxM, diag, order, collisions, arr, propName) {
         var startMin = moment(order.day).hour(startMinH).minutes(startMinM);
         var startMax = moment(order.day).hour(startMaxH).minutes(startMaxM);
@@ -87,9 +99,11 @@
                     return true;
                 } else {
                     start = moment(_cols[_cols.length - 1].end).add(1, 'hours').add(30, 'minutes');
+                    start = normalizeStart(start);
                 }
             } else {
                 start = moment(_cols[_cols.length - 1].end).add(1, 'hours').add(30, 'minutes');
+                start = normalizeStart(start);
             }
             //console.log('allocate:moving=' + start.format('HH:mm'));
             //------------------

@@ -235,11 +235,11 @@ app.controller('adminOrdersEdit', [
                         label: 'Order Address',
                         val: 1,
                         get: () => s.item && s.item.address
-                    }, {
+                    }/*, {
                         label: 'Diag Address',
                         val: 2,
                         get: () => s.item._diag.address || ''
-                    }];
+                    }*/];
                     if (s.item._client && s.item._client.clientType == 'agency') {
                         o.push({
                             label: 'Agency address',

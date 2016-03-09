@@ -1,4 +1,10 @@
 
+.overflow-500{
+    height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .disable-childs > *{
     pointer-events: none;
     tab-index: -1;

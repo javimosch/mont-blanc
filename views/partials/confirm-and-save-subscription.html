@@ -59,6 +59,15 @@
         <input type="text" disabled ng-model="_user.postCode">
     </li>
 </ul>
+
+<div class="center-block text-center v-margin-2 alert alert-info" ng-show="booking.order.taken">
+    An order with the same address and time is taken by another client. You can't proceed until you change order time or address.
+</div>
 <div class="center-block text-center v-margin-2">
-    <button ng-disabled="state.working()" class="btn btn-primary" ng-click="subscribeConfirm()">Continue</button>
+    <button
+    ng-show="!booking.order.taken"
+     ng-disabled="state.working()" class="btn btn-primary" ng-click="subscribeConfirm()">Continue</button>
+     <button
+    ng-show="booking.order.taken"
+     ng-disabled="state.working()" class="btn btn-primary" ng-click="moveTo('question5')">Back to Booking Questions</button>
 </div>

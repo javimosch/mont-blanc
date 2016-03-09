@@ -104,11 +104,19 @@ app.directive('ctrlSelect', function($rootScope) {
                     setVal(opt.scope, opt.modelPath, x.val || x);
                 }
             });
-            s.scope.$watch(() => {
-                if (opt.filter) {
-                    s.opt.items = _.filter(s.opt.items, (v) => opt.filter(v));
-                }
-            });
+            if (opt.filterWatch) {
+                s.scope.$watch(opt.filterWatch,() => {
+                    if (opt.filter) {
+                        s.opt.items = _.filter(s.opt.items, (v) => opt.filter(v));
+                    }
+                },true);
+            } else {
+                s.scope.$watch(() => {
+                    if (opt.filter) {
+                        s.opt.items = _.filter(s.opt.items, (v) => opt.filter(v));
+                    }
+                });
+            }
             opt.scope.$watch(opt.modelPath, (v, oldV) => {
                 var arr = s.opt.items.filter(item => ((item.val || item) == v));
                 if (arr.length > 1) {
