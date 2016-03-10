@@ -490,19 +490,47 @@ app.controller('adminDiagsEdit', [
             }, s.save);
         };
 
+        s.diplomesExpirationDateNotificationEnabled = (_id) => {
+            if (s.item.diplomesInfo[_id].expirationDateNotificationEnabled == undefined) {
+                s.item.diplomesInfo[_id].expirationDateNotificationEnabled = false;
+            }
+            return s.item.diplomesInfo[_id].expirationDateNotificationEnabled;
+        };
+        s.diplomesEnableExpirationDateNotification = (_id) => {
+            s.item.diplomesInfo[_id].expirationDateNotificationEnabled = true;
+            db.ctrl('Order', 'update', {
+                _id: s.item._id
+            }).then(d => {
+                r.notify('Expiration Date Notification Enabled', 'info');
+            });
+        };
 
         s.diplomesUpdate = () => {
             if (s.item && s.item.diplomes && s.item.diplomes.length > 0) {
                 s.diplomesData = {};
+
+                var infoToDelete = [];
+                Object.keys(s.item.diplomesInfo).forEach(_id => {
+                    if (!_.includes(s.item.diplomes, _id)) {
+                        infoToDelete.push(_id);
+                    }
+                });
+                infoToDelete.forEach(k => {
+                    delete s.item.diplomesInfo[k];
+                });
+                db.ctrl('User', 'update', {
+                    _id: s.item._id,
+                    diplomesInfo: s.item.diplomesInfo
+                });
+
                 s.item.diplomes.forEach((_id, k) => {
                     db.ctrl('File', 'find', {
                         _id: _id
                     }).then(data => {
                         var file = data.result;
                         if (data.ok && file) {
-                            var _id = file._id;
-                            file = Object.assign(file, s.item.diplomesInfo && s.item.diplomesInfo[_id] || {});
-                            s.diplomesData[_id] = s.diplomesDataCreate(file);
+                            file = Object.assign(file, s.item.diplomesInfo && s.item.diplomesInfo[file._id] || {});
+                            s.diplomesData[file._id] = s.diplomesDataCreate(file);
                         } else {
                             //if is unable to fetch the diplome, we assume that was removed from the db, so we delete the reference.
                             s.item.diplomes = _.pull(s.item.diplomes, _id);
@@ -559,6 +587,20 @@ app.controller('adminDiagsEdit', [
 
             s.diplomesData[new Date().getTime()] = s.diplomesDataCreate();
         };
+        s.diplomesLabel = _id => {
+            //Pdf {{(d.info && "("+d.info.filename+")")||""}}
+            var d = s.diplomesData[_id];
+            if(s.diplomesExists(_id)){
+                return 'Pdf '+ (d.info && "("+d.info.filename+")" || "unkown");
+            }else{
+                d = s.diplomesFile[_id];
+                if(d&&d.name){
+                    return 'Selected: '+ d.name.toLowerCase()+ ' (click upload button)';
+                }else{
+                    return 'select a file and click the upload button';
+                }
+            }
+        };
         s.diplomesDataCreate = (info) => {
             var o = {
                 obtentionMaxDate: new Date(),
@@ -596,12 +638,26 @@ app.controller('adminDiagsEdit', [
             }
 
             function _uploadNew() {
+
+
+
+                if (s.diplomesFile[_id]) {
+                    var _str = s.diplomesFile[_id].name.toString().toLowerCase();
+                    if (_str.substring(_str.length - 3) !== 'pdf') {
+                        s.message('PDF Format required', {
+                            type: 'warning',
+                            duration: 99999,
+                            scroll: true
+                        });
+                        return;
+                    }
+                }
+
                 s.message('Uploading (Do not touch anything)', {
                     type: 'info',
                     duration: 99999,
                     scroll: true
                 });
-
 
 
                 db.form('File/save/', {
@@ -612,6 +668,7 @@ app.controller('adminDiagsEdit', [
                         var newId = data.result._id;
                         s.item.diplomes.push(newId);
 
+                        s.item.diplomesInfo = s.item.diplomesInfo || {};
                         s.item.diplomesInfo[newId] = s.diplomesData[_id].info;
 
                         if (s.diplomesExists(curr)) {
@@ -684,6 +741,8 @@ app.controller('adminDiagsEdit', [
                         s.item.diplomesInfo[id] = {
                             obtentionDate: data.info.obtentionDate,
                             expirationDate: data.info.expirationDate,
+                            expirationDateNotificationEnabled: false,
+                            expirationDateNotificationSended: false,
                             filename: data.info.filename
                         };
                     }
