@@ -20,9 +20,16 @@
                     <td ng-if="model.remove" ng-click="model.remove(item,$index)" class="link">
                         <i class="fa fa-times"></i>
                     </td>
+                    
                     <td  ng-repeat="c in columns" 
                         ng-class="{link:true,'text-left':c.align==='left','text-right':c.align==='right','text-center':c.align==='center'}"
-                     html-content html="item[c.name||c]"></td>
+                     >
+                        <out ng-if="!c.format" html-content html="item[c.name||c]"></out>
+                        <out ng-if="c.format">
+                            {{c.format(item[c.name||c]);}}
+                        </out>
+                     </td>
+
                 </tr>
             </tbody>
             <tfoot ng-if="model.tfoot" ng-include="model.tfoot">

@@ -35,7 +35,7 @@
     </div>
     <my-alerts add="message" directive="notify"></my-alerts>
     <my-alerts add="notify" directive="notify" stacked="true" settings="{clickDismissable:false}"></my-alerts>
-    <span data-spinner show="showSpinner"></span>
+    <span data-spinner show="state.working"></span>
     <!-- spinner -->
     <span data-debug show="showDebug"></span>
     <!--VENDOR-->
@@ -68,7 +68,10 @@
     <script src="js/app.common.directives.js"></script>
     <script src="js/app.admin.js"></script>
     <script src="js/app.admin.routes.js"></script>
+    
     <script src="js/app.admin.calendar.js"></script>
+    <script src="js/section.notifications.js"></script>
+
     <script src="js/app.admin.login.js"></script>
     <script src="js/app.admin.user.js"></script>
     <script src="js/app.admin.diag.js"></script>

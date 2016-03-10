@@ -12,6 +12,10 @@ app.config(['$routeProvider',
             templateUrl: 'views/view.admin.calendar.html'
         }).
 
+        when('/notifications', {
+            templateUrl: 'views/view.notifications.html'
+        }).
+
         when('/administrators', {
             templateUrl: 'views/view.admin-list.html'
         }).

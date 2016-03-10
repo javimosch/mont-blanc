@@ -1,0 +1,30 @@
+<div class="modal-header">
+    <h3 class="modal-title">{{title}}</h3>
+</div>
+<div class="modal-body">
+    <ul class="form-tiny center-block">
+        <li>
+            <label>Subject</label>
+            <input ng-disabled="state.working()" disabled type="email" ng-value="item.subject" placeholder="Subject">
+        </li>
+        <li>
+            <label>To</label>
+            <input ng-disabled="state.working()" disabled type="text" ng-value="item.to" placeholder="To">
+        </li>
+        <li>
+            <label>Content</label>
+            <div class="alert alert-default" html-content html="item.contents">
+            </div>
+        </li>
+        <li>
+            <label>Sended</label>
+            <input ng-disabled="state.working()" disabled type="text" ng-value="item.sended?'Yes':'No'" placeholder="Sended?">
+        </li>
+        <li ng-show="item.sended">
+            <label>Sended Date</label>
+            <input ng-disabled="state.working()" disabled type="text" ng-value="momentFormat(item.sendedDate,'DD-MM-YY HH:mm')" placeholder="Sended date">
+        </li>
+    </ul>
+    <button class="btn btn-default" ng-click="close()"> Close</button>
+    <button class="btn btn-default" ng-click="data.send()"> Send</button>
+</div>
