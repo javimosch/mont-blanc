@@ -20,6 +20,7 @@
                 <li ng-show="logged() && userIs(['admin'])"><a class="link" ng-click="route('orders')">Orders</a></li>
                 <li ng-show="logged() && userIs(['admin'])"><a class="link" ng-click="route('clients')">Clients</a></li>
                 <li ng-show="logged() && userIs(['admin'])"><a class="link" ng-click="route('administrators')">Admins</a></li>
+                <li ng-show="logged() && userIs(['admin'])"><a class="link" ng-click="route('notifications')">Notifications</a></li>
                 <li ng-show="logged() && userIs(['diag'])"><a class="link" ng-click="route('diag/balance')">Balance</a></li>
                 <li ng-show="logged()">
                     <a class="link" ng-click="logout()">Logout

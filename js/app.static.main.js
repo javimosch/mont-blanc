@@ -706,8 +706,8 @@ app.controller('fullpage', ['server',
 
                 db.ctrl('Order', 'getById', Object.assign(s._order, {
                         __populate: {
-                            _client: 'email clientType address',
-                            _diag: 'email clientType address'
+                            _client: '_id email clientType address',
+                            _diag: '_id email clientType address'
                         }
                     }))
                     .then(d => {

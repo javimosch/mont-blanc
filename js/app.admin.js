@@ -7,6 +7,7 @@ var app = angular.module('app', [
     'app.admin.order',
     'app.admin.client',
     'app.admin.calendar',
+    'app.notifications',
     'app.admin.client.payments',
     'app.common.directives',
     'app.common.service',
