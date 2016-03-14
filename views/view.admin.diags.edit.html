@@ -75,7 +75,8 @@
                                 <!--DOWNLOAD-->
                                 <i ng-show="diplomesExists(id)" ng-disabled="!item._id || state.working() || !diplomesExists(id)" ng-click="!diplomesExists(id) || diplomesDownload(id)" class="fa fa-download file-button"></i>
                                 
-                                <i ng-show="diplomesExists(id) && !diplomesExpirationDateNotificationEnabled(id)" ng-disabled="!item.id || state.working()" class="fa fa-hourglass-start file-button" ng-click="!diplomesExpirationDateNotificationEnabled(id) || diplomesEnableExpirationDateNotification(id)"></i>
+                                <!--ACTIVATE EXPIRATION NOTIFICATION-->
+                                <i ng-show="diplomesExists(id) && !diplomesExpirationDateNotificationEnabled(id)" ng-disabled="!item._id || state.working()" class="fa fa-hourglass-start file-button" ng-click="diplomesEnableExpirationDateNotification(id)"></i>
 
                                 <i ng-show="diplomesExists(id)" class="fa fa-question file-button" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
                             </div>
@@ -86,7 +87,7 @@
                                 </p>
                                 <p class="input-group diplome-info" ng-if="userIs(['admin'])">
                                     <label>Expiration Date</label>
-                                    <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.expirationDate" is-open="d.expirationDateOpen" min-date="d.expirationMinDate" datepicker-options="d.dateOptions" date-disabled="false" ng-required="true" close-text="Close" ng-click="d.expirationDateClick()" />
+                                    <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.expirationDate" is-open="d.expirationDateOpen" min-date="d.expirationMinDate" datepicker-options="d.dateOptions" date-disabled="false" ng-required="true" close-text="Close" ng-click="d.expirationDateClick()" ng-change="diplomesExpirationDateChange(id)" />
                                 </p>
                             </div>
                         </li>

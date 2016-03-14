@@ -490,6 +490,12 @@ app.controller('adminDiagsEdit', [
             }, s.save);
         };
 
+        s.diplomesExpirationDateChange=(_id)=>{
+            if(s.item.diplomesInfo[_id]){
+                s.item.diplomesInfo[_id].expirationDateNotificationSended=false;
+                s.item.diplomesInfo[_id].expirationDateNotificationEnabled=false;
+            }
+        };
         s.diplomesExpirationDateNotificationEnabled = (_id) => {
             if (!s.item.diplomesInfo) return false;
             if (s.item.diplomesInfo[_id].expirationDateNotificationEnabled == undefined) {
@@ -502,8 +508,10 @@ app.controller('adminDiagsEdit', [
                 console.error('diplomesInfo expected.');
             }
             s.item.diplomesInfo[_id].expirationDateNotificationEnabled = true;
-            db.ctrl('Order', 'update', {
-                _id: s.item._id
+            s.item.diplomesInfo[_id].expirationDateNotificationSended = false
+            db.ctrl('User', 'update', {
+                _id: s.item._id,
+                diplomesInfo:s.item.diplomesInfo
             }).then(d => {
                 r.notify('Expiration Date Notification Enabled', 'info');
             });
