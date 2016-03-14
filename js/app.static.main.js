@@ -36,7 +36,6 @@ app.controller('fullpage', ['server',
 
         s.departmentHasTermites=()=>{
             if(s.model.department){
-                if(s.model.department.toString().toLowerCase()=='paris') return true;
                 var code = s.model.postCode.substring(0,2);
                 return _.includes(s.termitesDepartments.map(v=>(v.toString())),code);
             }

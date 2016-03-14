@@ -30,12 +30,22 @@ app.config(['$routeProvider',
             templateUrl: 'views/view.admin.clients.edit.html'
         }).
 
+        when('/tools', {
+            templateUrl: 'views/tools.html'
+        }).
+        when('/tools/termites-check', {
+            templateUrl: 'views/tools.termites-check.html'
+        }).
+
+        /*
         when('/users', {
             templateUrl: 'views/view.admin.users.html'
         }).
         when('/users/edit/:id', {
             templateUrl: 'views/view.admin.users.edit.html'
         }).
+        */
+        
         when('/diag/balance', {
             templateUrl: 'views/view.admin.diag.balance.html'
         }).

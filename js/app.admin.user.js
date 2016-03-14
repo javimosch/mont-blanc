@@ -1,10 +1,23 @@
 var app = angular.module('app.admin.user', ['app.common.service']);
 
+
+app.service('tpl', function($rootScope, $compile, $templateCache) {
+    this.compile = (n, s) => {
+        var raw = $templateCache.get(n + '.html');
+        return this.compileRaw(raw, s);
+    };
+    this.compileRaw = (raw, s) => {
+        var el = $compile(angular.element(raw))(s);
+        return el;
+    }
+    expose('tpl', this);
+});
+
 app.controller('adminUsers', [
 
     'server', '$scope', '$rootScope',
     function(db, s, r) {
-//        console.info('app.admin.user:adminUsers');
+        //        console.info('app.admin.user:adminUsers');
         //
         r.toggleNavbar(true);
         r.secureSection(s);
@@ -15,11 +28,11 @@ app.controller('adminUsers', [
             return r.handleSecurityRouteViolation();
         }
         //
-        s.click = function(item,optionalRouteForEdition) {
-            r.route((optionalRouteForEdition||'users/edit/') + item._id);
+        s.click = function(item, optionalRouteForEdition) {
+            r.route((optionalRouteForEdition || 'users/edit/') + item._id);
         };
-        s.create = function() {
-            r.route('users/edit/-1');
+        s.create = function(optionalRouteForEdition) {
+            r.route(optionalRouteForEdition || 'users/edit/-1');
         };
         s.delete = function(item) {
             s.confirm('Remove ' + s.selectedItems.length + ' item/s?', function() {
@@ -49,7 +62,7 @@ app.controller('adminUsers', [
         function read() {
             s.message('Loading . . .', 'info');
             db.custom('user', 'getAll', {}).then(function(r) {
-//                console.info('adminUsers:read:success');
+                //                console.info('adminUsers:read:success');
                 s.items = r.data.result;
                 s.message('Loaded', 'success', 1000);
             });
@@ -61,15 +74,15 @@ app.controller('adminUsers', [
 
 app.controller('adminUsersEdit', [
 
-    'server', '$scope', '$rootScope', '$routeParams',
-    function(db, s, r, params) {
-//        console.info('app.admin.user:adminUsersEdit');
+    'server', '$scope', '$rootScope', '$routeParams', 'tpl',
+    function(db, s, r, params, tpl) {
+        //        console.info('app.admin.user:adminUsersEdit');
         //
         r.toggleNavbar(true);
         r.secureSection(s);
         r.dom();
         //
-        expose('s',s);
+        expose('s', s);
         //
         s.item = {
             email: '',
@@ -103,7 +116,7 @@ app.controller('adminUsersEdit', [
         };
         //
         if (params && params.id && params.id.toString() !== '-1') {
-//            console.info('adminUsersEdit:params', params);
+            //            console.info('adminUsersEdit:params', params);
             r.dom(read, 1000);
         } else {
 
@@ -122,7 +135,9 @@ app.controller('adminUsersEdit', [
                     return r.route(r.params.prevRoute);
                     delete r.params.prevRoute;
                 } else {
-                    r.route('users');
+                    //r.route('users');
+                    console.warn('r.params.prevRoute required');
+                    r.route('dashboard');
                 }
 
             }
@@ -150,7 +165,7 @@ app.controller('adminUsersEdit', [
             db.ctrl('User', 'getAll', {
                 email: s.item.email,
                 userType: s.item.userType,
-                clientType:s.item.clientType
+                clientType: s.item.clientType
             }).then(function(data) {
                 var result = data.result;
                 s.requesting = false;
@@ -174,8 +189,8 @@ app.controller('adminUsersEdit', [
                     if (_r.ok) {
 
                         //if current user, update session.
-                        if(_r.result){
-                            if(_r.result._id == r.session()._id){
+                        if (_r.result) {
+                            if (_r.result._id == r.session()._id) {
                                 r.session(_r.result);
                             }
                         }
@@ -193,24 +208,40 @@ app.controller('adminUsersEdit', [
 
         };
         s.delete = function() {
-            s.confirm('Delete User ' + s.item.email + ' ?', function() {
-                console.log('adminUsersEdit:remove:in-progress');
-                s.message('deleting . . .', 'info');
-                s.requesting = true;
-                db.custom('user', 'remove', {
-                    _id: s.item._id
-                }).then(function(res) {
-                    s.requesting = false;
-                    s.message('deleted', 'info');
-                    reset();
-                    s.back();
-                    console.info('adminUsersEdit:remove:success', r.data);
-                }).error(function(err) {
-                    s.requesting = false;
-                    s.message('error, try later.', 'danger');
-                    console.warn('adminUsersEdit:remove:error', err);
+            userHasRelatedOrders().on('yes', (err, r) => {
+                s.relatedOrders = r.relatedOrders || [
+                    'data.relatedOrders required'
+                ];
+                s.okModal({
+                    messageEl: tpl.compile('user.delete.associated-orders', s)
+                },()=>{
+                    delete s.relatedOrders;
                 });
+
+            }).on('no', () => {
+                _proceedDelete();
             });
+
+            function _proceedDelete() {
+                s.confirm('Delete User ' + s.item.email + ' ?', function() {
+                    console.log('adminUsersEdit:remove:in-progress');
+                    s.message('deleting . . .', 'info');
+                    s.requesting = true;
+                    db.custom('user', 'remove', {
+                        _id: s.item._id
+                    }).then(function(res) {
+                        s.requesting = false;
+                        s.message('deleted', 'info');
+                        reset();
+                        s.back();
+                        console.info('adminUsersEdit:remove:success', r.data);
+                    }).error(function(err) {
+                        s.requesting = false;
+                        s.message('error, try later.', 'danger');
+                        console.warn('adminUsersEdit:remove:error', err);
+                    });
+                });
+            }
         };
 
         function reset() {
@@ -226,7 +257,7 @@ app.controller('adminUsersEdit', [
                 }
             }
 
-            s.message('Loading . . .', 'info');
+            //s.message('Loading . . .', 'info');
 
             s.requesting = true;
             db.custom('user', 'get', {
@@ -238,8 +269,41 @@ app.controller('adminUsersEdit', [
                     s.message('not found, maybe it was deleted!', 'warning', 5000);
                 } else {
                     s.types.click(s.item.userType);
-                    s.message('Loaded', 'success', 2000);
+                    //s.message('Loaded', 'success', 2000);
                 }
+            });
+        }
+
+
+        function userHasRelatedOrders(cb) {
+            var time = (d) => moment(d).format('HH:mm');
+            var descr = (_order) => _order.address + ' (' + time(_order.diagStart) + ' - ' + time(_order.diagEnd) + ')'
+            return MyPromise((resolve, error, emit) => {
+                if (s.item.userType === 'admin') {
+                    return emit('no'); //admin has no orders associated.
+                }
+                var rules = {
+                    __select: "diagStart diagEnd address" //we only need those 3 fields to build the description.
+                };
+                if (s.item.userType === 'client') {
+                    rules['_client'] = s.item._id
+                }
+                if (s.item.userType === 'diag') {
+                    rules['_diag'] = s.item._id
+                }
+                db.ctrl('Order', 'getAll', rules).then(data => {
+                    if (data.ok && data.result && data.result.length>0) {
+                        var relatedOrders = [];
+                        data.result.forEach(_order => {
+                            relatedOrders.push(descr(_order));
+                        });
+                        emit('yes', null, {
+                            relatedOrders: relatedOrders
+                        });
+                    } else {
+                        emit('no');
+                    }
+                });
             });
         }
 

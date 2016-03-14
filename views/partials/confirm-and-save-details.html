@@ -64,8 +64,12 @@
                     <label>Time End</label>
                     <input type="text" disabled ng-value="getDate().end">
                 </li>
+                <li>
+                    <label>Total price</label>
+                    <input type="text" disabled ng-value="totalPrice(true)">
+                </li>
             </ul>
-            <div class="table-responsive order">
+            <div class="table-responsive order" ng-if="false">
                 <table class="table order" >
                     <thead>
                         <tr>

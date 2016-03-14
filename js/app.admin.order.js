@@ -510,6 +510,17 @@ app.controller('adminOrdersEdit', [
 
 
             s.delete = function() {
+
+                if(!_.includes(['ordered','created'],s.item.status)){
+                    s.okModal({
+                        message:"You can't delete an Order with the follow status: delivered, prepaid or completed.",
+                        data:{
+                            title:'Delete Info'
+                        }
+                    });
+                    return;
+                }
+
                 var time = (d) => moment(d).format('HH:mm');
                 var descr = s.item.address + ' (' + time(s.item.diagStart) + ' - ' + time(s.item.diagEnd) + ')';
                 s.confirm('Delete Order ' + descr + ' ?', function() {

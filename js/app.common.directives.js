@@ -105,11 +105,11 @@ app.directive('ctrlSelect', function($rootScope) {
                 }
             });
             if (opt.filterWatch) {
-                s.scope.$watch(opt.filterWatch,() => {
+                s.scope.$watch(opt.filterWatch, () => {
                     if (opt.filter) {
                         s.opt.items = _.filter(s.opt.items, (v) => opt.filter(v));
                     }
-                },true);
+                }, true);
             } else {
                 s.scope.$watch(() => {
                     if (opt.filter) {
@@ -352,7 +352,7 @@ app.directive('address', function($rootScope, $timeout) {
                     if (scope.region) setVal(scope.model, scope.region, region);
                     if (scope.country) setVal(scope.model, scope.country, country);
                     if (scope.postCode) setVal(scope.model, scope.postCode, postCode);
-                    expose('address', Object.assign(result,scope));
+                    expose('address', Object.assign(result, scope));
                     r.dom();
                 });
 
@@ -736,6 +736,50 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
     };
 });
 
+app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal) {
+    return {
+        restrict: 'AE',
+        replace: true,
+        scope: {
+            open: '=open'
+        },
+        template: '<output></output>',
+        link: function(s, elem, attrs) {
+            if (!attrs.templateUrl) throw Error('modalCustom attr templateUrl required.');
+            s.open = function(opt, confirmCallback) {
+                opt = opt || {};
+                var message = '';
+                if (typeof opt === 'string') {
+                    message = opt;
+                } else {
+                    message = opt.message || '';
+                }
+                var modalInstance = $uibModal.open({
+                    animation: true,
+                    templateUrl: opt.templateUrl || attrs.templateUrl,
+                    controller: function($scope, $uibModalInstance) {
+                        $scope.data = opt.data;
+                        $scope.message = message;
+
+                        $scope.messageEl = opt.messageEl || null;
+
+
+                        $scope.yes = function() {
+                            $uibModalInstance.close();
+                            if (confirmCallback) {
+                                confirmCallback();
+                            }
+                        };
+                        $scope.cancel = function() {
+                            $uibModalInstance.dismiss('cancel');
+                        };
+                        expose('modalCustom', $scope);
+                    },
+                });
+            };
+        }
+    };
+});
 
 app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal) {
     return {
@@ -825,19 +869,35 @@ app.directive('dynamicTable', function(
     };
 });
 
+app.directive('appendChild', function(
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce) {
+    return {
+        restrict: 'AE',
+        replace: false,
+        scope: {
+            child: "=child",
+        },
+        link: function(s, elem, attrs) {
+            if (s.child) {
+                elem.html('').append(s.child);
+            }
+        }
+    };
+});
+
+
 app.directive('htmlContent', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce) {
     return {
         restrict: 'AE',
         replace: false,
         scope: {
-            html: "=html"
+            html: "&html",
         },
         link: function(s, elem, attrs) {
+            if(!s.html) return;
             r.dom(() => {
-                //var el = $compile(s.html)(s);
-                elem.html(s.html); //.append(el);
-                //console.log(s.html);
+                elem.html(s.html);
             });
         }
     };

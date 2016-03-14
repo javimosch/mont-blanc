@@ -1,0 +1,8 @@
+<script type="text/ng-template" id="user.delete.associated-orders.html">
+  <p>Delete {{item.email}} is not possible due to associated orders.</p>
+  <ul>
+  	<li ng-repeat="item in relatedOrders">
+  		{{item}}
+  	</li>
+  </ul>
+</script>

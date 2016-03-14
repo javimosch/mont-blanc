@@ -1,0 +1,60 @@
+<div class="container" ng-controller="termitesChecker">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Tools</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <ul class="form-tiny center-block">
+                        <li>
+                            <label>Address</label>
+                            <input ng-disabled="state.working()" type="text" data-address model="item" field="address" placeholder="Write an Address" city="city" department="department" region="region" country="country" post-code="postCode" class="fullwidth max-w-500">
+                        </li>
+                        <li>
+                            <label>City</label>
+                            <input type="text" disabled ng-vivavew="item.city">
+                        </li>
+                        <li>
+                            <label>Department</label>
+                            <input type="text" disabled ng-model="item.department">
+                        </li>
+                        <li>
+                            <label>Region</label>
+                            <input type="text" disabled ng-model="item.region">
+                        </li>
+                        <li>
+                            <label>Country</label>
+                            <input type="text" disabled ng-model="item.country">
+                        </li>
+                        <li>
+                            <label>Post Code</label>
+                            <input type="text" disabled ng-model="item.postCode">
+                        </li>
+                        <li>
+                            <label>Termites Departments</label>
+                            <textarea  type="text" disabled html-content html="termites" class="fullwidth"></textarea>
+                        </li>
+                        <li>
+                            <label>Has Termites</label>
+                            <input type="text" disabled ng-model="item.hasTermites">
+                        </li>
+                        <li>
+                            <label>Message</label>
+                            <input type="text" disabled ng-model="item.message">
+                        </li>
+                        <li>
+                        	<a href="img/termites-departments.jpg" target="_blank"><img class="img-reponsive max-w-300" src="img/termites-departments.jpg"/></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-12">
+            		<button class="btn btn-default link" ng-click="check()">Check</button>
+            		<button class="btn btn-default link" ng-click="route(tools)">Back</button>
+            	</div>
+            </div>
+        </div>
+    </div>
+</div>

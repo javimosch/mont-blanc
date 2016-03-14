@@ -1,7 +1,7 @@
 var app = angular.module('app.admin.login', ['app.common.service']);
 
 app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, r) {
-    console.info('app.admin.login:adminLogin');
+    //console.info('app.admin.login:adminLogin');
 
     r.navShow = false;
     s.show = false;

@@ -1,3 +1,4 @@
+/*
 var app = angular.module('app.admin.client', []);
 app.directive('clientOrders', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
@@ -75,21 +76,6 @@ app.directive('clientOrders', function(
                     };
                     r.route('orders/edit/' + item._id);
 
-                    /*
-                    s.open({
-                        title: 'Order View',
-                        data: data,
-                        evts: {
-                            'pay': [payOrder]
-                        },
-                        item: item,
-                        templateUrl: 'views/partials/partial.modal.client.order.html',
-                        callback: (item) => {
-                            ws.ctrl('Order', 'createUpdate', item).then((result) => {
-                                update();
-                            });
-                        }
-                    });*/
                 },
                 buttons: [{
                     label: "Refresh",
@@ -118,3 +104,4 @@ app.directive('clientOrders', function(
 });
 
 //
+*/

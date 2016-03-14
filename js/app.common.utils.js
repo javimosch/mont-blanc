@@ -257,13 +257,13 @@ function MyPromise(cb) {
         cb: null,
         errorCb: null,
         errorRes: null,
-        res: null
+        res: null,
+        evt:{}
     };
     var resolve = function(res) {
         if (_scope.cb) {
             _scope.cb(res);
         }
-        //console.info('PROMISE RES',res,_scope.cb);
         _scope.res = res || {};
     };
     var error = function(errorRes) {
@@ -272,12 +272,18 @@ function MyPromise(cb) {
         }
         _scope.errorRes = errorRes || {};
     };
-    cb(resolve, error);
+    var emit = function(n,err,r){
+        _scope.evt[n] = _scope.evt[n] || {};
+        _scope.evt[n].res = {err:err,r:r};
+        if(_scope.evt[n].cb!==undefined){
+            _scope.evt[n].cb(_scope.evt[n].res.err,_scope.evt[n].res.r);
+        }
+    };
+    cb(resolve, error,emit);
     var rta = {
         then: function(cb) {
-            if (_scope.res) _scope.res = cb(_scope.res);
+            if (_scope.res) cb(_scope.res);
             else _scope.cb = cb;
-            //console.info('PROMISE THEN: ',cb);
             return rta;
         },
         error: function(errorCb) {
@@ -285,13 +291,19 @@ function MyPromise(cb) {
             else _scope.errorCb = errorCb;
             return rta;
         },
-        arr: function() {
-            _scope.res = _scope.res || [];
-            return _scope.res;
+        on:function(n,cb){
+            _scope.evt[n] = _scope.evt[n]  || {};
+            _scope.evt[n].cb = cb;
+            if(_scope.evt[n].res !== undefined){
+                _scope.evt[n].cb(_scope.evt[n].res.err,_scope.evt[n].res.r);
+            }
+            return rta;
         }
     };
     return rta;
 }
+
+
 if (typeof exports !== 'undefined') {
     exports.MyPromise = MyPromise;
     exports.getHashParams = getHashParams;
