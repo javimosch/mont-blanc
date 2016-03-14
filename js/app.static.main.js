@@ -438,6 +438,7 @@ app.controller('fullpage', ['server',
                     }
                 }
 
+                if(!s.availableTimeRanges) return;
                 //retrieve diag names.
                 s.availableTimeRanges.forEach(r => {
                     db.ctrl('User', 'get', { _id: r._diag }).then(d => {

@@ -66,7 +66,22 @@
                 </li>
             </ul>
             <div class="table-responsive order">
-                <table class="table order">
+                <table class="table order" >
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TOTAL</td>
+                            <td>{{totalPrice(true)}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--
+                <table class="table order" >
                     <thead>
                         <tr>
                             <th>Description</th>
@@ -99,6 +114,7 @@
                         </tr>
                     </tfoot>
                 </table>
+                -->
             </div>
         </div>
     </div>
