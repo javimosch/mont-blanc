@@ -88,6 +88,12 @@ app.controller('adminUsersEdit', [
             email: '',
             password: ''
         };
+
+        if(r.params&&r.params.item){
+            s.item=Object.assign(r.params.item);
+            delete r.params.item;
+        }
+
         s.original = _.clone(s.item);
         //
         s.types = {
@@ -149,6 +155,8 @@ app.controller('adminUsersEdit', [
         s.validate = () => {
             ifThenMessage([
                 [s.item.userType, '==', undefined, "User type required"],
+                [!s.item.email, '==', true, "Email required"],
+                [!s.item.password, '==', true, "Password required"],
                 [s.item.email, '==', '', "Email cannot be empty"],
                 [s.item.password, '==', '', "Password cannot be empty"]
             ], (m) => {
@@ -156,12 +164,6 @@ app.controller('adminUsersEdit', [
             }, s.save);
         };
         s.save = function() {
-            s.message('saving . . .', 'info');
-
-            s.requesting = true;
-
-
-
             db.ctrl('User', 'getAll', {
                 email: s.item.email,
                 userType: s.item.userType,

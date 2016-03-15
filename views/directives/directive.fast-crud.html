@@ -1,12 +1,14 @@
-<div class="panel panel-info">
-    <div class="panel-heading" >
-        <h4 class="panel-title">{{title}}</h4>
+<out class="form-tiny">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="v-margin-2 padding-0">{{title}}</h3>
+        </div>
     </div>
-    <div class="panel-body">
-        <div data-dynamic-table model="model"></div>
-        <crud-modal open="open" close="close"></crud-modal>
-        <div data-modal-confirm open="confirm"></div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div data-dynamic-table model="model"></div>
+            <crud-modal open="open" close="close"></crud-modal>
+            <div data-modal-confirm open="confirm"></div>
+        </div>
     </div>
-    <div class="panel-footer">
-    </div>
-</div>
+</out>

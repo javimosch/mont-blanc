@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html class="no-js" ng-app="app">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -26,6 +25,7 @@
 </head>
 
 <body>
+    <!-- GLOBAL LAYOUT -->
     <div class="container-fluid">
         <div class="row-fluid">
             <div ng-include="'views/partials/partial.admin.nav.html'"></div>
@@ -34,15 +34,14 @@
             <div ng-view></div>
         </div>
     </div>
+    <!--GLOBAL DIRECTIVES -->
     <my-alerts add="message" directive="notify"></my-alerts>
     <my-alerts add="notify" directive="notify" stacked="true" settings="{clickDismissable:false}"></my-alerts>
     <modal-custom open="okModal" template-url="views/partials/popup.message.ok.html"></modal-custom>
     <span data-spinner show="state.working"></span>
     <span data-debug show="showDebug"></span>
-
     <!--TEMPLATES-->
     <div ng-include="'views/templates/templates.user.html'"></div>
-
     <!--VENDOR-->
     <script src="js/vendor/vendor.jquery.js"></script>
     <script src="js/vendor/vendor.jquery.fullpage.js"></script>
@@ -58,46 +57,38 @@
     <script src="js/vendor/vendor.ui-bootstrap.js"></script>
     <script src="js/vendor/vendor.ui-bootstrap-tpls.js"></script>
     <script type="text/javascript" src="js/vendor/vendor.angular.ui-bootstrap.datetimepicker.js"></script>
-    <!--
-    <script type="text/javascript" src="js/vendor/vendor.angular.ui-bootstrap.datetimepicker-tpls.js"></script>
-    -->
     <script src="js/vendor/vendor.angular.bcalendar.js"></script>
     <script src="js/vendor/vendor.angular.bcalendar.tpls.js"></script>
     <script src="js/vendor/vendor.lodash.js"></script>
     <script src="js/vendor/vendor.db.js"></script>
-    <!--CUSTOM-->
+    <!--COMMON-->
     <script src="js/diags.common.utils.js"></script>
     <script src="js/app.common.utils.js"></script>
     <script src="js/app.common.service.js"></script>
     <script src="js/app.common.root.js"></script>
     <script src="js/app.common.directives.js"></script>
+    <!-- BACKOFFICE -->
+    <script src="js/app.backoffice.js"></script>
     <script src="js/app.admin.js"></script>
     <script src="js/app.admin.routes.js"></script>
-
     <script src="js/app.tools.js"></script>
-    
     <script src="js/app.admin.calendar.js"></script>
     <script src="js/section.notifications.js"></script>
-
     <script src="js/app.admin.login.js"></script>
     <script src="js/app.admin.user.js"></script>
-    <script src="js/app.admin.diag.js"></script>
-    <script src="js/app.admin.diag.balance.js"></script>
-    <script src="js/app.admin.client.js"></script>
-    <script src="js/app.admin.order.js"></script>
+    <script src="js/app.diag.js"></script>
+    <script src="js/app.diag.balance.js"></script>
+    <script src="js/app.client.js"></script>
+    <script src="js/app.diag.js"></script>
+    <script src="js/app.order.js"></script>
     <script src="js/app.admin.client.payments.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
     <script src="js/vendor/vendor.geocomplete.js"></script>
-    
-
+    <!-- BACKOFFICE THIRD PARTY -->
     <script src="https://checkout.stripe.com/checkout.js"></script>
-
-	<script type="text/javascript" src="js/vendor/vendor.canvas-to-blob.min.js"></script>
-	<script type="text/javascript" src="js/vendor/vendor.jspdf.js"></script>
-	<script type="text/javascript" src="js/vendor/vendor.html2canvas.js"></script>
-	<script type="text/javascript" src="js/vendor/vendor.filesaver.js"></script>
-
-
+    <script type="text/javascript" src="js/vendor/vendor.canvas-to-blob.min.js"></script>
+    <script type="text/javascript" src="js/vendor/vendor.jspdf.js"></script>
+    <script type="text/javascript" src="js/vendor/vendor.html2canvas.js"></script>
+    <script type="text/javascript" src="js/vendor/vendor.filesaver.js"></script>
 </body>
-
 </html>

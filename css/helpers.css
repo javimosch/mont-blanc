@@ -1,3 +1,16 @@
+
+
+.margin-left-0{
+    margin-left: 0px;
+}
+.margin-right-1{
+    margin-right: 5px;
+}
+
+.childs-margin-0>*{
+    margin: 0px!important;
+}
+
 .color-black{
     color:black!important;
 }
@@ -107,6 +120,9 @@ table.minimal td{
     align-items: center;
 }
 
+.inline-flex{
+    display: inline-flex;
+}
 .inline-block{
     display: inline-block;
 }

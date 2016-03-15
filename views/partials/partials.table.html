@@ -1,6 +1,6 @@
 <div>
     <div class="table-reponsive unselectable">
-        <table class="table">
+        <table class="table-dynamic table">
             <caption ng-show="caption">{{caption}}</caption>
             <thead>
                 <tr>
@@ -26,7 +26,7 @@
                      >
                         <out ng-if="!c.format" html-content html="item[c.name||c]"></out>
                         <out ng-if="c.format">
-                            {{c.format(item[c.name||c]);}}
+                            {{c.format(item[c.name||c],item);}}
                         </out>
                      </td>
 
@@ -36,8 +36,10 @@
             </tfoot>
         </table>
     </div>
-    <div ng-if="buttons">
-        <button ng-repeat="(k,v) in buttons" ng-if="v.show==undefined || v.show==true" ng-class="v.type()||''" ng-click="v.click()">{{v.label}}</button>
+    <div ng-if="buttons" class="">
+        <button ng-repeat="(k,v) in buttons" ng-if="v.show==undefined || v.show==true" ng-class="v.type({
+            $index:$index,$first:$first
+        })||''" ng-click="v.click()" >{{v.label}}</button>
         <out ng-if="model.buttonsTpl" ng-include="model.buttonsTpl" include-replace></out>
         <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Double click on a row to edit"></i>
     </div>

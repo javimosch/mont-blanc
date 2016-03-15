@@ -1,0 +1,189 @@
+<modal-confirm open="confirm"></modal-confirm>
+<div class="container" ng-controller="adminOrdersEdit">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="v-margin-2 padding-0">Order Details</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <ul class="form-tiny labelx2 center-block">
+                <!--ADMIN: CLIENT SELECTION-->
+                <li ng-if="userIs(['admin'])">
+                    <label>Client {{currentClientType && currentClientType()}}</label>
+                    <input ng-disabled="state.working() || item._id" type="text" class="" ng-model="item._client" placeholder="Client" uib-typeahead="client as client.email for client in getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading clients. . .'" typeahead-no-results="noResults">
+                </li>
+                <!--DIAG,CLIENT(AGENCY,COMPANY): CLIENT READONLY-->
+                <li ng-if="userIs(['diag','client'])">
+                    <label>Client {{currentClientType && currentClientType()}}</label>
+                    <input ng-disabled="true" type="text" class="" ng-value="item._client.email">
+                </li>
+                <!--ADMIN,CLIENT(AGENCY,COMPANY): Landlord details -->
+                <out ng-show="canWriteAgency() && !isOwner()">
+                    <li>
+                        <label>Landlord Name</label>
+                        <input type="text" ng-disabled="state.working()" ng-model="item.landLordFullName" placeholder="Landlord Fullname">
+                    </li>
+                    <li>
+                        <label>Landlord Email</label>
+                        <input type="email" ng-disabled="state.working()" ng-model="item.landLordEmail" placeholder="Landlord Email">
+                    </li>
+                    <li>
+                        <label>Landlord Phone</label>
+                        <input type="text" ng-disabled="state.working()" ng-model="item.landLordPhone" placeholder="Landlord Phone">
+                    </li>
+                    <li>
+                        <label>Landlord Address</label>
+                        <input type="text" ng-disabled="state.working()" data-address model="item" field="landLordAddress" placeholder="Landlord Address" class="fullwidth max-w-500">
+                    </li>
+                    <li>
+                        <label>Landlord Payment link</label>
+                        <button ng-disabled="state.working()" class="btn btn-default btn-sm" ng-click="sendPaymentLink()">Send Payment link</button>
+                    </li>
+                </out>
+                <!--ADMIN DIAG:CHOICE -->
+                <li ng-if="userIs(['admin'])">
+                    <label>Inspector</label>
+                    <input ng-disabled="state.working() || item._id" type="text" class="" ng-model="item._diag" placeholder="Diag" uib-typeahead="diag as diag.email for diag in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingDiags||'Loading diags...'" typeahead-no-results="noResults">
+                </li>
+                <li ng-if="!userIs(['admin'])">
+                    <label>Inspector</label>
+                    <input ng-value="item._diag.firstName && item._diag.firstName + ' ' + item._diag.lastName || item._diag.email" />
+                </li>
+                <li>
+                    <label for="address">Diag Address</label>
+                    <input ng-disabled="true" data-address model="item" field="address" name="address" type="text" placeholder="Diag Address" class="fullwidth max-w-500">
+                </li>
+                <li>
+                    <label>Diags</label>
+                    <ul class="form-tiny center-block inline-block">
+                        <li ng-repeat="(key,x) in diags" class="" ng-if="item.diags[x.name]==true">{{x.label}}
+                        </li>
+                    </ul>
+                </li>
+                <!--ADMIN start:choice-->
+                <li ng-if="userIs(['admin'])" class="inline-flex">
+                    <label>Start Date</label>
+                    <input ng-disabled="state.working() || is(['client','diag'])" type="text" class="max-w-150" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.diagStart" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
+                    <button ng-disabled="state.working() || is(['client','diag'])" type="button" class="btn btn-default" ng-click="start.opened = !start.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+                </li>
+                <!--ADMIN end:choice-->
+                <li ng-if="userIs(['admin'])" class="inline-flex">
+                    <label>End Date</label>
+                    <input ng-disabled="state.working() || is(['client','diag'])" type="text" class="max-w-150" uib-datepicker-popup="dd/MM/yyyy HH:mm " ng-model="item.diagEnd" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="end.opened=false" is-open="end.opened" date-disabled="false" close-text="Close" />
+                    <button ng-disabled="state.working() || is(['client','diag'])" type="button" class="btn btn-default" ng-click="end.opened = !end.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+                </li>
+                <li ng-if="!userIs(['admin'])">
+                    <label>Diag Start</label>
+                    <input ng-disabled="true" type="text" class="max-w-150" ng-value="momentFormat(item.diagStart,'DD-MM-YY HH:mm')" />
+                </li>
+                <li ng-show="!canWriteAgency()">
+                    <label>Keys Picking Address</label>
+                    <input type="text" disabled ng-model="item.keysAddress" class="fullwidth max-w-500" />
+                </li>
+                <li ng-show="!canWriteAgency()">
+                    <label>Keys Picking Time Range</label>
+                    <div class="inline-block">
+                        <input type="text" disabled class="max-w-150" ng-value="momentFormat(item.keysTimeFrom,'HH:mm')" />
+                        <input type="text" disabled class="max-w-150" ng-value="momentFormat(item.keysTimeTo,'HH:mm')" />
+                    </div>
+                </li>
+                <out ng-show="!isOwner() && !canWriteAgency()">
+                    <li>
+                        <label>Landlord Fullname</label>
+                        <input ng-value="item.landLordFullName" />
+                    </li>
+                    <li>
+                        <label>Landlord Email</label>
+                        <input ng-value="item.landLordEmail" />
+                    </li>
+                </out>
+                <li>
+                    <label>Observations</label>
+                    <textarea ng-disabled="true" type="text" class="fullwidth min-height-100 no-resize" ng-value="item.obs"></textarea>
+                </li>
+                <li ng-show="userIs(['admin','diag'])">
+                    <label>Debriefing pdf file: {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||"(not available yet)"}}</label>
+                    <input type="file" file-model="pdfFile" ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working()" class="form-control" placeholder="Diag Pdf">
+                    <button ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working() || !pdfFile" class="btn btn-default" ng-click="saveFile()">Upload</button>
+                    <button ng-disabled="!item.pdfId" class="btn btn-default" ng-click="downloadFile()">Download</button>
+                    <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
+                </li>
+                <li ng-show="!userIs(['admin'])">
+                    <label>Debriefing pdf file: {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||"(not available yet)"}}</label>
+                    <div class="inline-block">
+                        <button ng-disabled="!item.pdfId" class="btn btn-default" ng-click="downloadFile()">Download</button>
+                        <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
+                    </div>
+                </li>
+                <li>
+                    <label>Price (eur)</label>
+                    <input ng-disabled="true" type="number" class="max-w-60 text-right" placeholder="Price" ng-model="item.price">
+                </li>
+                <li>
+                    <label for="status">Status</label>
+                    <input type="text" disabled class="max-w-100" ng-value="item.status" />
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-4">
+            <ul class="form-tiny center-block">
+                <li ng-if="userIs(['admin'])" class="well well-sm">
+                    <label>Time Rules</label>
+                    <input type="text" disabled ng-value="totalTimeFormated()" />
+                    <button class="btn btn-default" ng-click="applyTotalTime()">Apply</button>
+                </li>
+                <li ng-if="userIs(['admin'])" class="well well-sm">
+                    <label>Price Rules</label>
+                    <input disabled type="number" ng-value="totalPrice(true)">
+                    <table class="table minimal">
+                        <tr ng-repeat="(k,v) in priceInfo">
+                            <td>{{k}}</td>
+                            <td>{{v}}</td>
+                        </tr>
+                        <tr>
+                            <td>Total</td>
+                            <td>{{totalPrice(true)}}</td>
+                        </tr>
+                        <tr>
+                            <td>- House size % for {{item.info.squareMeters}} is {{squareMetersPrice[item.info.squareMeters]}}%.</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>- House size formula is {{subTotal()}}*{{squareMetersPrice[item.info.squareMeters]}}/100</td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    <button class="btn btn-default" ng-click="applyTotalPrice()">Apply</button>
+                </li>
+                
+                <!--ADMIN,CLIENT(AGENCY,COMPANY): Landlord details -->
+                <out ng-show="canWriteAgency()">
+                    <li>
+                        <label>Keys where</label>
+                        <ctrl-select options="keysWhereTime"></ctrl-select>
+                    </li>
+                    <li>
+                        <label>Keys address</label>
+                        <input type="text" data-address model="item" field="keysAddress" class="fullwidth max-w-500">
+                    </li>
+                    <li>
+                        <label>Keys From</label>
+                        <uib-timepicker ng-show="true" max="item.diagStart" ng-disabled="state.working() || !item.keysAddress" ng-model="item.keysTimeFrom" hour-step="keysWhereTime.hstep" minute-step="keysWhereTime.mstep" show-meridian="false"></uib-timepicker>
+                    </li>
+                    <li>
+                        <label>Keys To</label>
+                        <uib-timepicker ng-show="true" max="item.diagStart" ng-disabled="state.working() || !item.keysAddress" ng-model="item.keysTimeTo" hour-step="keysWhereTime.hstep" minute-step="keysWhereTime.mstep" show-meridian="false"></uib-timepicker>
+                    </li>
+                </out>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="validate()">Save</button>
+            <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>
+            <button ng-disabled="state.working() || requesting || userIs(['client','diag'])" class="btn btn-default" ng-click="delete()">Delete</button>
+        </div>
+    </div>
+</div>

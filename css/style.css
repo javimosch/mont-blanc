@@ -165,12 +165,22 @@ list-style: none;/* max-width: 400px; */padding: 0px;}
 .form-tiny a:hover{}
 
 .table-dynamic{}
-.table-dynamic td{}
-.table-dynamic th{}
-.table-dynamic tr{}
-.table-dynamic li{}
-.table-dynamic li{}
-.table-dynamic tbody,.table-dynamic tfoot,.table-dynamic thead{}
+.table-dynamic>tbody>tr>td{
+    padding: 5px 0px;
+    /* border-right: 1px solid rgba(0,0,0,.1); */
+    padding-right: 10px;
+    /* border-bottom: 0px; */
+    /* border-top: 0px; */
+    margin: 0px;
+}
+.table-dynamic>tbody>tr>td>*{}
+.table-dynamic>thead>tr>th{
+    padding: 5px 0px;
+}
+.table-dynamic>thead>tr{}
+.table-dynamic>tbody>tr{}
+.table-dynamic>tbody>tr>td>li{}
+.table-dynamic>tbody,.table-dynamic>tfoot,.table-dynamic>thead{}
 
 
 .childs-labels label{

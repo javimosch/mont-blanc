@@ -1,5 +1,5 @@
 (() => {
-    var app = angular.module('app.admin.diag.balance', []);
+    var app = angular.module('app.diag.balance', []);
     app.directive('diagBalance', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
         return {

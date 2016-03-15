@@ -1,32 +1,4 @@
-<div class="container" ng-controller="adminUsers" ng-init="routeParams({prevRoute:'administrators'})"
->
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <h3 class="panel-title">Back-office Administrators</h3>
-            <div class="btn-group" role="group" aria-label="...">
-                <button type="button" class="btn btn-default" ng-click="create()">New</button>
-            </div>
-        </div>
-        <div class="panel-body">
-            <div class="table-responsive">
-                <table class="table table-condensed table-hover">
-                    <thead>
-                        <tr>
-                            <th>Email</th>
-                            <th>Cell phone</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="(key,item) in items | filter:{userType:'admin'}" ng-click="click(item,'administrators/edit/')">
-                            <td>{{item.email}}</td>
-                            <td>{{item.cellPhone}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="panel-footer">
-        </div>
-    </div>
-    <modal-confirm open="confirm"></modal-confirm>
+<div class="container">
+    <admins-list></admins-list>
 </div>
+<modal-confirm open="confirm"></modal-confirm>

@@ -18,17 +18,17 @@
             },
             templateUrl: vars.TPL_CRUD,
             link: function(s, elem, attrs) {
-                var r = $rootScope;
-                var ws = server;
-                var n = attrs.name;
+                var r = $rootScope,db=server;
                 s.title = vars.TITLE;
-                window.balance = s;
-
                 r.logger.addControlledErrors([
                     "SENDING_DISABLED_TYPE"
                 ]);
 
-                function update() {
+                function update(items) {
+                    if(items){
+                        s.model.update(items);
+                        return;
+                    }
                     var data = {
                         //_user: r.session()._id,
                         __populate: {
@@ -36,10 +36,11 @@
                         }
                     };
 
-                    ws.ctrl('Notification', 'getAll', data).then((res) => {
+                    db.ctrl('Notification', 'getAll', data).then((res) => {
                         if (res.ok) {
                             console.info('notifications', res.result);
-                            s.model.update(res.result, s.balance);
+                            s.items = res.result;
+                            s.model.update(res.result);
                         }
                     });
                 }
@@ -51,25 +52,19 @@
                             _id: item._id
                         };
                         item._config.notifications = _.pull(item._config.notifications, item._id);
-                        ws.ctrl('UserNotifications', 'update', item._config).then((d) => {
+                        db.ctrl('UserNotifications', 'update', item._config).then((d) => {
                             if (d.ok) {
-                                ws.ctrl('Notification', 'remove', rule).then((d) => {
-                                    update(true)
+                                db.ctrl('Notification', 'remove', rule).then((d) => {
+                                    if(!d.ok){
+                                        s.items.push(item);//on error push item again
+                                        update(s.items);
+                                    }
                                 });
                             }
                         });
+                        s.items = s.items.filter(v=>v._id!==item._id);
+                        update(s.items);
                     },
-                    periodSelected: 'year',
-                    periods: createSelect({
-                        label: '(Select a period)',
-                        model: 'model.periodSelected',
-                        scope: s,
-                        change: x => {
-                            console.info(x);
-                            update(true)
-                        },
-                        items: ['month', 'year']
-                    }),
                     buttonsTpl: vars.TPL_CRUD_BUTTONS,
                     tfoot: vars.TPL_CRUD_TFOOT,
                     click: (item, index) => {
@@ -78,7 +73,7 @@
                             send: () => {
                                 s.confirm('Confirm sending to ' + item.to + '?', () => {
                                     //html from to subject
-                                    ws.ctrl('Email', 'send', {
+                                    db.ctrl('Email', 'send', {
                                         _user: item._user,
                                         _notification: item._id,
                                         html: item.contents,
@@ -93,11 +88,11 @@
                         };
 
 
-                        //ws.localData().then(function(d) {
+                        //db.localData().then(function(d) {
                         //  Object.assign(data, d);
                         //});
 
-                        //ws.ctrl('Payment', 'associatedOrder', {
+                        //db.ctrl('Payment', 'associatedOrder', {
                         //source: item.source
                         //}).then((data) => {
                         //item = Object.assign(data.result);
@@ -119,13 +114,8 @@
                     },
                     buttons: [{
                         label: "Refresh",
-                        type: () => "btn btn-primary spacing-h-1",
-                        click: () => update(true)
-                    }, {
-                        label: "Recalc",
-                        show: false,
-                        type: () => "btn btn-primary spacing-h-1",
-                        click: () => update(true)
+                        type: () => "btn btn-default",
+                        click: () => update()
                     }],
                     columns: [{
                         label: 'To',

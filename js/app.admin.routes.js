@@ -59,7 +59,7 @@ app.config(['$routeProvider',
             templateUrl: 'views/view.admin.orders.html'
         }).
         when('/orders/edit/:id', {
-            templateUrl: 'views/view.admin.orders.edit.html'
+            templateUrl: 'views/order.edit.html'
         }).
         when('/orders/view/:id', {
             templateUrl: 'views/view.admin.orders.view.html'

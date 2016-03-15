@@ -1,21 +1,18 @@
+<div class="container">
+    <diags-list></diags-list>
+</div>
+<modal-confirm open="confirm"></modal-confirm>
+
+
 <!--
-type: {type:String,default:'Landlord'}, //(Landlord / Agency / Foncière)
-    address: String,
-    tel: String,
-    siret: String,
-    discount: {type:Number,default:0},
-    email: String,
-    password: String,
-    -->
+
+
 <div class="container" ng-controller="adminDiags">
     <div class="panel panel-info">
         <div class="panel-heading">
             <h3 class="panel-title">Diags</h3>
             <div class="btn-group" role="group" aria-label="...">
                 <button type="button" class="btn btn-default" ng-click="create()">New</button>
-                <!--
-                <button ng-disabled="s.selectedItems===0" type="button" class="btn btn-default" ng-click="delete()">Delete</button>
-                -->
             </div>
         </div>
         <div class="panel-body">
@@ -23,7 +20,7 @@ type: {type:String,default:'Landlord'}, //(Landlord / Agency / Foncière)
                 <table class="table table-condensed table-hover">
                     <thead>
                         <tr>
-                            <!--<th>#</th>-->
+                            
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Comission</th>
@@ -31,11 +28,7 @@ type: {type:String,default:'Landlord'}, //(Landlord / Agency / Foncière)
                     </thead>
                     <tbody>
                         <tr ng-repeat="(key,item) in items" ng-click="click(item)">
-                            <!--
-                            <td>
-                                <check-box/ val="item._id" push="selectedItems" ng-click="select()">
-                            </td>
-                            -->
+                            
                             <td>{{item.email}}</td>
                             <td>{{item.tel}}</td>
                             <td>{{item.comission}}</td>
@@ -47,6 +40,7 @@ type: {type:String,default:'Landlord'}, //(Landlord / Agency / Foncière)
         <div class="panel-footer">
         </div>
     </div>
-    <!-- <my-alerts add="message"></my-alerts> -->
+    
     <modal-confirm open="confirm"></modal-confirm>
 </div>
+    -->
