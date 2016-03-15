@@ -92,11 +92,10 @@ app.directive('ctrlSelect', function($rootScope) {
                 if (!choice.label) return choice;
                 return (typeof choice.label !== 'string') ? choice.label() : choice.label;
             };
-            s.choiceDisabled = (choice)=>{
-                if(choice.disabled) {
+            s.choiceDisabled = (choice) => {
+                if (choice.disabled) {
                     return choice.disabled();
-                }
-                else return false;
+                } else return false;
             };
 
             var r = $rootScope;
@@ -130,7 +129,7 @@ app.directive('ctrlSelect', function($rootScope) {
                 });
             }
 
-            
+
 
 
             opt.scope.$watch(opt.modelPath, (v, oldV) => {
@@ -193,6 +192,25 @@ app.directive('includeReplace', function() {
         /* optional */
         link: function(scope, el, attrs) {
             el.replaceWith(el.children());
+        }
+    };
+});
+
+app.directive('activeRoute', function($rootScope) {
+    return {
+        restrict: 'A',
+        link: function(scope, el, attrs) {
+            function apply() {
+                if ($rootScope.routeIs(attrs.activeRoute)) {
+                    el.addClass('active');
+                } else {
+                    el.removeClass('active');
+                }
+            }
+            $rootScope.dom(apply);
+            $rootScope.$watch('__route',__route=>{
+                $rootScope.dom(apply);
+            });
         }
     };
 });

@@ -70,7 +70,9 @@ app.controller('adminOrdersEdit', [
 
             if (window.location.href.indexOf('orders/view') !== -1) {
                 //no login needed
-                r.toggleNavbar(false);
+                if(!r.params && !r.params.prevRoute){
+                    r.toggleNavbar(false);
+                }
             } else {
                 r.secureSection(s);
             }

@@ -142,7 +142,12 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
             path += '#/' + url;
             window.location.href = path;
         }, delay || 0);
+        r.__route = url;
+        return url;
     };
+    r.routeIs=(n)=>r.__route && r.__route.toString().toLowerCase().indexOf(n&&n.toLowerCase()||'invalid')!==-1 || false;
+    r.__route = window.location.href.replace(window.location.origin + window.location.pathname,'');
+
 
     r.userIs = (arr) => {
         var type = r.session().userType;

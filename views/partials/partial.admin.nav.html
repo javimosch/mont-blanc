@@ -9,23 +9,23 @@
             </button>
             <a class="navbar-brand link" ng-click="route('dashboard')">Diags Project</a>
         </div>
-        <span class="login-info small">Logged as {{session().email}} ({{session().userType}})</span>
+        
         <div id="navbar" class="navbar-collapse collapse" collapse-nav>
             <ul class="nav navbar-nav navbar-right spacing-1">
                 <li ng-show="logged()">
-                    <a class="link" ng-click="route('dashboard')">Dashboard</a>
+                    <a class="link" active-route="dashboard" ng-click="route('dashboard')">Dashboard</a>
                 </li>
-                <li ng-show="logged() && userIs(['admin'])"><a class="link" ng-click="route('global-calendar')">Global Calendar</a></li>
-                <li ng-show="logged() && userIs(['admin'])"><a class="link" ng-click="route('diags')">Diags</a></li>
-                <li ng-show="logged() && userIs(['admin'])"><a class="link" ng-click="route('orders')">Orders</a></li>
-                <li ng-show="logged() && userIs(['admin'])"><a class="link" ng-click="route('clients')">Clients</a></li>
-                <li ng-show="logged() && userIs(['admin'])"><a class="link" ng-click="route('administrators')">Admins</a></li>
-                <li ng-show="logged() && userIs(['admin'])"><a class="link" ng-click="route('notifications')">Notifications</a></li>
-<li ng-show="logged() && userIs(['admin'])"><a class="link" ng-click="route('tools')">Tools</a></li>
+                <li ng-show="logged() && userIs(['admin'])"><a class="link" active-route="global-calendar" ng-click="route('global-calendar')">Global Calendar</a></li>
+                <li ng-show="logged() && userIs(['admin'])"><a class="link" active-route="diags" ng-click="route('diags')">Diags</a></li>
+                <li ng-show="logged() && userIs(['admin'])"><a class="link" active-route="orders" ng-click="route('orders')">Orders</a></li>
+                <li ng-show="logged() && userIs(['admin'])"><a class="link" active-route="clients" ng-click="route('clients')">Clients</a></li>
+                <li ng-show="logged() && userIs(['admin'])"><a class="link" active-route="admins" ng-click="route('administrators')">Admins</a></li>
+                <li ng-show="logged() && userIs(['admin'])"><a class="link" active-route="notifications" ng-click="route('notifications')">Notifications</a></li>
+<li ng-show="logged() && userIs(['admin'])"><a class="link" active-route="tools" ng-click="route('tools')">Tools</a></li>
 
-                <li ng-show="logged() && userIs(['diag'])"><a class="link" ng-click="route('diag/balance')">Balance</a></li>
+                <li ng-show="logged() && userIs(['diag'])"><a class="link" active-route="balance" ng-click="route('diag/balance')">Balance</a></li>
                 <li ng-show="logged()">
-                    <a class="link color-black" ng-click="logout()">Logout
+                    <a class="link" ng-click="logout()">Logout
                       <span class="small" ng-show="false">
                         ({{session().email}})
                       </span>
@@ -35,6 +35,9 @@
                     <a class="link" ng-click="route('login')">Login</a>
                 </li>
             </ul>
+        </div>
+        <div class="fullwidth float-right text-right">
+            <span class="login-info small">Logged as {{session().email}} ({{session().userType}})</span>
         </div>
     </div>
 </nav>
