@@ -186,9 +186,12 @@ app.controller('fullpage', ['server',
                 //
                 //(true && s.model.house && s.model.squareMeters) &&
                 //(true && s.model.house == false && !s.model.apartamentType) &&
-                ((true && s.model.house == true && s.model.squareMeters) ||
-                    (true && s.model.house == false && s.model.apartamentType)) &&
-                //
+                
+                //deprecated: now there is only squareMeters (for house and apartment)
+                //((true && s.model.house == true && s.model.squareMeters) || (true && s.model.house == false && s.model.apartamentType)) &&
+                (true && s.model.squareMeter) &&
+
+                
                 (true && s.model.constructionPermissionDate) &&
                 (true && s.model.gasInstallation) &&
                 (true && s.model.electricityInstallation) &&
@@ -465,8 +468,8 @@ app.controller('fullpage', ['server',
             var req = {
                 'question1': () => (true && s.model.sell !== undefined),
                 'question2': () => (true && s.model.house !== undefined),
-                'question3': () => ((true && s.model.house == true && s.model.squareMeters) ||
-                    (true && s.model.house == false && s.model.apartamentType)),
+                //'question3': () => ((true && s.model.house == true && s.model.squareMeters) ||(true && s.model.house == false && s.model.apartamentType)),
+                'question3': () => (true && s.model.squareMeters),
                 'question4': () => (true && s.model.constructionPermissionDate),
                 'question5': () => (true && s.model.address),
                 'question6': () => (true && s.model.gasInstallation),

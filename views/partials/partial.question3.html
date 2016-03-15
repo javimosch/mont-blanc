@@ -5,7 +5,7 @@
     <div class="panel-heading" ng-show="!model.house">
         <h4 class="panel-title">Apartment size</h4>
     </div>
-    <output ng-show="model.house">
+    <output > <!--ng-show="model.house"-->
         <div class="panel-body">
             <div ng-repeat="(k,v) in squareMeters" class="input-group">
                 <span class="input-group-addon no-bg borderless">
@@ -15,7 +15,9 @@
             </div>
         </div>
     </output>
-    <output ng-show="!model.house">
+
+    <!-- //deprecated: now there is only squareMeters (for house and apartment) -->
+    <output ng-if="false" ng-show="!model.house">
         <div class="panel-body">
             <div ng-repeat="(k,v) in apartamentType" class="input-group">
                 <span class="input-group-addon no-bg borderless">
@@ -25,6 +27,7 @@
             </div>
         </div>
     </output>
+
     <div class="panel-footer">
 <button class="btn btn-success center-block text-center" ng-click="down()"
 ng-disabled="model.squareMeters === undefined && model.apartamentType === undefined"
