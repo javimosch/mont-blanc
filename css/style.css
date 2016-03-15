@@ -128,9 +128,13 @@ list-style: none;/* max-width: 400px; */padding: 0px;}
 .form-tiny li{
     margin: 5px 0px;
 }
+.form-tiny.labelx2 label{
+    min-width: 210px;
+}
 .form-tiny label{
     min-width: 135px;
     font-size: 0.8rem;
+    vertical-align: top;
 }
 .form-tiny button:active:focus{
     outline: none;

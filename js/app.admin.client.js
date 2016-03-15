@@ -1,4 +1,4 @@
-/*
+
 var app = angular.module('app.admin.client', []);
 app.directive('clientOrders', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
@@ -74,7 +74,7 @@ app.directive('clientOrders', function(
                         item: item,
                         prevRoute: 'dashboard'
                     };
-                    r.route('orders/edit/' + item._id);
+                    r.route('orders/view/' + item._id);
 
                 },
                 buttons: [{
@@ -104,4 +104,3 @@ app.directive('clientOrders', function(
 });
 
 //
-*/

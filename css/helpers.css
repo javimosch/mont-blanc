@@ -107,6 +107,10 @@ table.minimal td{
     align-items: center;
 }
 
+.inline-block{
+    display: inline-block;
+}
+
 .inline {
     display: inline-flex;
 }
@@ -136,6 +140,9 @@ table.minimal td{
 
 .v-spacing-1 {
     padding: 5px 0px;
+}
+.padding-0{
+    padding: 0px;
 }
 .h-padding-15{
     padding-left:15px;

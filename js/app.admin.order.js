@@ -105,6 +105,11 @@ app.controller('adminOrdersEdit', [
 
         function setHelpers() {
 
+            s.isOwner=()=>{
+                if(!s.item || !s.item._client) return false;
+                return s.item._client.clientType === 'landlord';
+            };
+
             s.successMsg = (msg) => {
                 r.message(msg, {
                     type: 'success',

@@ -5,7 +5,7 @@ var app = angular.module('app', [
     'app.admin.diag',
     'app.admin.diag.balance',
     'app.admin.order',
-//    'app.admin.client',
+    'app.admin.client',
     'app.admin.calendar',
     'app.notifications',
     'app.admin.client.payments',

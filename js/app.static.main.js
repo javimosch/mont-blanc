@@ -34,23 +34,28 @@ app.controller('fullpage', ['server',
             return _.includes(['prepaid', 'completed'], s._order.status);
         }
 
-        s.departmentHasTermites=()=>{
-            if(s.model.department){
-                var code = s.model.postCode.substring(0,2);
-                return _.includes(s.termitesDepartments.map(v=>(v.toString())),code);
+        s.departmentHasTermites = () => {
+            if (s.model.department) {
+                var code = s.model.postCode.substring(0, 2);
+                return _.includes(s.termitesDepartments.map(v => (v.toString())), code);
             }
         };
 
         s.orderExistsNote = () => {
             if (!s.booking.order.exists) return;
             if (!s.booking.order.saved) return;
-            if (s._order.landLordPaymentEmailSended == true) {
-                if (!s.booking.order.delegatedTo) {
-                    s.booking.order.delegatedTo = s._order.landLordEmail;
+
+            if (s._user.clientType !== 'landlord') {
+                if (s._order.landLordPaymentEmailSended == true) {
+                    if (!s.booking.order.delegatedTo) {
+                        s.booking.order.delegatedTo = s._order.landLordEmail;
+                    }
+                } else {
+                    return "The payment of this order is pending.";
                 }
-            }else{
-                return "The payment of this order is pending.";
             }
+
+
             var delegated = 'The payment of this order was delegated to ' + s.booking.order.delegatedTo;
             if (_.includes(['prepaid', 'completed'], s._order.status)) {
                 if (s._order.landLordPaymentEmailSended == true) {
@@ -70,7 +75,7 @@ app.controller('fullpage', ['server',
             },
             invalidKeysTime: () => {
                 var before = (d1, h) => moment(d1).isBefore(moment(d1).hours(8));
-                var diag={
+                var diag = {
                     hours: moment(s._order.diagStart).hours(),
                     minutes: moment(s._order.diagStart).minutes()
                 };
@@ -78,11 +83,11 @@ app.controller('fullpage', ['server',
                 var tfrom = s._order.keysTimeFrom;
                 var tto = s._order.keysTimeTo;
                 if (!tfrom || before(tfrom) || after(tfrom)) {
-                    console.warn('invalidKeysTime from',(!tfrom),before(tfrom),after(tfrom));
+                    console.warn('invalidKeysTime from', (!tfrom), before(tfrom), after(tfrom));
                     return true;
                 }
                 if (!tto || before(tto) || after(tto)) {
-                    console.warn('invalidKeysTime to',(!tto),before(tto),after(tto));
+                    console.warn('invalidKeysTime to', (!tto), before(tto), after(tto));
                     return true;
                 }
                 if (tto && tfrom && moment(tto).isBefore(moment(tfrom))) {
@@ -125,24 +130,24 @@ app.controller('fullpage', ['server',
             items: [],
             updateItems: ((self) => {
                 var o = [{
-                    label: ()=>s._order && s._order.address||'Diag Address',
+                    label: () => s._order && s._order.address || 'Diag Address',
                     val: 1,
                     get: () => s._order && s._order.address
                 }];
                 if (s._order._client && s._order._client.clientType == 'agency') {
                     o.push({
-                        label:()=>s._user.address||'Agency address',
+                        label: () => s._user.address || 'Agency address',
                         val: 3,
                         get: () => s._user.address || ''
                     }, {
-                        label: ()=>s._order.landLordAddress ||'Landlord address',
+                        label: () => s._order.landLordAddress || 'Landlord address',
                         val: 4,
-                        disabled:()=>!s._order.landLordAddress,
+                        disabled: () => !s._order.landLordAddress,
                         get: () => s._order.landLordAddress || ''
                     }); //when agency / other
                 } else {
                     o.push({
-                        label: ()=>s._user.address ||'Client address',
+                        label: () => s._user.address || 'Client address',
                         val: 3,
                         get: () => s._user.address || ''
                     }); //when landlord
@@ -201,18 +206,18 @@ app.controller('fullpage', ['server',
                 //
                 //(true && s.model.house && s.model.squareMeters) &&
                 //(true && s.model.house == false && !s.model.apartamentType) &&
-                
+
                 //deprecated: now there is only squareMeters (for house and apartment)
                 //((true && s.model.house == true && s.model.squareMeters) || (true && s.model.house == false && s.model.apartamentType)) &&
-                (true && s.model.squareMeters||false) &&
+                (true && s.model.squareMeters || false) &&
 
-                
-                (true && s.model.constructionPermissionDate||false) &&
-                (true && s.model.gasInstallation||false) &&
-                (true && s.model.electricityInstallation||false) &&
-                (true && s.model.address||false) &&
-                (true && s.model.diagStart||false) &&
-                (true && s.model.diagEnd||false) &&
+
+                (true && s.model.constructionPermissionDate || false) &&
+                (true && s.model.gasInstallation || false) &&
+                (true && s.model.electricityInstallation || false) &&
+                (true && s.model.address || false) &&
+                (true && s.model.diagStart || false) &&
+                (true && s.model.diagEnd || false) &&
                 true;
             return isValid;
         };
@@ -368,11 +373,11 @@ app.controller('fullpage', ['server',
                     toggle('crep', true);
                 }
 
-                if(s.departmentHasTermites()){
-                    toggle('termites', true);   
+                if (s.departmentHasTermites()) {
+                    toggle('termites', true);
                     s.model.diags.termites = true;
-                }else{
-                    toggle('termites', false);   
+                } else {
+                    toggle('termites', false);
                     s.model.diags.termites = false;
                 }
 
@@ -457,7 +462,7 @@ app.controller('fullpage', ['server',
                     }
                 }
 
-                if(!s.availableTimeRanges) return;
+                if (!s.availableTimeRanges) return;
                 //retrieve diag names.
                 s.availableTimeRanges.forEach(r => {
                     db.ctrl('User', 'get', { _id: r._diag }).then(d => {
@@ -612,17 +617,17 @@ app.controller('fullpage', ['server',
             });
         }
 
-        s.backToBookingQuestions = ()=>{
+        s.backToBookingQuestions = () => {
             s.moveTo('question5');
-            $('#fp-nav').toggle(true)//nav on again
+            $('#fp-nav').toggle(true) //nav on again
             s.left();
         };
-        s.slideToAuth = ()=>{
-            if(s.subscribeMode){
+        s.slideToAuth = () => {
+            if (s.subscribeMode) {
                 s.saveAsync();
             }
             s.hideNav();
-            s.right();   
+            s.right();
         }
 
         s.validateBooking = (cb) => {
@@ -677,23 +682,23 @@ app.controller('fullpage', ['server',
 
         s.subscribeMode = false;
         s.subscribeConfirm = () => {
-            var addressMessage = ()=>{
-                if(s._user.clientType=='landlord') return 'Address required.';
-                if(s._user.clientType=='agency') return 'Agency address required.';
-                if(s._user.clientType=='other') return 'Company address required.';
+            var addressMessage = () => {
+                if (s._user.clientType == 'landlord') return 'Address required.';
+                if (s._user.clientType == 'agency') return 'Agency address required.';
+                if (s._user.clientType == 'other') return 'Company address required.';
             };
             ifThenMessage([
-                [!s._user.address, '==', true,addressMessage],
+                [!s._user.address, '==', true, addressMessage],
                 [!s._user.email, '==', true, "Email required."],
                 [!s._user.password, '==', true, "Password required."],
                 [!s._user.fixedTel && !s._user.cellPhone, '==', true, "at least one fixed phone or cell phone is required."],
             ], (m) => {
-                if (typeof m[0] !== 'string') {s.warningMsg(m[0]())} else {s.warningMsg(m[0]);}
-            }, ()=>{
-                db.ctrl('User', 'update', s._user).then(() => s.right());    
-            });            
+                if (typeof m[0] !== 'string') { s.warningMsg(m[0]()) } else { s.warningMsg(m[0]); }
+            }, () => {
+                db.ctrl('User', 'update', s._user).then(() => s.right());
+            });
 
-            
+
         };
         s.subscribe = (clientType) => {
             s.validateAuthInput(() => {
@@ -747,6 +752,15 @@ app.controller('fullpage', ['server',
                 s.model.email = s._user.email;
                 s.model.clientType = s._user.clientType;
             }
+
+            //defaults for keysTime
+            if (!s.model.keysTimeFrom && s.model.diagStart) {
+                s.model.keysTimeFrom = moment(s.model.diagStart).subtract(2, 'hour');
+            }
+            if (!s.model.keysTimeTo && s.model.diagStart) {
+                s.model.keysTimeTo = moment(s.model.diagStart);
+            }
+
             db.ctrl('Order', 'saveWithEmail', s.model).then(data => {
                 var saved = data.ok;
                 var exists = (data.err === 'ORDER_EXISTS');

@@ -36,7 +36,7 @@
                         <input type="text" data-address model="_order" field="landLordAddress" placeholder="Landlord Address" class="fullwidth max-w-500">
                     </li>
                     <out>
-                        <li>
+                        <li ng-show="!orderPaid()">
                             <label>Keys where</label>
                             <ctrl-select options="keysWhereTime"></ctrl-select>
                         </li>
