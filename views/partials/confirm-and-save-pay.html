@@ -35,14 +35,14 @@
                         <label>Landlord Address</label>
                         <input type="text" data-address model="_order" field="landLordAddress" placeholder="Landlord Address" class="fullwidth max-w-500">
                     </li>
-                    <out >
+                    <out>
                         <li>
                             <label>Keys where</label>
                             <ctrl-select options="keysWhereTime"></ctrl-select>
                         </li>
                         <li>
                             <label>Keys address</label>
-                            <input type="text" disabled ng-model="_order.keysAddress" class="fullwidth max-w-500">
+                            <input type="text" data-address model="_order" field="keysAddress" class="fullwidth max-w-500">
                             <li>
                                 <label>Keys time</label>
                                 <uib-timepicker ng-show="_order.keysAddress" ng-disabled="state.working()" ng-model="_order.keysTime" hour-step="keysWhereTime.hstep" minute-step="keysWhereTime.mstep" show-meridian="true"></uib-timepicker>
@@ -82,13 +82,11 @@
                 <button ng-disabled="state.working() || booking.payment.complete" class="btn btn-primary" ng-click="invoiceEndOfTheMonth()">
                     Invoice end of the month
                 </button>
+                <out ng-show="!orderPaid()">
+                    or
+                    <button ng-disabled="state.working() || _order.landLordPaymentEmailSended" class="btn btn-primary" ng-click="sendPaymentLink()">Delegate to Landlord</button>
+                </out>
             </out>
-        </div>
-        <div class="v-margin-2" ng-show="isAgency() && !orderPaid()">
-            <div class="v-margin-2">Optional
-                <br>
-            </div>
-            <button ng-disabled="state.working() || _order.landLordPaymentEmailSended" class="btn btn-primary" ng-click="sendPaymentLink()">Delegate to Landlord</button>
         </div>
         <div ng-show="booking.order.exists" class="alert alert-info v-margin-2">
             {{orderExistsNote()}}

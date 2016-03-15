@@ -640,6 +640,7 @@ app.controller('fullpage', ['server',
                             _id: s._order._id,
                             landLordPaymentEmailSended: true
                         }); //async
+                        s.booking.complete = true; //
                     });
                 });
             }
