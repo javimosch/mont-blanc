@@ -11,7 +11,7 @@
 "></i>
             <br><span class="elegant">Booking Complete</span></div>
     </div>
-    <div class="panel-body size-medium overflow-500" ng-show="!booking.complete">
+    <div class="panel-body size-medium overflow-500 relative" ng-show="!booking.complete">
         <div class="row">
             <div class="col-sm-6">
                 <ul class="form-tiny center-block">
@@ -43,26 +43,31 @@
                         <li>
                             <label>Keys address</label>
                             <input type="text" data-address model="_order" field="keysAddress" class="fullwidth max-w-500">
-                            <li>
-                                <label>Keys time</label>
-                                <uib-timepicker ng-show="_order.keysAddress" ng-disabled="state.working()" ng-model="_order.keysTime" hour-step="keysWhereTime.hstep" minute-step="keysWhereTime.mstep" show-meridian="true"></uib-timepicker>
-                            </li>
+                        </li>
                     </out>
                 </ul>
             </div>
             <div class="col-sm-6">
                 <ul class="form-tiny center-block">
                     <li>
+                        <label>Keys From</label>
+                        <uib-timepicker ng-show="true" max="_order.diagStart" ng-disabled="state.working() || !_order.keysAddress" ng-model="_order.keysTimeFrom" hour-step="keysWhereTime.hstep" minute-step="keysWhereTime.mstep" show-meridian="false"></uib-timepicker>
+                    </li>
+                    <li>
+                        <label>Keys To</label>
+                        <uib-timepicker ng-show="true" max="_order.diagStart" ng-disabled="state.working() || !_order.keysAddress" ng-model="_order.keysTimeTo" hour-step="keysWhereTime.hstep" minute-step="keysWhereTime.mstep" show-meridian="false"></uib-timepicker>
+                    </li>
+                    <li>
                         <label>Date</label>
                         <input type="text" disabled ng-value="getDate().date">
                     </li>
                     <li>
                         <label>Time Start</label>
-                        <input type="text" disabled ng-value="getDate().start">
+                        <input type="text" disabled ng-value="momentTime(_order.diagStart)">
                     </li>
                     <li>
                         <label>Time End</label>
-                        <input type="text" disabled ng-value="getDate().end">
+                        <input type="text" disabled ng-value="momentTime(_order.diagEnd)">
                     </li>
                     <li>
                         <label>Total</label>
@@ -75,26 +80,36 @@
                 </ul>
             </div>
         </div>
-        <div class="v-margin-2" ng-show="!orderPaid()">
-            <button ng-disabled="state.working() || !orderSaved() || paymentDelegated()" class="btn btn-primary" ng-click="payNOW()">Pay now</button>
-            <out ng-show="isAgency()">
-                or
-                <button ng-disabled="state.working() || booking.payment.complete" class="btn btn-primary" ng-click="invoiceEndOfTheMonth()">
-                    Invoice end of the month
-                </button>
-                <out ng-show="!orderPaid()">
-                    or
-                    <button ng-disabled="state.working() || _order.landLordPaymentEmailSended" class="btn btn-primary" ng-click="sendPaymentLink()">Delegate to Landlord</button>
-                </out>
-            </out>
-        </div>
         <div ng-show="booking.order.exists" class="alert alert-info v-margin-2">
             {{orderExistsNote()}}
         </div>
-        <div class="v-margin-2" ng-show="orderPaid()">
-            <button ng-disabled="state.working() || booking.payment.complete" class="btn btn-primary" ng-click="invoiceEndOfTheMonth()">
-                Done
-            </button>
+        <div class="fullwidth bottom-1 v-margin-2">
+            <out ng-show="!orderPaid()">
+                <button ng-disabled="state.working()" class="btn btn-default" ng-click="left()">Back</button>
+                <out class="float-right">
+                    <button ng-disabled="state.working() || !orderSaved() || paymentDelegated()" class="btn btn-primary" ng-click="payNOW()">Pay now</button>
+                    <out ng-show="isAgency()">
+                        <!-- invoice end of the month is temporary disabled #75
+                        <out>
+                            
+                            or
+                            <button ng-disabled="state.working() || booking.payment.complete" class="btn btn-primary" ng-click="invoiceEndOfTheMonth()">
+                                Invoice end of the month
+                            </button>
+                        </out>
+                         -->
+                        <out ng-show="!orderPaid()">
+                            or
+                            <button ng-disabled="state.working() || _order.landLordPaymentEmailSended" class="btn btn-primary" ng-click="sendPaymentLink()">Delegate to Landlord</button>
+                        </out>
+                    </out>
+                </out>
+            </out>
+            <out ng-show="orderPaid()">
+                <button ng-disabled="state.working() || booking.payment.complete" class="btn btn-primary" ng-click="invoiceEndOfTheMonth()">
+                    Done
+                </button>
+            </out>
         </div>
     </div>
 </div>

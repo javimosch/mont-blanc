@@ -14,14 +14,20 @@
                     <h5>Question 
         <a ng-click="moveTo('question2')" class="link">House or Apartament</a>
                      required.</h5></li>
-                <li ng-show="model.house===true && !model.squareMeters">
+                <!-- <li ng-show="model.house===true && !model.squareMeters">-->
+                <li ng-show="!model.squareMeters">
                     <h5>Question 
         <a ng-click="moveTo('question3')" class="link">House Square Meters</a>
                      required.</h5></li>
+                
+                <!--
                 <li ng-show="model.house==false && !model.apartamentType">
                     <h5>Question 
         <a ng-click="moveTo('question3')" class="link">Apartament Type</a>
                      required.</h5></li>
+                     -->
+
+
                 <li ng-show="!model.constructionPermissionDate">
                     <h5>Question 
         <a ng-click="moveTo('question4')" class="link">Date permis de construire</a>
@@ -30,7 +36,7 @@
                     <h5>Order 
         <a ng-click="moveTo('question5')" class="link">Address</a>
                      required.</h5></li>
-                <li ng-show="!model.diagStart || !availableTimeRanges">
+                <li ng-show="!model.diagStart || !model.diagEnd || !availableTimeRanges">
                     <h5> 
 <a ng-click="moveTo('calendar-timepicker')" class="link">Order Time</a>
                      required.</h5></li>
@@ -45,7 +51,7 @@
             </ul>
         </div>
     </div>
-    <div class="panel-body2 size-medium" ng-show="validModel()">
+    <div class="panel-body size-medium" ng-show="validModel()">
         <div class="">
             <ul class="form-tiny center-block">
                 <li>
@@ -124,7 +130,7 @@
     </div>
     <div class="panel-footer">
         <button ng-show="!validModel()" class="center-block btn btn-warning text-center" ng-click="up()">Back</button>
-        <button ng-show="validModel()" ng-disabled="state.working() || !validModel() || _orderSAVED" class="btn btn-success btn-lg center-block text-center" ng-click="goRightAndHideNav()">Next</button>
+        <button ng-show="validModel()" ng-disabled="state.working() || !validModel() || _orderSAVED" class="btn btn-success btn-lg center-block text-center" ng-click="slideToAuth()">Next</button>
     </div>
 </div>
 <output data-message></output>

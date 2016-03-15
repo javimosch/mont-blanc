@@ -87,6 +87,18 @@ app.directive('ctrlSelect', function($rootScope) {
         replace: true,
         templateUrl: './views/directives/directive.ctrl.select.html',
         link: function(s, el, attrs) {
+
+            s.choiceLabel = (choice) => {
+                if (!choice.label) return choice;
+                return (typeof choice.label !== 'string') ? choice.label() : choice.label;
+            };
+            s.choiceDisabled = (choice)=>{
+                if(choice.disabled) {
+                    return choice.disabled();
+                }
+                else return false;
+            };
+
             var r = $rootScope;
             var opt = s.opt;
             if (!opt.modelPath) throw Error('ctrlSelect require opt.modelPath');
@@ -117,13 +129,26 @@ app.directive('ctrlSelect', function($rootScope) {
                     }
                 });
             }
+
+            
+
+
             opt.scope.$watch(opt.modelPath, (v, oldV) => {
                 var arr = s.opt.items.filter(item => ((item.val || item) == v));
                 if (arr.length > 1) {
                     throw Error('ctrlSelect items val need to be unique.');
                 }
                 if (arr.length == 1) {
-                    s.label = arr[0].label || arr[0];
+                    if (arr[0].label) {
+                        if (typeof arr[0].label !== 'string') {
+                            s.label = arr[0].label(); //fn support
+                        } else {
+                            s.label = arr[0].label;
+                        }
+                    } else {
+                        s.label = arr[0];
+                    }
+                    //s.label = arr[0].label || arr[0];
                     if (opt.change) {
                         opt.change(arr[0], opt, () => {
                             //console.info('OLD',oldV);
@@ -895,7 +920,7 @@ app.directive('htmlContent', function(
             html: "&html",
         },
         link: function(s, elem, attrs) {
-            if(!s.html) return;
+            if (!s.html) return;
             r.dom(() => {
                 elem.html(s.html);
             });

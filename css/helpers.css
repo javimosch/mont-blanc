@@ -8,6 +8,11 @@
     overflow-x: hidden;
 }
 
+
+.float-right{
+    float:right;
+}
+
 .disable-childs > *{
     pointer-events: none;
     tab-index: -1;
@@ -132,7 +137,10 @@ table.minimal td{
 .v-spacing-1 {
     padding: 5px 0px;
 }
-
+.h-padding-15{
+    padding-left:15px;
+    padding-right:15px;
+}
 .margin-1{
     margin:5px;
 }
@@ -245,7 +253,7 @@ table.minimal td{
 }
 
 .text-right {
-    text-align: right;
+    /* text-align: right; */
 }
 
 .unselectable {

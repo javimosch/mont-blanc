@@ -1,8 +1,8 @@
 <span uib-dropdown>
-    <button ng-disabled="disabled()" type="button" ng-class="cls()" uib-dropdown-toggle>{{label}}<span class="caret"></span></button>
+    <button ng-disabled="disabled()" type="button" ng-class="cls()" uib-dropdown-toggle>{{label}}&nbsp;<span class="caret"></span></button>
     <ul uib-dropdown-menu>
-        <li ng-repeat="choice in opt.items">
-            <a href ng-click="click(choice)">{{choice.label || choice}}</a>
+        <li ng-repeat="choice in opt.items" ng-disabled="choiceDisabled(choice)">
+            <a href ng-click="click(choice)">{{choiceLabel(choice)}}</a>
         </li>
     </ul>
 </span>

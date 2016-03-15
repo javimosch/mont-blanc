@@ -35,11 +35,41 @@
     }
 }
 
-@import url(https://fonts.googleapis.com/css?family=Roboto);
+
 
 html, body, *{
     font-family: 'Roboto', sans-serif;
     font-size: 1rem;
+}
+
+table.uib-timepicker{
+    display: inline-table;
+}
+table.uib-timepicker tr{}
+table.uib-timepicker td{}
+table.uib-timepicker td a{
+    margin: 0px;
+    padding: 0px;
+}
+table.uib-timepicker tbody{}
+table.uib-timepicker td a:focus{}
+table.uib-timepicker td a:hover{}
+table.uib-timepicker td input{}
+table.uib-timepicker td input:focus{}
+table.uib-timepicker td input:active:focus{}
+table.uib-timepicker td input:active{}
+table.uib-timepicker td input:hover{}
+table.uib-timepicker td span:active:focus{
+    outline: none;
+}
+table.uib-timepicker td span:focus{
+    outline: none!important;
+}
+table.uib-timepicker td span:active{}
+table.uib-timepicker td span:hover{}
+table.uib-timepicker td span{
+    font-size: 0.6rem;
+    color: #CCC;
 }
 
 select.nice{
@@ -100,8 +130,21 @@ list-style: none;/* max-width: 400px; */padding: 0px;}
 }
 .form-tiny label{
     min-width: 135px;
+    font-size: 0.8rem;
 }
-.form-tiny button{}
+.form-tiny button:active:focus{
+    outline: none;
+}
+.form-tiny button:hover,.form-tiny button:focus{}
+.form-tiny button:active{
+    border-color: #ccc;
+    background: transparent;
+    box-shadow: none;
+}
+.form-tiny button{
+    border-radius: 0px;
+    background: transparent;
+}
 .form-tiny div{}
 .form-tiny input:hover,.form-tiny input:focus{
     outline: none;

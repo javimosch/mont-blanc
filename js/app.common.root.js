@@ -25,6 +25,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     };
 
     r.momentFormat = (d, f) => (moment(d).format(f));
+    r.momentTime = (d) =>moment(d).format('HH:mm');
 
     r.dom = function(cb, timeout) {
         $timeout(function() {
