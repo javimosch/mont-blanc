@@ -352,8 +352,10 @@ app.controller('fullpage', ['server',
 
                 if(s.departmentHasTermites()){
                     toggle('termites', true);   
+                    s.model.diags.termites = true;
                 }else{
                     toggle('termites', false);   
+                    s.model.diags.termites = false;
                 }
 
                 if (_.includes(['Before le 01/01/1949', 'entre 1949 et le 01/07/1997'], s.model.constructionPermissionDate)) {
