@@ -288,9 +288,9 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
             __rules: {
                 disabled: { $ne: true } //exclude disabled diags
             },
-            __select: 'diagPriority'
+            __select: 'priority'
         }).then((data) => {
-            cb(data.result.map((v) => ({ _id: v._id, priority: v.diagPriority })));
+            cb(data.result.map((v) => ({ _id: v._id, priority: v.priority })));
         })
     }
 

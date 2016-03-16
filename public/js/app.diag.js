@@ -20,7 +20,10 @@
                 function update() {
                     db.ctrl('User', 'getAll', {
                         userType: 'diag'
-                    }).then((res) => s.model.update(res.result));
+                    }).then((res) => {
+                        res.result = _.orderBy(res.result,['priority'],['asc']);
+                        s.model.update(res.result)
+                    });
                 }
                 s.model = {
                     click: (item, index) => {
@@ -39,6 +42,9 @@
                         click: () => r.route('diags/edit/-1')
                     }],
                     columns: [{
+                        label:'Priority',
+                        name:'priority'
+                    },{
                         label: "Email",
                         name: 'email'
                     }, {

@@ -424,7 +424,8 @@ app.controller('adminDiagsEdit', [
             password: '',
             address: '',
             userType: 'diag',
-            diagPriority: undefined
+            priority: undefined,
+            commission:0
         };
         s.original = _.clone(s.item);
         window.edit = s;
@@ -446,12 +447,12 @@ app.controller('adminDiagsEdit', [
             }
         });
 
-        s.$watch('item.diagPriority', (v) => {
-            if (!_.isUndefined(v) && !_.isNull(v) && isFinite(v)) {
-                if (v === s.original.diagPriority) return;
-                db.ctrl('User', 'get', { userType: 'diag', diagPriority: v, __select: "email" }).then((data) => {
+        s.$watch('item.priority', (v) => {
+            if (!_.isUndefined(v) && !_.isNull(v) && isFinite(v) && !isNaN(v)) {
+                if (v === s.original.priority) return;
+                db.ctrl('User', 'get', { userType: 'diag', priority: v, __select: "email" }).then((data) => {
                     if (data.result !== null) {
-                        s.item.diagPriority = s.original.diagPriority;
+                        s.item.priority = s.original.priority;
                         r.message('Priority ' + v + ' is alredy assigned to ' + data.result.email, 'warning', 5000, true);
                     }
                 });
@@ -484,7 +485,13 @@ app.controller('adminDiagsEdit', [
         s.validate = () => {
             ifThenMessage([
                 [s.item.email, '==', '', "Email cannot be empty"],
-                [s.item.password, '==', '', "Password cannot be empty"]
+                [s.item.password, '==', '', "Password cannot be empty"],
+                [!s.item.commission,'==',true,"Commission required"],
+                [isNaN(s.item.commission), '==', true, "Commission allowed values are 0..100"],
+                [(s.item.commission<0||s.item.commission>100),'==',true,"Commission allowed values are 0..100"],
+                [!s.item.priority,'==',true,"Priority required"],
+                [isNaN(s.item.priority), '==', true, "Priority allowed values are 0..100"],
+                [(s.item.priority<0||s.item.priority>100),'==',true,"Priority allowed values are 0..100"]
             ], (m) => {
                 s.message(m[0], 'warning', 0, true);
             }, s.save);

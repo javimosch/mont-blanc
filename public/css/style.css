@@ -229,7 +229,7 @@ input [type='file'] {
 /*DIPLOMES FILES*/
 
 .diplome {
-    border-left: 1px solid black;
+    border-left: 1px solid rgba(0,0,0,.2);
 }
 
 .diplome-info {

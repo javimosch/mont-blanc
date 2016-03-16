@@ -152,13 +152,21 @@ app.controller('adminUsersEdit', [
         s.cancel = function() {
             s.back();
         };
+
+        s.isClient=()=>s.item.userType=='client';
+
         s.validate = () => {
             ifThenMessage([
                 [s.item.userType, '==', undefined, "User type required"],
                 [!s.item.email, '==', true, "Email required"],
                 [!s.item.password, '==', true, "Password required"],
                 [s.item.email, '==', '', "Email cannot be empty"],
-                [s.item.password, '==', '', "Password cannot be empty"]
+                [s.item.password, '==', '', "Password cannot be empty"],
+
+                [s.isClient()&&!s.item.discount,'==',true,"Discount required"],
+                [s.isClient()&&isNaN(s.item.discount), '==', true, "Discount allowed values are 0..100"],
+                [s.isClient()&&(s.item.discount<0||s.item.discount>100),'==',true,"Discount allowed values are 0..100"]
+
             ], (m) => {
                 s.message(m[0], 'warning', 0, true);
             }, s.save);
