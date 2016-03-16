@@ -2,7 +2,8 @@ var express = require('express');
 var path    = require("path");
 var app = express();
 
-var PROD = process.env.PROD || false;
+
+var PROD = process.env.PROD && process.env.PROD.toString() == '1' || false;
 
 app.use('/', express.static('./public'));
 

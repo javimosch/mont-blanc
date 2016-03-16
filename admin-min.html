@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html class="no-js" ng-app="app">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Diag Project | Admin</title>
+    <title>Diags Project | Back-office</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="css/fullpage.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/calendar.css">
@@ -25,6 +25,7 @@
 </head>
 
 <body>
+    <!-- GLOBAL LAYOUT -->
     <div class="container-fluid">
         <div class="row-fluid">
             <div ng-include="'views/partials/partial.admin.nav.html'"></div>
@@ -33,11 +34,14 @@
             <div ng-view></div>
         </div>
     </div>
+    <!--GLOBAL DIRECTIVES -->
     <my-alerts add="message" directive="notify"></my-alerts>
     <my-alerts add="notify" directive="notify" stacked="true" settings="{clickDismissable:false}"></my-alerts>
-    <span data-spinner show="showSpinner"></span>
-    <!-- spinner -->
+    <modal-custom open="okModal" template-url="views/partials/popup.message.ok.html"></modal-custom>
+    <span data-spinner show="state.working"></span>
     <span data-debug show="showDebug"></span>
+    <!--TEMPLATES-->
+    <div ng-include="'views/templates/templates.user.html'"></div>
     <!--VENDOR-->
     <script src="js/vendor/vendor.jquery.js"></script>
     <script src="js/vendor/vendor.jquery.fullpage.js"></script>
@@ -53,14 +57,14 @@
     <script src="js/vendor/vendor.ui-bootstrap.js"></script>
     <script src="js/vendor/vendor.ui-bootstrap-tpls.js"></script>
     <script type="text/javascript" src="js/vendor/vendor.angular.ui-bootstrap.datetimepicker.js"></script>
-    <!--
-    <script type="text/javascript" src="js/vendor/vendor.angular.ui-bootstrap.datetimepicker-tpls.js"></script>
-    -->
     <script src="js/vendor/vendor.angular.bcalendar.js"></script>
     <script src="js/vendor/vendor.angular.bcalendar.tpls.js"></script>
     <script src="js/vendor/vendor.lodash.js"></script>
-    <script src="js/vendor/vendor.db.js"></script>    
+    <script src="js/vendor/vendor.db.js"></script>
+    <!--BUNDLE-->
     <script src="app.bundle.js"></script>
+    <!-- BACKOFFICE THIRD PARTY -->
+    <script src="js/vendor/vendor.geocomplete.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
     <script src="https://checkout.stripe.com/checkout.js"></script>
 </body>

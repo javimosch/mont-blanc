@@ -21,24 +21,27 @@ var path = require('path');
         var base = htmlPath.substring(0, htmlPath.lastIndexOf('/') != -1 && htmlPath.lastIndexOf('/') || undefined);
         base = base.replace(htmlPath, '');
         if (base == '') base = '.';
-        //
+        var baseForFiles = base + '/' + opt.root + '/';
+
         console.log('reading '+path.resolve(htmlPath));
         var str = readFileSync(path.resolve(htmlPath), {
             encoding: 'utf8'
         });
         var tags = readScriptTags(str);
-        tags = tags.map(v => (base + '/' + v));
+        tags = tags.map(v => (baseForFiles + v));
         //console.log('base: '+base);
 
         tags = tags.filter(v=>v.indexOf('http')===-1);
 
-        //console.log('Tags',JSON.stringify(tags));
-        console.log('Last: ' + tags[tags.length - 1]);
+        //tags.forEach(v=>{console.log('Tags',JSON.stringify(v));    });
+        
+        //console.log('Base for files: '+baseForFiles);
+        //console.log('Last: ' + tags[tags.length - 1]);
         //return;
 
         gulp.src(tags)
             .pipe(concat({
-                base: opt.base || __dirname,
+                base: base,
                 path: (opt.name || 'bundle') + '.js',
                 src: tags,
                 ignoreFiles: ['vendor', 'http']

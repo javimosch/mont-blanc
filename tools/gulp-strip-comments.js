@@ -34,10 +34,10 @@ module.exports = function(opt) {
         //
         // file.contents = new Buffer(strip('pajaroloco/*hola*/'));
         var str = file.contents.toString();
-        console.log('strip initial length ' + str.length);
+        //console.log('strip initial length ' + str.length);
         //str=  strip('holamundo;          {    habia una ves } si');
         str = strip(str);
-        console.log('strip final length ' + str.length);
+        //console.log('strip final length ' + str.length);
         file.contents = new Buffer(str);
         this.push(file);
         callback();

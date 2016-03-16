@@ -67,9 +67,9 @@ module.exports = function(opt) {
         if (isLast(name)) {
             var concatFile = getConcatFile(file);
             this.push(concatFile);
-            console.log('Concatenando: ', name, ' Success!');
+            //console.log('Concatenando: ', name, ' Success!');
         } else {
-            console.log('Concatenando: ', name);
+            //console.log('Concatenando: ', name);
         }
 
         //file.path = file.path.replace(/\.js$/, ext.src);
@@ -90,7 +90,7 @@ module.exports = function(opt) {
             base: options.base
         });
         //console.log('rta path',f.path);
-        //console.log('rta base',f.base);
+        console.log('generando ',options.base,options.path);
         optimize();
         f.contents = new Buffer(_contents);
         return f;
