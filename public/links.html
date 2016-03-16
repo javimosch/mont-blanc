@@ -26,6 +26,23 @@
         </style>
     </head>
     <body>
+    	<p>Notes: extra parameters</p>
+    	<ul>
+    		<li>time=[any] The parameter time=any works for randomly choice an available time slot.</li>
+    	</ul>
+    	<p>Automatic scroll: For automatic scroll when the page loads, write the follow <B>after</B> all the querystring parameters:</p>
+    	<ul>
+    		<li>#/question1</li>
+    		<li>#/question2</li>
+    		<li>#/question3</li>
+    		<li>#/question4</li>
+    		<li><b>#/question5</b> (address)</li>
+    		<li>#/question6</li>
+    		<li>#/question7</li>
+    		<li>#/diags</li>
+    		<li><b>#/calendar-timepicker</b> (time-slots)</li>
+    		<li>#/confirm-and-save</li>
+    	</ul>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
 <script type="text/javascript">
@@ -43,7 +60,7 @@ var links = [
 	//['squareMeters','?squareMeters=badValue'],
 	//['apartamentType','?apartamentType=asdasd'],
 	//['gasInstallation bad value','?gasInstallation=yes'],
-
+	['QUESTIONS (SCROLL TO DIAGS)','#/diags'],
 	//VALID
 	['QUESTIONS (WITH ANSWERS)','?sell=0&house=1&squareMeters=20-30m2&apartamentType=T5&cpd=Before le 01/01/1949&address=15 Boulevard Voltaire, París, Francia&gasInstallation=Non&electrictyInstallation=Oui, Plus de 15 ans&crep=1&date=Thu Mar 28 2016 15:39:26 GMT+0100&time=any#/confirm-order'],
 
