@@ -151,6 +151,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
     r.userIs = (arr) => {
         var type = r.session().userType;
+        if(typeof arr === 'string') arr = [arr];
         return _.includes(arr, type);
     };
 

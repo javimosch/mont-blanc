@@ -70,9 +70,9 @@
                 </li>
                 <li>
                     <label>Discount %</label>
-                    <input  ng-disabled="state.working()" type="text" ng-model="item.discount" placeholder="Discount">
+                    <input  ng-disabled="state.working() || !userIs('admin')" type="text" ng-model="item.discount" placeholder="Discount">
                 </li>
-                <li>
+                <li ng-if="userIs('admin')">
                     <label>Type</label>
                     <select ng-disabled="state.working()" ng-model="item.clientType" class="max-w-150 nice">
                         <option value='landlord'>LandLord</option>
