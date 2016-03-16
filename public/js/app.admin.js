@@ -132,7 +132,7 @@
                     },
                     buttons: [{
                         label: "Refresh",
-                        type: () => "btn btn-primary spacing-h-1",
+                        type: () => "btn btn-success spacing-h-1",
                         click: () => update()
                     }],
                     columns: [{
@@ -140,6 +140,7 @@
                         name: 'description'
                     }, {
                         label: "Amount (eur)",
+                        labelCls:()=>({'text-right':true}),
                         name: 'amount',
                         align: 'right'
                     }, {

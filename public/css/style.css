@@ -147,6 +147,8 @@ list-style: none;/* max-width: 400px; */padding: 0px;}
 }
 .form-tiny button{
     border-radius: 0px;
+}
+.form-tiny button:not(.btn-primary,.btn-success){
     background: transparent;
 }
 .form-tiny div{}
@@ -165,7 +167,7 @@ list-style: none;/* max-width: 400px; */padding: 0px;}
 .form-tiny a:hover{}
 
 .table-dynamic{}
-.table-dynamic>tbody>tr>td{
+.table-dynamic>tbody>tr>td,.table-dynamic>thead>tr>th{
     padding: 5px 0px;
     /* border-right: 1px solid rgba(0,0,0,.1); */
     padding-right: 10px;
@@ -175,7 +177,7 @@ list-style: none;/* max-width: 400px; */padding: 0px;}
 }
 .table-dynamic>tbody>tr>td>*{}
 .table-dynamic>thead>tr>th{
-    padding: 5px 0px;
+    padding: 5px 10px 5px 0px;
 }
 .table-dynamic>thead>tr{}
 .table-dynamic>tbody>tr{}
