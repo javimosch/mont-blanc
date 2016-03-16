@@ -71,6 +71,13 @@
             </ul>
         </div>
     </div>
+    <div class="row" ng-show="isPaid()">
+        <div class="col-sm-12">
+            <div class="alert alert-info">
+                This order is already paid
+            </div>
+        </div>
+    </div>
     <div class="row" ng-show="item._id && item.status!=='prepaid' && item.status !=='completed'">
         <div class="col-sm-12">
             <button ng-show="params.prevRoute" class="btn btn-default" ng-click="route(params.prevRoute)">Back</button>

@@ -33,14 +33,18 @@
                         //_user: r.session()._id,
                         __populate: {
                             _config: '',
-                        }
+                        },
+                        __lean:true,
+                        limit:5
                     };
 
-                    db.ctrl('Notification', 'getAll', data).then((res) => {
+                    db.ctrl('Notification', 'paginate', data).then((res) => {
                         if (res.ok) {
                             console.info('notifications', res.result);
                             s.items = res.result;
-                            s.model.update(res.result);
+                            s.items=  _.orderBy(s.items,['created'],'desc');
+                            s.items=  _.chunk(s.items,20)[0];
+                            s.model.update(s.items);
                         }
                     });
                 }
