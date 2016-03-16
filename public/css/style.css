@@ -174,7 +174,7 @@ list-style: none;/* max-width: 400px; */padding: 0px;}
 }
 .table-dynamic>tbody>tr>td>*{}
 .table-dynamic>thead>tr>th{
-    padding: 5px 0px;
+    padding: 5px 10px 5px 0px;
 }
 .table-dynamic>thead>tr{}
 .table-dynamic>tbody>tr{}

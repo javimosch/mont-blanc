@@ -47,6 +47,7 @@
                     }
                 }).then(function(r) {
                     //                console.info('adminOrders:read:success', r.data.result);
+                    r.data.result = _.orderBy(r.data.result,['created'],['desc']);
                     s.items = r.data.result;
                     s.message('Loaded', 'success', 1000);
                 });
@@ -667,7 +668,10 @@
                             '_client': 'email',
                             '_diag': 'email'
                         }
-                    }).then((res) => s.model.update(res.result));
+                    }).then((res) =>{
+                        res.result = _.orderBy(res.result,['createdAt'],['desc']);
+                        s.model.update(res.result)
+                    });
                 }
                 s.model = {
                     click: (item, index) => {
@@ -714,6 +718,10 @@
                     }, {
                         label: 'Status',
                         name: 'status'
+                    },{
+                        label:'Created',
+                        name:'createdAt',
+                        format: (v, item) => r.momentFormat(item.createdAt, 'DD-MM-YY HH:mm')
                     }],
                     items: []
                 };
