@@ -100,7 +100,7 @@
                 </out>
                 <li>
                     <label>Observations</label>
-                    <textarea ng-disabled="true" type="text" class="fullwidth min-height-100 no-resize" ng-value="item.obs"></textarea>
+                    <textarea ng-disabled="false" type="text" class="fullwidth min-height-100 no-resize" ng-model="item.obs"></textarea>
                 </li>
                 <li ng-show="userIs(['admin','diag'])">
                     <label>Debriefing pdf file: {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||"(not available yet)"}}</label>

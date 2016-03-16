@@ -437,7 +437,7 @@
                         [moment(s.item.diagEnd || null).isValid(), '==', false, "End date invalid"],
 
                         [s.mmOK(s.item.diagStart), '==', false, "Start date minutes need to be 0 or 30."],
-                        [s.mmOK(s.item.diagEnd), '==', false, "End date minutes need to be 0 or 30."],
+                        //[s.mmOK(s.item.diagEnd), '==', false, "End date minutes need to be 0 or 30."],
 
                         [moment(s.item.diagEnd).isValid() && moment(s.item.diagStart).isValid() && !moment(s.item.diagEnd).isSame(moment(s.item.diagStart), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
                         [moment(s.item.diagEnd).isValid() && moment(s.item.diagEnd).isBefore(moment(s.item.diagStart), 'hour'), '==', true, 'End date cannot be lower than Start date'],

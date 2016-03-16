@@ -4,344 +4,84 @@
 		"selected_items":
 		[
 			[
-				"avail",
-				"availableTimeRanges"
+				"inline",
+				"inline-flex"
 			],
 			[
-				"passwor",
-				"passwordSended"
+				"clien",
+				"clientType"
 			],
 			[
-				"repla",
-				"replaceParams"
-			],
-			[
-				"conf",
-				"configureTemplateRoutes"
-			],
-			[
-				"a",
-				"a	<a>"
-			],
-			[
-				"save",
-				"saveWithEmail"
-			],
-			[
-				"required",
-				"requiredKeys"
-			],
-			[
-				"client",
-				"clients"
-			],
-			[
-				"_save",
-				"_saveAsociatedUser"
-			],
-			[
-				"adminClient",
-				"adminClientsEdit"
-			],
-			[
-				"dire",
-				"directive"
-			],
-			[
-				"local",
-				"localData"
-			],
-			[
-				"scri",
-				"script	Tag"
-			],
-			[
-				"selected",
-				"selectedDateRange"
-			],
-			[
-				"date",
-				"dateFormated"
-			],
-			[
-				"base",
-				"basedir"
-			],
-			[
-				"mailGU",
-				"mailgunHTML"
-			],
-			[
-				"for",
-				"forEach"
-			],
-			[
-				"param",
-				"parameters"
-			],
-			[
-				"deco",
-				"decode"
-			],
-			[
-				"create",
-				"createLocal"
-			],
-			[
-				"decode",
-				"decodeURIComponent"
-			],
-			[
-				"encode",
-				"encodeURIComponent"
-			],
-			[
-				"allo",
-				"allowLocalHost"
-			],
-			[
-				"QUERY",
-				"QUERY_VALIDATOR_FIELDS"
-			],
-			[
-				"mode",
-				"modelName"
-			],
-			[
-				"articl",
-				"articleSchema"
-			],
-			[
-				"inclu",
-				"inclusionHandler"
-			],
-			[
-				"rei",
-				"reviews"
-			],
-			[
-				"outp",
-				"outputHandler"
-			],
-			[
-				"ex",
-				"exclusionHandler"
-			],
-			[
-				"root",
-				"rootPath"
-			],
-			[
-				"toggle",
-				"toggleClass"
-			],
-			[
-				"jae",
-				"jadeLocals"
-			],
-			[
-				"jade",
-				"jadeLocals"
-			],
-			[
-				"compile",
-				"compileJade"
-			],
-			[
-				"build-scripts",
-				"build-scripts-js"
-			],
-			[
-				"build-scripts-",
-				"build-scripts-vendor"
-			],
-			[
-				"sass",
-				"sassOptions"
-			],
-			[
-				"conta",
-				"contact-button"
-			],
-			[
-				"details",
-				"detailsRoute	property"
-			],
-			[
-				"detail",
-				"detailsRoute	property"
-			],
-			[
-				"ITEM",
-				"ITEM_UPDATED	property"
-			],
-			[
-				"ITEM_",
-				"ITEM_UPDATED	property"
-			],
-			[
-				"EvtT",
-				"EvtTypeEnum	class"
-			],
-			[
-				"class",
-				"className	parameter"
-			],
-			[
-				"clas",
-				"className	parameter"
-			],
-			[
-				"select",
-				"selectedHero"
-			],
-			[
-				"fba",
-				"FBAuth"
-			],
-			[
-				"fb",
-				"FBAuth"
-			],
-			[
-				"mongo",
-				"mongooseService"
-			],
-			[
-				"list",
-				"listOfPosts"
-			],
-			[
-				"wid",
-				"width"
-			],
-			[
-				"end",
-				"endCb"
-			],
-			[
-				"scr",
-				"script"
-			],
-			[
-				"pr",
-				"pretty"
-			],
-			[
-				"plugin",
-				"pluginName"
-			],
-			[
-				"plu",
-				"pluginParameter"
-			],
-			[
-				"plugi",
-				"pluginName"
-			],
-			[
-				"appe",
-				"appendChild"
-			],
-			[
-				"sele",
-				"selectors"
-			],
-			[
-				"even",
-				"events"
-			],
-			[
-				"eve",
-				"events"
-			],
-			[
-				"snip",
-				"snippet_evt_off"
-			],
-			[
-				"out",
-				"output"
-			],
-			[
-				"index",
-				"indexAnt"
-			],
-			[
-				"inde",
-				"index"
-			],
-			[
-				"bli",
-				"blinking"
-			],
-			[
-				"blink",
-				"blinkingUnderscode"
-			],
-			[
-				"eas",
-				"easeInQuad"
-			],
-			[
-				"get",
-				"getTime"
-			],
-			[
-				"dis",
-				"disqus"
-			],
-			[
-				"disqu",
-				"disqus_url"
-			],
-			[
-				"disqus",
-				"disqus_shortname"
-			],
-			[
-				"bln",
-				"blinkingRectangle"
-			],
-			[
-				"blin",
-				"blinkingRectangle"
-			],
-			[
-				"sett",
-				"settings"
-			],
-			[
-				"div",
-				"divSelector"
-			],
-			[
-				"resize",
-				"resizeEscalador"
-			],
-			[
-				"rock",
-				"rockClimbingTarget"
+				"admin",
+				"administrators"
 			],
 			[
 				"li",
-				"list-style"
+				"li	Tag"
 			],
 			[
-				"font-",
+				"save",
+				"saveAsync"
+			],
+			[
+				"subs",
+				"subscribeMode"
+			],
+			[
+				"land",
+				"landLordAddress"
+			],
+			[
+				"add",
+				"address"
+			],
+			[
+				"font-s",
 				"font-size"
 			],
 			[
-				"rand",
-				"randomColor"
+				"depar",
+				"departmentHasTermites"
 			],
 			[
-				"styl",
-				"stylInput"
+				"conten",
+				"contents"
 			],
 			[
-				"html",
-				"htmlInput"
+				"contne",
+				"contents"
+			],
+			[
+				"templ",
+				"templateUrl"
+			],
+			[
+				"expir",
+				"expirationDateNotificationSended"
+			],
+			[
+				"diplomes",
+				"diplomesInfo"
+			],
+			[
+				"diplom",
+				"diplomesInfo"
+			],
+			[
+				"pror",
+				"programmedTasks"
+			],
+			[
+				"expi",
+				"expirationDateNotificationSended"
+			],
+			[
+				"exp",
+				"expirationDateNotificationSended"
+			],
+			[
+				"diplome",
+				"diplomeExpirationTask"
 			]
 		]
 	},
@@ -355,260 +95,64 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 132.0,
-		"last_filter": "install",
+		"height": 334.0,
+		"last_filter": "rena",
 		"selected_items":
 		[
 			[
+				"rena",
+				"File: Rename"
+			],
+			[
+				"rneam",
+				"File: Rename"
+			],
+			[
+				"r",
+				"File: Rename"
+			],
+			[
+				"renam",
+				"File: Rename"
+			],
+			[
+				"key",
+				"Preferences: Key Bindings - User"
+			],
+			[
+				"rename",
+				"File: Rename"
+			],
+			[
+				"Install",
+				"Package Control: Install Package"
+			],
+			[
+				"keys ",
+				"Preferences: Key Bindings - User"
+			],
+			[
+				"user ",
+				"Preferences: Settings - User"
+			],
+			[
+				"side bar",
+				"View: Toggle Side Bar"
+			],
+			[
+				"sidebar",
+				"View: Toggle Side Bar"
+			],
+			[
+				"Side ",
+				"Side Bar: Enable Syncing"
+			],
+			[
 				"install",
 				"Package Control: Install Package"
-			],
-			[
-				"lint",
-				"SublimeLinter: Toggle Linter"
-			],
-			[
-				"linter",
-				"SublimeLinter: Lint This View"
-			],
-			[
-				"linete",
-				"SublimeLinter: Enable Linter"
-			],
-			[
-				"disable",
-				"SublimeLinter: Disable Linter"
-			],
-			[
-				"set",
-				"Set Syntax: TypeScript"
-			],
-			[
-				"set typ",
-				"Set Syntax: TypeScript"
-			],
-			[
-				"typ",
-				"Set Syntax: TypeScript"
-			],
-			[
-				"type",
-				"Set Syntax: TypeScript"
-			],
-			[
-				"set ty",
-				"Set Syntax: TypeScript"
-			],
-			[
-				"set bab",
-				"Set Syntax: JavaScript (Babel)"
-			],
-			[
-				"syn java",
-				"Set Syntax: JavaScript (Babel)"
-			],
-			[
-				"form",
-				"Format: Javascript"
-			],
-			[
-				"html",
-				"HTMLBeautify"
-			],
-			[
-				"htm",
-				"Set Syntax: HTML Extended"
-			],
-			[
-				"boiler",
-				"Snippet: htmlboiler"
-			],
-			[
-				"jade",
-				"Set Syntax: Jade"
-			],
-			[
-				"fom",
-				"Format: Javascript"
-			],
-			[
-				"ty java",
-				"Set Syntax: JavaScript"
-			],
-			[
-				"set babel",
-				"Set Syntax: JavaScript (Babel)"
-			],
-			[
-				"set htm",
-				"Set Syntax: HTML Extended"
-			],
-			[
-				"ht",
-				"HTMLBeautify"
-			],
-			[
-				"set han",
-				"Set Syntax: Handlebars"
-			],
-			[
-				"set jade",
-				"Set Syntax: Jade"
-			],
-			[
-				"set java",
-				"Set Syntax: JavaScript"
-			],
-			[
-				"set html",
-				"Set Syntax: HTML Extended"
-			],
-			[
-				"handle",
-				"Set Syntax: Handlebars"
-			],
-			[
-				"FORM",
-				"Format: Javascript"
-			],
-			[
-				"java",
-				"Format: Javascript"
-			],
-			[
-				"ty",
-				"Set Syntax: TypeScript"
-			],
-			[
-				"set type",
-				"Set Syntax: TypeScript"
-			],
-			[
-				"for",
-				"Format: Javascript"
-			],
-			[
-				"set css",
-				"Set Syntax: CSS"
-			],
-			[
-				"set ja",
-				"Set Syntax: Jade (Python)"
-			],
-			[
-				"format",
-				"TypeScript: Format Document"
-			],
-			[
-				"set sas",
-				"Set Syntax: Sass"
-			],
-			[
-				"SET type",
-				"Set Syntax: TypeScript"
-			],
-			[
-				"SET JSX",
-				"Set Syntax: JSX"
-			],
-			[
-				"set jsx",
-				"Set Syntax: JSX"
-			],
-			[
-				"inst",
-				"Package Control: Install Package"
-			],
-			[
-				"set react",
-				"Set Syntax: React Templates"
-			],
-			[
-				"beuti",
-				"HTMLBeautify"
-			],
-			[
-				"ISNTALL",
-				"Package Control: Install Package"
-			],
-			[
-				"set coff",
-				"Set Syntax: CoffeeScript"
-			],
-			[
-				"set styl",
-				"Set Syntax: Stylus"
-			],
-			[
-				"formt",
-				"Format: Javascript"
-			],
-			[
-				"markdo",
-				"Set Syntax: Markdown"
-			],
-			[
-				"setjas",
-				"Set Syntax: Jasmine"
-			],
-			[
-				"jasmine",
-				"Set Syntax: Jasmine"
-			],
-			[
-				"jasmin",
-				"Jasmine (legacy): Switch between code and spec"
-			],
-			[
-				"set js",
-				"Set Syntax: JavaScript"
-			],
-			[
-				"git",
-				"Gitignore: New gitignore"
-			],
-			[
-				"mark",
-				"Markdown Preview: Preview in Browser"
-			],
-			[
-				"set mark",
-				"Snippet: Markdown_header_(mdh1)"
-			],
-			[
-				"forma",
-				"Format: Javascript"
-			],
-			[
-				"set sty",
-				"Set Syntax: Stylus"
-			],
-			[
-				"css",
-				"Set Syntax: CSS"
-			],
-			[
-				"linter ",
-				"SublimeLinter: Lint This View"
-			],
-			[
-				"js",
-				"Set Syntax: JavaScript"
-			],
-			[
-				"set coffe",
-				"Set Syntax: CoffeeScript"
-			],
-			[
-				"install ",
-				"Package Control: Install Package"
-			],
-			[
-				"linter sett",
-				"Preferences: SublimeLinter Settings – Default"
 			]
 		],
-		"width": 503.0
+		"width": 400.0
 	},
 	"console":
 	{
@@ -629,290 +173,233 @@
 	},
 	"expanded_folders":
 	[
-		"/home/javi/git/project-pierre/blooming-plateau-64344",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers"
+		"/F/git/diags-front",
+		"/F/git/diags-front/public",
+		"/F/git/diags-front/public/js",
+		"/F/git/diags-front/public/js/vendor",
+		"/F/git/diags-front/public/views",
+		"/F/git/diags-back"
 	],
 	"file_history":
 	[
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/utils.mailing.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/db.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handler.actions.js",
-		"/home/javi/git/project-pierre/inspectors/views/view.admin.orders.edit.html",
-		"/home/javi/git/project-pierre/inspectors/js/app.admin.order.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.order.js",
-		"/home/javi/git/project-misitioba/src/assets/projects/matools/html-to-json/index.jade",
-		"/home/javi/git/project-pierre/inspectors/views/view.admin.clients.html",
-		"/home/javi/git/project-pierre/inspectors/views/view.admin.clients.edit.html",
-		"/home/javi/git/project-pierre/inspectors/views/view.admin.users.edit.html",
-		"/home/javi/git/project-pierre/inspectors/views/view.admin.diags.edit.html",
-		"/home/javi/git/project-pierre/inspectors/js/app.admin.diag.js",
-		"/home/javi/git/project-pierre/inspectors/js/app.admin.login.js",
-		"/home/javi/git/project-pierre/inspectors/js/app.static.main.js",
-		"/home/javi/git/project-pierre/inspectors/js/app.common.service.js",
-		"/home/javi/git/project-pierre/inspectors/push.sh",
-		"/home/javi/git/project-pierre/inspectors/js/app.common.utils.js",
-		"/home/javi/git/project-pierre/inspectors/views/view.admin.login.html",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/templates/email.html",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.email.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.user.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/app.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handle.routes.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.client.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/package.json",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/templates/templates.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/utils.js",
-		"/home/javi/git/project-pierre/inspectors/express.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/test/get.sh",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/templates/order.created.client.html",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/test/post.sh",
-		"/home/javi/git/project-misitioba/src/vendor/micro/reqwest.js",
-		"/home/javi/git/project-pierre/inspectors/views/partials/partial.admin.nav.html",
-		"/home/javi/git/project-pierre/inspectors/views/view.admin.dashboard.html",
-		"/home/javi/git/project-misitioba/src/server/mailing/mailing.js",
-		"/home/javi/git/project-pierre/inspectors/js/app.common.root.js",
-		"/home/javi/git/project-pierre/inspectors/caracteristicas.txt",
-		"/home/javi/git/project-pierre/inspectors/views/view.admin.users.html",
-		"/home/javi/git/project-pierre/inspectors/js/app.admin.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/node_modules/localtunnel/client.js",
-		"/home/javi/git/project-pierre/inspectors/views/view.admin.orders.html",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.diag.js",
-		"/home/javi/git/project-pierre/inspectors/admin.html",
-		"/home/javi/git/project-pierre/inspectors/js/app.common.directives.js",
-		"/home/javi/git/project-pierre/inspectors/js/app.admin.user.js",
-		"/home/javi/git/project-pierre/inspectors/views/partials/partial.question5.address.html",
-		"/home/javi/git/project-pierre/inspectors/css/style.css",
-		"/home/javi/git/project-pierre/inspectors/views/view.admin.diags.html",
-		"/home/javi/git/project-misitioba/src/assets/projects/matools/html-to-json/html-to-json.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/test/order.save.sh",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/test/getAll.sh",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/test/order.model.json",
-		"/home/javi/git/project-pierre/inspectors/index.html",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/test/removeAll.sh",
-		"/home/javi/git/project-pierre/inspectors/views/partials/partial.calendar-timepicker.html",
-		"/home/javi/git/project-pierre/inspectors/views/partials/partial.calendar-datepicker.html",
-		"/home/javi/git/project-pierre/inspectors/views/partials/partial.confirm-order.html",
-		"/home/javi/git/project-pierre/inspectors/views/partials/partial.diags.html",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/handlers.testing.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/helpers/routes.js",
-		"/home/javi/git/project-pierre/inspectors/node_modules/jade/lib/inline-tags.js",
-		"/home/javi/git/project-pierre/inspectors/js/app.admin.routes.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/push.sh",
-		"/home/javi/git/project-pierre/inspectors/views/vies.admin.diags.edit.html",
-		"/home/javi/git/project-pierre/inspectors/views/directives/directive.modal.ok.html",
-		"/home/javi/git/project-pierre/inspectors/views/directives/directive.modal.sure.html",
-		"/home/javi/git/project-pierre/inspectors/views/view.static.index.html",
-		"/home/javi/git/project-pierre/inspectors/package.json",
-		"/home/javi/git/project-pierre/inspectors/css/admin.login.css",
-		"/home/javi/git/project-pierre/inspectors/views/view.admin.html",
-		"/home/javi/git/project-pierre/inspectors/views/partials/partial.admin.dashboard.html",
-		"/home/javi/git/project-pierre/inspectors/node_modules/serve-static/node_modules/mime/.npmignore",
-		"/home/javi/git/project-pierre/inspectors/node_modules/glob/test/root.js",
-		"/home/javi/git/project-pierre/inspectors/js/app.static.calendar.js",
-		"/home/javi/git/project-pierre/inspectors/js/app.admin.inspector.js",
-		"/home/javi/git/project-pierre/inspectors/js/main.js",
-		"/home/javi/git/project-pierre/inspectors/js/root.js",
-		"/home/javi/git/project-pierre/inspectors/js/ctrl.admin.inspector.js",
-		"/home/javi/git/project-pierre/inspectors/js/ctrl.admin.js",
-		"/home/javi/git/project-pierre/inspectors/partials/static.fullpage.html",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question5.address.html",
-		"/home/javi/git/project-pierre/inspectors/js/ctrl.fullpage.js",
-		"/home/javi/git/project-pierre/inspectors/partials/admin.html",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question1.html",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question2.html",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question3.html",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question4.html",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.question6.html",
-		"/home/javi/git/project-pierre/inspectors/partials/admin.inspectors.list.html",
-		"/home/javi/git/project-pierre/inspectors/partials/admin.clients.html",
-		"/home/javi/git/project-pierre/inspectors/js/service.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/gulpfile.js",
-		"/home/javi/git/project-pierre/blooming-plateau-64344/.env",
-		"/home/javi/git/project-pierre/inspectors/Procfile",
-		"/home/javi/git/project-pierre/inspectors/.env",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.diags.html",
-		"/home/javi/git/project-pierre/inspectors/partials/directive.modal.html",
-		"/home/javi/git/project-pierre/inspectors/partials/modal.email-sended.html",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.confirm-order.html",
-		"/home/javi/.config/sublime-text-3/Packages/HTML-CSS-JS Prettify/HTMLPrettify.sublime-settings",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.calendar-timepicker.html",
-		"/home/javi/Documents/adivina-adivinador.txt",
-		"/home/javi/git/project-pierre/inspectors/partials/admin.nav.html",
-		"/home/javi/git/project-misitioba/src/server/routes/routes-inspectors.js",
-		"/home/javi/git/project-misitioba/src/server/db/db.js",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.calendar-datepicker.html",
-		"/home/javi/git/project-pierre/inspectors/data.json",
-		"/home/javi/git/project-pierre/inspectors/js/ctrl.calendar.js",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.calendar.html",
-		"/home/javi/git/project-pierre/inspectors/js/bootstrap.datepicker.js",
-		"/home/javi/git/project-pierre/inspectors/css/bootstrap.datepicker.css",
-		"/home/javi/git/project-pierre/inspectors/partials/static2.html",
-		"/home/javi/git/project-pierre/inspectors/css/fullpage.css",
-		"/home/javi/git/project-pierre/inspectors/partials/static.html",
-		"/home/javi/git/project-pierre/inspectors/partials/admin.inspectors.html",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.shorcuts.html",
-		"/home/javi/git/project-pierre/inspectors/js/jquery.fullpage.js",
-		"/home/javi/git/project-pierre/inspectors/partials/_tpl.calendar.next.html",
-		"/home/javi/git/project-misitioba/src/assets/projects/inspectors/index.jade",
-		"/home/javi/git/project-misitioba/src/assets/views/_projects.jade",
-		"/home/javi/git/project-misitioba/gulpfile.js",
-		"/home/javi/git/project-misitioba/dist/projects/inspectors/index.html",
-		"/home/javi/git/project-misitioba/res/cruel.txt",
-		"/home/javi/git/project-misitioba/res/asd.txt",
-		"/home/javi/git/project-misitioba/res/changed/cruel.txt",
-		"/home/javi/git/project-misitioba/src/assets/views/layouts/_base.inspectors.app.jade",
-		"/home/javi/git/project-misitioba/src/scripts/angular/app.angular.js",
-		"/home/javi/git/project-misitioba/src/scripts/angular/srvs/parse-service.js"
+		"/F/git/diags-front/public/js/app.order.js",
+		"/F/git/diags-front/public/views/order.edit.html",
+		"/F/git/diags-front/booking.html",
+		"/F/git/diags-front/booking-min.html",
+		"/F/git/diags-front/admin-min.html",
+		"/F/git/diags-front/admin.html",
+		"/F/git/diags-front/.env",
+		"/F/git/diags-front/express.js",
+		"/F/git/diags-back/app.js",
+		"/F/git/diags-front/tools/node_bundle.js",
+		"/F/git/diags-front/tools/scripts-bundler.js",
+		"/F/git/diags-front/tools/gulp-concat.js",
+		"/F/git/diags-front/tools/gulp-strip-comments.js",
+		"/F/git/diags-front/public/js/app.diag.balance.js",
+		"/F/git/diags-front/public/js/section.notifications.js",
+		"/F/git/diags-front/public/js/app.admin.js",
+		"/F/git/commands.txt",
+		"/F/git/diags-front/.env.production",
+		"/F/VAGRANT/SCOTCH/Vagrantfile",
+		"/S/git/diags-front/Procfile",
+		"/S/git/diags-front/.env",
+		"/S/git/diags-front/express.js",
+		"/S/git/diags-front/booking-min.html",
+		"/S/git/diags-front/booking.html",
+		"/S/git/diags-front/tools/node_bundle.js",
+		"/S/git/diags-front/js/app.static.main.js",
+		"/S/git/diags-front/tools/scripts-bundler.js",
+		"/S/git/diags-front/index.html",
+		"/S/git/diags-front/tools/html-parser.js",
+		"/S/git/diags-front/js/diags.available-slots.js",
+		"/S/git/diags-front/js/deprecated.availableSlots.js",
+		"/S/git/diags-front/index-min.html",
+		"/S/git/diags-front/admin-min.html",
+		"/S/git/diags-front/admin.html",
+		"/S/git/diags-front/data.json",
+		"/S/git/diags-front/views/view.admin.orders.edit.html",
+		"/S/git/diags-front/js/app.order.js",
+		"/S/git/diags-front/views/order.edit.html",
+		"/S/git/diags-front/views/partials/partial.question7.html",
+		"/F/temp/KMSpico Install/ReadMe KMSpico Install.txt",
+		"/F/temp/_ReadMe.txt",
+		"/C/Users/aranc/Downloads/KMSpico 10.1.1 FINAL + Portable (Office and Windows 10 Activator) [TechTools.NET]/_ReadMe.txt",
+		"/S/git/diags-front/views/partials/confirm-and-save-pay.html",
+		"/S/git/diags-front/views/directives/directive.ctrl.select.html",
+		"/S/git/diags-front/views/partials/partial.order.pdf.html",
+		"/S/git/diags-front/views/partials/partial.order.price-rules.html",
+		"/S/git/diags-front/views/partials/partial.order.date-time.rules.html",
+		"/S/git/diags-front/css/helpers.css",
+		"/S/git/diags-front/css/style.css",
+		"/S/git/diags-front/views/partials/confirm-and-save-subscription.html",
+		"/S/git/diags-front/views/partials/partial.order.date-time.html",
+		"/S/git/diags-front/js/app.admin.routes.js",
+		"/S/git/diags-front/views/partials/partial.order.diag-details.html",
+		"/S/git/diags-front/views/view.admin.orders.view.html",
+		"/S/git/diags-front/views/partials/partial.order.client-details.html",
+		"/S/git/diags-front/views/order.edit-backup.html",
+		"/S/git/diags-front/js/section.notifications.js",
+		"/S/git/diags-back/.env",
+		"/S/git/diags-front/js/app.diag.js",
+		"/S/git/diags-front/views/view.admin.orders.html",
+		"/S/git/diags-front/js/app.backoffice.js",
+		"/S/git/diags-front/js/app.diag.balance.js",
+		"/S/git/diags-front/views/view.admin-list.html",
+		"/S/git/diags-front/js/app.client.js",
+		"/S/git/diags-front/views/view.admin.diags.edit.html",
+		"/S/git/diags-front/views/view.admin.diags.html",
+		"/S/git/diags-front/js/app.admin.js",
+		"/S/git/diags-front/views/tools.html",
+		"/S/git/diags-front/views/directives/directive.fast-crud.html",
+		"/S/git/diags-front/js/app.common.directives.js",
+		"/S/git/diags-front/js/app.admin.user.js",
+		"/S/git/diags-front/views/view.admin.clients.edit.html",
+		"/S/git/diags-front/views/view.admin-edit.html",
+		"/S/git/diags-front/views/partials/partial.admin.nav.html",
+		"/S/git/diags-front/views/view.admin.clients.html",
+		"/S/git/diags-back/helpers/handle.routes.js",
+		"/S/git/diags-front/js/app.admin.client.js",
+		"/S/git/diags-front/js/app.common.root.js",
+		"/S/git/diags-front/views/partials/partials.table.html",
+		"/S/git/diags-back/helpers/db.js",
+		"/S/git/diags-front/js/app.admin.order.js",
+		"/S/git/diags-front/views/view.admin.dashboard.html",
+		"/S/git/diags-front/views/view.admin.dashboard.client.html",
+		"/S/git/diags-back/helpers/handlers.order.js",
+		"/S/git/diags-front/views/partials/confirm-and-save-auth.html",
+		"/S/git/diags-back/helpers/handlers.email.js",
+		"/S/git/diags-front/js/app.admin.login.js",
+		"/S/git/diags-front/views/partials/confirm-and-save-details.html",
+		"/S/git/diags-front/views/partials/partial.question3.html",
+		"/S/git/diags-front/views/partials/partial.question6.html",
+		"/S/git/diags-front/views/partials/partial.diags.html",
+		"/S/git/diags-front/views/partials/partial.order.list-of-diags.html",
+		"/S/git/diags-front/views/partials/partial.question4.html",
+		"/S/git/diags-front/views/partials/partial.question5.address.html",
+		"/S/git/diags-front/js/app.common.utils.js",
+		"/S/git/diags-hub/public/index.html",
+		"/S/git/diags-front/views/view.notifications.html",
+		"/S/git/diags-front/js/tools.js",
+		"/S/git/diags-front/views/tools.termites-check.html",
+		"/S/git/diags-front/js/app.admin.diag.js",
+		"/S/git/diags-front/views/backup.diag.edit.html",
+		"/S/git/diags-front/views/templates/templates.user.html",
+		"/S/git/diags-back/helpers/handler.actions.js",
+		"/S/git/diags-front/js/app.admin.calendar.js",
+		"/S/git/diags-front/views/partials/popup.message.ok.html",
+		"/S/git/diags-front/views/view.admin.users.edit.html",
+		"/S/git/diags-back/helpers/utils.js",
+		"/S/git/diags-front/views/directives/directive.modal.sure.html",
+		"/C/Users/aranc/AppData/Roaming/Sublime Text 3/Packages/User/Default (Windows).sublime-keymap",
+		"/C/Users/aranc/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/S/git/diags-front/js/app.common.service.js",
+		"/S/git/diags-back/helpers/handlers.user.js",
+		"/S/git/diags-back/helpers/programmedTasks.diplomeExpiration.js",
+		"/S/git/diags-front/views/view.static.index.html",
+		"/S/git/diags-front/js/booking.fullscreen.js",
+		"/S/git/diags-back/templates/diplome.expiration.html",
+		"/S/git/diags-back/helpers/programmedTasks.js",
+		"/S/git/diags-back/app.js",
+		"/F/APPS/stylizer/MAYANPROPHECY.nfo",
+		"/F/APPS/FiSSH_Package/readme.txt"
 	],
 	"find":
 	{
-		"height": 35.0
+		"height": 34.0
 	},
 	"find_in_files":
 	{
 		"height": 90.0,
 		"where_history":
 		[
-			"/home/javi/git/project-pierre",
-			"/home/javi/git/project-pierrre",
-			"/home/javi/git/project-misitioba/src/styles",
-			"/home/javi/git/project-misitioba",
-			"/home/javi/git/brunch.one/",
-			"/home/javi/git/brunch.one/app"
+			"S:\\git\\diags-front\\js",
+			"S:\\git\\diags-front\\views",
+			""
 		]
 	},
 	"find_state":
 	{
-		"case_sensitive": true,
+		"case_sensitive": false,
 		"find_history":
 		[
-			"available",
-			"_client",
-			"env",
-			"passy",
-			".type",
-			"login",
-			"session",
-			".type",
-			"type",
-			"getAll",
-			"getA;;",
-			"custom('client",
-			"client",
-			"popula",
-			"populate",
-			"get",
-			"db.custom('diag",
-			"create",
-			"createUpdate",
-			"function get",
-			"console.log(cb)",
-			"create",
-			"exists",
-			"get",
-			"UserAction",
-			"actions.resul",
-			"check",
-			"instance",
-			"openD",
-			"openDia",
-			"confirm",
-			"rng.",
-			"rng.to",
-			"removeAll",
-			"actions.create",
-			"required",
-			"actions.create",
-			"result",
-			"user",
-			"get",
-			"User",
-			"get",
-			"update",
-			"updated",
-			"createUpdate",
-			".create",
-			"User",
-			"function remov",
-			"result",
-			"error",
-			"dataToRules",
-			"generate",
-			"save",
-			"rules",
-			"getAll",
-			"find",
-			"getAll",
-			"read",
-			"find",
+			"validate",
+			"End minutes",
+			"geocomplete",
+			"index.html",
+			"booking",
+			"index",
+			"index-min",
+			"freeAf",
+			"electricityInstallation",
+			"electri",
+			"Diag Add",
+			"s._user",
+			"s.item",
+			"_order",
+			"form-control",
+			"max-w",
+			"isAgency",
+			"balance",
 			"Client",
-			"read",
-			"clientId",
-			"getSingle",
-			"find",
-			"getSingle",
-			"User",
-			"remove",
-			"user",
-			"Diag",
-			"diag",
-			"Clients",
+			".direc",
+			".dire",
+			"app.admin.diag",
+			"..",
+			"app.admin",
+			"Daig",
 			"Client",
-			"User",
-			"user",
-			"User",
-			"user",
-			"r.route",
-			"User",
-			"find",
-			"ClientActions",
-			"user",
-			"find",
-			"USER:",
-			"diag",
-			"User",
-			"client",
-			"Diagnostiqueur",
-			"Users",
-			"create",
-			"createSession",
-			"session",
-			"adminClients",
-			"client",
-			"pass",
-			"Client",
-			"Client.",
-			"Client",
-			"login",
-			"handle",
-			"handler",
 			"clients",
+			".dire",
+			"ws.",
+			"s.item",
+			"r.params",
+			"params",
+			"childs-labels",
+			"nav",
+			"padding",
+			"email",
+			"invalidKey",
+			"goRightAndHideNav",
+			"invalidKeysTime",
+			"WhereTime",
+			"keysWhereTime",
+			"orderPaymentLink",
+			"square",
+			"question3",
+			"apartamentType",
+			"hasTermites",
+			"html",
+			" a",
+			"body",
+			"font-fa",
+			"notifica",
+			"notifi",
+			"departmentHasTermites",
+			"max-wid",
+			"notify",
+			"termitesDepartments",
+			"r.route",
 			"route",
-			"Client",
-			"adminUsers",
-			"adminClients",
-			"admin.login",
-			"CLIENT:",
-			"up",
-			"showModal",
-			"root",
-			"read",
-			"handle",
-			"handleError",
-			".route",
-			"showMessa",
-			"vm.",
-			"useNavbar",
-			"useNav",
-			"adminLogin",
-			":adminLogin",
-			".route",
-			"s.",
-			"vm.",
-			"adminRoute",
-			"MyPro",
-			"s.",
-			"toogleB",
-			"partials/direc"
+			"related",
+			"count",
+			"userHas",
+			"=set",
+			"setContents",
+			"htmlContent",
+			"compile",
+			"userHas",
+			".contro",
+			"$compile",
+			"dummy",
+			"spinner",
+			"v2.show",
+			"ng-if",
+			"expirationDateNotificationSended",
+			"diplomeExpiration",
+			"expirationDateNotificationEnabled",
+			"diplomesInfo",
+			"dblog",
+			"g2"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -920,107 +407,20 @@
 		"regex": false,
 		"replace_history":
 		[
-			"_user",
-			".userType",
-			"custom('user",
-			"db.custom('user",
-			"_create",
-			"",
-			"data",
-			"rng.diagEnd",
-			"actions.result",
-			"order",
-			"Model",
-			"toRules",
+			"booking.html",
+			"booking",
+			"booking-min",
+			"s.item._client",
+			"item",
+			"max-w-150",
+			"isOwner",
+			"app.diag",
+			"app.",
 			"Diag",
-			"get",
-			"Order",
-			"order",
-			"ordr",
-			"Order",
-			"order",
-			"Orders",
-			"Order",
-			"Diag",
-			"diag",
-			"DIAG:",
-			"Diag",
-			"diag",
-			"Diag",
-			"Diags",
-			"adminUsers",
-			"password",
-			"User",
-			"User.",
-			"users",
-			"User",
-			"adminUsers",
-			"admin.user",
-			"USER:",
-			"s.",
-			"toggleNavbar",
-			"useNavbar",
-			"adminDashboard",
-			":adminDashboard",
-			"",
-			"s.",
-			"route",
-			"views/directives/direc",
-			"views/partials/partial.",
-			"view.static.index",
-			"MyPromise",
-			"click",
-			"node_",
-			"euro",
-			"dist",
-			"game.js",
-			"'",
-			"root",
-			"r",
-			"",
-			"defineCommonControl",
-			"addFieldToWrapper",
-			"fieldKey",
-			"target",
-			"build-scripts-ts",
-			"router.",
-			"router",
-			"self.root",
-			"this.root",
-			"../img",
-			"this.id",
-			"instance",
-			"Parse",
-			"ITEM_UPDATED",
-			"ITEM_DELETED",
-			"'",
-			"post-section",
-			"post",
-			"ef='img/fa",
-			"url('fonts/firasansot",
-			"r",
-			"'fonts/Pr",
-			"",
-			"evtman",
-			"evtman.dom",
-			"emit",
-			"on",
-			"href='img/favicon/",
-			"href='css/img/favicon/",
-			"\"",
-			"body",
-			"|DESARROLLA SOFTWARE",
-			"|Y SOY UN JOVEN QUE",
-			"HOLA, MI NOMBRE ES",
-			"obj",
-			"",
-			"domEvtOff",
-			"domEvtOn",
-			"evt",
-			"myObj",
-			"",
-			"el,",
-			"jadeInput"
+			"Daig",
+			"diags",
+			"db.",
+			"g"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -1038,7 +438,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 27.0
+		"height": 23.0
 	},
 	"input":
 	{
@@ -1067,27 +467,15 @@
 		]
 	},
 	"menu_visible": true,
-	"output.doc":
-	{
-		"height": 0.0
-	},
 	"output.find_results":
 	{
 		"height": 0.0
-	},
-	"output.markdown":
-	{
-		"height": 118.0
-	},
-	"output.unsaved_changes":
-	{
-		"height": 124.0
 	},
 	"pinned_build_system": "",
 	"project": "inspectors.sublime-project",
 	"replace":
 	{
-		"height": 64.0
+		"height": 62.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1097,516 +485,516 @@
 		"selected_items":
 		[
 			[
-				"mailing",
-				"blooming-plateau-64344/helpers/utils.mailing.js"
+				"app.order",
+				"diags-front\\public\\js\\app.order.js"
 			],
 			[
-				"handleor",
-				"blooming-plateau-64344/helpers/handlers.order.js"
+				"orderedit",
+				"diags-front\\public\\views\\order.edit.html"
 			],
 			[
-				"db.js",
-				"blooming-plateau-64344/helpers/db.js"
+				"boo",
+				"diags-front\\booking-min.html"
 			],
 			[
-				"handleacti",
-				"blooming-plateau-64344/helpers/handler.actions.js"
-			],
-			[
-				"order.js",
-				"inspectors/js/app.admin.order.js"
-			],
-			[
-				"order.edi",
-				"inspectors/views/view.admin.orders.edit.html"
-			],
-			[
-				"diag.edi",
-				"inspectors/views/view.admin.diags.edit.html"
-			],
-			[
-				"user.edi",
-				"inspectors/views/view.admin.users.edit.html"
-			],
-			[
-				"clients.edi",
-				"inspectors/views/view.admin.clients.edit.html"
-			],
-			[
-				"client.html",
-				"inspectors/views/view.admin.clients.html"
-			],
-			[
-				"diag.js",
-				"inspectors/js/app.admin.diag.js"
-			],
-			[
-				"login.s",
-				"inspectors/js/app.admin.login.js"
-			],
-			[
-				"service",
-				"inspectors/js/app.common.service.js"
-			],
-			[
-				"staticmain",
-				"inspectors/js/app.static.main.js"
-			],
-			[
-				"static.main",
-				"inspectors/js/app.static.main.js"
-			],
-			[
-				"push.",
-				"inspectors/push.sh"
-			],
-			[
-				"login.html",
-				"inspectors/views/view.admin.login.html"
-			],
-			[
-				"commonutils",
-				"inspectors/js/app.common.utils.js"
-			],
-			[
-				"login.js",
-				"inspectors/js/app.admin.login.js"
-			],
-			[
-				"db.",
-				"blooming-plateau-64344/helpers/db.js"
-			],
-			[
-				"handleruse",
-				"blooming-plateau-64344/helpers/handlers.user.js"
-			],
-			[
-				"handlerclie",
-				"blooming-plateau-64344/helpers/handlers.client.js"
-			],
-			[
-				"handleror",
-				"blooming-plateau-64344/helpers/handlers.order.js"
-			],
-			[
-				"handleruser",
-				"blooming-plateau-64344/helpers/handlers.user.js"
-			],
-			[
-				"handlerclien",
-				"blooming-plateau-64344/helpers/handlers.client.js"
-			],
-			[
-				"utils.mai",
-				"blooming-plateau-64344/helpers/utils.mailing.js"
-			],
-			[
-				"app",
-				"blooming-plateau-64344/app.js"
-			],
-			[
-				"email.html",
-				"blooming-plateau-64344/templates/email.html"
-			],
-			[
-				"handlerou",
-				"blooming-plateau-64344/helpers/handle.routes.js"
-			],
-			[
-				"handleuser",
-				"blooming-plateau-64344/helpers/handlers.user.js"
-			],
-			[
-				"packa",
-				"blooming-plateau-64344/package.json"
-			],
-			[
-				"emailing",
-				"blooming-plateau-64344/helpers/utils.mailing.js"
-			],
-			[
-				"utils",
-				"blooming-plateau-64344/helpers/utils.js"
-			],
-			[
-				"app.js",
-				"blooming-plateau-64344/app.js"
-			],
-			[
-				"exp",
-				"inspectors/express.js"
-			],
-			[
-				"routes",
-				"blooming-plateau-64344/helpers/handle.routes.js"
-			],
-			[
-				"expr",
-				"inspectors/express.js"
-			],
-			[
-				"dashbo",
-				"inspectors/views/view.admin.dashboard.html"
-			],
-			[
-				"nav",
-				"inspectors/views/partials/partial.admin.nav.html"
-			],
-			[
-				"dashboa",
-				"inspectors/views/view.admin.dashboard.html"
-			],
-			[
-				"commonroot",
-				"inspectors/js/app.common.root.js"
-			],
-			[
-				"nav.",
-				"inspectors/views/partials/partial.admin.nav.html"
-			],
-			[
-				"user.html",
-				"inspectors/views/view.admin.users.html"
-			],
-			[
-				"app.admin",
-				"inspectors/js/app.admin.js"
-			],
-			[
-				"client.js",
-				"blooming-plateau-64344/node_modules/localtunnel/client.js"
-			],
-			[
-				"handleorde",
-				"blooming-plateau-64344/helpers/handlers.order.js"
-			],
-			[
-				"handleaci",
-				"blooming-plateau-64344/helpers/handler.actions.js"
-			],
-			[
-				"handledia",
-				"blooming-plateau-64344/helpers/handlers.diag.js"
-			],
-			[
-				"order.html",
-				"inspectors/views/view.admin.orders.html"
-			],
-			[
-				"handlediag",
-				"blooming-plateau-64344/helpers/handlers.diag.js"
+				"admin-",
+				"diags-front\\admin-min.html"
 			],
 			[
 				"admin",
-				"inspectors/admin.html"
+				"diags-front\\admin.html"
 			],
 			[
-				"direc",
-				"inspectors/js/app.common.directives.js"
+				"bookin",
+				"diags-front\\booking.html"
 			],
 			[
-				"user.js",
-				"inspectors/js/app.admin.user.js"
+				"admin-min",
+				"diags-front\\admin-min.html"
 			],
 			[
-				"styl",
-				"inspectors/css/style.css"
+				".env",
+				"diags-front\\.env"
 			],
 			[
-				"questionadd",
-				"inspectors/views/partials/partial.question5.address.html"
+				"booking",
+				"diags-front\\booking.html"
 			],
 			[
-				"diag.html",
-				"inspectors/views/view.admin.diags.html"
+				"app.",
+				"diags-back\\app.js"
 			],
 			[
-				"handler.user",
-				"blooming-plateau-64344/helpers/handlers.user.js"
+				"expr",
+				"express.js"
 			],
 			[
-				"handleraci",
-				"blooming-plateau-64344/helpers/handler.actions.js"
+				"nod",
+				"tools\\node_bundle.js"
 			],
 			[
-				"handler.ord",
-				"blooming-plateau-64344/helpers/handlers.order.js"
+				"node",
+				"tools\\node_bundle.js"
 			],
 			[
-				"order.model",
-				"blooming-plateau-64344/test/order.model.json"
-			],
-			[
-				"handler.orde",
-				"blooming-plateau-64344/helpers/handlers.order.js"
-			],
-			[
-				"getall",
-				"blooming-plateau-64344/test/getAll.sh"
-			],
-			[
-				"",
-				"inspectors/js/app.common.utils.js"
+				"booking-min",
+				"diags-front\\booking-min.html"
 			],
 			[
 				"index",
-				"inspectors/index.html"
+				"diags-front\\index.html"
 			],
 			[
-				"testremove",
-				"blooming-plateau-64344/test/removeAll.sh"
+				"proc",
+				"diags-front\\Procfile"
 			],
 			[
-				"app.common",
-				"inspectors/js/app.common.utils.js"
+				"appmain",
+				"diags-front\\js\\app.static.main.js"
 			],
 			[
-				"serv",
-				"inspectors/js/app.common.service.js"
+				"availa",
+				"diags-front\\js\\diags.available-slots.js"
 			],
 			[
-				"-timepi",
-				"inspectors/views/partials/partial.calendar-timepicker.html"
+				"inde",
+				"diags-front\\index.html"
 			],
 			[
-				"partial.datime",
-				"inspectors/views/partials/partial.calendar-datepicker.html"
+				"node_bun",
+				"diags-front\\tools\\node_bundle.js"
 			],
 			[
-				"partial.con",
-				"inspectors/views/partials/partial.confirm-order.html"
+				"data",
+				"diags-front\\data.json"
 			],
 			[
-				"handeord",
-				"blooming-plateau-64344/helpers/handlers.order.js"
+				"question",
+				"diags-front\\views\\partials\\partial.question7.html"
 			],
 			[
-				"handleracti",
-				"blooming-plateau-64344/helpers/handler.actions.js"
+				"app.od",
+				"diags-front\\js\\app.order.js"
 			],
 			[
-				"handler.dia",
-				"blooming-plateau-64344/helpers/handlers.diag.js"
+				"ctrl.sele",
+				"diags-front\\views\\directives\\directive.ctrl.select.html"
 			],
 			[
-				"handle.ro",
-				"blooming-plateau-64344/helpers/handle.routes.js"
+				"-sapa",
+				"diags-front\\views\\partials\\confirm-and-save-pay.html"
 			],
 			[
-				"helperrou",
-				"blooming-plateau-64344/helpers/routes.js"
+				"order.pdf",
+				"diags-front\\views\\partials\\partial.order.pdf.html"
 			],
 			[
-				"db",
-				"blooming-plateau-64344/helpers/db.js"
+				"price-rules",
+				"diags-front\\views\\partials\\partial.order.price-rules.html"
 			],
 			[
-				"diags.edi",
-				"inspectors/views/view.admin.diags.edit.html"
+				"date-time",
+				"diags-front\\views\\partials\\partial.order.date-time.rules.html"
 			],
 			[
-				"handler.diag",
-				"blooming-plateau-64344/helpers/handlers.diag.js"
+				"helpe",
+				"diags-front\\css\\helpers.css"
 			],
 			[
-				"handler.clie",
-				"blooming-plateau-64344/helpers/handlers.client.js"
+				"style",
+				"diags-front\\css\\style.css"
 			],
 			[
-				"handle.dia",
-				"blooming-plateau-64344/helpers/handlers.diag.js"
+				"-save",
+				"diags-front\\views\\partials\\confirm-and-save-pay.html"
 			],
 			[
-				"handletes",
-				"blooming-plateau-64344/helpers/handlers.testing.js"
+				"-savesub",
+				"diags-front\\views\\partials\\confirm-and-save-subscription.html"
 			],
 			[
-				"helperout",
-				"blooming-plateau-64344/helpers/routes.js"
+				"routes",
+				"diags-front\\js\\app.admin.routes.js"
 			],
 			[
-				"admin.",
-				"inspectors/admin.html"
+				"diag-deta",
+				"diags-front\\views\\partials\\partial.order.diag-details.html"
 			],
 			[
-				"diags.html",
-				"inspectors/views/view.admin.diags.html"
+				"client-deta",
+				"diags-front\\views\\partials\\partial.order.client-details.html"
 			],
 			[
-				"diags.js",
-				"inspectors/node_modules/jade/lib/inline-tags.js"
+				"apporder",
+				"diags-front\\js\\app.order.js"
 			],
 			[
-				"diag.edt",
-				"inspectors/views/view.admin.diags.edit.html"
+				"client-d",
+				"diags-front\\views\\partials\\partial.order.client-details.html"
 			],
 			[
-				"handleclient",
-				"blooming-plateau-64344/helpers/handlers.client.js"
+				"orderedi",
+				"diags-front\\views\\view.admin.orders.edit.html"
 			],
 			[
-				"handlerord",
-				"blooming-plateau-64344/helpers/handlers.order.js"
+				"vieworder",
+				"diags-front\\views\\view.admin.orders.view.html"
 			],
 			[
-				"order.edit",
-				"inspectors/views/view.admin.orders.edit.html"
+				"notific",
+				"diags-front\\js\\section.notifications.js"
 			],
 			[
-				"handler",
-				"blooming-plateau-64344/helpers/handlers.order.js"
+				"diag.balance",
+				"diags-front\\js\\app.admin.diag.balance.js"
 			],
 			[
-				"handler.or",
-				"blooming-plateau-64344/helpers/handlers.order.js"
+				"app.back",
+				"diags-front\\js\\app.backoffice.js"
 			],
 			[
-				"route",
-				"inspectors/js/app.admin.routes.js"
-			],
-			[
-				".nav",
-				"inspectors/views/partials/partial.admin.nav.html"
-			],
-			[
-				"admin.html",
-				"inspectors/admin.html"
-			],
-			[
-				"servi",
-				"inspectors/js/app.common.service.js"
-			],
-			[
-				"helroutes",
-				"blooming-plateau-64344/helpers/routes.js"
-			],
-			[
-				"hander.user",
-				"blooming-plateau-64344/helpers/handlers.user.js"
-			],
-			[
-				"handler.cli",
-				"blooming-plateau-64344/helpers/handlers.client.js"
-			],
-			[
-				"han.user",
-				"blooming-plateau-64344/helpers/handlers.user.js"
-			],
-			[
-				"client.edi",
-				"inspectors/views/view.admin.clients.edit.html"
-			],
-			[
-				"dahsboard",
-				"inspectors/views/view.admin.dashboard.html"
-			],
-			[
-				".login",
-				"inspectors/views/view.admin.login.html"
-			],
-			[
-				"handlers",
-				"blooming-plateau-64344/helpers/handlers.inspector.js"
-			],
-			[
-				"common.root",
-				"inspectors/js/app.common.root.js"
-			],
-			[
-				".user.html",
-				"inspectors/views/view.admin.users.html"
-			],
-			[
-				"login.",
-				"inspectors/views/view.admin.login.html"
-			],
-			[
-				"login",
-				"inspectors/js/app.admin.login.js"
-			],
-			[
-				"helperoutes",
-				"blooming-plateau-64344/helpers/routes.js"
-			],
-			[
-				"rotues",
-				"inspectors/js/app.admin.routes.js"
-			],
-			[
-				"admin.user",
-				"inspectors/js/app.admin.user.js"
-			],
-			[
-				"direc.modal",
-				"inspectors/views/directives/directive.modal.sure.html"
-			],
-			[
-				"app.static",
-				"inspectors/js/app.static.main.js"
-			],
-			[
-				"static",
-				"inspectors/js/app.static.main.js"
-			],
-			[
-				"helpersroutes",
-				"blooming-plateau-64344/helpers/routes.js"
-			],
-			[
-				"static.html",
-				"inspectors/views/view.static.index.html"
-			],
-			[
-				"express",
-				"inspectors/express.js"
-			],
-			[
-				"helperroutes",
-				"blooming-plateau-64344/helpers/routes.js"
-			],
-			[
-				"handle",
-				"blooming-plateau-64344/helpers/handlers.client.js"
-			],
-			[
-				"view.clie",
-				"inspectors/views/view.admin.clients.html"
-			],
-			[
-				"view",
-				"inspectors/views/view.admin.clients.edit.html"
-			],
-			[
-				".root",
-				"inspectors/js/app.common.root.js"
+				"app.dia",
+				"diags-front\\js\\app.diag.js"
 			],
 			[
 				"viewadmin",
-				"inspectors/views/view.admin.clients.edit.html"
+				"diags-front\\views\\view.admin-list.html"
 			],
 			[
-				".direc",
-				"inspectors/js/app.common.directives.js"
+				"orders",
+				"diags-front\\views\\view.admin.orders.html"
+			],
+			[
+				"app.client",
+				"diags-front\\js\\app.client.js"
+			],
+			[
+				"diagedit",
+				"diags-front\\views\\view.admin.diags.edit.html"
+			],
+			[
+				"app.admin",
+				"diags-front\\js\\app.admin.js"
+			],
+			[
+				"diagsview",
+				"diags-front\\views\\view.admin.diags.html"
+			],
+			[
+				"sty",
+				"diags-front\\css\\style.css"
+			],
+			[
+				"tools.",
+				"diags-front\\views\\tools.html"
+			],
+			[
+				"fast-crud",
+				"diags-front\\views\\directives\\directive.fast-crud.html"
+			],
+			[
+				"viewadmni",
+				"diags-front\\views\\view.admin-list.html"
+			],
+			[
+				"direc",
+				"diags-front\\js\\app.common.directives.js"
+			],
+			[
+				"notifica",
+				"diags-front\\js\\section.notifications.js"
+			],
+			[
+				"appuser",
+				"diags-front\\js\\app.admin.user.js"
+			],
+			[
+				"clientedit",
+				"diags-front\\views\\view.admin.clients.edit.html"
+			],
+			[
+				".nav",
+				"diags-front\\views\\partials\\partial.admin.nav.html"
+			],
+			[
+				"handleroute",
+				"diags-back\\helpers\\handle.routes.js"
+			],
+			[
+				"client",
+				"diags-front\\views\\view.admin.clients.html"
+			],
+			[
+				"ap.admin",
+				"diags-front\\js\\app.admin.js"
+			],
+			[
+				"app.clie",
+				"diags-front\\js\\app.client.js"
+			],
+			[
+				"adminh",
+				"diags-front\\admin.html"
+			],
+			[
+				"appadminclie",
+				"diags-front\\js\\app.admin.client.js"
+			],
+			[
+				"approot",
+				"diags-front\\js\\app.common.root.js"
+			],
+			[
+				"partialtable",
+				"diags-front\\views\\partials\\partials.table.html"
+			],
+			[
+				"helper",
+				"diags-front\\css\\helpers.css"
+			],
+			[
+				"appamdinclie",
+				"diags-front\\js\\app.admin.client.js"
+			],
+			[
+				"appusers",
+				"diags-front\\js\\app.admin.user.js"
+			],
+			[
+				"s",
+				"diags-front\\css\\style.css"
+			],
+			[
+				"fast-cru",
+				"diags-front\\views\\directives\\directive.fast-crud.html"
+			],
+			[
+				"db.js",
+				"diags-back\\helpers\\db.js"
+			],
+			[
+				"appclient",
+				"diags-front\\js\\app.admin.client.js"
+			],
+			[
+				"viewclients",
+				"diags-front\\views\\view.admin.clients.html"
+			],
+			[
+				"partial.table",
+				"diags-front\\views\\partials\\partials.table.html"
+			],
+			[
+				"approo",
+				"diags-front\\js\\app.common.root.js"
+			],
+			[
+				"app.root",
+				"diags-front\\js\\app.common.root.js"
+			],
+			[
+				"dashbor",
+				"diags-front\\views\\view.admin.dashboard.html"
+			],
+			[
+				"vieword",
+				"diags-front\\views\\view.admin.orders.view.html"
 			],
 			[
 				".admin",
-				"inspectors/js/app.admin.js"
+				"diags-front\\js\\app.admin.js"
 			],
 			[
-				"handlers.clie",
-				"blooming-plateau-64344/helpers/handlers.client.js"
+				"app.admin.cli",
+				"diags-front\\js\\app.admin.client.js"
 			],
 			[
-				".route",
-				"inspectors/js/app.admin.routes.js"
+				"dashboard",
+				"diags-front\\views\\view.admin.dashboard.client.html"
 			],
 			[
-				"clients.",
-				"inspectors/views/view.admin.clients.html"
+				"-savepay",
+				"diags-front\\views\\partials\\confirm-and-save-pay.html"
 			],
 			[
-				".clients",
-				"inspectors/views/view.admin.clients.html"
+				"handleor",
+				"diags-back\\helpers\\handlers.order.js"
+			],
+			[
+				"handleemail",
+				"diags-back\\helpers\\handlers.email.js"
+			],
+			[
+				"-sav",
+				"diags-front\\views\\partials\\confirm-and-save-auth.html"
+			],
+			[
+				"applogin",
+				"diags-front\\js\\app.admin.login.js"
+			],
+			[
+				"partialdiags",
+				"diags-front\\views\\partials\\partial.diags.html"
+			],
+			[
+				"diags",
+				"diags-front\\views\\partials\\partial.order.list-of-diags.html"
+			],
+			[
+				"ques",
+				"diags-front\\views\\partials\\partial.question4.html"
+			],
+			[
+				"-saveauth",
+				"diags-front\\views\\partials\\confirm-and-save-auth.html"
+			],
+			[
+				"question6",
+				"diags-front\\views\\partials\\partial.question6.html"
+			],
+			[
+				"-savepa",
+				"diags-front\\views\\partials\\confirm-and-save-pay.html"
+			],
+			[
+				"apputils",
+				"diags-front\\js\\app.common.utils.js"
+			],
+			[
+				".ctrl.sele",
+				"diags-front\\views\\directives\\directive.ctrl.select.html"
+			],
+			[
+				"appstatic",
+				"diags-front\\js\\app.static.main.js"
+			],
+			[
+				"handleemai",
+				"diags-back\\helpers\\handlers.email.js"
+			],
+			[
+				"sectionnoti",
+				"diags-front\\js\\section.notifications.js"
+			],
+			[
+				"",
+				"diags-front\\views\\view.notifications.html"
+			],
+			[
+				"styl",
+				"diags-front\\css\\style.css"
+			],
+			[
+				"handlerorder",
+				"diags-back\\helpers\\handlers.order.js"
+			],
+			[
+				"login",
+				"diags-front\\js\\app.admin.login.js"
+			],
+			[
+				"appdiag",
+				"diags-front\\js\\app.admin.diag.js"
+			],
+			[
+				"appadn",
+				"diags-front\\js\\app.admin.js"
+			],
+			[
+				"appadmin",
+				"diags-front\\js\\app.admin.js"
+			],
+			[
+				"approute",
+				"diags-front\\js\\app.admin.routes.js"
+			],
+			[
+				"diag.edi",
+				"diags-front\\views\\backup.diag.edit.html"
+			],
+			[
+				"diagedi",
+				"diags-front\\views\\view.admin.diags.edit.html"
+			],
+			[
+				"clients",
+				"diags-front\\views\\view.admin.clients.html"
+			],
+			[
+				"ordershtml",
+				"diags-front\\views\\view.admin.orders.html"
+			],
+			[
+				"appcalendar",
+				"diags-front\\js\\app.admin.calendar.js"
+			],
+			[
+				"handleac",
+				"diags-back\\helpers\\handler.actions.js"
+			],
+			[
+				"handleacti",
+				"diags-back\\helpers\\handler.actions.js"
+			],
+			[
+				".ok",
+				"diags-front\\views\\partials\\popup.message.ok.html"
+			],
+			[
+				".ok.",
+				"diags-front\\views\\partials\\popup.message.ok.html"
+			],
+			[
+				"utils",
+				"diags-back\\helpers\\utils.js"
+			],
+			[
+				"appcommon",
+				"diags-front\\js\\app.common.utils.js"
+			],
+			[
+				"modal.sure",
+				"diags-front\\views\\directives\\directive.modal.sure.html"
+			],
+			[
+				"directives.",
+				"diags-front\\js\\app.common.directives.js"
+			],
+			[
+				"service",
+				"diags-front\\js\\app.common.service.js"
+			],
+			[
+				"handleuser",
+				"diags-back\\helpers\\handlers.user.js"
+			],
+			[
+				"programme",
+				"diags-back\\helpers\\programmedTasks.diplomeExpiration.js"
+			],
+			[
+				"handleorde",
+				"diags-back\\helpers\\handlers.order.js"
+			],
+			[
+				"handlemail",
+				"diags-back\\helpers\\handlers.email.js"
+			],
+			[
+				"apps",
+				"diags-front\\js\\app.static.main.js"
+			],
+			[
+				"viewindex",
+				"diags-front\\views\\view.static.index.html"
+			],
+			[
+				"diplome",
+				"diags-back\\templates\\diplome.expiration.html"
+			],
+			[
+				"handleremail",
+				"diags-back\\helpers\\handlers.email.js"
 			]
 		],
 		"width": 0.0
@@ -1619,7 +1007,7 @@
 		[
 			[
 				"",
-				"~/git/project-misitioba/misitioba.sublime-project"
+				"F:\\git\\misitioba\\misitioba.sublime-project"
 			]
 		],
 		"width": 380.0
@@ -1641,7 +1029,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 296.0,
+	"side_bar_width": 256.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
