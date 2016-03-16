@@ -12,9 +12,14 @@
                     <label>Email</label>
                     <input type="email" ng-disabled="state.working() || item._id" ng-model="item.email" placeholder="Email">
                 </li>
-                <li>
+                <li ng-init="passVisible=false">
                     <label>Password</label>
-                    <input ng-disabled="state.working()" type="password" ng-model="item.password" placeholder="Password">
+                    <input ng-show="!passVisible" ng-disabled="state.working()" type="password" ng-model="item.password" placeholder="Password">
+                    <input ng-show="passVisible" ng-disabled="state.working()" type="text" ng-model="item.password" placeholder="Password">
+                    <out ng-show="userIs('admin')">
+                        <i ng-disabled="state.working()" ng-show="!passVisible" class="fa fa-eye link" ng-click="passVisible=true"></i>
+                        <i ng-disabled="state.working()" ng-show="passVisible" class="fa fa-eye-slash link" ng-click="passVisible=false"></i>
+                    </out>
                 </li>
                 <li>
                     <label>First name</label>
@@ -26,7 +31,7 @@
                 </li>
                 <li ng-show="item.clientType == 'agency'">
                     <label>Company Name</label>
-                    <input ng-disabled="state.working()"  type="text" ng-model="item.companyName" placeholder="Company Name">
+                    <input ng-disabled="state.working()" type="text" ng-model="item.companyName" placeholder="Company Name">
                 </li>
                 <li>
                     <label>Fixed Phone</label>
@@ -70,7 +75,7 @@
                 </li>
                 <li>
                     <label>Discount %</label>
-                    <input  ng-disabled="state.working() || !userIs('admin')" type="text" ng-model="item.discount" placeholder="Discount">
+                    <input ng-disabled="state.working() || !userIs('admin')" type="text" ng-model="item.discount" placeholder="Discount">
                 </li>
                 <li ng-if="userIs('admin')">
                     <label>Type</label>

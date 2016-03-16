@@ -153,6 +153,12 @@ app.controller('adminUsersEdit', [
             s.back();
         };
 
+        s.isCurrent=()=>{
+            return r.session()._id == s.item._id;
+        };
+
+        s.isAdmin=()=>s.item.userType=='admin';        
+
         s.isClient=()=>s.item.userType=='client';
 
         s.validate = () => {

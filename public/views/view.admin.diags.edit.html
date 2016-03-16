@@ -13,18 +13,12 @@
                         </li>
                         <li ng-init="passVisible=false">
                             <label>Password</label>
-                            
-                            <input 
-                            ng-show="!passVisible"
-                            ng-disabled="state.working()" type="password" ng-model="item.password" placeholder="Password">
-
-                            <input 
-                            ng-show="passVisible"
-                            ng-disabled="state.working()" type="text" ng-model="item.password" placeholder="Password">
-
-                            <i ng-show="!passVisible" class="fa fa-eye" ng-click="passVisible=true"></i>
-                            <i ng-show="passVisible" class="fa fa-eye-slash" ng-click="passVisible=false"></i>
-                            
+                            <input ng-show="!passVisible" ng-disabled="state.working()" type="password" ng-model="item.password" placeholder="Password">
+                            <input ng-show="passVisible" ng-disabled="state.working()" type="text" ng-model="item.password" placeholder="Password">
+                            <out ng-show="userIs('admin')">
+                                <i ng-disabled="state.working()" ng-show="!passVisible" class="fa fa-eye link" ng-click="passVisible=true"></i>
+                                <i ng-disabled="state.working()" ng-show="passVisible" class="fa fa-eye-slash link" ng-click="passVisible=false"></i>
+                            </out>
                         </li>
                         <li>
                             <label>First name</label>
@@ -85,10 +79,8 @@
                                 <label class="link file-label" for="{{'file_'+id}}">{{diplomesLabel(id)}}</label>
                                 <!--DOWNLOAD-->
                                 <i ng-show="diplomesExists(id)" ng-disabled="!item._id || state.working() || !diplomesExists(id)" ng-click="!diplomesExists(id) || diplomesDownload(id)" class="fa fa-download file-button"></i>
-                                
                                 <!--ACTIVATE EXPIRATION NOTIFICATION-->
                                 <i ng-show="diplomesExists(id) && !diplomesExpirationDateNotificationEnabled(id)" ng-disabled="!item._id || state.working()" class="fa fa-hourglass-start file-button" ng-click="diplomesEnableExpirationDateNotification(id)"></i>
-
                                 <i ng-show="diplomesExists(id)" class="fa fa-question file-button" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
                             </div>
                             <div>
