@@ -4,6 +4,7 @@ var app = angular.module('app', [
     'app.admin.login',
     'app.admin.user',
     'app.diag',
+    'app.diag.complete',
     'app.diag.balance',
     'app.order',
     'app.client',

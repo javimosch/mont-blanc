@@ -57,8 +57,19 @@
                 <li>
                     <label>Diags</label>
                     <ul class="form-tiny center-block inline-block">
-                        <li ng-repeat="(key,x) in diags" class="" ng-if="item.diags[x.name]==true">{{x.label}}
-                        </li>
+                        <out ng-if="userIs(['admin'])">
+                            <li ng-repeat="(key,x) in diags">
+                                <input type="checkbox"
+                                 ng-disabled="isPaid()"
+                                 ng-model="item.diags[x.name]">
+                                {{x.label}}
+                            </li>
+                        </out>
+                        <out ng-if="!userIs(['admin'])">
+                            <li ng-repeat="(key,x) in diags" class="" ng-if="item.diags[x.name]==true">
+                                {{x.label}}
+                            </li>
+                        </out>
                     </ul>
                 </li>
                 <!--ADMIN start:choice-->

@@ -87,6 +87,22 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "public/views/order.edit.html",
+			"settings":
+			{
+				"buffer_size": 12865,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "public/js/app.order.js",
+			"settings":
+			{
+				"buffer_size": 29342,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -178,12 +194,16 @@
 		"/F/git/diags-front/public/js",
 		"/F/git/diags-front/public/js/vendor",
 		"/F/git/diags-front/public/views",
-		"/F/git/diags-back"
+		"/F/git/diags-back",
+		"/F/git/diags-back/helpers"
 	],
 	"file_history":
 	[
-		"/F/git/diags-front/public/js/app.order.js",
 		"/F/git/diags-front/public/views/order.edit.html",
+		"/F/git/diags-back/helpers/db.js",
+		"/F/git/diags-front/public/js/app.admin.routes.js",
+		"/F/git/diags-front/public/views/view.admin.orders.edit.html",
+		"/F/git/diags-front/public/js/app.order.js",
 		"/F/git/diags-front/booking.html",
 		"/F/git/diags-front/booking-min.html",
 		"/F/git/diags-front/admin-min.html",
@@ -322,6 +342,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"status",
 			"validate",
 			"End minutes",
 			"geocomplete",
@@ -431,8 +452,69 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "public/views/order.edit.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12865,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3970,
+								3970
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 908.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "public/js/app.order.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 29342,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3696,
+								3696
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1531.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -487,6 +569,22 @@
 			[
 				"app.order",
 				"diags-front\\public\\js\\app.order.js"
+			],
+			[
+				"order.edit",
+				"diags-front\\public\\views\\order.edit.html"
+			],
+			[
+				"routes",
+				"diags-front\\public\\js\\app.admin.routes.js"
+			],
+			[
+				"db.js",
+				"diags-back\\helpers\\db.js"
+			],
+			[
+				"view.order",
+				"diags-front\\public\\views\\view.admin.orders.edit.html"
 			],
 			[
 				"orderedit",
@@ -611,10 +709,6 @@
 			[
 				"-savesub",
 				"diags-front\\views\\partials\\confirm-and-save-subscription.html"
-			],
-			[
-				"routes",
-				"diags-front\\js\\app.admin.routes.js"
 			],
 			[
 				"diag-deta",
@@ -767,10 +861,6 @@
 			[
 				"fast-cru",
 				"diags-front\\views\\directives\\directive.fast-crud.html"
-			],
-			[
-				"db.js",
-				"diags-back\\helpers\\db.js"
 			],
 			[
 				"appclient",
@@ -987,14 +1077,6 @@
 			[
 				"viewindex",
 				"diags-front\\views\\view.static.index.html"
-			],
-			[
-				"diplome",
-				"diags-back\\templates\\diplome.expiration.html"
-			],
-			[
-				"handleremail",
-				"diags-back\\helpers\\handlers.email.js"
 			]
 		],
 		"width": 0.0

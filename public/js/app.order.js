@@ -117,6 +117,10 @@
                     return r.userIs(['admin']) || r.sesison()._id == s.item._diag._id;
                 };
 
+                s.isPaid=()=>{
+                    return _.includes(['prepaid','delivered','completed'],s.item.status);
+                };
+
 
                 s.isOwner = () => {
                     if (!s.item || !s.item._client) return false;

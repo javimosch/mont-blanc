@@ -1,4 +1,4 @@
-var app = angular.module('app.admin.diag', ['app.common.service']);
+var app = angular.module('app.diag.complete', ['app.common.service']);
 
 app.directive('timeRangeExceptions', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {

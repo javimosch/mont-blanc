@@ -9,7 +9,7 @@
                     <ul class="form-tiny center-block">
                         <li>
                             <label>Email</label>
-                            <input ng-disabled="state.working()" type="email" ng-model="item.email" placeholder="Email">
+                            <input ng-disabled="state.working() || item._id" type="email" ng-model="item.email" placeholder="Email">
                         </li>
                         <li>
                             <label>Password</label>
