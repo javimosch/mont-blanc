@@ -4,7 +4,13 @@ var app = express();
 
 var PROD = process.env.PROD || false;
 
-app.use('/', express.static('./'));
+app.use('/', express.static('./public'));
+
+app.get('/',function(req,res){
+	var n = (PROD?'booking-min':'booking');
+	res.sendFile(path.join(__dirname+'/'+n+'.html'));
+});
+
 app.get('/admin',function(req,res){
 	var n = (PROD?'admin-min':'admin');
 	res.sendFile(path.join(__dirname+'/'+n+'.html'));

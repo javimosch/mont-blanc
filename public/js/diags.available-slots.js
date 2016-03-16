@@ -126,7 +126,7 @@
     }
 
     function freeAfternoon(order, collisions) {
-        var minAssignableAfternoonDate = moment(order.day).hours(13).minutes(00);
+        var minAssignableAfternoonDate = moment(order.day).hours(13).minutes(0);
         return collisions.filter(v => {
             return moment(v.start).isAfter(minAssignableAfternoonDate);
         }).length == 0;

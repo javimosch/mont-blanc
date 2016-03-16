@@ -11,6 +11,8 @@
     function readScriptTags(str) {
         var arr = fitlerTag('script', str);
         arr = arr.map(v => (getAttribute('src', v)));
+        arr = arr.filter(v=> v!=='');
+        //console.log(JSON.stringify(arr));
         return arr;
     }
 
@@ -35,6 +37,7 @@
         var x = str.substring(str.indexOf(n));
         x = x.substring(x.indexOf('"') + 1);
         x = x.substring(0, x.indexOf('"'));
+//        console.log(typeof x);
         return x;
     }
 

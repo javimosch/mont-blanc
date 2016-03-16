@@ -389,9 +389,9 @@ app.controller('fullpage', ['server',
                     s.model.diags.dta = false;
                 }
 
-                if (s.model.gasInstallation === 'Oui, Plus de 15 ans') {
+                if (_.includes(['Oui, Plus de 15 ans','Oui, Moins de 15 ans'],s.model.gasInstallation)) {
                     toggle('gaz', true);
-                    if (s.model.sell == true) {
+                    if (s.model.sell == true && s.model.gasInstallation === 'Oui, Plus de 15 ans') {
                         s.model.diags.gaz = true;
                     } else {
                         s.model.diags.gaz = false;
@@ -399,9 +399,9 @@ app.controller('fullpage', ['server',
                 } else {
                     toggle('gaz', false);
                 }
-                if (s.model.electricityInstallation === 'Oui, Plus de 15 ans') {
+                if (_.includes(['Oui, Plus de 15 ans','Oui, Moins de 15 ans'],s.model.electricityInstallation)) {
                     toggle('electricity', true);
-                    if (s.model.sell == true) {
+                    if (s.model.sell == true && s.model.electricityInstallation === 'Oui, Plus de 15 ans') {
                         s.model.diags.electricity = true;
                     } else {
                         s.model.diags.electricity = false;
@@ -559,7 +559,7 @@ app.controller('fullpage', ['server',
 
         s.auto = () => {
             console.log('auto');
-            r.dom(() => s.moveTo('confirm-and-save'), 0000);
+            r.dom(() => s.moveTo('confirm-and-save'), 0);
             r.dom(() => s.right(), 2000);
             r.dom(() => s.login(), 4000);
             s.hideNav();

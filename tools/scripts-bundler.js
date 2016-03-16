@@ -30,8 +30,11 @@ var path = require('path');
         tags = tags.map(v => (base + '/' + v));
         //console.log('base: '+base);
 
-        //console.log(JSON.stringify(tags));
+        tags = tags.filter(v=>v.indexOf('http')===-1);
+
+        //console.log('Tags',JSON.stringify(tags));
         console.log('Last: ' + tags[tags.length - 1]);
+        //return;
 
         gulp.src(tags)
             .pipe(concat({
@@ -47,7 +50,7 @@ var path = require('path');
             .pipe(strip())
             .pipe(minify({ ext: '.js' }))
             .pipe(gulp.dest(outPath || 'dist'));
-        console.log('scripts-bundler outPath ' + outPath);
+        console.log('scripts-bundler ',htmlPath,JSON.stringify(opt));
     }
 
     //gulp.task('watch-only', tasks.watchOnly);
