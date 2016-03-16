@@ -11,9 +11,20 @@
                             <label>Email</label>
                             <input ng-disabled="state.working() || item._id" type="email" ng-model="item.email" placeholder="Email">
                         </li>
-                        <li>
+                        <li ng-init="passVisible=false">
                             <label>Password</label>
-                            <input ng-disabled="state.working()" type="password" ng-model="item.password" placeholder="Password">
+                            
+                            <input 
+                            ng-show="!passVisible"
+                            ng-disabled="state.working()" type="password" ng-model="item.password" placeholder="Password">
+
+                            <input 
+                            ng-show="passVisible"
+                            ng-disabled="state.working()" type="text" ng-model="item.password" placeholder="Password">
+
+                            <i ng-show="!passVisible" class="fa fa-eye" ng-click="passVisible=true"></i>
+                            <i ng-show="passVisible" class="fa fa-eye-slash" ng-click="passVisible=false"></i>
+                            
                         </li>
                         <li>
                             <label>First name</label>

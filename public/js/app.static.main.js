@@ -423,7 +423,7 @@ app.controller('fullpage', ['server',
                 constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined,
                 address: param('address') || undefined,
                 gasInstallation: param('gasInstallation', s.gasInstallation) || undefined,
-                electricityInstallation: param('gasInstallation', s.gasInstallation) || undefined,
+                electricityInstallation: param('electricityInstallation', s.electricityInstallation) || undefined,
                 date: paramDate('date'),
                 time: param('time', ['any']),
                 clientType: param('clientType', ['agency', 'landlord'])
