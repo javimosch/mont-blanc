@@ -163,7 +163,7 @@ app.controller('adminUsersEdit', [
                 [s.item.email, '==', '', "Email cannot be empty"],
                 [s.item.password, '==', '', "Password cannot be empty"],
 
-                [s.isClient()&&!s.item.discount,'==',true,"Discount required"],
+                [s.isClient()&&s.item.discount==undefined,'==',true,"Discount required"],
                 [s.isClient()&&isNaN(s.item.discount), '==', true, "Discount allowed values are 0..100"],
                 [s.isClient()&&(s.item.discount<0||s.item.discount>100),'==',true,"Discount allowed values are 0..100"]
 
