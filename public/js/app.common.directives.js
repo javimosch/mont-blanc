@@ -730,12 +730,12 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
         scope: {
             add: '=add',
             directive: '@directive', //custom directive to be created
-            stacked: '@stacked',
+            stacked: '=stacked',
             settings: '@settings'
         },
         template: '<output></output>',
         link: function(s, elem, attrs) {
-            s.stacked = s.stacked === 'true';
+            //s.stacked = s.stacked === 'true';
             s.decodeMessage = function(msg) {
                 if (typeof msg == 'string') {
                     return msg;

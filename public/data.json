@@ -75,8 +75,8 @@
         "Oui, Plus de 15 ans": "Oui, Plus de 15 ans"
     },
     "electricityInstallation": {
-        "Oui, Moins de 15 ans": "Moins de 15 ans",
-        "Oui, Plus de 15 ans": "Plus de 15 ans"
+        "Moins de 15 ans": "Moins de 15 ans",
+        "Plus de 15 ans": "Plus de 15 ans"
     },
     "diagsNames": [
         "DPE",

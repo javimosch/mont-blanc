@@ -399,9 +399,9 @@ app.controller('fullpage', ['server',
                 } else {
                     toggle('gaz', false);
                 }
-                if (_.includes(['Oui, Plus de 15 ans','Oui, Moins de 15 ans'],s.model.electricityInstallation)) {
+                if (_.includes(['Plus de 15 ans','Moins de 15 ans'],s.model.electricityInstallation)) {
                     toggle('electricity', true);
-                    if (s.model.sell == true && s.model.electricityInstallation === 'Oui, Plus de 15 ans') {
+                    if (s.model.sell == true && s.model.electricityInstallation === 'Plus de 15 ans') {
                         s.model.diags.electricity = true;
                     } else {
                         s.model.diags.electricity = false;
@@ -522,11 +522,11 @@ app.controller('fullpage', ['server',
             return moment(s.model.date).format('DD MMMM YYYY');
         };
         s.drawRange = function(rng) {
-            var rta = moment(rng.start).format("HH[h]mm") + ' - ' + moment(rng.end).format("HH[h]mm");
+            var rta = moment(rng.start).format("HH[h]mm");
+            rta+=' - '+ rng.name+ ' - ' + s.totalPrice(true)+' €';
+            // + ' - ' + moment(rng.end).format("HH[h]mm");
 
-            if (rng.name) {
-                rta += ' by ' + rng.name;
-            }
+            
 
             return rta;
         };
