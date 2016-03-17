@@ -2,3 +2,16 @@
     <clients-list></clients-list>
 </div>
 <modal-confirm open="confirm"></modal-confirm>
+
+<script type="text/ng-template" id="clientFilter.html">
+    <ul class="form-tiny center-block float-right">
+        <li>
+        	<label>Type</label>
+        	<input ng-model="model.filter.fields.clientType" placeholder="Filter"/>
+        </li>
+        <li>
+        	<label>Email</label>
+        	<input ng-model="model.filter.fields.email" placeholder="Filter"/>
+        </li>
+    </ul>
+</script>

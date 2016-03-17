@@ -47,7 +47,7 @@
                     }
                 }).then(function(r) {
                     //                console.info('adminOrders:read:success', r.data.result);
-                    r.data.result = _.orderBy(r.data.result,['created'],['desc']);
+                    r.data.result = _.orderBy(r.data.result, ['created'], ['desc']);
                     s.items = r.data.result;
                     s.message('Loaded', 'success', 1000);
                 });
@@ -65,7 +65,7 @@
         function(db, s, r, params, focus) {
             r.setCurrentCtrl(s);
 
-            s.item={
+            s.item = {
 
             };
 
@@ -75,9 +75,9 @@
                 if (window.location.href.indexOf('orders/view') !== -1) {
                     //no login needed
                     if (r.params && r.params.prevRoute) {
-                     
-                    }else{
-                        r.toggleNavbar(false);   
+
+                    } else {
+                        r.toggleNavbar(false);
                     }
                 } else {
                     r.secureSection(s);
@@ -120,8 +120,8 @@
                     return r.userIs(['admin']) || r.sesison()._id == s.item._diag._id;
                 };
 
-                s.isPaid=()=>{
-                    return _.includes(['prepaid','delivered','completed'],s.item.status);
+                s.isPaid = () => {
+                    return _.includes(['prepaid', 'delivered', 'completed'], s.item.status);
                 };
 
 
@@ -641,7 +641,7 @@
 
 
     app.directive('ordersList', function(
-        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
+        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',
             replace: true,
@@ -651,7 +651,8 @@
             controller: function($scope, $element, $attrs, $transclude) {
                 var r = $rootScope,
                     db = server,
-                    s = $scope;
+                    s = $scope,
+                    dbPaginate = $mongoosePaginate.get('Order');
                 s.title = "Orders";
                 r.routeParams({
                     prevRoute: 'orders'
@@ -662,18 +663,29 @@
                     setTimeout(update, 10000);
                 };
 
-                function update() {
-                    db.ctrl('Order', 'getAll', {
+
+
+                function update(items, cb) {
+                    var data = {
                         __populate: {
                             '_client': 'email',
                             '_diag': 'email'
+                        },
+                        __sort: "-createdAt"
+                    };
+                    dbPaginate.ctrl(data,s.model).then(res => {
+                        if (cb) {
+                            cb(res.result);
+                        } else {
+                            s.model.update(res.result, null);
                         }
-                    }).then((res) =>{
-                        res.result = _.orderBy(res.result,['createdAt'],['desc']);
-                        s.model.update(res.result)
                     });
                 }
                 s.model = {
+                    init: () => update(),
+                    paginate: (cb) => {
+                        update(null, cb)
+                    },
                     click: (item, index) => {
                         r.routeParams({
                             item: item,
@@ -718,14 +730,14 @@
                     }, {
                         label: 'Status',
                         name: 'status'
-                    },{
-                        label:'Created',
-                        name:'createdAt',
+                    }, {
+                        label: 'Created',
+                        name: 'createdAt',
                         format: (v, item) => r.momentFormat(item.createdAt, 'DD-MM-YY HH:mm')
                     }],
                     items: []
                 };
-                update();
+
             }
         };
     });

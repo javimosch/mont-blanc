@@ -5,7 +5,7 @@
 
 
     app.directive('clientOrders', function(
-        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
+        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',
             replace: true,
@@ -14,7 +14,8 @@
             },
             templateUrl: 'views/directives/directive.fast-crud.html',
             link: function(s, elem, attrs) {
-                var r = $rootScope;
+                var r = $rootScope,
+                    dbPaginate = $mongoosePaginate.get('Order');
                 var ws = server;
                 var n = attrs.name;
                 s.title = "Your Orders";
@@ -33,6 +34,8 @@
                     if (r.userIs(['client'])) {
                         data['_client'] = r.session()._id;
                     }
+
+
 
                     ws.ctrl('Order', 'getAll', data).then((res) => {
                         if (res.ok) {
@@ -68,6 +71,9 @@
                     });
                 }
                 s.model = {
+                    //paginate: (cb) => {
+                    //  update(null, cb)
+                    //},
                     click: (item, index) => {
                         var data = {};
                         ws.localData().then(function(d) {
@@ -109,7 +115,7 @@
 
     //
     app.directive('clientsList', function(
-        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
+        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',
             replace: true,
@@ -119,18 +125,36 @@
             controller: function($scope, $element, $attrs, $transclude) {
                 var r = $rootScope,
                     db = server,
-                    s = $scope;
+                    s = $scope,
+                    dbPaginate = $mongoosePaginate.get('User');
                 s.title = "Clients";
                 r.routeParams({
                     prevRoute: 'clients'
                 });
 
-                function update() {
-                    db.ctrl('User', 'getAll', {
+                function update(cb) {
+                    dbPaginate.ctrl({
                         userType: 'client'
-                    }).then((res) => s.model.update(res.result));
+                    }, s.model).then((res) => {
+                        if (cb) {
+                            cb(res.result);
+                        } else {
+                            s.model.update(res.result)
+                        }
+                    });
                 }
                 s.model = {
+                    init:()=>update(),
+                    filter:{
+                        template:'clientFilter',
+                        rules:{
+                            email:'contains',
+                            clientType:'contains'
+                        }
+                    },
+                    paginate: (cb) => {
+                        update(cb)
+                    },
                     click: (item, index) => {
                         r.routeParams({
                             item: item,
@@ -162,7 +186,7 @@
                     }],
                     items: []
                 };
-                update();
+                
             }
         };
     });

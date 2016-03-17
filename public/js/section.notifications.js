@@ -8,8 +8,12 @@
         TPL_CRUD_EDIT: 'views/partials/notification.edit.html'
     };
     var app = angular.module('app.notifications', []);
+
+    
+
+
     app.directive('sectionNotifications', function(
-        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
+        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',
             replace: true,
@@ -18,39 +22,67 @@
             },
             templateUrl: vars.TPL_CRUD,
             link: function(s, elem, attrs) {
-                var r = $rootScope,db=server;
+                var r = $rootScope,
+                    db = server,
+                    dbPaginate = $mongoosePaginate.get('Notification');
                 s.title = vars.TITLE;
                 r.logger.addControlledErrors([
                     "SENDING_DISABLED_TYPE"
                 ]);
 
-                function update(items) {
-                    if(items){
+
+
+                function update(items, cb) {
+                    if (items) {
                         s.model.update(items);
                         return;
                     }
                     var data = {
-                        //_user: r.session()._id,
                         __populate: {
                             _config: '',
                         },
-                        __lean:true,
-                        limit:5
+                        __sort:"-created"
                     };
-
-                    db.ctrl('Notification', 'paginate', data).then((res) => {
-                        if (res.ok) {
-                            console.info('notifications', res.result);
-                            s.items = res.result;
-                            s.items=  _.orderBy(s.items,['created'],'desc');
-                            s.items=  _.chunk(s.items,20)[0];
-                            s.model.update(s.items);
+                    dbPaginate.ctrl(data, s.model).then(res => {
+                        if (cb) {
+                            cb(res.result);
+                        } else {
+                            s.model.update(res.result, null);
                         }
+                    }).on('cache', res => {
+                        s.model.update(res.result, null);
                     });
                 }
 
+                var modalData = {
+                    send: () => {
+                        s.confirm('Confirm sending to ' + item.to + '?', () => {
+                            //html from to subject
+                            db.ctrl('Email', 'send', {
+                                _user: item._user,
+                                _notification: item._id,
+                                html: item.contents,
+                                to: item.to,
+                                subject: item.subject
+                            }).then(d => {
+                                console.info(d);
+                                update();
+                            });
+                        });
+                    }
+                };
 
                 s.model = {
+                    filter: {
+                        template: 'notificationFilter',
+                        rules: {
+                            to: 'contains'
+                        }
+                    },
+                    init: () => update(),
+                    paginate: (cb) => {
+                        update(null, cb)
+                    },
                     remove: (item, index) => {
                         var rule = {
                             _id: item._id
@@ -59,62 +91,24 @@
                         db.ctrl('UserNotifications', 'update', item._config).then((d) => {
                             if (d.ok) {
                                 db.ctrl('Notification', 'remove', rule).then((d) => {
-                                    if(!d.ok){
-                                        s.items.push(item);//on error push item again
-                                        update(s.items);
-                                    }
+                                    update();
                                 });
                             }
                         });
-                        s.items = s.items.filter(v=>v._id!==item._id);
-                        update(s.items);
                     },
                     buttonsTpl: vars.TPL_CRUD_BUTTONS,
                     tfoot: vars.TPL_CRUD_TFOOT,
                     click: (item, index) => {
-
-                        var data = {
-                            send: () => {
-                                s.confirm('Confirm sending to ' + item.to + '?', () => {
-                                    //html from to subject
-                                    db.ctrl('Email', 'send', {
-                                        _user: item._user,
-                                        _notification: item._id,
-                                        html: item.contents,
-                                        to: item.to,
-                                        subject: item.subject
-                                    }).then(d => {
-                                        console.info(d);
-                                        update();
-                                    });
-                                });
-                            }
-                        };
-
-
-                        //db.localData().then(function(d) {
-                        //  Object.assign(data, d);
-                        //});
-
-                        //db.ctrl('Payment', 'associatedOrder', {
-                        //source: item.source
-                        //}).then((data) => {
-                        //item = Object.assign(data.result);
-                        _open();
-                        //});
-
-                        function _open() {
-                            s.open({
-                                title: 'Notification Details',
-                                data: data,
-                                evts: {
-                                    'init': []
-                                },
-                                item: item,
-                                templateUrl: vars.TPL_CRUD_EDIT,
-                                callback: (item) => {}
-                            });
-                        }
+                        s.open({
+                            title: 'Notification Details',
+                            data: modalData,
+                            evts: {
+                                'init': []
+                            },
+                            item: item,
+                            templateUrl: vars.TPL_CRUD_EDIT,
+                            callback: (item) => {}
+                        });
                     },
                     buttons: [{
                         label: "Refresh",
@@ -139,11 +133,9 @@
                         format: (v) => {
                             return r.momentFormat(v, "DD-MM-YY HH:mm");
                         }
-                    }],
-                    items: []
+                    }]
                 };
-                update();
-                //                console.log('directive.exceptions.linked');
+
             }
         };
     });

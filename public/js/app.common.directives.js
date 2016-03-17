@@ -1,5 +1,42 @@
 var app = angular.module('app.common.directives', []);
 
+app.directive('tableFilter', function(
+        $rootScope, $timeout, $compile, $templateRequest, $sce, tpl) {
+        return {
+            restrict: 'AE',
+            replace: true,
+            scope: {
+                model: "=model"
+            },
+            template: "<out></out>", //<h4>tableFilter</h4>
+            link: function(s, elem, attrs) {
+                if (s.model && !s.model.filter) return;
+                var filter = s.model.filter.template || '<h5>tableFilter requires filter.template</h5>'
+                r.dom(() => {
+                    var el = tpl.compile(filter, s);
+                    console.info('tableFilter', s.model.filter, el);
+                    elem.replaceWith(el);
+                });
+                s.model.filter.fields = {};
+                var filtered = [];
+                s.$watch('model.filter.fields', (fields) => {
+                    if (!s.model.itemsOriginalRef || s.model.itemsOriginalRef.length == 0) return;
+                    filtered = s.model.itemsOriginalRef;
+                    var rule = 'contains';
+                    for (var x in fields) {
+                        if (s.model.filter.rules[x]) {
+                            rule = s.model.filter.rules[x] || rule;
+                            if (rule == 'contains') {
+                                filtered = filtered.filter(v => v[x].indexOf(fields[x]) !== -1);
+                            }
+                        }
+                    }
+                    s.model.items = filtered;
+                    r.dom();
+                }, true);
+            }
+        };
+    });
 
 app.directive('ctrlDtp', function($rootScope) {
     /*
@@ -900,14 +937,37 @@ app.directive('dynamicTable', function(
             };
             s.buttons = s.model.buttons || null;
             s.columns = s.model.columns || [];
-            s.items = s.model.items || [];
-            s.model.update = (items, data) => {
-                s.items = items;
-                s.data = data;
-                r.dom();
-                //console.log('directive.dynamic-table.set:' + items.length);
+            s.model.items = s.model.items || [];
+
+            s.paginationTotalItems = 1;
+            s.model.pagination = s.model.pagination || {
+                currentPage:1,
+                maxSize:5,
+                itemsPerPage:10,
+                changed:()=>{
+                    if(s.model.paginate) s.model.paginate(items=>{
+                        s.model.items=items;
+                        r.dom();
+                    });
+                },
+                update:(p)=>{
+                    //s.model.pagination.itemsPerPage=p.itemsLength;
+                    s.paginationTotalItems  = s.model.pagination.itemsPerPage * p.numPages;
+                }
             };
-            //console.log('directive.dynamic-table.linked');
+
+            s.model.update = (items, data) => {
+                s.model.items = items;
+                s.model.itemsOriginalRef = items;
+                if(!s.data){
+                    s.data = data;
+                }
+            };
+            if(s.model.init){
+                s.model.init();
+            }
+            s.model.itemsOriginalRef = s.model.items;
+            expose('table',s);
         }
     };
 });

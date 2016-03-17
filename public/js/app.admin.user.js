@@ -1,17 +1,7 @@
 var app = angular.module('app.admin.user', ['app.common.service']);
 
 
-app.service('tpl', function($rootScope, $compile, $templateCache) {
-    this.compile = (n, s) => {
-        var raw = $templateCache.get(n + '.html');
-        return this.compileRaw(raw, s);
-    };
-    this.compileRaw = (raw, s) => {
-        var el = $compile(angular.element(raw))(s);
-        return el;
-    }
-    expose('tpl', this);
-});
+
 
 app.controller('adminUsers', [
 

@@ -1,5 +1,75 @@
 var srv = angular.module('app.common.service', []);
 
+srv.service('tpl', function($rootScope, $compile, $templateCache) {
+    this.compile = (n, s) => {
+        var raw = $templateCache.get(n + '.html');
+        return this.compileRaw(raw, s);
+    };
+    this.compileRaw = (raw, s) => {
+        var el = $compile(angular.element(raw))(s);
+        return el;
+    }
+    expose('tpl', this);
+});
+
+srv.service('$mongoosePaginate', ['server', function(db) {
+    function omitKeys(o, keys) {
+        var obj = {};
+        for (var x in o) {
+            if (!_.includes(keys, x)) obj[x] = o[x];
+        }
+        return obj;
+    }
+
+    function handler(modelName) {
+        var self = this;
+        self.working = false;
+        self.ctrl = function(data,model) {
+            return MyPromise((resolve, err, emit) => {
+                if(!model.pagination){
+                    err('model.pagination required.');
+                    console.warn('$mongoosePaginate model.pagination required.');
+                    return;
+                }
+                if (self.working) return console.warn('$mongoosePaginate is working, wait.');
+                self.working = true;
+                db.ctrl(modelName, 'paginate', Object.assign({
+                    __limit: model.pagination.itemsPerPage,
+                    __lean:true,
+                    __page: model.pagination.currentPage
+                }, data)).then(r => {
+                    if (!r.ok) {
+                        self.working = false;
+                        return;
+                    }
+                    var numberOfPages = r.result.pages;
+                    console.info(model.pagination.currentPage,model.pagination,numberOfPages);
+                    r.result = r.result.docs;
+                    self.working = false;
+                    if (model.pagination) {
+                        model.pagination.update({
+                            itemsLength:r.result.length,
+                            numPages: numberOfPages
+                        });
+                    }
+                    resolve(r);
+                });
+            });
+        }
+    }
+    var handlers = {};
+    return {
+        get: function(modelName) {
+            if (!handlers[modelName]) {
+                console.info('$mongoosePaginate creating handler for ' + modelName);
+                handlers[modelName] = new handler(modelName);
+            }
+            console.info('$mongoosePaginate delivering handler for ' + modelName);
+            return handlers[modelName];
+        }
+    };
+}]);
+
 srv.service('localdb', ['$http', function(http) {
 
     return function(settings) {
@@ -303,7 +373,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
         })
     }
 
-    function timeRangesDiagIsWorking(order,cb) {
+    function timeRangesDiagIsWorking(order, cb) {
         ctrl('Order', 'getAll', {
             __select: 'diagStart diagEnd _diag',
             __rules: {
@@ -311,8 +381,8 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
             }
         }).then((data) => {
 
-            data.result = data.result.filter(v=>{
-                return moment(v.diagStart).isSame(moment(order.day),'day');
+            data.result = data.result.filter(v => {
+                return moment(v.diagStart).isSame(moment(order.day), 'day');
             });
 
             cb(data.result.map((v) => ({ _user: v._diag, start: v.diagStart, end: v.diagEnd })));
@@ -325,7 +395,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
         }
 
         function _data(cb) {
-            timeRangesDiagIsWorking(order,(working) => {
+            timeRangesDiagIsWorking(order, (working) => {
                 timeRangesDiagSayHeCantWorktype((exceptions) => {
                     diagsPriority((diags) => {
                         cb(working, exceptions, diags);
@@ -335,7 +405,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
         }
 
         function calc(order, working, exceptions, diags) {
-            return diagsCalculateAvailableSlots(order,working,exceptions,diags);
+            return diagsCalculateAvailableSlots(order, working, exceptions, diags);
             //order: {day:moment(),time{hours,minutes}} // the time that the order last.
             //working: [{_user,start,end}] // the times that a diag is occupied.
             //exceptions: [{_user,start,end,repeat}] // the times that the diag can't work.
@@ -367,7 +437,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
 
 
 
-    
+
 
     function ctrl(ctrl, action, data) {
         return MyPromise(function(resolve, error) {

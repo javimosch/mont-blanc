@@ -1,4 +1,5 @@
 <div>
+    <table-filter model="model"></table-filter>
     <div class="table-reponsive unselectable">
         <table class="table-dynamic table">
             <caption ng-show="caption">{{caption}}</caption>
@@ -10,8 +11,9 @@
             </thead>
             <!--ng-click="!hasMouse && console.log(hasMouse)"-->
             <tbody>
-                
-                <tr ng-repeat="(key,item) in items" 
+                 
+                 <!--track by $index-->
+                <tr ng-repeat="(key,item) in model.items" 
 
                 ng-click="(!hasMouse && click(item,$index))"
                 ng-dblclick="(hasMouse && click(item,$index))"
@@ -35,6 +37,11 @@
             <tfoot ng-if="model.tfoot" ng-include="model.tfoot">
             </tfoot>
         </table>
+        <uib-pagination 
+        ng-show="model.paginate"
+        total-items="paginationTotalItems"
+        items-per-page="model.pagination.itemsPerPage"
+         ng-model="model.pagination.currentPage" ng-change="model.pagination.changed()" max-size="model.pagination.maxSize" class="pagination-sm" boundary-links="true"></uib-pagination>
     </div>
     <div ng-if="buttons" class="">
         <button ng-repeat="(k,v) in buttons" ng-if="v.show==undefined || v.show==true" ng-class="v.type({
