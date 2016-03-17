@@ -86,7 +86,7 @@
                 </li>
                 <li ng-if="!userIs(['admin'])">
                     <label>Diag Start</label>
-                    <input ng-disabled="true" type="text" class="max-w-150" ng-value="momentFormat(item.diagStart,'DD-MM-YY HH:mm')" />
+                    <input ng-disabled="true" type="text" class="max-w-150" ng-value="momentFormat(item.diagStart,'DD-MM-YY HH[h]mm')" />
                 </li>
                 <li ng-show="!canWriteAgency()">
                     <label>Keys Picking Address</label>
@@ -95,8 +95,8 @@
                 <li ng-show="!canWriteAgency()">
                     <label>Keys Picking Time Range</label>
                     <div class="inline-block">
-                        <input type="text" disabled class="max-w-150" ng-value="momentFormat(item.keysTimeFrom,'HH:mm')" />
-                        <input type="text" disabled class="max-w-150" ng-value="momentFormat(item.keysTimeTo,'HH:mm')" />
+                        <input type="text" disabled class="max-w-150" ng-value="momentFormat(item.keysTimeFrom,'HH[h]mm')" />
+                        <input type="text" disabled class="max-w-150" ng-value="momentFormat(item.keysTimeTo,'HH[h]mm')" />
                     </div>
                 </li>
                 <out ng-show="!isOwner() && !canWriteAgency()">
@@ -127,9 +127,13 @@
                         <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
                     </div>
                 </li>
-                <li>
+                <li ng-show="!isDiag()">
                     <label>Price (eur)</label>
                     <input ng-disabled="true" type="number" class="max-w-60 text-right" placeholder="Price" ng-model="item.price">
+                </li>
+                <li ng-show="isDiag()">
+                    <label>Vous percevez</label>
+                    <input ng-disabled="true" type="number" class="max-w-60 text-right" placeholder="Price" ng-value="diagPrice()">
                 </li>
                 <li>
                     <label for="status">Status</label>

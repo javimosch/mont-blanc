@@ -114,16 +114,32 @@
             function setHelpers() {
 
                 s.canWriteAgency = () => {
+                    if(!s.item._id){
+                        return r.userIs('admin');
+                    }
                     return r.userIs(['admin']) || (r.session()._id == s.item._client._id && _.includes(['agency', 'other'], s.item._client.clientType));
                 };
                 s.canWriteDiag = () => {
+                    if(!s.item._id){
+                        return false
+                    }
                     return r.userIs(['admin']) || r.sesison()._id == s.item._diag._id;
+                };
+
+                s.diagPrice=()=>{
+                    if(!s.item.price)return 0;
+                    if(isNaN(s.item.price))return 0;
+                    return (s.item.price - (s.item.price * 0.12)) * 0.30;
                 };
 
                 s.isPaid = () => {
                     return _.includes(['prepaid', 'delivered', 'completed'], s.item.status);
                 };
 
+                s.isDiag=()=>{
+                    if(!s.item._id) return false;
+                    return r.userIs('diag') && r.session()._id == s.item._diag._id;
+                };
 
                 s.isOwner = () => {
                     if (!s.item || !s.item._client) return false;
