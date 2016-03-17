@@ -27,33 +27,33 @@
     <div class="col-sm-4">
         <div class="flex" class="v-margin-2">
             <label for="start" class="label-4  margin-r-1 timeLabel">Start:</label>
-            <uib-timepicker name='start' ng-model="start.val" hour-step="start.hstep" minute-step="start.mstep" show-meridian="true"></uib-timepicker>
+            <uib-timepicker name='start' ng-model="start.val" hour-step="start.hstep" minute-step="start.mstep" show-meridian="false"></uib-timepicker>
         </div>
         <div class="flex" class="v-margin-2">
             <label for="end" class="label-4  margin-r-1 timeLabel">End:</label>
-            <uib-timepicker name='end' ng-model="end.val" hour-step="end.hstep" minute-step="end.mstep" show-meridian="true"></uib-timepicker>
+            <uib-timepicker name='end' ng-model="end.val" hour-step="end.hstep" minute-step="end.mstep" show-meridian="false"></uib-timepicker>
         </div>
     </div>
     <div class="col-sm-4">
         <div class="v-margin-2">
-            <label for="repeat" class="label-4 margin-r-1">Repeat:</label>
+            <label for="repeat" class="label-4 margin-r-1">Mode:</label>
             <div class="input-group spacing-1">
                 <span class="input-group-addon">
                 <input type="radio" name="repeatMode" ng-model="repeat" value="week">
             </span>
-                <input type="text" disabled class="form-control" value="Week" aria-label="...">
+                <input type="text" disabled class="form-control" value="Repeat weekly" aria-label="...">
             </div>
             <div class="input-group spacing-1">
                 <span class="input-group-addon">
                 <input type="radio" name="repeatMode" ng-model="repeat" value="day">
             </span>
-                <input type="text" disabled class="form-control" value="Day" aria-label="...">
+                <input type="text" disabled class="form-control" value="Repeat daily" aria-label="...">
             </div>
             <div class="input-group spacing-1">
                 <span class="input-group-addon">
                 <input type="radio" name="repeatMode" ng-model="repeat" value="none">
             </span>
-                <input type="text" disabled class="form-control" value="None" aria-label="...">
+                <input type="text" disabled class="form-control" value="Specific date" aria-label="...">
             </div>
         </div>
     </div>

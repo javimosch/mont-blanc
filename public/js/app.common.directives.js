@@ -1107,11 +1107,11 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                                 //s.message('Description required', 'warning', 2000);
                                 //return false;
                             }
-                            if (!s.days.val) {
-                                s.message('Choice a day', 'warning', 2000);
-                                return false;
-                            }
-                            if (s.repeat !== 'day' && s.days.val.toString() === '-1') {
+                            //if (s.repeat === 'none' && !s.datepicker.val) {
+                              //  s.message('Choice a day from the datepicker', 'warning', 2000);
+                                //return false;
+                            //}
+                            if (s.repeat == 'week' && s.days.val.toString() === '-1') {
                                 s.message('Choice a day', 'warning', 2000);
                                 return false;
                             }
@@ -1119,6 +1119,20 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                                 s.message('Choice a day in the calendar', 'warning', 2000)
                                 return;
                             }
+                            if(!s.start.val){
+                                s.message('Choice a valid start time.');
+                                return;
+                            }
+                            if(!s.end.val){
+                                s.message('Choice a valid end time.');
+                                return;
+                            }
+
+                            if(moment(s.start.val).isAfter(moment(s.end.val))){
+                                s.message('Start time need  to be before end time.');
+                                return;   
+                            }
+
                             try {
                                 var _d = moment(s.start.val);
                                 _d = moment(s.end.val);
@@ -1172,6 +1186,9 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                             s.days.select(s.days.val);
                             if (s.repeat == 'day') {
                                 s.days.val = -1;
+                            }
+                            if(s.repeat=='none'){
+                                s.datepicker.val = opt.item.start;
                             }
                         }
                     }

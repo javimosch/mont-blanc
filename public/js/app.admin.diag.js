@@ -21,6 +21,9 @@ app.directive('timeRangeExceptions', function(
                     if (res.ok) {
                         res.result.forEach((v) => {
                             v.dayFormat = moment(v.start).format('dddd');
+                            if(v.repeat=='none'){
+                                v.dayFormat = moment(v.start).format('dddd DD MMMM YYYYY');
+                            }
                             v.startFormat = moment(v.start).format('HH:mm');
                             v.endFormat = moment(v.end).format('HH:mm');
                         });
