@@ -365,7 +365,7 @@ app.controller('fullpage', ['server',
             s.$watch('model.electricityInstallation', updateChecks);
 
             function updateChecks() {
-                if (s.model.constructionPermissionDate === 'Before le 01/01/1949') {
+                if (s.model.constructionPermissionDate === 'avant le 01/01/1949') {
                     toggle('crep', true);
                     s.model.diags.crep = true; //mandatory
                 } else {
@@ -381,7 +381,7 @@ app.controller('fullpage', ['server',
                     s.model.diags.termites = false;
                 }
 
-                if (_.includes(['Before le 01/01/1949', 'entre 1949 et le 01/07/1997'], s.model.constructionPermissionDate)) {
+                if (_.includes(['avant le 01/01/1949', 'entre 1949 et le 01/07/1997'], s.model.constructionPermissionDate)) {
                     toggle('dta', true);
                     s.model.diags.dta = true; //mandatory
                 } else {
@@ -519,10 +519,10 @@ app.controller('fullpage', ['server',
             $.fn.fullpage.moveSectionUp();
         };
         s.selectedDate = function() {
-            return moment(s.model.date).format('MMMM Do YYYY, dddd');
+            return moment(s.model.date).format('DD MMMM YYYY');
         };
         s.drawRange = function(rng) {
-            var rta = moment(rng.start).format("HH:mm") + 'h - ' + moment(rng.end).format("HH:mm") + 'h';
+            var rta = moment(rng.start).format("HH[h]mm") + ' - ' + moment(rng.end).format("HH[h]mm");
 
             if (rng.name) {
                 rta += ' by ' + rng.name;
@@ -999,8 +999,8 @@ app.controller('fullpage', ['server',
         s.getDate = () => {
             return {
                 date: moment(s.model.diagStart).format('DD-MM-YY'),
-                start: moment(s.model.diagStart).format('HH:mm'),
-                end: moment(s.model.diagEnd).format('HH:mm')
+                start: moment(s.model.diagStart).format('HH[h]mm'),
+                end: moment(s.model.diagEnd).format('HH[h]mm')
             };
         };
 
