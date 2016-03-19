@@ -28,7 +28,11 @@
                 var ws = server;
                 var n = attrs.name;
 
+                r.logger.addControlledErrors(['StripeConnectionError']);
+
                 ws.ctrl('Payment', 'balance').then((data) => {
+                    //console.log('adminBalance:data',data);
+                    if(!data.ok)return r.notify(data.err&&data.err.message||'Server error when connecting with Stripe.');
                     var b = {};
                     var out = data.result;
                     b.available = _.sumBy(out.available, function(o) {

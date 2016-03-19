@@ -10,6 +10,13 @@
         var diags = _.orderBy(diags, (v) => v.priority);
         diags.forEach((diag) => {
             //
+            //if an exception collide with the whole day, skip.
+            if(isExceptionCollidingWholeDay(diag,order,exceptions)){
+                console.log(diag._id+' exception colliding whole day');
+                return;
+            }
+
+
             //exceptions that collide in the whole day.
             var _exceptions = orderDiagExceptions(order, diag, exceptions);
             //a sum of the active orders of the day plus exceptions.
@@ -49,6 +56,7 @@
     }
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
+
     function filterOrders(orders,diag){
     	return orders.filter(v=>{
     		return v._user == diag._id;
@@ -200,6 +208,14 @@
                     sameDay || repeatDay || (repeatWeek && sameDOW)
                 );
             return collide;
+        });
+    }
+    function isExceptionCollidingWholeDay(diag,order,exceptions){
+        return exceptions.some(ex=>{
+            var o = moment(order.day);
+            if(ex._user != diag._id) return false;
+            return moment(ex.start).isBefore(o.hour(8).minutes(0))
+                && moment(ex.end).isAfter(o.hour(19).minutes(0))
         });
     }
 })(typeof exports !== 'undefined' && exports || window);

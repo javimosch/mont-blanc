@@ -1,121 +1,130 @@
+<modal-confirm open="confirm"></modal-confirm>
 <div class="container" ng-controller="adminDiagsEdit">
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <h3 class="panel-title">Diag Details</h3>
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="v-margin-2 padding-0">Diag Details</h3>
         </div>
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-sm-6">
-                    <ul class="form-tiny center-block">
-                        <li>
-                            <label>Email</label>
-                            <input ng-disabled="state.working() || item._id" type="email" ng-model="item.email" placeholder="Email">
-                        </li>
-                        <li ng-init="passVisible=false">
-                            <label>Password</label>
-                            <input ng-show="!passVisible" ng-disabled="state.working()" type="password" ng-model="item.password" placeholder="Password">
-                            <input ng-show="passVisible" ng-disabled="state.working()" type="text" ng-model="item.password" placeholder="Password">
-                            <out ng-show="userIs('admin')">
-                                <i ng-disabled="state.working()" ng-show="!passVisible" class="fa fa-eye link" ng-click="passVisible=true"></i>
-                                <i ng-disabled="state.working()" ng-show="passVisible" class="fa fa-eye-slash link" ng-click="passVisible=false"></i>
-                            </out>
-                        </li>
-                        <li>
-                            <label>First name</label>
-                            <input type="text" ng-model="item.firstName" placeholder="First Name">
-                        </li>
-                        <li>
-                            <label>Last name</label>
-                            <input ng-disabled="state.working()" type="text" ng-model="item.lastName" placeholder="Last Name">
-                        </li>
-                        <li>
-                            <label>Fixed Phone</label>
-                            <input ng-disabled="state.working()" type="text" ng-model="item.fixedTel" placeholder="Fixed phone">
-                        </li>
-                        <li>
-                            <label>Cell Phone</label>
-                            <input ng-disabled="state.working()" type="text" ng-model="item.cellPhone" placeholder="CellPhone">
-                        </li>
-                        <li>
-                            <label>Street Address</label>
-                            <input ng-disabled="state.working()" type="text" data-address model="item" field="address" placeholder="Street Address" city="city" department="department" region="region" country="country" post-code="postCode" class="fullwidth max-w-500">
-                        </li>
-                        <li>
-                            <label>City</label>
-                            <input ng-disabled="state.working()" type="text" disabled ng-model="item.city">
-                        </li>
-                        <li>
-                            <label>Department</label>
-                            <input ng-disabled="state.working()" type="text" disabled ng-model="item.department">
-                        </li>
-                        <li>
-                            <label>Region</label>
-                            <input ng-disabled="state.working()" type="text" disabled ng-model="item.region">
-                        </li>
-                        <li>
-                            <label>Country</label>
-                            <input ng-disabled="state.working()" type="text" disabled ng-model="item.country">
-                        </li>
-                        <li>
-                            <label>Post Code</label>
-                            <input ng-disabled="state.working()" type="text" disabled ng-model="item.postCode">
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-sm-6">
-                    <ul class="form-tiny center-block">
-                        <li>
-                            Diplomes
-                        </li>
-                        <li ng-repeat="(id,d) in diplomesData" class="relative diplome">
-                            <!--FILE-->
-                            <input id="{{'file_'+id}}" class="form-control hidden" type="file" file-model="diplomesFile[id]" ng-disabled="!item._id || state.working()">
-                            <div class="inline childs-margin-1">
-                                <!--DELETE-->
-                                <i ng-show="diplomesExists(id)" ng-click="diplomesDelete(id)" class="fa fa-times file-button"></i>
-                                <!--UPLOAD-->
-                                <i ng-show="!diplomesExists(id)" class="fa fa-cloud-upload file-button" ng-disabled="!item._id || state.working() || !diplomesFile[id]" ng-click="!diplomesFile[id] || diplomesSave(id)"></i>
-                                <!--LABEL-->
-                                <label class="link file-label" for="{{'file_'+id}}">{{diplomesLabel(id)}}</label>
-                                <!--DOWNLOAD-->
-                                <i ng-show="diplomesExists(id)" ng-disabled="!item._id || state.working() || !diplomesExists(id)" ng-click="!diplomesExists(id) || diplomesDownload(id)" class="fa fa-download file-button"></i>
-                                <!--ACTIVATE EXPIRATION NOTIFICATION-->
-                                <i ng-show="diplomesExists(id) && !diplomesExpirationDateNotificationEnabled(id)" ng-disabled="!item._id || state.working()" class="fa fa-hourglass-start file-button" ng-click="diplomesEnableExpirationDateNotification(id)"></i>
-                                <i ng-show="diplomesExists(id)" class="fa fa-question file-button" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
-                            </div>
-                            <div>
-                                <p class="input-group diplome-info">
-                                    <label>Obtention Date</label>
-                                    <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.obtentionDate" is-open="d.obtentionDateOpen" max-date="d.obtentionMaxDate" datepicker-options="d.dateOptions" date-disabled="false" ng-required="true" close-text="Close" ng-click="d.obtentionDateClick()" />
-                                </p>
-                                <p class="input-group diplome-info" ng-if="userIs(['admin'])">
-                                    <label>Expiration Date</label>
-                                    <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.expirationDate" is-open="d.expirationDateOpen" min-date="d.expirationMinDate" datepicker-options="d.dateOptions" date-disabled="false" ng-required="true" close-text="Close" ng-click="d.expirationDateClick()" ng-change="diplomesExpirationDateChange(id)" />
-                                </p>
-                            </div>
-                        </li>
-                        <li>
-                            <button ng-disabled="!item._id || state.working()" ng-click="!item._id || diplomesNew()" class="btn btn-default fa fa-plus file-button">Add</button>
-                            <hr/>
-                        </li>
-                        <li>
-                            <label>Commission</label>
-                            <input ng-disabled="state.working() || !userIs(['admin'])" type="text" ng-model="item.commission" placeholder="Commission">
-                        </li>
-                        <li>
-                            <label>Priority</label>
-                            <input ng-disabled="state.working() || !userIs(['admin'])" type="text" ng-model="item.priority" placeholder="priority">
-                        </li>
-                    </ul>
-                </div>
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <ul class="form-tiny center-block">
+                <li>
+                    <label>Email</label>
+                    <input ng-disabled="state.working() || item._id" type="email" ng-model="item.email" placeholder="Email">
+                </li>
+                <li ng-init="passVisible=false">
+                    <label>Password</label>
+                    <input ng-show="!passVisible" ng-disabled="state.working()" type="password" ng-model="item.password" placeholder="Password">
+                    <input ng-show="passVisible" ng-disabled="state.working()" type="text" ng-model="item.password" placeholder="Password">
+                    <out ng-show="userIs('admin')">
+                        <i ng-disabled="state.working()" ng-show="!passVisible" class="fa fa-eye link" ng-click="passVisible=true"></i>
+                        <i ng-disabled="state.working()" ng-show="passVisible" class="fa fa-eye-slash link" ng-click="passVisible=false"></i>
+                    </out>
+                </li>
+                <li>
+                    <label>First name</label>
+                    <input type="text" ng-model="item.firstName" placeholder="First Name">
+                </li>
+                <li>
+                    <label>Last name</label>
+                    <input ng-disabled="state.working()" type="text" ng-model="item.lastName" placeholder="Last Name">
+                </li>
+                <li>
+                    <label>Fixed Phone</label>
+                    <input ng-disabled="state.working()" type="text" ng-model="item.fixedTel" placeholder="Fixed phone">
+                </li>
+                <li>
+                    <label>Cell Phone</label>
+                    <input ng-disabled="state.working()" type="text" ng-model="item.cellPhone" placeholder="CellPhone">
+                </li>
+                <li>
+                    <label>Street Address</label>
+                    <input ng-disabled="state.working()" type="text" data-address model="item" field="address" placeholder="Street Address" city="city" department="department" region="region" country="country" post-code="postCode" class="fullwidth max-w-500">
+                </li>
+                <li>
+                    <label>City</label>
+                    <input ng-disabled="state.working()" type="text" disabled ng-model="item.city">
+                </li>
+                <li>
+                    <label>Department</label>
+                    <input ng-disabled="state.working()" type="text" disabled ng-model="item.department">
+                </li>
+                <li>
+                    <label>Region</label>
+                    <input ng-disabled="state.working()" type="text" disabled ng-model="item.region">
+                </li>
+                <li>
+                    <label>Country</label>
+                    <input ng-disabled="state.working()" type="text" disabled ng-model="item.country">
+                </li>
+                <li>
+                    <label>Post Code</label>
+                    <input ng-disabled="state.working()" type="text" disabled ng-model="item.postCode">
+                </li>
+            </ul>
         </div>
-        <div class="panel-footer">
+        <div class="col-sm-6">
+            <ul class="form-tiny center-block">
+                <li>
+                    Diplomes
+                </li>
+                <li ng-repeat="(id,d) in diplomesData" class="relative diplome">
+                    <!--FILE-->
+                    <input id="{{'file_'+id}}" class="form-control hidden" type="file" file-model="diplomesFile[id]" ng-disabled="!item._id || state.working()">
+                    <div class="inline childs-margin-1">
+                        <!--DELETE-->
+                        <i ng-show="diplomesExists(id)" ng-click="diplomesDelete(id)" class="fa fa-times file-button"></i>
+                        <!--UPLOAD-->
+                        <i ng-show="!diplomesExists(id)" class="fa fa-cloud-upload file-button" ng-disabled="!item._id || state.working() || !diplomesFile[id]" ng-click="!diplomesFile[id] || diplomesSave(id)"></i>
+                        <!--LABEL-->
+                        <label class="link file-label" for="{{'file_'+id}}">{{diplomesLabel(id)}}</label>
+                        <!--DOWNLOAD-->
+                        <i ng-show="diplomesExists(id)" ng-disabled="!item._id || state.working() || !diplomesExists(id)" ng-click="!diplomesExists(id) || diplomesDownload(id)" class="fa fa-download file-button"></i>
+                        <!--ACTIVATE EXPIRATION NOTIFICATION-->
+                        <i ng-show="diplomesExists(id) && !diplomesExpirationDateNotificationEnabled(id)" ng-disabled="!item._id || state.working()" class="fa fa-hourglass-start file-button" ng-click="diplomesEnableExpirationDateNotification(id)"></i>
+                        <i ng-show="diplomesExists(id)" class="fa fa-question file-button" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
+                    </div>
+                    <div>
+                        <p class="input-group diplome-info">
+                            <label>Obtention Date</label>
+                            <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.obtentionDate" is-open="d.obtentionDateOpen" max-date="d.obtentionMaxDate" datepicker-options="d.dateOptions" date-disabled="false" ng-required="true" close-text="Close" ng-click="d.obtentionDateClick()" />
+                        </p>
+                        <p class="input-group diplome-info" ng-if="userIs(['admin'])">
+                            <label>Expiration Date</label>
+                            <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.expirationDate" is-open="d.expirationDateOpen" min-date="d.expirationMinDate" datepicker-options="d.dateOptions" date-disabled="false" ng-required="true" close-text="Close" ng-click="d.expirationDateClick()" ng-change="diplomesExpirationDateChange(id)" />
+                        </p>
+                    </div>
+                </li>
+                <li>
+                    <button ng-disabled="!item._id || state.working()" ng-click="!item._id || diplomesNew()" class="btn btn-default fa fa-plus file-button">Add</button>
+                    <hr/>
+                </li>
+                <li>
+                    <label>Commission</label>
+                    <input ng-disabled="state.working() || !userIs(['admin'])" type="text" ng-model="item.commission" placeholder="Commission">
+                </li>
+                <li>
+                    <label>Priority</label>
+                    <input ng-disabled="state.working() || !userIs(['admin'])" type="text" ng-model="item.priority" placeholder="priority">
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <h4 class="v-margin-2 padding-0">Working exceptions</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <diag-exception-list></diag-exception-list>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
             <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="validate()">Save</button>
             <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>
             <button ng-disabled="!item._id || state.working() || requesting" class="btn btn-default" ng-click="delete()">Delete</button>
         </div>
     </div>
-    <!--<my-alerts add="message"></my-alerts>-->
-    <modal-confirm open="confirm"></modal-confirm>
 </div>

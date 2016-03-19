@@ -42,6 +42,17 @@ html, body, *{
     font-size: 1rem;
 }
 
+
+.alert-info,.alert-warning,.alert-success{
+    /* background: rgba(0,0,0,0.1); */
+    background-image: none!important;
+    /* color: black; */
+    border-radius: 0px;
+    margin-bottom: 05px;
+    padding: 5px 30px;
+    text-align: center;
+}
+
 table.uib-timepicker{
     display: inline-table;
 }

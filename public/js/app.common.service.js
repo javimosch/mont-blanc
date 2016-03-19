@@ -169,7 +169,16 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                             if (_.includes(_controlledErrorsStrings, item.err)) {
                                 _controlledErrors[self.id] = item;
                             } else {
-                                _errors[self.id] = item;
+                                if(item.err && item.err.type){
+                                    if(_.includes(_controlledErrorsStrings, item.err.type)){
+                                        item.message = item.err.message;
+                                        _controlledErrors[self.id] = item;    
+                                    }else{
+                                        _errors[self.id] = item;
+                                    }
+                                }else{
+                                    _errors[self.id] = item;
+                                }
                             }
                         }
                     }

@@ -23,6 +23,7 @@
                 <li ng-show="logged() && userIs(['admin'])"><a class="link" active-route="notifications" ng-click="route('notifications')">Notifications</a></li>
 <li ng-show="logged() && userIs(['admin'])"><a class="link" active-route="tools" ng-click="route('tools')">Tools</a></li>
 
+                <li ng-show="logged() && userIs(['diag'])"><a class="link" active-route="diags" ng-click="route('diags/edit/'+session()._id)">My profile</a></li>
                 <li ng-show="logged() && userIs(['diag'])"><a class="link" active-route="balance" ng-click="route('diag/balance')">Balance</a></li>
                 <li ng-show="logged()">
                     <a class="link" ng-click="logout()">Logout

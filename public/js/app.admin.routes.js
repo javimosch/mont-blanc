@@ -23,6 +23,13 @@ app.config(['$routeProvider',
             templateUrl: 'views/view.admin-edit.html'
         }).
 
+        when('/exceptions', {
+            templateUrl: 'views/exception.list.html'
+        }).
+        when('/exceptions/edit/:id', {
+            templateUrl: 'views/exception.edit.html'
+        }).
+
         when('/clients', {
             templateUrl: 'views/view.admin.clients.html'
         }).

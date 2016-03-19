@@ -73,15 +73,15 @@
                     </ul>
                 </li>
                 <!--ADMIN start:choice-->
-                <li ng-if="userIs(['admin'])" class="inline-flex">
+                <li ng-if="userIs(['admin'])" class="inline-flex relative">
                     <label>Start Date</label>
                     <input ng-disabled="state.working() || is(['client','diag'])" type="text" class="max-w-150" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.diagStart" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
                     <button ng-disabled="state.working() || is(['client','diag'])" type="button" class="btn btn-default" ng-click="start.opened = !start.opened"><i class="glyphicon glyphicon-calendar"></i></button>
                 </li>
                 <!--ADMIN end:choice-->
-                <li ng-if="userIs(['admin'])" class="inline-flex">
+                <li ng-if="userIs(['admin'])" class="inline-flex relative">
                     <label>End Date</label>
-                    <input ng-disabled="state.working() || is(['client','diag'])" type="text" class="max-w-150" uib-datepicker-popup="dd/MM/yyyy HH:mm " ng-model="item.diagEnd" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="end.opened=false" is-open="end.opened" date-disabled="false" close-text="Close" />
+                    <input ng-disabled="true || state.working() || is(['client','diag'])" type="text" class="max-w-150" uib-datepicker-popup="dd/MM/yyyy HH:mm " ng-model="item.diagEnd" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="end.opened=false" is-open="end.opened" date-disabled="false" close-text="Close" />
                     <button ng-disabled="state.working() || is(['client','diag'])" type="button" class="btn btn-default" ng-click="end.opened = !end.opened"><i class="glyphicon glyphicon-calendar"></i></button>
                 </li>
                 <li ng-if="!userIs(['admin'])">

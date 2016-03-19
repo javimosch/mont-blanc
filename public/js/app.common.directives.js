@@ -1,42 +1,42 @@
 var app = angular.module('app.common.directives', []);
 
 app.directive('tableFilter', function(
-        $rootScope, $timeout, $compile, $templateRequest, $sce, tpl) {
-        return {
-            restrict: 'AE',
-            replace: true,
-            scope: {
-                model: "=model"
-            },
-            template: "<out></out>", //<h4>tableFilter</h4>
-            link: function(s, elem, attrs) {
-                if (s.model && !s.model.filter) return;
-                var filter = s.model.filter.template || '<h5>tableFilter requires filter.template</h5>'
-                r.dom(() => {
-                    var el = tpl.compile(filter, s);
-                    console.info('tableFilter', s.model.filter, el);
-                    elem.replaceWith(el);
-                });
-                s.model.filter.fields = {};
-                var filtered = [];
-                s.$watch('model.filter.fields', (fields) => {
-                    if (!s.model.itemsOriginalRef || s.model.itemsOriginalRef.length == 0) return;
-                    filtered = s.model.itemsOriginalRef;
-                    var rule = 'contains';
-                    for (var x in fields) {
-                        if (s.model.filter.rules[x]) {
-                            rule = s.model.filter.rules[x] || rule;
-                            if (rule == 'contains') {
-                                filtered = filtered.filter(v => v[x].indexOf(fields[x]) !== -1);
-                            }
+    $rootScope, $timeout, $compile, $templateRequest, $sce, tpl) {
+    return {
+        restrict: 'AE',
+        replace: true,
+        scope: {
+            model: "=model"
+        },
+        template: "<out></out>", //<h4>tableFilter</h4>
+        link: function(s, elem, attrs) {
+            if (s.model && !s.model.filter) return;
+            var filter = s.model.filter.template || '<h5>tableFilter requires filter.template</h5>'
+            r.dom(() => {
+                var el = tpl.compile(filter, s);
+                console.info('tableFilter', s.model.filter, el);
+                elem.replaceWith(el);
+            });
+            s.model.filter.fields = {};
+            var filtered = [];
+            s.$watch('model.filter.fields', (fields) => {
+                if (!s.model.itemsOriginalRef || s.model.itemsOriginalRef.length == 0) return;
+                filtered = s.model.itemsOriginalRef;
+                var rule = 'contains';
+                for (var x in fields) {
+                    if (s.model.filter.rules[x]) {
+                        rule = s.model.filter.rules[x] || rule;
+                        if (rule == 'contains') {
+                            filtered = filtered.filter(v => v[x].indexOf(fields[x]) !== -1);
                         }
                     }
-                    s.model.items = filtered;
-                    r.dom();
-                }, true);
-            }
-        };
-    });
+                }
+                s.model.items = filtered;
+                r.dom();
+            }, true);
+        }
+    };
+});
 
 app.directive('ctrlDtp', function($rootScope) {
     /*
@@ -245,7 +245,7 @@ app.directive('activeRoute', function($rootScope) {
                 }
             }
             $rootScope.dom(apply);
-            $rootScope.$watch('__route',__route=>{
+            $rootScope.$watch('__route', __route => {
                 $rootScope.dom(apply);
             });
         }
@@ -384,7 +384,13 @@ app.directive('address', function($rootScope, $timeout) {
                 throw Error("directive address require a valid model.");
             }
             $timeout(function() {
-                elem.geocomplete().bind("geocode:result", function(event, result) {
+                try {
+                    elem.geocomplete().bind("geocode:result", onResult);
+                } catch (e) {
+                    return r.notify('Google library issue, address autocomplete feature is temporaly disabled.', 'warning');
+                }
+
+                function onResult(event, result) {
                     scope.model[scope.field] = result.formatted_address;
                     scope.change && scope.change(result.formatted_address);
                     var data = result.address_components.map(v => (v.long_name));
@@ -434,7 +440,7 @@ app.directive('address', function($rootScope, $timeout) {
                     if (scope.postCode) setVal(scope.model, scope.postCode, postCode);
                     expose('address', Object.assign(result, scope));
                     r.dom();
-                });
+                }
 
                 function setVal(obj, propertyPath, val) {
                     var split = propertyPath.split('.');
@@ -782,7 +788,7 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                     scroll = true;
                 }
 
-                if (s.stacked) {
+                /*if (s.stacked) {
                     if (s.el) {
                         return s._stacked.push({
                             message: message,
@@ -792,11 +798,11 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                             opt: opt
                         });
                     }
-                } else {
+                } else {*/
                     if (s.el) {
                         s.el.alert('close');
                     }
-                }
+                //}
 
                 var directive = s.directive || 'my-alert';
                 s.opt = opt;
@@ -941,33 +947,33 @@ app.directive('dynamicTable', function(
 
             s.paginationTotalItems = 1;
             s.model.pagination = s.model.pagination || {
-                currentPage:1,
-                maxSize:5,
-                itemsPerPage:10,
-                changed:()=>{
-                    if(s.model.paginate) s.model.paginate(items=>{
-                        s.model.items=items;
+                currentPage: 1,
+                maxSize: 5,
+                itemsPerPage: 10,
+                changed: () => {
+                    if (s.model.paginate) s.model.paginate(items => {
+                        s.model.items = items;
                         r.dom();
                     });
                 },
-                update:(p)=>{
+                update: (p) => {
                     //s.model.pagination.itemsPerPage=p.itemsLength;
-                    s.paginationTotalItems  = s.model.pagination.itemsPerPage * p.numPages;
+                    s.paginationTotalItems = s.model.pagination.itemsPerPage * p.numPages;
                 }
             };
 
             s.model.update = (items, data) => {
                 s.model.items = items;
                 s.model.itemsOriginalRef = items;
-                if(!s.data){
+                if (!s.data) {
                     s.data = data;
                 }
             };
-            if(s.model.init){
+            if (s.model.init) {
                 s.model.init();
             }
             s.model.itemsOriginalRef = s.model.items;
-            expose('table',s);
+            expose('table', s);
         }
     };
 });
@@ -1108,8 +1114,8 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                                 //return false;
                             }
                             //if (s.repeat === 'none' && !s.datepicker.val) {
-                              //  s.message('Choice a day from the datepicker', 'warning', 2000);
-                                //return false;
+                            //  s.message('Choice a day from the datepicker', 'warning', 2000);
+                            //return false;
                             //}
                             if (s.repeat == 'week' && s.days.val.toString() === '-1') {
                                 s.message('Choice a day', 'warning', 2000);
@@ -1119,18 +1125,18 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                                 s.message('Choice a day in the calendar', 'warning', 2000)
                                 return;
                             }
-                            if(!s.start.val){
+                            if (!s.start.val) {
                                 s.message('Choice a valid start time.');
                                 return;
                             }
-                            if(!s.end.val){
+                            if (!s.end.val) {
                                 s.message('Choice a valid end time.');
                                 return;
                             }
 
-                            if(moment(s.start.val).isAfter(moment(s.end.val))){
+                            if (moment(s.start.val).isAfter(moment(s.end.val))) {
                                 s.message('Start time need  to be before end time.');
-                                return;   
+                                return;
                             }
 
                             try {
@@ -1187,7 +1193,7 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                             if (s.repeat == 'day') {
                                 s.days.val = -1;
                             }
-                            if(s.repeat=='none'){
+                            if (s.repeat == 'none') {
                                 s.datepicker.val = opt.item.start;
                             }
                         }
