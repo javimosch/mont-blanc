@@ -6,7 +6,7 @@
   "author": "",
   "scripts": {
     "test2": "echo \"Error: no test specified\" && exit 1",
-    "test": "./node_modules/.bin/mocha --recursive -R xunit test/ > test-reports.xml",
+    "test": "./node_modules/.bin/mocha --recursive -R xunit test/ > test-reports.xml && exit 0",
     "start": "heroku local web",
     "build": "node ./tools/node_bundle.js"
   },
