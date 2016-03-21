@@ -20,8 +20,8 @@ build:
         pull: true
         options:
     ci:
-      npm install
-      npm test
+        npm install
+        npm test
     post_ci:
     on_success:
     on_failure:
