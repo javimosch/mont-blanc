@@ -28,16 +28,16 @@ build:
     push:
     cache:
 
-integrations:
-    notifications:
-        - integrationName:
-          type:
-          recipients:
-          branches:
-          on_start:
-          on_success:
-          on_failure:
-          on_changed:   
+#integrations:
+#    notifications:
+#        - integrationName:
+ #         type:
+  #        recipients:
+   #       branches:
+    #      on_start:
+     #     on_success:
+      #    on_failure:
+       #   on_changed:   
 
     hub:
         - integrationName:
