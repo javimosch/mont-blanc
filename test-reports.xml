@@ -1,0 +1,3 @@
+<testsuite name="Mocha Tests" tests="1" failures="0" errors="0" skipped="0" timestamp="Mon, 21 Mar 2016 14:39:48 GMT" time="0.056">
+<testcase classname="String#split" name="should return an array" time="0.003"/>
+</testsuite>

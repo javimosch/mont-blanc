@@ -265,10 +265,16 @@
 	},
 	"expanded_folders":
 	[
-		"/F/git/diags-hub/public"
+		"/F/git/diags-front",
+		"//J25DEV/git/diags-back",
+		"//J25DEV/git/diags-back/helpers"
 	],
 	"file_history":
 	[
+		"/F/VAGRANT/SCOTCH/Vagrantfile",
+		"/F/git/diags-front/express.js",
+		"//J25DEV/git/diags-back/helpers/utils.js",
+		"/F/git/diags-front/package.json",
 		"/F/git/diags-hub/public/index.html",
 		"/F/git/diags-front/public/js/diags.available-slots.js",
 		"/F/git/diags-front/public/js/app.static.main.js",
@@ -336,7 +342,6 @@
 		"/F/git/diags-front/public/views/view.admin.orders.edit.html",
 		"/F/git/diags-front/booking.html",
 		"/F/git/diags-front/booking-min.html",
-		"/F/git/diags-front/express.js",
 		"/F/git/diags-back/app.js",
 		"/F/git/diags-front/tools/node_bundle.js",
 		"/F/git/diags-front/tools/scripts-bundler.js",
@@ -345,7 +350,6 @@
 		"/F/git/diags-front/public/js/app.diag.balance.js",
 		"/F/git/commands.txt",
 		"/F/git/diags-front/.env.production",
-		"/F/VAGRANT/SCOTCH/Vagrantfile",
 		"/S/git/diags-front/Procfile",
 		"/S/git/diags-front/.env",
 		"/S/git/diags-front/express.js",
@@ -394,9 +398,7 @@
 		"/S/git/diags-front/views/view.admin.diags.edit.html",
 		"/S/git/diags-front/views/view.admin.diags.html",
 		"/S/git/diags-front/js/app.admin.js",
-		"/S/git/diags-front/views/tools.html",
-		"/S/git/diags-front/views/directives/directive.fast-crud.html",
-		"/S/git/diags-front/js/app.common.directives.js"
+		"/S/git/diags-front/views/tools.html"
 	],
 	"find":
 	{
@@ -627,6 +629,18 @@
 		"selected_items":
 		[
 			[
+				"utils",
+				"diags-back\\helpers\\utils.js"
+			],
+			[
+				"expr",
+				"diags-front\\express.js"
+			],
+			[
+				"packa",
+				"diags-front\\package.json"
+			],
+			[
 				"index",
 				"diags-hub\\public\\index.html"
 			],
@@ -829,10 +843,6 @@
 			[
 				"diagutils",
 				"diags-front\\public\\js\\diags.common.utils.js"
-			],
-			[
-				"utils",
-				"diags-back\\helpers\\utils.js"
 			],
 			[
 				"data",
@@ -1055,10 +1065,6 @@
 				"diags-back\\app.js"
 			],
 			[
-				"expr",
-				"express.js"
-			],
-			[
 				"nod",
 				"tools\\node_bundle.js"
 			],
@@ -1133,10 +1139,6 @@
 			[
 				"vieworder",
 				"diags-front\\views\\view.admin.orders.view.html"
-			],
-			[
-				"notific",
-				"diags-front\\js\\section.notifications.js"
 			]
 		],
 		"width": 0.0
