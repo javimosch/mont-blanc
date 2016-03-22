@@ -1,0 +1,107 @@
+(function() {
+    var app = angular.module('srv.crud', []);
+    app.service('crud', function($rootScope, server) {
+        var r = $rootScope,
+            db = server;
+
+        function notify(m, t) {
+            r.notify(m, {
+                type: t,
+                duration: 5000,
+                clickDismissable: true
+            });
+        }
+
+        function handleError(err) {
+            notify('error, try later.', 'warning');
+        }
+
+        function createActions(s, opt, params) {
+            s.deleteSilent = function() {
+                db.ctrl(opt.name, 'remove', {
+                    _id: s.item._id
+                }).then(function(data) {
+                    if (data.ok) {
+                        s.back();
+                    } else {
+                        handleError(data);
+                    }
+                }).error(handleError);
+            };
+            s.delete = function() {
+                if (opt.modals && opt.modals.confirm) {
+                    s[opt.modals.confirm](val(opt, 'modals.delete.description') || 'Delete item?', function() {
+                        s.deleteSilent();
+                    });
+                } else {
+                    if (window.confirm(val(opt, 'modals.delete.description') || 'Delete item?')) {
+                        s.deleteSilent();
+                    }
+                }
+            };
+            s.validate = () => {
+                ifThenMessage(val(opt, 'validate.options',{args:[opt.scope]}) || [], (m) => {
+                    if (typeof m[0] !== 'string') {
+                        notify(m[0](), 'warning');
+                    } else {
+                        notify(m[0], 'warning');
+                    }
+                }, s.save);
+            };
+            s.save = function() {
+                db.ctrl(opt.name, 'save', s.item).then(function(data) {
+                    if (data.ok) {
+                        s.back();
+                    } else {
+                        handleError(data);
+                    }
+                }).error(handleError);
+            };
+            s.back = () => {
+                if (r.params && r.params.prevRoute) {
+                    return r.route(r.params.prevRoute);
+                } else {
+                    r.route(val(opt, 'routes.back') || 'dashboard');
+                }
+            };
+            s.cancel = function() {
+                s.back();
+            };
+            s.load = function(id) {
+                if (r.params && r.params.item && r.params.item._diag) {
+                    s.item = r.params.item; //partial loading
+                    delete r.params.item;
+                }
+                db.ctrl(opt.name, 'get', {
+                    _id: id || params.id || s.item._id,
+                }).then(function(data) {
+                    s.requesting = false;
+                    if (data.ok && data.result !== null) {
+                        s.item = data.result;
+                    } else {
+                        handleError(data);
+                    }
+                }).error(handleError);
+            }
+            s.init = () => {
+                if (params && params.id && params.id.toString() !== '-1') {
+                    s.load();
+                } else {
+                    s.reset();
+                }
+            };
+            s.reset = () => {
+
+            };
+        }
+        return {
+            create: function(opt) {
+                if (!opt.name) return notify('crud.create require opt.name', 'warning');
+                if (!opt.scope) return notify('crud.create require opt.scope', 'warning');
+                if (!opt.routeParams) return notify('crud.create require opt.routeParams', 'warning');
+                createActions(opt.scope, opt, opt.routeParams);
+                return opt.scope;
+            }
+        };
+    });
+})();

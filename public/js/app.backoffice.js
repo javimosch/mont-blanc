@@ -1,9 +1,11 @@
 var app = angular.module('app', [
+    'srv.crud',
     'app.admin',
     'app.admin.routes',
     'app.admin.login',
     'app.admin.user',
     'app.diag',
+    'app.log',
     'app.diag.complete',
     'app.diag.balance',
     'app.order',

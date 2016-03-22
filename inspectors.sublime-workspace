@@ -179,6 +179,14 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "//J25DEV/git/diags-back/push.sh",
+			"settings":
+			{
+				"buffer_size": 53,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -265,16 +273,21 @@
 	},
 	"expanded_folders":
 	[
-		"/F/git/diags-front",
-		"//J25DEV/git/diags-back",
-		"//J25DEV/git/diags-back/helpers"
+		"//J25DEV/git/diags-back"
 	],
 	"file_history":
 	[
+		"//J25DEV/git/diags-back/package.json",
+		"//J25DEV/git/diags-back/test/test.js",
+		"/F/git/diags-back/.travis.yml",
+		"/F/git/ma-strider/.gitlab-ci.yml",
+		"/F/git/diags-hub/package.json",
+		"/F/git/diags-front/package.json",
+		"/F/git/diags-front/shippable.yaml",
+		"/F/git/diags-front/test/test.js",
 		"/F/VAGRANT/SCOTCH/Vagrantfile",
 		"/F/git/diags-front/express.js",
 		"//J25DEV/git/diags-back/helpers/utils.js",
-		"/F/git/diags-front/package.json",
 		"/F/git/diags-hub/public/index.html",
 		"/F/git/diags-front/public/js/diags.available-slots.js",
 		"/F/git/diags-front/public/js/app.static.main.js",
@@ -391,14 +404,7 @@
 		"/S/git/diags-back/.env",
 		"/S/git/diags-front/js/app.diag.js",
 		"/S/git/diags-front/views/view.admin.orders.html",
-		"/S/git/diags-front/js/app.backoffice.js",
-		"/S/git/diags-front/js/app.diag.balance.js",
-		"/S/git/diags-front/views/view.admin-list.html",
-		"/S/git/diags-front/js/app.client.js",
-		"/S/git/diags-front/views/view.admin.diags.edit.html",
-		"/S/git/diags-front/views/view.admin.diags.html",
-		"/S/git/diags-front/js/app.admin.js",
-		"/S/git/diags-front/views/tools.html"
+		"/S/git/diags-front/js/app.backoffice.js"
 	],
 	"find":
 	{
@@ -575,8 +581,37 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "//J25DEV/git/diags-back/push.sh",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 53,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -629,16 +664,16 @@
 		"selected_items":
 		[
 			[
+				"packa",
+				"diags-hub\\package.json"
+			],
+			[
 				"utils",
 				"diags-back\\helpers\\utils.js"
 			],
 			[
 				"expr",
 				"diags-front\\express.js"
-			],
-			[
-				"packa",
-				"diags-front\\package.json"
 			],
 			[
 				"index",
@@ -1151,7 +1186,7 @@
 		[
 			[
 				"",
-				"F:\\git\\misitioba\\misitioba.sublime-project"
+				"F:\\git\\ma-strider\\ma-strider.sublime-project"
 			]
 		],
 		"width": 380.0

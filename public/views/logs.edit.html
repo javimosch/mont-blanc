@@ -1,0 +1,29 @@
+<modal-confirm open="confirm"></modal-confirm>
+<div class="container" ng-controller="logEdit">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="v-margin-2 padding-0">Log Details</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <ul class="form-tiny labelx2 center-block">
+                <li>
+                    <label>Message</label>
+                    <textarea ng-disabled="true" type="text" class="fullwidth min-height-100 no-resize" ng-model="item.message"></textarea>
+                </li>
+                <li>
+                    <label>Created</label>
+                    {{momentDateTime(item.created)}}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <button ng-disabled="state.working()" class="btn btn-default" ng-click="validate()">Save</button>
+            <button ng-disabled="state.working()" class="btn btn-default" ng-click="cancel()">Cancel</button>
+            <button ng-disabled="state.working()" class="btn btn-default" ng-click="delete()">Delete</button>
+        </div>
+    </div>
+</div>

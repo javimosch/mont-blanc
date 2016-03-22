@@ -1,10 +1,10 @@
 "use strict";
 
 
-function expose(path, val) {
-    setVal(window, path, val);
+function expose(path, v) {
+    setVal(window, path, v);
 
-    function setVal(obj, propertyPath, val) {
+    function setVal(obj, propertyPath, _v) {
         var split = propertyPath.split('.');
         var lastIndex = split.length - 1;
         split.forEach((chunk, index) => {
@@ -14,9 +14,35 @@ function expose(path, val) {
             if (!obj) return false;
         });
         if (obj) {
-            if (val) obj[split[lastIndex]] = val;
+            if (_v) obj[split[lastIndex]] = _v;
             return obj[split[lastIndex]];
         }
+    }
+}
+
+
+
+function val(obj, propertyPath, opt) {
+    var split = propertyPath.split('.');
+    var lastIndex = split.length - 1;
+    split.forEach((chunk, index) => {
+        var isLast = lastIndex == index;
+        if (isLast) return undefined;
+        obj = obj[chunk] || {};
+        if (!obj) return undefined;
+    });
+    if (obj) {
+        //if (_v) obj[split[lastIndex]] = _v;
+        var rta = obj[split[lastIndex]];
+        if (typeof rta === 'string') return rta;
+        if (typeof rta === 'function') {
+            if (opt && opt.args) {
+                return rta.apply(this, opt.args);
+            } else {
+                return rta();
+            }
+        }
+        return rta;
     }
 }
 
@@ -38,7 +64,7 @@ $(function() {
         //console.log('hrefAnchor '+hash.replace('/', '')+' | type '+typeof hash.replace('/', ''));
         return hash.replace('/', '');
     };
-    $.scrollToAnchor = () => {  
+    $.scrollToAnchor = () => {
         //console.log('scrollToAnchor '+$.hrefAnchor());
         var elem = $('#' + $.hrefAnchor());
         //console.info(elem);
@@ -258,7 +284,7 @@ function MyPromise(cb) {
         errorCb: null,
         errorRes: null,
         res: null,
-        evt:{}
+        evt: {}
     };
     var resolve = function(res) {
         if (_scope.cb) {
@@ -272,14 +298,14 @@ function MyPromise(cb) {
         }
         _scope.errorRes = errorRes || {};
     };
-    var emit = function(n,err,r){
+    var emit = function(n, err, r) {
         _scope.evt[n] = _scope.evt[n] || {};
-        _scope.evt[n].res = {err:err,r:r};
-        if(_scope.evt[n].cb!==undefined){
-            _scope.evt[n].cb(_scope.evt[n].res.err,_scope.evt[n].res.r);
+        _scope.evt[n].res = { err: err, r: r };
+        if (_scope.evt[n].cb !== undefined) {
+            _scope.evt[n].cb(_scope.evt[n].res.err, _scope.evt[n].res.r);
         }
     };
-    cb(resolve, error,emit);
+    cb(resolve, error, emit);
     var rta = {
         then: function(cb) {
             if (_scope.res) cb(_scope.res);
@@ -291,11 +317,11 @@ function MyPromise(cb) {
             else _scope.errorCb = errorCb;
             return rta;
         },
-        on:function(n,cb){
-            _scope.evt[n] = _scope.evt[n]  || {};
+        on: function(n, cb) {
+            _scope.evt[n] = _scope.evt[n] || {};
             _scope.evt[n].cb = cb;
-            if(_scope.evt[n].res !== undefined){
-                _scope.evt[n].cb(_scope.evt[n].res.err,_scope.evt[n].res.r);
+            if (_scope.evt[n].res !== undefined) {
+                _scope.evt[n].cb(_scope.evt[n].res.err, _scope.evt[n].res.r);
             }
             return rta;
         }
@@ -309,7 +335,9 @@ if (typeof exports !== 'undefined') {
     exports.getHashParams = getHashParams;
     exports.getParameterByName = getParameterByName;
     exports.ifThenMessage = ifThenMessage;
+    exports.val = val;
 } else {
+    window.val = val;
     window.MyPromise = MyPromise;
     window.getHashParams = getHashParams;
     window.getParameterByName = getParameterByName;
