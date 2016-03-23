@@ -4,6 +4,22 @@
 		"selected_items":
 		[
 			[
+				"dele",
+				"deleteSilent"
+			],
+			[
+				"delete",
+				"Delete"
+			],
+			[
+				"create",
+				"createActions"
+			],
+			[
+				"text",
+				"textarea	Tag"
+			],
+			[
 				"requi",
 				"requiredKeys"
 			],
@@ -179,14 +195,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "//J25DEV/git/diags-back/push.sh",
-			"settings":
-			{
-				"buffer_size": 53,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -273,19 +281,43 @@
 	},
 	"expanded_folders":
 	[
-		"//J25DEV/git/diags-back"
 	],
 	"file_history":
 	[
+		"/F/docker/testdocker/Dockerfile",
+		"/F/git/index.html",
+		"/F/VAGRANT/SCOTCH/Vagrantfile",
+		"/C/Users/aranc/Documents/ftpuse",
+		"/F/git/diags-front/public/js/app.admin.routes.js",
+		"/F/git/diags-front/public/js/app.common.utils.js",
+		"/F/git/diags-front/public/js/services/srv.crud.js",
+		"/F/git/diags-front/public/views/logs.html",
+		"/F/git/diags-front/public/views/logs.edit.html",
+		"/F/git/diags-front/public/js/app.log.js",
+		"/F/git/diags-front/public/js/app.backoffice.js",
+		"/F/git/diags-front/admin.html",
+		"/F/git/diags-front/public/js/app.order.js",
+		"/F/git/diags-front/public/js/app.admin.diag.js",
+		"/F/git/diags-front/public/js/app.common.root.js",
+		"/F/git/diags-front/public/views/order.edit.html",
+		"/F/git/diags-front/public/views/templates/templates.user.html",
+		"/F/git/diags-front/public/js/app.admin.js",
+		"//J25DEV/git/diags-back/helpers/db.js",
+		"/F/git/diags-front/public/js/app.diag.js",
+		"/F/git/diags-front/public/views/directives/directive.fast-crud.html",
+		"/F/git/diags-front/public/views/tools.html",
+		"/F/git/diags-front/.travis.yml",
 		"//J25DEV/git/diags-back/package.json",
 		"//J25DEV/git/diags-back/test/test.js",
+		"//J25DEV/git/diags-back/helpers/handler.actions.js",
+		"//J25DEV/git/diags-back/.travis.yml",
+		"//J25DEV/git/diags-back/push.sh",
 		"/F/git/diags-back/.travis.yml",
 		"/F/git/ma-strider/.gitlab-ci.yml",
 		"/F/git/diags-hub/package.json",
 		"/F/git/diags-front/package.json",
 		"/F/git/diags-front/shippable.yaml",
 		"/F/git/diags-front/test/test.js",
-		"/F/VAGRANT/SCOTCH/Vagrantfile",
 		"/F/git/diags-front/express.js",
 		"//J25DEV/git/diags-back/helpers/utils.js",
 		"/F/git/diags-hub/public/index.html",
@@ -294,15 +326,10 @@
 		"/F/git/diags-front/public/links.html",
 		"/F/git/diags-front/public/js/diags.common.utils.js",
 		"/F/git/diags-front/public/data.json",
-		"/F/git/diags-front/public/js/app.admin.js",
-		"/F/git/diags-front/public/js/app.admin.diag.js",
 		"/F/git/diags-front/public/js/app.common.directives.js",
 		"/F/git/diags-front/public/css/style.css",
 		"/F/git/diags-front/public/views/view.admin.clients.edit.html",
-		"/F/git/diags-front/public/views/order.edit.html",
-		"/F/git/diags-front/public/js/app.diag.js",
 		"/F/git/diags-front/public/js/app.common.service.js",
-		"//J25DEV/git/diags-back/helpers/handler.actions.js",
 		"//J25DEV/git/diags-back/.env",
 		"/F/git/diags-front/.env",
 		"/F/git/diags-front/public/views/view.admin.dashboard.diag.html",
@@ -312,16 +339,10 @@
 		"/F/git/diags-front/public/views/partials/partial.admin.nav.html",
 		"/F/git/diags-front/public/views/view.admin-edit.html",
 		"//J25DEV/git/diags-back/helpers/handle.routes.js",
-		"/F/git/diags-front/public/js/app.order.js",
-		"/F/git/diags-front/public/js/app.admin.routes.js",
 		"/F/git/diags-front/public/js/section.notifications.js",
 		"/F/git/diags-front/public/views/directives/deprecated.directive.modal.timeRange.html",
 		"/F/git/diags-front/public/views/directives/deprecated.directive.section.exceptions.html",
-		"/F/git/diags-front/public/js/app.backoffice.js",
 		"/F/git/diags-front/public/views/directives/directive.modal.timeRange.html",
-		"/F/git/diags-front/admin.html",
-		"/F/git/diags-front/public/js/app.common.root.js",
-		"/F/git/diags-front/public/views/templates/templates.user.html",
 		"/F/git/diags-front/public/views/directives/directive.section.exceptions.html",
 		"/F/git/diags-front/public/views/partials/confirm-and-save-details.html",
 		"/F/git/diags-front/public/views/view.static.index.html",
@@ -345,8 +366,6 @@
 		"/F/git/diags-front/admin-min.html",
 		"/F/git/diags-front/public/js/app.admin.user.js",
 		"/F/git/diags-back/helpers/handler.actions.js",
-		"/F/git/diags-front/public/views/directives/directive.fast-crud.html",
-		"/F/git/diags-front/public/js/app.common.utils.js",
 		"/F/git/diags-front/public/views/view.admin.orders.view.html",
 		"/F/git/diags-back/.env",
 		"/F/git/diags-back/.env.production",
@@ -392,19 +411,7 @@
 		"/S/git/diags-front/views/partials/partial.order.price-rules.html",
 		"/S/git/diags-front/views/partials/partial.order.date-time.rules.html",
 		"/S/git/diags-front/css/helpers.css",
-		"/S/git/diags-front/css/style.css",
-		"/S/git/diags-front/views/partials/confirm-and-save-subscription.html",
-		"/S/git/diags-front/views/partials/partial.order.date-time.html",
-		"/S/git/diags-front/js/app.admin.routes.js",
-		"/S/git/diags-front/views/partials/partial.order.diag-details.html",
-		"/S/git/diags-front/views/view.admin.orders.view.html",
-		"/S/git/diags-front/views/partials/partial.order.client-details.html",
-		"/S/git/diags-front/views/order.edit-backup.html",
-		"/S/git/diags-front/js/section.notifications.js",
-		"/S/git/diags-back/.env",
-		"/S/git/diags-front/js/app.diag.js",
-		"/S/git/diags-front/views/view.admin.orders.html",
-		"/S/git/diags-front/js/app.backoffice.js"
+		"/S/git/diags-front/css/style.css"
 	],
 	"find":
 	{
@@ -425,6 +432,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"read",
+			"read()",
+			"params",
+			"s.read",
+			"r.notify",
 			"electricityInstallation",
 			"electric",
 			"electricy",
@@ -581,37 +593,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "//J25DEV/git/diags-back/push.sh",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 53,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -664,8 +647,84 @@
 		"selected_items":
 		[
 			[
+				"apputis",
+				"diags-front\\public\\js\\app.common.utils.js"
+			],
+			[
+				"srv.crud",
+				"diags-front\\public\\js\\services\\srv.crud.js"
+			],
+			[
+				"logs.edit",
+				"diags-front\\public\\views\\logs.edit.html"
+			],
+			[
+				"app.back",
+				"diags-front\\public\\js\\app.backoffice.js"
+			],
+			[
+				"admin",
+				"diags-front\\admin.html"
+			],
+			[
+				"apputils",
+				"diags-front\\public\\js\\app.common.utils.js"
+			],
+			[
+				"routes",
+				"diags-front\\public\\js\\app.admin.routes.js"
+			],
+			[
+				"app.order",
+				"diags-front\\public\\js\\app.order.js"
+			],
+			[
+				"approot",
+				"diags-front\\public\\js\\app.common.root.js"
+			],
+			[
+				"order.edit",
+				"diags-front\\public\\views\\order.edit.html"
+			],
+			[
+				"template",
+				"diags-front\\public\\views\\templates\\templates.user.html"
+			],
+			[
+				"app.admin.diag",
+				"diags-front\\public\\js\\app.admin.diag.js"
+			],
+			[
+				"db.js",
+				"diags-back\\helpers\\db.js"
+			],
+			[
+				"app.admin",
+				"diags-front\\public\\js\\app.admin.js"
+			],
+			[
+				"app.diag",
+				"diags-front\\public\\js\\app.diag.js"
+			],
+			[
+				"fast-crud",
+				"diags-front\\public\\views\\directives\\directive.fast-crud.html"
+			],
+			[
+				"tools",
+				"diags-front\\public\\views\\tools.html"
+			],
+			[
+				".trav",
+				"diags-front\\.travis.yml"
+			],
+			[
 				"packa",
-				"diags-hub\\package.json"
+				"diags-back\\package.json"
+			],
+			[
+				"handleacti",
+				"diags-back\\helpers\\handler.actions.js"
 			],
 			[
 				"utils",
@@ -708,24 +767,8 @@
 				"diags-front\\public\\js\\app.common.directives.js"
 			],
 			[
-				"app.admin.diag",
-				"diags-front\\public\\js\\app.admin.diag.js"
-			],
-			[
-				"app.admin",
-				"diags-front\\public\\js\\app.admin.js"
-			],
-			[
 				"client.edit",
 				"diags-front\\public\\views\\view.admin.clients.edit.html"
-			],
-			[
-				"order.edit",
-				"diags-front\\public\\views\\order.edit.html"
-			],
-			[
-				"app.diag",
-				"diags-front\\public\\js\\app.diag.js"
 			],
 			[
 				"directives.j",
@@ -784,16 +827,8 @@
 				"diags-front\\public\\views\\exception.list.html"
 			],
 			[
-				"app.order",
-				"diags-front\\public\\js\\app.order.js"
-			],
-			[
 				"handleroute",
 				"diags-back\\helpers\\handle.routes.js"
-			],
-			[
-				"handleacti",
-				"diags-back\\helpers\\handler.actions.js"
 			],
 			[
 				"handleaci",
@@ -804,16 +839,8 @@
 				"diags-front\\public\\js\\app.common.directives.js"
 			],
 			[
-				"routes",
-				"diags-front\\public\\js\\app.admin.routes.js"
-			],
-			[
 				"section.",
 				"diags-front\\public\\js\\section.notifications.js"
-			],
-			[
-				"app.back",
-				"diags-front\\public\\js\\app.backoffice.js"
 			],
 			[
 				"app.ord",
@@ -842,14 +869,6 @@
 			[
 				"timerange",
 				"diags-front\\public\\views\\directives\\directive.modal.timeRange.html"
-			],
-			[
-				"admin",
-				"diags-front\\admin.html"
-			],
-			[
-				"approot",
-				"diags-front\\public\\js\\app.common.root.js"
 			],
 			[
 				"templates",
@@ -952,10 +971,6 @@
 				"diags-front\\public\\app.bundle.booking.js"
 			],
 			[
-				"db.js",
-				"diags-back\\helpers\\db.js"
-			],
-			[
 				"admin-min",
 				"diags-front\\admin-min.html"
 			],
@@ -976,20 +991,12 @@
 				"diags-front\\public\\views\\templates\\templates.user.html"
 			],
 			[
-				"fast-crud",
-				"diags-front\\public\\views\\directives\\directive.fast-crud.html"
-			],
-			[
 				"directives.",
 				"diags-front\\public\\js\\app.common.directives.js"
 			],
 			[
 				"servi",
 				"diags-front\\public\\js\\app.common.service.js"
-			],
-			[
-				"apputils",
-				"diags-front\\public\\js\\app.common.utils.js"
 			],
 			[
 				"fast-cr",
@@ -1150,30 +1157,6 @@
 			[
 				"helpe",
 				"diags-front\\css\\helpers.css"
-			],
-			[
-				"-savesub",
-				"diags-front\\views\\partials\\confirm-and-save-subscription.html"
-			],
-			[
-				"diag-deta",
-				"diags-front\\views\\partials\\partial.order.diag-details.html"
-			],
-			[
-				"client-deta",
-				"diags-front\\views\\partials\\partial.order.client-details.html"
-			],
-			[
-				"client-d",
-				"diags-front\\views\\partials\\partial.order.client-details.html"
-			],
-			[
-				"orderedi",
-				"diags-front\\views\\view.admin.orders.edit.html"
-			],
-			[
-				"vieworder",
-				"diags-front\\views\\view.admin.orders.view.html"
 			]
 		],
 		"width": 0.0
