@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"warnin",
+				"warningMsg"
+			],
+			[
 				"dele",
 				"deleteSilent"
 			],
@@ -281,9 +285,30 @@
 	},
 	"expanded_folders":
 	[
+		"/F/git/diags-front",
+		"/F/git/diags-front/public",
+		"/F/git/diags-front/public/js",
+		"/F/git/diags-front/public/views",
+		"/F/git/diags-front/public/views/partials",
+		"/F/git/diags-back",
+		"/F/git/diags-back/node_modules",
+		"/F/git/diags-back/node_modules/pac-resolver"
 	],
 	"file_history":
 	[
+		"/F/git/diags-front/public/js/app.common.directives.js",
+		"/C/Program Files (x86)/Heroku/bin/heroku",
+		"/F/git/diags-front/admin.html",
+		"/F/git/diags-front/public/js/app.backoffice.js",
+		"/F/git/diags-front/public/js/app.admin.login.js",
+		"/F/git/diags-front/public/js/app.common.service.js",
+		"/F/git/diags-front/public/js/app.common.root.js",
+		"/F/git/diags-front/public/views/view.admin.login.html",
+		"/F/git/diags-front/public/js/app.static.main.js",
+		"/F/git/diags-front/public/js/app.admin.js",
+		"/F/git/diags-front/public/views/partials/partial.calendar-timepicker.html",
+		"/F/git/diags-front/public/links.html",
+		"/F/git/diags-back/.env",
 		"/F/docker/testdocker/Dockerfile",
 		"/F/git/index.html",
 		"/F/VAGRANT/SCOTCH/Vagrantfile",
@@ -294,14 +319,10 @@
 		"/F/git/diags-front/public/views/logs.html",
 		"/F/git/diags-front/public/views/logs.edit.html",
 		"/F/git/diags-front/public/js/app.log.js",
-		"/F/git/diags-front/public/js/app.backoffice.js",
-		"/F/git/diags-front/admin.html",
 		"/F/git/diags-front/public/js/app.order.js",
 		"/F/git/diags-front/public/js/app.admin.diag.js",
-		"/F/git/diags-front/public/js/app.common.root.js",
 		"/F/git/diags-front/public/views/order.edit.html",
 		"/F/git/diags-front/public/views/templates/templates.user.html",
-		"/F/git/diags-front/public/js/app.admin.js",
 		"//J25DEV/git/diags-back/helpers/db.js",
 		"/F/git/diags-front/public/js/app.diag.js",
 		"/F/git/diags-front/public/views/directives/directive.fast-crud.html",
@@ -322,14 +343,10 @@
 		"//J25DEV/git/diags-back/helpers/utils.js",
 		"/F/git/diags-hub/public/index.html",
 		"/F/git/diags-front/public/js/diags.available-slots.js",
-		"/F/git/diags-front/public/js/app.static.main.js",
-		"/F/git/diags-front/public/links.html",
 		"/F/git/diags-front/public/js/diags.common.utils.js",
 		"/F/git/diags-front/public/data.json",
-		"/F/git/diags-front/public/js/app.common.directives.js",
 		"/F/git/diags-front/public/css/style.css",
 		"/F/git/diags-front/public/views/view.admin.clients.edit.html",
-		"/F/git/diags-front/public/js/app.common.service.js",
 		"//J25DEV/git/diags-back/.env",
 		"/F/git/diags-front/.env",
 		"/F/git/diags-front/public/views/view.admin.dashboard.diag.html",
@@ -348,7 +365,6 @@
 		"/F/git/diags-front/public/views/view.static.index.html",
 		"/F/git/diags-front/public/views/partials/confirm-and-save-pay.html",
 		"/F/git/diags-back/helpers/utils.js",
-		"/F/git/diags-front/public/views/partials/partial.calendar-timepicker.html",
 		"/F/git/diags-front/public/views/partials/deprecated.partial.calendar-datepicker.html",
 		"/F/git/diags-front/public/views/partials/partial.question6.html",
 		"/F/git/diags-front/public/views/partials/partial.question4.html",
@@ -367,7 +383,6 @@
 		"/F/git/diags-front/public/js/app.admin.user.js",
 		"/F/git/diags-back/helpers/handler.actions.js",
 		"/F/git/diags-front/public/views/view.admin.orders.view.html",
-		"/F/git/diags-back/.env",
 		"/F/git/diags-back/.env.production",
 		"/F/git/diags-back/helpers/handlers.email.js",
 		"/D/PROPHET/prophet.nfo",
@@ -408,10 +423,7 @@
 		"/S/git/diags-front/views/partials/confirm-and-save-pay.html",
 		"/S/git/diags-front/views/directives/directive.ctrl.select.html",
 		"/S/git/diags-front/views/partials/partial.order.pdf.html",
-		"/S/git/diags-front/views/partials/partial.order.price-rules.html",
-		"/S/git/diags-front/views/partials/partial.order.date-time.rules.html",
-		"/S/git/diags-front/css/helpers.css",
-		"/S/git/diags-front/css/style.css"
+		"/S/git/diags-front/views/partials/partial.order.price-rules.html"
 	],
 	"find":
 	{
@@ -432,6 +444,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"my-alert",
+			"hasPending",
+			"addAlert",
+			"error",
+			"message",
+			"r.no",
+			"watch",
 			"read",
 			"read()",
 			"params",
@@ -552,12 +571,7 @@
 			"spinner",
 			"v2.show",
 			"ng-if",
-			"expirationDateNotificationSended",
-			"diplomeExpiration",
-			"expirationDateNotificationEnabled",
-			"diplomesInfo",
-			"dblog",
-			"g2"
+			"expirationDateNotificationSended"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -647,6 +661,74 @@
 		"selected_items":
 		[
 			[
+				".direc",
+				"diags-front\\public\\js\\app.common.directives.js"
+			],
+			[
+				"admin",
+				"diags-front\\admin.html"
+			],
+			[
+				"app.back",
+				"diags-front\\public\\js\\app.backoffice.js"
+			],
+			[
+				"applogin",
+				"diags-front\\public\\js\\app.admin.login.js"
+			],
+			[
+				".directiv",
+				"diags-front\\public\\js\\app.common.directives.js"
+			],
+			[
+				"services",
+				"diags-front\\public\\js\\app.common.service.js"
+			],
+			[
+				"approot",
+				"diags-front\\public\\js\\app.common.root.js"
+			],
+			[
+				"admin.h",
+				"diags-front\\admin.html"
+			],
+			[
+				"appadmin",
+				"diags-front\\public\\js\\app.admin.js"
+			],
+			[
+				"loginhtml",
+				"diags-front\\public\\views\\view.admin.login.html"
+			],
+			[
+				"app.login",
+				"diags-front\\public\\js\\app.admin.login.js"
+			],
+			[
+				".directives",
+				"diags-front\\public\\js\\app.common.directives.js"
+			],
+			[
+				"timepicker",
+				"diags-front\\public\\views\\partials\\partial.calendar-timepicker.html"
+			],
+			[
+				"appmain",
+				"diags-front\\public\\js\\app.static.main.js"
+			],
+			[
+				"links",
+				"diags-front\\public\\links.html"
+			],
+			[
+				".env",
+				"diags-back\\.env"
+			],
+			[
+				"app.static",
+				"diags-front\\public\\js\\app.static.main.js"
+			],
+			[
 				"apputis",
 				"diags-front\\public\\js\\app.common.utils.js"
 			],
@@ -659,14 +741,6 @@
 				"diags-front\\public\\views\\logs.edit.html"
 			],
 			[
-				"app.back",
-				"diags-front\\public\\js\\app.backoffice.js"
-			],
-			[
-				"admin",
-				"diags-front\\admin.html"
-			],
-			[
 				"apputils",
 				"diags-front\\public\\js\\app.common.utils.js"
 			],
@@ -677,10 +751,6 @@
 			[
 				"app.order",
 				"diags-front\\public\\js\\app.order.js"
-			],
-			[
-				"approot",
-				"diags-front\\public\\js\\app.common.root.js"
 			],
 			[
 				"order.edit",
@@ -751,14 +821,6 @@
 				"diags-front\\public\\js\\diags.common.utils.js"
 			],
 			[
-				"appmain",
-				"diags-front\\public\\js\\app.static.main.js"
-			],
-			[
-				"links",
-				"diags-front\\public\\links.html"
-			],
-			[
 				"style",
 				"diags-front\\public\\css\\style.css"
 			],
@@ -779,16 +841,8 @@
 				"diags-front\\public\\js\\app.admin.js"
 			],
 			[
-				"services",
-				"diags-front\\public\\js\\app.common.service.js"
-			],
-			[
 				"app.admin.dia",
 				"diags-front\\public\\js\\app.admin.diag.js"
-			],
-			[
-				".env",
-				"diags-front\\.env"
 			],
 			[
 				"handleac",
@@ -983,10 +1037,6 @@
 				"diags-front\\public\\js\\app.admin.user.js"
 			],
 			[
-				".directives",
-				"diags-front\\public\\js\\app.common.directives.js"
-			],
-			[
 				"templates.user",
 				"diags-front\\public\\views\\templates\\templates.user.html"
 			],
@@ -1121,42 +1171,6 @@
 			[
 				"proc",
 				"diags-front\\Procfile"
-			],
-			[
-				"inde",
-				"diags-front\\index.html"
-			],
-			[
-				"node_bun",
-				"diags-front\\tools\\node_bundle.js"
-			],
-			[
-				"app.od",
-				"diags-front\\js\\app.order.js"
-			],
-			[
-				"ctrl.sele",
-				"diags-front\\views\\directives\\directive.ctrl.select.html"
-			],
-			[
-				"-sapa",
-				"diags-front\\views\\partials\\confirm-and-save-pay.html"
-			],
-			[
-				"order.pdf",
-				"diags-front\\views\\partials\\partial.order.pdf.html"
-			],
-			[
-				"price-rules",
-				"diags-front\\views\\partials\\partial.order.price-rules.html"
-			],
-			[
-				"date-time",
-				"diags-front\\views\\partials\\partial.order.date-time.rules.html"
-			],
-			[
-				"helpe",
-				"diags-front\\css\\helpers.css"
 			]
 		],
 		"width": 0.0
@@ -1191,7 +1205,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 353.0,
+	"side_bar_width": 185.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
