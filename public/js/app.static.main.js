@@ -446,6 +446,16 @@ app.controller('fullpage', ['server',
 
             if (!isFinite(new Date(date))) return; //invalid
 
+
+            //if sunday, skip
+            if(moment(date).day()===0){
+                s.warningMsg('Sunday is an exception.');
+                r.dom(()=>{
+                    s.model.date = moment(s.model.date).subtract(1,'days')._d;
+                },1000);
+                return;
+            }
+
             var time = s.totalTime();
             var order = {
                 day: date,

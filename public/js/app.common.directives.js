@@ -387,7 +387,9 @@ app.directive('address', function($rootScope, $timeout) {
                 try {
                     elem.geocomplete().bind("geocode:result", onResult);
                 } catch (e) {
-                    return r.notify('Google library issue, address autocomplete feature is temporaly disabled.', 'warning');
+                    var msg = 'Google library issue, address autocomplete feature is temporaly disabled.';
+                    return console.warn(msg);
+                    //return r.notify(, 'warning');
                 }
 
                 function onResult(event, result) {
@@ -481,7 +483,7 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
         },
         restrict: 'AE',
         replace: true,
-        template: '<div><i ng-show="show" ng-click="click()" class="link fa fa-bug fa-lg fixed left-1 bottom-1 always-on-top"><input type="checkbox" ng-click="stop()" ng-model="check"></i><span data-output></span></div>',
+        template: '<div><i ng-show="show" ng-click="click()" class="link fa fa-bug fa-lg fixed left-1 bottom-1 always-on-top"><input disabled type="checkbox" ng-click="stop()" ng-model="check"></i><span data-output></span></div>',
         link: function(s, elem, attrs) {
             var r = $rootScope;
             s.check = true;
@@ -515,6 +517,7 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
                             r.dom(() => {
                                 if (elem.find('[data-output] .alert-danger').length === 0) {
                                     s.create(r.logger.errors(), 'danger');
+                                    r.logger.clearErrors();
                                 }
                             });
                         }
@@ -531,6 +534,8 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
 
 
             s.create = (msg, type) => {
+                return console.warn('[DEBUG]['+(type==='danger'?'ERROR':'WARNING')+'] '+msg);
+
                 //msg = JSON.stringify(msg);
                 s.msgs = s.msgs || {};
                 var cls = "always-on-top fixed overlay limit-h-200 fullwidth " + ((type === 'danger') ? 'bottom-1' : 'top-1');

@@ -71,12 +71,12 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
                 r.route('dashboard');
             } else {
                 s.loginFailedTimes++;
-                s.addAlert('Incorrect login','warning');
+                r.warningMessage('Incorrect login','warning');
             }
 //            console.log(res.data);
         }).error(function(res) {
             s.sendingRequest = false;
-            s.addAlert(res);
+            r.errorMessage('Server down, try later.');
         });
 
     };

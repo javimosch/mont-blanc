@@ -73,6 +73,18 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     r.setCurrentCtrl = (_s) => { r.__currentCtrlScope = _s };
 
 
+    r.errorMessage=(msg)=>{
+        r.notify(msg,{
+            type:'danger',
+            duration:3000
+        });
+    };
+    r.warningMessage=(msg)=>{
+        r.notify(msg,{
+            type:'warning',
+            duration:3000
+        });
+    };
 
 }]);
 
