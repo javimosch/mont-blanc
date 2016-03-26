@@ -112,9 +112,9 @@
                     });
                 }
 
-                var userId=()=>{
-                    if(r.userIs('diag')) return r.session()._id;
-                    if(params.id) return params.id;
+                var userId = () => {
+                    if (r.userIs('diag')) return r.session()._id;
+                    if (params.id) return params.id;
                     return null;
                 };
                 var prevRoute = () => {
@@ -139,24 +139,24 @@
                 }, {
                     label: "Start",
                     name: 'start',
-                    format:(v,item)=>{
-                        if(item.repeat!=='none') return r.momentTime(item.start);
+                    format: (v, item) => {
+                        if (item.repeat !== 'none') return r.momentTime(item.start);
                         return moment(item.start).format('DD-MM-YY HH[h]mm')
                     }
                 }, {
                     label: "End",
                     name: 'end',
-                    format:(v,item)=>{
-                        if(item.repeat!=='none') return r.momentTime(item.end);
+                    format: (v, item) => {
+                        if (item.repeat !== 'none') return r.momentTime(item.end);
                         return moment(item.end).format('DD-MM-YY HH[h]mm')
                     }
                 }, {
                     label: "Repeat rule",
                     name: 'repeat',
-                    format:(v,item)=>{
-                        if(item.repeat=='none') return 'Specific date';
-                        if(item.repeat=='day') return 'Daily';
-                        if(item.repeat=='week') return 'Weekly';
+                    format: (v, item) => {
+                        if (item.repeat == 'none') return 'Specific date';
+                        if (item.repeat == 'day') return 'Daily';
+                        if (item.repeat == 'week') return 'Weekly';
                         return 'Error';
                     }
                 });
@@ -292,12 +292,12 @@
                     s.item.start = moment().hour(9).minutes(0)._d;
                     if (r.params && r.params.item) {
                         s.item = Object.assign(s.item, r.params.item);
-                        if(typeof s.params.item._user == 'string'){
-                            db.ctrl('User','get',{
-                                _id:r.params.item._user,
-                                __select:'email'
-                            }).then(d=>{
-                                if(d.ok) s.item._user=d.result;
+                        if (typeof s.params.item._user == 'string') {
+                            db.ctrl('User', 'get', {
+                                _id: r.params.item._user,
+                                __select: 'email'
+                            }).then(d => {
+                                if (d.ok) s.item._user = d.result;
                             });
                         }
                         delete r.params.item;
@@ -348,23 +348,52 @@
                     });
                 });
             };
-            s.validate = () => {
-                ifThenMessage([
-                    [!s.item._user, '==', true, 'Diag required'],
-                    [s.item.repeat == 'week' && s.days.val.toString() === '-1', '==', true, 'Choice a day'],
-                    [_.isNull(s.item.start) || _.isUndefined(s.item.start), '==', true, 'Start date required'],
-                    [_.isNull(s.item.end) || _.isUndefined(s.item.end), '==', true, 'Start date required'],
-                    [moment(s.item.start || null).isValid(), '==', false, "Start date invalid"],
-                    [moment(s.item.end || null).isValid(), '==', false, "End date invalid"],
-                    [s.item.repeat != 'none' && moment(s.item.end).isValid() && moment(s.item.start).isValid() && !moment(s.item.end).isSame(moment(s.item.start), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
-                    [moment(s.item.end).isValid() && moment(s.item.end).isBefore(moment(s.item.start), 'hour'), '==', true, 'End date cannot be lower than Start date']
-                ], (m) => {
-                    if (typeof m[0] !== 'string') {
-                        r.notify(m[0](), 'warning');
-                    } else {
-                        r.notify(m[0], 'warning');
+            s.rangeCollideWithOrder = (yes, no) => {
+                db.ctrl('Order', 'getAll', {
+                    __select: 'diagStart diagEnd',
+                    _diag: s.item._user
+                }).then((d) => {
+                    if (d.ok){
+                        d.result.forEach(v=>{
+                            if(rangeCollide(v.diagStart,v.diagEnd,s.item.start,s.item.end)){
+                                return yes(v);
+                            }
+                        });
+                        return no();
+                    }else{
+                        console.warn('rangeCollide order fetch error');
+                        return no();
                     }
-                }, s.save);
+                }).error(()=>{
+                    console.warn('rangeCollide order fetch error');
+                });
+            };
+            s.validate = () => {
+                if (!s.item) return console.warn('item missing.');
+                if (!s.item._user) return console.warn('item._user missing.');
+
+                s.rangeCollideWithOrder((order) => {
+                    //r.momentDateTime(order.diagStart);
+                   return r.warningMessage('An order exists for this date.');
+                }, () => {
+
+                    ifThenMessage([
+                        [!s.item._user, '==', true, 'Diag required'],
+                        [s.item.repeat == 'week' && s.days.val.toString() === '-1', '==', true, 'Choice a day'],
+                        [_.isNull(s.item.start) || _.isUndefined(s.item.start), '==', true, 'Start date required'],
+                        [_.isNull(s.item.end) || _.isUndefined(s.item.end), '==', true, 'Start date required'],
+                        [moment(s.item.start || null).isValid(), '==', false, "Start date invalid"],
+                        [moment(s.item.end || null).isValid(), '==', false, "End date invalid"],
+                        [s.item.repeat != 'none' && moment(s.item.end).isValid() && moment(s.item.start).isValid() && !moment(s.item.end).isSame(moment(s.item.start), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
+                        [moment(s.item.end).isValid() && moment(s.item.end).isBefore(moment(s.item.start), 'hour'), '==', true, 'End date cannot be lower than Start date']
+                    ], (m) => {
+                        if (typeof m[0] !== 'string') {
+                            r.notify(m[0](), 'warning');
+                        } else {
+                            r.notify(m[0], 'warning');
+                        }
+                    }, s.save);
+                });
             }
         }
     ]);

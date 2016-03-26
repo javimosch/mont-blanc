@@ -1,3 +1,34 @@
+
+function rangeCollide(d1s,d1e,d2s,d2e){
+    d1s = moment(d1s);
+    d1e = moment(d1e);
+    d2s = moment(d2s);
+    d2e = moment(d2e);
+    //D1S---D1E
+    //D2S---D2E
+    //
+    var collide = false;
+    //C1
+    //D1S--D2S--D1E
+    collide = d2s.isAfter(d1s) && d2s.isBefore(d1e);
+    if(collide)return collide;
+    //C2
+    //D1S--D2E--D1S
+    collide = d2e.isAfter(d1s) && d2e.isBefore(d1e);
+    //C3
+    //D1S--D2S--D2E--D1S
+    //
+    //C4
+    //D2S--D1S--D2E
+    collide = d1s.isAfter(d2s) && d1s.isBefore(d2e);
+    if(collide)return collide;
+    //C2
+    //D2S--D1E--D2S
+    collide = d1e.isAfter(d2s) && d1e.isBefore(d2e);
+    return collide;
+}
+
+
 function openStripeModalPayOrder(order, cb,opt) {
     opt = opt || {};
     var handler = StripeCheckout.configure({
