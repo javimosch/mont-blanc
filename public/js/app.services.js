@@ -1,4 +1,4 @@
-var srv = angular.module('app.common.service', []);
+var srv = angular.module('app.services', []);
 
 srv.service('tpl', function($rootScope, $compile, $templateCache) {
     this.compile = (n, s) => {
@@ -43,15 +43,16 @@ srv.service('$mongoosePaginate', ['server', function(db) {
                         return;
                     }
                     var numberOfPages = r.result.pages;
-                    console.info(model.pagination.currentPage,model.pagination,numberOfPages);
-                    r.result = r.result.docs;
+//                    console.info(model.pagination.currentPage,model.pagination,numberOfPages);
                     self.working = false;
                     if (model.pagination) {
                         model.pagination.update({
-                            itemsLength:r.result.length,
-                            numPages: numberOfPages
+                            itemsLength:r.result.docs.length,
+                            numPages: numberOfPages,
+                            total:r.result.total
                         });
                     }
+                    r.result = r.result.docs;
                     resolve(r);
                 });
             });
@@ -61,10 +62,10 @@ srv.service('$mongoosePaginate', ['server', function(db) {
     return {
         get: function(modelName) {
             if (!handlers[modelName]) {
-                console.info('$mongoosePaginate creating handler for ' + modelName);
+               // console.info('$mongoosePaginate creating handler for ' + modelName);
                 handlers[modelName] = new handler(modelName);
             }
-            console.info('$mongoosePaginate delivering handler for ' + modelName);
+            //console.info('$mongoosePaginate delivering handler for ' + modelName);
             return handlers[modelName];
         }
     };

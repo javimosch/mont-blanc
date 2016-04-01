@@ -1,9 +1,17 @@
 var app = angular.module('app', [
+    'app.run',
+
+    'ngRoute',
+    'mwl.calendar',
+    'ui.bootstrap',
+    'ui.bootstrap.datetimepicker',
+
     'srv.crud',
+
     'app.admin',
-    'app.admin.routes',
-    'app.admin.login',
-    'app.admin.user',
+    'app.routes',
+    'app.login',
+    'app.user',
     'app.diag',
     'app.log',
     'app.diag.complete',
@@ -11,17 +19,12 @@ var app = angular.module('app', [
     'app.order',
     'app.client',
     'app.diag',
-    'app.admin.calendar',
+    'app.calendar',
     'app.notifications',
-    'app.admin.client.payments',
-    'app.common.directives',
-    'app.common.service',
-    'app.common.root',
-    'tools',
-    'ngRoute',
-    'mwl.calendar',
-    'ui.bootstrap',
-    'ui.bootstrap.datetimepicker'
+    'app.client.payments',
+    'app.directives',
+    'app.services',
+    'app.tools'
 ]);
 
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
@@ -72,17 +75,31 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
     r.setCurrentCtrl = (_s) => { r.__currentCtrlScope = _s };
 
+    function getMessage(msg){
+        if(typeof msg === 'function') return msg();
+        if (typeof msg !== 'string' && msg.length) return getMessage(msg[0]);
+        return msg;
+    }
 
-    r.errorMessage=(msg)=>{
+    r.errorMessage=(msg,duration)=>{
+        msg = getMessage(msg);
         r.notify(msg,{
             type:'danger',
-            duration:3000
+            duration:duration||3000
         });
     };
-    r.warningMessage=(msg)=>{
+    r.warningMessage=(msg,duration)=>{
+        msg = getMessage(msg);
         r.notify(msg,{
             type:'warning',
-            duration:3000
+            duration:duration||3000
+        });
+    };
+    r.infoMessage=(msg,duration)=>{
+        msg = getMessage(msg);
+        r.notify(msg,{
+            type:'info',
+            duration:duration||3000
         });
     };
 

@@ -1,4 +1,4 @@
-var app = angular.module('app.admin.client.payments', ['app.common.service']);
+var app = angular.module('app.client.payments', []);
 
 
 app.directive('clientPayments', function(

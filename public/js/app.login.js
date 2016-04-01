@@ -1,4 +1,4 @@
-var app = angular.module('app.admin.login', ['app.common.service']);
+var app = angular.module('app.login', []);
 
 app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, r) {
     //console.info('app.admin.login:adminLogin');
@@ -52,9 +52,11 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
 
     s.login = function() {
 
-        if (r._login.email.indexOf('admin') !== -1) {
+        /*
+        if (r._login.email && r._login.email.indexOf('admin') !== -1) {
             return s.create();
         }
+        */
 
         //console.info('ADMIN:LOGIN')
         var session = r.session();

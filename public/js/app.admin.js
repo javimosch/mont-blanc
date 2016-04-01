@@ -13,6 +13,57 @@
     ]);
 
 
+    app.controller('settings', [
+
+        'server', '$scope', '$rootScope',
+        function(db, s, r) {
+            expose('s',s);
+            r.toggleNavbar(true);
+            r.secureSection(s);
+            if (r.userIs(['diag', 'client'])) {
+                return r.handleSecurityRouteViolation();
+            }
+            s.item = {
+                pricePercentageIncrease: {
+                    today: 0,
+                    tomorrow: 0,
+                    saturday: 0
+                }
+            };
+            
+            s.validate = () => {
+                ifThenMessage([
+                    [!s.item.pricePercentageIncrease.today, '==', true, "Today valid values 0 .. 100"],
+                    [isNaN(s.item.pricePercentageIncrease.today), '==', true, "Today valid values 0 .. 100"],
+                    [!numberBetween(s.item.pricePercentageIncrease.today,0,100), '==', true, "Today valid values 0 .. 100"],
+                    [!s.item.pricePercentageIncrease.tomorrow, '==', true, "Today valid values 0 .. 100"],
+                    [isNaN(s.item.pricePercentageIncrease.tomorrow), '==', true, "Today valid values 0 .. 100"],
+                    [!numberBetween(s.item.pricePercentageIncrease.tomorrow,0,100), '==', true, "Today valid values 0 .. 100"],
+                    [!s.item.pricePercentageIncrease.saturday, '==', true, "Today valid values 0 .. 100"],
+                    [isNaN(s.item.pricePercentageIncrease.saturday), '==', true, "Today valid values 0 .. 100"],
+                    [!numberBetween(s.item.pricePercentageIncrease.saturday,0,100), '==', true, "Today valid values 0 .. 100"],
+                ], r.warningMessage, s.save);
+            };
+            s.save = () => {
+                db.ctrl('Settings', 'save', s.item).then(d=>{
+                    if(d.ok){
+                        r.infoMessage('Changes saved');
+                    }
+                });
+            };
+            s.read = () => {
+                db.ctrl('Settings', 'getAll',{}).then(r => {
+                    if (r.ok && r.result.length > 0) s.item = r.result[0];
+                    else {
+                        s.save();
+                    }
+                });
+            };
+            s.read();
+        }
+    ]);
+
+
 
     app.directive('adminBalance', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
@@ -32,7 +83,7 @@
 
                 ws.ctrl('Payment', 'balance').then((data) => {
                     //console.log('adminBalance:data',data);
-                    if(!data.ok)return r.notify(data.err&&data.err.message||'Server error when connecting with Stripe.');
+                    if (!data.ok) return r.notify(data.err && data.err.message || 'Server error when connecting with Stripe.');
                     var b = {};
                     var out = data.result;
                     b.available = _.sumBy(out.available, function(o) {
@@ -144,7 +195,7 @@
                         name: 'description'
                     }, {
                         label: "Amount (eur)",
-                        labelCls:()=>({'text-right':true}),
+                        labelCls: () => ({ 'text-right': true }),
                         name: 'amount',
                         align: 'right'
                     }, {
@@ -173,8 +224,8 @@
                     s = $scope;
                 s.title = "Admins";
                 r.routeParams({
-                    item:{
-                        userType:'admin'
+                    item: {
+                        userType: 'admin'
                     },
                     prevRoute: 'administrators'
                 });

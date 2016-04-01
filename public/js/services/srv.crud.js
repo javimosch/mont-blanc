@@ -16,7 +16,21 @@
             notify('error, try later.', 'warning');
         }
 
+        function fireEvent(evts,p,path){
+            if(evts){
+                evts.forEach(evt=>{
+                    evt(p);
+                });
+                console.log('crud-fire '+path+' triggers ',evts.length,'events');
+            }
+        }
+
         function createActions(s, opt, params) {
+            function fire(path,p){
+                var evts = $U.val(opt,path);
+                fireEvent(evts,p,path);
+            }
+
             s.deleteSilent = function() {
                 db.ctrl(opt.name, 'remove', {
                     _id: s.item._id
@@ -51,7 +65,10 @@
             s.save = function() {
                 db.ctrl(opt.name, 'save', s.item).then(function(data) {
                     if (data.ok) {
-                        s.back();
+                        fire('events.after.save');
+                        if($U.has($U.val(opt,'save.after.goBack'),[undefined,true])){
+                            s.back();    
+                        }
                     } else {
                         handleError(data);
                     }
@@ -91,7 +108,7 @@
                 }
             };
             s.reset = () => {
-
+                s.item=$U.val(opt,'defaults.data')||{};
             };
         }
         return {

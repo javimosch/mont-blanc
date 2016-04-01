@@ -14,7 +14,7 @@
                 </li>
                 <li>
                     <label>Created</label>
-                    {{momentDateTime(item.created)}}
+                    {{item.created && momentDateTime(item.created) || ''}}
                 </li>
             </ul>
         </div>

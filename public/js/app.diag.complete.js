@@ -1,4 +1,4 @@
-var app = angular.module('app.diag.complete', ['app.common.service']);
+var app = angular.module('app.diag.complete', []);
 
 
 

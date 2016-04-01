@@ -5,6 +5,16 @@
             name: 'Log',
             routeParams: params,
             scope: s,
+            defaults:{
+                data:{
+                    message:'Write your message'
+                }
+            },
+            save:{
+                after:{
+                    goBack:true
+                }
+            },
             routes: {
                 back: 'logs'
             },
@@ -12,6 +22,15 @@
                 confirm: 'confirm',
                 delete: {
                     description: () => 'Delete item ' + s.item.type + ' ' + r.momentDateTime(s.item.created)
+                }
+            },
+            events:{
+                after:{
+                    save:[
+                        ()=>{
+                            //console.log('saved!');
+                        }
+                    ]
                 }
             },
             validate: {
@@ -24,7 +43,7 @@
         }).init();
     }]);
     app.directive('logList', function(
-        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
+        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server,$mongoosePaginate) {
         return {
             restrict: 'AE',
             replace: true,
@@ -34,7 +53,7 @@
             controller: function($scope, $element, $attrs, $transclude) {
                 var r = $rootScope,
                     db = server,
-                    s = $scope;
+                    s = $scope, dbPaginate = $mongoosePaginate.get('Log');
                 //
                 r.secureSection(s);
                 var isClientOrDiag = r.userIs(['client', 'diag']);
@@ -50,12 +69,23 @@
                     prevRoute: 'logs'
                 });
 
-                function update() {
-                    db.ctrl('Log', 'getAll', {
-                        //userType: 'admin'
-                    }).then((res) => s.model.update(res.result));
+                function update(cb) {
+                    dbPaginate.ctrl({},s.model).then(res=>{
+                        if(cb) return cb(res.result);
+                        s.model.update(res.result);
+                    });
                 }
                 s.model = {
+                    init:()=>update(),
+                    filter:{
+                        template:'logFilter',
+                        rules:{
+                            type:'contains',
+                        }
+                    },
+                    paginate: (cb) => {
+                        update(cb)
+                    },
                     click: (item, index) => {
                         r.routeParams({
                             item: item,
@@ -67,9 +97,25 @@
                         type: () => "btn btn-default margin-left-0 margin-right-1",
                         click: () => update()
                     }, {
-                        label: "New Admin",
-                        type: () => "btn btn-default",
+                        label: "New Log",
+                        show:false,
+                        type: () => "btn btn-default margin-right-1",
                         click: () => r.route('logs/edit/-1')
+                    },{
+                        label:"Delete all",
+                        type: () => "btn btn-warning",
+                        click: () => {
+                            s.confirm('Sure?',()=>{
+                                db.ctrl('Log','removeAll',{}).then(d=>{
+                                    if(d.ok){
+                                        r.infoMessage('All records were deleted');
+                                        update(null);
+                                    }else{
+                                        r.warningMessage("Delete all fail, try later.");
+                                    }
+                                })
+                            });
+                        }
                     }],
                     columns: [{
                         label: "Type",
@@ -82,9 +128,13 @@
                         label: "Created",
                         format: (v, item) => r.momentFormat(item.created, "DD-MM-YY HH[h]mm")
                     }],
-                    items: []
+                    items: [],
+                    records:{
+                        label:'Records',
+                        show:true
+                    }
                 };
-                update();
+                
             }
         };
     });

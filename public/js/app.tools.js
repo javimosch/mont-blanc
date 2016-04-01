@@ -1,5 +1,5 @@
 (function() {
-    var app = angular.module('tools', []);
+    var app = angular.module('app.tools', []);
     app.controller('termitesChecker', ['server', '$scope', '$rootScope', (db, s, r) => {
         s.item = [];
         s.check = () => {

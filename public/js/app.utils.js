@@ -1,5 +1,8 @@
 "use strict";
 
+function numberBetween(n,min,max){
+    return n>=min && n<=max;
+}
 
 function expose(path, v) {
     setVal(window, path, v);
@@ -21,6 +24,12 @@ function expose(path, v) {
 }
 
 
+function has(v,arr){
+    for(var x in arr){
+        if(v==arr[x]) return true;
+    }
+    return false;
+}
 
 function val(obj, propertyPath, opt) {
     var split = propertyPath.split('.');
@@ -43,6 +52,8 @@ function val(obj, propertyPath, opt) {
             }
         }
         return rta;
+    }else{
+        return undefined;
     }
 }
 
@@ -336,10 +347,22 @@ if (typeof exports !== 'undefined') {
     exports.getParameterByName = getParameterByName;
     exports.ifThenMessage = ifThenMessage;
     exports.val = val;
+    exports.numberBetween  = numberBetween;
 } else {
     window.val = val;
+    window.numberBetween = numberBetween;
     window.MyPromise = MyPromise;
     window.getHashParams = getHashParams;
     window.getParameterByName = getParameterByName;
     window.ifThenMessage = ifThenMessage;
+
+    window.$U = {
+        val:val,
+        numberBetween:numberBetween,
+        MyPromise:MyPromise,
+        getHashParams:getHashParams,
+        getParameterByName:getParameterByName,
+        ifThenMessage:ifThenMessage,
+        has:has
+    };
 }

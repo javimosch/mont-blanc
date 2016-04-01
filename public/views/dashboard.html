@@ -1,0 +1,12 @@
+<div class="container" ng-controller="adminDashboard">
+    <div class="jumbotron">
+        <h1>Dashboard</h1>
+        <h4>Welcome {{session().firstName || session().email}}.<br>You are a {{session().userType}}.</h4>
+    </div>
+    <div ng-if="session().userType=='diag'" ng-include=" 'views/dashboard.diag.html' ">
+    </div>
+    <div ng-if="session().userType=='client'" ng-include=" 'views/dashboard.client.html' ">
+    </div>
+    <div ng-if="session().userType=='admin'" ng-include=" 'views/dashboard.admin.html' ">
+    </div>
+</div>

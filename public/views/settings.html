@@ -1,0 +1,44 @@
+<div class="container" ng-controller="settings">
+    <out class="form-tiny">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="v-margin-2 padding-0">Price modifiers</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="form-tiny labelx2 center-block">
+                    <li>
+                        <label>Notifications</label>
+                        <button class="btn btn-default link" ng-click="route('notifications')">Enter</button>
+                    </li>
+                    <li>
+                        <label>Server log</label>
+                        <button class="btn btn-default link" ng-click="route('logs')">Enter</button>
+                    </li>
+                    <li>
+                        <label>Tools</label>
+                        <button class="btn btn-default link" ng-click="route('tools')">Enter</button>
+                    </li>
+                    <li>
+                        <label>Today (increase in percentage)</label>
+                        <input placeholder="%" ng-model="item.pricePercentageIncrease.today" />
+                    </li>
+                    <li>
+                        <label>Tomorrow (increase in percentage)</label>
+                        <input placeholder="%" ng-model="item.pricePercentageIncrease.tomorrow" />
+                    </li>
+                    <li>
+                        <label>Saturday (increase in percentage)</label>
+                        <input placeholder="%" ng-model="item.pricePercentageIncrease.saturday" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <button ng-disabled="state.working()" class="btn btn-default" ng-click="validate()">Save</button>
+            </div>
+        </div>
+    </out>
+</div>

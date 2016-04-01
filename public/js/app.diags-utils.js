@@ -159,11 +159,54 @@ var sizePrice = (model, diags, squareMetersPrice, basePrice, opt) => {
     }
     return rta;
 }
+
+var isToday=(d)=>moment().isSame(moment(d),'day');
+var isTomorrow=(d)=>moment().add(1,'day').isSame(moment(d),'day');
+var isSaturday=(d)=>moment(d).day()===6;
+
 var totalPrice = (showRounded, model, diags, squareMetersPrice, basePrice, opt) => {
+    opt = opt || {};
     var tot = subTotal(model, diags, basePrice, opt) + sizePrice(model, diags, squareMetersPrice, basePrice, opt);
+
+    if (opt.s) {
+        opt.s.priceInfo = opt.s.priceInfo || {};
+    }
+
+    if(opt.s){
+        if(opt.s.settings){
+            if(opt.s.settings.pricePercentageIncrease
+                && model.date
+                ){
+                var increase = opt.s.settings.pricePercentageIncrease;
+                var percentage = 0;
+                if(isSaturday(model.date)){
+                    percentage = (percentage>increase.saturday)?percentage:increase.saturday;
+                    delete opt.s.priceInfo['increase-today'];
+                    delete opt.s.priceInfo['increase-tomorrow'];
+                    opt.s.priceInfo['increase-saturday'] = tot * (percentage/100);
+                }
+                if(isTomorrow(model.date)){
+                    percentage = (percentage>increase.tomorrow)?percentage:increase.tomorrow;
+                    delete opt.s.priceInfo['increase-today'];
+                    delete opt.s.priceInfo['increase-saturday'];
+                    opt.s.priceInfo['increase-tomorrow'] = tot * (percentage/100);
+                }
+                if(isToday(model.date)){
+                    percentage = (percentage>increase.today)?percentage:increase.today;
+                    delete opt.s.priceInfo['increase-tomorrow'];
+                    delete opt.s.priceInfo['increase-saturday'];
+                    opt.s.priceInfo['increase-today'] = tot * (percentage/100);
+                }
+                
+                
+                tot = tot + tot * (percentage/100);
+            }
+        }
+    }
+
     var realTot = parseInt(parseInt(tot) / 10, 10) * 10;
 
-    opt = opt || {};
+    
     if (opt.s) {
         opt.s.priceInfo = opt.s.priceInfo || {};
         opt.s.priceInfo['Round-to-near-10'] = (tot - realTot) * -1;

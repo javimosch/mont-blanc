@@ -1,0 +1,14 @@
+
+.ma .navbar-default{
+	box-shadow: none;
+    border-radius: 0px;
+    border: 0px;
+}
+
+.ma .navbar-default .navbar-collapse, .navbar-default .navbar-form{
+	border: 0px;
+}
+
+.ma.ma-black .link{
+	color:grey;
+}

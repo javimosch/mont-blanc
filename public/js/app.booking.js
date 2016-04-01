@@ -1,10 +1,12 @@
 var app = angular.module('app', [
-    'app.common.service',
-    'app.common.root',
-    'app.common.directives',
+    'app.run',
+    'app.services',
+    'app.directives',
     'app.static.calendar',
+    
     'ui.bootstrap'
 ]);
+
 
 
 app.controller('fullpage', ['server',
@@ -29,6 +31,11 @@ app.controller('fullpage', ['server',
                 complete: false
             }
         };
+
+
+        db.ctrl('Settings', 'getAll', {}).then(d => {
+            if (d.ok && d.result.length > 0) s.settings = d.result[0];
+        });
 
         s.orderPaid = () => {
             return _.includes(['prepaid', 'completed'], s._order.status);
@@ -389,7 +396,7 @@ app.controller('fullpage', ['server',
                     s.model.diags.dta = false;
                 }
 
-                if (_.includes(['Oui, Plus de 15 ans','Oui, Moins de 15 ans'],s.model.gasInstallation)) {
+                if (_.includes(['Oui, Plus de 15 ans', 'Oui, Moins de 15 ans'], s.model.gasInstallation)) {
                     toggle('gaz', true);
                     if (s.model.sell == true && s.model.gasInstallation === 'Oui, Plus de 15 ans') {
                         s.model.diags.gaz = true;
@@ -399,7 +406,7 @@ app.controller('fullpage', ['server',
                 } else {
                     toggle('gaz', false);
                 }
-                if (_.includes(['Plus de 15 ans','Moins de 15 ans'],s.model.electricityInstallation)) {
+                if (_.includes(['Plus de 15 ans', 'Moins de 15 ans'], s.model.electricityInstallation)) {
                     toggle('electricity', true);
                     if (s.model.sell == true && s.model.electricityInstallation === 'Plus de 15 ans') {
                         s.model.diags.electricity = true;
@@ -448,11 +455,11 @@ app.controller('fullpage', ['server',
 
 
             //if sunday, skip
-            if(moment(date).day()===0){
+            if (moment(date).day() === 0) {
                 s.warningMsg('Sunday is an exception.');
-                r.dom(()=>{
-                    s.model.date = moment(s.model.date).subtract(1,'days')._d;
-                },1000);
+                r.dom(() => {
+                    s.model.date = moment(s.model.date).subtract(1, 'days')._d;
+                }, 1000);
                 return;
             }
 
@@ -533,10 +540,10 @@ app.controller('fullpage', ['server',
         };
         s.drawRange = function(rng) {
             var rta = moment(rng.start).format("HH[h]mm");
-            rta+=' - '+ rng.name+ ' - ' + s.totalPrice(true)+' €';
+            rta += ' - ' + rng.name + ' - ' + s.totalPrice(true) + ' €';
             // + ' - ' + moment(rng.end).format("HH[h]mm");
 
-            
+
 
             return rta;
         };

@@ -1,4 +1,4 @@
-var app = angular.module('app.admin.calendar', []);
+var app = angular.module('app.calendar', []);
 
 app.directive('globalCalendar', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {

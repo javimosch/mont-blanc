@@ -133,7 +133,11 @@
                         format: (v) => {
                             return r.momentFormat(v, "DD-MM-YY HH:mm");
                         }
-                    }]
+                    }],
+                    records:{
+                        label:'Records',
+                        show:true
+                    }
                 };
 
             }

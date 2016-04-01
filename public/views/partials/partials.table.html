@@ -39,10 +39,18 @@
         </table>
         <uib-pagination 
         ng-show="model.paginate"
-        total-items="paginationTotalItems"
+        total-items="model.pagination.total"
         items-per-page="model.pagination.itemsPerPage"
          ng-model="model.pagination.currentPage" ng-change="model.pagination.changed()" max-size="model.pagination.maxSize" class="pagination-sm" boundary-links="true"></uib-pagination>
     </div>
+    <div ng-show="model.records && model.records.show">
+        <ul class="form-tiny labelx2 center-block">
+            <li>
+                <label>{{model.records.label}}</label>
+                <input disabled ng-value="model.pagination.total" class="max-w-60">
+            </li>
+    </div>
+
     <div ng-if="buttons" class="">
         <button ng-repeat="(k,v) in buttons" ng-if="v.show==undefined || v.show==true" ng-class="v.type({
             $index:$index,$first:$first

@@ -1,19 +1,23 @@
-var srv = angular.module('app.admin.routes', []);
+var srv = angular.module('app.routes', []);
 app.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
         when('/', {
-            templateUrl: 'views/view.admin.login.html'
+            templateUrl: 'views/login.html'
         }).
         when('/dashboard', {
-            templateUrl: 'views/view.admin.dashboard.html'
+            templateUrl: 'views/dashboard.html'
         }).
         when('/global-calendar', {
-            templateUrl: 'views/view.admin.calendar.html'
+            templateUrl: 'views/global-calendar.html'
+        }).
+
+        when('/settings', {
+            templateUrl: 'views/settings.html'
         }).
 
         when('/notifications', {
-            templateUrl: 'views/view.notifications.html'
+            templateUrl: 'views/notifications.html'
         }).
 
         when('/logs', {
@@ -24,10 +28,10 @@ app.config(['$routeProvider',
         }).
 
         when('/administrators', {
-            templateUrl: 'views/view.admin-list.html'
+            templateUrl: 'views/admins.html'
         }).
         when('/administrators/edit/:id', {
-            templateUrl: 'views/view.admin-edit.html'
+            templateUrl: 'views/admin.edit.html'
         }).
 
         when('/exceptions', {
@@ -38,10 +42,10 @@ app.config(['$routeProvider',
         }).
 
         when('/clients', {
-            templateUrl: 'views/view.admin.clients.html'
+            templateUrl: 'views/clients.html'
         }).
         when('/clients/edit/:id', {
-            templateUrl: 'views/view.admin.clients.edit.html'
+            templateUrl: 'views/client.edit.html'
         }).
 
         when('/tools', {
@@ -51,32 +55,23 @@ app.config(['$routeProvider',
             templateUrl: 'views/tools.termites-check.html'
         }).
 
-        /*
-        when('/users', {
-            templateUrl: 'views/view.admin.users.html'
-        }).
-        when('/users/edit/:id', {
-            templateUrl: 'views/view.admin.users.edit.html'
-        }).
-        */
-        
         when('/diag/balance', {
-            templateUrl: 'views/view.admin.diag.balance.html'
+            templateUrl: 'views/diag-balance.html'
         }).
         when('/diags', {
-            templateUrl: 'views/view.admin.diags.html'
+            templateUrl: 'views/diags.html'
         }).
         when('/diags/edit/:id', {
-            templateUrl: 'views/view.admin.diags.edit.html'
+            templateUrl: 'views/diag.edit.html'
         }).
         when('/orders', {
-            templateUrl: 'views/view.admin.orders.html'
+            templateUrl: 'views/orders.html'
         }).
         when('/orders/edit/:id', {
             templateUrl: 'views/order.edit.html'
         }).
         when('/orders/view/:id', {
-            templateUrl: 'views/view.admin.orders.view.html'
+            templateUrl: 'views/order.view.html'
         }).
         otherwise({
             redirectTo: '/'

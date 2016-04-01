@@ -1,4 +1,4 @@
-var app = angular.module('app.common.directives', []);
+var app = angular.module('app.directives', []);
 
 app.directive('tableFilter', function(
     $rootScope, $timeout, $compile, $templateRequest, $sce, tpl) {
@@ -951,10 +951,25 @@ app.directive('dynamicTable', function(
             s.model.items = s.model.items || [];
 
             s.paginationTotalItems = 1;
-            s.model.pagination = s.model.pagination || {
+
+            function objUpdate(obj1,obj2,preserveFields){
+                var rta = obj1;
+                Object.keys(obj2).forEach(k=>{
+                    for(var x in preserveFields){
+                        if(preserveFields[x]==k
+                         && typeof obj1[k] !== 'undefined'
+                        ) return; //skips fields who need to be preserved. (only when they exists on obj1).
+                    }
+                    rta[k] = obj2[k];
+                })
+                return rta;
+            }
+
+            var paginationDefaults = {
                 currentPage: 1,
                 maxSize: 5,
                 itemsPerPage: 10,
+                total:1,
                 changed: () => {
                     if (s.model.paginate) s.model.paginate(items => {
                         s.model.items = items;
@@ -963,9 +978,11 @@ app.directive('dynamicTable', function(
                 },
                 update: (p) => {
                     //s.model.pagination.itemsPerPage=p.itemsLength;
-                    s.paginationTotalItems = s.model.pagination.itemsPerPage * p.numPages;
+                    //s.paginationTotalItems = s.model.pagination.itemsPerPage * p.numPages;
+                    s.model.pagination.total = p.total;
                 }
             };
+            s.model.pagination = s.model.pagination && objUpdate(s.model.pagination,paginationDefaults,['itemsPerPage']) || paginationDefaults;
 
             s.model.update = (items, data) => {
                 s.model.items = items;

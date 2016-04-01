@@ -1,7 +1,20 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
+        	<ol class="breadcrumb">
+                <li><a class="link" ng-click="route('settings')">Settings</a></li>
+                <li>Server Log</li>
+            </ol>
             <log-list></log-list>
         </div>
     </div>
 </div>
+
+<script type="text/ng-template" id="logFilter.html">
+    <ul class="form-tiny center-block float-right">
+        <li>
+        	<label>Type</label>
+        	<input ng-model="model.filter.fields.type" placeholder="info, warning, error"/>
+        </li>
+    </ul>
+</script>

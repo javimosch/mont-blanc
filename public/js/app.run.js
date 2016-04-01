@@ -1,4 +1,4 @@
-var app = angular.module('app.common.root', []);
+var app = angular.module('app.run', []);
 
 
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {

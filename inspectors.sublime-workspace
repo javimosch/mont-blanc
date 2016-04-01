@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"per",
+				"percentage"
+			],
+			[
+				"get",
+				"getAll"
+			],
+			[
 				"warnin",
 				"warningMsg"
 			],
@@ -199,6 +207,14 @@
 	},
 	"buffers":
 	[
+		{
+			"contents": "\nADD file:b5391cb13172fb513dbfca0b8471ea02bffa913ffdab94ad864d892d129318c6 in /\nCMD \"/bin/bash\"\nRUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl wget && rm -rf /var/lib/apt/lists/*\nRUN apt-get update && apt-get install -y --no-install-recommends bzr git mercurial openssh-client subversion procps && rm -rf /var/lib/apt/lists/*\nRUN apt-get update && apt-get install -y --no-install-recommends autoconf automake bzip2 file g++ gcc imagemagick libbz2-dev libc6-dev libcurl4-openssl-dev libevent-dev libffi-dev libgeoip-dev libglib2.0-dev libjpeg-dev liblzma-dev libmagickcore-dev libmagickwand-dev libmysqlclient-dev libncurses-dev libpng-dev libpq-dev libreadline-dev libsqlite3-dev libssl-dev libtool libwebp-dev libxml2-dev libxslt-dev libyaml-dev make patch xz-utils zlib1g-dev && rm -rf /var/lib/apt/lists/*\nRUN set -ex && for key in 9554F04D7259F04124DE6B476D5A82AC7E37093B 94AE36675C464D64BAFA68DD7434390BDBE9B9C5 0034A06D9D9B0064CE8ADF6BF1747F4AD2306D93 FD3A5288F042B6850C66B31F09FE44734EB7990E 71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 DD8F2338BAE7501E3DD5AC78C273792F7D83545D B9AE9905FFD7803F25714661B63B535A4C206CA9 C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 ; do gpg --keyserver ha.pool.sks-keyservers.net --recv-keys \"$key\"; done\nENV NPM_CONFIG_LOGLEVEL=info\nENV NODE_VERSION=5.9.0\nRUN curl -SLO \"https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz\" && curl -SLO \"https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc\" && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc && grep \" node-v$NODE_VERSION-linux-x64.tar.xz\\$\" SHASUMS256.txt | sha256sum -c - && tar -xJf \"node-v$NODE_VERSION-linux-x64.tar.xz\" -C /usr/local --strip-components=1 && rm \"node-v$NODE_VERSION-linux-x64.tar.xz\" SHASUMS256.txt.asc SHASUMS256.txt\nCMD \"node\"\n ",
+			"settings":
+			{
+				"buffer_size": 1819,
+				"line_ending": "Windows"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -286,26 +302,49 @@
 	"expanded_folders":
 	[
 		"/F/git/diags-front",
+		"/F/git/diags-front/node_modules",
+		"/F/git/diags-front/node_modules/acorn",
 		"/F/git/diags-front/public",
 		"/F/git/diags-front/public/js",
 		"/F/git/diags-front/public/views",
+		"/F/git/diags-front/public/views/directives",
 		"/F/git/diags-front/public/views/partials",
 		"/F/git/diags-back",
+		"/F/git/diags-back/helpers",
 		"/F/git/diags-back/node_modules",
+		"/F/git/diags-back/node_modules/bson",
+		"/F/git/diags-back/node_modules/bson/alternate_parsers",
 		"/F/git/diags-back/node_modules/pac-resolver"
 	],
 	"file_history":
 	[
-		"/F/git/diags-front/public/js/app.common.directives.js",
-		"/C/Program Files (x86)/Heroku/bin/heroku",
-		"/F/git/diags-front/admin.html",
-		"/F/git/diags-front/public/js/app.backoffice.js",
-		"/F/git/diags-front/public/js/app.admin.login.js",
-		"/F/git/diags-front/public/js/app.common.service.js",
-		"/F/git/diags-front/public/js/app.common.root.js",
-		"/F/git/diags-front/public/views/view.admin.login.html",
 		"/F/git/diags-front/public/js/app.static.main.js",
 		"/F/git/diags-front/public/js/app.admin.js",
+		"/F/git/diags-front/public/js/diags.common.utils.js",
+		"/F/git/diags-front/public/views/settings.html",
+		"/F/git/diags-front/public/js/app.backoffice.js",
+		"/F/git/diags-front/public/js/app.common.utils.js",
+		"/F/git/diags-front/public/js/app.common.root.js",
+		"/F/git/diags-front/public/js/app.order.js",
+		"/F/git/diags-front/public/views/order.edit.html",
+		"/F/git/diags-back/helpers/handler.actions.js",
+		"/F/git/diags-back/helpers/db.js",
+		"/F/git/diags-front/public/views/view.admin.orders.html",
+		"/F/git/diags-front/public/js/app.admin.routes.js",
+		"/F/git/diags-front/public/views/partials/partial.admin.nav.html",
+		"/F/git/diags-front/public/views/directives/directive.fast-crud.html",
+		"/F/git/diags-front/public/views/partials/partial.order.list-of-diags.html",
+		"/F/git/diags-front/public/js/app.diag.js",
+		"/F/git/diags-front/log.sh",
+		"/F/git/diags-front/push.sh",
+		"/F/git/diags-back/helpers/programmedTasks.js",
+		"/F/git/diags-back/helpers/programmedTasks.diplomeExpiration.js",
+		"/C/Program Files (x86)/Heroku/bin/heroku",
+		"/F/git/diags-front/public/js/app.common.directives.js",
+		"/F/git/diags-front/admin.html",
+		"/F/git/diags-front/public/js/app.admin.login.js",
+		"/F/git/diags-front/public/js/app.common.service.js",
+		"/F/git/diags-front/public/views/view.admin.login.html",
 		"/F/git/diags-front/public/views/partials/partial.calendar-timepicker.html",
 		"/F/git/diags-front/public/links.html",
 		"/F/git/diags-back/.env",
@@ -313,19 +352,13 @@
 		"/F/git/index.html",
 		"/F/VAGRANT/SCOTCH/Vagrantfile",
 		"/C/Users/aranc/Documents/ftpuse",
-		"/F/git/diags-front/public/js/app.admin.routes.js",
-		"/F/git/diags-front/public/js/app.common.utils.js",
 		"/F/git/diags-front/public/js/services/srv.crud.js",
 		"/F/git/diags-front/public/views/logs.html",
 		"/F/git/diags-front/public/views/logs.edit.html",
 		"/F/git/diags-front/public/js/app.log.js",
-		"/F/git/diags-front/public/js/app.order.js",
 		"/F/git/diags-front/public/js/app.admin.diag.js",
-		"/F/git/diags-front/public/views/order.edit.html",
 		"/F/git/diags-front/public/views/templates/templates.user.html",
 		"//J25DEV/git/diags-back/helpers/db.js",
-		"/F/git/diags-front/public/js/app.diag.js",
-		"/F/git/diags-front/public/views/directives/directive.fast-crud.html",
 		"/F/git/diags-front/public/views/tools.html",
 		"/F/git/diags-front/.travis.yml",
 		"//J25DEV/git/diags-back/package.json",
@@ -343,7 +376,6 @@
 		"//J25DEV/git/diags-back/helpers/utils.js",
 		"/F/git/diags-hub/public/index.html",
 		"/F/git/diags-front/public/js/diags.available-slots.js",
-		"/F/git/diags-front/public/js/diags.common.utils.js",
 		"/F/git/diags-front/public/data.json",
 		"/F/git/diags-front/public/css/style.css",
 		"/F/git/diags-front/public/views/view.admin.clients.edit.html",
@@ -353,7 +385,6 @@
 		"/F/git/diags-front/public/views/view.admin.diags.edit.html",
 		"/F/git/diags-front/public/views/exception.edit.html",
 		"/F/git/diags-front/public/views/exception.list.html",
-		"/F/git/diags-front/public/views/partials/partial.admin.nav.html",
 		"/F/git/diags-front/public/views/view.admin-edit.html",
 		"//J25DEV/git/diags-back/helpers/handle.routes.js",
 		"/F/git/diags-front/public/js/section.notifications.js",
@@ -378,10 +409,8 @@
 		"/F/git/diags-front/public/views/view.notifications.html",
 		"/F/git/diags-front/public/views/partials/partials.table.html",
 		"/F/git/diags-front/public/app.bundle.booking.js",
-		"/F/git/diags-back/helpers/db.js",
 		"/F/git/diags-front/admin-min.html",
 		"/F/git/diags-front/public/js/app.admin.user.js",
-		"/F/git/diags-back/helpers/handler.actions.js",
 		"/F/git/diags-front/public/views/view.admin.orders.view.html",
 		"/F/git/diags-back/.env.production",
 		"/F/git/diags-back/helpers/handlers.email.js",
@@ -416,14 +445,7 @@
 		"/S/git/diags-front/views/view.admin.orders.edit.html",
 		"/S/git/diags-front/js/app.order.js",
 		"/S/git/diags-front/views/order.edit.html",
-		"/S/git/diags-front/views/partials/partial.question7.html",
-		"/F/temp/KMSpico Install/ReadMe KMSpico Install.txt",
-		"/F/temp/_ReadMe.txt",
-		"/C/Users/aranc/Downloads/KMSpico 10.1.1 FINAL + Portable (Office and Windows 10 Activator) [TechTools.NET]/_ReadMe.txt",
-		"/S/git/diags-front/views/partials/confirm-and-save-pay.html",
-		"/S/git/diags-front/views/directives/directive.ctrl.select.html",
-		"/S/git/diags-front/views/partials/partial.order.pdf.html",
-		"/S/git/diags-front/views/partials/partial.order.price-rules.html"
+		"/S/git/diags-front/views/partials/partial.question7.html"
 	],
 	"find":
 	{
@@ -444,6 +466,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"totalPrice",
+			"db.ctrl",
+			"exports",
+			".dire",
 			"my-alert",
 			"hasPending",
 			"addAlert",
@@ -567,11 +593,7 @@
 			"userHas",
 			".contro",
 			"$compile",
-			"dummy",
-			"spinner",
-			"v2.show",
-			"ng-if",
-			"expirationDateNotificationSended"
+			"dummy"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -607,8 +629,37 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1819,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"auto_name": "",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -661,16 +712,100 @@
 		"selected_items":
 		[
 			[
+				"adminutil",
+				"diags-front\\public\\js\\diags.common.utils.js"
+			],
+			[
+				"app.admin",
+				"diags-front\\public\\js\\app.admin.js"
+			],
+			[
+				"appmain",
+				"diags-front\\public\\js\\app.static.main.js"
+			],
+			[
+				"adminutils",
+				"diags-front\\public\\js\\diags.common.utils.js"
+			],
+			[
+				"apputils",
+				"diags-front\\public\\js\\app.common.utils.js"
+			],
+			[
+				"app.back",
+				"diags-front\\public\\js\\app.backoffice.js"
+			],
+			[
+				"approot",
+				"diags-front\\public\\js\\app.common.root.js"
+			],
+			[
+				"app.order",
+				"diags-front\\public\\js\\app.order.js"
+			],
+			[
+				"order.edit",
+				"diags-front\\public\\views\\order.edit.html"
+			],
+			[
+				"handelacti",
+				"diags-back\\helpers\\handler.actions.js"
+			],
+			[
+				"db.",
+				"diags-back\\helpers\\db.js"
+			],
+			[
+				"setings",
+				"diags-front\\public\\views\\settings.html"
+			],
+			[
+				".nav",
+				"diags-front\\public\\views\\partials\\partial.admin.nav.html"
+			],
+			[
+				"routes",
+				"diags-front\\public\\js\\app.admin.routes.js"
+			],
+			[
+				"fast-cru",
+				"diags-front\\public\\views\\directives\\directive.fast-crud.html"
+			],
+			[
+				"orders",
+				"diags-front\\public\\views\\view.admin.orders.html"
+			],
+			[
+				"orderlist",
+				"diags-front\\public\\views\\partials\\partial.order.list-of-diags.html"
+			],
+			[
+				"log.sh",
+				"diags-front\\log.sh"
+			],
+			[
+				"push.sh",
+				"diags-front\\push.sh"
+			],
+			[
+				"handleacti",
+				"diags-back\\helpers\\handler.actions.js"
+			],
+			[
+				"programmed",
+				"diags-back\\helpers\\programmedTasks.js"
+			],
+			[
+				"app.diag",
+				"diags-front\\public\\js\\app.diag.js"
+			],
+			[
 				".direc",
 				"diags-front\\public\\js\\app.common.directives.js"
 			],
 			[
 				"admin",
 				"diags-front\\admin.html"
-			],
-			[
-				"app.back",
-				"diags-front\\public\\js\\app.backoffice.js"
 			],
 			[
 				"applogin",
@@ -683,10 +818,6 @@
 			[
 				"services",
 				"diags-front\\public\\js\\app.common.service.js"
-			],
-			[
-				"approot",
-				"diags-front\\public\\js\\app.common.root.js"
 			],
 			[
 				"admin.h",
@@ -713,10 +844,6 @@
 				"diags-front\\public\\views\\partials\\partial.calendar-timepicker.html"
 			],
 			[
-				"appmain",
-				"diags-front\\public\\js\\app.static.main.js"
-			],
-			[
 				"links",
 				"diags-front\\public\\links.html"
 			],
@@ -741,22 +868,6 @@
 				"diags-front\\public\\views\\logs.edit.html"
 			],
 			[
-				"apputils",
-				"diags-front\\public\\js\\app.common.utils.js"
-			],
-			[
-				"routes",
-				"diags-front\\public\\js\\app.admin.routes.js"
-			],
-			[
-				"app.order",
-				"diags-front\\public\\js\\app.order.js"
-			],
-			[
-				"order.edit",
-				"diags-front\\public\\views\\order.edit.html"
-			],
-			[
 				"template",
 				"diags-front\\public\\views\\templates\\templates.user.html"
 			],
@@ -767,14 +878,6 @@
 			[
 				"db.js",
 				"diags-back\\helpers\\db.js"
-			],
-			[
-				"app.admin",
-				"diags-front\\public\\js\\app.admin.js"
-			],
-			[
-				"app.diag",
-				"diags-front\\public\\js\\app.diag.js"
 			],
 			[
 				"fast-crud",
@@ -791,10 +894,6 @@
 			[
 				"packa",
 				"diags-back\\package.json"
-			],
-			[
-				"handleacti",
-				"diags-back\\helpers\\handler.actions.js"
 			],
 			[
 				"utils",
@@ -859,10 +958,6 @@
 			[
 				"viewdiag",
 				"diags-front\\public\\views\\view.admin.diags.edit.html"
-			],
-			[
-				".nav",
-				"diags-front\\public\\views\\partials\\partial.admin.nav.html"
 			],
 			[
 				"excep",
@@ -1127,50 +1222,6 @@
 			[
 				"amdin",
 				"diags-front\\admin.html"
-			],
-			[
-				"view.order",
-				"diags-front\\public\\views\\view.admin.orders.edit.html"
-			],
-			[
-				"orderedit",
-				"diags-front\\public\\views\\order.edit.html"
-			],
-			[
-				"boo",
-				"diags-front\\booking-min.html"
-			],
-			[
-				"admin-",
-				"diags-front\\admin-min.html"
-			],
-			[
-				"bookin",
-				"diags-front\\booking.html"
-			],
-			[
-				"booking",
-				"diags-front\\booking.html"
-			],
-			[
-				"app.",
-				"diags-back\\app.js"
-			],
-			[
-				"nod",
-				"tools\\node_bundle.js"
-			],
-			[
-				"node",
-				"tools\\node_bundle.js"
-			],
-			[
-				"booking-min",
-				"diags-front\\booking-min.html"
-			],
-			[
-				"proc",
-				"diags-front\\Procfile"
 			]
 		],
 		"width": 0.0
@@ -1205,7 +1256,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 185.0,
+	"side_bar_width": 50.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

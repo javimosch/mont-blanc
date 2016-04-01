@@ -1,4 +1,4 @@
-var app = angular.module('app.admin.user', ['app.common.service']);
+var app = angular.module('app.user', []);
 
 
 

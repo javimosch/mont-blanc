@@ -44,13 +44,20 @@ html, body, *{
 
 
 .alert-info,.alert-warning,.alert-success{
-    /* background: rgba(0,0,0,0.1); */
-    background-image: none!important;
-    /* color: black; */
-    border-radius: 0px;
-    margin-bottom: 05px;
-    padding: 5px 30px;
-    text-align: center;
+    
+/* background: rgba(0,0,0,0.1); */
+    
+background-image: none!important;
+    
+/* color: black; */
+    
+border-radius: 0px;
+    
+margin-bottom: 05px;
+    
+padding: 5px 30px;
+    
+text-align: center;
 }
 
 table.uib-timepicker{
@@ -316,7 +323,7 @@ i.file-button[disabled]:hover {
 a.navbar-brand{
     font-size: 3rem;
     color: #333!important;
-    text-shadow: 20px 0px rgba(0,0,0,0.12);
+    /*text-shadow: 20px 0px rgba(0,0,0,0.12);*/
 }
 
 .nav li a {
