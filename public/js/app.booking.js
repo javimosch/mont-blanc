@@ -9,7 +9,7 @@ var app = angular.module('app', [
 
 
 
-app.controller('fullpage', ['server',
+app.controller('ctrl.booking', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal',
     function(db, $timeout, s, r, $uibModal) {
         window.r = r;
@@ -192,7 +192,7 @@ app.controller('fullpage', ['server',
         ]);
 
         s.datepicker = {
-            minDate: moment().add(1, 'day'),
+            minDate: moment(), //.add(1, 'day'), //today is available with an increase in price.
             maxDate: moment().add(60, 'day'),
             initDate: new Date()
         };
@@ -712,7 +712,8 @@ app.controller('fullpage', ['server',
             ], (m) => {
                 if (typeof m[0] !== 'string') { s.warningMsg(m[0]()) } else { s.warningMsg(m[0]); }
             }, () => {
-                db.ctrl('User', 'update', s._user).then(() => s.right());
+                db.setAsync().ctrl('User', 'update', s._user).then(() => {}); //async (we don't want to wait here).
+                s.right();
             });
 
 
@@ -765,7 +766,8 @@ app.controller('fullpage', ['server',
 
         s.saveAsync = () => {
             if (s._user) {
-                s.model._client = s._user._id;
+                //s.model._client = s._user._id;
+                s.model._client = s._user; //we need the full user ref for price discount calcs.
                 s.model.email = s._user.email;
                 s.model.clientType = s._user.clientType;
             }
@@ -963,7 +965,9 @@ app.controller('fullpage', ['server',
 
 
             function _saveOrder(payAfterSave) {
-                db.custom('order', 'saveWithEmail', s.model).then(function(res) {
+                var data = _.clone(s.model);
+                data._client = data._client.id || data._client;
+                db.custom('order', 'saveWithEmail', data).then(function(res) {
                     if (res.data.ok) {
                         //showModal('Detailed information was send to ' + s.model.email);
                         if (payAfterSave) {

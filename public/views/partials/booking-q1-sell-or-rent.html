@@ -1,0 +1,24 @@
+<div class="panel center-block question panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">Vente ou Location</h4>
+    </div>
+    <div class="panel-body">
+        <div class="input-group">
+            <span class="input-group-addon no-bg borderless">
+                <input type="radio" ng-model="model.sell" ng-value="true" ng-click="down()">
+            </span>
+            <input type="text" disabled class="check-label" value="Vous vendez" aria-label="...">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon no-bg borderless">
+                <input type="radio" ng-value="false" ng-model="model.sell" ng-click="down()">
+            </span>
+            <input type="text" disabled class="check-label" value="Vous louez" aria-label="...">
+        </div>
+    </div>
+    <div class="panel-footer">
+<button class="btn btn-success center-block text-center" ng-click="down()"
+ng-disabled="model.sell===undefined"
+> Continuer </button>
+    </div>
+</div>

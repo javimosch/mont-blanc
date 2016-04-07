@@ -24,9 +24,9 @@ srv.service('$mongoosePaginate', ['server', function(db) {
     function handler(modelName) {
         var self = this;
         self.working = false;
-        self.ctrl = function(data,model) {
+        self.ctrl = function(data, model) {
             return MyPromise((resolve, err, emit) => {
-                if(!model.pagination){
+                if (!model.pagination) {
                     err('model.pagination required.');
                     console.warn('$mongoosePaginate model.pagination required.');
                     return;
@@ -35,7 +35,7 @@ srv.service('$mongoosePaginate', ['server', function(db) {
                 self.working = true;
                 db.ctrl(modelName, 'paginate', Object.assign({
                     __limit: model.pagination.itemsPerPage,
-                    __lean:true,
+                    __lean: true,
                     __page: model.pagination.currentPage
                 }, data)).then(r => {
                     if (!r.ok) {
@@ -43,13 +43,13 @@ srv.service('$mongoosePaginate', ['server', function(db) {
                         return;
                     }
                     var numberOfPages = r.result.pages;
-//                    console.info(model.pagination.currentPage,model.pagination,numberOfPages);
+                    //                    console.info(model.pagination.currentPage,model.pagination,numberOfPages);
                     self.working = false;
                     if (model.pagination) {
                         model.pagination.update({
-                            itemsLength:r.result.docs.length,
+                            itemsLength: r.result.docs.length,
                             numPages: numberOfPages,
-                            total:r.result.total
+                            total: r.result.total
                         });
                     }
                     r.result = r.result.docs;
@@ -62,7 +62,7 @@ srv.service('$mongoosePaginate', ['server', function(db) {
     return {
         get: function(modelName) {
             if (!handlers[modelName]) {
-               // console.info('$mongoosePaginate creating handler for ' + modelName);
+                // console.info('$mongoosePaginate creating handler for ' + modelName);
                 handlers[modelName] = new handler(modelName);
             }
             //console.info('$mongoosePaginate delivering handler for ' + modelName);
@@ -122,7 +122,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     });
 
     //var URL = 'http://blooming-plateau-64344.herokuapp.com/';
-
+    var globalState = {};//containts a global state of the service. (db)
     var localData = null;
 
     var spinner = (() => {
@@ -152,7 +152,12 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                     }
                 }, 1000 * 30);
                 r.$emit('logger.working');
-                return (res) => {
+                var rta = function (res){
+                    //
+                    if (_.isUndefined(_logs[self.id])) {
+                        return;//registered as async or duplicate response (very rare).
+                    }
+
                     //data for $http, result for others
                     //add more validations for detect a fail here.
                     if (!res.data && !res.result) {
@@ -170,14 +175,14 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                             if (_.includes(_controlledErrorsStrings, item.err)) {
                                 _controlledErrors[self.id] = item;
                             } else {
-                                if(item.err && item.err.type){
-                                    if(_.includes(_controlledErrorsStrings, item.err.type)){
+                                if (item.err && item.err.type) {
+                                    if (_.includes(_controlledErrorsStrings, item.err.type)) {
                                         item.message = item.err.message;
-                                        _controlledErrors[self.id] = item;    
-                                    }else{
+                                        _controlledErrors[self.id] = item;
+                                    } else {
                                         _errors[self.id] = item;
                                     }
-                                }else{
+                                } else {
                                     _errors[self.id] = item;
                                 }
                             }
@@ -189,7 +194,12 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                     if (Object.keys(_logs).length === 0) {
                         r.$emit('logger.clear');
                     }
-                }
+                };
+                rta.registerAsync=()=>{
+                    delete _logs[self.id];
+                    r.$emit('logger.clear');
+                };
+                return rta;
             }
         };
         fn.addControlledErrors = (arr) => {
@@ -277,7 +287,24 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     r.get = get;
 
     function post(relativeUrl, data, callback, error) {
+        data = data || {};
         var _log = logger(relativeUrl, data);
+
+        if(globalState.async){
+            data = Object.assign(data,{
+                ___serviceOptions:{
+                    logAsAsync:true
+                }
+            });
+            delete globalState.async;
+        }
+
+        if(data.___serviceOptions){
+            if(data.___serviceOptions.logAsAsync==true){
+                _log.registerAsync();
+            }
+        }
+
         http({
             method: 'POST',
             data: data,
@@ -295,18 +322,6 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     }
 
 
-
-    var _dataAvailableRangeDummy = [{
-        price: 60,
-        diagStart: new Date().getTime() - (1000 * 60) * 30,
-        diagEnd: new Date().getTime() + (1000 * 60) * 30,
-        _diag: 1
-    }, {
-        price: 55,
-        diagStart: new Date().getTime() - (1000 * 60) * 120,
-        diagEnd: new Date().getTime() - (1000 * 60) * 60,
-        _diag: 1
-    }];
 
     function login(data) {
         console.log('SEVICE LOGIN', data);
@@ -358,97 +373,6 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     }
 
 
-    ///--------------------------------------- DIAGS RELATED---------BEGIN
-    ///--------------------------------------- DIAGS RELATED---------BEGIN
-    ///--------------------------------------- DIAGS RELATED---------BEGIN
-    ///--------------------------------------- DIAGS RELATED---------BEGIN
-    function diagsPriority(cb) {
-        ctrl('User', 'getAll', {
-            userType: 'diag',
-            __rules: {
-                disabled: { $ne: true } //exclude disabled diags
-            },
-            __select: 'priority'
-        }).then((data) => {
-            cb(data.result.map((v) => ({ _id: v._id, priority: v.priority })));
-        })
-    }
-
-    function timeRangesDiagSayHeCantWorktype(cb) {
-        ctrl('TimeRange', 'getAll', {
-            type: 'work-exception',
-            __select: '_user start end repeat'
-        }).then((data) => {
-            cb(data.result.map((v) => (v)));
-        })
-    }
-
-    function timeRangesDiagIsWorking(order, cb) {
-        ctrl('Order', 'getAll', {
-            __select: 'diagStart diagEnd _diag',
-            __rules: {
-                status: { $ne: 'complete' }
-            }
-        }).then((data) => {
-
-            data.result = data.result.filter(v => {
-                return moment(v.diagStart).isSame(moment(order.day), 'day');
-            });
-
-            cb(data.result.map((v) => ({ _user: v._diag, start: v.diagStart, end: v.diagEnd })));
-        })
-    }
-
-    function getAvailableRanges(order) {
-        if (!isFinite(new Date(order.day))) {
-            throw Error('getAvailableRanges Invalid order day');
-        }
-
-        function _data(cb) {
-            timeRangesDiagIsWorking(order, (working) => {
-                timeRangesDiagSayHeCantWorktype((exceptions) => {
-                    diagsPriority((diags) => {
-                        cb(working, exceptions, diags);
-                    });
-                });
-            });
-        }
-
-        function calc(order, working, exceptions, diags) {
-            return diagsCalculateAvailableSlots(order, working, exceptions, diags);
-            //order: {day:moment(),time{hours,minutes}} // the time that the order last.
-            //working: [{_user,start,end}] // the times that a diag is occupied.
-            //exceptions: [{_user,start,end,repeat}] // the times that the diag can't work.
-            //diags: [{_user, priority}] //a list of diags.
-            //
-            //RULES
-            //-book the whole day of the diag with Priority = 1 then 2 then 3 
-            //-Working day is from 8h to 19h (8am to 7pm)
-            //-diagnositquer do not work on sunday
-            //We propose Two rendez vous in the morning and two in the afternoon 
-            //9h and 10h are proposed by default when calendat is empty for the morning
-            //14h and 15h are proposed by default for the afternoon is empty
-            //Last beginning time for morning : 11h30
-            //Last diag of the day has to finish at 19h  7pm max
-            //A diag can start at 00min or 30 ex: 9H30 10H 10h30
-            //The diagnostiquer need 30 minutes. Its minimum time between to mission.
-            //one hour minimum between each diag beginning
-        }
-        return MyPromise(function(resolve, error) {
-            _data((working, exceptions, diags) => {
-                resolve(calc(order, working, exceptions, diags));
-            });
-        });
-    }
-    ///--------------------------------------- DIAGS RELATED---------END
-    ///--------------------------------------- DIAGS RELATED---------END
-    ///--------------------------------------- DIAGS RELATED---------END
-    ///--------------------------------------- DIAGS RELATED---------END
-
-
-
-
-
     function ctrl(ctrl, action, data) {
         return MyPromise(function(resolve, error) {
 
@@ -459,9 +383,12 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
 
         });
     }
+
+    
+
     var ws = {
         URL: () => URL,
-        getAvailableRanges: getAvailableRanges,
+        getAvailableRanges: (order)=> diagsGetAvailableRanges(order,ctrl),
         login: login,
         save: save,
         get: getSingle,
@@ -489,6 +416,10 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                     err(res);
                 });
             });
+        },
+        setAsync:()=>{
+            globalState.async = true;
+            return ws;
         },
         ctrl: ctrl,
         $get: (url, config) => {

@@ -280,7 +280,7 @@
                     address: '',
                     scope: s,
                     val: undefined,
-                    disabled: () => r.state.working(),
+                    disabled: () => isPaid() || r.state.working(),
                     cls: () => ({ btn: true, 'btn-default': true }),
                     filterWatch: 'item',
                     filter: (v) => {
@@ -293,7 +293,7 @@
                         }
                         return true;
                     },
-                    label: '(Select where)',
+                    label: 'Select',
                     modelPath: 'item.keysWhere',
                     items: [],
                     updateItems: ((self) => {
@@ -639,7 +639,7 @@
                 db.ctrl('Order', 'get', {
                     _id: id || params.id || s.item._id,
                     __populate: {
-                        '_client': 'email clientType address',
+                        '_client': 'email clientType address discount',
                         '_diag': 'email address'
                     }
                 }).then(function(data) {
@@ -734,7 +734,7 @@
                     }, {
                         label: "Sync payments",
                         type: () => "btn btn-default margin-right-1",
-                        click: () => syncStripe()
+                        click: () => s.syncStripe()
                     }],
                     columns: [{
                         label: "Diag",

@@ -31,6 +31,23 @@ function has(v,arr){
     return false;
 }
 
+function valid(obj,propertyPath,opt){
+    var split = propertyPath.split('.');
+    var lastIndex = split.length - 1;
+    split.forEach((chunk, index) => {
+        var isLast = lastIndex == index;
+        if (isLast) return false
+        obj = obj[chunk] || {};
+        if (!obj) return false
+    });
+    if (obj) {
+        var rta = obj[split[lastIndex]];
+        if(rta) return true;
+    }else{
+        return false;
+    }
+}
+
 function val(obj, propertyPath, opt) {
     var split = propertyPath.split('.');
     var lastIndex = split.length - 1;
@@ -357,6 +374,7 @@ if (typeof exports !== 'undefined') {
     window.ifThenMessage = ifThenMessage;
 
     window.$U = {
+        valid:valid,
         val:val,
         numberBetween:numberBetween,
         MyPromise:MyPromise,

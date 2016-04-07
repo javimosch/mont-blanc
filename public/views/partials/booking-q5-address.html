@@ -1,0 +1,17 @@
+<div class="panel center-block question panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">Adresse du diagnostic</h4>
+    </div>
+    <div class="panel-body">
+        <div class="control-group">
+            <div class="controls">
+                <input data-address model="model" field="address" id="address" department="department" post-code="postCode" type="text" placeholder="address line" class="input-xlarge">
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-success center-block text-center" ng-click="down()"
+ng-disabled="model.address === undefined"
+        > Continuer </button>
+    </div>
+</div>

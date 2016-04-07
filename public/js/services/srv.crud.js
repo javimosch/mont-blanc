@@ -89,9 +89,9 @@
                     s.item = r.params.item; //partial loading
                     delete r.params.item;
                 }
-                db.ctrl(opt.name, 'get', {
+                db.ctrl(opt.name, 'get', Object.assign({
                     _id: id || params.id || s.item._id,
-                }).then(function(data) {
+                },$U.val(opt,'defaults.http.request')||{})).then(function(data) {
                     s.requesting = false;
                     if (data.ok && data.result !== null) {
                         s.item = data.result;

@@ -183,23 +183,32 @@ var totalPrice = (showRounded, model, diags, squareMetersPrice, basePrice, opt) 
                     percentage = (percentage>increase.saturday)?percentage:increase.saturday;
                     delete opt.s.priceInfo['increase-today'];
                     delete opt.s.priceInfo['increase-tomorrow'];
-                    opt.s.priceInfo['increase-saturday'] = tot * (percentage/100);
+                    opt.s.priceInfo['increase-saturday'] = tot * (percentage/100)+' ('+percentage+'%)'; 
                 }
                 if(isTomorrow(model.date)){
                     percentage = (percentage>increase.tomorrow)?percentage:increase.tomorrow;
                     delete opt.s.priceInfo['increase-today'];
                     delete opt.s.priceInfo['increase-saturday'];
-                    opt.s.priceInfo['increase-tomorrow'] = tot * (percentage/100);
+                    opt.s.priceInfo['increase-tomorrow'] = tot * (percentage/100)+' ('+percentage+'%)'; 
                 }
                 if(isToday(model.date)){
                     percentage = (percentage>increase.today)?percentage:increase.today;
                     delete opt.s.priceInfo['increase-tomorrow'];
                     delete opt.s.priceInfo['increase-saturday'];
-                    opt.s.priceInfo['increase-today'] = tot * (percentage/100);
+                    opt.s.priceInfo['increase-today'] = tot * (percentage/100) +' ('+percentage+'%)'; 
                 }
                 
                 
                 tot = tot + tot * (percentage/100);
+            }
+        }
+
+        //_client discount (if any)
+        if($U.val(model,'_client.discount')){
+            var discount = $U.val(model,'_client.discount');
+            if(discount>0){
+                opt.s.priceInfo['client-discount'] = -tot * (discount/100)+' ('+discount+'%)'; 
+                tot = tot - tot * (discount/100);
             }
         }
     }

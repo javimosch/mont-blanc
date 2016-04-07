@@ -1,0 +1,33 @@
+<modal-confirm open="confirm"></modal-confirm>
+<div class="container" ng-controller="typeEdit">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="v-margin-2 padding-0">Type Details</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <ul class="form-tiny center-block">
+                <li>
+                    <label>Code</label>
+                    <input type="text" ng-disabled="state.working()" ng-model="item.code" placeholder="Code">
+                </li>
+                <li>
+                    <label>Description</label>
+                    <input type="text" ng-disabled="state.working()" ng-model="item.description" placeholder="Description">
+                </li>
+                <li>
+                    <label>Parent Type (Optional)</label>
+                    <input ng-disabled="state.working()" type="text" class="" ng-model="item._parent" placeholder="Parent Type" uib-typeahead="item as item.code for item in getTypes($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading types. . .'" typeahead-no-results="noResults">
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <button ng-disabled="requesting" class="btn btn-default" ng-click="validate()">Save</button>
+            <button ng-disabled="requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>
+            <button ng-disabled="requesting" class="btn btn-default" ng-click="delete()">Delete</button>
+        </div>
+    </div>
+</div>

@@ -38,7 +38,7 @@
                     </li>
                     <li>
                         <label>Landlord Payment link</label>
-                        <button ng-disabled="state.working()" class="btn btn-default btn-sm" ng-click="sendPaymentLink()">Send Payment link</button>
+                        <button ng-disabled="isPaid() || state.working()" class="btn btn-default btn-sm" ng-click="sendPaymentLink()">Send Payment link</button>
                     </li>
                 </out>
                 <!--ADMIN DIAG:CHOICE -->
@@ -75,7 +75,7 @@
                 <!--ADMIN start:choice-->
                 <li ng-if="userIs(['admin'])" class="inline-flex relative">
                     <label>Start Date</label>
-                    <input ng-disabled="state.working() || is(['client','diag'])" type="text" class="max-w-150" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.diagStart" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
+                    <input ng-disabled="isPaid() || state.working() || is(['client','diag'])" type="text" class="max-w-150" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.diagStart" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
                     <button ng-disabled="state.working() || is(['client','diag'])" type="button" class="btn btn-default" ng-click="start.opened = !start.opened"><i class="glyphicon glyphicon-calendar"></i></button>
                 </li>
                 <!--ADMIN end:choice-->
@@ -146,7 +146,9 @@
                 <li ng-if="userIs(['admin'])" class="well well-sm">
                     <label>Time Rules</label>
                     <input type="text" disabled ng-value="totalTimeFormated()" />
-                    <button class="btn btn-default" ng-click="applyTotalTime()">Apply</button>
+                    <button class="btn btn-default"
+                    ng-disabled="isPaid()"
+                     ng-click="applyTotalTime()">Apply</button>
                 </li>
                 <li ng-if="userIs(['admin'])" class="well well-sm">
                     <label>Price Rules</label>
@@ -169,7 +171,7 @@
                             <td></td>
                         </tr>
                     </table>
-                    <button class="btn btn-default" ng-click="applyTotalPrice()">Apply</button>
+                    <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalPrice()">Apply</button>
                 </li>
                 
                 <!--ADMIN,CLIENT(AGENCY,COMPANY): Landlord details -->
@@ -184,11 +186,11 @@
                     </li>
                     <li>
                         <label>Keys From</label>
-                        <uib-timepicker ng-show="true" max="item.diagStart" ng-disabled="state.working() || !item.keysAddress" ng-model="item.keysTimeFrom" hour-step="keysWhereTime.hstep" minute-step="keysWhereTime.mstep" show-meridian="false"></uib-timepicker>
+                        <uib-timepicker ng-show="true" max="item.diagStart" ng-disabled="isPaid() || state.working() || !item.keysAddress" ng-model="item.keysTimeFrom" hour-step="keysWhereTime.hstep" minute-step="keysWhereTime.mstep" show-meridian="false"></uib-timepicker>
                     </li>
                     <li>
                         <label>Keys To</label>
-                        <uib-timepicker ng-show="true" max="item.diagStart" ng-disabled="state.working() || !item.keysAddress" ng-model="item.keysTimeTo" hour-step="keysWhereTime.hstep" minute-step="keysWhereTime.mstep" show-meridian="false"></uib-timepicker>
+                        <uib-timepicker ng-show="true" max="item.diagStart" ng-disabled="isPaid() || state.working() || !item.keysAddress" ng-model="item.keysTimeTo" hour-step="keysWhereTime.hstep" minute-step="keysWhereTime.mstep" show-meridian="false"></uib-timepicker>
                     </li>
                 </out>
             </ul>

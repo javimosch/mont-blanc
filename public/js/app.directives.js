@@ -16,6 +16,18 @@ app.directive('tableFilter', function(
                 var el = tpl.compile(filter, s);
                 console.info('tableFilter', s.model.filter, el);
                 elem.replaceWith(el);
+
+                //if enter is pressed on any input, call s.model.filter.update with the payload (if exists).
+                el.find('input').on('keyup', (evt) => {
+                    //var k = String.fromCharCode(evt.keyCode);
+                    if(evt.keyCode.toString()=='13'){ 
+                        if($U.valid(s,'model.init')){
+                            s.model.filter.payload = {__regexp:s.model.filter.fields};
+                            if(s.model.init) s.model.init();
+                        }
+                    }
+                });
+
             });
             s.model.filter.fields = {};
             var filtered = [];
@@ -34,6 +46,9 @@ app.directive('tableFilter', function(
                 s.model.items = filtered;
                 r.dom();
             }, true);
+
+            
+
         }
     };
 });
@@ -534,7 +549,7 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
 
 
             s.create = (msg, type) => {
-                return console.warn('[DEBUG]['+(type==='danger'?'ERROR':'WARNING')+'] '+msg);
+                return console.warn('[DEBUG][' + (type === 'danger' ? 'ERROR' : 'WARNING') + '] ' + msg);
 
                 //msg = JSON.stringify(msg);
                 s.msgs = s.msgs || {};
@@ -804,9 +819,9 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                         });
                     }
                 } else {*/
-                    if (s.el) {
-                        s.el.alert('close');
-                    }
+                if (s.el) {
+                    s.el.alert('close');
+                }
                 //}
 
                 var directive = s.directive || 'my-alert';
@@ -952,13 +967,11 @@ app.directive('dynamicTable', function(
 
             s.paginationTotalItems = 1;
 
-            function objUpdate(obj1,obj2,preserveFields){
+            function objUpdate(obj1, obj2, preserveFields) {
                 var rta = obj1;
-                Object.keys(obj2).forEach(k=>{
-                    for(var x in preserveFields){
-                        if(preserveFields[x]==k
-                         && typeof obj1[k] !== 'undefined'
-                        ) return; //skips fields who need to be preserved. (only when they exists on obj1).
+                Object.keys(obj2).forEach(k => {
+                    for (var x in preserveFields) {
+                        if (preserveFields[x] == k && typeof obj1[k] !== 'undefined') return; //skips fields who need to be preserved. (only when they exists on obj1).
                     }
                     rta[k] = obj2[k];
                 })
@@ -969,7 +982,7 @@ app.directive('dynamicTable', function(
                 currentPage: 1,
                 maxSize: 5,
                 itemsPerPage: 10,
-                total:1,
+                total: 1,
                 changed: () => {
                     if (s.model.paginate) s.model.paginate(items => {
                         s.model.items = items;
@@ -982,7 +995,7 @@ app.directive('dynamicTable', function(
                     s.model.pagination.total = p.total;
                 }
             };
-            s.model.pagination = s.model.pagination && objUpdate(s.model.pagination,paginationDefaults,['itemsPerPage']) || paginationDefaults;
+            s.model.pagination = s.model.pagination && objUpdate(s.model.pagination, paginationDefaults, ['itemsPerPage']) || paginationDefaults;
 
             s.model.update = (items, data) => {
                 s.model.items = items;

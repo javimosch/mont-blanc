@@ -17,6 +17,11 @@ app.get('/admin',function(req,res){
 	res.sendFile(path.join(__dirname+'/'+n+'.html'));
 });
 
+app.get('/ma',function(req,res){
+	res.sendFile(path.join(__dirname+'/ma.html'));
+});
+
+
 app.get('/serverURL',function(req,res){
 	res.json({
 		URL: process.env.serverURL || 'http://localhost:5000'

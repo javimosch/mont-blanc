@@ -1,5 +1,87 @@
 ((global) => {
     global.diagsCalculateAvailableSlots = diagsCalculateAvailableSlots;
+    global.diagsGetAvailableRanges = diagsGetAvailableRanges;
+
+    function diagsGetAvailableRanges(order,ctrl) {
+        if (!isFinite(new Date(order.day))) {
+            throw Error('getAvailableRanges Invalid order day');
+        }
+
+        //helpers
+        function diagsPriority(cb) {
+            ctrl('User', 'getAll', {
+                userType: 'diag',
+                __rules: {
+                    disabled: { $ne: true } //exclude disabled diags
+                },
+                __select: 'priority'
+            }).then((data) => {
+                cb(data.result.map((v) => ({ _id: v._id, priority: v.priority })));
+            })
+        }
+
+        function timeRangesDiagSayHeCantWorktype(cb) {
+            ctrl('TimeRange', 'getAll', {
+                type: 'work-exception',
+                __select: '_user start end repeat'
+            }).then((data) => {
+                cb(data.result.map((v) => (v)));
+            })
+        }
+
+        function timeRangesDiagIsWorking(order, cb) {
+            ctrl('Order', 'getAll', {
+                __select: 'diagStart diagEnd _diag',
+                __rules: {
+                    status: { $ne: 'complete' }
+                }
+            }).then((data) => {
+
+                data.result = data.result.filter(v => {
+                    return moment(v.diagStart).isSame(moment(order.day), 'day');
+                });
+
+                cb(data.result.map((v) => ({ _user: v._diag, start: v.diagStart, end: v.diagEnd })));
+            })
+        }
+        //
+
+        function _data(cb) {
+            timeRangesDiagIsWorking(order, (working) => {
+                timeRangesDiagSayHeCantWorktype((exceptions) => {
+                    diagsPriority((diags) => {
+                        cb(working, exceptions, diags);
+                    });
+                });
+            });
+        }
+
+        function calc(order, working, exceptions, diags) {
+            return diagsCalculateAvailableSlots(order, working, exceptions, diags);
+            //order: {day:moment(),time{hours,minutes}} // the time that the order last.
+            //working: [{_user,start,end}] // the times that a diag is occupied.
+            //exceptions: [{_user,start,end,repeat}] // the times that the diag can't work.
+            //diags: [{_user, priority}] //a list of diags.
+            //
+            //RULES
+            //-book the whole day of the diag with Priority = 1 then 2 then 3 
+            //-Working day is from 8h to 19h (8am to 7pm)
+            //-diagnositquer do not work on sunday
+            //We propose Two rendez vous in the morning and two in the afternoon 
+            //9h and 10h are proposed by default when calendat is empty for the morning
+            //14h and 15h are proposed by default for the afternoon is empty
+            //Last beginning time for morning : 11h30
+            //Last diag of the day has to finish at 19h  7pm max
+            //A diag can start at 00min or 30 ex: 9H30 10H 10h30
+            //The diagnostiquer need 30 minutes. Its minimum time between to mission.
+            //one hour minimum between each diag beginning
+        }
+        return MyPromise(function(resolve, error) {
+            _data((working, exceptions, diags) => {
+                resolve(calc(order, working, exceptions, diags));
+            });
+        });
+    }
     //////////////////
     function diagsCalculateAvailableSlots(order, working, exceptions, diags) {
        //console.log('diagsCalculateAvailableSlots');

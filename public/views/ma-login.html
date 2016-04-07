@@ -1,0 +1,23 @@
+<div class="container" ng-controller="adminLogin" ng-show="show">
+    <div class="jumbotron">
+        <h1 class="text-center">Ma ERP</h1>
+    </div>
+    <form class="form-signin">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" id="inputEmail" ng-model="_login.email" class="form-control" placeholder="Email address" required="" autofocus="">
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" ng-model="_login.password" id="inputPassword" class="form-control" placeholder="Password" >
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" ng-value="true" ng-model="_login.rememberPass"> Remember password
+            </label>
+        </div>
+        <button ng-disabled="sendingRequest" class="btn btn-lg btn-primary btn-block" ng-click="login()">Sign in</button>
+        <output name="" ng-show="loginFailedTimes>3">
+        <p class="text-center">Or</p>
+        <button ng-disabled="sendingRequest || !_login.email" class="btn btn-lg btn-info btn-block" ng-click="resetPassword()">Reset password</button>
+        </output>
+        <my-alerts add="addAlert" />
+    </form>
+</div>
