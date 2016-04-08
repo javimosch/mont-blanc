@@ -31,6 +31,7 @@ app.get('/serverURL',function(req,res){
 var port = process.env.PORT || 3000;
 app.listen(port, function () {
   console.log('Production? '+(PROD?'Oui!':'Non!'));
+  console.log('serverURL',process.env.serverURL || 'http://localhost:5000');
   console.log('diags-project-frontend app listening on port '+port+'!');
 });
 
