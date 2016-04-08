@@ -1,3 +1,6 @@
-The OpenShift `nodejs` cartridge documentation can be found at:
+diags-frontend
 
-http://openshift.github.io/documentation/oo_cartridge_guide.html#nodejs
+### enviroments variables to configure:
+
+- PORT (Port where the frontend server will serve)
+- serverURL (url where the backend is exposed. Without a backslash in the end. Ex: http://diags/backend:5000 )
