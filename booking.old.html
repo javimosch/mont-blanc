@@ -7,7 +7,7 @@
     <title>Diag Project | Booking</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="img/favicon.ico" />
+    <link rel="shortcut icon" href="img/favicon.ico"/>
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="css/fullpage.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
@@ -23,20 +23,15 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap.timepicker.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap-theme-1.css">
     <link rel="stylesheet" type="text/css" href="css/font.awesome.css">
-
-    <link rel="stylesheet" href="css/rangeslider.css" type="text/css" />
-    <link rel="stylesheet" href="css/diags.design.css" type="text/css" />
-    <link rel="stylesheet" href="css/diags-checkbox.css" type="text/css" />
 </head>
 
-<body data-main class="hiddenn">
-    <div ng-include="'views/booking.home.html'"></div>
+<body data-main class="hiddenn" >
+    <div ng-include="'views/booking.index.html'" class="h-padding-2"></div>
     <!--VENDOR-->
     <script src="js/vendor/vendor.jquery.unzip.js"></script>
     <script src="js/vendor/vendor.jquery.fullpage.js"></script>
     <script src="js/vendor/vendor.angular.unzip.js"></script>
     <script src="js/vendor/vendor.angular-route.min.js"></script>
-    
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
     <script src="js/vendor/vendor.geocomplete.js"></script>
     <script src="js/vendor/vendor.bootstrap.js"></script>
@@ -50,7 +45,7 @@
     <script src="js/vendor/vendor.ui-bootstrap-tpls.js"></script>
     <script src="js/vendor/vendor.lodash.js"></script>
     <script src="js/vendor/vendor.db.js"></script>
-
+    
     <!--COMMON-->
     <script src="js/app.diags-utils.js"></script>
     <script src="js/app.utils.js"></script>
@@ -61,39 +56,16 @@
     <script src="js/app.run.js"></script>
     <script src="js/app.directives.js"></script>
     <script src="js/app.static.calendar.js"></script>
-
+    
     <script src="https://checkout.stripe.com/checkout.js"></script>
     <script>
-        //(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-        //function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-        // e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-        //e.src='//www.google-analytics.com/analytics.js';
-        //r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-        //ga('create','UA-XXXXX-X');ga('send','pageview');
+    //(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+    //function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+    // e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+    //e.src='//www.google-analytics.com/analytics.js';
+    //r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+    //ga('create','UA-XXXXX-X');ga('send','pageview');
     </script>
-
-    <!-- LIVERLEOAD-->
-    <script type="text/javascript" src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
-    <script type="text/javascript">
-        (function() {
-            //require firebase
-            /*global Firebase*/
-            /*global localStorage*/
-            var ref = new Firebase("https://madev.firebaseio.com/diagsfront" + '/signals/reload');
-            var counter = localStorage['livesync'] && parseInt(localStorage['livesync']) || 0;
-            ref.on('value', function(snap) {
-                if (snap.val()!= counter) {
-                  localStorage['livesync'] = snap.val().toString();
-                  console.log(snap.val(),counter,'reloading');
-                  window.location.reload();
-                }else{
-                    console.log(snap.val(),counter,'it-has-reload-ok');
-                }
-                //console.log('reload', snap.val(), sec);
-            });
-        })();
-    </script>
-
 </body>
 
 </html>

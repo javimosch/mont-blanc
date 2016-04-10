@@ -3,11 +3,20 @@ var app = angular.module('app', [
     'app.services',
     'app.directives',
     'app.static.calendar',
-    
+
     'ui.bootstrap'
 ]);
 
+app.directive('rangeSlider', function($rootScope, $timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, el, attrs) {
+            //el.replaceWith(el.children());
+          
 
+        }
+    };
+});
 
 app.controller('ctrl.booking', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal',
@@ -57,7 +66,8 @@ app.controller('ctrl.booking', ['server',
                     if (!s.booking.order.delegatedTo) {
                         s.booking.order.delegatedTo = s._order.landLordEmail;
                     }
-                } else {
+                }
+                else {
                     return "The payment of this order is pending.";
                 }
             }
@@ -67,10 +77,12 @@ app.controller('ctrl.booking', ['server',
             if (_.includes(['prepaid', 'completed'], s._order.status)) {
                 if (s._order.landLordPaymentEmailSended == true) {
                     return "This order was delegated to " + s.booking.order.delegatedTo + ' and is already paid.';
-                } else {
+                }
+                else {
                     return "This order is already paid"
                 }
-            } else {
+            }
+            else {
                 return delegated;
             }
         };
@@ -120,7 +132,10 @@ app.controller('ctrl.booking', ['server',
             scope: s,
             val: undefined,
             disabled: () => r.state.working(),
-            cls: () => ({ btn: true, 'btn-default': true }),
+            cls: () => ({
+                btn: true,
+                'btn-default': true
+            }),
             filterWatch: '_order',
             filter: (v) => {
                 if (s._order && s._order._client && s._order._client.clientType) {
@@ -152,7 +167,8 @@ app.controller('ctrl.booking', ['server',
                         disabled: () => !s._order.landLordAddress,
                         get: () => s._order.landLordAddress || ''
                     }); //when agency / other
-                } else {
+                }
+                else {
                     o.push({
                         label: () => s._user.address || 'Client address',
                         val: 3,
@@ -179,7 +195,8 @@ app.controller('ctrl.booking', ['server',
                         s._order.keysTime = moment(s._order.diagStart).hours(8).minutes(0)._d;
                     }
                     return;
-                } else {
+                }
+                else {
                     s._order.keysAddress = address;
                 }
 
@@ -258,7 +275,8 @@ app.controller('ctrl.booking', ['server',
                 if ($.hrefAnchor()) {
                     $.fn.fullpage.moveTo($.hrefAnchor());
                 }
-            } catch (e) {
+            }
+            catch (e) {
 
             }
         }
@@ -298,16 +316,20 @@ app.controller('ctrl.booking', ['server',
             if (!val) return undefined;
             if (!validate) {
                 return val;
-            } else {
+            }
+            else {
                 var vals = Object.keys(validate).map((v) => {
                     return validate[v]
                 }); //valid vals
                 if (vals.length > 0 && !_.includes(vals, val)) {
                     var msg = 'Parameter ' + diagDescription(n) + ' has the follow valid values:' + JSON.stringify(vals);
                     console.warn(msg);
-                    s.notify(msg, 'warning', 0, true, { duration: 99999 })
+                    s.notify(msg, 'warning', 0, true, {
+                        duration: 99999
+                    })
                     return undefined;
-                } else {
+                }
+                else {
                     return val;
                 }
             }
@@ -324,13 +346,18 @@ app.controller('ctrl.booking', ['server',
                     fail = true;
                 }
                 if (fail) {
-                    s.notify('Parameter ' + n + ' needs to be a valid date between ' + s.datepicker.minDate.format("DD/MM/YY") + ' and ' + s.datepicker.maxDate.format('DD/MM/YY'), 'warning', 0, true, { duration: 99999 })
+                    s.notify('Parameter ' + n + ' needs to be a valid date between ' + s.datepicker.minDate.format("DD/MM/YY") + ' and ' + s.datepicker.maxDate.format('DD/MM/YY'), 'warning', 0, true, {
+                        duration: 99999
+                    })
                     return undefined;
                 }
                 return d;
-            } else {
+            }
+            else {
                 if (getParameterByName(n) !== null) {
-                    s.notify('Parameter ' + n + ' needs to be a valid date', 'warning', 0, true, { duration: 99999 })
+                    s.notify('Parameter ' + n + ' needs to be a valid date', 'warning', 0, true, {
+                        duration: 99999
+                    })
                 }
             }
             return undefined;
@@ -339,9 +366,12 @@ app.controller('ctrl.booking', ['server',
             var v = (getParameterByName(n) || '').toString()
             if (_.includes(['1', '0'], v)) {
                 return v === '1';
-            } else {
+            }
+            else {
                 if (getParameterByName(n) !== null) {
-                    s.notify('Parameter ' + n + ' needs to be a 1/0', 'warning', 0, true, { duration: 99999 })
+                    s.notify('Parameter ' + n + ' needs to be a 1/0', 'warning', 0, true, {
+                        duration: 99999
+                    })
                 }
                 return undefined;
             }
@@ -375,7 +405,8 @@ app.controller('ctrl.booking', ['server',
                 if (s.model.constructionPermissionDate === 'avant le 01/01/1949') {
                     toggle('crep', true);
                     s.model.diags.crep = true; //mandatory
-                } else {
+                }
+                else {
                     s.model.diags.crep = false; //
                     toggle('crep', true);
                 }
@@ -383,7 +414,8 @@ app.controller('ctrl.booking', ['server',
                 if (s.departmentHasTermites()) {
                     toggle('termites', true);
                     s.model.diags.termites = true;
-                } else {
+                }
+                else {
                     toggle('termites', false);
                     s.model.diags.termites = false;
                 }
@@ -391,7 +423,8 @@ app.controller('ctrl.booking', ['server',
                 if (_.includes(['avant le 01/01/1949', 'entre 1949 et le 01/07/1997'], s.model.constructionPermissionDate)) {
                     toggle('dta', true);
                     s.model.diags.dta = true; //mandatory
-                } else {
+                }
+                else {
                     toggle('dta', true);
                     s.model.diags.dta = false;
                 }
@@ -400,20 +433,24 @@ app.controller('ctrl.booking', ['server',
                     toggle('gaz', true);
                     if (s.model.sell == true && s.model.gasInstallation === 'Oui, Plus de 15 ans') {
                         s.model.diags.gaz = true;
-                    } else {
+                    }
+                    else {
                         s.model.diags.gaz = false;
                     }
-                } else {
+                }
+                else {
                     toggle('gaz', false);
                 }
                 if (_.includes(['Plus de 15 ans', 'Moins de 15 ans'], s.model.electricityInstallation)) {
                     toggle('electricity', true);
                     if (s.model.sell == true && s.model.electricityInstallation === 'Plus de 15 ans') {
                         s.model.diags.electricity = true;
-                    } else {
+                    }
+                    else {
                         s.model.diags.electricity = false;
                     }
-                } else {
+                }
+                else {
                     toggle('electricity', false);
                 }
 
@@ -482,7 +519,9 @@ app.controller('ctrl.booking', ['server',
                 if (!s.availableTimeRanges) return;
                 //retrieve diag names.
                 s.availableTimeRanges.forEach(r => {
-                    db.ctrl('User', 'get', { _id: r._diag }).then(d => {
+                    db.ctrl('User', 'get', {
+                        _id: r._diag
+                    }).then(d => {
                         if (d.ok && d.result) {
                             r.name = d.result.firstName;
                             if (d.result.diagPriority) {
@@ -495,7 +534,9 @@ app.controller('ctrl.booking', ['server',
 
             });
         });
-        s.moveTo = (n) => { $.fn.fullpage.moveTo(n); };
+        s.moveTo = (n) => {
+            $.fn.fullpage.moveTo(n);
+        };
         s.left = () => ($.fn.fullpage.moveSlideLeft());
         s.right = () => ($.fn.fullpage.moveSlideRight());
         s.down = function(force) {
@@ -526,7 +567,8 @@ app.controller('ctrl.booking', ['server',
             };
             if (force == true) {
                 $.fn.fullpage.moveSectionDown();
-            } else {
+            }
+            else {
                 s.moveTo(nextInvalidAnchor(curr));
             }
 
@@ -599,7 +641,8 @@ app.controller('ctrl.booking', ['server',
             ], (m) => {
                 if (typeof m[0] !== 'string') {
                     s.warningMsg(m[0]())
-                } else {
+                }
+                else {
                     s.warningMsg(m[0]);
                 }
             }, cb);
@@ -627,7 +670,8 @@ app.controller('ctrl.booking', ['server',
                         s.saveAsync();
                         s.subscribeMode = true;
                         //s.right();
-                    } else {
+                    }
+                    else {
                         s.warningMsg('Invalid credentials');
                     }
                 });
@@ -660,7 +704,8 @@ app.controller('ctrl.booking', ['server',
             ], (m) => {
                 if (typeof m[0] !== 'string') {
                     s.warningMsg(m[0]());
-                } else {
+                }
+                else {
                     s.warningMsg(m[0]);
                 }
             }, cb);
@@ -710,7 +755,12 @@ app.controller('ctrl.booking', ['server',
                 [!s._user.password, '==', true, "Password required."],
                 [!s._user.fixedTel && !s._user.cellPhone, '==', true, "at least one fixed phone or cell phone is required."],
             ], (m) => {
-                if (typeof m[0] !== 'string') { s.warningMsg(m[0]()) } else { s.warningMsg(m[0]); }
+                if (typeof m[0] !== 'string') {
+                    s.warningMsg(m[0]())
+                }
+                else {
+                    s.warningMsg(m[0]);
+                }
             }, () => {
                 db.setAsync().ctrl('User', 'update', s._user).then(() => {}); //async (we don't want to wait here).
                 s.right();
@@ -727,7 +777,8 @@ app.controller('ctrl.booking', ['server',
                     exists = exists.ok && exists.result == true;
                     if (exists) {
                         s.warningMsg('This email address belongs to an existing member.');
-                    } else {
+                    }
+                    else {
                         db.ctrl('User', 'createClient', {
                             email: s.auth.email,
                             clientType: clientType
@@ -861,7 +912,8 @@ app.controller('ctrl.booking', ['server',
                                 type: 'success',
                                 duration: 100000
                             });
-                        } else {
+                        }
+                        else {
                             console.info('PAY-FAIL', data.err);
                             s.notify('There was a server issue during the payment proccess. You pay later from the back-office.', {
                                 type: 'warning',
@@ -891,7 +943,8 @@ app.controller('ctrl.booking', ['server',
                             type: 'success',
                             duration: 100000
                         });
-                    } else {
+                    }
+                    else {
                         console.info('PAY-FAIL', data.err);
                         s.notify('There was a server issue during the payment proccess, but your Order has been created. Check your email for more information.', {
                             type: 'warning',
@@ -926,7 +979,8 @@ app.controller('ctrl.booking', ['server',
                 var url = 'views/directives/directive.modal.confirm.order.as.agency.html'
                 if (!_user && s.model.clientType === 'landlord') {
                     url = url.replace('agency', 'landlord');
-                } else {
+                }
+                else {
                     if (_user.clientType === 'landlord') {
                         url = url.replace('agency', 'landlord');
                     }
@@ -972,7 +1026,8 @@ app.controller('ctrl.booking', ['server',
                         //showModal('Detailed information was send to ' + s.model.email);
                         if (payAfterSave) {
                             _payOrder(res.data.result);
-                        } else {
+                        }
+                        else {
                             //agency
                             s.notify('Order created. We send you an email.', {
                                 type: 'success',
@@ -981,19 +1036,22 @@ app.controller('ctrl.booking', ['server',
                         }
                         s._orderSAVED = true;
                         console.info('ORDER:SAVE:SUCCESS', res.data);
-                    } else {
+                    }
+                    else {
                         if (res.data.err === 'ORDER_EXISTS') {
                             //if landlord && if payment pending (paymodal)
                             var _order = res.data.result;
                             if (isLandlord() && !_.includes(['prepaid', 'completed'], _order.status)) {
                                 return _payOrder(_order);
-                            } else {
+                            }
+                            else {
                                 var backOffice = '<a target="_blank" href="' + location.origin + '/admin#/orders/edit/' + _order._id + '">View Order</a>';
                                 _modalInfo('A similar order is alredy associated to the email you enter: ' + s.model.email + '.<br>' + backOffice + ' in our back-office.');
                             }
 
                             //_modalInfo('An order with same address / start/ end is alredy associated to ' + s.model.email);
-                        } else {
+                        }
+                        else {
                             console.info('ORDER:SAVE:ISSUES', res.data);
                             s.notify('There was a server issue. Try again later.', {
                                 type: 'warning',
@@ -1067,7 +1125,8 @@ app.controller('ctrl.booking', ['server',
             minutes = (minutes < 10) ? '0' + minutes : minutes;
             if (hours > 0) {
                 return hours + ':' + minutes + ' hours';
-            } else {
+            }
+            else {
                 return minutes + ' minutes';
             }
         };
