@@ -1,3 +1,9 @@
+/*
+SMOTH
+-webkit-text-stroke: .025em rgba(51,51,51,0.50);
+
+*/
+
 @font-face {
     font-family: 'Avenir-Book';
     src: url('../fonts/Avenir-Book.eot?#iefix') format('embedded-opentype'), url('../fonts/Avenir-Book.woff') format('woff'), url('../fonts/Avenir-Book.ttf') format('truetype'), url('../fonts/Avenir-Book.svg#Avenir-Book') format('svg');
@@ -31,6 +37,11 @@
     src: url('../fonts/Avenir-Roman.eot?#iefix') format('embedded-opentype'), url('../fonts/Avenir-Roman.woff') format('woff'), url('../fonts/Avenir-Roman.ttf') format('truetype'), url('../fonts/Avenir-Roman.svg#Avenir-Roman') format('svg');
     font-weight: normal;
     font-style: normal;
+}
+
+output {
+    padding: 0px;
+    margin: 0px;
 }
 
 body {
@@ -75,6 +86,7 @@ body {
 
 .nav.navbar-right li a {
     /*margin-right: 17px;*/
+    color: white;
 }
 
 @media screen and (min-width: 768px) {
@@ -226,6 +238,7 @@ a.diag-btn-info:hover {
 .home-bg-dialog {
     margin: 0px;
     padding: 0px;
+    margin-top: 55px;
 }
 
 .home-brandon-re-38-489 {
@@ -258,18 +271,20 @@ a.diag-btn-info:hover {
 }
 
 .diags-pill-success {
-    background-color: #3FEFA3;
+    background-color: #01DF8A;
     width: 63px;
     border-radius: 20px;
     height: 7px;
+    color:white;
 }
 
 .diags-pill-info {
     border-radius: 20px;
-    background-color: #00A9FF;
+    background-color: #00A8FF;
     padding: 3px 15px;
     display: inline-block;
     line-height: 30px;
+    color:white;
 }
 
 .title-big * {
@@ -302,26 +317,49 @@ a.diag-btn-info:hover {
     font-family: 'Avenir-Medium';
 }
 
-.booking-form .fields input[type="checkbox"] + span {
+.booking-form span {
     color: white;
+    font-size: 18px;
+    font-family: 'Avenir-Roman';
+}
+
+.booking-form label {
+    color: white;
+    font-size: 18px;
+    font-family: 'Avenir-Medium';
     font-weight: 300;
-    line-height: 30px;
-    vertical-align: middle;
+    text-align: left;
 }
 
-.booking-form .fields {
-    padding: 5px 38px;
+.booking-form input[type="checkbox"] + span {
+    line-height: 23px;
 }
 
-.booking-form .fields > div {
-    margin-top: 10px;
+.diag-row {
+    padding: 0px;
+    margin: 0px;
 }
 
-.booking-form .fields > div > * {
-    outline: 1px dashed orange;
+@media (min-width: 768px) {
+    .diag-col-sm-4-input-1 {
+        width: 36.533333%;
+        /* border: 1px solid black; */
+    }
+    .diag-col-sm-8-input-1 {
+        width: 72.966667%;
+    }
 }
 
-.booking-form .fields .label {
+.diag-col-label {
+    padding: 0px;
+}
+
+.diag-col-label-1 {
+    width: 26.888%;
+    padding: 0px;
+}
+
+.booking-form .label {
     width: 29.33%;
     font-family: 'Avenir-Medium';
     font-size: 18px;
@@ -329,8 +367,6 @@ a.diag-btn-info:hover {
     padding: 0px;
     font-weight: 300;
     vertical-align: middle;
-    line-height: 30px;
-    /* outline: 1px dashed black; */
     text-align: left;
 }
 
@@ -352,11 +388,13 @@ a.diag-btn-info:hover {
     border-bottom: 2px solid #6FCFFF;
 }
 
-.diags-range {}
+.diags-range {
+    margin-top: 10px;
+}
 
 @media screen and (min-width: 768px) {
     .diags-range {
-        width: 262px!important;
+        max-width: 300px!important;
     }
 }
 
@@ -382,7 +420,7 @@ ul.diags {
 ul.diags li {
     width: 89;
     float: left;
-    margin:0px 25px 25px 0px;
+    margin: 0px 25px 25px 0px;
 }
 
 ul.diags li:first-child {
@@ -399,10 +437,75 @@ h2.diags.black {
     color: black;
 }
 
-.home .diag-dialog-right-transparent{
+.home .diag-dialog-right-transparent {
     max-width: 481px;
 }
-.home .diag-dialog-right{
+
+.home .diag-dialog-right {
     max-width: 481px;
-    background-color:#00A9FF;
+    background-color: #00A9FF;
+}
+
+.btn {
+    height: 46px;
+    background: white;
+}
+
+.diag-btn-main:hover,.diag-btn-main:active,.diag-btn-main:focus{
+    color:whitesmoke;
+}
+.diag-btn-main{
+       background-color: #0A3967;
+    height: 60px;
+    width: 100%;
+    font-family: Avenir-Medium;
+    font-size: 18px;
+    color: white;
+}
+
+.dropdown .caret {
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    color: #00A9FF;
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    line-height: 17px;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    /* outline: 1px solid red; */
+    position: absolute;
+    right: 5px;
+}
+
+.dropdown .caret:before {
+    content: "\f078";
+}
+
+.dropdown button span{
+    color:black;
+    font-family:'Avenir-Roman';
+    font-size:13px;
+}
+.dropdown button{
+    position:relative;
+    text-align: left;
+}
+.dropdown.with-caret button span:first-child{
+        padding-right: 20px;
+}
+.gaz-dropdown button{
+    width: 169px;
+}
+
+.address i{
+    color:#0B3968;
+}
+.address span{
+    background-color:white;
+}
+.address input{
+        border-left: 0px;
 }

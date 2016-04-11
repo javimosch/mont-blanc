@@ -26,47 +26,7 @@
                     </ul>
                 </div>
                 <div class="col-sm-12 col-md-5">
-                    <div class="booking-form">
-                        <div class="solapas">
-                            <div class="solapa-1-2">
-                                <div class="booking-form-header-btn active">
-                                    Vous vendez?
-                                </div>
-                            </div>
-                            <div class="solapa-1-2">
-                                <div class="booking-form-header-btn">
-                                    Vous louer?
-                                </div>
-                            </div>
-                        </div>
-                        <div class="fields ">
-                            <div class="flex hr">
-                                <span class="label">Type</span>
-                                <label>
-                                    <input type="checkbox" name="type" />
-                                    <span class="avenir-roman fnt-18">&nbsp;&nbsp;&nbsp;Appartament</span>
-                                </label>
-                                &nbsp; &nbsp;
-                                <label>
-                                    <input type="checkbox" name="type" />
-                                    <span class="avenir-roman fnt-18">&nbsp;&nbsp;&nbsp;Maison</span>
-                                </label>
-
-
-
-                            </div>
-
-
-                            <div class="flex">
-                                <span class="label">Superficie</span>
-                                <div>
-
-                                    <input class="diags-range" type="range" min="10" max="100" step="10" value="300" data-orientation="horizontal">
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
+                   <div ng-include="'views/partials/booking-home-form.html'" includeReplace></div>
                 </div>
             </div>
         </div>
@@ -78,19 +38,19 @@
                 <div class="inline-table margin-top-three">
                     <ul class=" diags">
                         <li>
-                            <img src="img/dpe.jpg" />
+                            <img class="link" ng-click="diagSelected=diag.dpe"  src="img/dpe.jpg" />
                         </li>
                         <li>
-                            <img src="img/amiante.jpg" />
+                            <img class="link" ng-click="diagSelected=diag.dta"  src="img/amiante.jpg" />
                         </li>
                         <li>
-                            <img src="img/carrez.jpg" />
+                            <img class="link" ng-click="diagSelected=diag.loiCarrez"  src="img/carrez.jpg" />
                         </li>
                         <li>
-                            <img src="img/plomb.jpg" />
+                            <img class="link" ng-click="diagSelected=diag.crep"  src="img/plomb.jpg" />
                         </li>
                         <li>
-                            <img src="img/gaz.jpg" />
+                            <img class="link" ng-click="diagSelected=diag.gaz"  src="img/gaz.jpg" />
                         </li>
                     </ul>
 
@@ -101,13 +61,13 @@
                             <img class="link" ng-click="diagSelected=diag.electricity" src="img/electricite.jpg" />
                         </li>
                         <li>
-                            <img src="img/termites.jpg" />
+                            <img class="link" ng-click="diagSelected=diag.termites" src="img/termites.jpg" />
                         </li>
                         <li>
-                            <img src="img/ernt.jpg" />
+                            <img class="link" ng-click="diagSelected=diag.ernt" src="img/ernt.jpg" />
                         </li>
                         <li>
-                            <img src="img/parasite.jpg" />
+                            <img class="link" ng-click="diagSelected=diag.parasitaire" src="img/parasite.jpg" />
                         </li>
                     </ul>
                 </div>
@@ -129,17 +89,19 @@
             <div class="col-md-5">
                 <div class="diag-dialog-right margin-top-three padding-three">
                     <div class="avenir-book fnt-32 white">
-                        Il doit comporter quatre sections :
+                        {{homeTwoTitle()||"Il doit comporter quatre sections :"}}
+                        
                     </div>
                     <p class="avenir-book fnt-18 white padding-top-two">
-                        Consommation annuelle d'énergie exprimée en kWh et en euros ; Positionnement en consommation d'énergie / m2 / an et en émission de gaz à effet de serre (GES) / m2 / an ; Descriptif des données clefs : isolation et constitution murs, toiture, fenêtres,
-                        chaudière, etc. ;
+                        {{homeTwoContent()||"Consommation annuelle d'énergie exprimée en kWh et en euros ; Positionnement en consommation d'énergie / m2 / an et en émission de gaz à effet de serre (GES) / m2 / an ; Descriptif des données clefs : isolation et constitution murs, toiture, fenêtres,
+                        chaudière, etc. ;"}}
+                        
                     </p>
                 </div>
                 <div class="diag-dialog-right-transparent margin-top-three">
                     <p class="avenir-book fnt-18 black">
-                        Descriptif des propositions d'amélioration. Il faut compter 30 à 120 minutes pour la réalisation d'un diagnostic énergétique de manière correcte. Le temps d'intervention dépend en partie de la surface du bien à expertiser, du nombre de pièces et de l'accès
-                        aux informations.
+                        {{homeThreeContent()||"Descriptif des propositions d'amélioration. Il faut compter 30 à 120 minutes pour la réalisation d'un diagnostic énergétique de manière correcte. Le temps d'intervention dépend en partie de la surface du bien à expertiser, du nombre de pièces et de l'accès
+                        aux informations."}}
                     </p>
                 </div>
             </div>

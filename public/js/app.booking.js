@@ -273,7 +273,24 @@ app.controller('ctrl.booking', ['server',
             }, 200);
         };
 
+        s.__constructionPermissionDateSelectFirstItem = () => s.constructionPermissionDate && Object.keys(s.constructionPermissionDate)[0] || "Loading";
+        s.__constructionPermissionDateSelectLabel = () => s.__constructionPermissionDateSelectLabelVal || s.__constructionPermissionDateSelectFirstItem();
+        s.__constructionPermissionDateSelect = (key, val) => {
+            s.model.constructionPermissionDate = val;
+            s.__constructionPermissionDateSelectLabelVal = key;
+        };
 
+
+        s.__gazSelectFirstItem = () => s.gasInstallation && Object.keys(s.gasInstallation)[0] || "Loading";
+        s.__gazSelectLabel = () => s.__gazSelectLabelVal || s.__gazSelectFirstItem();
+        s.__gazSelect = (key, val) => {
+            s.model.gasInstallation = val;
+            s.__gazSelectLabelVal = key;
+        };
+
+
+
+        s.diagSelected = {};
         s.homeOneTitle = () => decodeURI(val(s.diagSelected, 'dialogs.one.title'));
         s.homeOneContent = () => decodeURI(val(s.diagSelected, 'dialogs.one.content'));
         s.homeTwoTitle = () => decodeURI(val(s.diagSelected, 'dialogs.two.title'));
