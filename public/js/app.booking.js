@@ -1,3 +1,12 @@
+/*global val*/
+/*global angular*/
+/*global _*/
+/*global moment*/
+/*global $*/
+/*global getParameterByName*/
+/*global ifThenMessage*/
+/*global subTotal*/
+/*global openStripeModalPayOrder*/
 var app = angular.module('app', [
     'app.run',
     'app.services',
@@ -12,7 +21,7 @@ app.directive('rangeSlider', function($rootScope, $timeout) {
         restrict: 'A',
         link: function(scope, el, attrs) {
             //el.replaceWith(el.children());
-          
+
 
         }
     };
@@ -264,8 +273,29 @@ app.controller('ctrl.booking', ['server',
             }, 200);
         };
 
+
+        s.homeOneTitle = () => decodeURI(val(s.diagSelected, 'dialogs.one.title'));
+        s.homeOneContent = () => decodeURI(val(s.diagSelected, 'dialogs.one.content'));
+        s.homeTwoTitle = () => decodeURI(val(s.diagSelected, 'dialogs.two.title'));
+        s.homeTwoContent = () => decodeURI(val(s.diagSelected, 'dialogs.one.content'));
+        s.homeThreeTitle = () => decodeURI(val(s.diagSelected, 'dialogs.two.title'));
+        s.homeThreeContent = () => decodeURI(val(s.diagSelected, 'dialogs.three.content'));
+
         db.localData().then(function(data) {
             Object.assign(s, data);
+
+            //accessors for diags
+            s.diag = s.diag || {};
+            s.diags.forEach(diag => {
+                s.diag[diag.name] = diag;
+            });
+            s.diagSelected = s.diag.dpe;
+
+
+
+
+
+
             updateChecksVisibilityOnDemand();
             waitForProperties([loadDefaults, scrollToAnchor, r.dom], ['notify']);
         });
@@ -879,7 +909,7 @@ app.controller('ctrl.booking', ['server',
                     type: 'warning',
                     duration: 100000
                 });
-                setTimeout(saveAsync, 10000);
+                setTimeout(s.saveAsync, 10000);
             });
 
         };

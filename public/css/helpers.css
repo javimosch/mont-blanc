@@ -1,9 +1,43 @@
+/*                            FONTS-SIZES */
+.fnt-18{
+    font-size:18px;
+}
+.fnt-32{
+    font-size:32px;
+}
+
+
+/*                            DISPLAY */
+.flex{
+    display: flex;
+}
+.inline-flex{
+    display: inline-flex;
+}
+.inline-block{
+    display: inline-block;
+}
+.inline-table{
+    display: inline-table;
+}
+
+.inline {
+    display: inline-flex;
+}
+.table-row{
+    display:table-row;
+}
+
 .navbar-default{
     z-index:100000;
 }
 
-span.white{
+
+.white{
     color:white;
+}
+.black{
+    color:black;
 }
 
 span.middle{
@@ -33,7 +67,7 @@ span.middle{
 }
 
 
-.without-dots{
+.without-dots, .no-bullets, .list-bare{
     list-style:none;
 }
 
@@ -157,19 +191,15 @@ table.minimal td{
     align-items: center;
 }
 
-.flex{
+
+ul.flex{
     display: flex;
+    list-style: none;
 }
-.inline-flex{
-    display: inline-flex;
-}
-.inline-block{
-    display: inline-block;
+ul.flex li{
+    
 }
 
-.inline {
-    display: inline-flex;
-}
 
 @media (max-width: 568px) {
     .inline.table {
@@ -197,6 +227,7 @@ table.minimal td{
 .v-spacing-1 {
     padding: 5px 0px;
 }
+
 .padding-0{
     padding: 0px;
 }
@@ -233,6 +264,216 @@ table.minimal td{
 }
 
 
+.margin-top-none {
+  margin-top: 0; }
+
+.margin-top-quarter {
+  margin-top: 0.25em; }
+
+.margin-top-half {
+  margin-top: 0.5em; }
+
+.margin-top-one {
+  margin-top: 1em; }
+
+.margin-top-two {
+  margin-top: 2em; }
+
+.margin-top-three {
+  margin-top: 3em; }
+
+.margin-top-four {
+  margin-top: 4em; }
+
+.margin-bottom-none {
+  margin-bottom: 0; }
+
+.margin-bottom-quarter {
+  margin-bottom: 0.25em; }
+
+.margin-bottom-half {
+  margin-bottom: 0.5em; }
+
+.margin-bottom-one {
+  margin-bottom: 1em; }
+
+.margin-bottom-two {
+  margin-bottom: 2em; }
+
+.margin-bottom-three {
+  margin-bottom: 3em; }
+
+.margin-bottom-four {
+  margin-bottom: 4em; }
+
+.margin-right-none {
+  margin-right: 0; }
+
+.margin-right-quarter {
+  margin-right: 0.25em; }
+
+.margin-right-half {
+  margin-right: 0.5em; }
+
+.margin-right-one {
+  margin-right: 1em; }
+
+.margin-right-two {
+  margin-right: 2em; }
+
+.margin-right-three {
+  margin-right: 3em; }
+
+.margin-right-four {
+  margin-right: 4em; }
+
+.margin-left-none {
+  margin-left: 0; }
+
+.margin-left-quarter {
+  margin-left: 0.25em; }
+
+.margin-left-half {
+  margin-left: 0.5em; }
+
+.margin-left-one {
+  margin-left: 1em; }
+
+.margin-left-two {
+  margin-left: 2em; }
+
+.margin-left-three {
+  margin-left: 3em; }
+
+.margin-left-four {
+  margin-left: 4em; }
+
+.margin-none {
+  margin: 0; }
+
+.margin-quarter {
+  margin: 0.25em; }
+
+.margin-half {
+  margin: 0.5em; }
+
+.margin-one {
+  margin: 1em; }
+
+.margin-two {
+  margin: 2em; }
+
+.margin-three {
+  margin: 3em; }
+
+.margin-four {
+  margin: 4em; }
+  
+  
+.padding-top-none {
+  padding-top: 0; }
+
+.padding-top-quarter {
+  padding-top: 0.25em; }
+
+.padding-top-halve {
+  padding-top: 0.5em; }
+
+.padding-top-one {
+  padding-top: 1em; }
+
+.padding-top-two {
+  padding-top: 2em; }
+
+.padding-top-three {
+  padding-top: 3em; }
+
+.padding-top-four {
+  padding-top: 4em; }
+
+.padding-bottom-none {
+  padding-bottom: 0; }
+
+.padding-bottom-quarter {
+  padding-bottom: 0.25em; }
+
+.padding-bottom-halve {
+  padding-bottom: 0.5em; }
+
+.padding-bottom-one {
+  padding-bottom: 1em; }
+
+.padding-bottom-two {
+  padding-bottom: 2em; }
+
+.padding-bottom-three {
+  padding-bottom: 3em; }
+
+.padding-bottom-four {
+  padding-bottom: 4em; }
+
+.padding-right-none {
+  padding-right: 0; }
+
+.padding-right-quarter {
+  padding-right: 0.25em; }
+
+.padding-right-halve {
+  padding-right: 0.5em; }
+
+.padding-right-one {
+  padding-right: 1em; }
+
+.padding-right-two {
+  padding-right: 2em; }
+
+.padding-right-three {
+  padding-right: 3em; }
+
+.padding-right-four {
+  padding-right: 4em; }
+
+.padding-left-none {
+  padding-left: 0; }
+
+.padding-left-quarter {
+  padding-left: 0.25em; }
+
+.padding-left-halve {
+  padding-left: 0.5em; }
+
+.padding-left-one {
+  padding-left: 1em; }
+
+.padding-left-two {
+  padding-left: 2em; }
+
+.padding-left-three {
+  padding-left: 3em; }
+
+.padding-left-four {
+  padding-left: 4em; }
+
+.padding-none {
+  padding: 0; }
+
+.padding-quarter {
+  padding: 0.25em; }
+
+.padding-halve {
+  padding: 0.5em; }
+
+.padding-one {
+  padding: 1em; }
+
+.padding-two {
+  padding: 2em; }
+
+.padding-three {
+  padding: 3em; }
+
+.padding-four {
+  padding: 4em; }
 
 
 .max-size-medium-1{

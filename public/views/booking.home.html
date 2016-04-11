@@ -1,73 +1,151 @@
-<div ng-include="'views/partials/booking-header.html'" includeReplace></div>
+<output ng-controller="ctrl.booking">
+    <div ng-include="'views/partials/booking-header.html'" includeReplace></div>
+    <div class="container-fluid diags-home-bg home">
+        <div class="container ">
+            <div class="row-fluid">
+                <div class="col-sm-12 col-md-7">
 
-<div class="container-fluid diags-home-bg" ng-controller="ctrl.booking">
-    <div class="container outline">
-        <div class="row-fluid">
-            <div class="col-sm-12 col-md-6">
-
-                <ul class="home-bg-dialog">
-                    <li>
-                        <div class="diags-pill-success"></div>
-                    </li>
-                    <li class="title-big">
-                        <span class="title title-1">Diagnosti</span><span class="title title-2">cal</span>
-                    </li>
-                    <li>
-                        <div class="diags-pill-info ">
-                            <span class="avenir-book txt-md white">Nous joindre au</span>
-                            <span class="avenir-black txt-xl white middle">0899 399 039</span>
-                        </div>
-                    </li>
-                    <li>
-                        <p class="home-brandon-re-38-489">
-                            Accédez aux calendriers en live des diagnostiqueurs immobiliers certifiés, disponibles, au bon prix*
-                        </p>
-                    </li>
-                </ul>
-            </div>
-            <div class="col-sm-12 col-md-6">
-                <div class="booking-form">
-                    <div class="solapas">
-                        <div class="solapa-1-2">
-                            <div class="booking-form-header-btn active">
-                                Vous vendez?
+                    <ul class="home-bg-dialog without-dots">
+                        <li>
+                            <div class="diags-pill-success"></div>
+                        </li>
+                        <li class="title-big">
+                            <span class="title title-1">Diagnosti</span><span class="title title-2">cal</span>
+                        </li>
+                        <li>
+                            <div class="diags-pill-info ">
+                                <span class="avenir-book txt-md white">Nous joindre au</span>
+                                <span class="avenir-black txt-xl white middle">0899 399 039</span>
+                            </div>
+                        </li>
+                        <li>
+                            <p class="home-brandon-re-38-489">
+                                Accédez aux calendriers en live des diagnostiqueurs immobiliers certifiés, disponibles, au bon prix*
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-12 col-md-5">
+                    <div class="booking-form">
+                        <div class="solapas">
+                            <div class="solapa-1-2">
+                                <div class="booking-form-header-btn active">
+                                    Vous vendez?
+                                </div>
+                            </div>
+                            <div class="solapa-1-2">
+                                <div class="booking-form-header-btn">
+                                    Vous louer?
+                                </div>
                             </div>
                         </div>
-                        <div class="solapa-1-2">
-                            <div class="booking-form-header-btn">
-                                Vous louer?
-                            </div>
-                        </div>
-                    </div>
-                    <div class="fields ">
-                        <div class="flex hr">
-                            <span class="label">Type</span>
-                            <label>
-                                <input type="checkbox" name="type" />
-                                <span class="avenir-roman fnt-18">&nbsp;&nbsp;&nbsp;Appartament</span>
-                            </label>
-                            &nbsp; &nbsp;
-                            <label>
-                                <input type="checkbox" name="type" />
-                                <span class="avenir-roman fnt-18">&nbsp;&nbsp;&nbsp;Maison</span>
-                            </label>
+                        <div class="fields ">
+                            <div class="flex hr">
+                                <span class="label">Type</span>
+                                <label>
+                                    <input type="checkbox" name="type" />
+                                    <span class="avenir-roman fnt-18">&nbsp;&nbsp;&nbsp;Appartament</span>
+                                </label>
+                                &nbsp; &nbsp;
+                                <label>
+                                    <input type="checkbox" name="type" />
+                                    <span class="avenir-roman fnt-18">&nbsp;&nbsp;&nbsp;Maison</span>
+                                </label>
 
 
 
-                        </div>
-
-
-                        <div class="flex">
-                            <span class="label">Superficie</span>
-                            <div>
-                                
-                                <input class="diags-range" type="range" min="10"  max="100"  step="10"  value="300" data-orientation="horizontal">
                             </div>
 
+
+                            <div class="flex">
+                                <span class="label">Superficie</span>
+                                <div>
+
+                                    <input class="diags-range" type="range" min="10" max="100" step="10" value="300" data-orientation="horizontal">
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <div class="container home">
+        <div class="row">
+            <div class="col-md-7">
+                <div class="inline-table margin-top-three">
+                    <ul class=" diags">
+                        <li>
+                            <img src="img/dpe.jpg" />
+                        </li>
+                        <li>
+                            <img src="img/amiante.jpg" />
+                        </li>
+                        <li>
+                            <img src="img/carrez.jpg" />
+                        </li>
+                        <li>
+                            <img src="img/plomb.jpg" />
+                        </li>
+                        <li>
+                            <img src="img/gaz.jpg" />
+                        </li>
+                    </ul>
+
+                </div>
+                <div class="inline-table">
+                    <ul class=" diags">
+                        <li>
+                            <img class="link" ng-click="diagSelected=diag.electricity" src="img/electricite.jpg" />
+                        </li>
+                        <li>
+                            <img src="img/termites.jpg" />
+                        </li>
+                        <li>
+                            <img src="img/ernt.jpg" />
+                        </li>
+                        <li>
+                            <img src="img/parasite.jpg" />
+                        </li>
+                    </ul>
+                </div>
+                <div class="table-row">
+                    <h2 class="diags black">
+                    {{homeOneTitle()||"Diagnostic de Performance Énergétique"}}
+                </h2>
+                </div>
+                <div class="diags-pill-success"></div>
+                <div class="padding-top-three padding-bottom-four">
+                    <p class="avenir-book fnt-18">
+                        {{homeOneContent()||
+                        "Il est un des documents faisant partie du dossier de diagnostics techniques (DDT)1. La durée de validité de ce DPE a été fixée à dix ans par le décret no2011-413 du 13 avril 2011. Le DPE doit être présenté lors de la vente ou location des logements et
+                        des bâtiments tertiaires (bureaux, hôtel, etc.) depuis le 1er juillet 2007. Il doit être à présent réalisé avant la mise en vente ou en location. Il vise à informer le propriétaire et le locataire de la consommation d'énergie du
+                        logement ou du bâtiment tertiaire sur son chauffage, sa climatisation, sa production d'eau chaude sanitaire (ECS), mais pas sur l'électricité spécifique (éclairage, appareils électroménagers, etc.)."}}
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="diag-dialog-right margin-top-three padding-three">
+                    <div class="avenir-book fnt-32 white">
+                        Il doit comporter quatre sections :
+                    </div>
+                    <p class="avenir-book fnt-18 white padding-top-two">
+                        Consommation annuelle d'énergie exprimée en kWh et en euros ; Positionnement en consommation d'énergie / m2 / an et en émission de gaz à effet de serre (GES) / m2 / an ; Descriptif des données clefs : isolation et constitution murs, toiture, fenêtres,
+                        chaudière, etc. ;
+                    </p>
+                </div>
+                <div class="diag-dialog-right-transparent margin-top-three">
+                    <p class="avenir-book fnt-18 black">
+                        Descriptif des propositions d'amélioration. Il faut compter 30 à 120 minutes pour la réalisation d'un diagnostic énergétique de manière correcte. Le temps d'intervention dépend en partie de la surface du bien à expertiser, du nombre de pièces et de l'accès
+                        aux informations.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div ng-include="'views/partials/booking-footer.html'" includeReplace></div>
+</output>

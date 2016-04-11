@@ -34,7 +34,7 @@
 }
 
 body {
-    background: black;
+    background: white;
     margin: 0px;
     padding: 0px;
 }
@@ -352,12 +352,57 @@ a.diag-btn-info:hover {
     border-bottom: 2px solid #6FCFFF;
 }
 
-.diags-range {
-    
-}
+.diags-range {}
 
 @media screen and (min-width: 768px) {
     .diags-range {
         width: 262px!important;
     }
+}
+
+footer {
+    height: 110px;
+    width: 100%;
+    background-color: #09519D;
+}
+
+footer .title-1,
+footer .title-2 {
+    line-height: 98px;
+    padding: 0px;
+    margin: 0px;
+    font-size: 38px;
+}
+
+ul.diags {
+    list-style-type: none;
+    padding: 0px;
+}
+
+ul.diags li {
+    width: 89;
+    float: left;
+    margin:0px 25px 25px 0px;
+}
+
+ul.diags li:first-child {
+    margin: 0px 25px 25px 0px;
+}
+
+h2.diags {
+    font-family: 'Avenir-Book';
+    font-size: 36px;
+    padding-bottom: 33px;
+}
+
+h2.diags.black {
+    color: black;
+}
+
+.home .diag-dialog-right-transparent{
+    max-width: 481px;
+}
+.home .diag-dialog-right{
+    max-width: 481px;
+    background-color:#00A9FF;
 }
