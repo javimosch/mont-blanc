@@ -1,3 +1,10 @@
+/*global angular*/
+/*global expose*/
+/*global _*/
+/*global MyPromise*/
+/*global newId*/
+/*global $*/
+/*global diagsGetAvailableRanges*/
 var srv = angular.module('app.services', []);
 
 srv.service('tpl', function($rootScope, $compile, $templateCache) {
@@ -106,7 +113,9 @@ srv.service('fileUpload', ['$http', function($http) {
         fd.append('file', opt.file);
         $http.post(opt.url, fd, {
                 transformRequest: angular.identity,
-                headers: { 'Content-Type': undefined }
+                headers: {
+                    'Content-Type': undefined
+                }
             })
             .success(success)
             .error(err);
@@ -116,13 +125,23 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     //var URL = 'http://ujkk558c0c9a.javoche.koding.io:3434';
     var URL = 'http://localhost:5000';
 
-    $.ajax("/serverURL").then(function(r) {
-        URL = r.URL; //updates serverURL from express (node env serverURL);
-        console.info('server:url:' + URL);
+    $.ajax({
+        url: '/data.json',
+        async: false,
+        dataType: 'json',
+        success: function(r) {
+            URL = r.config.backendURL; //updates serverURL from express (node env serverURL);
+            console.info('server:url:' + URL);
+        }
     });
 
+    //$.ajax("/serverURL").then(function(r) {
+      //  URL = r.URL; //updates serverURL from express (node env serverURL);
+        //console.info('server:url:' + URL);
+    //});
+
     //var URL = 'http://blooming-plateau-64344.herokuapp.com/';
-    var globalState = {};//containts a global state of the service. (db)
+    var globalState = {}; //containts a global state of the service. (db)
     var localData = null;
 
     var spinner = (() => {
@@ -152,10 +171,10 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                     }
                 }, 1000 * 30);
                 r.$emit('logger.working');
-                var rta = function (res){
+                var rta = function(res) {
                     //
                     if (_.isUndefined(_logs[self.id])) {
-                        return;//registered as async or duplicate response (very rare).
+                        return; //registered as async or duplicate response (very rare).
                     }
 
                     //data for $http, result for others
@@ -164,25 +183,30 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                         item.err = 'Server down, try later.';
                         if (_.includes(_controlledErrorsStrings, item.err)) {
                             _controlledErrors[self.id] = item;
-                        } else {
+                        }
+                        else {
                             _errors[self.id] = item;
                         }
-                    } else {
+                    }
+                    else {
                         var data = res.data || res;
                         if (data.ok !== true) {
                             item.err = data.err || data;
                             item.message = data.message || null;
                             if (_.includes(_controlledErrorsStrings, item.err)) {
                                 _controlledErrors[self.id] = item;
-                            } else {
+                            }
+                            else {
                                 if (item.err && item.err.type) {
                                     if (_.includes(_controlledErrorsStrings, item.err.type)) {
                                         item.message = item.err.message;
                                         _controlledErrors[self.id] = item;
-                                    } else {
+                                    }
+                                    else {
                                         _errors[self.id] = item;
                                     }
-                                } else {
+                                }
+                                else {
                                     _errors[self.id] = item;
                                 }
                             }
@@ -195,7 +219,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                         r.$emit('logger.clear');
                     }
                 };
-                rta.registerAsync=()=>{
+                rta.registerAsync = () => {
                     delete _logs[self.id];
                     r.$emit('logger.clear');
                 };
@@ -224,7 +248,8 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                 if (msg !== '') msg += '<br>';
                 try {
                     msg += v.url + ': ' + JSON.stringify(v.err);
-                } catch (e) {
+                }
+                catch (e) {
                     msg += v.url + ': ' + 'Unparseable error. See the console.';
                 }
             });
@@ -250,7 +275,8 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
         return MyPromise(function(resolve, error) {
             if (localData) {
                 resolve(localData);
-            } else {
+            }
+            else {
                 $.getJSON('./data.json', function(data) {
                     localData = data;
                     resolve(localData);
@@ -281,7 +307,9 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
             url: URL + '/' + relativeUrl
         }).then(function(res) {
             _log(res);
-            if (callback) { callback(res); }
+            if (callback) {
+                callback(res);
+            }
         }, (err) => handleError(_log, err));
     }
     r.get = get;
@@ -290,17 +318,17 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
         data = data || {};
         var _log = logger(relativeUrl, data);
 
-        if(globalState.async){
-            data = Object.assign(data,{
-                ___serviceOptions:{
-                    logAsAsync:true
+        if (globalState.async) {
+            data = Object.assign(data, {
+                ___serviceOptions: {
+                    logAsAsync: true
                 }
             });
             delete globalState.async;
         }
 
-        if(data.___serviceOptions){
-            if(data.___serviceOptions.logAsAsync==true){
+        if (data.___serviceOptions) {
+            if (data.___serviceOptions.logAsAsync == true) {
                 _log.registerAsync();
             }
         }
@@ -363,7 +391,8 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                     resolve(res);
                 }, error);
             });
-        } else {
+        }
+        else {
             return MyPromise(function(resolve, error) {
                 post(controller + '/' + action, data, function(res) {
                     resolve(res);
@@ -384,11 +413,11 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
         });
     }
 
-    
+
 
     var ws = {
         URL: () => URL,
-        getAvailableRanges: (order)=> diagsGetAvailableRanges(order,ctrl),
+        getAvailableRanges: (order) => diagsGetAvailableRanges(order, ctrl),
         login: login,
         save: save,
         get: getSingle,
@@ -417,7 +446,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                 });
             });
         },
-        setAsync:()=>{
+        setAsync: () => {
             globalState.async = true;
             return ws;
         },

@@ -104,8 +104,9 @@ input[type="radio"]:checked + span::before
  
 input[type="checkbox"]:checked + span::before
 {
-    content: "\2714";
-    font-size: 23px;
+        content: "\2714";
+    font-size: 21px;
+    padding-top: 2px;
 }
 
 

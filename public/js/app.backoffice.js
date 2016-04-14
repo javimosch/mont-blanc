@@ -1,6 +1,7 @@
 /*global angular*/
+/*global expose*/
 (function() {
-    angular.module('app', [
+    var app = angular.module('app', [
         'app.run',
 
         'ngRoute',
@@ -30,4 +31,5 @@
         'app.services',
         'app.tools'
     ]);
+    expose('app',app);
 })();

@@ -30,9 +30,22 @@ app.directive('rangeSlider', function($rootScope, $timeout) {
 app.controller('ctrl.booking', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal',
     function(db, $timeout, s, r, $uibModal) {
+        console.info('CTRL.BOOKING');
         window.r = r;
         window.s = s;
+        window.booking = s;
         r.dom(); //compile directives
+
+
+
+        s.state = 'home';
+        s.states = ['home', 'diags','date'];
+        s.stateIs = (n) => s.state == n;
+        s.stateTo = (n) => _.includes(s.states, n) && (s.state = n) || console.warn(n, 'not-a-valid-state');
+        $timeout(() => {
+            if (param('state')) s.stateTo(param('state'));
+        }, 1000);
+
         //
         s._user = {
             address: null
@@ -49,6 +62,17 @@ app.controller('ctrl.booking', ['server',
                 complete: false
             }
         };
+
+        s.checks={
+            selectAll:false
+        };
+
+        s.$watch('checks.selectAll', function() {
+            if(!s.diags) return;
+            s.diags.forEach(d => {
+                s.model.diags[d.name] = s.checks.selectAll;
+            });
+        },true);
 
 
         db.ctrl('Settings', 'getAll', {}).then(d => {
@@ -291,6 +315,7 @@ app.controller('ctrl.booking', ['server',
 
 
         s.diagSelected = {};
+        s.selectDiag = (d)=>s.diagSelected = (typeof d == 'string') ? s.diag[d] : d;
         s.homeOneTitle = () => decodeURI(val(s.diagSelected, 'dialogs.one.title'));
         s.homeOneContent = () => decodeURI(val(s.diagSelected, 'dialogs.one.content'));
         s.homeTwoTitle = () => decodeURI(val(s.diagSelected, 'dialogs.two.title'));
@@ -424,6 +449,16 @@ app.controller('ctrl.booking', ['server',
             }
         }
 
+        function toggleMandatory(n, val) {
+            s.diags.forEach((diag) => {
+                if ((n && diag.name == n) || !n) {
+                    diag.show = val;
+                    if (diag.show == false) {
+                        s.model.diags[diag.name] = false;
+                    }
+                }
+            });
+        }
 
         s.lineThrough = (item) => (item.show == false);
 
@@ -452,53 +487,65 @@ app.controller('ctrl.booking', ['server',
                 if (s.model.constructionPermissionDate === 'avant le 01/01/1949') {
                     toggle('crep', true);
                     s.model.diags.crep = true; //mandatory
+                    toggleMandatory('crep', true);
                 }
                 else {
                     s.model.diags.crep = false; //
                     toggle('crep', true);
+                    toggleMandatory('crep', false);
                 }
 
                 if (s.departmentHasTermites()) {
                     toggle('termites', true);
                     s.model.diags.termites = true;
+                    toggleMandatory('termites', true);
                 }
                 else {
                     toggle('termites', false);
                     s.model.diags.termites = false;
+                    toggleMandatory('termites', false);
                 }
 
                 if (_.includes(['avant le 01/01/1949', 'entre 1949 et le 01/07/1997'], s.model.constructionPermissionDate)) {
                     toggle('dta', true);
                     s.model.diags.dta = true; //mandatory
+                    toggleMandatory('dta', true);
                 }
                 else {
                     toggle('dta', true);
                     s.model.diags.dta = false;
+                    toggleMandatory('dta', false);
                 }
 
                 if (_.includes(['Oui, Plus de 15 ans', 'Oui, Moins de 15 ans'], s.model.gasInstallation)) {
                     toggle('gaz', true);
                     if (s.model.sell == true && s.model.gasInstallation === 'Oui, Plus de 15 ans') {
                         s.model.diags.gaz = true;
+                        toggleMandatory('gaz', true);
                     }
                     else {
                         s.model.diags.gaz = false;
+                        toggleMandatory('gaz', false);
                     }
                 }
                 else {
                     toggle('gaz', false);
+                    toggleMandatory('gaz', false);
                 }
                 if (_.includes(['Plus de 15 ans', 'Moins de 15 ans'], s.model.electricityInstallation)) {
                     toggle('electricity', true);
                     if (s.model.sell == true && s.model.electricityInstallation === 'Plus de 15 ans') {
                         s.model.diags.electricity = true;
+                        toggleMandatory('electricity', true);
                     }
                     else {
                         s.model.diags.electricity = false;
+                        toggleMandatory('electricity', false);
                     }
                 }
                 else {
                     toggle('electricity', false);
+                    toggleMandatory('electricity', false);
                 }
 
             }

@@ -1,0 +1,107 @@
+<div ng-include="'views/partials/booking-header-2.html'" includeReplace>
+</div>
+<div class="diags-bg">
+    <div class="diags-content container diags-selection padding-none">
+        <div class="row diags-bg-block-40 hidden-xs"></div>
+        <div class="row diag-row padding-top-three">
+            <div class="col-sm-12 ">
+                <div class='row'>
+                    <div class="col-sm-3">
+                        <div class="booking-phase active">
+                            1.Choisir vos diagnostics
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="booking-phase">
+                            2.Prendre RDV
+                        </div>
+                    </div>
+                    <div class="col-sm-3 ">
+                        <div class="booking-phase">
+                            3.Connexion
+                        </div>
+                    </div>
+                    <div class="col-sm-3 ">
+                        <div class="booking-phase">
+                            4.Paiement
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row diag-row margin-top-one">
+            <div class="col-sm-6">
+                <i class="fa fa-chevron-right fnt-18"><span class="medium18">Les diagnostics obligatoires</span></i>
+
+
+            </div>
+            <div class="col-sm-6 ">
+                <label class="float-right select-all-checkbox">
+                    <input type="checkbox" ng-model="checks.selectAll" class="check mark-white" />
+                    <span class="sky-blue"></span>
+                </label>
+                <span class="select-all-checkbox-span medium18 float-right margin-right-half">Tout sélectionner</span>
+            </div>
+        </div>
+        <div class="row diag-row margin-top-one">
+            <div class="col-md-12">
+                <ul class="diags-list margin-top-one list-bare padding-none">
+                    <li ng-repeat="(k,v) in diags" ng-show="v.mandatory" class="margin-right-quarter margin-bottom-quarter float-left">
+                        <div class="diag check row">
+                            <div class="col-xs-2 padding-none">
+                                <img ng-src="img/icons/icon_{{v.name}}.png">
+                            </div>
+                            <div class="col-xs-7 padding-none">
+                                <span>{{v.label}}</span>
+                            </div>
+                            <div class="col-xs-3 padding-none">
+                                <label class="sm-float-right padding-top-quarter">
+                                    <input type="checkbox" ng-model="model.diags[v.name]" class="check mark-white" />
+                                    <span class="sky-blue"></span>
+                                </label>
+                            </div>
+
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row diag-row margin-top-one">
+            <div class="col-md-12 ">
+                <i class="fa fa-chevron-right fnt-18"><span class="medium18">Les diagnostics en options</span></i>
+                <ul class="diags-list margin-top-one list-bare padding-none">
+                    <li ng-repeat="(k,v) in diags" ng-show="!v.mandatory" class="margin-right-quarter margin-bottom-quarter float-left">
+                        <div class="diag check row">
+                            <div class="col-xs-2 padding-none">
+                                <img ng-src="img/icons/icon_{{v.name}}.png">
+                            </div>
+                            <div class="col-xs-7 padding-none">
+                                <span>{{v.label}}</span>
+                            </div>
+                            <div class="col-xs-3 padding-none">
+                                <label class="sm-float-right padding-top-quarter">
+                                    <input type="checkbox" ng-model="model.diags[v.name]" class="check mark-white" />
+                                    <span class="sky-blue"></span>
+                                </label>
+                            </div>
+
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row diag-row margin-top-one padding-bottom-two">
+            <div class="col-md-12 ">
+                <div class="diags-payment-info inline-flex">
+                    <span class="avenir-medium fnt-30 line-60 middle sky-blue padding-02em">*</span>
+                    <span class="avenir-medium fnt-16 line-60 middle violet">
+                        Paiement simplifié et sécurisé (PCI 1, le niveau le plus élevé) avec Stripe 
+                    </span>
+                </div>
+                <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 sm-float-right">Prendre un rendez-vous</button>
+            </div>
+        </div>
+        <div class="row diags-bg-block-40 hidden-xs"></div>
+    </div>
+</div>
+<div ng-include="'views/partials/booking-footer.html'" includeReplace></div>
