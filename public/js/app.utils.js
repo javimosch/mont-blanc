@@ -1,7 +1,8 @@
+/*global $*/
 "use strict";
 
-function numberBetween(n,min,max){
-    return n>=min && n<=max;
+function numberBetween(n, min, max) {
+    return n >= min && n <= max;
 }
 
 function expose(path, v) {
@@ -24,14 +25,14 @@ function expose(path, v) {
 }
 
 
-function has(v,arr){
-    for(var x in arr){
-        if(v==arr[x]) return true;
+function has(v, arr) {
+    for (var x in arr) {
+        if (v == arr[x]) return true;
     }
     return false;
 }
 
-function valid(obj,propertyPath,opt){
+function valid(obj, propertyPath, opt) {
     var split = propertyPath.split('.');
     var lastIndex = split.length - 1;
     split.forEach((chunk, index) => {
@@ -42,8 +43,9 @@ function valid(obj,propertyPath,opt){
     });
     if (obj) {
         var rta = obj[split[lastIndex]];
-        if(rta) return true;
-    }else{
+        if (rta) return true;
+    }
+    else {
         return false;
     }
 }
@@ -64,12 +66,14 @@ function val(obj, propertyPath, opt) {
         if (typeof rta === 'function') {
             if (opt && opt.args) {
                 return rta.apply(this, opt.args);
-            } else {
+            }
+            else {
                 return rta();
             }
         }
         return rta;
-    }else{
+    }
+    else {
         return undefined;
     }
 }
@@ -159,7 +163,8 @@ function createSelect(opt) { //s:scope r:rootscope
     opt.scope.$watch(opt.model, (v) => {
         if (v !== undefined) {
             o.label = v.label || (v.substring(0, 1).toUpperCase() + v.slice(1));
-        } else {
+        }
+        else {
             o.label = opt.label;
         }
     });
@@ -224,7 +229,8 @@ function ifThenMessage(comparisons, messagesCallback, noMessagesCallback) {
             if (v1()) {
                 messages.push(comparison[1]);
             }
-        } else {
+        }
+        else {
             var operator = comparison[1];
             var v2 = comparison[2];
             var m = comparison[3];
@@ -252,7 +258,8 @@ function ifThenMessage(comparisons, messagesCallback, noMessagesCallback) {
     });
     if (messages.length > 0) {
         messagesCallback(messages);
-    } else {
+    }
+    else {
         noMessagesCallback();
     }
 }
@@ -328,7 +335,10 @@ function MyPromise(cb) {
     };
     var emit = function(n, err, r) {
         _scope.evt[n] = _scope.evt[n] || {};
-        _scope.evt[n].res = { err: err, r: r };
+        _scope.evt[n].res = {
+            err: err,
+            r: r
+        };
         if (_scope.evt[n].cb !== undefined) {
             _scope.evt[n].cb(_scope.evt[n].res.err, _scope.evt[n].res.r);
         }
@@ -358,14 +368,100 @@ function MyPromise(cb) {
 }
 
 
+var Eventify = (function(self) { //event handling snippet
+    var once = {}; //stores parameters for events that already happen if there was a 'once' listener. Next listeners will be automatically called.
+    var evts = {};
+    function firePreserve(n, handler) {
+        if (!once[n]) return;
+        console.log('fire-preserve', n, once[n]);
+        handler(once[n]);
+    }
+    self.off = function(evt) {
+        if (typeof evt == 'string') delete evts[evt];
+        else delete evts[evt.type][evt.id];
+    };
+    self.emitPreserve = function(n, p) {
+        self.emit(n, p, {
+            preserve: true
+        });
+    };
+    self.emit = function(n, p, opt) {
+        evts[n] = evts[n] || {};
+        Object.keys(evts[n]).forEach(k => {
+            evts[n][k].handler(p);
+        });
+        if (opt && opt.preserve) {
+            once[n] = p;
+        }
+        var pp = p;
+        try{
+            pp = JSON.stringify(pp);
+        }catch(e){pp=p}
+        console.log('emit', n, pp, opt);
+    };
+    self.once = function(n, handler) {
+        if (once[n]) return firePreserve(n, handler);
+        var evt = self.on(n, (p) => {
+            handler(p);
+            self.off(evt);
+            once[n] = p;
+        });
+    };
+    self.on = function(n, handler) {
+        firePreserve(n, handler);
+        //
+        evts[n] = evts[n] || {};
+        var id = 'evt_' + n + '_' + new Date().getTime() + '_' + Object.keys(evts).length;
+        evts[n][id] = {
+            id: id,
+            type: n,
+            handler: handler
+        };
+        console.log('on', n, id);
+        return evts[n][id];
+    }
+    return self;
+});
+
+
+function onAnchorChange(handler) {
+    if ("onhashchange" in window) { // event supported?
+        window.onhashchange = function() {
+            handler(window.location.hash);
+        }
+    }
+    else { // event not supported:
+        var storedHash = window.location.hash;
+        window.setInterval(function() {
+            if (window.location.hash != storedHash) {
+                storedHash = window.location.hash;
+                handler(storedHash);
+            }
+        }, 100);
+    }
+}
+
+function cbHell(quantity, cb) {
+    //if(quantity==0) cb();
+    return {
+        call: () => cb(),
+        next: () => {
+            quantity--;
+            if (quantity === 0) cb();
+        }
+    }
+}
+
+
 if (typeof exports !== 'undefined') {
     exports.MyPromise = MyPromise;
     exports.getHashParams = getHashParams;
     exports.getParameterByName = getParameterByName;
     exports.ifThenMessage = ifThenMessage;
     exports.val = val;
-    exports.numberBetween  = numberBetween;
-} else {
+    exports.numberBetween = numberBetween;
+}
+else {
     window.val = val;
     window.numberBetween = numberBetween;
     window.MyPromise = MyPromise;
@@ -374,13 +470,17 @@ if (typeof exports !== 'undefined') {
     window.ifThenMessage = ifThenMessage;
 
     window.$U = {
-        valid:valid,
-        val:val,
-        numberBetween:numberBetween,
-        MyPromise:MyPromise,
-        getHashParams:getHashParams,
-        getParameterByName:getParameterByName,
-        ifThenMessage:ifThenMessage,
-        has:has
+        cbHell:cbHell,
+        onAnchorChange:onAnchorChange,
+        valid: valid,
+        val: val,
+        numberBetween: numberBetween,
+        MyPromise: MyPromise,
+        getHashParams: getHashParams,
+        getParameterByName: getParameterByName,
+        ifThenMessage: ifThenMessage,
+        has: has
     };
+    window.$U = Eventify(window.$U);
+
 }

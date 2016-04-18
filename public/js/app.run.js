@@ -1,3 +1,4 @@
+/*global $U*/
 /*global angular*/
 /*global $*/
 /*global getHashParams*/
@@ -22,7 +23,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         if (!r.logged()) {
             console.warn('secureSection:redirecting to login');
             r.route('login');
-        } else {
+        }
+        else {
             _s.show = true;
         }
     };
@@ -54,33 +56,35 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         };
     });
 
-    r.setCurrentCtrl = (_s) => { r.__currentCtrlScope = _s };
+    r.setCurrentCtrl = (_s) => {
+        r.__currentCtrlScope = _s
+    };
 
-    function getMessage(msg){
-        if(typeof msg === 'function') return msg();
+    function getMessage(msg) {
+        if (typeof msg === 'function') return msg();
         if (typeof msg !== 'string' && msg.length) return getMessage(msg[0]);
         return msg;
     }
 
-    r.errorMessage=(msg,duration)=>{
+    r.errorMessage = (msg, duration) => {
         msg = getMessage(msg);
-        r.notify(msg,{
-            type:'danger',
-            duration:duration||3000
+        r.notify(msg, {
+            type: 'danger',
+            duration: duration || 3000
         });
     };
-    r.warningMessage=(msg,duration)=>{
+    r.warningMessage = (msg, duration) => {
         msg = getMessage(msg);
-        r.notify(msg,{
-            type:'warning',
-            duration:duration||3000
+        r.notify(msg, {
+            type: 'warning',
+            duration: duration || 3000
         });
     };
-    r.infoMessage=(msg,duration)=>{
+    r.infoMessage = (msg, duration) => {
         msg = getMessage(msg);
-        r.notify(msg,{
-            type:'info',
-            duration:duration||3000
+        r.notify(msg, {
+            type: 'info',
+            duration: duration || 3000
         });
     };
 
@@ -103,7 +107,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     r.cache = function(n, o) {
         if (o) {
             return r.__cache[n] = o;
-        } else {
+        }
+        else {
             if (!_.isUndefined(r.__cache[n]) && !_.isNull(r.__cache[n])) {
                 //console.info('CACHE: retrieving ' + n + ' (' + typeof r.__cache[n] + ')');
             }
@@ -112,8 +117,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     };
 
     r.momentFormat = (d, f) => (moment(d).format(f));
-    r.momentTime = (d) =>moment(d).format('HH[h]mm');
-    r.momentDateTime=(d)=>moment(d).format('DD-MM-YY HH[h]mm');
+    r.momentTime = (d) => moment(d).format('HH[h]mm');
+    r.momentDateTime = (d) => moment(d).format('DD-MM-YY HH[h]mm');
 
     r.dom = function(cb, timeout) {
         $timeout(function() {
@@ -228,18 +233,25 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         setTimeout(function() {
             var path = window.location.origin + window.location.pathname;
             path += '#/' + url;
+            r.$emit('route-change', url);
             window.location.href = path;
         }, delay || 0);
         r.__route = url;
         return url;
     };
-    r.routeIs=(n)=>r.__route && r.__route.toString().toLowerCase().indexOf(n&&n.toLowerCase()||'invalid')!==-1 || false;
-    r.__route = window.location.href.replace(window.location.origin + window.location.pathname,'');
-
+    r.routeIs = (n) => r.__route && r.__route.toString().toLowerCase().indexOf(n && n.toLowerCase() || 'invalid') !== -1 || false;
+    r.__route = window.location.href.replace(window.location.origin + window.location.pathname, '');
+    setTimeout(function() {
+        $U.emitPreserve('route-change', r.__route.slice(2));
+    }, 500);
+    $U.onAnchorChange(() => {
+        r.__route = window.location.href.replace(window.location.origin + window.location.pathname, '');
+        $U.emitPreserve('route-change', r.__route.slice(2))
+    });
 
     r.userIs = (arr) => {
         var type = r.session().userType;
-        if(typeof arr === 'string') arr = [arr];
+        if (typeof arr === 'string') arr = [arr];
         return _.includes(arr, type);
     };
 
@@ -247,6 +259,18 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         r.params = Object.assign(r.params || {}, obj);
     };
 
+
+    r.lookUp = function(scope, property) {
+        if (scope[property]) return scope[property];
+        else {
+            if (scope.$parent) {
+                return r.lookUp(scope.$parent, property);
+            }
+            else {
+                return undefined;
+            }
+        }
+    };
 
 
     r.hasMouse = false;

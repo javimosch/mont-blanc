@@ -11,15 +11,7 @@
                 <a class="navbar-brand " href="/">Diagnosti<span class="cal">cal</span></a>
             </div>
             <div class="collapse navbar-collapse" id="ex2">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/admin" class="diag-button diag-btn-success">Espace Entreprise</a></li>
-                    <li><a href="/admin" class="diag-button diag-btn-info">Espace Diagnostiqueur</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#" class="diag-link">Contactez-nous</a></li>
-                    <li><a href="#" class="diag-link">ERNT</a></li>
-                    <li><a href="#" class="diag-link">FAQ</a></li>
-                </ul>
+                <div ng-include="'views/booking/partials/booking-header-nav.html'" include-replace></div>
             </div>
         </div>
     </nav>

@@ -4,8 +4,16 @@
   list-style: none!important;
 }
 
+.fnt-12 {
+  font-size: 12px;
+}
+
+.fnt-14 {
+  font-size: 14px;
+}
+
 .fnt-16 {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .fnt-18 {

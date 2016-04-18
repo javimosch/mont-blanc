@@ -1,7 +1,8 @@
-<output ng-controller="ctrl.booking">
+<output > <!--ng-controller="ctrl.booking"-->
     <my-alerts add="notify" directive="notify" stacked="false" settings="{clickDismissable:false}"></my-alerts>
     <modal-confirm open="openConfirm"></modal-confirm>
     <div id="fullpage">
+        <!--
         <div class="section" data-anchor="question1">
             <div ng-include="'views/partials/booking-q1-sell-or-rent.html'"></div>
         </div>
@@ -23,6 +24,7 @@
         <div class="section" data-anchor="question7">
             <div ng-include="'views/partials/booking-q7-electricity.html'"></div>
         </div>
+        -->
         <div class="section" data-anchor="diags">
             <div ng-include="'views/partials/booking-diags-selection.html'"></div>
         </div>
@@ -43,3 +45,5 @@
     <span data-debug show="showDebug"></span>
 </output>
 <script type="text/javascript" src="js/app.booking-fullscreen.js"></script>
+
+

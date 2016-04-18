@@ -1,5 +1,3 @@
-<div ng-include="'views/partials/booking-header-2.html'" includeReplace>
-</div>
 <div class="diags-bg">
     <div class="diags-content container diags-selection padding-none">
         <div class="row diags-bg-block-40 hidden-xs"></div>
@@ -98,10 +96,11 @@
                         Paiement simplifié et sécurisé (PCI 1, le niveau le plus élevé) avec Stripe 
                     </span>
                 </div>
-                <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 sm-float-right">Prendre un rendez-vous</button>
+                <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 sm-float-right"
+                ng-click="proceedToDateSelection()"
+                >Prendre un rendez-vous</button>
             </div>
         </div>
         <div class="row diags-bg-block-40 hidden-xs"></div>
     </div>
 </div>
-<div ng-include="'views/partials/booking-footer.html'" includeReplace></div>

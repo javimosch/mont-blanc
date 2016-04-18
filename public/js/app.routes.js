@@ -1,5 +1,6 @@
+/*global angular*/
 var srv = angular.module('app.routes', []);
-app.config(['$routeProvider',
+srv.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
         when('/', {

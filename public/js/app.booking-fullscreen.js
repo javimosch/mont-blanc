@@ -1,16 +1,21 @@
+/*global $*/
 $(document).ready(function() {
     window.fp = $('#fullpage').fullpage({
         //Navigation
         menu: '#menu',
         lockAnchors: false,
-        anchors: ['question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'question7', 'diags'
+        anchors: [
+            //'question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'question7'
+            , 'diags'
             //, 'calendar-datepicker'
             , 'calendar-timepicker', 'confirm-and-save'
             //, 'confirm-order'
         ],
         navigation: true,
         navigationPosition: 'right',
-        navigationTooltips: ['You Sell or Rent', 'House or Apartment', 'Size', 'Date permis de construire', 'Write your address', 'What about gas installation?', 'Electricity Installation?', 'Select diags' //, 'Choice a day'
+        navigationTooltips: [
+            //'You Sell or Rent', 'House or Apartment', 'Size', 'Date permis de construire', 'Write your address', 'What about gas installation?', 'Electricity Installation?'
+            , 'Select diags' //, 'Choice a day'
             , 'Pick a time', 'Confirmation and Save'
         ],
         showActiveTooltip: true,

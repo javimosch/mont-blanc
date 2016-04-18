@@ -107,6 +107,7 @@ input[type="checkbox"]:checked + span::before
         content: "\2714";
     font-size: 21px;
     padding-top: 2px;
+        z-index: 999;
 }
 
 

@@ -56,9 +56,9 @@
         "T10": "T10"
     },
     "constructionPermissionDate": {
-        "Avant le 01/01/1949": "avant le 01/01/1949",
-        "Entre 1949 et le 01/07/1997": "entre 1949 et le 01/07/1997",
-        "Après le 01/07/1997": "après le 01/07/1997"
+        "Avant le 01/01/1949": "Avant le 01/01/1949",
+        "Entre 1949 et le 01/07/1997": "Antre 1949 et le 01/07/1997",
+        "Après le 01/07/1997": "Après le 01/07/1997"
     },
     "gasInstallation": {
         "Non": "Non",

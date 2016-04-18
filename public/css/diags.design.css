@@ -230,35 +230,45 @@ ul.menu li a {
     }
 }
 
-
-.btn.dropdown-toggle, input.diag {
+.btn.dropdown-toggle,
+input.diag {
     height: 46px;
     background: white;
 }
+
 a.diag-btn {
     border-radius: 20px;
     line-height: 28px!important;
 }
+
 a.diag-btn-big {}
+
 a.diag-btn:hover {}
+
 a.diag-btn:active {}
+
 a.diag-btn-success {
     background-color: #23DC8C!important;
 }
+
 a.diag-btn-success:hover {
     background-color: #23DC8C!important;
 }
+
 a.diag-btn-info {
     background-color: #00A9FF!important;
 }
+
 a.diag-btn-info:hover {
     background-color: #00A9FF!important;
 }
+
 .diag-btn-main:hover,
 .diag-btn-main:active,
 .diag-btn-main:focus {
     color: whitesmoke;
 }
+
 .diag-btn-main {
     background-color: #0A3967;
     height: 60px;
@@ -267,11 +277,10 @@ a.diag-btn-info:hover {
     font-size: 18px;
     color: white;
 }
+
 .diag-btn-width306 {
     width: 306px;
 }
-
-
 
 
 /*FONT FAMILY HELPERS*/
@@ -378,7 +387,7 @@ a.diag-btn-info:hover {
     color: white;
 }
 
-.diag46{
+.diag46 {
     line-height: 46px;
 }
 
@@ -398,7 +407,8 @@ a.diag-btn-info:hover {
     font-family: 'Avenir-Book';
 }
 
-.title-color-sky-blue .title-1, .title-color-sky-blue .title-2{
+.title-color-sky-blue .title-1,
+.title-color-sky-blue .title-2 {
     color: #00A9FF;
 }
 
@@ -406,7 +416,6 @@ a.diag-btn-info:hover {
 /*BOOKING FORM*/
 
 .booking-form {
-    max-width: 450px;
     min-width: 320px;
     background-color: #00A9FF;
     border-radius: 0px;
@@ -414,6 +423,12 @@ a.diag-btn-info:hover {
     position: relative;
     margin-top: 55px;
     font-family: 'Avenir-Medium';
+}
+
+@media only screen and (min-width: 480px) {
+    .booking-form {
+        width: 450px;
+    }
 }
 
 .booking-form span {
@@ -434,6 +449,11 @@ a.diag-btn-info:hover {
     line-height: 23px;
 }
 
+input[type="radio"]:disabled + span,
+input[type="checkbox"]:disabled + span {
+    opacity: 1!important;
+}
+
 .diag-row {
     padding: 0px;
     margin: 0px;
@@ -442,6 +462,10 @@ a.diag-btn-info:hover {
 @media only screen and (min-width: 992px) {
     .diag-row {
         padding: 0px 50px;
+        margin: 0px;
+    }
+    .home .diag-row {
+        padding: 0px 0px;
         margin: 0px;
     }
 }
@@ -556,8 +580,6 @@ h2.diags.black {
     max-width: 481px;
     background-color: #00A9FF;
 }
-
-
 
 .dropdown .caret {
     font: normal normal normal 14px/1 FontAwesome;
@@ -694,9 +716,9 @@ h2.diags.black {
 .stripe-message {
     font-family: 'Avenir-Medium';
     font-size: 16px;
-    color:#0B3967;
+    color: #0B3967;
     line-height: 30px;
-    text-align:center;
+    text-align: center;
 }
 
 .diags-payment-info {
@@ -714,15 +736,21 @@ h2.diags.black {
     }
 }
 
-.icons-list{
-    
+.icons-list {}
+
+.icons-list>div {}
+
+@media only screen and (min-width: 992px) {
+    .icons-list>div {
+        width: 900px;
+        margin: 0 auto;
+    }
 }
-.icons-list>div{
-    
+
+.icons-list img {
+    margin: 10px;
 }
-.icons-list img{
-    margin:10px;
-}
+
 
 /*
 .check.mark-white:checked + span::after {
@@ -750,4 +778,63 @@ h2.diags.black {
 .check.mark-white + .sky-blue::before {
     border: solid 2px #00A9FF;
     background: #00A9FF;
+}
+
+.diags-date-day-wrapper {
+    height: 348px;
+    width: 298px;
+    padding: 0px;
+    margin: 0px;
+    background-color: #EDF9FF;
+}
+
+.diags-date-day-header {
+    width: 100%;
+    background-color: #0B3967;
+    height: 52px;
+    font-family: 'Avenir-Medium';
+    font-size: 18px;
+    text-align: center;
+    color: white;
+    line-height: 52px;
+}
+
+.diags-date-day-item {
+    height: 74px;
+    display: inline-flex;
+    background-color: transparent;
+    width: 100%;
+}
+
+.diags-date-day-item.selected {
+    background-color: #D9F3FF;
+}
+
+.diags-date-day-item-check-wrapper {
+    width: 81px;
+    padding: 25px 29px;
+}
+
+.diags-date-day-item .diags-date-day-item-description-wrapper .time-price {
+    color: #0B3967;
+    /*normal*/
+    font-family: 'Avenir-Medium';
+    font-size: 24px;
+    padding-top: 0.5em;
+}
+
+.diags-date-day-item.selected .diags-date-day-item-description-wrapper .time-price {
+    color: #00A9FF!important;
+}
+
+.diags-date-day-item-description-wrapper .diag-guy {
+    color: #0B3967;
+    font-family: 'Avenir-Medium';
+    font-size: 14px;
+}
+
+@media only screen and (min-width: 992px) {
+    .diags-date-day-wrapper {
+        padding-right: 4px
+    }
 }

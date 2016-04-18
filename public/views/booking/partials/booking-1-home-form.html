@@ -1,12 +1,12 @@
 <div class="booking-form">
     <div class="box">
         <div class="box-1-2">
-            <div class="booking-form-header-btn active">
+            <div class="booking-form-header-btn link active" toggle-click toggle-value="model.sell" ng-value="true" toggle-class="active">
                 Vous vendez?
             </div>
         </div>
         <div class="box-1-2">
-            <div class="booking-form-header-btn">
+            <div class="booking-form-header-btn link" toggle-click toggle-value="model.sell" ng-value="false" toggle-class="active">
                 Vous louer?
             </div>
         </div>
@@ -20,12 +20,12 @@
         </div>
         <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one">
             <label class="sm-float-left">
-                <input type="checkbox" name="type" /><span class=""></span></label>
+                <input type="checkbox" check-box-group check-box-model='model.house' name="type" value="false"/><span class=""></span></label>
             <span class="padding-left-halve sm-float-left">Appartament</span>
         </div>
         <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one">
             <label class="sm-float-left">
-                <input type="checkbox" name="type" /><span class=""></span></label>
+                <input type="checkbox" check-box-group check-box-model='model.house' name="type" value="true" ng-model="model.house" /><span class=""></span></label>
             <span class="padding-left-halve sm-float-left">Maison</span>
         </div>
 
@@ -38,7 +38,8 @@
             <span class="label">Superficie</span>
         </div>
         <div class="col-sm-8 diag-col-sm-8-input-1 padding-none margin-bottom-one">
-            <input class="diags-range" type="range" min="10" max="100" step="10" value="300" data-orientation="horizontal">
+            <input class="diags-range" ng-model="range" type="range" min="0" max="100" step="5" value="0" data-orientation="horizontal" range-values="squareMeters" range-model="model.squareMeters">
+            <span class="fnt-12 avenir-roman padding-top-quarter">{{model.squareMeters||'&nbsp;'}}</span>
         </div>
     </div>
     <div class="row  margin-bottom-one  diag-row width90p center">
@@ -82,12 +83,12 @@
         </div>
         <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one">
             <label class="sm-float-left">
-                <input type="checkbox" name="type" /><span class=""></span></label>
+                <input type="checkbox" check-box-group check-box-model='model.electricityInstallation' name="electricityInstallation" value="Moins de 15 ans"/><span class=""></span></label>
             <span class="padding-left-halve sm-float-left">-de 15 ans</span>
         </div>
         <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one">
             <label class="sm-float-left">
-                <input type="checkbox" name="type" /><span class=""></span></label>
+                <input type="checkbox" check-box-group check-box-model='model.electricityInstallation' name="electricityInstallation" value="Plus de 15 ans"/><span class=""></span></label>
             <span class="padding-left-halve sm-float-left">+de 15 ans</span>
         </div>
 
@@ -98,7 +99,7 @@
 
             <div class="input-group address">
                 <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
-                <input type="text" class="form-control" placeholder="Ex: 102 rue Réaumur 75002 Paris, France">
+                <input type="text" class="form-control" data-address model="model" field="address" id="address" department="department" post-code="postCode" placeholder="Ex: 102 rue Réaumur 75002 Paris, France">
             </div>
 
         </div>
@@ -106,7 +107,7 @@
     
     <div class="row diag-row width90p center">
         <div class="col-sm-12 padding-none margin-bottom-one">
-           <button class="btn diag-btn-main" ng-click="stateTo('diags')">Choisir vos diagnostics</button>
+           <button class="btn diag-btn-main" ng-click="proceedToDiagsSelection()">Choisir vos diagnostics</button>
         </div>
     </div>
 

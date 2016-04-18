@@ -27,7 +27,7 @@
                             <li ng-show="logged() && userIs(['diag'])"><a class="link diag-link" active-route="diags" ng-click="route('diags/edit/'+session()._id)" data-toggle="collapse" data-target=".navbar-collapse.in">My profile</a></li>
                             <li ng-show="logged() && userIs(['diag'])"><a class="link diag-link" active-route="balance" ng-click="route('diag/balance')" data-toggle="collapse" data-target=".navbar-collapse.in">Balance</a></li>
                             <li ng-show="logged() && userIs(['admin'])">
-                                <a class="link" active-route="settings" ng-click="route('settings')" data-toggle="collapse" data-target=".navbar-collapse.in">Settings</a>
+                                <a class="link diag-link" active-route="settings" ng-click="route('settings')" data-toggle="collapse" data-target=".navbar-collapse.in">Settings</a>
                             </li>
 
                         </ul>
