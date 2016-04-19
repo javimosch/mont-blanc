@@ -44,6 +44,10 @@ app.config(['$routeProvider',
         when('/connexion', {
             templateUrl: 'views/booking/booking-4-connection.html'
         }).
+         when('/inscription', {
+            templateUrl: 'views/booking/booking-5-inscription.html'
+        }).
+
 
         otherwise({
             redirectTo: '/'
