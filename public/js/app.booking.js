@@ -101,7 +101,10 @@ app.controller('ctrl.booking', ['server',
             if (url.indexOf(URL.RDV) !== -1) {
 
 
-                var cbHell = $U.cbHell(4, setSelectedRangeDateUsingOrder);
+                var cbHell = $U.cbHell(4, function(){
+                    console.info('available-dates-retrived');
+                    setSelectedRangeDateUsingOrder();
+                });
 
                 s.requestSlots(moment()._d).then((d) => {
                     s.slots1 = d;
@@ -126,7 +129,7 @@ app.controller('ctrl.booking', ['server',
 
             }
 
-            if ($U.indexOf(url, [URL.RDV, URL.LOGIN, URL.PAYMENT])) {
+            if ($U.indexOf(url, [URL.PAYMENT])) {
                 if ((s.__manualUrlChange || 0) + 5000 < new Date().getTime()) {
                     resolvePaymentScreenAuth().then(resolvePaymentScreenOrder);
                 }
@@ -1042,7 +1045,7 @@ app.controller('ctrl.booking', ['server',
                     time: time
                 };
                 db.getAvailableRanges(order).then(function(data) {
-                    console.log('slots', data);
+                    //console.log('slots', data);
                     data = data.length > 0 && data || null;
                     if (s.model.time == 'any') {
                         if (data && s.availableTimeRanges.length > 0) {
@@ -1051,7 +1054,7 @@ app.controller('ctrl.booking', ['server',
                     }
                     if (!data) return;
                     var cbHell = $U.cbHell(data.length, function() {
-                        console.log('slots-ok', data);
+                     //   console.log('slots-ok', data);
                         resolve(data);
                     });
 
@@ -1195,7 +1198,7 @@ app.controller('ctrl.booking', ['server',
         }
 
         s.orderSaved = () => {
-            return s._order._id;
+            return s._order && s._order._id;
         };
         s.paymentDelegated = () => {
             return s._order.landLordPaymentEmailSended == true;
@@ -1378,6 +1381,7 @@ app.controller('ctrl.booking', ['server',
                 db.ctrl('Order', 'getById', payload)
                     .then(d => {
                         if (d.ok) {
+                            console.info('fetch-order',payload._id,r.momentDateTime(d.result.diagStart));
                             r.dom(function() {
                                 setOrder(d.result);
                             });
@@ -1436,6 +1440,7 @@ app.controller('ctrl.booking', ['server',
                 db.ctrl('Order', 'saveWithEmail', s.model).then(data => {
                     var saved = data.ok;
 
+                    console.info('save-order',data.err)
 
                     var exists = (data.err === 'ORDER_EXISTS');
                     var taken = (data.err === 'ORDER_TAKEN');

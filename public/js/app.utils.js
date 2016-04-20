@@ -406,7 +406,7 @@ var Eventify = (function(self) { //event handling snippet
         catch (e) {
             pp = p
         }
-        console.log('emit', n, pp, opt);
+//        console.log('emit', n, pp, opt);
     };
     self.once = function(n, handler) {
         if (once[n]) return firePreserve(n, handler);
@@ -426,7 +426,7 @@ var Eventify = (function(self) { //event handling snippet
             type: n,
             handler: handler
         };
-        console.log('on', n, id);
+       // console.log('on', n, id);
         return evts[n][id];
     }
     return self;
