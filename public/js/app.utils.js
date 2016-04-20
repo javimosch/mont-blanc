@@ -573,6 +573,11 @@ function indexOf(str,values){
     return rta;
 }
 
+
+function scrollToTop(time){
+    $('html, body').animate({scrollTop : 0},time||800);
+}
+
 if (typeof exports !== 'undefined') {
     exports.MyPromise = MyPromise;
     exports.getHashParams = getHashParams;
@@ -590,6 +595,7 @@ else {
     window.ifThenMessage = ifThenMessage;
 
     window.$U = {
+        scrollToTop:scrollToTop,
         indexOf:indexOf,
         url: queryString,
         hasUndefinedProps: hasUndefinedProps,

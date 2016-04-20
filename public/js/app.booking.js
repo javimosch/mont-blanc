@@ -95,13 +95,16 @@ app.controller('ctrl.booking', ['server',
 
 
         $U.on('route-change', function(url) {
+
+            r.dom($U.scrollToTop);
+
             if ($U.indexOf(url, [URL.HOME]) || url == '') s.__header = 1;
             else s.__header = 2;
 
             if (url.indexOf(URL.RDV) !== -1) {
 
 
-                var cbHell = $U.cbHell(4, function(){
+                var cbHell = $U.cbHell(4, function() {
                     console.info('available-dates-retrived');
                     setSelectedRangeDateUsingOrder();
                 });
@@ -211,9 +214,18 @@ app.controller('ctrl.booking', ['server',
             selectAll: false
         };
 
+        s.validateBeforePayment = function(cb,validateLoginAlso) {
+            if(validateLoginAlso && (!s._user||!s._user._id)) return r.route(URL.LOGIN);
+            s.validateQuestions(function() {
+                s.validateDate(cb, () => r.route(URL.RDV));
+            }, () => r.route(URL.HOME));
+        }
 
         //MAIN BUTTONS
         s.proceedToDiagsSelection = function() {
+            
+            //s.validateBeforePayment(()=r.route(URL.PAYMENT));
+            
             s.validateQuestions(function() {
                 r.route('choix-diagnostics');
             }, () => {
@@ -283,7 +295,7 @@ app.controller('ctrl.booking', ['server',
         });
 
         function setSelectedRangeIDUsingOrder(slots, rngId) {
-            if(!$U.val(s._order,'_diag._id')) return;
+            if (!$U.val(s._order, '_diag._id')) return;
             if (rngId) return null;
             slots.forEach(v => {
                 var data = JSON.parse(window.atob(v.id));
@@ -341,7 +353,7 @@ app.controller('ctrl.booking', ['server',
         });
 
 
-        function orderPaid(){
+        function orderPaid() {
             return _.includes($D.ORDER_STATUS_PAID, s._order.status);
         }
 
@@ -750,7 +762,7 @@ app.controller('ctrl.booking', ['server',
 
         };
         s.$watch('model.constructionPermissionDate', function(val) {
-            s.__constructionPermissionDateSelectLabel = val?val:'choisir';
+            s.__constructionPermissionDateSelectLabel = val ? val : 'choisir';
             r.dom();
         });
 
@@ -759,7 +771,7 @@ app.controller('ctrl.booking', ['server',
             s.model.gasInstallation = val;
         };
         s.$watch('model.gasInstallation', function(val) {
-            s.__gazSelectLabel = val?val:'choisir';
+            s.__gazSelectLabel = val ? val : 'choisir';
             r.dom();
         });
 
@@ -1007,12 +1019,12 @@ app.controller('ctrl.booking', ['server',
             s.model = Object.assign(s.model, {
                 sell: paramBool('sell') || false,
                 house: paramBool('house') || false,
-                squareMeters: param('squareMeters', s.squareMeters) || undefined,// '- de 20m²',
+                squareMeters: param('squareMeters', s.squareMeters) || undefined, // '- de 20m²',
                 // apartamentType: param('apartamentType', s.apartamentType) || undefined,
-                constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined,// 'Entre 1949 et le 01/07/1997',
-                address: param('address') || undefined,// "15 rue L'Hopital Sain Louis",
-                gasInstallation: param('gasInstallation', s.gasInstallation) || undefined,// 'Oui, Moins de 15 ans',
-                electricityInstallation: param('electricityInstallation', s.electricityInstallation) || undefined,// 'Plus de 15 ans',
+                constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined, // 'Entre 1949 et le 01/07/1997',
+                address: param('address') || undefined, // "15 rue L'Hopital Sain Louis",
+                gasInstallation: param('gasInstallation', s.gasInstallation) || undefined, // 'Oui, Moins de 15 ans',
+                electricityInstallation: param('electricityInstallation', s.electricityInstallation) || undefined, // 'Plus de 15 ans',
                 date: paramDate('date'),
                 time: param('time', ['any']),
                 clientType: param('clientType', s.CLIENT_TYPES)
@@ -1054,7 +1066,7 @@ app.controller('ctrl.booking', ['server',
                     }
                     if (!data) return;
                     var cbHell = $U.cbHell(data.length, function() {
-                     //   console.log('slots-ok', data);
+                        //   console.log('slots-ok', data);
                         resolve(data);
                     });
 
@@ -1216,9 +1228,12 @@ app.controller('ctrl.booking', ['server',
                         s.model.clientType = _user.clientType;
                         s._user = _user;
 
-                        s.saveAsync().on('success', function() {
-                            s.route(URL.PAYMENT);
-                        });
+                        s.validateBeforePayment(function() {
+                            s.saveAsync().on('success', function() {
+                                s.route(URL.PAYMENT);
+                            });
+                        },true);
+
                         //s.subscribeMode = true;
                         //s.right();
 
@@ -1367,7 +1382,7 @@ app.controller('ctrl.booking', ['server',
         };
 
 
-        function fetchOrder(_order_id){
+        function fetchOrder(_order_id) {
             return $U.MyPromise(function(resolve, err, emit) {
                 var payload = Object.assign(s._order, {
                     __populate: {
@@ -1381,7 +1396,7 @@ app.controller('ctrl.booking', ['server',
                 db.ctrl('Order', 'getById', payload)
                     .then(d => {
                         if (d.ok) {
-                            console.info('fetch-order',payload._id,r.momentDateTime(d.result.diagStart));
+                            console.info('fetch-order', payload._id, r.momentDateTime(d.result.diagStart));
                             r.dom(function() {
                                 setOrder(d.result);
                             });
@@ -1440,7 +1455,7 @@ app.controller('ctrl.booking', ['server',
                 db.ctrl('Order', 'saveWithEmail', s.model).then(data => {
                     var saved = data.ok;
 
-                    console.info('save-order',data.err)
+                    console.info('save-order', data.err)
 
                     var exists = (data.err === 'ORDER_EXISTS');
                     var taken = (data.err === 'ORDER_TAKEN');
@@ -1526,7 +1541,7 @@ app.controller('ctrl.booking', ['server',
                     db.ctrl('Order', 'pay', order).then((data) => {
                         if (data.ok) {
                             if (success) {
-                                s._order.status='prepaid';
+                                s._order.status = 'prepaid';
                                 success();
                             }
                             s.booking.complete = true;
@@ -1537,7 +1552,7 @@ app.controller('ctrl.booking', ['server',
                                 type: 'success',
                                 duration: 100000
                             });
-                            
+
                             s._order = {}
                             $U.url.clear();
                             r.route(URL.HOME);
