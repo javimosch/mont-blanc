@@ -48,9 +48,10 @@
     <div class="row diag-row width90p center">
         <div class="col-sm-7 diag-col-label margin-bottom-one">
             <label>Permis de construire</label>
-            <div class="dropdown with-caret" ng-init="__constructionPermissionDateSelectLabelVal=null">
-                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span>{{__constructionPermissionDateSelectLabel()}}</span>
+            <div class="dropdown with-caret">
+                
+                <button class="btn btn-default btn-permis-de-construire dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span>{{__constructionPermissionDateSelectLabel}}</span>
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -62,9 +63,9 @@
         </div>
         <div class="col-sm-5 diag-col-label margin-bottom-one">
             <label>Gaz</label>
-            <div class="dropdown with-caret gaz-dropdown" ng-init="__gazSelectLabelVal=null">
+            <div class="dropdown with-caret gaz-dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span>{{__gazSelectLabel()}}</span>
+                    <span>{{__gazSelectLabel}}</span>
                     <span class="caret"></span>
                 </button>
                 

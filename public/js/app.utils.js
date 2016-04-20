@@ -355,6 +355,11 @@ function MyPromise(cb) {
             else _scope.errorCb = errorCb;
             return rta;
         },
+        err: function(errorCb) {
+            if (_scope.errorRes) errorCb(_scope.errorRes);
+            else _scope.errorCb = errorCb;
+            return rta;
+        },
         on: function(n, cb) {
             _scope.evt[n] = _scope.evt[n] || {};
             _scope.evt[n].cb = cb;
@@ -371,6 +376,7 @@ function MyPromise(cb) {
 var Eventify = (function(self) { //event handling snippet
     var once = {}; //stores parameters for events that already happen if there was a 'once' listener. Next listeners will be automatically called.
     var evts = {};
+
     function firePreserve(n, handler) {
         if (!once[n]) return;
         console.log('fire-preserve', n, once[n]);
@@ -394,9 +400,12 @@ var Eventify = (function(self) { //event handling snippet
             once[n] = p;
         }
         var pp = p;
-        try{
+        try {
             pp = JSON.stringify(pp);
-        }catch(e){pp=p}
+        }
+        catch (e) {
+            pp = p
+        }
         console.log('emit', n, pp, opt);
     };
     self.once = function(n, handler) {
@@ -425,7 +434,7 @@ var Eventify = (function(self) { //event handling snippet
 
 
 function onAnchorChange(handler) {
-    if ("onhashchange" in window) { // event supported?
+    if (false && "onhashchange" in window) { // event supported?
         window.onhashchange = function() {
             handler(window.location.hash);
         }
@@ -452,6 +461,117 @@ function cbHell(quantity, cb) {
     }
 }
 
+function hasUndefinedProps(obj, props) {
+    var has = false;
+    props.forEach(v => {
+        if (obj[v] == undefined) has = true;
+    });
+    return has;
+}
+
+/*!
+    query-string
+    Parse and stringify URL query strings
+    https://github.com/sindresorhus/query-string
+    by Sindre Sorhus
+    MIT License
+*/
+var queryString = (function() {
+    'use strict';
+    var queryString = {};
+
+    queryString.parse = function(str) {
+        if (typeof str !== 'string') {
+            return {};
+        }
+
+        str = str.trim().replace(/^\?/, '');
+
+        if (!str) {
+            return {};
+        }
+
+        return str.trim().split('&').reduce(function(ret, param) {
+            var parts = param.replace(/\+/g, ' ').split('=');
+            var key = parts[0];
+            var val = parts[1];
+
+            key = decodeURIComponent(key);
+            // missing `=` should be `null`:
+            // http://w3.org/TR/2012/WD-url-20120524/#collect-url-parameters
+            val = val === undefined ? null : decodeURIComponent(val);
+
+            if (!ret.hasOwnProperty(key)) {
+                ret[key] = val;
+            }
+            else if (Array.isArray(ret[key])) {
+                ret[key].push(val);
+            }
+            else {
+                ret[key] = [ret[key], val];
+            }
+
+            return ret;
+        }, {});
+    };
+
+    queryString.stringify = function(obj) {
+        return obj ? Object.keys(obj).map(function(key) {
+            var val = obj[key];
+
+            if (Array.isArray(val)) {
+                return val.map(function(val2) {
+                    return encodeURIComponent(key) + '=' + encodeURIComponent(val2);
+                }).join('&');
+            }
+
+            return encodeURIComponent(key) + '=' + encodeURIComponent(val);
+        }).join('&') : '';
+    };
+    
+    queryString.get = getParameterByName;
+    queryString.hash = function(str) {
+        var hash = (
+            (window.location.hash.indexOf('?') !== -1) ?
+            window.location.hash.substring(0, window.location.hash.indexOf('?')) : window.location.hash
+        );
+        var params = queryString.parse(window.location.hash.replace(hash, ''));
+        var new_params_string = queryString.stringify(params)
+        window.history.pushState({}, "", window.location.pathname + '#/' + str + '?' + new_params_string);
+    };
+    queryString.clear = function() {
+        var hash = (
+            (window.location.hash.indexOf('?') !== -1) ?
+            window.location.hash.substring(0, window.location.hash.indexOf('?')) : window.location.hash
+        );
+        window.history.pushState({}, "", window.location.pathname + hash);
+    };
+    queryString.set = function(key, new_value) {
+        var hash = (
+            (window.location.hash.indexOf('?') !== -1) ?
+            window.location.hash.substring(0, window.location.hash.indexOf('?')) : window.location.hash
+        );
+        var params = queryString.parse(window.location.hash.replace(hash, ''));
+        params[key] = new_value;
+        var new_params_string = queryString.stringify(params)
+        window.history.pushState({}, "", window.location.pathname + hash + '?' + new_params_string);
+    }
+
+    if (typeof module !== 'undefined' && module.exports) {
+        return queryString;
+    }
+    else {
+        return queryString;
+    }
+})();
+
+function indexOf(str,values){
+    var rta = false;
+    values.forEach(v=>{
+        if(str.indexOf(v)!==-1) rta = true;
+    });
+    return rta;
+}
 
 if (typeof exports !== 'undefined') {
     exports.MyPromise = MyPromise;
@@ -470,8 +590,11 @@ else {
     window.ifThenMessage = ifThenMessage;
 
     window.$U = {
-        cbHell:cbHell,
-        onAnchorChange:onAnchorChange,
+        indexOf:indexOf,
+        url: queryString,
+        hasUndefinedProps: hasUndefinedProps,
+        cbHell: cbHell,
+        onAnchorChange: onAnchorChange,
         valid: valid,
         val: val,
         numberBetween: numberBetween,

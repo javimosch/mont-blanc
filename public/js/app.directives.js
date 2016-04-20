@@ -634,7 +634,7 @@ app.directive('notify', function($rootScope, $timeout) {
         },
         restrict: 'AE',
         replace: true,
-        templateUrl: './views/directives/directive.alert.notify.html',
+        templateUrl: './views/common/popups/popup-notify.html',
         link: function(scope, elem, attrs) {
             var r = $rootScope;
             var s = scope;

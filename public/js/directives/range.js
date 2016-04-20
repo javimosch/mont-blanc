@@ -5,18 +5,22 @@ app.directive('rangeModel', function($rootScope, $timeout, $compile) {
         link: function(scope, el, attrs) {
             if(!attrs.rangeValues) throw Error('rangeModel: rangeValues attribute requited.');
             var vals = scope[attrs.rangeValues];
-            var unidad = (attrs.max+attrs.min)/Object.keys(vals).length
+            //var unidad = (attrs.max+attrs.min)/Object.keys(vals).length
+            $timeout(function(){
+                el.attr('min',0);
+                el.attr('max',Object.keys(vals).length-1);
+                el.attr('step',1);
+                $rootScope.$apply();
+            })
+           // console.log('range',vals);
             el.on('input',function(){
-               var index = Math.floor((el.val()+attrs.min)/unidad);
+               var index = el.val(); //Math.floor((el.val()+attrs.min)/unidad);
                set(get(index),scope);
+               //console.log('range',index,get(index));
+               $timeout(function(){$rootScope.$apply();});
             });
             function get(index){
-                var c=0;
-                for(var x in vals){
-                    if(c==index) return vals[x];
-                    c++;
-                }
-                return null;
+                return vals[Object.keys(vals)[index]];
             }
             function set(val,ss) {
                 var split = attrs.rangeModel.split('.');

@@ -10,6 +10,7 @@
 /*global $U*/
 /*global sizePrice*/
 /*global totalPrice*/
+/*global $D*/
 var app = angular.module('app', [
     'app.run',
     'app.services',
@@ -19,12 +20,12 @@ var app = angular.module('app', [
     'ui.bootstrap'
 ]);
 var URL = {
-    HOME:'home',
-    DIAGS:'choix-diagnostics',
+    HOME: 'home',
+    DIAGS: 'choix-diagnostics',
     RDV: 'rendez-vous',
-    LOGIN:'connexion',
-    SUBSCRIBE:'subscribe',
-    PAYMENT:'payment'
+    LOGIN: 'connexion',
+    SUBSCRIBE: 'subscribe',
+    PAYMENT: 'payment'
 };
 app.config(['$routeProvider',
     function($routeProvider) {
@@ -44,10 +45,12 @@ app.config(['$routeProvider',
         when('/connexion', {
             templateUrl: 'views/booking/booking-4-connection.html'
         }).
-         when('/inscription', {
+        when('/inscription', {
             templateUrl: 'views/booking/booking-5-inscription.html'
         }).
-
+        when('/payment', {
+            templateUrl: 'views/booking/booking-6-payment.html'
+        }).
 
         otherwise({
             redirectTo: '/'
@@ -75,26 +78,114 @@ app.controller('ctrl.booking', ['server',
         window.s = s;
         window.booking = s;
         r.dom(); //compile directives
-    
+
         moment.locale('fr')
-        
+
+
+        s.isDevEnv = () => window.location.hostname.indexOf('diags-javoche.c9users.io') !== -1;
+        setTimeout(function() {
+            if (s.isDevEnv()) {
+                s.auth = {
+                    email: 'javiermosch@gmail.com',
+                    pass: 'agency'
+                }
+                r.dom();
+            };
+        }, 3000);
+
 
         $U.on('route-change', function(url) {
-            if (url == URL.HOME || url == '') s.__header = 1;
+            if ($U.indexOf(url, [URL.HOME]) || url == '') s.__header = 1;
             else s.__header = 2;
 
-            if (url == URL.RDV) {
-                s.requestSlots(moment()._d).then((d) => s.slots1 = d);
-                s.requestSlots(moment().add(1, 'days')._d).then((d) => s.slots2 = d);
-                s.requestSlots(moment().add(2, 'days')._d).then((d) => s.slots3 = d);
-                s.requestSlots(moment().add(3, 'days')._d).then((d) => s.slots4 = d);
-               
-               s.slots2Label = moment().add(1, 'days').format('dddd DD MMMM');
-               s.slots3Label = moment().add(2, 'days').format('dddd DD MMMM');
-               s.slots4Label = moment().add(3, 'days').format('dddd DD MMMM');
-               
+            if (url.indexOf(URL.RDV) !== -1) {
+
+
+                var cbHell = $U.cbHell(4, setSelectedRangeDateUsingOrder);
+
+                s.requestSlots(moment()._d).then((d) => {
+                    s.slots1 = d;
+                    cbHell.next();
+                });
+                s.requestSlots(moment().add(1, 'days')._d).then((d) => {
+                    s.slots2 = d;
+                    cbHell.next();
+                });
+                s.requestSlots(moment().add(2, 'days')._d).then((d) => {
+                    s.slots3 = d;
+                    cbHell.next();
+                });
+                s.requestSlots(moment().add(3, 'days')._d).then((d) => {
+                    s.slots4 = d;
+                    cbHell.next();
+                });
+
+                s.slots2Label = moment().add(1, 'days').format('dddd DD MMMM');
+                s.slots3Label = moment().add(2, 'days').format('dddd DD MMMM');
+                s.slots4Label = moment().add(3, 'days').format('dddd DD MMMM');
+
             }
+
+            if ($U.indexOf(url, [URL.RDV, URL.LOGIN, URL.PAYMENT])) {
+                if ((s.__manualUrlChange || 0) + 5000 < new Date().getTime()) {
+                    resolvePaymentScreenAuth().then(resolvePaymentScreenOrder);
+                }
+            }
+
         });
+
+        function resolvePaymentScreenAuth() {
+            return $U.MyPromise(function(resolve, err, emit) {
+                if (s._user && s._user._id) {
+                    if (!$U.url.get('auth')) {
+                        $U.url.set('auth', s._user._id);
+                        s.__manualUrlChange = new Date().getTime();
+                    }
+                    resolve();
+                    return;
+                }
+                if ($U.url.get('auth')) {
+                    db.ctrl('User', 'get', {
+                        _id: $U.url.get('auth')
+                    }).then(_user => {
+                        _user = _user.ok && _user.result || null;
+                        if (_user) {
+                            s._user = _user;
+                            $U.url.set('auth', s._user._id);
+                            s.__manualUrlChange = new Date().getTime();
+                            resolve();
+                        }
+                        else {
+                            return r.route(URL.LOGIN);
+                        }
+                    });
+                }
+                else {
+                    return r.route(URL.LOGIN);
+                }
+            });
+        }
+
+        function resolvePaymentScreenOrder() {
+            if ($U.url.get('order')) {
+                if (!s._order._id) s.fetchOrder($U.url.get('order'));
+            }
+            else {
+                if (!s._order._id) {
+                    s.saveAsync().on('success', function() {
+                        s.__manualUrlChange = new Date().getTime();
+                        if (!s._order._id) throw Error('ORDER-ID-NULL');
+                        $U.url.set('order', s._order._id);
+                    })
+                }
+                else {
+                    if (!s._order._id) throw Error('ORDER-ID-NULL');
+                    s.__manualUrlChange = new Date().getTime();
+                    $U.url.set('order', s._order._id);
+                }
+            }
+
+        }
 
         //
         s._user = {
@@ -138,10 +229,13 @@ app.controller('ctrl.booking', ['server',
         }
         s.proceedToConnect = function() {
             s.validateDate(function() {
-                if (!s._order) {
-                    s.saveAsync();
-                    console.info('You are able to connect');
+                if (s._user && s._user._id) {
+                    r.route(URL.PAYMENT);
                 }
+                else {
+                    r.route(URL.LOGIN);
+                }
+
             });
         }
 
@@ -175,22 +269,61 @@ app.controller('ctrl.booking', ['server',
                 if (err) err();
             }, cb);
         };
-        
+
         //DIAG DATE SELECTION -> Get the slot that the user had selected to the right place.
-        s.$watch('model.range',function(id){
-           if(!id) return;
-           var data = JSON.parse(window.atob(id));
-           s.model._diag = data._diag;
-           s.model.diagStart = data.start;
-           s.model.diagEnd = data.end;
+        s.$watch('model.range', function(id) {
+            if (!id) return;
+            var data = JSON.parse(window.atob(id));
+            s.model._diag = data._diag;
+            s.model.diagStart = data.start;
+            s.model.diagEnd = data.end;
         });
+
+        function setSelectedRangeIDUsingOrder(slots, rngId) {
+            if(!$U.val(s._order,'_diag._id')) return;
+            if (rngId) return null;
+            slots.forEach(v => {
+                var data = JSON.parse(window.atob(v.id));
+                if (data._diag == s._order._diag || data._diag == s._order._diag._id) {
+                    if (data.start == s._order.diagStart && data.end == s._order.diagEnd) {
+                        r.dom(function() {
+                            s.model.range = v.id;
+                            return v.id;
+                        });
+                    }
+                }
+            })
+        }
+
+        function setSelectedRangeDateUsingOrder() {
+            if (!$U.indexOf(r.__route, [URL.RDV])) return;
+            var id = setSelectedRangeIDUsingOrder(s.slots1, null);
+            id = setSelectedRangeIDUsingOrder(s.slots2, id);
+            id = setSelectedRangeIDUsingOrder(s.slots3, id);
+            id = setSelectedRangeIDUsingOrder(s.slots4, id);
+        }
 
 
         //DOM CLASS
-        s.dateSlotSelected = function(rng){
+        s.dateSlotSelected = function(rng) {
             return (s.model.range && (s.model.range == rng.id));
         }
 
+
+        //DOM HELPERS
+
+        s.orderDateFormatted = function() {
+            if (!s._order) console.warn('invalid-order');
+            var _date = s._order && s._order.diagStart;
+            var m = moment(_date).format('dddd D MMMM YYYY');
+            m += 'à ' + r.momentTime(_date);
+            return m.substring(0, 1).toUpperCase() + m.slice(1);
+        };
+        s.orderDiagFormatted = function() {
+            return 'Avec ' +
+                (((s._order && s._order._diag && s._order._diag.firstName) && s._order._diag.firstName + ' ') || 'Pepe ') +
+                (((s._order && s._order._diag && s._order._diag.lastName) && s._order._diag.lastName.substring(0, 1).toUpperCase() + ' ') || 'G');
+        };
 
         s.$watch('checks.selectAll', function() {
             if (!s.diags) return;
@@ -204,9 +337,12 @@ app.controller('ctrl.booking', ['server',
             if (d.ok && d.result.length > 0) s.settings = d.result[0];
         });
 
-        s.orderPaid = () => {
-            return _.includes(['prepaid', 'completed'], s._order.status);
+
+        function orderPaid(){
+            return _.includes($D.ORDER_STATUS_PAID, s._order.status);
         }
+
+        s.orderPaid = orderPaid;
 
         s.departmentHasTermites = () => {
             if (s.model.department) {
@@ -232,7 +368,7 @@ app.controller('ctrl.booking', ['server',
 
 
             var delegated = 'The payment of this order was delegated to ' + s.booking.order.delegatedTo;
-            if (_.includes(['prepaid', 'completed'], s._order.status)) {
+            if (orderPaid()) {
                 if (s._order.landLordPaymentEmailSended == true) {
                     return "This order was delegated to " + s.booking.order.delegatedTo + ' and is already paid.';
                 }
@@ -244,6 +380,178 @@ app.controller('ctrl.booking', ['server',
                 return delegated;
             }
         };
+
+
+        //Auto-save Every 5sec, only if _order change.
+        function updateAutoSave() {
+            var saving = false;
+            if (s.__autoSaveInterval) window.clearInterval(s.__autoSaveInterval);
+            if (!s._order) return console.info('auto-save: call updateAutoSave _order exists');
+            cloneOrder();
+            s.__autoSaveInterval = window.setInterval(function() {
+                if (saving) return;
+                if (!s._order) return; //no order to save;
+                var hasChanged = !_.isEqual(s.__clonedOrder, s._order);
+                if (hasChanged) {
+                    saving = true;
+                    cloneOrder();
+                    db.ctrl('Order', 'update', s._order).then(function() {
+                        saving = false;
+                        console.info('auto-save: saved');
+                    })
+                }
+            }, 5000);
+
+            function cloneOrder() {
+                s.__clonedOrder = _.cloneDeep(s._order);
+            }
+        }
+
+
+        //KEYS WHERE Version2 --------------------------------
+        s.__keysWhereItems = {};
+        s.__keysWhereGetItems = () => {
+            if (!s._user || !s._user.clientType) return {
+                'Ou ?': () => '',
+            };
+            if (s.isLandLord()) {
+                return {
+                    'Ou ?': () => '',
+                    'Diag Address': () => s._order.address,
+                    'Client Address': () => s._user.address, //when landlord
+                    'Other': () => 'other'
+                };
+            }
+            else {
+                return {
+                    'Ou ?': () => '',
+                    'Diag Address': () => s._order.address,
+                    'Agency Address': () => s._user.address, //when not-landlord
+                    'Landlord Address': () => s._order.landLordAddress, //when not-landlord 
+                    'Other': () => 'other'
+                };
+            }
+        };
+        s.$watch('_user', function(val) {
+            s.__keysWhereItems = s.__keysWhereGetItems();
+        }, true);
+        s.__keysWhereSelectFirstItem = () => s.__keysWhereItems && Object.keys(s.__keysWhereItems)[0] || "Loading";
+        s.__keysWhereSelectLabel = () => s.__keysWhereSelectLabelVal || s.__keysWhereSelectFirstItem();
+        s.__keysWhereSelect = (key, val) => {
+            s._order.keysWhere = val && val() || undefined;
+        };
+        s.$watch('_order.keysWhere', function(val) {
+            if (val == undefined) {
+                r.dom(() => {
+                    s._order.keysAddress = 'non disponible';
+                });
+                r.dom(() => {
+                    s._order.keysAddress = undefined;
+                }, 2000);
+                //
+                return s.__keysWhereSelectLabelVal = 'Ou ?';
+            }
+            Object.keys(s.__keysWhereItems).forEach(k => {
+                if (s.__keysWhereItems[k]() == val) {
+                    s.__keysWhereSelectLabelVal = k;
+                }
+            });
+            s._order.keysAddress = (val == 'other') ? '' : val;
+        });
+
+        //KEYS TIME FROM ------------------------------------------------------------------------------------------------
+        s.__keysTimeFromItems = {};
+        s.__keysTimeFromGetItems = () => {
+            var vals = {};
+            if (!s._order) return vals;
+            var m = moment(s._order.diagStart).hours(8);
+            while (m.isBefore(moment(s._order.diagStart))) {
+                vals[r.momentTime(m)] = new Date(m.toString());
+                m = m.add(5, 'minutes');
+            };
+            vals[r.momentTime(s._order.diagStart)] = new Date(moment(s._order.diagStart).toString());
+            return vals;
+        };
+        s.__keysTimeFromSelectFirstItem = () => s.__keysTimeFromItems && Object.keys(s.__keysTimeFromItems)[0] || "Loading";
+        s.__keysTimeFromSelectLabel = 'choisir';
+        s.__keysTimeFromSelect = (key, val) => {
+            s._order.keysTimeFrom = val;
+            if (dtAfter(s._order.keysTimeFrom, s._order.keysTimeTo)) {
+                s._order.keysTimeTo = undefined;
+            }
+        };
+        s.$watch('_order.keysTimeFrom', function(val) {
+            if (!val) {
+                s.__keysTimeFromSelectLabel = 'choisir';
+            }
+            else {
+                s.__keysTimeFromSelectLabel = 'choisir';
+                _.each(s.__keysTimeFromItems, (v, k) => {
+                    if (v == val) s.__keysTimeFromSelectLabel = k;
+                });
+            }
+
+        });
+        s.$watch('_order.diagStart', function(val) {
+            s.__keysTimeFromItems = s.__keysTimeFromGetItems();
+        });
+
+
+        function dtAfter(d1, d2, unit) {
+            return moment(d1).isAfter(moment(d2), unit);
+        }
+
+        function dtBefore(d1, d2, unit) {
+            return moment(d1).isAfter(moment(d2), unit);
+        }
+
+
+        //KEYS TIME TO ------------------------------------------------------------------------------------------------
+        s.__keysTimeToItems = {};
+        s.__keysTimeToGetItems = () => {
+            var vals = {};
+            if (!s._order) return vals;
+            var m = moment(s._order.diagStart).hours(8).minutes(0);
+            if (
+                moment(s._order.keysTimeFrom).isAfter(m) &&
+                moment(s._order.keysTimeFrom).isBefore(moment(s._order.diagStart))
+            ) {
+                m = m.hours(moment(s._order.keysTimeFrom).hours())
+                m = m.minutes(moment(s._order.keysTimeFrom).minutes())
+            }
+
+            while (m.isBefore(moment(s._order.diagStart))) {
+                vals[r.momentTime(m)] = new Date(m.toString());
+                m = m.add(5, 'minutes');
+            };
+            vals[r.momentTime(s._order.diagStart)] = new Date(moment(s._order.diagStart).toString());
+            return vals;
+        };
+        s.__keysTimeToSelectFirstItem = () => s.__keysTimeToItems && Object.keys(s.__keysTimeToItems)[0] || "Loading";
+        s.__keysTimeToSelectLabel = 'choisir';
+        s.__keysTimeToSelect = (key, val) => {
+            s._order.keysTimeTo = val;
+        };
+        s.$watch('_order.keysTimeTo', function(val) {
+            if (!val) {
+                s.__keysTimeToSelectLabel = 'choisir';
+            }
+            else {
+                s.__keysTimeToSelectLabel = 'choisir';
+                _.each(s.__keysTimeToItems, (v, k) => {
+                    if (v == val) s.__keysTimeToSelectLabel = k;
+                });
+            }
+
+        });
+        s.$watch('_order.keysTimeFrom', function(val) {
+            s.__keysTimeToItems = s.__keysTimeToGetItems();
+        });
+        s.$watch('_order.diagStart', function(val) {
+            s.__keysTimeToItems = s.__keysTimeToGetItems();
+        });
+        //-------------------------------------------------------------------------
+
 
         s.keysWhereTime = {
             invalidKeysTimeMessage: () => {
@@ -371,15 +679,24 @@ app.controller('ctrl.booking', ['server',
             maxDate: moment().add(60, 'day'),
             initDate: new Date()
         };
+
+
+        s.CLIENT_TYPES = ['agency', 'enterprise', 'landlord', 'other'];
+        s.CLIENT_TYPES_COMPANY = ['agency', 'enterprise'];
+        s.isLandLord = () => {
+            return !_.includes(s.CLIENT_TYPES_COMPANY, s._user.clientType);
+        }
+        s.isAgency = () => {
+            return !s.isLandLord();
+        };
+
         s.model = {
             date: undefined,
             diags: {},
-            clientType: 'agency'
+            clientType: 'landlord'
         };
 
-        s.isAgency = () => {
-            return s.model.clientType == 'agency' || false;
-        };
+
 
         s.validModel = () => {
             var isValid = true &&
@@ -424,25 +741,23 @@ app.controller('ctrl.booking', ['server',
             }, 200);
         };
 
-        s.__constructionPermissionDateSelectFirstItem = () => s.constructionPermissionDate && Object.keys(s.constructionPermissionDate)[0] || "Loading";
-        s.__constructionPermissionDateSelectLabel = () => s.__constructionPermissionDateSelectLabelVal || s.__constructionPermissionDateSelectFirstItem();
+        s.__constructionPermissionDateSelectLabel = 'choisir';
         s.__constructionPermissionDateSelect = (key, val) => {
             s.model.constructionPermissionDate = val;
 
         };
         s.$watch('model.constructionPermissionDate', function(val) {
-            s.__constructionPermissionDateSelectLabelVal = val;
+            s.__constructionPermissionDateSelectLabel = val?val:'choisir';
+            r.dom();
         });
 
-
-
-        s.__gazSelectFirstItem = () => s.gasInstallation && Object.keys(s.gasInstallation)[0] || "Loading";
-        s.__gazSelectLabel = () => s.__gazSelectLabelVal || s.__gazSelectFirstItem();
+        s.__gazSelectLabel = 'choisir';
         s.__gazSelect = (key, val) => {
             s.model.gasInstallation = val;
         };
         s.$watch('model.gasInstallation', function(val) {
-            s.__gazSelectLabelVal = val;
+            s.__gazSelectLabel = val?val:'choisir';
+            r.dom();
         });
 
 
@@ -689,15 +1004,15 @@ app.controller('ctrl.booking', ['server',
             s.model = Object.assign(s.model, {
                 sell: paramBool('sell') || false,
                 house: paramBool('house') || false,
-                squareMeters: param('squareMeters', s.squareMeters) || '- de 20m²',
+                squareMeters: param('squareMeters', s.squareMeters) || undefined,// '- de 20m²',
                 // apartamentType: param('apartamentType', s.apartamentType) || undefined,
-                constructionPermissionDate: param('cpd', s.constructionPermissionDate) || 'Entre 1949 et le 01/07/1997',
-                address: param('address') || "15 rue L'Hopital Sain Louis",
-                gasInstallation: param('gasInstallation', s.gasInstallation) || 'Oui, Moins de 15 ans',
-                electricityInstallation: param('electricityInstallation', s.electricityInstallation) || 'Plus de 15 ans',
+                constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined,// 'Entre 1949 et le 01/07/1997',
+                address: param('address') || undefined,// "15 rue L'Hopital Sain Louis",
+                gasInstallation: param('gasInstallation', s.gasInstallation) || undefined,// 'Oui, Moins de 15 ans',
+                electricityInstallation: param('electricityInstallation', s.electricityInstallation) || undefined,// 'Plus de 15 ans',
                 date: paramDate('date'),
                 time: param('time', ['any']),
-                clientType: param('clientType', ['agency', 'landlord'])
+                clientType: param('clientType', s.CLIENT_TYPES)
             });
             $U.emitPreserve('booking-defaults-change');
 
@@ -727,7 +1042,7 @@ app.controller('ctrl.booking', ['server',
                     time: time
                 };
                 db.getAvailableRanges(order).then(function(data) {
-                    console.log('slots',data);
+                    console.log('slots', data);
                     data = data.length > 0 && data || null;
                     if (s.model.time == 'any') {
                         if (data && s.availableTimeRanges.length > 0) {
@@ -736,19 +1051,19 @@ app.controller('ctrl.booking', ['server',
                     }
                     if (!data) return;
                     var cbHell = $U.cbHell(data.length, function() {
-                        console.log('slots-ok',data);
+                        console.log('slots-ok', data);
                         resolve(data);
                     });
-                    
+
                     data.forEach(r => {
-                        
+
                         r.id = window.btoa(JSON.stringify(r));
-                        
+
                         db.ctrl('User', 'get', {
                             _id: r._diag
                         }).then(d => {
                             if (d.ok && d.result) {
-                                r.name = d.result.firstName+', '+ d.result.lastName.substring(0,1);
+                                r.name = d.result.firstName + ', ' + d.result.lastName.substring(0, 1);
                                 if (d.result.diagPriority) {
                                     r.name += ' (' + d.result.diagPriority + ')';
                                 }
@@ -880,7 +1195,7 @@ app.controller('ctrl.booking', ['server',
         }
 
         s.orderSaved = () => {
-            return s.booking.order.saved;
+            return s._order._id;
         };
         s.paymentDelegated = () => {
             return s._order.landLordPaymentEmailSended == true;
@@ -897,9 +1212,13 @@ app.controller('ctrl.booking', ['server',
                     if (_user) {
                         s.model.clientType = _user.clientType;
                         s._user = _user;
-                        s.saveAsync();
-                        s.subscribeMode = true;
+
+                        s.saveAsync().on('success', function() {
+                            s.route(URL.PAYMENT);
+                        });
+                        //s.subscribeMode = true;
                         //s.right();
+
                     }
                     else {
                         s.warningMsg('Invalid credentials');
@@ -1045,81 +1364,149 @@ app.controller('ctrl.booking', ['server',
         };
 
 
-        s.saveAsync = () => {
-            if (s._user) {
-                //s.model._client = s._user._id;
-                s.model._client = s._user; //we need the full user ref for price discount calcs.
-                s.model.email = s._user.email;
-                s.model.clientType = s._user.clientType;
-            }
-
-            //defaults for keysTime
-            if (!s.model.keysTimeFrom && s.model.diagStart) {
-                s.model.keysTimeFrom = moment(s.model.diagStart).subtract(2, 'hour');
-            }
-            if (!s.model.keysTimeTo && s.model.diagStart) {
-                s.model.keysTimeTo = moment(s.model.diagStart);
-            }
-
-            db.ctrl('Order', 'saveWithEmail', s.model).then(data => {
-                var saved = data.ok;
-                var exists = (data.err === 'ORDER_EXISTS');
-                var taken = (data.err === 'ORDER_TAKEN');
-                //
-                s._order = data.result;
-                //
-
-                if (!data.ok) console.warn('save-error', data);
-
-                db.ctrl('Order', 'getById', Object.assign(s._order, {
-                        __populate: {
-                            _client: '_id email clientType address',
-                            _diag: '_id email clientType address'
-                        }
-                    }))
-                    .then(d => {
-                        if (d.ok) s._order = d.result;
-                        s.keysWhereTime.emit('onItem');
-                    });
-
-
-
-                //
-                if (saved) {
-                    s.successMsg('Order created');
-                }
-                if (exists) {
-                    //s.warningMsg('Order already exists.');
-                    s.successMsg('Order retaken');
-                }
-                if (taken) {
-                    //s.successMsg("An order with the same address and time is taken by another client. You can't proceed until you change order time or address.");
-                }
-
-
-
-                s._orderSAVED = saved || exists;
-                s.booking.order.saved = saved || exists;
-                s.booking.order.exists = exists;
-
-
-
-                s.booking.order.taken = (taken == true);
-
-            }).error(err => {
-                s.notify('There was a server issue during the order saving proccess. Retrying in 10 seconds. Wait.', {
-                    type: 'warning',
-                    duration: 100000
+        function fetchOrder(_order_id){
+            return $U.MyPromise(function(resolve, err, emit) {
+                var payload = Object.assign(s._order, {
+                    __populate: {
+                        _client: '_id email clientType address',
+                        _diag: '_id email clientType address firstName lastName'
+                    }
                 });
-                setTimeout(s.saveAsync, 10000);
+                if (_order_id) {
+                    payload._id = _order_id;
+                }
+                db.ctrl('Order', 'getById', payload)
+                    .then(d => {
+                        if (d.ok) {
+                            r.dom(function() {
+                                setOrder(d.result);
+                            });
+                            resolve(s._order);
+                        }
+                        else {
+                            err(d);
+                        }
+                    });
             });
+        }
+        s.fetchOrder = fetchOrder;
 
+        function setOrder(_order) {
+            s._order = _order;
+            commitOrderInfo();
+            updateAutoSave();
+        }
+
+        function commitOrderInfo() {
+            if (!s._order) return;
+            s._order.info = Object.assign(s._order.info, {
+                house: $U.val(s.model, 'house') || s._order.info.house,
+                sell: $U.val(s.model, 'sell') || s._order.info.sell
+            });
+        }
+
+        //SAVEASYNC
+        s.saveAsync = () => {
+            return $U.MyPromise(function(resolve, err, evt) {
+
+
+                if (s._user) {
+                    //s.model._client = s._user._id;
+                    s.model._client = s._user; //we need the full user ref for price discount calcs.
+                    s.model.email = s._user.email;
+                    s.model.clientType = s._user.clientType;
+                }
+
+                //defaults for keysTime
+                if (!s.model.keysTimeFrom && s.model.diagStart) {
+                    s.model.keysTimeFrom = moment(s.model.diagStart).subtract(2, 'hour');
+                }
+                if (!s.model.keysTimeTo && s.model.diagStart) {
+                    s.model.keysTimeTo = moment(s.model.diagStart);
+                }
+
+                //update price
+                s.model.price = s.totalPrice(true);
+
+                if ($U.hasUndefinedProps(s.model, ['_diag', 'diagStart', 'diagEnd'])) {
+                    s.warningMsg('Select one available date');
+                    return r.route(URL.RDV);
+                }
+
+                db.ctrl('Order', 'saveWithEmail', s.model).then(data => {
+                    var saved = data.ok;
+
+
+                    var exists = (data.err === 'ORDER_EXISTS');
+                    var taken = (data.err === 'ORDER_TAKEN');
+                    if (exists || taken) saved = true;
+                    //
+                    r.dom(function() {
+                        setOrder(data.result);
+
+                        updateAutoSave();
+                        if (saved) {
+                            evt('success');
+                        }
+                        if (!saved) {
+                            console.warn('save-error', data);
+                            return s.warningMsg('An error occured, please try again later');
+                        }
+
+                        db.ctrl('Order', 'getById', Object.assign(s._order, {
+                                __populate: {
+                                    _client: '_id email clientType address',
+                                    _diag: '_id email clientType address firstName lastName'
+                                }
+                            }))
+                            .then(d => {
+                                if (d.ok) {
+                                    setOrder(d.result);
+
+                                    s.keysWhereTime.emit('onItem');
+                                }
+
+                            });
+
+
+
+                        //
+                        if (saved) {
+                            s.successMsg('Order created');
+                        }
+                        if (exists) {
+                            //s.warningMsg('Order already exists.');
+                            s.successMsg('Order retaken');
+                        }
+                        if (taken) {
+                            //s.successMsg("An order with the same address and time is taken by another client. You can't proceed until you change order time or address.");
+                        }
+
+
+
+                        s._orderSAVED = saved || exists;
+                        s.booking.order.saved = saved || exists || taken;
+                        s.booking.order.exists = exists;
+
+
+
+                        s.booking.order.taken = (taken == true);
+                    });
+                    //
+                }).err(err => {
+                    s.notify('There was a server issue during the order saving proccess. Retrying in 10 seconds. Wait.', {
+                        type: 'warning',
+                        duration: 100000
+                    });
+                    setTimeout(s.saveAsync, 10000);
+                });
+            });
         };
 
 
 
 
-        var isLandlord = () => s.model.clientType === 'landlord';
+
 
         //require an order to be saved (s._order)
         s.payNOW = (success) => {
@@ -1134,6 +1521,7 @@ app.controller('ctrl.booking', ['server',
                     db.ctrl('Order', 'pay', order).then((data) => {
                         if (data.ok) {
                             if (success) {
+                                s._order.status='prepaid';
                                 success();
                             }
                             s.booking.complete = true;
@@ -1144,6 +1532,10 @@ app.controller('ctrl.booking', ['server',
                                 type: 'success',
                                 duration: 100000
                             });
+                            
+                            s._order = {}
+                            $U.url.clear();
+                            r.route(URL.HOME);
                         }
                         else {
                             console.info('PAY-FAIL', data.err);

@@ -340,7 +340,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
         }).then(function(res) {
             _log(res);
             if (res.data && res.data.ok == false) {
-                console.warn('SERVER:REQUEST:WARNING = ', res.data.err || "Unkown error detected");
+                console.warn('SERVER:REQUEST:WARNING = ', res.data.err || "Unkown error detected",relativeUrl);
             }
             return callback(res);
         }, (err) => {

@@ -40,16 +40,16 @@
                             <p class="label">Vous avez déjà passé commande</p>
                         </div>
                         <div class="row margin-top-one">
-                            <input class="diags-input" placeholder="Adresse email">
+                            <input ng-model="auth.email" type="email" class="diags-input" placeholder="Adresse email">
                         </div>
                         <div class="row margin-top-half">
-                            <input class="diags-input" placeholder="Mot de passe">
+                            <input type="password" ng-model="auth.pass" class="diags-input" placeholder="Mot de passe">
                         </div>
                         <div class="row margin-top-one">
                             <a class="diags-link text-center">Mot de passe oublié ?</a>
                         </div>
                         <div class="row margin-top-one">
-                            <button class="btn btn-xl bg-madison">Connexion</button>
+                            <button  ng-click="login()" class="btn btn-xl bg-madison">Connexion</button>
                         </div>
                     </div>
                 </div>
@@ -65,22 +65,22 @@
                             <p class="label">C’est la première fois que vous passez commande</p>
                         </div>
                         <div class="row margin-top-one">
-                            <input class="diags-input" placeholder="Adresse email">
+                            <input type="email" ng-model="auth.email" class="diags-input" placeholder="Adresse email">
                         </div>
                         <div class="row margin-top-half">
-                            <input class="diags-input" placeholder="Mot de passe">
+                            <input ng-model="auth.password" type="password" class="diags-input" placeholder="Mot de passe">
                         </div>
                         <div class="row margin-top-two">
                             <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">S’inscrire en tant que </span></i>
                         </div>
                         <div class="row margin-top-one">
-                            <button class="btn btn-xl bg-azure-radiance">Propriéraire</button>
+                            <button ng-click="subscribe('landlord')" class="btn btn-xl bg-azure-radiance">Propriéraire</button>
                         </div>
                         <div class="row margin-top-half">
-                            <button class="btn btn-xl bg-pomegranate">Agence immobilière</button>
+                            <button ng-click="subscribe('agency')" class="btn btn-xl bg-pomegranate">Agence immobilière</button>
                         </div>
                         <div class="row margin-top-half">
-                            <button class="btn btn-xl bg-blaze-orange">Autre entreprise</button>
+                            <button ng-click="subscribe('other')" class="btn btn-xl bg-blaze-orange">Autre entreprise</button>
                         </div>
                     </div>
                 </div>

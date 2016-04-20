@@ -592,7 +592,7 @@ h2.diags.black {
 
 .home .diag-dialog-right {
     max-width: 481px;
-    background-color: #00A9FF;
+    background-color: #00BB55;
 }
 
 .dropdown .caret {
@@ -870,6 +870,10 @@ h2.diags.black {
     margin: 0px;
 }
 
+.diags-form textarea.diags-input {
+    padding-top: 10px;
+}
+
 .diags-form .diags-input {
     width: 286px;
     height: 48px;
@@ -877,9 +881,55 @@ h2.diags.black {
     box-shadow: none;
     border: 1px solid #C6DEE8;
     font-family: 'Avenir-Oblique';
-    color: #0B3967;
+    color: #8597AB;
     font-size: 14px;
     padding: 0px 26px;
+    border-radius: 5px;
+}
+
+.diags-form .diags-select {
+    max-height: 300px;
+    overflow: overlay;
+}
+
+.diags-form .diags-select li {
+    width: 286px;
+    height: 48px;
+    font-family: 'Avenir-Oblique';
+    color: #8597AB;
+    font-size: 14px;
+    padding: 0px;
+}
+
+.diags-form .diags-select li a {
+    font-family: 'Avenir-Oblique';
+    color: #8597AB!important;
+    font-size: 14px;
+    width: 100%;
+    line-height: 48px;
+    padding: 0px 0px 0px 26px;
+}
+
+.diags-form .diags-input > span:first-child {
+    font-family: 'Avenir-Oblique';
+    color: #8597AB!important;
+    font-size: 14px;
+}
+
+.diags-form .diags-input .caret {
+    top: 14px;
+}
+
+.diags-form .diags-btn-group > div {
+    padding: 0px;
+}
+
+.diags-form .diags-input.xs {
+    width: 90px;
+}
+
+.diags-form .diags-input.half {
+    width: 140px;
 }
 
 .diags-form .label {
@@ -890,10 +940,35 @@ h2.diags.black {
     text-align: left;
 }
 
+.notify .box {
+        border: 0px;
+    display: flex;
+    width: 100%;
+    position: relative;
+    top: 1px;
+}
+
+.notify .box span {
+    font-family: Avenir-Oblique;
+    font-size: 1.1em;
+    padding: 15px;
+    text-align: justify;
+}
+
+.notify .box .close {
+    right: 10px;
+    top: 5px;
+    position: absolute;
+}
+
 .diags-form .btn {
     font-family: 'Avenir-Medium';
     font-size: 24px;
     color: white;
+}
+
+.btn-permis-de-construire {
+    width: 215px;
 }
 
 .diags-form .btn-xl {
@@ -909,6 +984,27 @@ h2.diags.black {
     display: inline-block;
 }
 
+.diags-icons img {
+    margin-top: 0.4em!important;
+    margin-right: 0.5em;
+}
+
+.roman-16 {
+    font-size: 16px;
+    font-family: 'Avenir-Roman';
+}
+
+.light-14 {
+    font-size: 14px;
+    font-family: 'Avenir-Light';
+}
+
+.diags-form .row.diags-botticelli-wrapper {
+    border: 2px solid #CAE1E9;
+    padding: 10px 15px;
+    border-radius: 5px
+}
+
 .diags-form .diags-link:hover,
 .diags-form .diags-link:focus,
 .diags-form .diags-link:active {
@@ -918,6 +1014,7 @@ h2.diags.black {
 .diags-form-wrapper {
     border: 2px solid #C6DEE8;
     padding: 20px 0px;
+    border-radius: 5px;
 }
 
 @media only screen and (min-width: 480px) {
@@ -941,5 +1038,3 @@ h2.diags.black {
         min-height: 535px;
     }
 }
-
-

@@ -234,7 +234,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
             var path = window.location.origin + window.location.pathname;
             path += '#/' + url;
             r.$emit('route-change', url);
-            window.location.href = path;
+            $U.url.hash(url);
+            window.location.href = window.location.href;
         }, delay || 0);
         r.__route = url;
         return url;
