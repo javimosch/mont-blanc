@@ -24,7 +24,8 @@ var URL = {
     DIAGS: 'choix-diagnostics',
     RDV: 'rendez-vous',
     LOGIN: 'connexion',
-    SUBSCRIBE: 'subscribe',
+    NEW_ACCOUNT: 'new-inscription',
+    ACCOUNT_DETAILS: 'inscription-details',
     PAYMENT: 'payment'
 };
 app.config(['$routeProvider',
@@ -45,8 +46,11 @@ app.config(['$routeProvider',
         when('/connexion', {
             templateUrl: 'views/booking/booking-4-connection.html'
         }).
-        when('/inscription', {
-            templateUrl: 'views/booking/booking-5-inscription.html'
+        when('/new-inscription', {
+            templateUrl: 'views/booking/booking-5-new-inscription.html'
+        }).
+        when('/inscription-details', {
+            templateUrl: 'views/booking/booking-5-inscription-details.html'
         }).
         when('/payment', {
             templateUrl: 'views/booking/booking-6-payment.html'
