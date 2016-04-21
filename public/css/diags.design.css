@@ -1038,3 +1038,30 @@ h2.diags.black {
         min-height: 535px;
     }
 }
+
+
+.diags-style h1,.diags-style h2,.diags-style h3,.diags-style h4,.diags-style h5,.diags-style h6{
+    font-family: 'Avenir-Black'!important;
+}
+.diags-style h4{
+    font-size:1.5em!important;
+}
+
+.diags-style .table th{
+    font-family: 'Avenir-Book'!important;
+    font-size: 14px!important;
+    font-weight: 500;
+}
+
+.diags-style .table td out{
+    font-family: 'Avenir-Light'!important;
+    font-size: 12px!important;
+        font-weight: 800;
+}
+
+.diags-style .cal-slide-content a.event-item{
+    font-family: 'Avenir-Light'!important;
+    font-size: 12px!important;
+        font-weight: 800;
+}
+

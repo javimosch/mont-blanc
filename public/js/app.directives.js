@@ -1,3 +1,7 @@
+/*global $U*/
+/*global angular*/
+/*global _*/
+/*global $*/
 var app = angular.module('app.directives', []);
 
 app.directive('tableFilter', function(
@@ -10,6 +14,7 @@ app.directive('tableFilter', function(
         },
         template: "<out></out>", //<h4>tableFilter</h4>
         link: function(s, elem, attrs) {
+            var r = $rootScope;
             if (s.model && !s.model.filter) return;
             var filter = s.model.filter.template || '<h5>tableFilter requires filter.template</h5>'
             r.dom(() => {
@@ -20,10 +25,12 @@ app.directive('tableFilter', function(
                 //if enter is pressed on any input, call s.model.filter.update with the payload (if exists).
                 el.find('input').on('keyup', (evt) => {
                     //var k = String.fromCharCode(evt.keyCode);
-                    if(evt.keyCode.toString()=='13'){ 
-                        if($U.valid(s,'model.init')){
-                            s.model.filter.payload = {__regexp:s.model.filter.fields};
-                            if(s.model.init) s.model.init();
+                    if (evt.keyCode.toString() == '13') {
+                        if ($U.valid(s, 'model.init')) {
+                            s.model.filter.payload = {
+                                __regexp: s.model.filter.fields
+                            };
+                            if (s.model.init) s.model.init();
                         }
                     }
                 });
@@ -47,7 +54,7 @@ app.directive('tableFilter', function(
                 r.dom();
             }, true);
 
-            
+
 
         }
     };
@@ -86,9 +93,9 @@ app.directive('ctrlDtp', function($rootScope) {
             var r = $rootScope;
             var opt = s.opt;
 
-            if (expose) {
-                expose(opt.name || 'dtp', s);
-            }
+
+            $U.expose(opt.name || 'dtp', s);
+
 
             if (!opt.modelPath) throw Error('ctrlDtp require opt.modelPath');
             if (!opt.scope) throw Error('ctrlDtp require opt.scope');
@@ -147,7 +154,8 @@ app.directive('ctrlSelect', function($rootScope) {
             s.choiceDisabled = (choice) => {
                 if (choice.disabled) {
                     return choice.disabled();
-                } else return false;
+                }
+                else return false;
             };
 
             var r = $rootScope;
@@ -173,7 +181,8 @@ app.directive('ctrlSelect', function($rootScope) {
                         s.opt.items = _.filter(s.opt.items, (v) => opt.filter(v));
                     }
                 }, true);
-            } else {
+            }
+            else {
                 s.scope.$watch(() => {
                     if (opt.filter) {
                         s.opt.items = _.filter(s.opt.items, (v) => opt.filter(v));
@@ -193,10 +202,12 @@ app.directive('ctrlSelect', function($rootScope) {
                     if (arr[0].label) {
                         if (typeof arr[0].label !== 'string') {
                             s.label = arr[0].label(); //fn support
-                        } else {
+                        }
+                        else {
                             s.label = arr[0].label;
                         }
-                    } else {
+                    }
+                    else {
                         s.label = arr[0];
                     }
                     //s.label = arr[0].label || arr[0];
@@ -209,7 +220,8 @@ app.directive('ctrlSelect', function($rootScope) {
                         });
                     }
                     r.dom();
-                } else {
+                }
+                else {
                     if (opt.label) {
                         s.label = opt.label || '(Select Item)'
                     }
@@ -255,7 +267,8 @@ app.directive('activeRoute', function($rootScope) {
             function apply() {
                 if ($rootScope.routeIs(attrs.activeRoute)) {
                     el.addClass('active');
-                } else {
+                }
+                else {
                     el.removeClass('active');
                 }
             }
@@ -326,7 +339,8 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
                     s.evts[n].forEach((cb) => {
                         if (ctx) {
                             cb.call(ctx, p);
-                        } else {
+                        }
+                        else {
                             cb(p);
                         }
                     })
@@ -350,7 +364,8 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
                                 ifThenMessage(s.validate.when(s), s.validate.fail(s), () => {
                                     s.close();
                                 });
-                            } else {
+                            }
+                            else {
                                 s.close();
                             }
                         };
@@ -401,7 +416,8 @@ app.directive('address', function($rootScope, $timeout) {
             $timeout(function() {
                 try {
                     elem.geocomplete().bind("geocode:result", onResult);
-                } catch (e) {
+                }
+                catch (e) {
                     var msg = 'Google library issue, address autocomplete feature is temporaly disabled.';
                     return console.warn(msg);
                     //return r.notify(, 'warning');
@@ -453,7 +469,12 @@ app.directive('address', function($rootScope, $timeout) {
                     if (scope.city) setVal(scope.model, scope.city, city);
                     if (scope.department) setVal(scope.model, scope.department, department);
                     if (scope.region) setVal(scope.model, scope.region, region);
-                    if (scope.country) setVal(scope.model, scope.country, country);
+                    if (scope.country) {
+                        $U.fetchCountry(result.formatted_address).then(function(d) {
+                            setVal(scope.model, scope.country, d.name);
+                        });
+                        //setVal(scope.model, scope.country, country);
+                    }
                     if (scope.postCode) setVal(scope.model, scope.postCode, postCode);
                     expose('address', Object.assign(result, scope));
                     r.dom();
@@ -540,7 +561,8 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
                     window.onerror = (err) => {
                         s.create(err, 'danger');
                     };
-                } else {
+                }
+                else {
                     if (s.checking) clearInterval(s.checking);
                     window.onerror = (err) => {};
                 }
@@ -606,7 +628,8 @@ app.directive('checkBox', function($rootScope, $timeout) {
                         if (checked) {
                             scope.arr = scope.arr || [];
                             scope.arr.push(scope.val);
-                        } else {
+                        }
+                        else {
                             _.remove(scope.arr, function(e) {
                                 return e === scope.val;
                             });
@@ -687,7 +710,8 @@ app.directive('notify', function($rootScope, $timeout) {
 
             if (s.opt && s.opt.duration) {
                 r.dom(s.dismiss, s.opt.duration);
-            } else {
+            }
+            else {
                 if (_.includes(['alert-info', 'alert-success'], s.type)) r.dom(scope.dismiss, 2000);
                 if (_.includes(['alert-danger', 'alert-warning'], s.type)) r.dom(scope.dismiss, 10000);
             }
@@ -765,7 +789,8 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
             s.decodeMessage = function(msg) {
                 if (typeof msg == 'string') {
                     return msg;
-                } else {
+                }
+                else {
                     return JSON.stringify(msg);
                 }
             };
@@ -857,7 +882,8 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
                 var message = '';
                 if (typeof opt === 'string') {
                     message = opt;
-                } else {
+                }
+                else {
                     message = opt.message || '';
                 }
                 var modalInstance = $uibModal.open({
@@ -903,7 +929,8 @@ app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal
                 if (typeof opt === 'string') {
                     message = opt;
                     //opt = undefined;
-                } else {
+                }
+                else {
                     message = opt.message || '';
                 }
 
@@ -1068,7 +1095,8 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                             s.title = "Time Range";
                             if (opt.action && opt.action === 'edit') {
                                 s.title += ' - Edition';
-                            } else {
+                            }
+                            else {
                                 s.title = 'New ' + s.title;
                             }
                         }
@@ -1183,7 +1211,8 @@ app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
                                     s.end.val = moment(s.datepicker.val).hour(moment(s.end.val).hour()).minutes(moment(s.end.val).minutes()).toDate()
                                 }
 
-                            } catch (e) {
+                            }
+                            catch (e) {
                                 s.message('Invalid time', 'warning', 2000);
                                 return false;
                             }

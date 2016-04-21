@@ -1,3 +1,5 @@
+/*global moment*/
+/*global angular*/
 var app = angular.module('app.calendar', []);
 
 app.directive('globalCalendar', function(
@@ -23,25 +25,36 @@ app.directive('globalCalendar', function(
                     s.views.selected = s.calendarView;
                     r.dom();
                 },
-                items: [
-                    { label: 'Day' },
-                    { label: 'Week' },
-                    { label: 'Month' },
-                    { label: 'Year' },
-                ]
+                items: [{
+                    label: 'Day'
+                }, {
+                    label: 'Week'
+                }, {
+                    label: 'Month'
+                }, {
+                    label: 'Year'
+                }, ]
             };
             s.calendarDate = new Date();
-            s.events = r.cache('global.calendar.events')|| [];
+            s.events = r.cache('global.calendar.events') || [];
+
             function update() {
-                ws.ctrl('Order', 'getAll', { __populate: ['_client', 'email'] }).then((res) => {
+                ws.ctrl('Order', 'getAll', {
+                    __select: "_client _diag email diagStart diagEnd status",
+                    __populate: {
+                        '_client': "email firstName lastName",
+                        '_diag': "email firstName lastName"
+                    }
+                }).then((res) => {
                     if (res.ok) {
                         var evts = [];
                         res.result.forEach((v) => {
                             v.start = moment(v.diagStart).format('HH:mm');
                             v.end = moment(v.diagEnd).format('HH:mm');
+                            v.diag = v._diag.firstName + ", " + v._diag.lastName.toUpperCase().substring(0,1);
                             evts.push({
                                 item: v,
-                                title: 'Order ',
+                                title: 'Order (Status: ' + v.status + ', Diag: ' + v.diag + ')',
                                 type: 'info',
                                 startsAt: new Date(v.diagStart),
                                 endsAt: new Date(v.diagEnd),
@@ -56,16 +69,16 @@ app.directive('globalCalendar', function(
                             });
                             s.events = evts;
                         });
-						r.cache('global.calendar.events',s.events);
+                        r.cache('global.calendar.events', s.events);
                     }
                 });
             }
             s.eventClicked = (calendarEvent) => {
-            	r.params = {
-            		item:calendarEvent.item,
-            		prevRoute:'global-calendar'
-            	};
-            	r.route('orders/edit/'+calendarEvent.item._id);
+                r.params = {
+                    item: calendarEvent.item,
+                    prevRoute: 'global-calendar'
+                };
+                r.route('orders/edit/' + calendarEvent.item._id);
             };
             update();
         }

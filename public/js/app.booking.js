@@ -89,6 +89,11 @@ app.controller('ctrl.booking', ['server',
 
         moment.locale('fr')
 
+        var MESSAGES = {
+            ANSWER_SELL_OR_RENT: 'Répondre Vendez / Louer',
+            ANSWER_APPARTAMENT_OR_MAISON:'Répondre Appartament / Maison',
+            FRENCH_ADDRESS_REQUIRED: 'Adresse besoin d&#39;appartenir à France',
+        };
 
         s.isDevEnv = () => window.location.hostname.indexOf('diags-javoche.c9users.io') !== -1;
         setTimeout(function() {
@@ -353,22 +358,20 @@ app.controller('ctrl.booking', ['server',
             }, cb);
         }
 
+
+
         s.validateQuestions = function(cb, err) {
             ifThenMessage([
-                [s.model.sell, '==', undefined, "Vendez / Louer"],
-                [s.model.house, '==', undefined, "Appartament / Maison"],
-                [s.model.squareMeters, '==', undefined, "Superficie"],
-                [s.model.constructionPermissionDate, '==', undefined, "Permis de construire"],
-                [s.model.gasInstallation, '==', undefined, "Gaz"],
-                [s.model.electricityInstallation, '==', undefined, "Electricité"],
-                [s.model.address, '==', undefined, "Address"],
+                [s.model.sell, '==', undefined, MESSAGES.ANSWER_SELL_OR_RENT],
+                [s.model.house, '==', undefined, MESSAGES.ANSWER_APPARTAMENT_OR_MAISON],
+                [s.model.squareMeters, '==', undefined, "Répondre Superficie"],
+                [s.model.constructionPermissionDate, '==', undefined, "Répondre Permis de construire"],
+                [s.model.gasInstallation, '==', undefined, "Répondre Gaz"],
+                [s.model.electricityInstallation, '==', undefined, "Répondre Electricité"],
+                [s.model.address, '==', undefined, "Répondre Address"],
+                [s.model.country, '!=', 'France', MESSAGES.FRENCH_ADDRESS_REQUIRED]
             ], (m) => {
-                if (typeof m[0] !== 'string') {
-                    s.warningMsg("Répondre " + m[0]())
-                }
-                else {
-                    s.warningMsg("Répondre " + m[0]);
-                }
+                s.warningMsg(m[0]);
                 if (err) err();
             }, cb);
         };
@@ -901,6 +904,14 @@ app.controller('ctrl.booking', ['server',
             s.$watch('model.electricityInstallation', updateChecks);
 
             function updateChecks() {
+
+                setTimeout(function() {
+                    if (s.model.country !== 'France') {
+                        s.warningMsg(MESSAGES.FRENCH_ADDRESS_REQUIRED);
+                    }
+                }, 2000);
+
+
                 if (s.model.constructionPermissionDate === 'Avant le 01/01/1949') {
                     toggle('crep', true);
                     s.model.diags.crep = true; //mandatory

@@ -1,4 +1,5 @@
 /*global $*/
+/*global google*/
 "use strict";
 
 function numberBetween(n, min, max) {
@@ -406,7 +407,7 @@ var Eventify = (function(self) { //event handling snippet
         catch (e) {
             pp = p
         }
-//        console.log('emit', n, pp, opt);
+        //        console.log('emit', n, pp, opt);
     };
     self.once = function(n, handler) {
         if (once[n]) return firePreserve(n, handler);
@@ -426,7 +427,7 @@ var Eventify = (function(self) { //event handling snippet
             type: n,
             handler: handler
         };
-       // console.log('on', n, id);
+        // console.log('on', n, id);
         return evts[n][id];
     }
     return self;
@@ -528,7 +529,7 @@ var queryString = (function() {
             return encodeURIComponent(key) + '=' + encodeURIComponent(val);
         }).join('&') : '';
     };
-    
+
     queryString.get = getParameterByName;
     queryString.hash = function(str) {
         var hash = (
@@ -565,17 +566,43 @@ var queryString = (function() {
     }
 })();
 
-function indexOf(str,values){
+function indexOf(str, values) {
     var rta = false;
-    values.forEach(v=>{
-        if(str.indexOf(v)!==-1) rta = true;
+    values.forEach(v => {
+        if (str.indexOf(v) !== -1) rta = true;
     });
     return rta;
 }
 
 
-function scrollToTop(time){
-    $('html, body').animate({scrollTop : 0},time||800);
+function scrollToTop(time) {
+    $('html, body').animate({
+        scrollTop: 0
+    }, time || 800);
+}
+
+function fetchCountry(address) {
+    return MyPromise(function(resolve, err, emit) {
+        var rta = {
+            name: '',
+            code: ''
+        };
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({
+            "address": address
+        }, function(results) {
+            for (var i = 0; i < results[0].address_components.length; i++) {
+                for (var j = 0; j < results[0].address_components[i].types.length; j++) {
+                    if (results[0].address_components[i].types[j] == "country") {
+                        var country = results[0].address_components[i];
+                        rta.name = country.long_name;
+                        rta.code = country.short_name;
+                        resolve(rta);
+                    }
+                }
+            }
+        });
+    });
 }
 
 if (typeof exports !== 'undefined') {
@@ -595,8 +622,10 @@ else {
     window.ifThenMessage = ifThenMessage;
 
     window.$U = {
-        scrollToTop:scrollToTop,
-        indexOf:indexOf,
+        expose:expose,
+        fetchCountry:fetchCountry,
+        scrollToTop: scrollToTop,
+        indexOf: indexOf,
         url: queryString,
         hasUndefinedProps: hasUndefinedProps,
         cbHell: cbHell,
