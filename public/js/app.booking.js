@@ -25,7 +25,8 @@ var URL = {
     RDV: 'rendez-vous',
     LOGIN: 'connexion',
     NEW_ACCOUNT: 'new-inscription',
-    ACCOUNT_DETAILS: 'inscription-details',
+    ACCOUNT_DETAILS: 'account-details',
+    ACCOUNT_DETAILS_BOOKING: 'inscription-details',
     PAYMENT: 'payment'
 };
 app.config(['$routeProvider',
@@ -47,10 +48,13 @@ app.config(['$routeProvider',
             templateUrl: 'views/booking/booking-4-connection.html'
         }).
         when('/new-inscription', {
-            templateUrl: 'views/booking/booking-5-new-inscription.html'
+            templateUrl: 'views/booking/booking-new-inscription.html'
+        }).
+        when('/account-details', {
+            templateUrl: 'views/booking/booking-inscription-details.html'
         }).
         when('/inscription-details', {
-            templateUrl: 'views/booking/booking-5-inscription-details.html'
+            templateUrl: 'views/booking/booking-5-inscription.html'
         }).
         when('/payment', {
             templateUrl: 'views/booking/booking-6-payment.html'
@@ -99,11 +103,24 @@ app.controller('ctrl.booking', ['server',
 
 
         $U.on('route-change', function(url) {
+            console.info('route-change ',url);
 
             r.dom($U.scrollToTop);
+            
+            if ($U.indexOf(url, [URL.PAYMENT])) {
+                if ((s.__manualUrlChange || 0) + 5000 < new Date().getTime()) {
+                    resolvePaymentScreenAuth().then(resolvePaymentScreenOrder);
+                }
+            }else{
+                $U.url.clear();
+            }
 
-            if ($U.indexOf(url, [URL.HOME]) || url == '') s.__header = 1;
-            else s.__header = 2;
+            if ($U.indexOf(url, [URL.HOME]) || url == ''){
+              s.__header = 1;  
+            }
+            else{
+              s.__header = 2;  
+            } 
 
             if (url.indexOf(URL.RDV) !== -1) {
 
@@ -136,9 +153,13 @@ app.controller('ctrl.booking', ['server',
 
             }
 
-            if ($U.indexOf(url, [URL.PAYMENT])) {
-                if ((s.__manualUrlChange || 0) + 5000 < new Date().getTime()) {
-                    resolvePaymentScreenAuth().then(resolvePaymentScreenOrder);
+            if ($U.indexOf(url, [URL.ACCOUNT_DETAILS])) {
+                if (!s._user || !s._user.__subscribeMode) {
+                    console.warn('current _user is not in _subscribeMode');
+                    r.route(URL.HOME);
+                }
+                else {
+                    delete s._user.__subscribeMode;
                 }
             }
 
@@ -218,8 +239,8 @@ app.controller('ctrl.booking', ['server',
             selectAll: false
         };
 
-        s.validateBeforePayment = function(cb,validateLoginAlso) {
-            if(validateLoginAlso && (!s._user||!s._user._id)) return r.route(URL.LOGIN);
+        s.validateBeforePayment = function(cb, validateLoginAlso) {
+            if (validateLoginAlso && (!s._user || !s._user._id)) return r.route(URL.LOGIN);
             s.validateQuestions(function() {
                 s.validateDate(cb, () => r.route(URL.RDV));
             }, () => r.route(URL.HOME));
@@ -227,9 +248,9 @@ app.controller('ctrl.booking', ['server',
 
         //MAIN BUTTONS
         s.proceedToDiagsSelection = function() {
-            
+
             //s.validateBeforePayment(()=r.route(URL.PAYMENT));
-            
+
             s.validateQuestions(function() {
                 r.route('choix-diagnostics');
             }, () => {
@@ -402,9 +423,11 @@ app.controller('ctrl.booking', ['server',
 
 
         //Auto-save Every 5sec, only if _order change.
-        function updateAutoSave() {
+        function updateAutoSave(enabled) {
+            enabled = enabled || true;
             var saving = false;
             if (s.__autoSaveInterval) window.clearInterval(s.__autoSaveInterval);
+            if(!enabled) return console.info('auto-save: disabled');
             if (!s._order) return console.info('auto-save: call updateAutoSave _order exists');
             cloneOrder();
             s.__autoSaveInterval = window.setInterval(function() {
@@ -1022,7 +1045,7 @@ app.controller('ctrl.booking', ['server',
         function loadDefaults() {
             s.model = Object.assign(s.model, {
                 sell: paramBool('sell') || false,
-                house: paramBool('house') || false,
+                house: paramBool('house') || undefined,
                 squareMeters: param('squareMeters', s.squareMeters) || undefined, // '- de 20m²',
                 // apartamentType: param('apartamentType', s.apartamentType) || undefined,
                 constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined, // 'Entre 1949 et le 01/07/1997',
@@ -1236,7 +1259,7 @@ app.controller('ctrl.booking', ['server',
                             s.saveAsync().on('success', function() {
                                 s.route(URL.PAYMENT);
                             });
-                        },true);
+                        }, true);
 
                         //s.subscribeMode = true;
                         //s.right();
@@ -1292,6 +1315,8 @@ app.controller('ctrl.booking', ['server',
                 });
             });
         };
+
+
         s.sendPaymentLink = () => {
             s.validateBooking(_sendPaymentLink);
             //
@@ -1313,33 +1338,98 @@ app.controller('ctrl.booking', ['server',
             }
         };
 
-        s.subscribeMode = false;
-        s.subscribeConfirm = () => {
-            var addressMessage = () => {
-                if (s._user.clientType == 'landlord') return 'Address required.';
-                if (s._user.clientType == 'agency') return 'Agency address required.';
-                if (s._user.clientType == 'other') return 'Company address required.';
-            };
-            ifThenMessage([
-                [!s._user.address, '==', true, addressMessage],
-                [!s._user.email, '==', true, "Email required."],
-                [!s._user.password, '==', true, "Password required."],
-                [!s._user.fixedTel && !s._user.cellPhone, '==', true, "at least one fixed phone or cell phone is required."],
-            ], (m) => {
-                if (typeof m[0] !== 'string') {
-                    s.warningMsg(m[0]())
+        /*deprecated 
+                s.subscribeMode = false;
+                s.subscribeConfirm = () => {
+                    var addressMessage = () => {
+                        if (s._user.clientType == 'landlord') return 'Address required.';
+                        if (s._user.clientType == 'agency') return 'Agency address required.';
+                        if (s._user.clientType == 'other') return 'Company address required.';
+                    };
+                    ifThenMessage([
+                        [!s._user.address, '==', true, addressMessage],
+                        [!s._user.email, '==', true, "Email required."],
+                        [!s._user.password, '==', true, "Password required."],
+                        [!s._user.fixedTel && !s._user.cellPhone, '==', true, "at least one fixed phone or cell phone is required."],
+                    ], (m) => {
+                        if (typeof m[0] !== 'string') {
+                            s.warningMsg(m[0]())
+                        }
+                        else {
+                            s.warningMsg(m[0]);
+                        }
+                    }, () => {
+                        db.setAsync().ctrl('User', 'update', s._user).then(() => {}); //async (we don't want to wait here).
+                        s.right();
+                    });
+
+
+                };
+                */
+
+        s.validateClientDetails = function(cb) {
+            db.ctrl('User', 'exists', {
+                email: s.auth.email,
+                userType: 'client',
+            }).then(exists => {
+                exists = exists.ok && exists.result == true;
+                if (exists) {
+                    s.warningMsg('This email address belongs to an existing member.');
                 }
                 else {
-                    s.warningMsg(m[0]);
+                    //validate fields
+                    ifThenMessage([
+                        [!s._user.email, '==', true, "Email c&#39;est obligatoire."],
+                        [!s._user.password, '==', true, "Password c&#39;est obligatoire."],
+                        [!s._user.cellPhone, '==', true, "Mobile c&#39;est obligatoire"],
+                    ], (m) => {
+                        if (typeof m[0] !== 'string') {
+                            s.warningMsg(m[0]())
+                        }
+                        else {
+                            s.warningMsg(m[0]);
+                        }
+                    }, cb);
                 }
-            }, () => {
-                db.setAsync().ctrl('User', 'update', s._user).then(() => {}); //async (we don't want to wait here).
-                s.right();
             });
+        }
 
+        s.subscribeClientStandAlone = function() {
+            s.createClient(function() {
+                s.infoMsg('Le compte a été créé . Vérifiez votre email .');
+                r.route(URL.HOME);
+            })
+        }
 
-        };
-        s.subscribe = (clientType) => {
+        s.subscribeClient = function() {
+            s.createClient(function() {
+                //s.infoMsg('Le compte a été créé . Vérifiez votre email .');
+                s.validateBeforePayment(function() {
+                    s.saveAsync().on('success', function() {
+                        s.route(URL.PAYMENT);
+                    });
+                }, true);
+            });
+        }
+
+        s.createClient = function(cb) {
+            s.validateClientDetails(function() {
+                db.ctrl('User', 'createClient', s._user).then(data => {
+                    if (data.ok) {
+                        s._user = data.result;
+                        cb();
+                    }
+                    else {
+                        s.warningMsg(data.err);
+                    }
+                })
+            });
+        }
+
+        s.subscribeModeBooking = (clientType) => s.subscribe(clientType, URL.ACCOUNT_DETAILS_BOOKING);
+        s.subscribeMode = (clientType) => s.subscribe(clientType, URL.ACCOUNT_DETAILS);
+
+        s.subscribe = (clientType, nextRoute) => {
             s.validateAuthInput(() => {
                 db.ctrl('User', 'exists', {
                     email: s.auth.email,
@@ -1350,17 +1440,11 @@ app.controller('ctrl.booking', ['server',
                         s.warningMsg('This email address belongs to an existing member.');
                     }
                     else {
-                        db.ctrl('User', 'createClient', {
-                            email: s.auth.email,
-                            clientType: clientType
-                        }).then(data => {
-                            if (data.ok) {
-                                s._user = data.result;
-                                s.saveAsync();
-                                s.subscribeMode = true;
-                                //s.right();
-                            }
-                        })
+                        s._user.email = s.auth.email;
+                        s._user.password = s.auth.pass;
+                        s._user.clientType = clientType;
+                        s._user.__subscribeMode = true;
+                        r.route(nextRoute);
                     }
                 });
             });
@@ -1534,6 +1618,11 @@ app.controller('ctrl.booking', ['server',
 
         //require an order to be saved (s._order)
         s.payNOW = (success) => {
+            
+            if(orderPaid()){
+                return s.infoMsg('Son ordre de travail a déjà été payée');
+            }
+            
             s.validateBooking(() => {
                 //
                 db.ctrl('Order', 'update', s._order); //async
@@ -1544,10 +1633,9 @@ app.controller('ctrl.booking', ['server',
                     order.stripeToken = token.id;
                     db.ctrl('Order', 'pay', order).then((data) => {
                         if (data.ok) {
-                            if (success) {
-                                s._order.status = 'prepaid';
-                                success();
-                            }
+
+                            s._order.status = 'prepaid';
+
                             s.booking.complete = true;
                             s.booking.payment.complete = true;
                             db.ctrl('Order', 'update', s._order); //async
@@ -1557,7 +1645,8 @@ app.controller('ctrl.booking', ['server',
                                 duration: 100000
                             });
 
-                            s._order = {}
+                            r.dom(()=>(s._order = {}));
+                            updateAutoSave(false);
                             $U.url.clear();
                             r.route(URL.HOME);
                         }

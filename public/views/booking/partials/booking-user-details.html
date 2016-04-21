@@ -1,0 +1,73 @@
+<div class="row margin-top-one">
+    <div class="col-xs-12 col-sm-12 col-md-6 min-md-padding-none">
+        <div class="row-fluid diags-form-wrapper min-md-margin-right-none">
+            <div class="diags-form">
+                <div class="row">
+                    <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Inscription</span></i>
+                </div>
+                <div class="row margin-top-quarter">
+                    <p class="label">C’est la première fois que vous passez commande</p>
+                </div>
+                <div class="row margin-top-one">
+                    <input ng-model="_user.email" class="diags-input" placeholder="Adresse email">
+                </div>
+                <div class="row margin-top-half">
+                    <input ng-model="_user.password" type="password" class="diags-input" placeholder="Mot de passe">
+                </div>
+                <div class="row margin-top-half">
+                    <input ng-model="_user.lastName" class="diags-input" placeholder="Nom">
+                </div>
+                <div class="row margin-top-half">
+                    <input ng-model="_user.firstName" class="diags-input" placeholder="Prenom">
+                </div>
+                <div class="row margin-top-half">
+                    <input ng-model="_user.fixedTel" class="diags-input" placeholder="Télphone fixe">
+                </div>
+                <div class="row margin-top-half">
+                    <input ng-model="_user.cellPhone" class="diags-input" placeholder="Mobile">
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-6 min-md-padding-none">
+        <div class="row-fluid diags-form-wrapper min-md-margin-left-none min-md-border-left-width-none">
+            <div class="diags-form">
+                <div class="row margin-top-quarter min-md-padding-top-one-and-half">
+                    <p class="label">Vos coordonnées</p>
+                </div>
+                <div class="row margin-top-one">
+                    <input ng-model="_user.companyName" class="diags-input" placeholder="Entreprise">
+                </div>
+                <div class="row margin-top-half">
+                    <input class="diags-input" 
+                   
+                    data-address 
+                    model="_user" 
+                    field="address"  
+                    department="department" 
+                    region="region" 
+                    country="country" 
+                    post-code="postCode"
+                    
+                    placeholder="Votre adresse">
+                </div>
+                <div class="row margin-top-half">
+                    <input ng-disabled="true" ng-model="_user.department" class="diags-input" placeholder="Département">
+                </div>
+                <div class="row margin-top-half">
+                    <input ng-disabled="true" ng-model="_user.region" class="diags-input" placeholder="Région">
+                </div>
+                <div class="row margin-top-half">
+                    <input ng-disabled="true" ng-model="_user.country" class="diags-input" placeholder="Pays">
+                </div>
+
+                <div class="row margin-top-one">
+                    <button class="btn btn-xl bg-madison">S’inscrire</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
