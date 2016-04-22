@@ -21,6 +21,11 @@ var app = angular.module('app', [
 ]);
 var URL = {
     HOME: 'home',
+    CONTACT_US:'contactez-nous',
+    ERNT:'ernt',
+    FAQ:'faq',
+    GENERAL_CONDITIONS:'conditions-generales-utilisation',
+    LEGAL_MENTIONS:'mentions-legales',
     DIAGS: 'choix-diagnostics',
     RDV: 'rendez-vous',
     LOGIN: 'connexion',
@@ -37,6 +42,21 @@ app.config(['$routeProvider',
         }).
         when('/home', {
             templateUrl: 'views/booking/booking-1-home.html'
+        }).
+        when('/mentions-legales', {
+            templateUrl: 'views/legal-mentions.html'
+        }).
+        when('/conditions-generales-utilisation', {
+            templateUrl: 'views/general-conditions.html'
+        }).
+        when('/ernt', {
+            templateUrl: 'views/ernt.html'
+        }).
+        when('/faq', {
+            templateUrl: 'views/faq.html'
+        }).
+        when('/contactez-nous', {
+            templateUrl: 'views/contact-us.html'
         }).
         when('/choix-diagnostics', {
             templateUrl: 'views/booking/booking-2-diags-selection.html'
@@ -905,11 +925,12 @@ app.controller('ctrl.booking', ['server',
 
             function updateChecks() {
 
+/*alredt done in questions validations
                 setTimeout(function() {
                     if (s.model.country !== 'France') {
                         s.warningMsg(MESSAGES.FRENCH_ADDRESS_REQUIRED);
                     }
-                }, 2000);
+                }, 2000);*/
 
 
                 if (s.model.constructionPermissionDate === 'Avant le 01/01/1949') {

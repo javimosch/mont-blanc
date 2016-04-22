@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html class="no-js" ng-app="app">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Diagnostical | Back-office</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="img/favicon.ico"/>
+    <link rel="shortcut icon" href="img/favicon.ico" />
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="css/fullpage.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
@@ -24,7 +25,7 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap-theme-1.css">
     <link rel="stylesheet" type="text/css" href="css/abc.css">
     <link rel="stylesheet" type="text/css" href="css/font.awesome.css">
-    
+
     <link rel="stylesheet" href="css/diags.design.css" type="text/css" />
     <link rel="stylesheet" href="css/diags-checkbox.css" type="text/css" />
 </head>
@@ -35,12 +36,20 @@
         <div class="row-fluid">
             <div ng-include="'views/partials/app-header.html'"></div>
         </div>
-        <div class="row-fluid diags-content">
-            <div ng-view></div>
-        </div>
+
         <div class="row-fluid">
-            <div ng-include="'views/partials/app-footer.html'"></div>
+            <div class="diags-bg">
+                <div class=" container diags-selection padding-none">
+                    <div class="row diags-bg-block-40 hidden-xs"></div>
+                    <div ng-view class="diags-content"></div>
+                    <div class="row diags-bg-block-40 hidden-xs"></div>
+                </div>
+            </div>
         </div>
+    </div>
+    <div class="row-fluid">
+        <div ng-include="'views/partials/app-footer.html'"></div>
+    </div>
     </div>
     <!--GLOBAL DIRECTIVES -->
     <my-alerts add="message" directive="notify"></my-alerts>
@@ -69,11 +78,11 @@
     <script src="js/vendor/vendor.angular.bcalendar.tpls.js"></script>
     <script src="js/vendor/vendor.lodash.js"></script>
     <script src="js/vendor/vendor.db.js"></script>
-    
+
     <!--COMMON-->
     <script src="js/app.utils.js"></script>
     <script src="js/app.diags-utils.js"></script>
-    
+
     <!-- BACKOFFICE -->
     <script src="js/app.backoffice.js"></script>
     <script src="js/directives/checkbox.js"></script>
@@ -83,7 +92,7 @@
     <script src="js/services/srv.crud.js"></script>
     <script src="js/app.directives.js"></script>
     <!-- BACKOFFICE MODULES -->
-    
+
     <script src="js/app.run-calendar.js"></script>
     <script src="js/app.admin.js"></script>
     <script src="js/app.routes.js"></script>
@@ -100,7 +109,7 @@
     <script src="js/app.diag.js"></script>
     <script src="js/app.order.js"></script>
     <script src="js/app.client.payments.js"></script>
-    
+
     <!-- BACKOFFICE THIRD PARTY (We load in the end because is not important to rendering.) -->
     <script src="js/vendor/vendor.geocomplete.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
@@ -112,4 +121,5 @@
     <script type="text/javascript" src="js/vendor/vendor.filesaver.js"></script>
     -->
 </body>
+
 </html>
