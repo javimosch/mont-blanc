@@ -315,6 +315,10 @@ a.diag-btn-info:hover {
     font-family: 'Avenir-Roman';
 }
 
+.avenir-oblique {
+    font-family: 'Avenir-Oblique';
+}
+
 .brandon-re {
     font-family: 'BrandonGrotesque-Regular';
 }
@@ -555,10 +559,29 @@ footer {
 
 footer .title-1,
 footer .title-2 {
-    line-height: 98px;
+    line-height: 66px;
     padding: 0px;
     margin: 0px;
     font-size: 38px;
+}
+
+@media only screen and (min-width: 992px) {
+    footer .title-1, footer .title-2 {
+        line-height: 98px;
+    }
+}
+
+footer a {
+    color: white!important;
+}
+
+footer .text {
+    font-family: 'Avenir-Book';
+    font-size: 14px;
+    position: absolute;
+    right: 5px;
+    top: 44px;
+    color: white;
 }
 
 ul.diags {
@@ -941,7 +964,7 @@ h2.diags.black {
 }
 
 .notify .box {
-        border: 0px;
+    border: 0px;
     display: flex;
     width: 100%;
     position: relative;
@@ -1039,29 +1062,33 @@ h2.diags.black {
     }
 }
 
-
-.diags-style h1,.diags-style h2,.diags-style h3,.diags-style h4,.diags-style h5,.diags-style h6{
+.diags-style h1,
+.diags-style h2,
+.diags-style h3,
+.diags-style h4,
+.diags-style h5,
+.diags-style h6 {
     font-family: 'Avenir-Black'!important;
 }
-.diags-style h4{
-    font-size:1.5em!important;
+
+.diags-style h4 {
+    font-size: 1.5em!important;
 }
 
-.diags-style .table th{
+.diags-style .table th {
     font-family: 'Avenir-Book'!important;
     font-size: 14px!important;
     font-weight: 500;
 }
 
-.diags-style .table td out{
+.diags-style .table td out {
     font-family: 'Avenir-Light'!important;
     font-size: 12px!important;
-        font-weight: 800;
+    font-weight: 800;
 }
 
-.diags-style .cal-slide-content a.event-item{
+.diags-style .cal-slide-content a.event-item {
     font-family: 'Avenir-Light'!important;
     font-size: 12px!important;
-        font-weight: 800;
+    font-weight: 800;
 }
-
