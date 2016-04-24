@@ -1003,7 +1003,7 @@ app.controller('ctrl.booking', ['server',
 
         function loadDefaults() {
             s.model = Object.assign(s.model, {
-                sell: paramBool('sell') || false,
+                sell: paramBool('sell') || true,
                 house: paramBool('house') || undefined,
                 squareMeters: param('squareMeters', s.squareMeters) || undefined, // '- de 20m²',
                 // apartamentType: param('apartamentType', s.apartamentType) || undefined,
