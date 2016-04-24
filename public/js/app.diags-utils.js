@@ -185,6 +185,9 @@ var isSaturday = (d) => moment(d).day() === 6;
 
 var totalPrice = (showRounded, model, diags, squareMetersPrice, basePrice, opt) => {
     opt = opt || {};
+    if(opt.basePrice){
+        basePrice = opt.basePrice;
+    }
     var tot = subTotal(model, diags, basePrice, opt) + sizePrice(model, diags, squareMetersPrice, basePrice, opt);
 
     if (opt.s) {

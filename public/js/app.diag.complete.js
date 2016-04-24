@@ -1,3 +1,7 @@
+/*global angular*/
+/*global $U*/
+/*global moment*/
+/*global _*/
 var app = angular.module('app.diag.complete', []);
 
 
@@ -61,18 +65,7 @@ app.directive('diagOrders', function(
                         prevRoute: 'dashboard'
                     };
                     r.route('orders/edit/' + item._id);
-                    /*
-                    s.open({
-                        title: 'Order View',
-                        data: data,
-                        item: item,
-                        templateUrl: 'views/partials/partial.modal.diag.order.html',
-                        callback: (item) => {
-                            ws.ctrl('Order', 'createUpdate', item).then((result) => {
-                                update();
-                            });
-                        }
-                    });*/
+                    
                 },
                 buttons: [{
                     label: "Refresh",
@@ -98,6 +91,9 @@ app.directive('diagOrders', function(
         }
     };
 });
+
+
+
 
 app.directive('diagCalendar', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
@@ -245,6 +241,9 @@ app.controller('diagDashboard', [
 ]);
 
 
+//DEPRECATED?
+/*
+
 app.controller('adminDiags', [
 
     'server', '$scope', '$rootScope',
@@ -308,6 +307,8 @@ app.controller('adminDiags', [
     }
 ]);
 
+*/
+
 app.controller('adminDiagsEdit', [
 
     'server', '$scope', '$rootScope', '$routeParams',
@@ -323,7 +324,7 @@ app.controller('adminDiagsEdit', [
             return r.handleSecurityRouteViolation();
         }
         //
-        expose('s', s);
+        $U.expose('s', s);
         //
         r.dom();
         //
@@ -385,13 +386,13 @@ app.controller('adminDiagsEdit', [
             r.route('diags');
         };
 
-        function handleErrors(err) {
+        function handleErrors(_err) {
             s.requesting = false;
             s.message('error, try later.', 'danger');
         }
 
         s.validate = () => {
-            ifThenMessage([
+            $U.ifThenMessage([
                 [s.item.email, '==', '', "Email cannot be empty"],
                 [s.item.password, '==', '', "Password cannot be empty"],
                 [!s.item.commission,'==',true,"Commission required"],

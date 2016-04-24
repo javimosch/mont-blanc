@@ -567,7 +567,7 @@ footer .title-2 {
 
 @media only screen and (min-width: 992px) {
     footer .title-1, footer .title-2 {
-        line-height: 98px;
+/*        line-height: 98px;*/
     }
 }
 

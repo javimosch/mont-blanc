@@ -1,3 +1,5 @@
+/*global angular*/
+/*global $U*/
 var app = angular.module('app.login', []);
 
 app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, r) {
@@ -63,17 +65,15 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
         if (session.email && session.expire < new Date().getTime()) {
             r.db.createSession(true);
         }
-      
-        s.sendingRequest = true;
+
         db.custom('user', 'login', r._login).then(function(res) {
-            s.sendingRequest = false;
             if (res.data.ok && res.data.result!=null) {
                 r.session(res.data.result);
 //                console.log('adminLogin: server says user is logged', res.data);
                 r.route('dashboard');
             } else {
                 s.loginFailedTimes++;
-                r.warningMessage('Incorrect login','warning');
+                r.warningMessage('Incorrect login');
             }
 //            console.log(res.data);
         }).error(function(res) {
@@ -84,6 +84,9 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
     };
 
     s.resetPassword=()=>{
+        if(!r._login.email){
+            return r.warningMessage("Email required");
+        }
         db.ctrl('User','passwordReset',{email:r._login.email}).then((res)=>{
             if(res.ok){
                 r.message('A new password has been send to '+r._login.email
@@ -97,8 +100,8 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
 
     //fill _login with query string parameters
     var params={
-        email:getParameterByName('email'),
-        password: (getParameterByName('k'))?atob(getParameterByName('k')):''
+        email:$U.getParameterByName('email'),
+        password: ($U.getParameterByName('k'))?window.atob($U.getParameterByName('k')):''
     };
     if(params.email) r._login.email = params.email;
     if(params.password) r._login.password = params.password;

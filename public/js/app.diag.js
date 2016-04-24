@@ -1,5 +1,12 @@
+/*global angular*/
+/*global _*/
+/*global moment*/
+/*global $U*/
+/*global $D*/
+
 (function() {
     var app = angular.module('app.diag', []);
+    
     app.directive('diagsList', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
         return {
@@ -99,6 +106,10 @@
 
                     if (params && params.id) {
                         rules._user = params.id;
+                    }
+                    
+                    if(!rules._user || rules._user.toString() == '-1'){
+                        return console.warn('time-range: insufficients rules.');
                     }
 
                     dbPaginate.ctrl(rules, s.model).then((res) => {
@@ -215,7 +226,7 @@
                 end: new Date()
             };
             var isEdit = params.id.toString() !== '-1';
-            expose('edit', s);
+            $U.expose('edit', s);
             //DAYS SELECTOR
             s.days = (() => {
                 var o = {
@@ -341,7 +352,7 @@
             };
             s.cancel = () => r.route(r.params && r.params.prevRoute || 'dashboard');
             s.delete = () => {
-                var msg = 'Delete ' + s.item.description + ' ' + s.item.startFormat + ' - ' + s.item.endFormat + ' (' + item.dayFormat + ')';
+                var msg = 'Delete ' + s.item.description + ' ' + s.item.startFormat + ' - ' + s.item.endFormat + ' (' + s.item.dayFormat + ')';
                 s.confirm(msg, () => {
                     db.ctrl('TimeRange', 'remove', { _id: s.item._id }).then(() => {
                         s.cancel();
@@ -355,7 +366,7 @@
                 }).then((d) => {
                     if (d.ok){
                         d.result.forEach(v=>{
-                            if(rangeCollide(v.diagStart,v.diagEnd,s.item.start,s.item.end)){
+                            if($D.rangeCollide(v.diagStart,v.diagEnd,s.item.start,s.item.end)){
                                 return yes(v);
                             }
                         });
@@ -377,7 +388,7 @@
                    return r.warningMessage('An order exists for this date.');
                 }, () => {
 
-                    ifThenMessage([
+                    $U.ifThenMessage([
                         [!s.item._user, '==', true, 'Diag required'],
                         [s.item.repeat == 'week' && s.days.val.toString() === '-1', '==', true, 'Choice a day'],
                         [_.isNull(s.item.start) || _.isUndefined(s.item.start), '==', true, 'Start date required'],

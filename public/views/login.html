@@ -11,30 +11,39 @@
 </div>
 
 <div class="container diags-content" ng-controller="adminLogin" ng-show="show">
-    <div class="row">
-        <div class="col-sm-12">
-            <ul class="form-tiny center-block max-w-500">
-                <li>
-                    <label class="diag46">Email</label>
-                    <input type="email" id="inputEmail" ng-model="_login.email" class="diag fullwidth" placeholder="Email address" required="" autofocus="">
-                </li>
-                <li>
-                    <label class="diag46">Password</label>
-                    <input type="password" ng-model="_login.password" id="inputPassword" class="diag fullwidth" placeholder="Password">
-                </li>
-                <li>
-                    <label class="diag46 avenir-medium fnt-16 black">Remember password</label>
+    <div class="row diags-form-wrapper">
+        <div class="col-sm-12 col-md-12">
+            <div class="diags-form">
+                <div class="row">
+                    <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Se connecter</span></i>
+                </div>
+                <div class="row margin-top-one">
+                    <input ng-model="_login.email" class="diags-input" placeholder="Adresse email">
+                </div>
+                <div class="row margin-top-half">
+                    <input ng-model="_login.password" type="password" class="diags-input" placeholder="Mot de passe">
+                </div>
+                <div class="row margin-top-half">
+                    <label class="diag46 avenir-medium fnt-12 black">Remember password</label>
                     <nice-check-box class="diag46" template='sky-blue' model="_login.rememberPass"></nice-check-box>
-                </li>
-                <li>
+                </div>
+                <div class="row margin-top-one">
                     <button ng-disabled="sendingRequest" class="btn  diag-btn-main" ng-click="login()">Sign in</button>
-                    <output name="" ng-show="loginFailedTimes>3">
-                        <p class="text-center">Or</p>
-                        <button ng-disabled="sendingRequest || !_login.email" class="btn btn-lg btn-info btn-block" ng-click="resetPassword()">Reset password</button>
-                    </output>
-                    <my-alerts add="addAlert" />
-                </li>
-            </ul>
+                    <a ng-disabled="!_.login.email" class="link avenir-medium fnt-12 black" ng-click="resetPassword()">Reset password</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-12 col-md-12 margin-top-three">
+            <div class="diags-form">
+                <div class="row">
+                    <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Inscrire comme un inspecteur</span></i>
+                </div>
+                <div class="row margin-top-one">
+                    <button ng-disabled="sendingRequest" class="btn  diag-btn-main" ng-click="login()">Inscrire</button>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

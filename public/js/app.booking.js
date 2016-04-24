@@ -21,11 +21,11 @@ var app = angular.module('app', [
 ]);
 var URL = {
     HOME: 'home',
-    CONTACT_US:'contactez-nous',
-    ERNT:'ernt',
-    FAQ:'faq',
-    GENERAL_CONDITIONS:'conditions-generales-utilisation',
-    LEGAL_MENTIONS:'mentions-legales',
+    CONTACT_US: 'contactez-nous',
+    ERNT: 'ernt',
+    FAQ: 'faq',
+    GENERAL_CONDITIONS: 'conditions-generales-utilisation',
+    LEGAL_MENTIONS: 'mentions-legales',
     DIAGS: 'choix-diagnostics',
     RDV: 'rendez-vous',
     LOGIN: 'connexion',
@@ -111,7 +111,7 @@ app.controller('ctrl.booking', ['server',
 
         var MESSAGES = {
             ANSWER_SELL_OR_RENT: 'Répondre Vendez / Louer',
-            ANSWER_APPARTAMENT_OR_MAISON:'Répondre Appartament / Maison',
+            ANSWER_APPARTAMENT_OR_MAISON: 'Répondre Appartament / Maison',
             FRENCH_ADDRESS_REQUIRED: 'Adresse besoin d&#39;appartenir à France',
         };
 
@@ -925,12 +925,12 @@ app.controller('ctrl.booking', ['server',
 
             function updateChecks() {
 
-/*alredt done in questions validations
-                setTimeout(function() {
-                    if (s.model.country !== 'France') {
-                        s.warningMsg(MESSAGES.FRENCH_ADDRESS_REQUIRED);
-                    }
-                }, 2000);*/
+                /*alredt done in questions validations
+                                setTimeout(function() {
+                                    if (s.model.country !== 'France') {
+                                        s.warningMsg(MESSAGES.FRENCH_ADDRESS_REQUIRED);
+                                    }
+                                }, 2000);*/
 
 
                 if (s.model.constructionPermissionDate === 'Avant le 01/01/1949') {
@@ -1029,14 +1029,18 @@ app.controller('ctrl.booking', ['server',
         s.requestSlots = function(date) {
             return $U.MyPromise(function(resolve, error, evt) {
                 if (!isFinite(new Date(date))) return; //invalid
+
                 //if sunday, skip
+                /*
                 if (moment(date).day() === 0) {
                     s.warningMsg('Sunday is an exception.');
                     r.dom(() => {
                         s.model.date = moment(s.model.date).subtract(1, 'days')._d;
                     }, 1000);
                     return;
-                }
+                }*/
+
+
                 var time = s.totalTime();
                 var order = {
                     day: date,
@@ -1059,6 +1063,17 @@ app.controller('ctrl.booking', ['server',
                     data.forEach(r => {
 
                         r.id = window.btoa(JSON.stringify(r));
+
+                        if (moment(date).day() === 0) {
+                            //on sundays, this rngs had a different basic price (+100%)
+                            var basePriceIncr = 100;
+                            r.price = s.totalPrice(true,{
+                                basePrice: s.basePrice + (s.basePrice*basePriceIncr/100)
+                            });
+                        }
+                        else {
+                            r.price = s.totalPrice(true);
+                        }
 
                         db.ctrl('User', 'get', {
                             _id: r._diag
@@ -1092,7 +1107,8 @@ app.controller('ctrl.booking', ['server',
         };
         s.drawRange = function(rng) {
             var rta = moment(rng.start).format("HH[h]mm");
-            rta += ' - ' + s.totalPrice(true) + ' €';
+            //rta += ' - ' + s.totalPrice(true) + ' €';
+            rta += ' - ' + rng.price + ' €';
             // + ' - ' + moment(rng.end).format("HH[h]mm");
             return rta;
         };
@@ -1490,14 +1506,18 @@ app.controller('ctrl.booking', ['server',
 
         s.subTotal = () => subTotal(s.model, s.diags, s.basePrice);
         s.sizePrice = () => sizePrice(s.model, s.diags, s.squareMetersPrice, s.basePrice);
-        s.totalPrice = (showRounded) => totalPrice(showRounded, s.model, s.diags, s.squareMetersPrice, s.basePrice, {
+        s.totalPrice = (showRounded, opt) => totalPrice(showRounded, s.model, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({
             s: s
-        });
+        }, opt || {}));
 
         s.pickTimeRange = function(timeRange) {
             s.model.diagStart = timeRange.start;
             s.model._diag = timeRange._diag;
             s.model.diagEnd = timeRange.end;
+            s.model.price = timeRange.price;
+            if(!timeRange.price){
+                console.warn('time-range invalid price attribute',timeRange);
+            }
         };
 
         s.totalTime = function() {

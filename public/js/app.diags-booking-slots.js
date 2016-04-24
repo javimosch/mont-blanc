@@ -1,3 +1,6 @@
+/*global moment*/
+/*global $U*/
+/*global _*/
 ((global) => {
     global.diagsCalculateAvailableSlots = diagsCalculateAvailableSlots;
     global.diagsGetAvailableRanges = diagsGetAvailableRanges;
@@ -76,7 +79,7 @@
             //The diagnostiquer need 30 minutes. Its minimum time between to mission.
             //one hour minimum between each diag beginning
         }
-        return MyPromise(function(resolve, error) {
+        return $U.MyPromise(function(resolve, error) {
             _data((working, exceptions, diags) => {
                 resolve(calc(order, working, exceptions, diags));
             });
