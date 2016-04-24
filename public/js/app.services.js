@@ -130,15 +130,15 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
         async: false,
         dataType: 'json',
         success: function(r) {
-            URL = r.config.backendURL; //updates serverURL from express (node env serverURL);
-            console.info('server:url:' + URL);
+            //URL = r.config.backendURL; //updates serverURL from express (node env serverURL);
+            console.info('server-url-(data.json):' + URL);
         }
     });
 
-    //$.ajax("/serverURL").then(function(r) {
-      //  URL = r.URL; //updates serverURL from express (node env serverURL);
-        //console.info('server:url:' + URL);
-    //});
+    $.ajax("/serverURL").then(function(r) {
+        URL = r.URL; //updates serverURL from express (node env serverURL);
+        console.info('server:url(env serverURL):' + URL);
+    });
 
     //var URL = 'http://blooming-plateau-64344.herokuapp.com/';
     var globalState = {}; //containts a global state of the service. (db)

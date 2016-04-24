@@ -111,6 +111,9 @@
             //require firebase
             /*global Firebase*/
             /*global localStorage*/
+            var isDevEnv = function(){window.location.hostname.indexOf('diags-javoche.c9users.io') !== -1;}
+            if(!isDevEnv()) return;
+            console.info('live-reload-enabled!');
             var ref = new Firebase("https://madev.firebaseio.com/diagsfront" + '/signals/reload');
             var counter = localStorage['livesync'] && parseInt(localStorage['livesync']) || 0;
             ref.on('value', function(snap) {
