@@ -1067,9 +1067,12 @@ app.controller('ctrl.booking', ['server',
                         if (moment(date).day() === 0) {
                             //on sundays, this rngs had a different basic price (+100%)
                             var basePriceIncr = 100;
+                            /*
                             r.price = s.totalPrice(true,{
                                 basePrice: s.basePrice + (s.basePrice*basePriceIncr/100)
-                            });
+                            });*/
+                            r.price = s.totalPrice(true);
+                            r.price+= r.price*basePriceIncr/100;
                         }
                         else {
                             r.price = s.totalPrice(true);
