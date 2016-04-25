@@ -380,7 +380,7 @@ var Eventify = (function(self) { //event handling snippet
 
     function firePreserve(n, handler) {
         if (!once[n]) return;
-        console.log('fire-preserve', n, once[n]);
+       // console.log('fire-preserve', n, once[n]);
         handler(once[n]);
     }
     self.off = function(evt) {
@@ -398,7 +398,7 @@ var Eventify = (function(self) { //event handling snippet
             evts[n][k].handler(p);
         });
         if (opt && opt.preserve) {
-            once[n] = p;
+            once[n] = p || {};
         }
         var pp = p;
         try {

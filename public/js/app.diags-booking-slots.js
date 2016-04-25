@@ -142,19 +142,47 @@
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
 
+    function isToday(order){
+        return moment(order.day).isSame(moment(),'day');
+    }
+
     function filterOrders(orders,diag){
     	return orders.filter(v=>{
     		return v._user == diag._id;
     	});
     }
     function allocateMorning(diag, order, collisions, arr) {
-        return allocate(8, 0, 11, 30, diag, order, collisions, arr, 'morning');
+        var startMinH = 8;
+        var startMinM = 0;
+        
+        if(isToday(order)){
+            if(moment().isAfter(moment().hour(11).minutes(30))){//now is after 11:30?
+                return false;  //do not allocate in morning then.
+            }else{
+                startMinH = moment().add(1,'hour').hours(); //allocate morning staring in one hour.
+                startMinM = moment().minutes();
+            }
+        }
+        
+        return allocate(startMinH, startMinM, 11, 30, diag, order, collisions, arr, 'morning');
     }
 
     function allocateAfternoon(diag, order, collisions, arr) {
+        var startMinH = 13;
+        var startMinM = 0;
         var startMax = moment(order.day).hours(19).minutes(0).subtract(order.time.hours, 'hour').subtract(order.time.minutes, 'minutes');
         //
-        return allocate(13, 0, startMax.hours(), startMax.minutes(), diag, order, collisions, arr, 'afternoon');
+        if(isToday(order)){
+            if(moment().isAfter(moment().hour(startMax.hours()).minutes(startMax.minutes()))){
+                //now is after 19:00 minus order time?
+                return false;  //do not allocate in afternoon then.
+            }else{
+                startMinH = moment().add(1,'hour').hours(); //allocate afternoon staring in one hour.
+                startMinM = moment().minutes();
+            }
+        }
+        //
+        return allocate(startMinH, startMinM, startMax.hours(), startMax.minutes(), diag, order, collisions, arr, 'afternoon');
     }
 
     function normalizeStart(start){
@@ -169,6 +197,7 @@
         return start.hours(h).minutes(m);
     }
 
+    //arr: represents the current allocated slots.
     function allocate(startMinH, startMinM, startMaxH, startMaxM, diag, order, collisions, arr, propName) {
         var startMin = moment(order.day).hour(startMinH).minutes(startMinM);
         var startMax = moment(order.day).hour(startMaxH).minutes(startMaxM);

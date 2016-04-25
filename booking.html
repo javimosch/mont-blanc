@@ -9,8 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="img/favicon.ico" />
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-    
-   
+
+
     <link rel="stylesheet" type="text/css" href="css/fullpage.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/calendar.css">
@@ -26,15 +26,15 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap-theme-1.css">
     <link rel="stylesheet" type="text/css" href="css/font.awesome.css">
 
-     <link rel="stylesheet" href="css/rangeslider.css" type="text/css" />
+    <link rel="stylesheet" href="css/rangeslider.css" type="text/css" />
     <link rel="stylesheet" href="css/diags.design.css" type="text/css" />
     <link rel="stylesheet" href="css/diags-checkbox.css" type="text/css" />
-    
-    
+
+
 </head>
 
 <body data-main class="hiddenn" ng-controller="ctrl.booking">
-    
+
     <!-- GLOBAL LAYOUT -->
     <div class="container-fluid">
         <div class="row-fluid">
@@ -48,24 +48,25 @@
             <div ng-include="'views/booking/partials/booking-footer.html'"></div>
         </div>
     </div>
-    
+
     <!--
     <div ng-show="stateIs('home')" ng-include="'views/booking/booking-1-home.html'"></div>
     <div ng-show="stateIs('diags')" ng-include="'views/booking/booking-2-diags-selection.html'"></div>
     <div ng-show="stateIs('date')" ng-include="'views/booking/booking-3-date-selection.html'"></div>
     <div ng-show="stateIs('connect')" ng-include="'views/booking/booking-4-connection.html'"></div>
     -->
-    
+
     <my-alerts add="notify" class="notify" directive="notify" stacked="false" settings="{clickDismissable:false}"></my-alerts>
     <modal-confirm open="openConfirm"></modal-confirm>
     <span data-spinner show="state.working"></span>
-    
+
     <!--VENDOR-->
+
     <script src="js/vendor/vendor.jquery.unzip.js"></script>
-    <script src="js/vendor/vendor.jquery.fullpage.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"></script>
     <script src="js/vendor/vendor.angular.unzip.js"></script>
     <script src="js/vendor/vendor.angular-route.min.js"></script>
-    
+
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
     <script src="js/vendor/vendor.geocomplete.js"></script>
     <script src="js/vendor/vendor.bootstrap.js"></script>
@@ -96,6 +97,11 @@
 
     <script src="https://checkout.stripe.com/checkout.js"></script>
     <script>
+        /*global $*/
+        /*global FastClick*/
+        $(function() {
+            FastClick.attach(document.body);
+        });
         //(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
         //function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
         // e=o.createElement(i);r=o.getElementsByTagName(i)[0];
@@ -104,30 +110,8 @@
         //ga('create','UA-XXXXX-X');ga('send','pageview');
     </script>
 
-    <!-- LIVERLEOAD-->
     <script type="text/javascript" src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
-    <script type="text/javascript">
-        (function() {
-            //require firebase
-            /*global Firebase*/
-            /*global localStorage*/
-            var isDevEnv = function(){window.location.hostname.indexOf('diags-javoche.c9users.io') !== -1;}
-            if(!isDevEnv()) return;
-            console.info('live-reload-enabled!');
-            var ref = new Firebase("https://madev.firebaseio.com/diagsfront" + '/signals/reload');
-            var counter = localStorage['livesync'] && parseInt(localStorage['livesync']) || 0;
-            ref.on('value', function(snap) {
-                if (snap.val()!= counter) {
-                  localStorage['livesync'] = snap.val().toString();
-                  console.log(snap.val(),counter,'reloading');
-                  window.location.reload();
-                }else{
-                    console.log(snap.val(),counter,'it-has-reload-ok');
-                }
-                //console.log('reload', snap.val(), sec);
-            });
-        })();
-    </script>
+    <div ng-include="'views/live-reload.html'"></div>
 
 </body>
 

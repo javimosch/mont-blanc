@@ -4,8 +4,8 @@ var app = angular.module('app.login', []);
 
 app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, r) {
     //console.info('app.admin.login:adminLogin');
-
-    r.navShow = false;
+    r.__hideNavMenu = true;
+    r.navShow = true;
     s.show = false;
 
     /*

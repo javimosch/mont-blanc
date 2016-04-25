@@ -4,6 +4,7 @@
 /*global MyPromise*/
 /*global newId*/
 /*global $*/
+/*global $U*/
 /*global diagsGetAvailableRanges*/
 var srv = angular.module('app.services', []);
 
@@ -137,6 +138,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
 
     $.ajax("/serverURL").then(function(r) {
         URL = r.URL; //updates serverURL from express (node env serverURL);
+        $U.emitPreserve('server-up');
         console.info('server:url(env serverURL):' + URL);
     });
 
@@ -333,19 +335,21 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
             }
         }
 
-        http({
-            method: 'POST',
-            data: data,
-            url: URL + '/' + relativeUrl
-        }).then(function(res) {
-            _log(res);
-            if (res.data && res.data.ok == false) {
-                console.warn('SERVER:REQUEST:WARNING = ', res.data.err || "Unkown error detected",relativeUrl);
-            }
-            return callback(res);
-        }, (err) => {
-            handleError(_log, err);
-            error(err);
+        $U.once('server-up', function() {
+            http({
+                method: 'POST',
+                data: data,
+                url: URL + '/' + relativeUrl
+            }).then(function(res) {
+                _log(res);
+                if (res.data && res.data.ok == false) {
+                    console.warn('SERVER:REQUEST:WARNING = ', res.data.err || "Unkown error detected", relativeUrl);
+                }
+                return callback(res);
+            }, (err) => {
+                handleError(_log, err);
+                error(err);
+            });
         });
     }
 
