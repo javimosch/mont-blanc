@@ -42,7 +42,10 @@
 
         <div class="row diag-row margin-top-one">
             <div class="col-md-12 ">
-                <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 center" ng-click="proceedToConnect()">Créneau suivant</button>
+                <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 center" 
+                ng-disabled="state.working() || slotsDays.nextIsDisabled()"
+                ng-click="slotsDays.next()"
+                >Créneau suivant</button>
             </div>
         </div>
 

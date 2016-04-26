@@ -5,7 +5,7 @@
     global.diagsCalculateAvailableSlots = diagsCalculateAvailableSlots;
     global.diagsGetAvailableRanges = diagsGetAvailableRanges;
 
-    function diagsGetAvailableRanges(order,ctrl) {
+    function diagsGetAvailableRanges(order, ctrl) {
         if (!isFinite(new Date(order.day))) {
             throw Error('getAvailableRanges Invalid order day');
         }
@@ -15,11 +15,16 @@
             ctrl('User', 'getAll', {
                 userType: 'diag',
                 __rules: {
-                    disabled: { $ne: true } //exclude disabled diags
+                    disabled: {
+                        $ne: true
+                    } //exclude disabled diags
                 },
                 __select: 'priority'
             }).then((data) => {
-                cb(data.result.map((v) => ({ _id: v._id, priority: v.priority })));
+                cb(data.result.map((v) => ({
+                    _id: v._id,
+                    priority: v.priority
+                })));
             })
         }
 
@@ -36,7 +41,9 @@
             ctrl('Order', 'getAll', {
                 __select: 'diagStart diagEnd _diag',
                 __rules: {
-                    status: { $ne: 'complete' }
+                    status: {
+                        $ne: 'complete'
+                    }
                 }
             }).then((data) => {
 
@@ -44,7 +51,11 @@
                     return moment(v.diagStart).isSame(moment(order.day), 'day');
                 });
 
-                cb(data.result.map((v) => ({ _user: v._diag, start: v.diagStart, end: v.diagEnd })));
+                cb(data.result.map((v) => ({
+                    _user: v._diag,
+                    start: v.diagStart,
+                    end: v.diagEnd
+                })));
             })
         }
         //
@@ -87,7 +98,7 @@
     }
     //////////////////
     function diagsCalculateAvailableSlots(order, working, exceptions, diags) {
-       //console.log('diagsCalculateAvailableSlots');
+        //console.log('diagsCalculateAvailableSlots');
         var slots = {
             morning: [],
             afternoon: []
@@ -96,8 +107,8 @@
         diags.forEach((diag) => {
             //
             //if an exception collide with the whole day, skip.
-            if(isExceptionCollidingWholeDay(diag,order,exceptions)){
-                console.log(diag._id+' exception colliding whole day');
+            if (isExceptionCollidingWholeDay(diag, order, exceptions)) {
+                console.log(diag._id + ' exception colliding whole day');
                 return;
             }
 
@@ -105,7 +116,7 @@
             //exceptions that collide in the whole day.
             var _exceptions = orderDiagExceptions(order, diag, exceptions);
             //a sum of the active orders of the day plus exceptions.
-            var _collisions = _.union(filterOrders(working,diag), _exceptions);
+            var _collisions = _.union(filterOrders(working, diag), _exceptions);
             //
             //we sum already assigned slots
             _collisions = _.union(_collisions, slots.morning);
@@ -113,8 +124,10 @@
             //
             if (slots.morning.length < 2) {
                 if (freeMorning(order, _collisions)) {
-                    slots.morning.push(slot(9, 0, order, diag), slot(10, 0, order, diag));
-                } else {
+                    //slots.morning.push(slot(9, 0, order, diag), slot(10, 0, order, diag));
+                    slots = allocateFixedMorning(slots, order, diag);
+                }
+                else {
                     var sumo = allocateMorning(diag, order, _collisions, slots);
                     if (sumo && slots.morning.length < 2) {
                         _collisions.push(slots.morning[slots.morning.length - 1]);
@@ -125,8 +138,10 @@
             //
             if (slots.afternoon.length < 2) {
                 if (freeAfternoon(order, _collisions)) {
-                    slots.afternoon.push(slot(14, 0, order, diag), slot(15, 0, order, diag));
-                } else {
+                    //slots.afternoon.push(slot(14, 0, order, diag), slot(15, 0, order, diag));
+                    slots = allocateFixedAfternoon(slots,order,diag);
+                }
+                else {
                     var sumo = allocateAfternoon(diag, order, _collisions, slots);
                     if (sumo && slots.afternoon.length < 2) {
                         _collisions.push(slots.afternoon[slots.afternoon.length - 1]);
@@ -142,28 +157,105 @@
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
 
-    function isToday(order){
-        return moment(order.day).isSame(moment(),'day');
+    function allocateFixedMorning(_slots, order, diag) {
+        if (isToday(order)) {
+            //after 11:300, none.
+            //before 8:00am, fixed slots are at 9h00 and 10h00.
+            //past 8:00, fixed slots are one hour after current time. Separated by one hour.
+            //if past 11h30, there are not fixed slots for the morning.
+            if (moment().isBefore(moment().hour(11).minutes(30))) {
+                if (moment().isBefore(moment().hour(8).minutes(0))) {
+                    _slots.morning.push(slot(9, 0, order, diag), slot(10, 0, order, diag));
+                    console.log('allocate-fixed-morning-today-at-9h00-and-10h00-current-time-before-08h00: ');
+                }
+                else {
+                    var fixed = moment().add(1, 'hour');
+                    if (fixed.isBefore(moment().hour(11).minutes(30))) {
+                        var minutes = parseInt(parseInt(fixed.minutes()) / 10, 10) * 10;
+                        _slots.morning.push(slot(fixed.hours(), minutes, order, diag));
+                        console.log('allocate-fixed-morning-today-at: ',fixed);
+                        fixed = fixed.add(1, 'hour');
+                        if (fixed.isBefore(moment().hour(11).minutes(30))) {
+                            _slots.morning.push(slot(fixed.hours(), minutes, order, diag));
+                            console.log('allocate-fixed-morning-today-at: ',fixed);
+                        }else{
+                            console.log('allocate-fixed-morning-today-skip: fixed beyond limit (11h30)',fixed);
+                        }
+                    }else{
+                        console.log('allocate-fixed-morning-today-skip: fixed beyond limit (11h30)',fixed);
+                    }
+                }
+            }
+            else {
+                //none
+                console.log('allocate-fixed-morning-skip-current-time-after-11h30: ',fixed);
+            }
+        }
+        else {
+            _slots.morning.push(slot(9, 0, order, diag), slot(10, 0, order, diag)); // normal
+        }
+        return _slots;
     }
 
-    function filterOrders(orders,diag){
-    	return orders.filter(v=>{
-    		return v._user == diag._id;
-    	});
+    function allocateFixedAfternoon(_slots, order, diag) {
+        if (isToday(order)) {
+            //past 13:00am
+            //past 19h00, none.
+            if (moment().isAfter(moment().hour(13).minutes(0))) {
+                var fixed = moment().add(1, 'hour');
+                //the limit were a fixed slot can start during the afternoon is 19h00 minus the order time.
+                var limit = moment().hours(19).minutes(00).subtract(order.time.hours, 'hours').subtract(order.time.minutes, 'minutes');
+                //
+                if (!fixed.isBefore(limit)) {
+                    var minutes = parseInt(parseInt(fixed.minutes()) / 10, 10) * 10;
+                    _slots.afternoon.push(slot(fixed.hours(), minutes, order, diag));
+                    console.log('allocate-fixed-afternoon-today-at: ',fixed);
+                    fixed = fixed.add(1, 'hour');
+                    if (!fixed.isBefore(limit)) {
+                        _slots.afternoon.push(slot(fixed.hours(), minutes, order, diag));
+                        console.log('allocate-fixed-afternoon-today-at: ',fixed);
+                    }else{
+                        console.log('allocate-fixed-afternoon-today-skip: fixed beyond limit',limit,fixed);
+                    }
+                }else{
+                    console.log('allocate-fixed-afternoon-today-skip: fixed beyond limit',limit,fixed);
+                }
+            }
+            else {
+                _slots.afternoon.push(slot(14, 0, order, diag), slot(15, 0, order, diag)); //normal (is today in the morning, so allocate afternoon as normal)
+                console.log('allocate-fixed-afternoon-today-at-14-and-15-current-time-before-13h00: ',fixed);
+            }
+        }
+        else {
+            _slots.afternoon.push(slot(14, 0, order, diag), slot(15, 0, order, diag)); //normal fixed allocation
+        }
+        return _slots;
     }
+
+    function isToday(order) {
+        return moment(order.day).isSame(moment(), 'day');
+    }
+
+    function filterOrders(orders, diag) {
+        return orders.filter(v => {
+            return v._user == diag._id;
+        });
+    }
+
     function allocateMorning(diag, order, collisions, arr) {
         var startMinH = 8;
         var startMinM = 0;
-        
-        if(isToday(order)){
-            if(moment().isAfter(moment().hour(11).minutes(30))){//now is after 11:30?
-                return false;  //do not allocate in morning then.
-            }else{
-                startMinH = moment().add(1,'hour').hours(); //allocate morning staring in one hour.
+
+        if (isToday(order)) {
+            if (moment().isAfter(moment().hour(11).minutes(30))) { //now is after 11:30?
+                return false; //do not allocate in morning then.
+            }
+            else {
+                startMinH = moment().add(1, 'hour').hours(); //allocate morning staring in one hour.
                 startMinM = moment().minutes();
             }
         }
-        
+
         return allocate(startMinH, startMinM, 11, 30, diag, order, collisions, arr, 'morning');
     }
 
@@ -172,12 +264,13 @@
         var startMinM = 0;
         var startMax = moment(order.day).hours(19).minutes(0).subtract(order.time.hours, 'hour').subtract(order.time.minutes, 'minutes');
         //
-        if(isToday(order)){
-            if(moment().isAfter(moment().hour(startMax.hours()).minutes(startMax.minutes()))){
+        if (isToday(order)) {
+            if (moment().isAfter(moment().hour(startMax.hours()).minutes(startMax.minutes()))) {
                 //now is after 19:00 minus order time?
-                return false;  //do not allocate in afternoon then.
-            }else{
-                startMinH = moment().add(1,'hour').hours(); //allocate afternoon staring in one hour.
+                return false; //do not allocate in afternoon then.
+            }
+            else {
+                startMinH = moment().add(1, 'hour').hours(); //allocate afternoon staring in one hour.
                 startMinM = moment().minutes();
             }
         }
@@ -185,14 +278,14 @@
         return allocate(startMinH, startMinM, startMax.hours(), startMax.minutes(), diag, order, collisions, arr, 'afternoon');
     }
 
-    function normalizeStart(start){
+    function normalizeStart(start) {
         start = moment(start);
         var h = start.hours();
         var m = start.minutes();
-        if(m>0 && m<30) m = 30;
-        if(m>30){
-             m = 0;
-             h++;
+        if (m > 0 && m < 30) m = 30;
+        if (m > 30) {
+            m = 0;
+            h++;
         }
         return start.hours(h).minutes(m);
     }
@@ -216,14 +309,16 @@
                 if (_cols.length == 0) {
                     //available!
                     var _s = slot(start.hours(), start.minutes(), order, diag);
-                   //console.info('allocate:success=' + JSON.stringify(_s));
+                    //console.info('allocate:success=' + JSON.stringify(_s));
                     arr[propName].push(_s);
                     return true;
-                } else {
+                }
+                else {
                     start = moment(_cols[_cols.length - 1].end).add(1, 'hours').add(30, 'minutes');
                     start = normalizeStart(start);
                 }
-            } else {
+            }
+            else {
                 start = moment(_cols[_cols.length - 1].end).add(1, 'hours').add(30, 'minutes');
                 start = normalizeStart(start);
             }
@@ -233,9 +328,10 @@
             if (c > 20) cut = true;
         } while (moment(start).isBefore(moment(startMax)) || cut);
         if (cut) {
-           //console.warn('allocate while warning.');
-        } else {
-           //console.log('allocate:not-posible');
+            //console.warn('allocate while warning.');
+        }
+        else {
+            //console.log('allocate:not-posible');
         }
         return false;
     }
@@ -297,12 +393,12 @@
             moment(r.end).isSameOrBefore(end)
         )));
         //
-       /*
-       console.info('rangeCollisions ' + moment(start).format('HH:mm') + ' - ' + moment(end).format('HH:mm') + ' collisions:' + JSON.stringify(collisions.map(v => {
-            return
-            moment(v.start).format('HH:mm') + ' - ' + moment(v.end).format('HH:mm');
+        /*
+        console.info('rangeCollisions ' + moment(start).format('HH:mm') + ' - ' + moment(end).format('HH:mm') + ' collisions:' + JSON.stringify(collisions.map(v => {
+             return
+             moment(v.start).format('HH:mm') + ' - ' + moment(v.end).format('HH:mm');
 
-        })) + ' == Collisions: ' + (rta.length));*/
+         })) + ' == Collisions: ' + (rta.length));*/
         return rta;
     }
 
@@ -324,12 +420,12 @@
             return collide;
         });
     }
-    function isExceptionCollidingWholeDay(diag,order,exceptions){
-        return exceptions.some(ex=>{
+
+    function isExceptionCollidingWholeDay(diag, order, exceptions) {
+        return exceptions.some(ex => {
             var o = moment(order.day);
-            if(ex._user != diag._id) return false;
-            return moment(ex.start).isBefore(o.hour(8).minutes(0))
-                && moment(ex.end).isAfter(o.hour(19).minutes(0))
+            if (ex._user != diag._id) return false;
+            return moment(ex.start).isBefore(o.hour(8).minutes(0)) && moment(ex.end).isAfter(o.hour(19).minutes(0))
         });
     }
 })(typeof exports !== 'undefined' && exports || window);

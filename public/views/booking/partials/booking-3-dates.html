@@ -1,66 +1,16 @@
 <div class="row booking-date-row">
-    <div class="col-xs-12 col-md-6 col-lg-3">
+    <div class="col-xs-12 col-md-6 col-lg-3" ng-repeat="d in slotsDays.get() track by $index">
         <div class="diags-date-day-wrapper">
-            <div class="diags-date-day-header">Aujourd’hui</div>
-            <div ng-repeat="(key,range) in slots1 track by $index" ng-class="{'diags-date-day-item':true,'selected':dateSlotSelected(range)}">
+            <div class="diags-date-day-header">{{d.label()}}</div>
+            <div ng-repeat="(key,range) in d.slots track by $index" ng-class="{'diags-date-day-item':true,'selected':dateSlotSelected(range)}">
                 <div class="diags-date-day-item-check-wrapper">
-                    <nice-check-box class="diag46" template='diags-date-slot' model="model" data="range"></nice-check-box>
-                </div>
-                <div class="diags-date-day-item-description-wrapper">
-                    <div class="time-price">
-                        {{drawRange(range)||'1h - 224 €'}}
-                    </div>
-                    <div class="diag-guy">
-                        {{range.name||'Pepe, G'}}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-    </div>
-    <div class="col-xs-12 col-md-6 col-lg-3">
-        <div class="diags-date-day-wrapper">
-            <div class="diags-date-day-header">{{slots2Label}}</div>
-            <div ng-repeat="(key,range) in slots2 track by $index" ng-class="{'diags-date-day-item':true,'selected':dateSlotSelected(range)}">
-                <div class="diags-date-day-item-check-wrapper">
-                    <nice-check-box class="diag46" template='diags-date-slot' model="model" data="range"></nice-check-box>
-                </div>
-                <div class="diags-date-day-item-description-wrapper">
-                    <div class="time-price">
-                        {{drawRange(range)||'1h - 224 €'}}
-                    </div>
-                    <div class="diag-guy">
-                        {{range.name||'Pepe, G'}}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-     <div class="col-xs-12 col-md-6 col-lg-3">
-        <div class="diags-date-day-wrapper">
-            <div class="diags-date-day-header">{{slots3Label}}</div>
-            <div ng-repeat="(key,range) in slots3 track by $index" ng-class="{'diags-date-day-item':true,'selected':dateSlotSelected(range)}">
-                <div class="diags-date-day-item-check-wrapper">
-                    <nice-check-box class="diag46" template='diags-date-slot' model="model" data="range"></nice-check-box>
-                </div>
-                <div class="diags-date-day-item-description-wrapper">
-                    <div class="time-price">
-                        {{drawRange(range)||'1h - 224 €'}}
-                    </div>
-                    <div class="diag-guy">
-                        {{range.name||'Pepe, G'}}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-     <div class="col-xs-12 col-md-6 col-lg-3">
-        <div class="diags-date-day-wrapper">
-            <div class="diags-date-day-header">{{slots4Label}}</div>
-            <div ng-repeat="(key,range) in slots4 track by $index" ng-class="{'diags-date-day-item':true,'selected':dateSlotSelected(range)}">
-                <div class="diags-date-day-item-check-wrapper">
-                    <nice-check-box class="diag46" template='diags-date-slot' model="model" data="range"></nice-check-box>
+                    <nice-check-box 
+                    class="diag46" 
+                    template='diags-date-slot' 
+                    model="model" 
+                    data="range"
+                    click="proceedToConnect"
+                    ></nice-check-box>
                 </div>
                 <div class="diags-date-day-item-description-wrapper">
                     <div class="time-price">

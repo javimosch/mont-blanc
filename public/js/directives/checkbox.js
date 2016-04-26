@@ -7,7 +7,8 @@ app.directive('niceCheckBox', function($rootScope, $timeout, $compile) {
             model: "=model",
             data:"=data",
             name: "@name",
-            template: "@template"
+            template: "@template",
+            click:"=click"
         },
         templateUrl: "views/directives/checkbox.html",
         link: function(scope, el, attrs) {

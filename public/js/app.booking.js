@@ -149,34 +149,7 @@ app.controller('ctrl.booking', ['server',
             }
 
             if (url.indexOf(URL.RDV) !== -1) {
-
-
-                var cbHell = $U.cbHell(4, function() {
-                    console.info('available-dates-retrived');
-                    setSelectedRangeDateUsingOrder();
-                });
-
-                s.requestSlots(moment()._d).then((d) => {
-                    s.slots1 = d;
-                    cbHell.next();
-                });
-                s.requestSlots(moment().add(1, 'days')._d).then((d) => {
-                    s.slots2 = d;
-                    cbHell.next();
-                });
-                s.requestSlots(moment().add(2, 'days')._d).then((d) => {
-                    s.slots3 = d;
-                    cbHell.next();
-                });
-                s.requestSlots(moment().add(3, 'days')._d).then((d) => {
-                    s.slots4 = d;
-                    cbHell.next();
-                });
-
-                s.slots2Label = moment().add(1, 'days').format('dddd DD MMMM');
-                s.slots3Label = moment().add(2, 'days').format('dddd DD MMMM');
-                s.slots4Label = moment().add(3, 'days').format('dddd DD MMMM');
-
+                slotsDays.init();
             }
 
             if ($U.indexOf(url, [URL.ACCOUNT_DETAILS])) {
@@ -190,6 +163,78 @@ app.controller('ctrl.booking', ['server',
             }
 
         });
+
+
+        //this component is a high-level wrapper to retrive diags available slots.
+        var slotsDays = function() {
+            function asyncRequest(_localCursor, cbHell, dataPosition) {
+                _localCursor = new Date(_localCursor);
+                s.requestSlots(_localCursor).then((d) => {
+                    _data[dataPosition] = new DaySlot(_localCursor, d);
+                    console.log('slots-days-request-end-for', _localCursor, 'at', dataPosition);
+                    cbHell.next();
+                });
+            }
+
+            var DaySlot = function(_date, _slots) {
+                var o = {
+                    date: moment(_date),
+                    slots: _slots,
+                    label: function() {
+                        if (o.isToday()) {
+                            return 'Aujourd’hui';
+                        }
+                        else {
+                            return r.momentFormat(o.date, 'dddd DD MMMM');
+                        }
+                    },
+                    isToday: function() {
+                        return o.date.isSame(moment(), 'day');
+                    }
+                };
+                return o;
+            };
+            var _data = [];
+            var _nextTimes = 0;
+            var cursor = moment();
+            var o = {};
+            o.get = function() {
+                return _data;
+            };
+            o.init = function() {
+                cursor = moment(); //today, tomorrow, tomorrow morrow y tomorrow morrow morrow. 
+                o.request();
+            };
+            o.nextIsDisabled=function(){
+                return false; //_nextTimes > 1;
+            }
+            o.next = function() {
+                if(_nextTimes>15){
+                    _nextTimes=0;
+                    return o.init();
+                }
+                _nextTimes++;
+                cursor = cursor.add(4, 'days');
+                o.request();
+            };
+            o.request = function() {
+                var _localCursor = moment(cursor);
+                var cbHell = $U.cbHell(4, function() {
+                    console.info('slots-days-request-end');
+                    setSelectedRangeDateUsingOrder();
+                });
+                console.info('slots-days-request-begin for', r.momentFormat(_localCursor, 'DD-MM-YY'));
+                asyncRequest(_localCursor._d, cbHell, 0); //
+                _localCursor = _localCursor.add(1, 'days');
+                asyncRequest(_localCursor._d, cbHell, 1); //
+                _localCursor = _localCursor.add(1, 'days');
+                asyncRequest(_localCursor._d, cbHell, 2); //
+                _localCursor = _localCursor.add(1, 'days');
+                asyncRequest(_localCursor._d, cbHell, 3); //
+            };
+            return o;
+        }();
+        s.slotsDays = slotsDays;
 
         function resolvePaymentScreenAuth() {
             return $U.MyPromise(function(resolve, err, emit) {
@@ -289,17 +334,27 @@ app.controller('ctrl.booking', ['server',
             });
         }
         s.proceedToConnect = function() {
-            s.validateDate(function() {
-                if (s._user && s._user._id) {
-                    r.route(URL.PAYMENT);
-                }
-                else {
-                    r.route(URL.LOGIN);
-                }
+            //this is fire from the date checkbox and they need a time to change the state.
+            //lets execute this with a delay.
+            setTimeout(function() {
+                //
+                s.validateDate(function() {
+                    if (s._user && s._user._id) {
+                        r.route(URL.PAYMENT);
+                    }
+                    else {
+                        r.route(URL.LOGIN);
+                    }
 
-            });
+                });
+                //
+            }, 500);
+
         }
 
+        s.dateSlot = {
+            proceedToConnect: s.proceedToConnect
+        };
 
         s.validateBooking = function(cb) {
             ifThenMessage([
@@ -389,7 +444,9 @@ app.controller('ctrl.booking', ['server',
                 [s.model.gasInstallation, '==', undefined, "Répondre Gaz"],
                 [s.model.electricityInstallation, '==', undefined, "Répondre Electricité"],
                 [s.model.address, '==', undefined, "Répondre Address"],
-                [s.model.country, '!=', 'France', MESSAGES.FRENCH_ADDRESS_REQUIRED]
+                [_.includes(['France', 'Francia', 'Frankrig', 'Frankrijk',
+                    'Frankreich', 'Frankrike', 'Francja'
+                ], s.model.country), '==', false, MESSAGES.FRENCH_ADDRESS_REQUIRED]
             ], (m) => {
                 s.warningMsg(m[0]);
                 if (err) err();
@@ -1072,7 +1129,7 @@ app.controller('ctrl.booking', ['server',
                                 basePrice: s.basePrice + (s.basePrice*basePriceIncr/100)
                             });*/
                             r.price = s.totalPrice(true);
-                            r.price+= r.price*basePriceIncr/100;
+                            r.price += r.price * basePriceIncr / 100;
                         }
                         else {
                             r.price = s.totalPrice(true);
@@ -1518,8 +1575,8 @@ app.controller('ctrl.booking', ['server',
             s.model._diag = timeRange._diag;
             s.model.diagEnd = timeRange.end;
             s.model.price = timeRange.price;
-            if(!timeRange.price){
-                console.warn('time-range invalid price attribute',timeRange);
+            if (!timeRange.price) {
+                console.warn('time-range invalid price attribute', timeRange);
             }
         };
 
