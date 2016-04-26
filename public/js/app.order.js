@@ -1,3 +1,8 @@
+/*global angular*/
+/*global moment*/
+/*global _*/
+/*global $U*/
+
 (function() {
     var app = angular.module('app.order', []);
 
@@ -44,7 +49,7 @@
                     __populate: {
                         '_client': 'email',
                         '_diag': 'email',
-                        __select:"address diagStart diagEnd status created"
+                        __select: "address diagStart diagEnd status created"
                     }
                 }).then(function(r) {
                     //                console.info('adminOrders:read:success', r.data.result);
@@ -77,10 +82,16 @@
                     //no login needed
                     if (r.params && r.params.prevRoute) {
 
-                    } else {
-                        r.toggleNavbar(false);
                     }
-                } else {
+                    else {
+                        r.toggleNavbar(true);
+                        r.__hideNavMenu = true;
+                        $U.once('route-exit:'+$U.url.hashName(), function(url) {
+                            r.__hideNavMenu = false;
+                        });
+                    }
+                }
+                else {
                     r.secureSection(s);
                 }
 
@@ -93,11 +104,12 @@
                 setDefaults();
                 setBindings();
                 setActions();
-                whenProperties(s, ['diags'], [setDefaultsDiags]);
+                $U.whenProperties(s, ['diags'], [setDefaultsDiags]);
                 //
                 if (params && params.id && params.id.toString() !== '-1') {
                     r.dom(read, 0);
-                } else {
+                }
+                else {
                     reset();
                 }
             }
@@ -220,7 +232,7 @@
                     if (d.ok && d.result.length > 0) s.settings = d.result[0];
                 });
 
-                s.$watch('item.diagStart',(v)=>{
+                s.$watch('item.diagStart', (v) => {
                     s.item.date = v; //fallback for total price calculation.
                 });
 
@@ -281,7 +293,10 @@
                     scope: s,
                     val: undefined,
                     disabled: () => s.isPaid() || r.state.working(),
-                    cls: () => ({ btn: true, 'btn-default': true }),
+                    cls: () => ({
+                        btn: true,
+                        'btn-default': true
+                    }),
                     filterWatch: 'item',
                     filter: (v) => {
                         if (s.item && s.item._client && s.item._client.clientType) {
@@ -313,7 +328,8 @@
                                 disabled: () => !s.item.landLordAddress,
                                 get: () => s.item.landLordAddress || ''
                             }); //when agency / other
-                        } else {
+                        }
+                        else {
                             o.push({
                                 label: () => s.item._client.address || 'Client address',
                                 val: 3,
@@ -340,7 +356,8 @@
                                 s.item.keysTime = moment(s.item.diagStart).hours(8).minutes(0)._d;
                             }
                             return;
-                        } else {
+                        }
+                        else {
                             s.item.keysAddress = address;
                         }
 
@@ -373,7 +390,9 @@
                     return db.http('User', 'getAll', {
                         userType: 'diag',
                         __rules: {
-                            disabled: { $ne: true },
+                            disabled: {
+                                $ne: true
+                            },
                         },
                         __regexp: {
                             email: val
@@ -409,7 +428,8 @@
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             s.message(m[0](), 'warning', 0, true);
-                        } else {
+                        }
+                        else {
                             s.message(m[0], 'warning', 0, true);
                         }
                     }, _sendPaymentLink);
@@ -433,7 +453,8 @@
                                 console.info('PAY-OK', data.result);
                                 s.successMsg('The order was paid successfully');
                                 r.dom(read, 5000);
-                            } else {
+                            }
+                            else {
                                 s.successMsg('There was a server error, try later.', 'warning');
                                 console.info('PAY-FAIL', data.err);
                             }
@@ -445,10 +466,12 @@
                 s.back = () => {
                     if (s.is(['diag', 'client'])) {
                         r.route('dashboard');
-                    } else {
+                    }
+                    else {
                         if (r.params && r.params.prevRoute) {
                             return r.route(r.params.prevRoute);
-                        } else {
+                        }
+                        else {
                             r.route('orders');
                         }
 
@@ -486,7 +509,8 @@
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             s.message(m[0](), 'warning', 0, true);
-                        } else {
+                        }
+                        else {
                             s.message(m[0], 'warning', 0, true);
                         }
                     }, s.save);
@@ -499,7 +523,8 @@
                         if (data.ok) {
                             s.message('saved', 'success');
                             s.back();
-                        } else {
+                        }
+                        else {
                             handleError(data);
                         }
                     }).error(handleError);
@@ -510,7 +535,8 @@
                             duration: 5000,
                             scroll: true
                         });
-                    } else {
+                    }
+                    else {
                         window.open(db.URL() + '/File/get/' + s.item.pdfId, '_newtab');
                     }
                 };
@@ -527,7 +553,9 @@
 
                     function _deletePrev() {
                         if (pdfId_prev) {
-                            db.ctrl('File', 'remove', { _id: pdfId_prev });
+                            db.ctrl('File', 'remove', {
+                                _id: pdfId_prev
+                            });
                         }
                     }
 
@@ -558,7 +586,8 @@
                                         scroll: true
                                     });
                                 });
-                            } else {
+                            }
+                            else {
                                 s.message('Upload fail, try later.', {
                                     type: 'warning',
                                     duration: 99999,
@@ -595,7 +624,8 @@
                             if (data.ok) {
                                 s.message('deleted', 'info');
                                 s.back();
-                            } else {
+                            }
+                            else {
                                 handleError(data);
                             }
                         }).error(handleError);
@@ -655,7 +685,8 @@
                         _readFile();
                         //                    console.info('READ', s.item);
                         s.message('Loaded', 'success', 2000);
-                    } else {
+                    }
+                    else {
                         handleError(data);
                     }
                 }).error(handleError);
@@ -694,25 +725,53 @@
 
                 function update(items, cb) {
                     var data = {
-                        __select:"_client _diag address diagStart diagEnd price status created",
+                        __select: "_client _diag address diagStart diagEnd price status created",
                         __populate: {
                             '_client': 'email',
                             '_diag': 'email'
                         },
-                        __sort: "-createdAt"
+                        __sort: "-createdAt",
+
                     };
-                    dbPaginate.ctrl(data, s.model).then(res => {
-                        if (cb) {
-                            cb(res.result);
-                        } else {
-                            s.model.update(res.result, null);
+
+                    r.dom(_apply);
+
+                    function _apply() {
+
+                        var status = s.model.filter.fields.status;
+                        if (status) {
+                            status = status.replaceAll(' ', '');
+                            if (status.charAt(status.length - 1) == ',') {
+                                status = status.substring(0, status.length - 1);
+                            }
+                            var statusArr = status.split(',');
+                            data.__rules = data.__rules || {};
+                            data.__rules.status = {
+                                $in: statusArr
+                            };
+                            //console.log('filter-applied',statusArr);
                         }
-                    });
+
+                        dbPaginate.ctrl(data, s.model).then(res => {
+                            if (cb) {
+                                cb(res.result);
+                            }
+                            else {
+                                s.model.update(res.result, null);
+                            }
+                        });
+                    }
                 }
                 s.model = {
                     init: () => update(),
-                    pagination:{
-                        itemsPerPage:5
+                    filter: {
+                        template: 'ordersFilter',
+                        rules: {
+                            status: 'contains'
+                        }
+                    },
+                    pagination: {
+                        itemsPerPage: 5
                     },
                     paginate: (cb) => {
                         update(null, cb)
@@ -767,9 +826,9 @@
                         format: (v, item) => r.momentFormat(item.createdAt, 'DD-MM-YY HH:mm')
                     }],
                     items: [],
-                    records:{
-                        label:'Records',
-                        show:true
+                    records: {
+                        label: 'Records',
+                        show: true
                     }
                 };
 

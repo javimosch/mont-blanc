@@ -1,6 +1,12 @@
 /*global $*/
 /*global google*/
+/*global _*/
 "use strict";
+
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
 
 function numberBetween(n, min, max) {
     return n >= min && n <= max;
@@ -8,20 +14,20 @@ function numberBetween(n, min, max) {
 
 function expose(path, v) {
     setVal(window, path, v);
+}
 
-    function setVal(obj, propertyPath, _v) {
-        var split = propertyPath.split('.');
-        var lastIndex = split.length - 1;
-        split.forEach((chunk, index) => {
-            var isLast = lastIndex == index;
-            if (isLast) return false;
-            obj = obj[chunk] || {};
-            if (!obj) return false;
-        });
-        if (obj) {
-            if (_v) obj[split[lastIndex]] = _v;
-            return obj[split[lastIndex]];
-        }
+function setVal(obj, propertyPath, _v) {
+    var split = propertyPath.split('.');
+    var lastIndex = split.length - 1;
+    split.forEach((chunk, index) => {
+        var isLast = lastIndex == index;
+        if (isLast) return false;
+        obj = obj[chunk] || {};
+        if (!obj) return false;
+    });
+    if (obj) {
+        if (_v) obj[split[lastIndex]] = _v;
+        return obj[split[lastIndex]];
     }
 }
 
@@ -261,12 +267,13 @@ function ifThenMessage(comparisons, messagesCallback, noMessagesCallback) {
         messagesCallback(messages);
     }
     else {
-        if(noMessagesCallback){
-          noMessagesCallback();  
-        }else{
+        if (noMessagesCallback) {
+            noMessagesCallback();
+        }
+        else {
             console.warn('ifThenMessage no-message-callback-undefined');
         }
-        
+
     }
 }
 
@@ -385,7 +392,7 @@ var Eventify = (function(self) { //event handling snippet
 
     function firePreserve(n, handler) {
         if (!once[n]) return;
-       // console.log('fire-preserve', n, once[n]);
+        // console.log('fire-preserve', n, once[n]);
         handler(once[n]);
     }
     self.off = function(evt) {
@@ -539,18 +546,18 @@ var queryString = (function() {
     };
 
     queryString.get = getParameterByName;
-    queryString.hashName = function(){
+    queryString.hashName = function() {
         return (
             (window.location.hash.indexOf('?') !== -1) ?
             window.location.hash.substring(0, window.location.hash.indexOf('?')) : window.location.hash
-        ).replace('#/','');
+        ).replace('#/', '');
     };
     queryString.hash = function(str) {
         var hash = (
             (window.location.hash.indexOf('?') !== -1) ?
             window.location.hash.substring(0, window.location.hash.indexOf('?')) : window.location.hash
         );
-        if(str == undefined) return hash;
+        if (str == undefined) return hash;
         var params = queryString.parse(window.location.hash.replace(hash, ''));
         var new_params_string = queryString.stringify(params)
         window.history.pushState({}, "", window.location.pathname + '#/' + str + '?' + new_params_string);
@@ -637,8 +644,9 @@ else {
     window.ifThenMessage = ifThenMessage;
 
     window.$U = {
-        expose:expose,
-        fetchCountry:fetchCountry,
+        whenProperties: whenProperties,
+        expose: expose,
+        fetchCountry: fetchCountry,
         scrollToTop: scrollToTop,
         indexOf: indexOf,
         url: queryString,
@@ -647,6 +655,7 @@ else {
         onAnchorChange: onAnchorChange,
         valid: valid,
         val: val,
+        setVal:setVal,
         numberBetween: numberBetween,
         MyPromise: MyPromise,
         getHashParams: getHashParams,

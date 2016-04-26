@@ -35,62 +35,72 @@
     }
 }
 
-
-
-html, body, *{
+html,
+body,
+* {
     font-family: 'Roboto', sans-serif;
     font-size: 1rem;
 }
 
-
-.alert-info,.alert-warning,.alert-success{
-    
-/* background: rgba(0,0,0,0.1); */
-    
-background-image: none!important;
-    
-/* color: black; */
-    
-border-radius: 0px;
-    
-margin-bottom: 05px;
-    
-padding: 5px 30px;
-    
-text-align: center;
+.alert-info,
+.alert-warning,
+.alert-success {
+    /* background: rgba(0,0,0,0.1); */
+    background-image: none!important;
+    /* color: black; */
+    border-radius: 0px;
+    margin-bottom: 05px;
+    padding: 5px 30px;
+    text-align: center;
 }
 
-table.uib-timepicker{
+table.uib-timepicker {
     display: inline-table;
 }
-table.uib-timepicker tr{}
-table.uib-timepicker td{}
-table.uib-timepicker td a{
+
+table.uib-timepicker tr {}
+
+table.uib-timepicker td {}
+
+table.uib-timepicker td a {
     margin: 0px;
     padding: 0px;
 }
-table.uib-timepicker tbody{}
-table.uib-timepicker td a:focus{}
-table.uib-timepicker td a:hover{}
-table.uib-timepicker td input{}
-table.uib-timepicker td input:focus{}
-table.uib-timepicker td input:active:focus{}
-table.uib-timepicker td input:active{}
-table.uib-timepicker td input:hover{}
-table.uib-timepicker td span:active:focus{
+
+table.uib-timepicker tbody {}
+
+table.uib-timepicker td a:focus {}
+
+table.uib-timepicker td a:hover {}
+
+table.uib-timepicker td input {}
+
+table.uib-timepicker td input:focus {}
+
+table.uib-timepicker td input:active:focus {}
+
+table.uib-timepicker td input:active {}
+
+table.uib-timepicker td input:hover {}
+
+table.uib-timepicker td span:active:focus {
     outline: none;
 }
-table.uib-timepicker td span:focus{
+
+table.uib-timepicker td span:focus {
     outline: none!important;
 }
-table.uib-timepicker td span:active{}
-table.uib-timepicker td span:hover{}
-table.uib-timepicker td span{
+
+table.uib-timepicker td span:active {}
+
+table.uib-timepicker td span:hover {}
+
+table.uib-timepicker td span {
     font-size: 0.6rem;
     color: #CCC;
 }
 
-select.nice{
+select.nice {
     padding: 5px;
     border: 1px solid #ccc;
 }
@@ -106,11 +116,12 @@ select.nice{
 input.small {
     font-size: 0.8rem;
     /* border: 1px solid rgba(0, 0, 0, .1); */
-    border:0px;
+    border: 0px;
     color: black;
     /*font-family: serif;*/
     padding: 0px 5px;
 }
+
 input.big {
     font-size: 2rem;
     border: 1px solid rgba(0, 0, 0, .1);
@@ -121,17 +132,18 @@ input.medium {
     border: 1px solid rgba(0, 0, 0, .1);
 }
 
-span .elegant{
+span .elegant {
     font-size: 2rem;
     font-style: italic;
     /*font-family: serif;*/
 }
 
-span.medium{
-        font-size: x-large;
-        /* font-weight: 300; */
-        /* color: black; */
+span.medium {
+    font-size: x-large;
+    /* font-weight: 300; */
+    /* color: black; */
 }
+
 input.big:focus {
     text-decoration: none;
     outline: none;
@@ -141,70 +153,99 @@ input.big:focus {
     display: none;
 }
 
-.form-tiny{
-list-style: none;/* max-width: 400px; */padding: 0px;}
-.form-tiny li{
+.form-tiny {
+    list-style: none;
+    /* max-width: 400px; */
+    padding: 0px;
+}
+
+.form-tiny li {
     margin: 5px 0px;
 }
-.form-tiny.labelx2 label{
+
+.form-tiny.labelx2 label {
     min-width: 210px;
 }
-.form-tiny label{
+
+.form-tiny label {
     min-width: 135px;
     font-size: 0.8rem;
     vertical-align: top;
 }
-.form-tiny button:active:focus{
+
+.form-tiny button:active:focus {
     outline: none;
 }
-.form-tiny button:hover,.form-tiny button:focus{}
-.form-tiny button:active{
+
+.form-tiny button:hover,
+.form-tiny button:focus {}
+
+.form-tiny button:active {
     border-color: #ccc;
     background: transparent;
     box-shadow: none;
 }
-.form-tiny button{
+
+.form-tiny button {
     border-radius: 0px;
 }
-.form-tiny button:not(.btn-primary,.btn-success){
+
+.form-tiny button:not(.btn-primary, .btn-success) {
     background: transparent;
 }
-.form-tiny div{}
-.form-tiny input:hover,.form-tiny input:focus{
+
+.form-tiny div {}
+
+.form-tiny input:hover,
+.form-tiny input:focus {
     outline: none;
-    border-bottom: 1px solid rgba(0,0,0,.5);
+    border-bottom: 1px solid rgba(0, 0, 0, .5);
 }
-.form-tiny input{
+
+.form-tiny input {
     border: none;
-    border-bottom: 1px solid rgba(0,0,0,.2);
+    border-bottom: 1px solid rgba(0, 0, 0, .2);
 }
-.form-tiny input[disabled]{
+
+.form-tiny input[disabled] {
     background: whitesmoke;
 }
-.form-tiny a{}
-.form-tiny a:hover{}
 
-.table-dynamic{}
-.table-dynamic>tbody>tr>td,.table-dynamic>thead>tr>th{
+.form-tiny a {}
+
+.form-tiny a:hover {}
+
+.table-dynamic {}
+
+.table-dynamic>tbody>tr>td,
+.table-dynamic>thead>tr>th {
     padding: 5px 0px;
     padding-right: 10px;
     margin: 0px;
 }
-.table-dynamic>tbody>tr>td>*{}
-.table-dynamic>thead>tr>th{
+
+.table-dynamic>tbody>tr>td>* {}
+
+.table-dynamic>thead>tr>th {
     padding: 5px 10px 5px 0px;
 }
-.table-dynamic>thead>tr{}
-.table-dynamic>tbody>tr{}
-.table-dynamic>tbody>tr>td>li{}
-.table-dynamic>tbody,.table-dynamic>tfoot,.table-dynamic>thead{}
 
+.table-dynamic>thead>tr {}
 
-.childs-labels label{
-    width:150px!important;
+.table-dynamic>tbody>tr {}
+
+.table-dynamic>tbody>tr>td>li {}
+
+.table-dynamic>tbody,
+.table-dynamic>tfoot,
+.table-dynamic>thead {}
+
+.childs-labels label {
+    width: 150px!important;
 }
-.subscribe-input-group button{
-    width:226px;
+
+.subscribe-input-group button {
+    width: 226px;
 }
 
 .form-group {}
@@ -246,7 +287,7 @@ input [type='file'] {
 /*DIPLOMES FILES*/
 
 .diplome {
-    border-left: 1px solid rgba(0,0,0,.2);
+    border-left: 1px solid rgba(0, 0, 0, .2);
 }
 
 .diplome-info {
@@ -320,7 +361,7 @@ i.file-button[disabled]:hover {
     width: 50%;
 }
 
-a.navbar-brand{
+a.navbar-brand {
     font-size: 3rem;
     color: #333;
     /*text-shadow: 20px 0px rgba(0,0,0,0.12);*/
@@ -330,8 +371,9 @@ a.navbar-brand{
     font-size: 1rem;
     /*font-family: inherit;*/
 }
-.nav li a.active{
-    color:#333;
+
+.nav li a.active {
+    color: #333;
 }
 
 .nav li {
@@ -340,7 +382,7 @@ a.navbar-brand{
 
 @media screen and (min-width: 768px) {
     .nav {
-       /* width: 100%;*/
+        /* width: 100%;*/
     }
 }
 
@@ -464,4 +506,109 @@ table.order td {
     color: black;
     font-size: smaller;
     border-bottom: 5px solid;
+}
+
+
+/*AWESOME AUTOCOMPLETE*/
+
+[hidden] {
+    display: none;
+}
+
+.visually-hidden {
+    position: absolute;
+    clip: rect(0, 0, 0, 0);
+}
+
+div.awesomplete {
+    display: inline-block;
+    position: relative;
+}
+
+div.awesomplete > input {
+    display: block;
+}
+
+div.awesomplete > ul {
+    position: absolute;
+    left: 0;
+    z-index: 1;
+    min-width: 100%;
+    box-sizing: border-box;
+    list-style: none;
+    padding: 0;
+    border-radius: .3em;
+    margin: .2em 0 0;
+    background: hsla(0, 0%, 100%, .9);
+    background: linear-gradient(to bottom right, white, hsla(0, 0%, 100%, .8));
+    border: 1px solid rgba(0, 0, 0, .3);
+    box-shadow: .05em .2em .6em rgba(0, 0, 0, .2);
+    text-shadow: none;
+}
+
+div.awesomplete > ul[hidden],
+div.awesomplete > ul:empty {
+    display: none;
+}
+
+@supports (transform: scale(0)) {
+    div.awesomplete > ul {
+        transition: .3s cubic-bezier(.4, .2, .5, 1.4);
+        transform-origin: 1.43em -.43em;
+    }
+    div.awesomplete > ul[hidden],
+    div.awesomplete > ul:empty {
+        opacity: 0;
+        transform: scale(0);
+        display: block;
+        transition-timing-function: ease;
+    }
+}
+
+
+/* Pointer */
+
+div.awesomplete > ul:before {
+    content: "";
+    position: absolute;
+    top: -.43em;
+    left: 1em;
+    width: 0;
+    height: 0;
+    padding: .4em;
+    background: white;
+    border: inherit;
+    border-right: 0;
+    border-bottom: 0;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+div.awesomplete > ul > li {
+    position: relative;
+    padding: .2em .5em;
+    cursor: pointer;
+}
+
+div.awesomplete > ul > li:hover {
+    background: hsl(200, 40%, 80%);
+    color: black;
+}
+
+div.awesomplete > ul > li[aria-selected="true"] {
+    background: hsl(205, 40%, 40%);
+    color: white;
+}
+
+div.awesomplete mark {
+    background: hsl(65, 100%, 50%);
+}
+
+div.awesomplete li:hover mark {
+    background: hsl(68, 100%, 41%);
+}
+
+div.awesomplete li[aria-selected="true"] mark {
+    background: hsl(86, 100%, 21%);
+    color: inherit;
 }

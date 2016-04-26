@@ -14,3 +14,31 @@
     </div>
 </div>
 <modal-confirm open="confirm"></modal-confirm>
+
+<script type="text/ng-template" id="ordersFilter.html">
+    <ul class="form-tiny center-block float-right">
+        <li>
+            <label>
+                Filtre&nbsp;&nbsp; (
+                <i class="fa fa-question" tooltip-placement="top" uib-tooltip="ENTER will fetch from the server."></i>)
+            </label>
+        </li>
+        <li>
+            <label>Status</label>
+
+            <input class="awesomplete" awesome-complete target="#myList" model="model" field="filter.fields.status" placeholder="ex: created, ordered, prepaid" />
+            <!-- //ng-model="model.filter.fields.status" -->
+
+            <datalist id="myList">
+                <option>created</option>
+                <option>ordered</option>
+                <option>prepaid</option>
+                <option>delivered</option>
+                <option>completed</option>
+            </datalist>
+
+        </li>
+
+    </ul>
+
+</script>

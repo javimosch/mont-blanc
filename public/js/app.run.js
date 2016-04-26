@@ -272,11 +272,15 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     };
     r.routeIs = (n) => r.__route && r.__route.toString().toLowerCase().indexOf(n && n.toLowerCase() || 'invalid') !== -1 || false;
     r.__route = window.location.href.replace(window.location.origin + window.location.pathname, '');
+    r.__routeHashName =  $U.url.hashName();
+    r.__routeHashNameBefore =  $U.url.hashName();
     setTimeout(function() {
         $U.emitPreserve('route-change', r.__route.slice(2));
     }, 500);
     $U.onAnchorChange(() => {
         r.__route = window.location.href.replace(window.location.origin + window.location.pathname, '');
+        $U.emit('route-exit:' + r.__routeHashName);
+        r.__routeHashName =  $U.url.hashName();
         $U.emitPreserve('route-change', r.__route.slice(2))
     });
 
