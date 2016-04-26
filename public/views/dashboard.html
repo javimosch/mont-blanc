@@ -1,12 +1,29 @@
 <div class="container" ng-controller="adminDashboard">
-    <div class="jumbotron">
-        <h1>Dashboard</h1>
-        <h4>Welcome {{session().firstName || session().email}}.<br>You are a {{session().userType}}.</h4>
+    <div class="row">
+        <div class="col-sm-12 padding-none">
+            <ol class="breadcrumb">
+                <li>Dashboard</li>
+            </ol>
+        </div>
     </div>
-    <div ng-if="session().userType=='diag'" ng-include=" 'views/dashboard.diag.html' ">
+    <div class="row">
+        <div class="col-sm-12 padding-none">
+            <div class="jumbotron">
+                <h1>Dashboard</h1>
+                <h4>Welcome {{session().firstName || session().email}}</h4>
+                <h5 class="margin-top-two">Shorcuts</h5>
+                <h6 ng-show="userIs('admin')">Open <a href="/" target="_blank">booking</a> in a new tab.</h6>
+            </div>
+        </div>
     </div>
-    <div ng-if="session().userType=='client'" ng-include=" 'views/dashboard.client.html' ">
-    </div>
-    <div ng-if="session().userType=='admin'" ng-include=" 'views/dashboard.admin.html' ">
+    <div class="row">
+        <div class="col-sm-12">
+            <div ng-if="session().userType=='diag'" ng-include=" 'views/dashboard.diag.html' ">
+            </div>
+            <div ng-if="session().userType=='client'" ng-include=" 'views/dashboard.client.html' ">
+            </div>
+            <div ng-if="session().userType=='admin'" ng-include=" 'views/dashboard.admin.html' ">
+            </div>
+        </div>
     </div>
 </div>

@@ -1,10 +1,39 @@
 /*global angular*/
 var srv = angular.module('app.routes', []);
 srv.config(['$routeProvider',
-    function($routeProvider) {
+    function($routeProvider,$rootScope) {
+        
+       
         $routeProvider.
+        
+        //SHARED
+        when('/mentions-legales', {
+            templateUrl: 'views/legal-mentions.html'
+        }).
+        when('/conditions-generales-utilisation', {
+            templateUrl: 'views/general-conditions.html'
+        }).
+        when('/ernt', {
+            templateUrl: 'views/ernt.html'
+        }).
+        when('/faq', {
+            templateUrl: 'views/faq.html'
+        }).
+        when('/contactez-nous', {
+            templateUrl: 'views/contact-us.html'
+        }).
+        
+        //PUBLIC
+        when('/login', {
+            templateUrl: 'views/public/login.html'
+        }).
+        when('/diag-inscription', {
+            templateUrl: 'views/public/diag-inscription.html'
+        }).
+        
+        //PRIVATE
         when('/', {
-            templateUrl: 'views/login.html'
+            templateUrl: 'views/dashboard.html'
         }).
         when('/dashboard', {
             templateUrl: 'views/dashboard.html'

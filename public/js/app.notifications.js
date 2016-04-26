@@ -1,3 +1,4 @@
+/*global angular*/
 (() => {
     //QUICK CRUD
     var vars = {
@@ -55,7 +56,7 @@
                 }
 
                 var modalData = {
-                    send: () => {
+                    send: (item) => {
                         s.confirm('Confirm sending to ' + item.to + '?', () => {
                             //html from to subject
                             db.ctrl('Email', 'send', {
@@ -66,6 +67,7 @@
                                 subject: item.subject
                             }).then(d => {
                                 console.info(d);
+                                r.infoMessage('Copy send to '+item.to);
                                 update();
                             });
                         });

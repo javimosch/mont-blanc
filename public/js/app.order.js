@@ -280,7 +280,7 @@
                     address: '',
                     scope: s,
                     val: undefined,
-                    disabled: () => isPaid() || r.state.working(),
+                    disabled: () => s.isPaid() || r.state.working(),
                     cls: () => ({ btn: true, 'btn-default': true }),
                     filterWatch: 'item',
                     filter: (v) => {

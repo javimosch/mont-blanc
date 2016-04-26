@@ -8,6 +8,10 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
     r.navShow = true;
     s.show = false;
 
+    $U.once('route-exit:login', function(url) {
+        r.__hideNavMenu = false;
+    });
+
     /*
     db.post('custom',{
         model:"User",action:"find",data:{
@@ -19,23 +23,26 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
 */
 
     s.loginFailedTimes = 0;
-    
+
 
 
     s.create = function() {
         s.sendingRequest = true;
 
-        db.custom('user','find',{email:r._login.email}).then(function(res){
-            if(res.data.result.length>0){
+        db.custom('user', 'find', {
+            email: r._login.email
+        }).then(function(res) {
+            if (res.data.result.length > 0) {
                 r.session(res.data.result[0]);
-                console.log('login:user:found:'+res.data.result[0].email);
+                console.log('login:user:found:' + res.data.result[0].email);
                 r.route('dashboard');
-            }else{
+            }
+            else {
                 _create();
             }
         });
 
-        function _create(){
+        function _create() {
             db.custom('user', 'save', {
                 email: r._login.email,
                 password: r._login.password,
@@ -43,11 +50,11 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
             }).then(function(res) {
                 s.sendingRequest = false;
                 r.session(res.data.result);
-                console.log('adminLogin:admin:creation:success',res.data);
+                console.log('adminLogin:admin:creation:success', res.data);
                 r.route('dashboard');
-            }).error(function(err){
+            }).error(function(err) {
                 s.sendingRequest = false;
-                console.log('adminLogin:admin:creation:fail',err);
+                console.log('adminLogin:admin:creation:fail', err);
             });
         }
     };
@@ -67,15 +74,16 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
         }
 
         db.custom('user', 'login', r._login).then(function(res) {
-            if (res.data.ok && res.data.result!=null) {
+            if (res.data.ok && res.data.result != null) {
                 r.session(res.data.result);
-//                console.log('adminLogin: server says user is logged', res.data);
+                //                console.log('adminLogin: server says user is logged', res.data);
                 r.route('dashboard');
-            } else {
+            }
+            else {
                 s.loginFailedTimes++;
                 r.warningMessage('Incorrect login');
             }
-//            console.log(res.data);
+            //            console.log(res.data);
         }).error(function(res) {
             s.sendingRequest = false;
             r.errorMessage('Server down, try later.');
@@ -83,14 +91,17 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
 
     };
 
-    s.resetPassword=()=>{
-        if(!r._login.email){
+    s.resetPassword = () => {
+        if (!r._login.email) {
             return r.warningMessage("Email required");
         }
-        db.ctrl('User','passwordReset',{email:r._login.email}).then((res)=>{
-            if(res.ok){
-                r.message('A new password has been send to '+r._login.email
-                    ,'info',undefined,undefined,{duration:10000})
+        db.ctrl('User', 'passwordReset', {
+            email: r._login.email
+        }).then((res) => {
+            if (res.ok) {
+                r.message('A new password has been send to ' + r._login.email, 'info', undefined, undefined, {
+                    duration: 10000
+                })
                 s.loginFailedTimes = 0;
                 r.dom();
             }
@@ -99,13 +110,13 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
 
 
     //fill _login with query string parameters
-    var params={
-        email:$U.getParameterByName('email'),
-        password: ($U.getParameterByName('k'))?window.atob($U.getParameterByName('k')):''
+    var params = {
+        email: $U.getParameterByName('email'),
+        password: ($U.getParameterByName('k')) ? window.atob($U.getParameterByName('k')) : ''
     };
-    if(params.email) r._login.email = params.email;
-    if(params.password) r._login.password = params.password;
-    if(params.email && params.password){
+    if (params.email) r._login.email = params.email;
+    if (params.password) r._login.password = params.password;
+    if (params.email && params.password) {
         console.log('adminLogin: lets try to sign-in from queryparameters');
         s.login();
     }
@@ -118,15 +129,18 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
         console.log('adminLogin: session found at initial check');
         _asyncUpdateSession();
         r.route('dashboard');
-    } else {
+    }
+    else {
         s.show = true;
     }
 
 
 
-    function _asyncUpdateSession(){
-        db.ctrl('User','get',{_id:session()._id}).then((err,data)=>{
-            if(!err && data.ok && data.result){
+    function _asyncUpdateSession() {
+        db.ctrl('User', 'get', {
+            _id: session()._id
+        }).then((err, data) => {
+            if (!err && data.ok && data.result) {
                 r.session(data.result);
             }
         })

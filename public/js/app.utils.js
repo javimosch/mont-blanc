@@ -261,7 +261,12 @@ function ifThenMessage(comparisons, messagesCallback, noMessagesCallback) {
         messagesCallback(messages);
     }
     else {
-        noMessagesCallback();
+        if(noMessagesCallback){
+          noMessagesCallback();  
+        }else{
+            console.warn('ifThenMessage no-message-callback-undefined');
+        }
+        
     }
 }
 
@@ -384,7 +389,10 @@ var Eventify = (function(self) { //event handling snippet
         handler(once[n]);
     }
     self.off = function(evt) {
-        if (typeof evt == 'string') delete evts[evt];
+        if (typeof evt == 'string') {
+            delete evts[evt];
+            delete once[evt];
+        }
         else delete evts[evt.type][evt.id];
     };
     self.emitPreserve = function(n, p) {
@@ -407,7 +415,7 @@ var Eventify = (function(self) { //event handling snippet
         catch (e) {
             pp = p
         }
-        //        console.log('emit', n, pp, opt);
+        console.log('emit', n, pp, opt);
     };
     self.once = function(n, handler) {
         if (once[n]) return firePreserve(n, handler);
@@ -531,11 +539,18 @@ var queryString = (function() {
     };
 
     queryString.get = getParameterByName;
+    queryString.hashName = function(){
+        return (
+            (window.location.hash.indexOf('?') !== -1) ?
+            window.location.hash.substring(0, window.location.hash.indexOf('?')) : window.location.hash
+        ).replace('#/','');
+    };
     queryString.hash = function(str) {
         var hash = (
             (window.location.hash.indexOf('?') !== -1) ?
             window.location.hash.substring(0, window.location.hash.indexOf('?')) : window.location.hash
         );
+        if(str == undefined) return hash;
         var params = queryString.parse(window.location.hash.replace(hash, ''));
         var new_params_string = queryString.stringify(params)
         window.history.pushState({}, "", window.location.pathname + '#/' + str + '?' + new_params_string);

@@ -10,13 +10,24 @@
 var app = angular.module('app.run', []);
 
 app.config(['$httpProvider', function($httpProvider) {
-        $httpProvider.defaults.useXDomain = true;
-        delete $httpProvider.defaults.headers.common['X-Requested-With'];
-    }
-]);
+    $httpProvider.defaults.useXDomain = true;
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+}]);
 
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     //    console.info('app.admin:run');
+
+    r.URL = {
+        LOGIN: 'login',
+        DIAG_SIGN_UP: 'diag-inscription',
+        HOME: 'home',
+        CONTACT_US: 'contactez-nous',
+        ERNT: 'ernt',
+        FAQ: 'faq',
+        GENERAL_CONDITIONS: 'conditions-generales-utilisation',
+        LEGAL_MENTIONS: 'mentions-legales'
+    };
+
 
     r.navShow = true;
 
@@ -32,6 +43,10 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         }
         else {
             _s.show = true;
+            //async update of the current user.
+            db.ctrl('User','getById',r.session()).then(function(d){
+                if(d.ok&&d.result) r.session(d.result);
+            });
         }
     };
 
@@ -233,13 +248,22 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         r.route('login');
     };
 
+    r.admin = function() {
+        r._login.email = 'arancibiajav@gmail.com';
+        r._login.password = 'admin';
+        r.dom();
+    };
+
+
 
     r.route = function(url, delay) {
-        //console.info('r.route:', delay, url);
+
         setTimeout(function() {
             var path = window.location.origin + window.location.pathname;
             path += '#/' + url;
+            $U.emit('route-exit:' + $U.url.hashName());
             r.$emit('route-change', url);
+
             $U.url.hash(url);
             window.location.href = window.location.href;
         }, delay || 0);

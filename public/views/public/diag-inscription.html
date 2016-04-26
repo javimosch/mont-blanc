@@ -1,35 +1,25 @@
-<div class="container-fluid" ng-controller="adminDiagsEdit">
-    <div class="row-fluid margin-none">
-        <div class="col-sm-12 padding-none">
-            <div class="jumbotron">
-                <h1 class="text-center title-big title-color-sky-blue">
-            <span class="title title-1">Diagnosti</span><span class="title title-2">cal</span>
-        </h1>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="container diags-content" ng-controller="adminLogin" ng-show="show">
+<div class="container diags-content" ng-controller="diagInscription">
     <div class="row diags-form-wrapper">
         <div class="col-sm-12 col-md-12">
             <div class="diags-form">
                 <div class="row">
-                    <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Details</span></i>
+                    <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Details du compte</span></i>
                 </div>
                 <div class="row margin-top-one">
-                    <input ng-model="_login.email" class="diags-input" placeholder="Adresse email">
+                    <input type="email" ng-model="item.email" class="diags-input" placeholder="Adresse email">
                 </div>
                 <div class="row margin-top-half">
-                    <input ng-model="_login.password" type="password" class="diags-input" placeholder="Mot de passe">
+                    <input ng-model="item.password" type="password" class="diags-input" placeholder="Mot de passe">
                 </div>
                 <div class="row margin-top-half">
-                    <label class="diag46 avenir-medium fnt-12 black">Remember password</label>
-                    <nice-check-box class="diag46" template='sky-blue' model="_login.rememberPass"></nice-check-box>
+                    <input type="text" ng-model="item.cellPhone" class="diags-input" placeholder="Mobile">
+                </div>
+                <div class="row margin-top-half">
+                  
+                    <input type="text" class="form-control diags-input" data-address model="item" field="address" department="department" region="region" country="country" post-code="postCode" placeholder="Ex: 102 rue Réaumur 75002 Paris, France">
                 </div>
                 <div class="row margin-top-one">
-                    <button ng-disabled="sendingRequest" class="btn  diag-btn-main" ng-click="login()">Sign in</button>
-                    <a ng-disabled="!_.login.email" class="link avenir-medium fnt-12 black" ng-click="resetPassword()">Reset password</a>
+                    <button ng-disabled="sendingRequest" class="btn  diag-btn-main" ng-click="validate()">s'inscrire</button>
                 </div>
             </div>
 

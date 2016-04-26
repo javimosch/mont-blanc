@@ -12,12 +12,12 @@
                     <input ng-model="_login.password" type="password" class="diags-input" placeholder="Mot de passe">
                 </div>
                 <div class="row margin-top-half">
-                    <label class="diag46 avenir-medium fnt-12 black">Remember password</label>
+                    <label class="diag46 avenir-medium fnt-12 black">Se souvenir du mot de passe</label>
                     <nice-check-box class="diag46" template='sky-blue' model="_login.rememberPass"></nice-check-box>
                 </div>
                 <div class="row margin-top-one">
-                    <button ng-disabled="sendingRequest" class="btn  diag-btn-main" ng-click="login()">Sign in</button>
-                    <a ng-disabled="!_.login.email" class="link avenir-medium fnt-12 black" ng-click="resetPassword()">Reset password</a>
+                    <button ng-disabled="sendingRequest" class="btn  diag-btn-main" ng-click="login()">S'identifier</button>
+                    <a ng-disabled="!_.login.email" class="link avenir-medium fnt-12 black" ng-click="resetPassword()">Réinitialiser le mot de passe</a>
                 </div>
             </div>
 
@@ -28,7 +28,7 @@
                     <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Inscrire comme un inspecteur</span></i>
                 </div>
                 <div class="row margin-top-one">
-                    <button ng-disabled="sendingRequest" class="btn  diag-btn-main" ng-click="login()">Inscrire</button>
+                    <button ng-disabled="sendingRequest" class="btn  diag-btn-main" ng-click="route(URL.DIAG_SIGN_UP)">Inscrire</button>
                 </div>
             </div>
 

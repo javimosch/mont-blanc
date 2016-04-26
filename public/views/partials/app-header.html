@@ -13,7 +13,7 @@
                 <a class="navbar-brand " href="/admin#dashboard">Diagnosti<span class="cal">cal</span></a>
             </div>
             <div class="collapse navbar-collapse" id="ex2" ng-show="!__hideNavMenu">
-                <ul class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-right" ng-show="!__hideNavMenu">
                     <li ng-show="logged()">
                         <a class="link diag-link" active-route="dashboard" ng-click="route('dashboard')" data-toggle="collapse" data-target=".navbar-collapse.in">Dashboard</a>
                     </li>
@@ -34,8 +34,8 @@
 
                         </ul>
                     </li>
-                    <li><a href="#" class="diag-link" data-toggle="collapse" data-target=".navbar-collapse.in">FAQ</a></li>
-                    <li><a href="#" class="diag-link" data-toggle="collapse" data-target=".navbar-collapse.in">Contactez-nous</a></li>
+                    <li><a ng-click="route(URL.FAQ)" class="link diag-link" data-toggle="collapse" data-target=".navbar-collapse.in">FAQ</a></li>
+                    <li><a ng-click="route(URL.CONTACT_US)" class="link diag-link" data-toggle="collapse" data-target=".navbar-collapse.in">Contactez-nous</a></li>
                     <li ng-show="logged()">
                         <a class="link diag-link" ng-click="logout()">Logout
                       <span class="small" ng-show="false">

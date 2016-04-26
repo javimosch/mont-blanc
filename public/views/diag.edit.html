@@ -1,5 +1,14 @@
 <modal-confirm open="confirm"></modal-confirm>
 <div class="container" ng-controller="adminDiagsEdit">
+     <div class="row">
+        <div class="col-sm-12 padding-none">
+            <ol class="breadcrumb">
+                <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+                <li><a class="link" ng-click="route('clients')" ng-show="userIs('admin')">Diags</a></li>
+                <li>Diag Details</li>
+            </ol>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-12">
             <h3 class="v-margin-2 padding-0">Diag Details</h3>

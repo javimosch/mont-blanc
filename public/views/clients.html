@@ -1,17 +1,29 @@
 <div class="container">
-    <clients-list></clients-list>
+    <div class="row">
+        <div class="col-sm-12 padding-none">
+            <ol class="breadcrumb">
+                <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+                <li>Clients</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <clients-list></clients-list>
+        </div>
+    </div>
 </div>
 <modal-confirm open="confirm"></modal-confirm>
 
 <script type="text/ng-template" id="clientFilter.html">
     <ul class="form-tiny center-block float-right">
         <li>
-        	<label>Type</label>
-        	<input ng-model="model.filter.fields.clientType" placeholder="Filter"/>
+            <label>Type</label>
+            <input ng-model="model.filter.fields.clientType" placeholder="Filter" />
         </li>
         <li>
-        	<label>Email</label>
-        	<input ng-model="model.filter.fields.email" placeholder="Filter"/>
+            <label>Email</label>
+            <input ng-model="model.filter.fields.email" placeholder="Filter" />
         </li>
     </ul>
 </script>
