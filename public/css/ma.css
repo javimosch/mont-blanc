@@ -12,3 +12,7 @@
 .ma.ma-black .link{
 	color:grey;
 }
+
+.ma .row{
+    margin:0px;
+}

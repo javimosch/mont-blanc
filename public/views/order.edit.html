@@ -4,23 +4,23 @@
         <div class="col-sm-12 padding-none">
             <ol class="breadcrumb">
                 <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
-                <li><a class="link" ng-click="route('orders')" ng-show="userIs('admin')">Orders</a></li>
-                <li>Order Details</li>
+                <li ng-show="userIs('admin')"><a class="link" ng-click="route('orders')" >Orders</a></li>
+                <li>Détails de la commande</li>
             </ol>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <h3 class="v-margin-2 padding-0">Order Details</h3>
-        </div>
-    </div>
-    <div class="row">
+    
+    <div ng-if="userIs('diag')" ng-include="'views/diag/diag-order-view.html'" includeReplace></div>
+    
+
+    <div class="row" ng-if="!userIs('diag')">
         <div class="col-sm-8">
             <ul class="form-tiny labelx2 center-block">
                 <!--ADMIN: CLIENT SELECTION-->
                 <li ng-if="userIs(['admin'])">
                     <label>Client {{currentClientType && currentClientType()}}</label>
-                    <input ng-disabled="state.working() || item._id" type="text" class="" ng-model="item._client" placeholder="Client" uib-typeahead="client as client.email for client in getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading clients. . .'" typeahead-no-results="noResults">
+                    <input ng-disabled="state.working() || item._id" type="text" class="" ng-model="item._client" placeholder="Client" uib-typeahead="client as client.email for client in getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading clients. . .'"
+                    typeahead-no-results="noResults">
                 </li>
                 <!--DIAG,CLIENT(AGENCY,COMPANY): CLIENT READONLY-->
                 <li ng-if="userIs(['diag','client'])">
@@ -68,10 +68,7 @@
                     <ul class="form-tiny center-block inline-block">
                         <out ng-if="userIs(['admin'])">
                             <li ng-repeat="(key,x) in diags">
-                                <input type="checkbox"
-                                 ng-disabled="isPaid()"
-                                 ng-model="item.diags[x.name]">
-                                {{x.label}}
+                                <input type="checkbox" ng-disabled="isPaid()" ng-model="item.diags[x.name]"> {{x.label}}
                             </li>
                         </out>
                         <out ng-if="!userIs(['admin'])">
@@ -84,13 +81,15 @@
                 <!--ADMIN start:choice-->
                 <li ng-if="userIs(['admin'])" class="inline-flex relative">
                     <label>Start Date</label>
-                    <input ng-disabled="isPaid() || state.working() || is(['client','diag'])" type="text" class="max-w-150" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.diagStart" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
+                    <input ng-disabled="isPaid() || state.working() || is(['client','diag'])" type="text" class="max-w-150" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.diagStart" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart"
+                    ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
                     <button ng-disabled="state.working() || is(['client','diag'])" type="button" class="btn btn-default" ng-click="start.opened = !start.opened"><i class="glyphicon glyphicon-calendar"></i></button>
                 </li>
                 <!--ADMIN end:choice-->
                 <li ng-if="userIs(['admin'])" class="inline-flex relative">
                     <label>End Date</label>
-                    <input ng-disabled="true || state.working() || is(['client','diag'])" type="text" class="max-w-150" uib-datepicker-popup="dd/MM/yyyy HH:mm " ng-model="item.diagEnd" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart" ng-init="end.opened=false" is-open="end.opened" date-disabled="false" close-text="Close" />
+                    <input ng-disabled="true || state.working() || is(['client','diag'])" type="text" class="max-w-150" uib-datepicker-popup="dd/MM/yyyy HH:mm " ng-model="item.diagEnd" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.diagStart"
+                    ng-init="end.opened=false" is-open="end.opened" date-disabled="false" close-text="Close" />
                     <button ng-disabled="state.working() || is(['client','diag'])" type="button" class="btn btn-default" ng-click="end.opened = !end.opened"><i class="glyphicon glyphicon-calendar"></i></button>
                 </li>
                 <li ng-if="!userIs(['admin'])">
@@ -146,7 +145,7 @@
                 </li>
                 <li>
                     <label for="status">Status</label>
-                    <input type="text" disabled class="max-w-100" ng-value="item.status" />
+                    <input type="text" ng-disabled="true" class="max-w-100" ng-value="item.status" />
                 </li>
             </ul>
         </div>
@@ -155,9 +154,7 @@
                 <li ng-if="userIs(['admin'])" class="well well-sm">
                     <label>Time Rules</label>
                     <input type="text" disabled ng-value="totalTimeFormated()" />
-                    <button class="btn btn-default"
-                    ng-disabled="isPaid()"
-                     ng-click="applyTotalTime()">Apply</button>
+                    <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalTime()">Apply</button>
                 </li>
                 <li ng-if="userIs(['admin'])" class="well well-sm">
                     <label>Price Rules</label>
@@ -182,7 +179,7 @@
                     </table>
                     <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalPrice()">Apply</button>
                 </li>
-                
+
                 <!--ADMIN,CLIENT(AGENCY,COMPANY): Landlord details -->
                 <out ng-show="canWriteAgency()">
                     <li>
@@ -205,7 +202,7 @@
             </ul>
         </div>
     </div>
-    <div class="row">
+    <div class="row" ng-if="!userIs('diag')">
         <div class="col-sm-12">
             <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="validate()">Save</button>
             <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>

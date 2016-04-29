@@ -931,7 +931,8 @@ h2.diags.black {
     padding-top: 10px;
 }
 
-.diags-form .diags-input {
+/*.diags-form */
+.diags-input {
     width: 286px;
     height: 48px;
     background-color: #EDF5F9;
@@ -989,7 +990,7 @@ h2.diags.black {
     width: 140px;
 }
 
-.diags-form .label {
+.diags-form .label, .diags-form-label {
     font-family: 'Avenir-Light';
     font-size: 14px;
     color: #373737;
@@ -1018,10 +1019,18 @@ h2.diags.black {
     position: absolute;
 }
 
-.diags-form .btn {
+.diags-form .btn, .diags-btn {
     font-family: 'Avenir-Medium';
     font-size: 24px;
     color: white;
+}
+
+.row{
+    padding-bottom: 20px;
+}
+
+.diags-btn.btn-sm {
+    font-size: 18px;
 }
 
 .btn-permis-de-construire {

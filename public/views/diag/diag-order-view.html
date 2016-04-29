@@ -1,0 +1,96 @@
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 min-md-padding-none">
+
+        <div class="diags-form">
+
+            <div class="row margin-top-one">
+                <label class="unselectable">Client</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input ng-disabled="true" ng-value="item._client.email" class="diags-input" placeholder="Client">
+            </div>
+            <div class="row margin-top-half">
+                <label class="unselectable">Adresse</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input ng-disabled="true" class="diags-input" ng-value="item.address" placeholder="Adresse">
+            </div>
+
+            <div class="row margin-top-half">
+                <label class="unselectable">Liste diags</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <table class="table table-striped table-condensed unselectable">
+                    <tr ng-repeat="(k,o) in item.diags" class="unselectable">
+                        <td ng-bind="k"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="row margin-top-half">
+                <label class="unselectable">Date de début</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.diagStart)" placeholder="Adresse">
+            </div>
+            <div class="row margin-top-half">
+                <label class="unselectable">Clés</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input ng-disabled="true" class="diags-input" ng-value="item.keysAddress" placeholder="Adresse">
+            </div>
+            <div class="row margin-top-quarter">
+                <input ng-disabled="true" class="diags-input" ng-value="momentFormat(item.keysTimeFrom,'HH[h]mm')" placeholder="Adresse">
+            </div>
+            <div class="row margin-top-quarter">
+                <input ng-disabled="true" class="diags-input" ng-value="momentFormat(item.keysTimeTo,'HH[h]mm')" placeholder="Adresse">
+            </div>
+
+
+
+            <div class="row margin-top-one">
+                <button ng-click="validate()" class="btn btn-xl bg-madison">Accepter</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 min-md-padding-none">
+
+        <div class="diags-form">
+            <div class="row margin-top-half">
+                <label  class="unselectable">Propriétaire</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input ng-disabled="true" class="diags-input" ng-value="item.landLordFullName" placeholder="Propriétaire">
+            </div>
+            <div class="row margin-top-quarter">
+                <input ng-disabled="true" class="diags-input" ng-value="item.landLordEmail" placeholder="Propriétaire Email">
+            </div>
+            <div class="row margin-top-half">
+                <label class="unselectable">Observations</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <textarea ng-disabled="false" type="text" class="diags-input fullwidth min-height-100 no-resize" ng-model="item.obs"></textarea>
+            </div>
+            <div class="row margin-top-half">
+                <label class="unselectable">Debriefing pdf file: {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||"(not available yet)"}}</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input type="file" file-model="pdfFile" ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working()" class="form-control" placeholder="Diag Pdf">
+                <button ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working() || !pdfFile" class="margin-top-quarter btn bg-azure-radiance" ng-click="saveFile()">Upload</button>
+                <button ng-disabled="!item.pdfId" class="margin-top-quarter btn bg-azure-radiance" ng-click="downloadFile()">Download</button>
+                <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
+            </div>
+            <div class="row margin-top-half">
+                <label class="unselectable">Vous percevez (euro)</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input ng-disabled="true" type="text" class="diags-input" ng-value="diagPrice()">
+            </div>
+            <div class="row margin-top-half">
+                <label class="unselectable">Etat</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input ng-disabled="true" type="text" class="diags-input" ng-value="item.status">
+            </div>
+        </div>
+    </div>
+</div>

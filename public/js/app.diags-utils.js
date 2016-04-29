@@ -4,6 +4,7 @@
 /*global _*/
 
 var $D = {
+    rangeCollide:rangeCollide,
     ORDER_STATUS: {
         CREATED:'created', //just created
         ORDERED:'ordered', //client (agency/other) clicks invoice end of the month

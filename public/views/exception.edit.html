@@ -1,79 +1,101 @@
+<div class="row">
+    <div class="col-sm-12 padding-none">
+        <ol class="breadcrumb">
+            <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+            <li>Exception travail</li>
+        </ol>
+    </div>
+</div>
+
 <div class="container" ng-controller="diagExceptionEdit">
     <div class="row">
-        <div class="col-sm-12">
-            <h3 class="v-margin-2 padding-0">Exception Details</h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <ul class="form-tiny center-block">
-                <li ng-if="userIs(['admin'])">
-                    <label>Diag</label>
-                    <input ng-disabled="state.working() || item._id" type="text" class="" ng-model="item._user" placeholder="Diag" uib-typeahead="item as item.email for item in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading diags. . .'" typeahead-no-results="noResults">
-                </li>
-                <li>
-                    <label>Motive</label>
-                    <input type="text" ng-disabled="state.working()" ng-model="item.description" placeholder="Motive (optional)">
-                </li>
-                <out ng-show="item.repeat!=='none'">
-                    <li>
-                        <label for="day" class="label-4  margin-r-1">Day:</label>
-                        <span uib-dropdown name='day'>
-      					<button ng-disabled="repeat=='day'" id="single-button" type="button" class="btn btn-primary" uib-dropdown-toggle ng-disabled="disabled">
+        <div class="col-sm-12 col-md-6 margin-top-one">
+            <div class="row margin-top-half" ng-if="userIs(['admin'])">
+                <label>Diag</label>
+            </div>
+            <div class="row" ng-if="userIs(['admin'])">
+                <input ng-disabled="state.working() || item._id" type="text" class="diags-input" ng-model="item._user" placeholder="Diag" uib-typeahead="item as item.email for item in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading diags. . .'" typeahead-no-results="noResults">
+            </div>
+            <div class="row margin-top-half">
+                <label>Motive</label>
+            </div>
+            <div class="row">
+                <input type="text" class="diags-input" ng-disabled="state.working()" ng-model="item.description" placeholder="Motive (optional)">
+            </div>
+             <div class="row margin-top-half"  ng-show="item.repeat!=='none'">
+                <label>Day</label>
+            </div>
+            <div class="row" ng-show="item.repeat!=='none'">
+                <span uib-dropdown name='day'>
+      					<button ng-disabled="repeat=='day'" id="single-button" type="button" 
+      					class="btn diags-btn bg-azure-radiance padding-right-one btn-sm" uib-dropdown-toggle ng-disabled="disabled">
         				{{days.selected}}<span class="caret"></span>
-                        </button>
-                        <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
-                            <li ng-repeat="choice in days.items">
-                                <a href ng-click="days.click(choice)">{{choice.label || choice}}</a>
-                            </li>
-                        </ul>
-                        </span>
+                </button>
+                <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
+                    <li ng-repeat="choice in days.items">
+                        <a href ng-click="days.click(choice)">{{choice.label || choice}}</a>
                     </li>
-                    <li>
-                        <label>Start</label>
-                        <uib-timepicker ng-disabled="state.working()" ng-model="item.start" hour-step="timeRange.hstep" minute-step="timeRange.mstep" show-meridian="false"></uib-timepicker>
-                    </li>
-                    <li>
-                        <label>End</label>
-                        <uib-timepicker ng-disabled="state.working()" ng-model="item.end" hour-step="timeRange.hstep" minute-step="timeRange.mstep" show-meridian="false"></uib-timepicker>
-                    </li>
-                </out>
-                <out ng-show="item.repeat=='none'">
-                    <li class="inline-flex relative">
-                        <label>Start</label>
-                        <input ng-disabled="state.working()" type="text" class="max-w-150" datetime-picker="dd-MM-yyyy HH:mm " ng-model="item.start" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.start" ng-init="__start.opened=false" is-open="__start.opened" date-disabled="false" close-text="Close" show-meridian="false" />
-                        <button ng-disabled="state.working() " type="button" class="btn btn-default" ng-click="__start.opened = !__start.opened"><i class="glyphicon glyphicon-calendar"></i></button>
-                    </li>
-                    <li class="inline-flex relative">
-                        <label>End</label>
-                        <input ng-disabled="state.working() " type="text" class="max-w-150" datetime-picker="dd-MM-yyyy HH:mm " ng-model="item.end" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.end" ng-init="__end.opened=false" is-open="__end.opened" date-disabled="false" close-text="Close" show-meridian="false"  />
-                        <button ng-disabled="state.working() " type="button" class="btn btn-default" ng-click="__end.opened = !__end.opened"><i class="glyphicon glyphicon-calendar"></i></button>
-                    </li>
-                </out>
-            </ul>
+                </ul>
+                </span>
+            </div>
+            <div class="row margin-top-half">
+                <label>Start</label>
+            </div>
+            <div class="row">
+                <input ng-disabled="state.working()" type="text" class="diags-input max-w-150" datetime-picker="dd-MM-yyyy HH:mm " ng-model="item.start" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.start" ng-init="__start.opened=false" is-open="__start.opened"
+                date-disabled="false" close-text="Close" show-meridian="false" />
+                <button ng-disabled="state.working() " type="button" 
+                class="btn diags-btn bg-azure-radiance" 
+                ng-click="__start.opened = !__start.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+            </div>
+            <div class="row margin-top-half">
+                <label>End</label>
+            </div>
+
+            <div class="row">
+                <input ng-disabled="state.working() " type="text" class="diags-input max-w-150" datetime-picker="dd-MM-yyyy HH:mm " ng-model="item.end" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.end" ng-init="__end.opened=false" is-open="__end.opened"
+                date-disabled="false" close-text="Close" show-meridian="false" />
+                <button ng-disabled="state.working() " type="button" class="btn diags-btn bg-azure-radiance" ng-click="__end.opened = !__end.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+            </div>
+
+
         </div>
-        <div class="col-sm-6">
-            <ul class="form-tiny center-block">
-                <li>
-                    <label for="repeat" class="label-4 margin-r-1">Mode:</label>
-                    <div>
-                        <input type="radio" name="repeatMode" ng-model="item.repeat" value="week"> Repeat weekly
-                    </div>
-                    <div>
-                        <input type="radio" name="repeatMode" ng-model="item.repeat" value="day"> Repeat daily
-                    </div>
-                    <div>
-                        <input type="radio" name="repeatMode" ng-model="item.repeat" value="none"> Specific datetime range
-                    </div>
-                </li>
-            </ul>
+        <div class="col-sm-12 col-md-6 margin-top-one">
+            <div class="row">
+
+                <label class="">
+                    <input type="checkbox" check-box-group check-box-model='item.repeat' name="repeatMode" value="week" class="check mark-white" />
+                    <span class="sky-blue"></span>
+                </label>
+                <label>Repeat weekly</label>
+            </div>
+
+            <div class="row">
+
+                <label class="">
+                    <input type="checkbox" check-box-group check-box-model='item.repeat' name="repeatMode" value="day" class="check mark-white" />
+                    <span class="sky-blue"></span>
+                </label>
+                <label>Repeat daily</label>
+            </div>
+
+            <div class="row">
+
+                <label class="">
+                    <input type="checkbox" check-box-group check-box-model='item.repeat' name="repeatMode" value="none" class="check mark-white" />
+                    <span class="sky-blue"></span>
+                </label>
+                <label>Specific datetime range</label>
+            </div>
+
+
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <button ng-disabled="state.working()" class="btn btn-default" ng-click="validate()">Save</button>
-            <button ng-disabled="state.working()" class="btn btn-default" ng-click="cancel()">Cancel</button>
-            <button ng-disabled="state.working()" class="btn btn-default" ng-click="delete()">Delete</button>
+    <div class="row margin-top-one">
+        <div class="col-sm-12 col-md-6">
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Save</button>
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="cancel()">Cancel</button>
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="delete()">Delete</button>
         </div>
     </div>
 </div>
