@@ -811,6 +811,15 @@ app.controller('ctrl.booking', ['server',
         });
 
 
+        s.diagRightClass = function(){
+            var cls = {
+                'diag-dialog-right':true,
+                'margin-top-three':true,
+                'padding-three':true
+            };
+            cls['bg-'+s.diagSelected.name] = true;
+            return cls;
+        };
 
         s.diagSelected = {};
         s.selectDiag = (d) => s.diagSelected = (typeof d == 'string') ? s.diag[d] : d;

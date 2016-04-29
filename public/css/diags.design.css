@@ -621,7 +621,35 @@ h2.diags.black {
 
 .home .diag-dialog-right {
     max-width: 481px;
+    
+}
+
+.bg-dpe{
     background-color: #00BB55;
+}
+.bg-dta{
+    background-color: #FF8B00;
+}
+.bg-loiCarrez{
+    background-color: #B45134;
+}
+.bg-crep{
+    background-color: #0153A7;
+}
+.bg-gaz{
+    background-color: #F8BD17;
+}
+.bg-electricity{
+    background-color: #CD1024;
+}
+.bg-termites{
+    background-color: #7C0616;
+}
+.bg-ernt{
+    background-color: #821E78;
+}
+.bg-parasitaire{
+    background-color: #79D3EB;
 }
 
 .dropdown .caret {
