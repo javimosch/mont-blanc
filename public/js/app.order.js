@@ -725,7 +725,7 @@
 
                 function update(items, cb) {
                     var data = {
-                        __select: "_client _diag address diagStart diagEnd price status created",
+                        __select: "_client _diag address diagStart diagEnd price status created createdAt",
                         __populate: {
                             '_client': 'email',
                             '_diag': 'email'
@@ -823,7 +823,9 @@
                     }, {
                         label: 'Created',
                         name: 'createdAt',
-                        format: (v, item) => r.momentFormat(item.createdAt, 'DD-MM-YY HH:mm')
+                        format: (v, item) => {
+                           return r.momentFormat(item.createdAt, 'DD-MM-YY HH:mm');   
+                        }
                     }],
                     items: [],
                     records: {
