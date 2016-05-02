@@ -786,7 +786,7 @@ h2.diags.black {
     }
 }
 
-.breadcrumb{
+.breadcrumb {
     margin-bottom: 0px;
 }
 
@@ -803,8 +803,9 @@ h2.diags.black {
     line-height: 30px;
     text-align: center;
 }
-.stripe-message span{
-    vertical-align: sub!important;    
+
+.stripe-message span {
+    vertical-align: sub!important;
 }
 
 .diags-payment-info {
@@ -1095,9 +1096,7 @@ h2.diags.black {
 }
 
 .diags-form-wrapper {
-    
     padding: 20px 0px;
-    
 }
 
 @media only screen and (min-width: 480px) {
@@ -1116,14 +1115,127 @@ h2.diags.black {
     }
 }
 
+.diag-row-form > div {
+    margin-top: 4em;
+}
+
+.diag-row-form {
+    margin: 0px;
+    padding: 0px;
+}
+
+@media only screen and (min-width: 480px) {
+    .diag-row-form {
+        padding: 50px 0;
+        margin: 50px 0px;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    .diag-row-form {
+        border: 2px solid #C6DEE8;
+        border-radius: 5px;
+        margin: 50px 50px;
+    }
+}
+
 @media only screen and (min-width: 992px) {
-    .stripe-home-message{
+    .diag-row-form {
+        margin: 50px 50px;
+    }
+    .frm-wrapper {
+        min-height: 370px;
+    }
+    .stripe-home-message {
         margin-top: 11em;
     }
     .diags-form-wrapper {
-        margin: 25px!important;
         padding: 50px 0px;
         min-height: 570px;
+    }
+    .diags-form-wrapper-left {
+        border-left: 2px solid #C6DEE8;
+        border-top: 2px solid #C6DEE8;
+        border-bottom: 2px solid #C6DEE8;
+        border-right: 2px solid #C6DEE8;
+        min-height: 570px;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        margin-right: 0px!important;
+        padding: 50px 0px;
+    }
+    .diags-form-wrapper-left-3 {
+        border-left: 2px solid #C6DEE8;
+        border-top: 2px solid #C6DEE8;
+        border-bottom: 2px solid #C6DEE8;
+        min-height: 570px;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        margin-right: 0px!important;
+        padding: 50px 0px;
+    }
+    .diags-form-wrapper-center {
+        border-top: 2px solid #C6DEE8;
+        border-bottom: 2px solid #C6DEE8;
+        min-height: 570px;
+        margin-right: 0px!important;
+        margin-left: 0px!important;
+        padding: 50px 0px;
+    }
+    .diags-form-wrapper-right {
+        border-right: 2px solid #C6DEE8;
+        border-top: 2px solid #C6DEE8;
+        border-bottom: 2px solid #C6DEE8;
+        min-height: 570px;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        margin-left: 0px!important;
+        padding: 50px 0px;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .frm-wrapper {
+        min-height: 570px;
+    }
+    .diags-form-wrapper-left-lg {
+        border-left: 2px solid #C6DEE8;
+        border-top: 2px solid #C6DEE8;
+        border-bottom: 2px solid #C6DEE8;
+        border-right: 2px solid #C6DEE8;
+        min-height: 570px;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        margin-right: 0px!important;
+        padding: 50px 0px;
+    }
+    .diags-form-wrapper-left-3-lg {
+        border-left: 2px solid #C6DEE8;
+        border-top: 2px solid #C6DEE8;
+        border-bottom: 2px solid #C6DEE8;
+        min-height: 570px;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        margin-right: 0px!important;
+        padding: 50px 0px;
+    }
+    .diags-form-wrapper-center-lg {
+        border-top: 2px solid #C6DEE8;
+        border-bottom: 2px solid #C6DEE8;
+        min-height: 570px;
+        margin-right: 0px!important;
+        margin-left: 0px!important;
+        padding: 50px 0px;
+    }
+    .diags-form-wrapper-right-lg {
+        border-right: 2px solid #C6DEE8;
+        border-top: 2px solid #C6DEE8;
+        border-bottom: 2px solid #C6DEE8;
+        min-height: 570px;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        margin-left: 0px!important;
+        padding: 50px 0px;
     }
 }
 

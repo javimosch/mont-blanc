@@ -206,12 +206,12 @@
                 //the limit were a fixed slot can start during the afternoon is 19h00 minus the order time.
                 var limit = moment().hours(19).minutes(00).subtract(order.time.hours, 'hours').subtract(order.time.minutes, 'minutes');
                 //
-                if (!fixed.isBefore(limit)) {
+                if (fixed.isBefore(limit)) {
                     var minutes = parseInt(parseInt(fixed.minutes()) / 10, 10) * 10;
                     _slots.afternoon.push(slot(fixed.hours(), minutes, order, diag));
                     console.log('allocate-fixed-afternoon-today-at: ',fixed);
                     fixed = fixed.add(1, 'hour');
-                    if (!fixed.isBefore(limit)) {
+                    if (fixed.isBefore(limit)) {
                         _slots.afternoon.push(slot(fixed.hours(), minutes, order, diag));
                         console.log('allocate-fixed-afternoon-today-at: ',fixed);
                     }else{
