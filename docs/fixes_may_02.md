@@ -91,8 +91,14 @@ ENVOYER button (to send)
 ##—— Admin page ——
 There is possibility to log in and to subscribe as a diagnostiqueur. When I click on S’inscrire, I should find here all the fields we have in back office for each diagnostiqueur.  When click on S’inscrire it adds the diagnostiqueur in BO but Inactivate and Superadmin receive an email… In BO SUperadmin can check the details and activate the diag man
 
-- What is browse in header…. weird 
+        DONE
+        All the fields were added. The working exceptions are only accesible in BO when logged.
+        Diplomes become available to upload after pressing Next. (Diplomes need the diag to be saved in the DB first).
+        Diag inscription is a public url, and now the new account is created with the disabled flag.
+        Diag inscription is accesible with the anchor: #/diag-inscription
+        
 
+- What is browse in header…. weird 
         Now is different, without 'browse'.
 ———
 

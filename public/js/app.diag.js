@@ -19,7 +19,7 @@
                 var r = $rootScope,
                     db = server,
                     s = $scope;
-                s.title = "Diags";
+                s.title = "";
                 r.routeParams({
                     prevRoute: 'diags'
                 });
@@ -41,11 +41,11 @@
                     },
                     buttons: [{
                         label: "Refresh",
-                        type: () => "btn btn-default margin-left-0 margin-right-1",
+                        type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => update()
                     }, {
                         label: "New Diag",
-                        type: () => "btn btn-default",
+                        type: () => "btn diags-btn bg-azure-radiance",
                         click: () => r.route('diags/edit/-1')
                     }],
                     columns: [{
@@ -173,7 +173,7 @@
                 });
 
                 s.model = {
-                    title: 'Exceptions',
+                    title: 'Working Exceptions',
                     paginate: (cb) => update(null, cb),
                     init: () => update(),
                     remove: (item, index) => {
@@ -193,11 +193,11 @@
                     },
                     buttons: [{
                         label: "Refresh",
-                        type: () => "btn btn-default spacing-h-1",
+                        type: () => "btn diags-btn bg-azure-radiance spacing-h-1",
                         click: () => update()
                     }, {
                         label: "New",
-                        type: () => "btn btn-default spacing-h-1",
+                        type: () => "btn diags-btn bg-azure-radiance spacing-h-1",
                         click: () => {
                             r.routeParams({
                                 item: {

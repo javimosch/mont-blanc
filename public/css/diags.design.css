@@ -786,6 +786,10 @@ h2.diags.black {
     }
 }
 
+.breadcrumb{
+    margin-bottom: 0px;
+}
+
 .diag.check span {
     font-family: 'Avenir-Medium';
     font-size: 16px;
@@ -1091,13 +1095,15 @@ h2.diags.black {
 }
 
 .diags-form-wrapper {
-    border: 2px solid #C6DEE8;
+    
     padding: 20px 0px;
-    border-radius: 5px;
+    
 }
 
 @media only screen and (min-width: 480px) {
     .diags-form-wrapper {
+        border: 2px solid #C6DEE8;
+        border-radius: 5px;
         padding: 50px 0px;
         margin: 10px;
     }

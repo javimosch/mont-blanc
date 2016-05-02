@@ -695,7 +695,7 @@
                     db = server,
                     s = $scope,
                     dbPaginate = $mongoosePaginate.get('Order');
-                s.title = "Orders";
+                s.title = "";
                 r.routeParams({
                     prevRoute: 'orders'
                 });
@@ -768,15 +768,15 @@
                     },
                     buttons: [{
                         label: "Refresh",
-                        type: () => "btn btn-default margin-left-0 margin-right-1",
+                        type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => update()
                     }, {
                         label: "New Order",
-                        type: () => "btn btn-default margin-right-1",
+                        type: () => "btn diags-btn bg-azure-radiance margin-right-1",
                         click: () => r.route('orders/edit/-1')
                     }, {
                         label: "Sync payments",
-                        type: () => "btn btn-default margin-right-1",
+                        type: () => "btn diags-btn bg-azure-radiance margin-right-1",
                         click: () => s.syncStripe()
                     }],
                     columns: [{

@@ -43,7 +43,7 @@
         items-per-page="model.pagination.itemsPerPage"
          ng-model="model.pagination.currentPage" ng-change="model.pagination.changed()" max-size="model.pagination.maxSize" class="pagination-sm" boundary-links="true"></uib-pagination>
     </div>
-    <div ng-show="model.records && model.records.show">
+    <div ng-show="model.records && model.records.show" class="margin-bottom-one">
         <ul class="form-tiny labelx2 center-block">
             <li>
                 <label>{{model.records.label}}</label>

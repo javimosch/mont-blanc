@@ -38,8 +38,10 @@ app.directive('diagOrders', function(
                     data['_client'] = r.session()._id;
                 }
 
-                data.__rules={
-                    status:{"$ne":'created'}
+                data.__rules = {
+                    status: {
+                        "$ne": 'created'
+                    }
                 };
 
                 ws.ctrl('Order', 'getAll', data).then((res) => {
@@ -65,7 +67,7 @@ app.directive('diagOrders', function(
                         prevRoute: 'dashboard'
                     };
                     r.route('orders/edit/' + item._id);
-                    
+
                 },
                 buttons: [{
                     label: "Refresh",
@@ -126,30 +128,35 @@ app.directive('diagCalendar', function(
                     s.views.selected = s.calendarView;
                     r.dom();
                 },
-                items: [
-                    { label: 'Day' },
-                    { label: 'Week' },
-                    { label: 'Month' },
-                    { label: 'Year' },
-                ]
+                items: [{
+                    label: 'Day'
+                }, {
+                    label: 'Week'
+                }, {
+                    label: 'Month'
+                }, {
+                    label: 'Year'
+                }, ]
             };
 
 
             s.calendarDate = new Date();
 
-            s.events = [/*{
-                title: 'Order #2384', // The title of the event
-                type: 'info', // The type of the event (determines its color). Can be important, warning, info, inverse, success or special
-                startsAt: new Date(y, mo, 15, 1), // A javascript date object for when the event starts
-                endsAt: new Date(y, mo, 15, 15), // Optional - a javascript date object for when the event ends
-                editable: false, // If edit-event-html is set and this field is explicitly set to false then dont make it editable.
-                deletable: false, // If delete-event-html is set and this field is explicitly set to false then dont make it deleteable
-                draggable: true, //Allow an event to be dragged and dropped
-                resizable: true, //Allow an event to be resizable
-                incrementsBadgeTotal: true, //If set to false then will not count towards the badge total amount on the month and year view
-                recursOn: 'year', // If set the event will recur on the given period. Valid values are year or month
-                cssClass: 'a-css-class-name' //A CSS class (or more, just separate with spaces) that will be added to the event when it is displayed on each view. Useful for marking an event as selected / active etc
-            }*/];
+            s.events = [
+                /*{
+                                title: 'Order #2384', // The title of the event
+                                type: 'info', // The type of the event (determines its color). Can be important, warning, info, inverse, success or special
+                                startsAt: new Date(y, mo, 15, 1), // A javascript date object for when the event starts
+                                endsAt: new Date(y, mo, 15, 15), // Optional - a javascript date object for when the event ends
+                                editable: false, // If edit-event-html is set and this field is explicitly set to false then dont make it editable.
+                                deletable: false, // If delete-event-html is set and this field is explicitly set to false then dont make it deleteable
+                                draggable: true, //Allow an event to be dragged and dropped
+                                resizable: true, //Allow an event to be resizable
+                                incrementsBadgeTotal: true, //If set to false then will not count towards the badge total amount on the month and year view
+                                recursOn: 'year', // If set the event will recur on the given period. Valid values are year or month
+                                cssClass: 'a-css-class-name' //A CSS class (or more, just separate with spaces) that will be added to the event when it is displayed on each view. Useful for marking an event as selected / active etc
+                            }*/
+            ];
 
             function update() {
                 var conditions = {
@@ -166,8 +173,10 @@ app.directive('diagCalendar', function(
                     conditions['_client'] = r.session()._id;
                 }
 
-                conditions.__rules={
-                    status:{"$ne":'created'}
+                conditions.__rules = {
+                    status: {
+                        "$ne": 'created'
+                    }
                 };
 
                 ws.ctrl('Order', 'getAll', conditions).then((res) => {
@@ -241,87 +250,49 @@ app.controller('diagDashboard', [
 ]);
 
 
-//DEPRECATED?
-/*
 
-app.controller('adminDiags', [
-
-    'server', '$scope', '$rootScope',
-    function(db, s, r) {
-        console.info('app.admin.diag:adminDiags');
-        //
-        r.toggleNavbar(true);
-        r.secureSection(s);
-        //
-        var isClientOrDiag = r.userIs(['client', 'diag']);
-        if (isClientOrDiag) {
-            return r.handleSecurityRouteViolation();
-        }
-        //
-
-        //
-        s.selectedItems = [];
-        s.items = [];
-        //
-        s.click = function(item) {
-            r.route('diags/edit/' + item._id);
-        };
-        s.create = function() {
-            r.route('diags/edit/-1');
-        };
-        s.delete = function(item) {
-            s.confirm('Remove ' + s.selectedItems.length + ' item/s?', function() {
-                console.log('adminDiags:removeAll:in-progress');
-                s.message('deleting . . .', 'info');
-                s.requesting = true;
-                db.custom('user', 'removeAll', {
-                    ids: s.selectedItems
-                }).then(function(res) {
-                    s.requesting = false;
-                    s.message('deleted', 'info');
-                    read();
-                    console.info('adminDiags:removeAll:success', r.data);
-                }).error(function(err) {
-                    s.requesting = false;
-                    s.message('error, try later.', 'danger');
-                    console.warn('adminDiags:removeAll:error', err);
-                });
-            });
-        };
-        s.select = function() {
-            if (window.event) {
-                window.event.stopPropagation();
-            }
-        };
-
-        function read() {
-            s.message('loading . . .', 'info');
-            db.custom('user', 'getAll', { userType: 'diag' }).then(function(r) {
-                console.info('adminDiags:read:success', r.data);
-                s.items = r.data.result;
-                s.message('loaded!', 'success', 1000);
-            });
-        }
-        r.dom(read, 0);
-
-    }
-]);
-
-*/
-
-app.controller('adminDiagsEdit', [
+app.controller('ctrl-diag-edit', [
 
     'server', '$scope', '$rootScope', '$routeParams',
     function(db, s, r, params) {
         //        console.info('app.admin.diag:adminDiagsEdit');
         //
-        r.toggleNavbar(true);
-        r.secureSection(s);
+
+
         //
+        var isAdmin = r.userIs(['admin']);
         var isClient = r.userIs(['client']);
         var notCurrentDiag = (r.userIs(['diag']) && r.session()._id !== params.id);
-        if (isClient || notCurrentDiag) {
-            return r.handleSecurityRouteViolation();
+        var logged = r.logged();
+
+        s.inscriptionLabel = {
+            val: "Suivante",
+            update: function() {
+                r.dom(function() {
+                    if (s.item._id) {
+                        s.inscriptionLabel.val = "S'inscrire";
+                    }
+                    else {
+                        s.inscriptionLabel.val = "Suivante"
+                    }
+                });
+            }
+        };
+
+        if (!logged) {
+            //new diag public route
+            r.__hideNavMenu = true;
+            $U.once('route-exit:diag-inscription', function(url) {
+                r.__hideNavMenu = false;
+            });
+            r.toggleNavbar(false);
+        }
+        else {
+            r.toggleNavbar(true);
+            r.secureSection(s);
+            if (isClient || notCurrentDiag) {
+                return r.handleSecurityRouteViolation();
+            }
         }
         //
         $U.expose('s', s);
@@ -333,11 +304,17 @@ app.controller('adminDiagsEdit', [
             password: '',
             address: '',
             userType: 'diag',
-            priority: undefined,
-            commission:0
+            priority: 100,
+            commission: 0,
+            disabled: true
         };
-        s.original = _.clone(s.item);
-        window.edit = s;
+
+        if (isAdmin) {
+            s.item.disabled = false
+        }
+
+        s.original = _.cloneDeep(s.item);
+
 
 
         s.$watch('item.disabled', (v) => {
@@ -347,10 +324,7 @@ app.controller('adminDiagsEdit', [
                 }).then(d => {
                     if (d.ok && d.result > 0) {
                         s.item.disabled = false;
-                        r.message('Diag can only be disabled when there are not orders assigned.', {
-                            type: 'warning',
-                            duration: 5000
-                        });
+                        r.warningMessage('Diag can only be disabled when there are not orders assigned.', 5000);
                     }
                 });
             }
@@ -359,10 +333,14 @@ app.controller('adminDiagsEdit', [
         s.$watch('item.priority', (v) => {
             if (!_.isUndefined(v) && !_.isNull(v) && isFinite(v) && !isNaN(v)) {
                 if (v === s.original.priority) return;
-                db.ctrl('User', 'get', { userType: 'diag', priority: v, __select: "email" }).then((data) => {
+                db.ctrl('User', 'get', {
+                    userType: 'diag',
+                    priority: v,
+                    __select: "email"
+                }).then((data) => {
                     if (data.result !== null) {
                         s.item.priority = s.original.priority;
-                        r.message('Priority ' + v + ' is alredy assigned to ' + data.result.email, 'warning', 5000, true);
+                        r.warningMessage('Priority ' + v + ' is alredy assigned to ' + data.result.email, 5000);
                     }
                 });
             }
@@ -375,10 +353,9 @@ app.controller('adminDiagsEdit', [
 
         //
         if (params && params.id && params.id.toString() !== '-1') {
-            console.info('adminDiagsEdit:params', params);
             r.dom(read, 1000);
-        } else {
-            console.info('adminDiagsEdit:reset');
+        }
+        else {
             reset();
         }
         //
@@ -387,29 +364,36 @@ app.controller('adminDiagsEdit', [
         };
 
         function handleErrors(_err) {
-            s.requesting = false;
-            s.message('error, try later.', 'danger');
+            r.errorMessage('Error, try later.');
         }
 
         s.validate = () => {
             $U.ifThenMessage([
-                [s.item.email, '==', '', "Email cannot be empty"],
-                [s.item.password, '==', '', "Password cannot be empty"],
-                [!s.item.commission,'==',true,"Commission required"],
+                [s.item.email, '==', '', "email est nécessaire"],
+                [s.item.password, '==', '', "Password est nécessaire"],
+                [s.item.commission == undefined, '==', true, "Commission est nécessaire"],
                 [isNaN(s.item.commission), '==', true, "Commission allowed values are 0..100"],
-                [(s.item.commission<0||s.item.commission>100),'==',true,"Commission allowed values are 0..100"],
-                [!s.item.priority,'==',true,"Priority required"],
+                [(s.item.commission < 0 || s.item.commission > 100), '==', true, "Commission allowed values are 0..100"],
+                [!s.item.priority, '==', true, "Priority required"],
                 [isNaN(s.item.priority), '==', true, "Priority allowed values are 0..100"],
-                [(s.item.priority<0||s.item.priority>100),'==',true,"Priority allowed values are 0..100"]
+                [(s.item.priority < 0 || s.item.priority > 100), '==', true, "Priority allowed values are 0..100"]
             ], (m) => {
-                s.message(m[0], 'warning', 0, true);
+                r.warningMessage(m[0], 5000);
             }, s.save);
         };
 
-        s.diplomesExpirationDateChange=(_id)=>{
-            if(s.item.diplomesInfo[_id]){
-                s.item.diplomesInfo[_id].expirationDateNotificationSended=false;
-                s.item.diplomesInfo[_id].expirationDateNotificationEnabled=false;
+
+
+
+
+
+
+
+
+        s.diplomesExpirationDateChange = (_id) => {
+            if (s.item.diplomesInfo[_id]) {
+                s.item.diplomesInfo[_id].expirationDateNotificationSended = false;
+                s.item.diplomesInfo[_id].expirationDateNotificationEnabled = false;
             }
         };
         s.diplomesExpirationDateNotificationEnabled = (_id) => {
@@ -427,7 +411,7 @@ app.controller('adminDiagsEdit', [
             s.item.diplomesInfo[_id].expirationDateNotificationSended = false
             db.ctrl('User', 'update', {
                 _id: s.item._id,
-                diplomesInfo:s.item.diplomesInfo
+                diplomesInfo: s.item.diplomesInfo
             }).then(d => {
                 r.notify('Expiration Date Notification Enabled', 'info');
             });
@@ -475,7 +459,8 @@ app.controller('adminDiagsEdit', [
                             }
                             file = Object.assign(file, s.item.diplomesInfo && s.item.diplomesInfo[file._id] || {});
                             s.diplomesData[file._id] = s.diplomesDataCreate(file);
-                        } else {
+                        }
+                        else {
                             //if is unable to fetch the diplome, we assume that was removed from the db, so we delete the reference.
                             s.item.diplomes = _.pull(s.item.diplomes, _id);
                             s.item.diplomesInfo = _.pull(s.item.diplomesInfo, _id);
@@ -492,7 +477,8 @@ app.controller('adminDiagsEdit', [
                         }
                     });
                 });
-            } else {
+            }
+            else {
                 s.item.diplomes = s.item.diplomes || [];
                 s.diplomesNew();
             }
@@ -505,7 +491,9 @@ app.controller('adminDiagsEdit', [
             if (!s.diplomesExists(_id)) return;
             var name = s.diplomesData[_id] && s.diplomesData[_id].info.filename || "File";
             s.confirm('Delete ' + name + ' ?', () => {
-                db.ctrl('File', 'remove', { _id: _id }).then((d) => {
+                db.ctrl('File', 'remove', {
+                    _id: _id
+                }).then((d) => {
                     if (d.ok) {
                         s.item.diplomes = _.pull(s.item.diplomes, _id);
                         s.item.diplomesInfo = _.pull(s.item.diplomesInfo, _id);
@@ -536,11 +524,13 @@ app.controller('adminDiagsEdit', [
             var d = s.diplomesData[_id];
             if (s.diplomesExists(_id)) {
                 return 'Pdf ' + (d.info && "(" + d.info.filename + ")" || "unkown");
-            } else {
+            }
+            else {
                 d = s.diplomesFile[_id];
                 if (d && d.name) {
                     return 'Selected: ' + d.name.toLowerCase() + ' (click upload button)';
-                } else {
+                }
+                else {
                     return 'select a file and click the upload button';
                 }
             }
@@ -569,6 +559,22 @@ app.controller('adminDiagsEdit', [
         };
 
 
+        s.diplomeInfoApply = function() {
+            s.item.diplomesInfo = s.item.diplomesInfo || {};
+            Object.keys(s.diplomesData).forEach(id => {
+                if (s.diplomesExists(id)) {
+                    var data = s.diplomesData[id];
+                    s.item.diplomesInfo[id] = {
+                        obtentionDate: data.info.obtentionDate,
+                        expirationDate: data.info.expirationDate,
+                        expirationDateNotificationEnabled: false,
+                        expirationDateNotificationSended: false,
+                        filename: data.info.filename
+                    };
+                }
+            });
+        };
+
         s.diplomesSave = (_id) => {
             if (!s.diplomesFile[_id]) return;
             var curr = _id;
@@ -578,7 +584,9 @@ app.controller('adminDiagsEdit', [
 
 
             function _deleteCurr() {
-                db.ctrl('File', 'remove', { _id: curr });
+                db.ctrl('File', 'remove', {
+                    _id: curr
+                });
             }
 
             function _uploadNew() {
@@ -588,20 +596,12 @@ app.controller('adminDiagsEdit', [
                 if (s.diplomesFile[_id]) {
                     var _str = s.diplomesFile[_id].name.toString().toLowerCase();
                     if (_str.substring(_str.length - 3) !== 'pdf') {
-                        s.message('PDF Format required', {
-                            type: 'warning',
-                            duration: 99999,
-                            scroll: true
-                        });
+                        s.warningMessage('PDF Format required', 99999);
                         return;
                     }
                 }
 
-                s.message('Uploading (Do not touch anything)', {
-                    type: 'info',
-                    duration: 99999,
-                    scroll: true
-                });
+                r.infoMessage('Uploading (Do not touch anything)', 99999);
 
 
                 db.form('File/save/', {
@@ -627,82 +627,71 @@ app.controller('adminDiagsEdit', [
                                 if (s.diplomesExists(curr)) {
                                     _deleteCurr();
                                 }
-                                s.message('File upload success.', {
-                                    type: 'info',
-                                    duration: 5000,
-                                    scroll: true
-                                });
-                            } else {
-                                s.message('Upload fail, try later.', {
-                                    type: 'warning',
-                                    duration: 99999,
-                                    scroll: true
-                                });
+                                r.infoMessage('File upload success.', 5000);
+                            }
+                            else {
+                                r.warningMessage('Upload fail, try later.', 99999);
                             }
                             read(s.item._id);
                         });
-                    } else {
-                        s.message('Upload fail, try later.', {
-                            type: 'warning',
-                            duration: 99999,
-                            scroll: true
-                        });
+                    }
+                    else {
+                        r.warningMessage('Upload fail, try later.', 99999);
                     }
                 });
             }
         };
 
+
+
+
+
+
+
+
+
         s.save = function() {
-            s.message('saving . . .', 'info');
-
-            s.requesting = true;
-
-
             db.custom('user', 'find', {
                 email: s.item.email,
                 userType: 'diag'
             }).then(function(res) {
-                s.requesting = false;
                 if (res.data.result.length > 0) {
                     var _item = res.data.result[0];
                     if (s.item._id && s.item._id == _item._id) {
                         _save(); //same diag
-                    } else {
-                        s.message('Email address in use.');
                     }
-                } else {
+                    else {
+                        s.warningMessage('Email address in use.');
+                    }
+                }
+                else {
                     _save(); //do not exist.
                 }
             }).error(handleErrors);
 
             function _save() {
-                s.requesting = true;
-
-                s.item.diplomesInfo = s.item.diplomesInfo || {};
-                Object.keys(s.diplomesData).forEach(id => {
-                    if (s.diplomesExists(id)) {
-                        var data = s.diplomesData[id];
-                        s.item.diplomesInfo[id] = {
-                            obtentionDate: data.info.obtentionDate,
-                            expirationDate: data.info.expirationDate,
-                            expirationDateNotificationEnabled: false,
-                            expirationDateNotificationSended: false,
-                            filename: data.info.filename
-                        };
-                    }
-                });
-
-
+                s.diplomeInfoApply();
                 db.ctrl('User', 'save', s.item).then((res) => {
-                    s.requesting = false;
                     var _r = res;
                     if (_r.ok) {
-                        console.info('adminDiagsEdit:save:success');
-                        //s.message('saved', 'success');
-                        r.route('diags', 0);
-                    } else {
-                        console.warn('adminDiagsEdit:save:fail', _r.err);
-                        s.message('Error, try later', 'warning');
+                        if (!logged) {
+                            if (s.item._id) {
+                                r.route('login');
+                                return r.infoMessage("Votre compte a été créé et sera examinée par un administrateur");
+                            }
+                            else {
+                                s.item = res.result;
+                                s.inscriptionLabel.update();
+                                return r.dom();
+                            }
+                        }
+                        else {
+                            r.route('diags', 0);
+                        }
+
+                    }
+                    else {
+                        r.warningMessage('Error, try later', 'warning');
                     }
                 }).error(handleErrors);
 
@@ -711,51 +700,43 @@ app.controller('adminDiagsEdit', [
         };
         s.delete = function() {
             s.confirm('Delete Diag ' + s.item.email + ' ?', function() {
-                //console.log('adminDiagsEdit:remove:in-progress');
-                s.message('deleting . . .', 'info');
-                s.requesting = true;
                 db.custom('user', 'remove', {
                     _id: s.item._id
                 }).then(function(res) {
-                    s.requesting = false;
-                    s.message('deleted', 'info');
+                    r.infoMessage('Deleted');
                     reset();
                     r.route('diags', 0);
-                    console.info('adminDiagsEdit:remove:success', r.data);
                 }).error(function(err) {
-                    s.requesting = false;
-                    s.message('error, try later.', 'danger');
-                    console.warn('adminDiagsEdit:remove:error', err);
+                    r.errorMessage('Error, try later.');
                 });
             });
         };
 
         function reset() {
-            s.item = _.clone(s.original);
+            s.item = _.cloneDeep(s.original);
         }
 
         s.update = read;
 
         function read() {
-            s.message('Loading . . .', 'info');
-
-            s.requesting = true;
-
-
-
-
+            var id = params.id;
+            if(s.item._id){
+                id  = s.item._id;
+            }
+            
+            s.infoMessage('Loading . . .');
             db.custom('user', 'get', {
-                _id: params.id
+                _id: id,
+                userType:'diag'
             }).then(function(res) {
-                s.requesting = false;
-                //                console.info('adminDiagsEdit:read:success', res.data);
                 s.original = _.clone(res.data.result);
                 s.item = res.data.result;
                 s.diplomesUpdate();
                 if (!res.data.ok) {
-                    s.message('Registry not found, maybe it was deleted.', 'warning', 5000);
-                } else {
-                    //s.message('loaded', 'success', 2000);
+                    r.infoMessage('Registry not found, maybe it was deleted.', 'warning', 5000);
+                }
+                else {
+
                 }
             });
         }

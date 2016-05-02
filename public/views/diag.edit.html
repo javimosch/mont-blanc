@@ -1,20 +1,15 @@
 <modal-confirm open="confirm"></modal-confirm>
-<div class="container" ng-controller="adminDiagsEdit">
-     <div class="row">
-        <div class="col-sm-12 padding-none">
-            <ol class="breadcrumb">
-                <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
-                <li><a class="link" ng-click="route('clients')" ng-show="userIs('admin')">Diags</a></li>
-                <li>Diag Details</li>
-            </ol>
-        </div>
+<div class="row">
+    <div class="col-sm-12 padding-none">
+        <ol class="breadcrumb">
+            <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+            <li><a class="link" ng-click="route('clients')" ng-show="userIs('admin')">Diags</a></li>
+            <li>Diag Details</li>
+        </ol>
     </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <h3 class="v-margin-2 padding-0">Diag Details</h3>
-        </div>
-    </div>
-    <div class="row">
+</div>
+<div class="container" ng-controller="ctrl-diag-edit">
+    <div class="row margin-top-four margin-bottom-four">
         <div class="col-sm-6">
             <ul class="form-tiny center-block">
                 <li>
@@ -96,11 +91,13 @@
                     <div>
                         <p class="input-group diplome-info">
                             <label>Obtention Date</label>
-                            <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.obtentionDate" is-open="d.obtentionDateOpen" max-date="d.obtentionMaxDate" datepicker-options="d.dateOptions" date-disabled="false" ng-required="true" close-text="Close" ng-click="d.obtentionDateClick()" />
+                            <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.obtentionDate" is-open="d.obtentionDateOpen" max-date="d.obtentionMaxDate" datepicker-options="d.dateOptions" date-disabled="false"
+                            ng-required="true" close-text="Close" ng-click="d.obtentionDateClick()" />
                         </p>
                         <p class="input-group diplome-info" ng-if="userIs(['admin'])">
                             <label>Expiration Date</label>
-                            <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.expirationDate" is-open="d.expirationDateOpen" min-date="d.expirationMinDate" datepicker-options="d.dateOptions" date-disabled="false" ng-required="true" close-text="Close" ng-click="d.expirationDateClick()" ng-change="diplomesExpirationDateChange(id)" />
+                            <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.expirationDate" is-open="d.expirationDateOpen" min-date="d.expirationMinDate" datepicker-options="d.dateOptions" date-disabled="false"
+                            ng-required="true" close-text="Close" ng-click="d.expirationDateClick()" ng-change="diplomesExpirationDateChange(id)" />
                         </p>
                     </div>
                 </li>
@@ -116,24 +113,32 @@
                     <label>Priority</label>
                     <input ng-disabled="state.working() || !userIs(['admin'])" type="text" ng-model="item.priority" placeholder="priority">
                 </li>
+                <li>
+                    <label>Disabled</label>
+                   
+                    <label class="">
+                        <input type="checkbox" 
+                            ng-model='item.disabled' 
+                            ng-value="true"
+                            class="check mark-white"
+                        />
+                        <span class="sky-blue"></span>
+                    </label>
+                    
+                </li>
             </ul>
         </div>
     </div>
-    <div class="row" ng-show="item._id">
-        <div class="col-sm-12">
-            <h4 class="v-margin-2 padding-0">Working exceptions</h4>
-        </div>
-    </div>
-    <div class="row" ng-show="item._id">
+    <div class="row margin-top-three margin-bottom-three" ng-show="item._id">
         <div class="col-sm-12">
             <diag-exception-list></diag-exception-list>
         </div>
     </div>
-    <div class="row">
+    <div class="row margin-bottom-four">
         <div class="col-sm-12">
-            <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="validate()">Save</button>
-            <button ng-disabled="state.working() || requesting" class="btn btn-default" ng-click="cancel()">Cancel</button>
-            <button ng-disabled="!item._id || state.working() || requesting" class="btn btn-default" ng-click="delete()">Delete</button>
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Save</button>
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="cancel()">Cancel</button>
+            <button ng-disabled="!item._id || state.working()" class="btn diags-btn bg-azure-radiance" ng-click="delete()">Delete</button>
         </div>
     </div>
 </div>

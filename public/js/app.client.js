@@ -127,7 +127,7 @@
                     db = server,
                     s = $scope,
                     dbPaginate = $mongoosePaginate.get('User');
-                s.title = "Clients";
+                s.title = "";
                 r.routeParams({
                     prevRoute: 'clients'
                 });
@@ -163,11 +163,11 @@
                     },
                     buttons: [{
                         label: "Refresh",
-                        type: () => "btn btn-default margin-left-0 margin-right-1",
+                        type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => update()
                     }, {
                         label: "New Client",
-                        type: () => "btn btn-default",
+                        type: () => "btn diags-btn bg-azure-radiance",
                         click: () => r.route('clients/edit/-1')
                     }],
                     columns: [{

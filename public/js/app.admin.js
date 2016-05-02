@@ -246,7 +246,7 @@
                 var r = $rootScope,
                     db = server,
                     s = $scope;
-                s.title = "Admins";
+                s.title = "";
                 r.routeParams({
                     item: {
                         userType: 'admin'
@@ -268,11 +268,11 @@
                     },
                     buttons: [{
                         label: "Refresh",
-                        type: () => "btn btn-default margin-left-0 margin-right-1",
+                        type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => update()
                     }, {
                         label: "New Admin",
-                        type: () => "btn btn-default",
+                        type: () => "btn diags-btn bg-azure-radiance",
                         click: () => r.route('administrators/edit/-1')
                     }],
                     columns: [{

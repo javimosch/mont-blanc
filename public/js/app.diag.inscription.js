@@ -7,7 +7,7 @@
         function(db, s, r, params) {
             r.__hideNavMenu = true;    
             r.toggleNavbar(true);
-            $U.once('route-exit:login', function(url) {
+            $U.once('route-exit:diag-inscription', function(url) {
                 r.__hideNavMenu = false;
             });
 
@@ -26,7 +26,8 @@
             function save() {
                 db.custom('user', 'find', {
                     email: s.item.email,
-                    userType: 'diag'
+                    userType: 'diag',
+                    disabled:true
                 }).then(function(res) {
                     if (res.data.result.length > 0) {
                         var _item = res.data.result[0];
