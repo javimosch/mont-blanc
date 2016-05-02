@@ -1,26 +1,39 @@
 <div class="diags-bg">
     <div class="diags-content container diags-selection padding-none">
         <div class="row diags-bg-block-40 hidden-xs"></div>
-        <div class="row diag-row padding-top-three">
-            <div class="col-sm-12 ">
-                <h4>Contactez-nous</h4>
-            </div>
-        </div>
 
 
-        <div class="row diag-row margin-top-one">
+        <div class="row margin-top-one">
             <div class="col-xs-12 col-sm-12 col-md-12 ">
-                <p>
-                    "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human
-                    happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone
-                    who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes
-                    laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant
-                    pleasure?"
-                </p>
+                <div class="row-fluid diags-form-wrapper">
+                    <div class="diags-form" ng-controller="ctrl.booking-contact-form">
+                        <div class="row">
+                            <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Contactez-nous</span></i>
+                        </div>
+                        <div class="row margin-top-quarter">
+                            <p class="label"></p>
+                        </div>
+                        <div class="row margin-top-one">
+                            <input type="text" ng-model="_email.fullname" class="diags-input" placeholder="Prénom Nom">
+                        </div>
+                        <div class="row margin-top-half">
+                            <input ng-model="_email.email" type="email" class="diags-input" placeholder="Adresse email">
+                        </div>
+                        <div class="row margin-top-half">
+                            <input ng-model="_email.phone" type="text" class="diags-input" placeholder="Phone Number">
+                        </div>
+                        <div class="row margin-top-half">
+                            <textarea ng-model="_email.message" type="text" class="diags-input fullwidth min-height-100 no-resize" placeholder="Message"></textarea>
+                        </div>
+                        <div class="row margin-top-one">
+                            <button ng-click="validate()" class="btn btn-xl bg-madison">Envoyer</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-
         </div>
+
+
 
 
         <div class="row diag-row margin-top-three padding-bottom-two">

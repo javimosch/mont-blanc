@@ -55,8 +55,9 @@
 .table-row {
   display: table-row;
 }
-.table-caption{
-  display:table-caption;
+
+.table-caption {
+  display: table-caption;
 }
 
 .navbar-default {
@@ -111,10 +112,12 @@
   line-height: 60px;
 }
 
-.middle, .vertical-middle {
+.middle,
+.vertical-middle {
   vertical-align: middle;
 }
-.vertical-super{
+
+.vertical-super {
   vertical-align: super;
 }
 
@@ -180,6 +183,24 @@
 
 .min-width-120 {
   min-width: 120px;
+}
+
+.min-width-200 {
+  min-width: 200px;
+}
+
+.min-width-300 {
+  min-width: 300px;
+}
+
+.min-width-400 {
+  min-width: 400px;
+}
+
+@media only screen and (min-width: 992px) {
+  .min-md-min-width-400 {
+    min-width: 400px;
+  }
 }
 
 .childs-margin-1 > * {
@@ -269,12 +290,12 @@ table.minimal td {
   bottom: 0em!important;
 }
 
-.top-none{
-  top:-0.1em!important;
+.top-none {
+  top: -0.1em!important;
 }
 
-.top-50p{
-  top:50%!important;
+.top-50p {
+  top: 50%!important;
 }
 
 .center,
@@ -372,8 +393,6 @@ table.minimal td {
   }
 }
 
-
-
 .margin-top-none {
   margin-top: 0!important;
 }
@@ -385,9 +404,11 @@ table.minimal td {
 .margin-top-half {
   margin-top: 0.5em!important;
 }
-.margin-top-08em{
+
+.margin-top-08em {
   margin-top: 0.8em!important;
 }
+
 .margin-top-one {
   margin-top: 1em!important;
 }
@@ -519,8 +540,6 @@ table.minimal td {
 .padding-top-none {
   padding-top: 0!important;
 }
-
-
 
 .padding-02em {
   padding: 0.2em!important;
@@ -813,7 +832,6 @@ table.minimal td {
 .box-1-2 {
   width: 50%;
 }
-
 
 @media only screen and (min-width: 992px) {
   .min-md-padding-top-one-and-half {

@@ -86,10 +86,14 @@ Its a form with fields :
 ENVOYER button (to send)
 ——
 
+        DONE
+
 ##—— Admin page ——
 There is possibility to log in and to subscribe as a diagnostiqueur. When I click on S’inscrire, I should find here all the fields we have in back office for each diagnostiqueur.  When click on S’inscrire it adds the diagnostiqueur in BO but Inactivate and Superadmin receive an email… In BO SUperadmin can check the details and activate the diag man
 
 - What is browse in header…. weird 
+
+        Now is different, without 'browse'.
 ———
 
 ##— Price structure ——

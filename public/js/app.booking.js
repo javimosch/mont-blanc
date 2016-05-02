@@ -98,6 +98,41 @@ app.directive('rangeSlider', function($rootScope, $timeout) {
     };
 });
 
+//contactFormSendToAllAdmins
+
+app.controller('ctrl.booking-contact-form', ['server',
+    '$timeout', '$scope', '$rootScope', '$uibModal',
+    function(db, $timeout, s, r, $uibModal) {
+        s._email = {
+            
+        };
+        s.send = function() {
+            db.ctrl('Email','contactFormSendToAllAdmins',s._email).then(function(d){
+               if(d.ok){
+                   r.infoMessage('Message envoyé');
+               }else{
+                   r.infoMessage('Problème de serveur , réessayer plus tard');
+               }
+            });
+        };
+        s.validate = function() {
+            ifThenMessage([
+                [!s._email.fullname, '==', true, 'Prénom Nom requis'],
+                [!s._email.email, '==', true, 'Email requis'],
+                [!s._email.phone, '==', true, 'Phone requis'],
+                [!s._email.message, '==', true, 'Message requis'],
+            ], (m) => {
+                if (typeof m[0] !== 'string') {
+                    s.warningMsg(m[0]());
+                }
+                else {
+                    s.warningMsg(m[0]);
+                }
+            }, s.send);
+        }
+    }
+]);
+
 app.controller('ctrl.booking', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal',
     function(db, $timeout, s, r, $uibModal) {
@@ -120,13 +155,15 @@ app.controller('ctrl.booking', ['server',
                 if (s.__debugKeyCode.toLowerCase() == 'debug') {
                     r.__debugDiags = true;
                     console.info('debug-mode-on');
-                }else{
+                }
+                else {
                     r.__debugDiags = false;
                     console.info('debug-mode-off, try again');
                 }
                 s.__debugKeyCode = '';
                 r.dom();
-            }else{
+            }
+            else {
                 s.__debugKeyCode = s.__debugKeyCode + key;
             }
         });

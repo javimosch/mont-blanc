@@ -2,9 +2,7 @@
     <nav class="diags-navbar-2 navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
-                <button 
-                ng-show="!__hideNavMenu"
-                type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#ex2" aria-expanded="false">
+                <button ng-show="!__hideNavMenu" type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#ex2" aria-expanded="false">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -14,26 +12,33 @@
             </div>
             <div class="collapse navbar-collapse" id="ex2" ng-show="!__hideNavMenu">
                 <ul class="nav navbar-nav navbar-right" ng-show="!__hideNavMenu">
+
+                    <!--COMMON VIEW -->
                     <li ng-show="logged()">
                         <a class="link diag-link" active-route="dashboard" ng-click="route('dashboard')" data-toggle="collapse" data-target=".navbar-collapse.in">Dashboard</a>
                     </li>
-                    <li class="dropdown">
-                        <a class="dropdown-toggle diag-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Browse <span >></span></a>
-                        <ul class="dropdown-menu">
 
-                            <li ng-show="logged() && userIs(['admin'])"><a class="link diag-link" active-route="global-calendar" ng-click="route('global-calendar')" data-toggle="collapse" data-target=".navbar-collapse.in">Global Calendar</a></li>
+                    <!--DIAG ONLY-->
+                    <li ng-show="logged() && userIs(['diag'])"><a class="link diag-link" active-route="diags" ng-click="route('diags/edit/'+session()._id)" data-toggle="collapse" data-target=".navbar-collapse.in">My profile</a></li>
+                    <li ng-show="logged() && userIs(['diag'])"><a class="link diag-link" active-route="balance" ng-click="route('diag/balance')" data-toggle="collapse" data-target=".navbar-collapse.in">Balance</a></li>
+
+                    <!--ADMIN ONLY-->
+                    <li ng-show="logged() && userIs(['admin'])"><a class="link diag-link" active-route="global-calendar" ng-click="route('global-calendar')" data-toggle="collapse" data-target=".navbar-collapse.in">Global Calendar</a></li>
+                    <li ng-show="logged() && userIs(['admin'])"><a class="link diag-link" active-route="orders" ng-click="route('orders')" data-toggle="collapse" data-target=".navbar-collapse.in">Orders</a></li>
+
+                    <li class="dropdown" ng-show="logged() && userIs(['admin'])">
+                        <a class="dropdown-toggle diag-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Users <span ></span></a>
+                        <ul class="dropdown-menu">
                             <li ng-show="logged() && userIs(['admin'])"><a class="link diag-link" active-route="diags" ng-click="route('diags')" data-toggle="collapse" data-target=".navbar-collapse.in">Diags</a></li>
-                            <li ng-show="logged() && userIs(['admin'])"><a class="link diag-link" active-route="orders" ng-click="route('orders')" data-toggle="collapse" data-target=".navbar-collapse.in">Orders</a></li>
                             <li ng-show="logged() && userIs(['admin'])"><a class="link diag-link" active-route="clients" ng-click="route('clients')" data-toggle="collapse" data-target=".navbar-collapse.in">Clients</a></li>
                             <li ng-show="logged() && userIs(['admin'])"><a class="link diag-link" active-route="administrators" ng-click="route('administrators')" data-toggle="collapse" data-target=".navbar-collapse.in">Admins</a></li>
-                            <li ng-show="logged() && userIs(['diag'])"><a class="link diag-link" active-route="diags" ng-click="route('diags/edit/'+session()._id)" data-toggle="collapse" data-target=".navbar-collapse.in">My profile</a></li>
-                            <li ng-show="logged() && userIs(['diag'])"><a class="link diag-link" active-route="balance" ng-click="route('diag/balance')" data-toggle="collapse" data-target=".navbar-collapse.in">Balance</a></li>
-                            <li ng-show="logged() && userIs(['admin'])">
-                                <a class="link diag-link" active-route="settings" ng-click="route('settings')" data-toggle="collapse" data-target=".navbar-collapse.in">Settings</a>
-                            </li>
-
                         </ul>
                     </li>
+
+                    <li ng-show="logged() && userIs(['admin'])">
+                        <a class="link diag-link" active-route="settings" ng-click="route('settings')" data-toggle="collapse" data-target=".navbar-collapse.in">Settings</a>
+                    </li>
+
                     <li><a ng-click="route(URL.FAQ)" class="link diag-link" data-toggle="collapse" data-target=".navbar-collapse.in">FAQ</a></li>
                     <li><a ng-click="route(URL.CONTACT_US)" class="link diag-link" data-toggle="collapse" data-target=".navbar-collapse.in">Contactez-nous</a></li>
                     <li ng-show="logged()">
