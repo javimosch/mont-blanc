@@ -131,7 +131,7 @@
                         }
                     }, {
                         label: "Created",
-                        name: 'created',
+                        name: 'createdAt',
                         format: (v) => {
                             return r.momentFormat(v, "DD-MM-YY HH:mm");
                         }

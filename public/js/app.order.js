@@ -2,6 +2,7 @@
 /*global moment*/
 /*global _*/
 /*global $U*/
+/*global $D*/
 
 (function() {
     var app = angular.module('app.order', []);
@@ -44,7 +45,7 @@
             };
 
             function read() {
-                s.message('Loading . . .', 'info');
+                r.infoMessage('Loading . . .');
                 db.custom('order', 'getAll', {
                     __populate: {
                         '_client': 'email',
@@ -55,7 +56,7 @@
                     //                console.info('adminOrders:read:success', r.data.result);
                     r.data.result = _.orderBy(r.data.result, ['created'], ['desc']);
                     s.items = r.data.result;
-                    s.message('Loaded', 'success', 1000);
+                    r.successMessage('Loaded',1000);
                 });
             }
             s.refresh = read;
@@ -116,7 +117,7 @@
 
             function autoPay() {
                 if (window.location.href.indexOf('orders/view') === -1) return;
-                if (s.pay && getParameterByName('pay') === '1') {
+                if (s.pay && $U.getParameterByName('pay') === '1') {
                     if (s.item && !_.includes(['prepaid', 'completed'], s.item.status)) {
                         s.pay();
                     }
@@ -175,30 +176,33 @@
                 s.currentClientType = () =>
                     s.item && s.item._client && '(' + s.item._client.clientType + ')' || '';
 
-                s.subTotal = () => subTotal(s.item, s.diags, s.basePrice);
-                s.sizePrice = () => sizePrice(s.item, s.diags, s.squareMetersPrice, s.basePrice);
-                s.totalPrice = (showRounded) => totalPrice(showRounded, s.item, s.diags, s.squareMetersPrice, s.basePrice, {
+                s.subTotal = () => $D.subTotal(s.item, s.diags, s.basePrice);
+                s.sizePrice = () => $D.sizePrice(s.item, s.diags, s.squareMetersPrice, s.basePrice);
+                s.totalPrice = (showRounded) => $D.totalPrice(showRounded, s.item, s.diags, s.squareMetersPrice, s.basePrice, {
                     overwriteModel: false,
-                    s: s //with the scope, a priceInfo object is created to debug price calc.
+                    s: s,
+                    r:r
+                    //with the scope, a priceInfo object is created to debug price calc.
                 });
-                s.totalTime = () => OrderTotalTime(s.item.diags, s.diags);
+                s.totalTime = () => $D.OrderTotalTime(s.item.diags, s.diags);
                 s.totalTimeFormated = () => {
-                    var t = OrderTotalTime(s.item.diags, s.diags);
+                    var t = $D.OrderTotalTime(s.item.diags, s.diags);
                     var m = moment().hours(t.hours).minutes(t.minutes).format('HH:mm');
                     return m;
                 };
                 s.applyTotalPrice = () => {
                     s.item.price = s.totalPrice(true);
+                    r.dom();
                 };
                 s.applyTotalTime = () => {
-                    var t = OrderTotalTime(s.item.diags, s.diags);
+                    var t = $D.OrderTotalTime(s.item.diags, s.diags);
                     if (s.item && s.item.diagStart) {
                         s.item.diagEnd = moment(s.item.diagStart)
                             .add(t.hours, 'hours').add(t.minutes, 'minutes')._d;
                         r.dom();
                     }
                 };
-                s.message = r.message;
+                
                 s.type = r.session().userType;
                 s.is = (arr) => _.includes(arr, s.type);
                 s.focus = focus;
@@ -403,9 +407,9 @@
                 };
 
 
-                s.start = createDateTimePickerData();
-                s.end = createDateTimePickerData();
-                s.status = createSelect({
+                s.start = $D.createDateTimePickerData();
+                s.end = $D.createDateTimePickerData();
+                s.status = $D.createSelect({
                     scope: s,
                     model: 'item.status',
                     label: '(Select an status)',
@@ -422,15 +426,15 @@
 
                 s.sendPaymentLink = () => {
 
-                    ifThenMessage([
+                    $U.ifThenMessage([
                         [!s.item.landLordEmail, '==', true, "Landlord Email required."],
                         [!s.item.landLordFullName, '==', true, "Landlord Name required."],
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
-                            s.message(m[0](), 'warning', 0, true);
+                            r.warningMessage(m[0](), 'warning');
                         }
                         else {
-                            s.message(m[0], 'warning', 0, true);
+                            r.warningMessage(m[0], 'warning');
                         }
                     }, _sendPaymentLink);
 
@@ -446,7 +450,7 @@
 
                 s.pay = () => {
                     var order = s.item;
-                    openStripeModalPayOrder(order, (token) => {
+                    $D.openStripeModalPayOrder(order, (token) => {
                         order.stripeToken = token.id;
                         db.ctrl('Order', 'pay', order).then((data) => {
                             if (data.ok) {
@@ -485,7 +489,7 @@
                 s.mmOK = (d) => _.includes([0, 30], s.mm(d));
 
                 s.validate = () => {
-                    ifThenMessage([
+                    $U.ifThenMessage([
                         [typeof s.item._client, '!=', 'object', "Client required"],
                         [_.isUndefined(s.item.address) || _.isNull(s.item.address) || s.item.address === '', '==', true, 'Address required'],
                         [_.isNull(s.item.diagStart) || _.isUndefined(s.item.diagStart), '==', true, 'Start date required'],
@@ -508,20 +512,19 @@
                         [s.item.status, '==', '', 'Status required']
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
-                            s.message(m[0](), 'warning', 0, true);
+                            r.warningMessage(m[0](), 'warning');
                         }
                         else {
-                            s.message(m[0], 'warning', 0, true);
+                            r.warningMessage(m[0], 'warning');
                         }
                     }, s.save);
                 };
                 s.save = function() {
-                    s.message('saving . . .', 'info');
                     s.requesting = true;
                     db.ctrl('Order', 'save', s.item).then(function(data) {
                         s.requesting = false;
                         if (data.ok) {
-                            s.message('saved', 'success');
+                            r.infoMessage('Changes saved', 'success');
                             s.back();
                         }
                         else {
@@ -531,10 +534,7 @@
                 };
                 s.downloadFile = () => {
                     if (!s.item.pdfId) {
-                        return s.message("File required", 'warning', {
-                            duration: 5000,
-                            scroll: true
-                        });
+                        return r.warningMessage("File required", 5000);
                     }
                     else {
                         window.open(db.URL() + '/File/get/' + s.item.pdfId, '_newtab');
@@ -542,11 +542,7 @@
                 };
                 s.saveFile = () => {
                     if (!s.pdfFile) {
-                        saveFile
-                        return s.message("File required", 'warning', {
-                            duration: 5000,
-                            scroll: true
-                        });
+                        return r.warningMessage("File required", 5000);
                     }
                     var pdfId_prev = s.item.pdfId;
                     _uploadNew(); //starts here
@@ -560,11 +556,7 @@
                     }
 
                     function _uploadNew() {
-                        s.message('Uploading (Do not touch anything)', {
-                            type: 'info',
-                            duration: 99999,
-                            scroll: true
-                        });
+                        r.infoMessage('Uploading (Do not touch anything)',9999);
                         db.form('File/save/', {
                             name: s.pdfFile.name,
                             file: s.pdfFile
@@ -580,19 +572,11 @@
                                     _deletePrev();
                                     //_readFile();
                                     read(s.item._id);
-                                    s.message('File upload success.', {
-                                        type: 'info',
-                                        duration: 5000,
-                                        scroll: true
-                                    });
+                                    r.infoMessage('File upload success.',5000);
                                 });
                             }
                             else {
-                                s.message('Upload fail, try later.', {
-                                    type: 'warning',
-                                    duration: 99999,
-                                    scroll: true
-                                });
+                                r.warningMessage('Upload fail, try later.',9999);
                             }
                         });
                     }
@@ -633,7 +617,7 @@
                 };
             }
 
-            function handleError(err) {
+            function handleError(er) {
                 s.requesting = false;
                 s.message('error, try later.', 'danger', 0, true);
             }

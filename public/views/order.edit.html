@@ -160,15 +160,10 @@
                 </li>
                 <li ng-if="userIs(['admin'])" class="well well-sm">
                     <label>Price Rules</label>
-                    <input disabled type="number" ng-value="totalPrice(true)">
                     <table class="table minimal">
                         <tr ng-repeat="(k,v) in priceInfo">
                             <td>{{k}}</td>
                             <td>{{v}}</td>
-                        </tr>
-                        <tr>
-                            <td>Total</td>
-                            <td>{{totalPrice(true)}}</td>
                         </tr>
                         <tr>
                             <td>- House size % for {{item.info.squareMeters}} is {{squareMetersPrice[item.info.squareMeters]}}%.</td>
@@ -179,7 +174,7 @@
                             <td></td>
                         </tr>
                     </table>
-                    <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalPrice()">Apply</button>
+                    <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalPrice()">Calculate</button>
                 </li>
 
                 <!--ADMIN,CLIENT(AGENCY,COMPANY): Landlord details -->

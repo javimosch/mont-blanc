@@ -4,16 +4,57 @@
 /*global _*/
 
 var $D = {
-    rangeCollide:rangeCollide,
+    openStripeModalPayOrder: openStripeModalPayOrder,
+    rangeCollide: rangeCollide,
+    normalizeOrderStartTime: normalizeOrderStartTime,
+    OrderTotalTime: OrderTotalTime,
+    subTotal: subTotal,
+    sizePrice: sizePrice,
+    totalPrice: totalPrice,
+    createSelect: createSelect,
+    createDateTimePickerData: createDateTimePickerData,
     ORDER_STATUS: {
-        CREATED:'created', //just created
-        ORDERED:'ordered', //client (agency/other) clicks invoice end of the month
-        PREPAID:'prepaid', //client paid first. When upload pdf -> complete
-        DELIVERED:'delivered', // PDF uploaded first. When client paid -> complete
-        COMPLETED:'completed' //pdf uploaded and order paid.
+        CREATED: 'created', //just created
+        ORDERED: 'ordered', //client (agency/other) clicks invoice end of the month
+        PREPAID: 'prepaid', //client paid first. When upload pdf -> complete
+        DELIVERED: 'delivered', // PDF uploaded first. When client paid -> complete
+        COMPLETED: 'completed' //pdf uploaded and order paid.
     },
-    ORDER_STATUS_PAID:['prepaid', 'completed']
+    ORDER_STATUS_PAID: ['prepaid', 'completed']
 };
+
+function createDateTimePickerData() {
+    var o = {
+        isOpen: false,
+        openCalendar: function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            o.isOpen = true;
+        }
+    };
+    return o;
+}
+
+function createSelect(opt) { //s:scope r:rootscope
+    var o = {
+        label: opt.label,
+        click: (x) => {
+            o.label = x.label || x;
+            $U.setPropByGivenPath(opt.scope, opt.model, x);
+            opt.change(x);
+        },
+        items: opt.items
+    };
+    opt.scope.$watch(opt.model, (v) => {
+        if (v !== undefined) {
+            o.label = v.label || (v.substring(0, 1).toUpperCase() + v.slice(1));
+        }
+        else {
+            o.label = opt.label;
+        }
+    });
+    return o;
+}
 
 function rangeCollide(d1s, d1e, d2s, d2e) {
     d1s = moment(d1s);
@@ -46,7 +87,11 @@ function rangeCollide(d1s, d1e, d2s, d2e) {
 
 
 function openStripeModalPayOrder(order, cb, opt) {
-    opt = opt || {};
+    opt = opt || {
+        config: {
+            companyName: "Unknown"
+        }
+    };
     var handler = StripeCheckout.configure({
         key: 'pk_test_MDkxtBLcBpHwMCgkqX2dJHjO',
         image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
@@ -63,7 +108,7 @@ function openStripeModalPayOrder(order, cb, opt) {
 
     // Open Checkout with further options
     handler.open({
-        name: r.config.companyName || "[r.config.companyName]",
+        name: opt.config.companyName || "[r.config.companyName]",
         description: 'Order payment',
         email: opt.email || order._client.email,
         currency: "eur",
@@ -116,7 +161,8 @@ function normalizeOrderTime(t, eachTreintaOnly) {
     return t;
 }
 
-var subTotal = function(model, diags, basePrice, opt) {
+function subTotal(model, diags, basePrice, opt) {
+    if(!model)return 0;
     opt = opt || {}; //s:scope
     if (opt.s) {
         opt.s.priceInfo = opt.s.priceInfo || {};
@@ -152,13 +198,15 @@ var subTotal = function(model, diags, basePrice, opt) {
     }
     return rta;
 };
-var sizePrice = (model, diags, squareMetersPrice, basePrice, opt) => {
+
+function sizePrice(model, diags, squareMetersPrice, basePrice, opt) {
+    if(!model)return 0;
     var rta = 0;
     //
-    var isHouse = model.info ? model.info.house : model.house;
+    //var isHouse = model.info ? model.info.house : model.house;
     var squareMeters = model.info ? model.info.squareMeters : model.squareMeters;
     //
-    if (isHouse && squareMeters) {
+    if (squareMeters) {
         var porcent = squareMetersPrice[squareMeters];
         if (_.isUndefined(porcent) || _.isNull(porcent)) {
             console.warn('sizePrice: squareMeters missing in model.');
@@ -180,40 +228,128 @@ var sizePrice = (model, diags, squareMetersPrice, basePrice, opt) => {
     return rta;
 }
 
+var isTomorrowSaturday = function(d) {
+    return moment(d).add(1, 'day').day() === 6;
+}
+var isTomorrowSunday = function(d) {
+    return moment(d).add(1, 'day').day() === 0;
+}
+
+var isTodaySaturday = function(d) {
+    return moment(d).day() === 6;
+}
+var isTodaySunday = function(d) {
+    return moment(d).day() === 0;
+}
+
 var isToday = (d) => moment().isSame(moment(d), 'day');
 var isTomorrow = (d) => moment().add(1, 'day').isSame(moment(d), 'day');
 var isSaturday = (d) => moment(d).day() === 6;
+var isSunday = (d) => moment(d).day() === 0;
 
-var totalPrice = (showRounded, model, diags, squareMetersPrice, basePrice, opt) => {
+function totalPrice(showRounded, model, diags, squareMetersPrice, basePrice, opt) {
     opt = opt || {};
-    if(opt.basePrice){
+    if (opt.basePrice) {
         basePrice = opt.basePrice;
     }
-    var tot = subTotal(model, diags, basePrice, opt) + sizePrice(model, diags, squareMetersPrice, basePrice, opt);
+    var _sizePrice = sizePrice(model, diags, squareMetersPrice, basePrice, opt);
+    var tot = subTotal(model, diags, basePrice, opt) + _sizePrice;
 
     if (opt.s) {
+
         opt.s.priceInfo = opt.s.priceInfo || {};
     }
 
+    if (opt.r) {
+        opt.r.dom(function() {
+            opt.r.__debugPriceModifiers = {
+                sizePrice: _sizePrice
+            };
+        });
+    }
+
+    if (!model) return 0; //The order may be not prepared.
+
     if (opt.s) {
+
+        var date = model.diagStart;
         if (opt.s.settings) {
-            if (opt.s.settings.pricePercentageIncrease && model.date) {
+            if (opt.s.settings.pricePercentageIncrease && date) {
                 var increase = opt.s.settings.pricePercentageIncrease;
                 var percentage = 0;
-                if (isSaturday(model.date)) {
+
+                if (isSaturday(date) && !isToday(date)) {
                     percentage = (percentage > increase.saturday) ? percentage : increase.saturday;
+                    if (opt.r) opt.r.dom(function() {
+                        opt.r.__debugPriceModifiers.saturday = percentage;
+                    })
                     delete opt.s.priceInfo['increase-today'];
                     delete opt.s.priceInfo['increase-tomorrow'];
+                    delete opt.s.priceInfo['increase-sunday'];
                     opt.s.priceInfo['increase-saturday'] = tot * (percentage / 100) + ' (' + percentage + '%)';
                 }
-                if (isTomorrow(model.date)) {
+
+                if (isSunday(date) && !isToday(date)) {
+                    percentage = (percentage > increase.saturday) ? percentage : increase.saturday;
+                    if (opt.r) opt.r.dom(function() {
+                        opt.r.__debugPriceModifiers.sunday = percentage;
+                    })
+                    delete opt.s.priceInfo['increase-today'];
+                    delete opt.s.priceInfo['increase-tomorrow'];
+                    delete opt.s.priceInfo['increase-saturday'];
+                    opt.s.priceInfo['increase-sunday'] = tot * (percentage / 100) + ' (' + percentage + '%)';
+                }
+
+                if (isTomorrow(date)) {
                     percentage = (percentage > increase.tomorrow) ? percentage : increase.tomorrow;
+
+                    if (isTomorrowSaturday(date)) {
+                        percentage = increase.tomorrowSaturday;
+                        if (opt.r) opt.r.dom(function() {
+                            opt.r.__debugPriceModifiers.tomorrowSaturday = percentage;
+                        })
+                    }
+                    else {
+                        if (isTomorrowSunday(date)) {
+                            percentage = increase.tomorrowSunday;
+                            if (opt.r) opt.r.dom(function() {
+                                opt.r.__debugPriceModifiers.tomorrowSunday = percentage;
+                            })
+                        }
+                        else {
+                            percentage = increase.tomorrowMondayToFriday;
+                            if (opt.r) opt.r.dom(function() {
+                                opt.r.__debugPriceModifiers.tomorrowMondayToFriday = percentage;
+                            })
+                        }
+                    }
+
                     delete opt.s.priceInfo['increase-today'];
                     delete opt.s.priceInfo['increase-saturday'];
                     opt.s.priceInfo['increase-tomorrow'] = tot * (percentage / 100) + ' (' + percentage + '%)';
                 }
-                if (isToday(model.date)) {
+                if (isToday(date)) {
                     percentage = (percentage > increase.today) ? percentage : increase.today;
+                    if (isTodaySaturday(date)) {
+                        percentage = increase.todaySaturday;
+                        if (opt.r) opt.r.dom(function() {
+                            opt.r.__debugPriceModifiers.todaySaturday = percentage;
+                        })
+                    }
+                    else {
+                        if (isTodaySunday(date)) {
+                            percentage = increase.todaySunday;
+                            if (opt.r) opt.r.dom(function() {
+                                opt.r.__debugPriceModifiers.todaySunday = percentage;
+                            })
+                        }
+                        else {
+                            percentage = increase.todayMondayToFriday;
+                            if (opt.r) opt.r.dom(function() {
+                                opt.r.__debugPriceModifiers.todayMondayToFriday = percentage;
+                            })
+                        }
+                    }
                     delete opt.s.priceInfo['increase-tomorrow'];
                     delete opt.s.priceInfo['increase-saturday'];
                     opt.s.priceInfo['increase-today'] = tot * (percentage / 100) + ' (' + percentage + '%)';
@@ -230,8 +366,15 @@ var totalPrice = (showRounded, model, diags, squareMetersPrice, basePrice, opt) 
             if (discount > 0) {
                 opt.s.priceInfo['client-discount'] = -tot * (discount / 100) + ' (' + discount + '%)';
                 tot = tot - tot * (discount / 100);
+
+                if (opt.r) opt.r.dom(function() {
+                    opt.r.__debugPriceModifiers.clientDiscount = discount;
+                })
             }
         }
+    }
+    else {
+        console.warn('$D totalPrice opt.s required');
     }
 
     var realTot = parseInt(parseInt(tot) / 10, 10) * 10;

@@ -145,38 +145,7 @@ $(function() {
 });
 
 
-function createDateTimePickerData() {
-    var o = {
-        isOpen: false,
-        openCalendar: function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            o.isOpen = true;
-        }
-    };
-    return o;
-}
 
-function createSelect(opt) { //s:scope r:rootscope
-    var o = {
-        label: opt.label,
-        click: (x) => {
-            o.label = x.label || x;
-            setPropByGivenPath(opt.scope, opt.model, x);
-            opt.change(x);
-        },
-        items: opt.items
-    };
-    opt.scope.$watch(opt.model, (v) => {
-        if (v !== undefined) {
-            o.label = v.label || (v.substring(0, 1).toUpperCase() + v.slice(1));
-        }
-        else {
-            o.label = opt.label;
-        }
-    });
-    return o;
-}
 
 function setPropByGivenPath(obj, propertyPath, val) {
     var split = propertyPath.split('.');

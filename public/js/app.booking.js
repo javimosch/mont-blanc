@@ -104,15 +104,16 @@ app.controller('ctrl.booking-contact-form', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal',
     function(db, $timeout, s, r, $uibModal) {
         s._email = {
-            
+
         };
         s.send = function() {
-            db.ctrl('Email','contactFormSendToAllAdmins',s._email).then(function(d){
-               if(d.ok){
-                   r.infoMessage('Message envoyé');
-               }else{
-                   r.infoMessage('Problème de serveur , réessayer plus tard');
-               }
+            db.ctrl('Email', 'contactFormSendToAllAdmins', s._email).then(function(d) {
+                if (d.ok) {
+                    r.infoMessage('Message envoyé');
+                }
+                else {
+                    r.infoMessage('Problème de serveur , réessayer plus tard');
+                }
             });
         };
         s.validate = function() {
@@ -122,12 +123,7 @@ app.controller('ctrl.booking-contact-form', ['server',
                 [!s._email.phone, '==', true, 'Phone requis'],
                 [!s._email.message, '==', true, 'Message requis'],
             ], (m) => {
-                if (typeof m[0] !== 'string') {
-                    s.warningMsg(m[0]());
-                }
-                else {
-                    s.warningMsg(m[0]);
-                }
+                s.warningMsg(m[0], 10000);
             }, s.send);
         }
     }
@@ -145,28 +141,7 @@ app.controller('ctrl.booking', ['server',
         moment.locale('fr')
 
 
-        //TOGGLES A FLAG WRITING DEBUG ANYWHERE IN THE SITE.
-        r.__debugDiags = false;
-        s.__debugKeyCode = '';
-        $(window).on('keyup', function(ev) {
-            ev = ev || window.event;
-            var key = String.fromCharCode(ev.which);
-            if (ev.which == 13) {
-                if (s.__debugKeyCode.toLowerCase() == 'debug') {
-                    r.__debugDiags = true;
-                    console.info('debug-mode-on');
-                }
-                else {
-                    r.__debugDiags = false;
-                    console.info('debug-mode-off, try again');
-                }
-                s.__debugKeyCode = '';
-                r.dom();
-            }
-            else {
-                s.__debugKeyCode = s.__debugKeyCode + key;
-            }
-        });
+        
 
 
         var MESSAGES = {
@@ -231,7 +206,7 @@ app.controller('ctrl.booking', ['server',
                 _localCursor = new Date(_localCursor);
                 s.requestSlots(_localCursor).then((d) => {
                     _data[dataPosition] = new DaySlot(_localCursor, d);
-                    console.log('slots-days-request-end-for', _localCursor, 'at', dataPosition);
+//                    console.log('slots-days-request-end-for', _localCursor, 'at', dataPosition);
                     cbHell.next();
                 });
             }
@@ -1463,6 +1438,7 @@ app.controller('ctrl.booking', ['server',
 
         function setOrder(_order) {
             s._order = _order;
+            s._order.price = s.totalPrice(true);
             commitOrderInfo();
             updateAutoSave();
         }
@@ -1473,6 +1449,11 @@ app.controller('ctrl.booking', ['server',
                 house: $U.val(s.model, 'house') || s._order.info.house,
                 sell: $U.val(s.model, 'sell') || s._order.info.sell
             });
+            
+            
+            if(s._order.info.house==undefined){
+                throw Error('The order info.house is undefined.');
+            }
         }
 
         //SAVEASYNC
@@ -1496,7 +1477,8 @@ app.controller('ctrl.booking', ['server',
                 }
 
                 //update price
-                s.model.price = s.totalPrice(true);
+                //s.model.price = s.totalPrice(true);
+                s.model.price = 0;
 
                 if ($U.hasUndefinedProps(s.model, ['_diag', 'diagStart', 'diagEnd'])) {
                     s.warningMsg('Select one available date');
@@ -1526,7 +1508,7 @@ app.controller('ctrl.booking', ['server',
 
                         db.ctrl('Order', 'getById', Object.assign(s._order, {
                                 __populate: {
-                                    _client: '_id email clientType address',
+                                    _client: '_id email clientType address discount',
                                     _diag: '_id email clientType address firstName lastName'
                                 }
                             }))
@@ -1626,6 +1608,8 @@ app.controller('ctrl.booking', ['server',
                             duration: 100000
                         });
                     });
+                }, {
+                    config: r.config
                 });
                 //
             });
@@ -1646,10 +1630,11 @@ app.controller('ctrl.booking', ['server',
             };
         };
 
-        s.subTotal = () => subTotal(s.model, s.diags, s.basePrice);
-        s.sizePrice = () => sizePrice(s.model, s.diags, s.squareMetersPrice, s.basePrice);
-        s.totalPrice = (showRounded, opt) => totalPrice(showRounded, s.model, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({
-            s: s
+        s.subTotal = () => subTotal(s._order, s.diags, s.basePrice);
+        s.sizePrice = () => sizePrice(s._order, s.diags, s.squareMetersPrice, s.basePrice);
+        s.totalPrice = (showRounded, opt) => totalPrice(showRounded, s._order, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({
+            s: s,
+            r:r
         }, opt || {}));
 
         s.pickTimeRange = function(timeRange) {

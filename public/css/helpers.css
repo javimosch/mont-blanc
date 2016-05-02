@@ -116,6 +116,9 @@
 .vertical-middle {
   vertical-align: middle;
 }
+.vertical-sub{
+  vertical-align: sub;
+}
 
 .vertical-super {
   vertical-align: super;

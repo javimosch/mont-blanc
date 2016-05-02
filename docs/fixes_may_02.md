@@ -40,7 +40,7 @@
         DONE
 
 - In all the purple cards ERNMT… The text inside is "État des risques naturels, miniers et technologiques » … even in the diag name we have in the Diag choices pages you should change there the title
-        CHECKING
+        DONE
 
 - When we check a box it should be in white when background is this light blue
         DONE
@@ -111,3 +111,6 @@ Emergency Penalities
 - TOMORROW saturday : + 40%
 - TOMORROW sunday : + 110%
 ——
+
+        DONE
+        To check if things are working ok in your test, you can write 'debug' and press ENTER anywhere in the screen (focus on the site). You will see the Price modifiers being in effect in the middle-left of the screen.

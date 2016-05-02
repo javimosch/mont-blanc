@@ -621,34 +621,41 @@ h2.diags.black {
 
 .home .diag-dialog-right {
     max-width: 481px;
-    
 }
 
-.bg-dpe{
+.bg-dpe {
     background-color: #00BB55;
 }
-.bg-dta{
+
+.bg-dta {
     background-color: #FF8B00;
 }
-.bg-loiCarrez{
+
+.bg-loiCarrez {
     background-color: #B45134;
 }
-.bg-crep{
+
+.bg-crep {
     background-color: #0153A7;
 }
-.bg-gaz{
+
+.bg-gaz {
     background-color: #F8BD17;
 }
-.bg-electricity{
+
+.bg-electricity {
     background-color: #CD1024;
 }
-.bg-termites{
+
+.bg-termites {
     background-color: #7C0616;
 }
-.bg-ernt{
+
+.bg-ernt {
     background-color: #821E78;
 }
-.bg-parasitaire{
+
+.bg-parasitaire {
     background-color: #79D3EB;
 }
 
@@ -682,6 +689,7 @@ h2.diags.black {
 .dropdown button {
     position: relative;
     text-align: left;
+    padding-right: 30px;
 }
 
 .dropdown.with-caret button span:first-child {
@@ -790,6 +798,9 @@ h2.diags.black {
     color: #0B3967;
     line-height: 30px;
     text-align: center;
+}
+.stripe-message span{
+    vertical-align: sub!important;    
 }
 
 .diags-payment-info {
@@ -931,7 +942,9 @@ h2.diags.black {
     padding-top: 10px;
 }
 
+
 /*.diags-form */
+
 .diags-input {
     width: 286px;
     height: 48px;
@@ -990,7 +1003,8 @@ h2.diags.black {
     width: 140px;
 }
 
-.diags-form .label, .diags-form-label {
+.diags-form .label,
+.diags-form-label {
     font-family: 'Avenir-Light';
     font-size: 14px;
     color: #373737;
@@ -1019,15 +1033,14 @@ h2.diags.black {
     position: absolute;
 }
 
-.diags-form .btn, .diags-btn {
+.diags-form .btn,
+.diags-btn {
     font-family: 'Avenir-Medium';
     font-size: 24px;
     color: white;
 }
 
-.row{
-    padding-bottom: 20px;
-}
+.row {}
 
 .diags-btn.btn-sm {
     font-size: 18px;
@@ -1099,7 +1112,7 @@ h2.diags.black {
 
 @media only screen and (min-width: 992px) {
     .diags-form-wrapper {
-        margin: 25px;
+        margin: 25px!important;
         padding: 50px 0px;
         min-height: 570px;
     }

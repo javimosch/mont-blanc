@@ -1,16 +1,16 @@
+<div class="row-fluid">
+    <div class="span-12 padding-none">
+        <ol class="breadcrumb">
+            <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+            <li>Settings</li>
+        </ol>
+    </div>
+</div>
 <div class="container" ng-controller="settings">
     <out class="form-tiny">
-        <div class="row">
-            <div class="col-sm-12 padding-none">
-                <ol class="breadcrumb">
-                    <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
-                    <li>Settings</li>
-                </ol>
-            </div>
-        </div>
+
         <div class="row">
             <div class="col-sm-12">
-                <h3 class="padding-left-none margin-top-none margin-bottom-three">Settings</h3>
                 <ul class="form-tiny labelx2 center-block">
                     <li>
                         <label>Notifications</label>
@@ -24,24 +24,52 @@
                         <label>Tools</label>
                         <button class="btn btn-default link" ng-click="route('tools')">Enter</button>
                     </li>
+                </ul>
+
+                <h4>Price modifiers</h4>
+                <ul class="form-tiny labelx2 center-block">
                     <li>
-                        <label>Today (increase in percentage)</label>
-                        <input placeholder="%" ng-model="item.pricePercentageIncrease.today" />
+                        <label>Today Monday to Friday (+%)</label>
+                        <input placeholder="%" ng-model="item.pricePercentageIncrease.todayMondayToFriday" />
                     </li>
                     <li>
-                        <label>Tomorrow (increase in percentage)</label>
-                        <input placeholder="%" ng-model="item.pricePercentageIncrease.tomorrow" />
+                        <label>Today Saturday (+%)</label>
+                        <input placeholder="%" ng-model="item.pricePercentageIncrease.todaySaturday" />
                     </li>
                     <li>
-                        <label>Saturday (increase in percentage)</label>
+                        <label>Today Sunday (+%)</label>
+                        <input placeholder="%" ng-model="item.pricePercentageIncrease.todaySunday" />
+                    </li>
+                    <li>
+                        <label>Tomorrow Monday to Friday (+%)</label>
+                        <input placeholder="%" ng-model="item.pricePercentageIncrease.tomorrowMondayToFriday" />
+                    </li>
+                    <li>
+                        <label>Tomorrow Saturday (+%)</label>
+                        <input placeholder="%" ng-model="item.pricePercentageIncrease.tomorrowSaturday" />
+                    </li>
+                    <li>
+                        <label>Tomorrow Sunday (+%)</label>
+                        <input placeholder="%" ng-model="item.pricePercentageIncrease.tomorrowSunday" />
+                    </li>
+                    <li>
+                        <label>Monday to Friday (+%)</label>
+                        <input placeholder="%" ng-model="item.pricePercentageIncrease.mondayToFriday" />
+                    </li>
+                    <li>
+                        <label>Saturday (+%)</label>
                         <input placeholder="%" ng-model="item.pricePercentageIncrease.saturday" />
+                    </li>
+                    <li>
+                        <label>Sunday (+%)</label>
+                        <input placeholder="%" ng-model="item.pricePercentageIncrease.sunday" />
                     </li>
                 </ul>
             </div>
         </div>
-        <div class="row">
+        <div class="row margin-bottom-three">
             <div class="col-sm-12">
-                <button ng-disabled="state.working()" class="btn btn-default" ng-click="validate()">Save</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Save</button>
             </div>
         </div>
     </out>

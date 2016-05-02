@@ -63,6 +63,10 @@
     ng-class="{fixed:true,hidden:!__debugDiags,bounceInLeft:true,animated:true,'top-50p':true}">
         <ul>
             <li>order-info-house: <span ng-bind="_order.info.house"></span></li>
+            <li ng-show="__debugPriceModifiers">Price Modifiers (+%) :</li>
+            <li ng-repeat="(k,i) in __debugPriceModifiers">
+                <span ng-bind="k"></span>:<span ng-bind="i"></span>
+            </li>
         </ul>
     </div>
 

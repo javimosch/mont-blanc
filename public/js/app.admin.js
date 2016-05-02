@@ -1,3 +1,7 @@
+/*global angular*/
+/*global $U*/
+/*global moment*/
+/*global _*/
 (function() {
     var app = angular.module('app.admin', []);
 
@@ -17,42 +21,60 @@
 
         'server', '$scope', '$rootScope',
         function(db, s, r) {
-            expose('s',s);
+            $U.expose('s', s);
             r.toggleNavbar(true);
             r.secureSection(s);
             if (r.userIs(['diag', 'client'])) {
                 return r.handleSecurityRouteViolation();
             }
+            $U.expose('s',s);
             s.item = {
                 pricePercentageIncrease: {
-                    today: 0,
-                    tomorrow: 0,
-                    saturday: 0
+                    //today: 0, //deprecated for today[DAY]
+                    todayMondayToFriday: 30,
+                    todaySaturday: 50,
+                    todaySunday: 130,
+
+                    //tomorrow: 0, //deprecated for tomorrow[DAY]
+                    tomorrowMondayToFriday: 10,
+                    tomorrowSaturday: 40,
+                    tomorrowSunday: 110,
+
+                    mondayToFriday: 0,
+                    saturday: 30,
+                    sunday: 100,
                 }
             };
-            
+
+
+            function validNumber(input) {
+                var rta = !input;
+                if (rta) return false;
+                rta = isNaN(input);
+                if (rta) return false;
+                if (!$U.numberBetween(input, 0, 500)) return false;
+                return true;
+            }
+
             s.validate = () => {
-                ifThenMessage([
-                    [!s.item.pricePercentageIncrease.today, '==', true, "Today valid values 0 .. 100"],
-                    [isNaN(s.item.pricePercentageIncrease.today), '==', true, "Today valid values 0 .. 100"],
-                    [!numberBetween(s.item.pricePercentageIncrease.today,0,100), '==', true, "Today valid values 0 .. 100"],
-                    [!s.item.pricePercentageIncrease.tomorrow, '==', true, "Today valid values 0 .. 100"],
-                    [isNaN(s.item.pricePercentageIncrease.tomorrow), '==', true, "Today valid values 0 .. 100"],
-                    [!numberBetween(s.item.pricePercentageIncrease.tomorrow,0,100), '==', true, "Today valid values 0 .. 100"],
-                    [!s.item.pricePercentageIncrease.saturday, '==', true, "Today valid values 0 .. 100"],
-                    [isNaN(s.item.pricePercentageIncrease.saturday), '==', true, "Today valid values 0 .. 100"],
-                    [!numberBetween(s.item.pricePercentageIncrease.saturday,0,100), '==', true, "Today valid values 0 .. 100"],
-                ], r.warningMessage, s.save);
+                var rules = [];
+                for (var x in s.item.pricePercentageIncrease) {
+                    rules.push([
+                        validNumber(s.item.pricePercentageIncrease[x]), '==', false, 
+                        x+ " valid value in  0 .. 500"
+                    ]);
+                }
+                $U.ifThenMessage(rules, r.warningMessage, s.save);
             };
             s.save = () => {
-                db.ctrl('Settings', 'save', s.item).then(d=>{
-                    if(d.ok){
+                db.ctrl('Settings', 'save', s.item).then(d => {
+                    if (d.ok) {
                         r.infoMessage('Changes saved');
                     }
                 });
             };
             s.read = () => {
-                db.ctrl('Settings', 'getAll',{}).then(r => {
+                db.ctrl('Settings', 'getAll', {}).then(r => {
                     if (r.ok && r.result.length > 0) s.item = r.result[0];
                     else {
                         s.save();
@@ -195,7 +217,9 @@
                         name: 'description'
                     }, {
                         label: "Amount (eur)",
-                        labelCls: () => ({ 'text-right': true }),
+                        labelCls: () => ({
+                            'text-right': true
+                        }),
                         name: 'amount',
                         align: 'right'
                     }, {

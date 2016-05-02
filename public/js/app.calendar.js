@@ -40,6 +40,11 @@ app.directive('globalCalendar', function(
 
             function update() {
                 ws.ctrl('Order', 'getAll', {
+                    __rules: {
+                        status: {
+                            $ne: ['created']
+                        }
+                    },
                     __select: "_client _diag email diagStart diagEnd status",
                     __populate: {
                         '_client': "email firstName lastName",
@@ -51,7 +56,7 @@ app.directive('globalCalendar', function(
                         res.result.forEach((v) => {
                             v.start = moment(v.diagStart).format('HH:mm');
                             v.end = moment(v.diagEnd).format('HH:mm');
-                            v.diag = v._diag.firstName + ", " + v._diag.lastName.toUpperCase().substring(0,1);
+                            v.diag = v._diag.firstName + ", " + v._diag.lastName.toUpperCase().substring(0, 1);
                             evts.push({
                                 item: v,
                                 title: 'Order (Status: ' + v.status + ', Diag: ' + v.diag + ')',

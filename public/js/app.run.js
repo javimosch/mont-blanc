@@ -14,6 +14,34 @@ app.config(['$httpProvider', function($httpProvider) {
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
 }]);
 
+
+
+app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
+    //    console.info('app.admin:run');
+    //TOGGLES A FLAG WRITING DEBUG ANYWHERE IN THE SITE.
+    r.__debugDiags = false;
+    var keyword = '';
+    $(window).on('keyup', function(ev) {
+        ev = ev || window.event;
+        var key = String.fromCharCode(ev.which);
+        if (ev.which == 13) {
+            if (keyword.toLowerCase() == 'debug') {
+                r.__debugDiags = true;
+                console.info('debug-mode-on');
+            }
+            else {
+                r.__debugDiags = false;
+                console.info('debug-mode-off, try again');
+            }
+            keyword = '';
+            r.dom();
+        }
+        else {
+            keyword = keyword + key;
+        }
+    });
+}]);
+
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     //    console.info('app.admin:run');
 
@@ -44,8 +72,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         else {
             _s.show = true;
             //async update of the current user.
-            db.ctrl('User','getById',r.session()).then(function(d){
-                if(d.ok&&d.result) r.session(d.result);
+            db.ctrl('User', 'getById', r.session()).then(function(d) {
+                if (d.ok && d.result) r.session(d.result);
             });
         }
     };
@@ -105,6 +133,13 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         msg = getMessage(msg);
         r.notify(msg, {
             type: 'info',
+            duration: duration || 3000
+        });
+    };
+    r.successMessage = (msg, duration) => {
+        msg = getMessage(msg);
+        r.notify(msg, {
+            type: 'success',
             duration: duration || 3000
         });
     };
@@ -272,15 +307,15 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     };
     r.routeIs = (n) => r.__route && r.__route.toString().toLowerCase().indexOf(n && n.toLowerCase() || 'invalid') !== -1 || false;
     r.__route = window.location.href.replace(window.location.origin + window.location.pathname, '');
-    r.__routeHashName =  $U.url.hashName();
-    r.__routeHashNameBefore =  $U.url.hashName();
+    r.__routeHashName = $U.url.hashName();
+    r.__routeHashNameBefore = $U.url.hashName();
     setTimeout(function() {
         $U.emitPreserve('route-change', r.__route.slice(2));
     }, 500);
     $U.onAnchorChange(() => {
         r.__route = window.location.href.replace(window.location.origin + window.location.pathname, '');
         $U.emit('route-exit:' + r.__routeHashName);
-        r.__routeHashName =  $U.url.hashName();
+        r.__routeHashName = $U.url.hashName();
         $U.emitPreserve('route-change', r.__route.slice(2))
     });
 

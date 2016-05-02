@@ -126,6 +126,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     //var URL = 'http://ujkk558c0c9a.javoche.koding.io:3434';
     var URL = 'http://localhost:5000';
 
+/*
     $.ajax({
         url: '/data.json',
         async: false,
@@ -134,7 +135,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
             //URL = r.config.backendURL; //updates serverURL from express (node env serverURL);
             //console.info('server-url-(data.json):' + URL);
         }
-    });
+    });*/
 
     $.ajax("/serverURL").then(function(r) {
         URL = r.URL; //updates serverURL from express (node env serverURL);

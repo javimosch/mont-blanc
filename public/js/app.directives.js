@@ -874,6 +874,7 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
             
             if(s.directive == 'notify'){
                 r.notify = s.add;
+                r.message = s.add;
                 console.log('notify-directive-added-to-rootscope');
             }
             
