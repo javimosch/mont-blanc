@@ -94,7 +94,7 @@ There is possibility to log in and to subscribe as a diagnostiqueur. When I clic
         DONE
         All the fields were added. The working exceptions are only accesible in BO when logged.
         Diplomes become available to upload after pressing Next. (Diplomes need the diag to be saved in the DB first).
-        Diag inscription is a public url, and now the new account is created with the disabled flag.
+        Diag inscription is a public url, and now the new account is created with the disabled flag
         Diag inscription is accesible with the anchor: #/diag-inscription
         
 

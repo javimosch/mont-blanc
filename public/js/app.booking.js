@@ -1185,11 +1185,11 @@ app.controller('ctrl.booking', ['server',
                             r.price = s.totalPrice(true,{
                                 basePrice: s.basePrice + (s.basePrice*basePriceIncr/100)
                             });*/
-                            r.price = s.totalPrice(true);
+                            r.price = s.totalPriceRange(date);
                             r.price += r.price * basePriceIncr / 100;
                         }
                         else {
-                            r.price = s.totalPrice(true);
+                            r.price = s.totalPriceRange(date);
                         }
 
                         db.ctrl('User', 'get', {
@@ -1636,6 +1636,12 @@ app.controller('ctrl.booking', ['server',
             s: s,
             r:r
         }, opt || {}));
+        
+        s.totalPriceRange = (dt) => totalPrice(true, s.model, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({
+            s: s,
+            r:r,
+            dt
+        }, {}));
 
         s.pickTimeRange = function(timeRange) {
             s.model.diagStart = timeRange.start;

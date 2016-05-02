@@ -273,6 +273,8 @@ function totalPrice(showRounded, model, diags, squareMetersPrice, basePrice, opt
     if (opt.s) {
 
         var date = model.diagStart;
+        if(opt.dt) date = opt.dt;
+        
         if (opt.s.settings) {
             if (opt.s.settings.pricePercentageIncrease && date) {
                 var increase = opt.s.settings.pricePercentageIncrease;
