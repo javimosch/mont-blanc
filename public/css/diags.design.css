@@ -1117,6 +1117,9 @@ h2.diags.black {
 }
 
 @media only screen and (min-width: 992px) {
+    .stripe-home-message{
+        margin-top: 11em;
+    }
     .diags-form-wrapper {
         margin: 25px!important;
         padding: 50px 0px;
