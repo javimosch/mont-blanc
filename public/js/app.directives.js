@@ -661,6 +661,8 @@ app.directive('notify', function($rootScope, $timeout) {
         link: function(scope, elem, attrs) {
             var r = $rootScope;
             var s = scope;
+            
+            console.log('notify-directive');
 
             if (s.settings && typeof s.settings == 'string') {
                 var fixedJSON = s.settings.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": ');
@@ -715,6 +717,11 @@ app.directive('notify', function($rootScope, $timeout) {
                 if (_.includes(['alert-info', 'alert-success'], s.type)) r.dom(scope.dismiss, 2000);
                 if (_.includes(['alert-danger', 'alert-warning'], s.type)) r.dom(scope.dismiss, 10000);
             }
+            
+            if(s.settings.scroll==true){
+                r.dom($U.scrollToTop);
+            }
+            
         }
     };
 });
@@ -734,6 +741,7 @@ app.directive('myAlert', function($rootScope, $timeout) {
         templateUrl: './views/directives/directive.alert.html',
         link: function(scope, elem, attrs) {
             var s = scope;
+            var r = $rootScope;
             var fireEvent = (n) => {
                 if (s.evts) {
                     s.evts[n] = s.evts[n] || [];
@@ -785,6 +793,8 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
         },
         template: '<output></output>',
         link: function(s, elem, attrs) {
+            console.log('my-alerts directive');
+            var r = $rootScope;
             //s.stacked = s.stacked === 'true';
             s.decodeMessage = function(msg) {
                 if (typeof msg == 'string') {
@@ -861,6 +871,12 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                     }, timeout);
                 }
             };
+            
+            if(s.directive == 'notify'){
+                r.notify = s.add;
+                console.log('notify-directive-added-to-rootscope');
+            }
+            
             window.ss = s;
             //console.log('directive:my-alerts:linked');
         }

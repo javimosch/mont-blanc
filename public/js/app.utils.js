@@ -422,7 +422,7 @@ var Eventify = (function(self) { //event handling snippet
         catch (e) {
             pp = p
         }
-        console.log('emit', n, pp, opt);
+      //  console.log('emit', n, pp, opt);
     };
     self.once = function(n, handler) {
         if (once[n]) return firePreserve(n, handler);

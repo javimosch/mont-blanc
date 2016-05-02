@@ -11,7 +11,7 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
 
-    <link rel="stylesheet" type="text/css" href="css/fullpage.css">
+    <!--<link rel="stylesheet" type="text/css" href="css/fullpage.css">-->
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/calendar.css">
     <link rel="stylesheet" type="text/css" href="css/animate.css">
@@ -41,6 +41,15 @@
             <div ng-show="__header==1" ng-include="'views/booking/partials/booking-header.html'"></div>
             <div ng-show="__header==2" ng-include="'views/booking/partials/booking-header-2.html'"></div>
         </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span-12 relative">
+                <my-alerts add="notify" class="notify " directive="notify" stacked="false" settings="{clickDismissable:false,scroll:true}"></my-alerts>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
         <div class="row-fluid diags-content">
             <div ng-view></div>
         </div>
@@ -49,14 +58,15 @@
         </div>
     </div>
 
-    <!--
-    <div ng-show="stateIs('home')" ng-include="'views/booking/booking-1-home.html'"></div>
-    <div ng-show="stateIs('diags')" ng-include="'views/booking/booking-2-diags-selection.html'"></div>
-    <div ng-show="stateIs('date')" ng-include="'views/booking/booking-3-date-selection.html'"></div>
-    <div ng-show="stateIs('connect')" ng-include="'views/booking/booking-4-connection.html'"></div>
-    -->
+    <div 
+    ng-cloak
+    ng-class="{fixed:true,hidden:!__debugDiags,bounceInLeft:true,animated:true,'top-50p':true}">
+        <ul>
+            <li>order-info-house: <span ng-bind="_order.info.house"></span></li>
+        </ul>
+    </div>
 
-    <my-alerts add="notify" class="notify" directive="notify" stacked="false" settings="{clickDismissable:false}"></my-alerts>
+
     <modal-confirm open="openConfirm"></modal-confirm>
     <span data-spinner show="state.working"></span>
 

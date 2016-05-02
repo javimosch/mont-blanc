@@ -75,7 +75,7 @@ input[type="checkbox"] + span::before
 input[type="radio"]:checked + span::before,
 input[type="checkbox"]:checked + span::before
 {
-    color: #666;
+    color: white;
 }
  
 input[type="radio"]:disabled + span,

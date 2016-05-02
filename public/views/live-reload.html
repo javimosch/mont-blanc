@@ -11,17 +11,17 @@
             return window.location.hostname.indexOf('diags-javoche.c9users.io') !== -1;
         }
         if (!isDevEnv()) return;
-        console.info('live-reload-enabled!');
+       // console.info('live-reload-enabled!');
         var ref = new Firebase("https://madev.firebaseio.com/diagsfront" + '/signals/reload');
         var counter = localStorage['livesync'] && parseInt(localStorage['livesync']) || 0;
         ref.on('value', function(snap) {
             if (snap.val() != counter) {
                 localStorage['livesync'] = snap.val().toString();
-                console.log(snap.val(), counter, 'reloading');
+                console.log('live-reload',snap.val(), counter, 'reloading');
                 window.location.reload();
             }
             else {
-                console.log(snap.val(), counter, 'it-has-reload-ok');
+                //console.log('live-reload',snap.val(), counter, 'it-has-reload-ok');
             }
             //console.log('reload', snap.val(), sec);
         });

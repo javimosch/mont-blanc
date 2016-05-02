@@ -12,6 +12,8 @@
     
     <div ng-if="userIs('diag')" ng-include="'views/diag/diag-order-view.html'" includeReplace></div>
     
+    <div ng-if="userIs('admin_no_yet')" ng-include="'views/admin/admin-order-details.html'" includeReplace></div>
+    
 
     <div class="row" ng-if="!userIs('diag')">
         <div class="col-sm-8">

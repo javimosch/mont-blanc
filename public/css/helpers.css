@@ -25,7 +25,7 @@
 }
 
 .fnt-30 {
-  font-size: 32px;
+  font-size: 30px;
 }
 
 .fnt-32 {
@@ -111,8 +111,11 @@
   line-height: 60px;
 }
 
-.middle {
+.middle, .vertical-middle {
   vertical-align: middle;
+}
+.vertical-super{
+  vertical-align: super;
 }
 
 .outline {
@@ -264,6 +267,14 @@ table.minimal td {
 
 .bottom-none {
   bottom: 0em!important;
+}
+
+.top-none{
+  top:-0.1em!important;
+}
+
+.top-50p{
+  top:50%!important;
 }
 
 .center,
@@ -509,8 +520,14 @@ table.minimal td {
   padding-top: 0!important;
 }
 
+
+
 .padding-02em {
   padding: 0.2em!important;
+}
+
+.padding-top-01em {
+  padding: 0.1em!important;
 }
 
 .padding-top-quarter {

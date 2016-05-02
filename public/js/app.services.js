@@ -132,7 +132,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
         dataType: 'json',
         success: function(r) {
             //URL = r.config.backendURL; //updates serverURL from express (node env serverURL);
-            console.info('server-url-(data.json):' + URL);
+            //console.info('server-url-(data.json):' + URL);
         }
     });
 

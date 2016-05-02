@@ -22,7 +22,7 @@ var app = angular.module('app', [
 var URL = {
     HOME: 'home',
     CONTACT_US: 'contactez-nous',
-    ERNT: 'ernt',
+    ERNT: 'ernmt',
     FAQ: 'faq',
     GENERAL_CONDITIONS: 'conditions-generales-utilisation',
     LEGAL_MENTIONS: 'mentions-legales',
@@ -49,7 +49,7 @@ app.config(['$routeProvider',
         when('/conditions-generales-utilisation', {
             templateUrl: 'views/general-conditions.html'
         }).
-        when('/ernt', {
+        when('/ernmt', {
             templateUrl: 'views/ernt.html'
         }).
         when('/faq', {
@@ -109,6 +109,29 @@ app.controller('ctrl.booking', ['server',
 
         moment.locale('fr')
 
+
+        //TOGGLES A FLAG WRITING DEBUG ANYWHERE IN THE SITE.
+        r.__debugDiags = false;
+        s.__debugKeyCode = '';
+        $(window).on('keyup', function(ev) {
+            ev = ev || window.event;
+            var key = String.fromCharCode(ev.which);
+            if (ev.which == 13) {
+                if (s.__debugKeyCode.toLowerCase() == 'debug') {
+                    r.__debugDiags = true;
+                    console.info('debug-mode-on');
+                }else{
+                    r.__debugDiags = false;
+                    console.info('debug-mode-off, try again');
+                }
+                s.__debugKeyCode = '';
+                r.dom();
+            }else{
+                s.__debugKeyCode = s.__debugKeyCode + key;
+            }
+        });
+
+
         var MESSAGES = {
             ANSWER_SELL_OR_RENT: 'Répondre Vendez / Louer',
             ANSWER_APPARTAMENT_OR_MAISON: 'Répondre Appartament / Maison',
@@ -128,7 +151,7 @@ app.controller('ctrl.booking', ['server',
 
 
         $U.on('route-change', function(url) {
-            console.info('route-change ', url);
+            //console.info('route-change ', url);
 
             r.dom($U.scrollToTop);
 
@@ -205,12 +228,12 @@ app.controller('ctrl.booking', ['server',
                 cursor = moment(); //today, tomorrow, tomorrow morrow y tomorrow morrow morrow. 
                 o.request();
             };
-            o.nextIsDisabled=function(){
+            o.nextIsDisabled = function() {
                 return false; //_nextTimes > 1;
             }
             o.next = function() {
-                if(_nextTimes>15){
-                    _nextTimes=0;
+                if (_nextTimes > 15) {
+                    _nextTimes = 0;
                     return o.init();
                 }
                 _nextTimes++;
@@ -311,6 +334,13 @@ app.controller('ctrl.booking', ['server',
         };
 
 
+        function atLeastOneDiagSelected() {
+            for (var x in s.model.diags) {
+                if (s.model.diags[x] == true) return true;
+            }
+            return false;
+        }
+
 
         //MAIN BUTTONS
         s.proceedToDiagsSelection = function() {
@@ -325,10 +355,13 @@ app.controller('ctrl.booking', ['server',
         }
         s.proceedToDateSelection = function() {
             s.validateQuestions(function() {
-
-
-
-                r.route('rendez-vous');
+                //at least one diag selected
+                if (atLeastOneDiagSelected()) {
+                    return r.route('rendez-vous');
+                }
+                else {
+                    return r.warningMessage('Sélectionnez au moins un choix');
+                }
             }, () => {
                 r.route('home');
             });
@@ -811,13 +844,13 @@ app.controller('ctrl.booking', ['server',
         });
 
 
-        s.diagRightClass = function(){
+        s.diagRightClass = function() {
             var cls = {
-                'diag-dialog-right':true,
-                'margin-top-three':true,
-                'padding-three':true
+                'diag-dialog-right': true,
+                'margin-top-three': true,
+                'padding-three': true
             };
-            cls['bg-'+s.diagSelected.name] = true;
+            cls['bg-' + s.diagSelected.name] = true;
             return cls;
         };
 
@@ -845,19 +878,22 @@ app.controller('ctrl.booking', ['server',
             s.diagSelected = s.diag.dpe;
 
             updateChecksVisibilityOnDemand();
-            waitForProperties([loadDefaults, scrollToAnchor, r.dom], ['notify']);
+            waitForProperties([loadDefaults, r.dom], ['notify']);
         });
 
-        function scrollToAnchor() {
-            try {
-                if ($.hrefAnchor()) {
-                    $.fn.fullpage.moveTo($.hrefAnchor());
-                }
-            }
-            catch (e) {
 
-            }
-        }
+        /*
+                function scrollToAnchor() {
+                    try {
+                        if ($.hrefAnchor()) {
+                            $.fn.fullpage.moveTo($.hrefAnchor());
+                        }
+                    }
+                    catch (e) {
+
+                    }
+                }
+                */
 
 
 
@@ -1071,7 +1107,7 @@ app.controller('ctrl.booking', ['server',
             s.model = Object.assign(s.model, {
                 sell: paramBool('sell') || true,
                 house: paramBool('house') || undefined,
-                squareMeters: param('squareMeters', s.squareMeters) || undefined, // '- de 20m²',
+                squareMeters: param('squareMeters', s.squareMeters) || '90 - 110m²', // '- de 20m²',
                 // apartamentType: param('apartamentType', s.apartamentType) || undefined,
                 constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined, // 'Entre 1949 et le 01/07/1997',
                 address: param('address') || undefined, // "15 rue L'Hopital Sain Louis",
@@ -1461,7 +1497,7 @@ app.controller('ctrl.booking', ['server',
                                 if (d.ok) {
                                     setOrder(d.result);
 
-                                    s.keysWhereTime.emit('onItem');
+                                    // s.keysWhereTime.emit('onItem');
                                 }
 
                             });
