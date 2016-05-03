@@ -598,7 +598,8 @@ app.controller('ctrl.booking', ['server',
                 r.__textsNotFound[code] = code;
 
             }
-            return s.__text && s.__text[code] || txt || code;
+            
+            return s.__text && s.__text[code] || txt || ((s.isDevEnv())?code:'');
         };
 
 

@@ -46,31 +46,74 @@ app.directive('tableFilter', function(
                 console.info('tableFilter', s.model.filter, el);
                 elem.replaceWith(el);
 
+
+
                 //if enter is pressed on any input, call s.model.filter.update with the payload (if exists).
                 el.find('input').on('keyup', (evt) => {
                     //var k = String.fromCharCode(evt.keyCode);
                     if (evt.keyCode.toString() == '13') {
-                        if ($U.valid(s, 'model.init')) {
-                            s.model.filter.payload = {
-                                __regexp: s.model.filter.fields
-                            };
-                            if (s.model.init) s.model.init();
-                        }
+                        s.model.filter.filter();
                     }
                 });
 
             });
+
+            s.model.filter.filter = function() {
+                s.model.filter.payload = {
+                    __regexp: regexpFields() //s.model.filter.fields
+                };
+                s.model.filter.payload = Object.assign(s.model.filter.payload,
+                    collectionPointersFields());
+                if (s.model.filter && s.model.filter.update) s.model.filter.update();
+            }
+
+            function regexpFields() {
+                var fields = {};
+                for (var x in s.model.filter.fields) {
+                    if (x.charAt(0) == '_') continue; //fields starting with _ are collections pointers.
+                    else {
+                        fields[x] = s.model.filter.fields[x];
+                    }
+                }
+                return fields;
+            }
+
+            function collectionPointersFields() {
+                var fields = {};
+                for (var x in s.model.filter.fields) {
+                    if (x.charAt(0) == '_') fields[x] = s.model.filter.fields[x];
+                    else continue;
+                }
+                return fields;
+            }
+
             s.model.filter.fields = {};
             var filtered = [];
             s.$watch('model.filter.fields', (fields) => {
                 if (!s.model.itemsOriginalRef || s.model.itemsOriginalRef.length == 0) return;
                 filtered = s.model.itemsOriginalRef;
-                var rule = 'contains';
+                var rule = 'contains',
+                    val = null,
+                    filterVal;
                 for (var x in fields) {
+                    filterVal = fields[x] || '';
+                    //
                     if (s.model.filter.rules[x]) {
                         rule = s.model.filter.rules[x] || rule;
                         if (rule == 'contains') {
-                            filtered = filtered.filter(v => v[x].indexOf(fields[x]) !== -1);
+                            filtered = filtered.filter(v => v[x] && v[x].toLowerCase().indexOf(filterVal.toLowerCase()) !== -1);
+                        }
+                        if (rule == 'match') {
+                            filtered = filtered.filter(v => {
+                                val = (x.charAt(0) == '_') ? v[x] && v[x]._id : v[x];
+                                return val && val.toLowerCase() == filterVal.toLowerCase();
+                            });
+                        }
+                        if (rule == 'matchCaseSensiive') {
+                            filtered = filtered.filter(v => {
+                                val = (x.charAt(0) == '_') ? v[x] && v[x]._id : v[x];
+                                return val && val == filterVal;
+                            });
                         }
                     }
                 }

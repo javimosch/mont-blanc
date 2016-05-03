@@ -21,13 +21,18 @@
         <li>
             <label>
                 Filtre&nbsp;&nbsp; (
-                <i class="fa fa-question" tooltip-placement="top" uib-tooltip="ENTER will fetch from the server."></i>)
+                <i class="fa fa-question" tooltip-placement="top" uib-tooltip="ENTER or Filter button will fetch from the server."></i>)
             </label>
         </li>
         <li>
-            <label>Status</label>
-            <input class=""  model="model" field="filter.fields.code" placeholder="Code" />
-        
+            <label>Page Section</label>
+            <select class="diags-input" ng-model="model.filter.fields._category" ng-options="item._id as item.code for item in model.categories">
+                <option value="">Select</option>
+            </select>
+        </li>
+        <li class="margin-top-quarter">
+            <label>Code</label>
+            <input class="diags-input" ng-model="model.filter.fields.code" placeholder="Code" />
         </li>
 
     </ul>

@@ -18,6 +18,18 @@
     <div class="row diags-row margin-bottom-two">
         <div class="col-sm-12 col-md-4">
             <div class="row margin-top-one">
+                <label>Page Section</label>
+            </div>
+            <div class="row  margin-top-half">
+                <select ng-model="item._category"
+                class="diags-input"
+                ng-options="item._id as item.code for item in categories"
+                >
+                    <option value="">Select</option>
+                    <!--<option ng-repeat="item in categories" ng-value="item._id" ng-bind="item.code"></option>-->
+                </select>
+            </div>
+            <div class="row margin-top-one">
                 <label>Code</label>
             </div>
             <div class="row  margin-top-half">

@@ -20,8 +20,53 @@ var $D = {
         DELIVERED: 'delivered', // PDF uploaded first. When client paid -> complete
         COMPLETED: 'completed' //pdf uploaded and order paid.
     },
-    ORDER_STATUS_PAID: ['prepaid', 'completed']
+    ORDER_STATUS_PAID: ['prepaid', 'completed'],
+    createSiteSectionsCategories: createSiteSectionsCategories
 };
+
+function createSiteSectionsCategories(db) {
+    //check if page cats exists.
+    //create if not.
+    db.ctrl('Category', 'get', {
+        code: 'DIAGS'
+    }).then(function(res) {
+        if (res.ok && res.result) {
+            _createPageSections(res);
+        }
+        else {
+            _createRoot(_createPageSections)
+        }
+    });
+    var categories = ['ERNMT', 'BOOKING_HOME', 'GENERAL_CONDITIONS', 'FAQ','LEGAL_MENTIONS'];
+
+    function _createPageSections(res) {
+        if (res && res.ok && res.result) {
+            var root = res.result;
+            var cbCount = $U.cbHell(categories.length, function() {
+                console.info('create-page-categories#', categories.length, 'created-or-updated-success');
+            });
+            categories.forEach(function(cat) {
+                var payload = {
+                    code: cat,
+                    description: 'Diags Site Section',
+                    _parent: root._id,
+                    __match:['code']
+                };
+                db.ctrl('Category', 'save', payload).then(cbCount.next);
+            });
+        }
+        else {
+            console.warn('create-page-categories#create-page-sections=invalid-parameters,category-res-expected-and-got', res);
+        }
+    }
+
+    function _createRoot(cb) {
+        db.ctrl('Category', 'create', {
+            code: "DIAGS",
+            description: "Diags Root Category"
+        }).then(cb);
+    }
+}
 
 function createDateTimePickerData() {
     var o = {
@@ -162,7 +207,7 @@ function normalizeOrderTime(t, eachTreintaOnly) {
 }
 
 function subTotal(model, diags, basePrice, opt) {
-    if(!model)return 0;
+    if (!model) return 0;
     opt = opt || {}; //s:scope
     if (opt.s) {
         opt.s.priceInfo = opt.s.priceInfo || {};
@@ -200,7 +245,7 @@ function subTotal(model, diags, basePrice, opt) {
 };
 
 function sizePrice(model, diags, squareMetersPrice, basePrice, opt) {
-    if(!model)return 0;
+    if (!model) return 0;
     var rta = 0;
     //
     //var isHouse = model.info ? model.info.house : model.house;
@@ -273,8 +318,8 @@ function totalPrice(showRounded, model, diags, squareMetersPrice, basePrice, opt
     if (opt.s) {
 
         var date = model.diagStart;
-        if(opt.dt) date = opt.dt;
-        
+        if (opt.dt) date = opt.dt;
+
         if (opt.s.settings) {
             if (opt.s.settings.pricePercentageIncrease && date) {
                 var increase = opt.s.settings.pricePercentageIncrease;

@@ -31,7 +31,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
             }
             else {
                 r.__debugDiags = false;
-                console.info('debug-mode-off, try again');
+                //console.info('debug-mode-off, try again');
             }
             keyword = '';
             r.dom();

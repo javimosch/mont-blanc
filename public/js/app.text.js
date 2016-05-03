@@ -1,4 +1,5 @@
 /*global $U*/
+/*global $D*/
 /*global moment*/
 /*global _*/
 /*global app*/
@@ -6,6 +7,22 @@
 (function() {
 
 
+    function updateCategorySelectData(s, db) {
+        s.categories = [];
+        db.ctrl('Category', "get", {
+            code: "DIAGS"
+        }).then(function(r) {
+            if (r && r.ok && r.result) {
+                db.ctrl('Category', 'getAll', {
+                    _parent: r.result._id
+                }).then(function(r) {
+                    if (r && r.ok && r.result) {
+                        s.categories = r.result;
+                    }
+                });
+            }
+        });
+    }
 
     app.controller('ctrl-text-edit', ['server', '$scope', '$rootScope', '$routeParams', 'focus',
         function(db, s, r, params) {
@@ -17,6 +34,8 @@
                 description: '',
                 content: ''
             };
+
+            updateCategorySelectData(s, db);
             check(); //checks when the wysing lib is ready and init the components.
             //
             s.read = function() {
@@ -34,8 +53,9 @@
                 }
                 //
             s.save = function() {
-                if (!s.item.code)           return r.warningMessage('Code required');
-                if (!s.item.description)    return r.warningMessage('Description required');
+                if (!s.item.code)       return r.warningMessage('Code required');
+                if (!s.item.content)    return r.warningMessage('Content required');
+                if (!s.item._category)  return r.warningMessage('Page Section required');
                 //
                 db.ctrl('Text', 'save', s.item).then(function() {
                     r.route('texts');
@@ -48,6 +68,8 @@
                     });
                 });
             };
+
+
 
             function check() {
                 if (typeof window.Quill !== 'undefined') {
@@ -93,6 +115,7 @@
     ]);
 
 
+
     app.directive('textsList', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
@@ -100,24 +123,28 @@
             replace: true,
             scope: {},
             templateUrl: 'views/directives/directive.fast-crud.html',
-            link: function(s, elem, attrs) {},
+            link: function(s, elem, attrs) {
+                $D.createSiteSectionsCategories(server);
+            },
             controller: function($scope, $element, $attrs, $transclude) {
                 var r = $rootScope,
                     db = server,
                     s = $scope,
                     dbPaginate = $mongoosePaginate.get('Text');
-                s.title = "";
+                $U.expose('s', s);
                 r.routeParams({
                     prevRoute: 'texts'
                 });
 
+
+
                 function update(items, cb) {
                     var data = {
                         //__select: "_client _diag address diagStart diagEnd price status created createdAt",
-                        /*__populate: {
-                            '_client': 'email',
-                            '_diag': 'email'
-                        },*/
+                        __populate: {
+                            '_category': 'code',
+
+                        },
                         __sort: "-createdAt",
 
                     };
@@ -126,13 +153,17 @@
 
                     function _apply() {
 
+                        /*
                         var code = s.model.filter.fields.code;
                         if (code) {
                             data.__rules = data.__rules || {};
                             data.__rules.code = {
                                 $in: code
                             };
-                        }
+                        }*/
+
+                        data = Object.assign(data, s.model.filter.payload);
+                        console.info('filter-payload', s.model.filter.payload);
 
                         dbPaginate.ctrl(data, s.model).then(res => {
                             if (cb) {
@@ -145,11 +176,16 @@
                     }
                 }
                 s.model = {
-                    init: () => update(),
+                    init: function() {
+                        updateCategorySelectData(s.model, db);
+                        update();
+                    },
                     filter: {
                         template: 'textsFilter',
+                        update: update,
                         rules: {
-                            code: 'contains'
+                            code: 'contains',
+                            _category: "match"
                         }
                     },
                     pagination: {
@@ -169,11 +205,25 @@
                         type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => update()
                     }, {
+                        label: "Filtre",
+                        type: function() {
+                            return "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1";
+                        },
+                        click:function(){
+                            s.model.filter.filter();
+                        }
+                    }, {
                         label: "New Item",
                         type: () => "btn diags-btn bg-azure-radiance margin-right-1",
                         click: () => r.route('texts/edit/-1')
                     }],
                     columns: [{
+                        label: "Page Section",
+                        name: '_category',
+                        format: function(v, item) {
+                            return item._category && item._category.code || "";
+                        }
+                    }, {
                         label: "Code",
                         name: 'code' //,
                             //format: (v, item) => item._diag.email
