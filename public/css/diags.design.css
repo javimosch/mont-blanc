@@ -477,6 +477,10 @@ input[type="checkbox"]:disabled + span {
     margin: 0px;
 }
 
+.diag-row > div {
+    margin-bottom: 10px;
+}
+
 @media only screen and (min-width: 992px) {
     .diag-row {
         padding: 0px 50px;
@@ -758,7 +762,7 @@ h2.diags.black {
 }
 
 .select-all-checkbox-span {
-   /* position: relative;
+    /* position: relative;
     top: 0.8em;*/
 }
 
@@ -769,7 +773,7 @@ h2.diags.black {
 
 @media only screen and (min-width: 992px) {
     .select-all-checkbox-span {
-      /*  position: relative;
+        /*  position: relative;
         top: 0.9em;*/
     }
     .select-all-checkbox {
@@ -1099,49 +1103,44 @@ h2.diags.black {
     padding: 20px 0px;
 }
 
-@media only screen and (min-width: 480px) {
-    .diags-form-wrapper {
-        border: 2px solid #C6DEE8;
-        border-radius: 5px;
-        padding: 50px 0px;
-        margin: 10px;
-    }
-}
-
-@media only screen and (min-width: 768px) {
-    .diags-form-wrapper {
-        margin: 50px;
-        padding: 50px;
-    }
-}
-
 .diag-row-form > div {
     margin-top: 2em;
 }
 
-.diag-row-form {
-    margin: 0px;
-    padding: 0px;
-}
+.diag-row-form {}
 
 @media only screen and (min-width: 480px) {
+    .diags-form-wrapper {
+        padding: 50px 0px;
+        margin: 10px;
+    }
     .diag-row-form {
-        padding: 0 0;
         margin: 50px 0px;
     }
 }
 
 @media only screen and (min-width: 768px) {
+    .diags-form-wrapper {
+        margin: 15px 0px 0px 0px;
+        padding: 0px;
+    }
     .diag-row-form {
-        border: 2px solid #C6DEE8;
-        border-radius: 5px;
-        margin: 50px 50px;
+        margin: 0px;
     }
 }
 
 @media only screen and (min-width: 992px) {
+    .diags-form-wrapper {
+        margin-top:0px;
+        border: 2px solid #C6DEE8;
+        border-radius: 5px;
+        padding: 2em 0px;
+        min-height: 570px;
+    }
     .diag-row-form {
-        margin: 50px 50px;
+        border: 2px solid #C6DEE8;
+        border-radius: 5px;
+        margin: 0px 50px 0px 50px;
     }
     .frm-wrapper {
         min-height: 370px;
@@ -1149,9 +1148,11 @@ h2.diags.black {
     .stripe-home-message {
         margin-top: 11em;
     }
-    .diags-form-wrapper {
-        padding: 50px 0px;
-        min-height: 570px;
+    .diags-form-wrapper.left {
+        margin-right: 1em;
+    }
+    .diags-form-wrapper.right {
+        margin-left: 1em;
     }
     .diags-form-wrapper-left {
         border-left: 2px solid #C6DEE8;
@@ -1162,7 +1163,7 @@ h2.diags.black {
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
         margin-right: 0px!important;
-        padding: 50px 0px;
+        padding: 2em 0px;
     }
     .diags-form-wrapper-left-3 {
         border-left: 2px solid #C6DEE8;
@@ -1172,7 +1173,7 @@ h2.diags.black {
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
         margin-right: 0px!important;
-        padding: 50px 0px;
+        padding: 2em 0px;
     }
     .diags-form-wrapper-center {
         border-top: 2px solid #C6DEE8;
@@ -1180,7 +1181,7 @@ h2.diags.black {
         min-height: 570px;
         margin-right: 0px!important;
         margin-left: 0px!important;
-        padding: 50px 0px;
+        padding: 2em 0px;
     }
     .diags-form-wrapper-right {
         border-right: 2px solid #C6DEE8;
@@ -1190,7 +1191,7 @@ h2.diags.black {
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
         margin-left: 0px!important;
-        padding: 50px 0px;
+        padding: 2em 0px;
     }
 }
 
@@ -1207,7 +1208,7 @@ h2.diags.black {
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
         margin-right: 0px!important;
-        padding: 50px 0px;
+        padding: 2em 0px;
     }
     .diags-form-wrapper-left-3-lg {
         border-left: 2px solid #C6DEE8;
@@ -1217,7 +1218,7 @@ h2.diags.black {
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
         margin-right: 0px!important;
-        padding: 50px 0px;
+        padding: 2em 0px;
     }
     .diags-form-wrapper-center-lg {
         border-top: 2px solid #C6DEE8;
@@ -1225,7 +1226,7 @@ h2.diags.black {
         min-height: 570px;
         margin-right: 0px!important;
         margin-left: 0px!important;
-        padding: 50px 0px;
+        padding: 2em 0px;
     }
     .diags-form-wrapper-right-lg {
         border-right: 2px solid #C6DEE8;
@@ -1235,7 +1236,7 @@ h2.diags.black {
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
         margin-left: 0px!important;
-        padding: 50px 0px;
+        padding: 2em 0px;
     }
 }
 

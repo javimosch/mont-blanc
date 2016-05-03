@@ -1107,9 +1107,10 @@ app.controller('ctrl.booking', ['server',
         }
 
         function loadDefaults() {
+            console.log('loadDefaults');
             s.model = Object.assign(s.model, {
                 sell: paramBool('sell') || true,
-                house: paramBool('house') || undefined,
+                house: paramBool('house') || true,
                 squareMeters: param('squareMeters', s.squareMeters) || '90 - 110m²', // '- de 20m²',
                 // apartamentType: param('apartamentType', s.apartamentType) || undefined,
                 constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined, // 'Entre 1949 et le 01/07/1997',
