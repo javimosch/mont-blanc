@@ -60,12 +60,15 @@
 
     <div class="hidden" remove-hidden>
         <div 
-        ng-class="{fixed:true,hidden:!__debugDiags,bounceInLeft:true,animated:true,'top-50p':true}">
+        ng-class="{hidden:!__debugDiags,bounceInLeft:true,animated:true,'debug-wrapper':true}">
             <ul ng-cloak>
                 <li ng-cloak>order-info-house: <span ng-cloak ng-bind="_order.info.house"></span></li>
                 <li ng-cloak ng-show="__debugPriceModifiers">Price Modifiers (+%) :</li>
                 <li ng-cloak ng-repeat="(k,i) in __debugPriceModifiers">
                     <span ng-cloak ng-bind="k"></span>:<span ng-cloak ng-bind="i"></span>
+                </li>
+                <li ng-show="__textsNotFound">Texts codes requested:</li>
+                <li ng-cloak ng-repeat="item in __textsNotFound" ng-bind="item">
                 </li>
             </ul>
         </div>

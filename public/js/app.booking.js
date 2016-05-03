@@ -135,6 +135,10 @@ app.controller('ctrl.booking', ['server',
             ANSWER_APPARTAMENT_OR_MAISON: 'Répondre Appartament / Maison',
             FRENCH_ADDRESS_REQUIRED: 'Adresse besoin d&#39;appartenir à France',
         };
+        
+        s.STATIC = {
+            STRIPE: "Paiement simplifié et sécurisé (PCI 1, le niveau le plus élevé) avec Stripe"
+        };
 
         s.isDevEnv = () => window.location.hostname.indexOf('diags-javoche.c9users.io') !== -1;
 
@@ -574,15 +578,26 @@ app.controller('ctrl.booking', ['server',
         db.ctrl('Text', 'getAll', {}).then(d => {
             s.__texts = d.result;
             s.__texts.forEach(function(item) {
-               s.__text = s.__text || {};
-               s.__text[item.code] = window.decodeURIComponent(item.content);
+                s.__text = s.__text || {};
+                s.__text[item.code] = window.decodeURIComponent(item.content);
             });
         });
-       
-        s.htmlReplaceDiagName = function(str){
-            var code = str.replace('$NAME',s.diagSelected.name).toUpperCase();
-            return s.__text && s.__text[code] || code;
+
+        s.htmlReplaceDiagName = function(str) {
+            var code = str.replace('$NAME', s.diagSelected.name).toUpperCase();
+            return s.html(code);
         }
+        s.html = function(code,txt) {
+            if (s.__text && s.__text[code]) {
+
+            }
+            else {
+                r.__textsNotFound = r.__textsNotFound || {};
+                r.__textsNotFound[code] = code;
+
+            }
+            return s.__text && s.__text[code] || txt || code;
+        };
 
 
         function orderPaid() {

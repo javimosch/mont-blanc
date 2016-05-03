@@ -20,3 +20,14 @@
  - DONE
 
 
+###Attached file : weird behavior… only 4 slots a day..; sorted by hour…not 5 with wrong order
+
+    I could not reproduce this issue. But I code a validation to avoid render more than four slots.
+
+###In attached file a PSD with the subtitle i want under Les diagnostics obligatoires :
+ - DONE
+
+
+
+
+
