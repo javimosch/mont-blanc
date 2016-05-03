@@ -70,6 +70,13 @@ srv.config(['$routeProvider',
         when('/exceptions/edit/:id', {
             templateUrl: 'views/exception.edit.html'
         }).
+        
+         when('/texts', {
+            templateUrl: 'views/text/text-list.html'
+        }).
+        when('/texts/edit/:id', {
+            templateUrl: 'views/text/text-edit.html'
+        }).
 
         when('/clients', {
             templateUrl: 'views/clients.html'

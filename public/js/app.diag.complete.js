@@ -285,7 +285,7 @@ app.controller('ctrl-diag-edit', [
             $U.once('route-exit:diag-inscription', function(url) {
                 r.__hideNavMenu = false;
             });
-            r.toggleNavbar(false);
+            r.toggleNavbar(true);
         }
         else {
             r.toggleNavbar(true);

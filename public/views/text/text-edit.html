@@ -1,0 +1,64 @@
+<!-- Include Quill stylesheet -->
+
+
+<script src="https://cdn.quilljs.com/latest/quill.js"></script>
+
+
+<div class="row">
+    <div class="col-sm-12 padding-none">
+        <ol class="breadcrumb">
+            <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+            <li><a class="link" ng-click="route('texts')">Texts</a></li>
+            <li>Text Details</li>
+        </ol>
+    </div>
+</div>
+<div class="container" ng-controller="ctrl-text-edit">
+    <modal-confirm open="confirm"></modal-confirm>
+    <div class="row diags-row margin-bottom-two">
+        <div class="col-sm-12 col-md-4">
+            <div class="row margin-top-one">
+                <label>Code</label>
+            </div>
+            <div class="row  margin-top-half">
+                <input ng-disabled="state.working()" ng-model="item.code" class="diags-input" placeholder="Code">
+            </div>
+            <div class="row margin-top-one">
+                <label>Description</label>
+            </div>
+            <div class="row  margin-top-half">
+                <input ng-disabled="state.working()" ng-model="item.description" class="diags-input" placeholder="Description">
+            </div>
+            <div class="row margin-top-one">
+                <div id="toolbar">
+                    <!-- Add font size dropdown -->
+                    <select class="ql-size">
+                        <option value="10px">Small</option>
+                        <option value="13px" selected>Normal</option>
+                        <option value="18px">Large</option>
+                        <option value="32px">Huge</option>
+                    </select>
+                    
+                    <button class="ql-bold">Bold</button>
+                    <button class="ql-italic">Italic</button>
+                    <button class="ql-strike">Strike</button>
+                    <button class="ql-underline">Underline</button>
+                    
+                    
+                </div>
+            </div>
+            <div class="row margin-top-half">
+                <div id="editor">
+                    <p>Hello World!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row diags-row margin-bottom-two">
+        <div class="col-sm-12">
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="save()">Save</button>
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="route('texts')">Cancel</button>
+            <button ng-show="userIs('admin')" ng-disabled="state.working() || !item._id " class="btn diags-btn bg-azure-radiance" ng-click="delete()">Delete</button>
+        </div>
+    </div>
+</div>
