@@ -758,8 +758,8 @@ h2.diags.black {
 }
 
 .select-all-checkbox-span {
-    position: relative;
-    top: 0.8em;
+   /* position: relative;
+    top: 0.8em;*/
 }
 
 .select-all-checkbox {
@@ -769,8 +769,8 @@ h2.diags.black {
 
 @media only screen and (min-width: 992px) {
     .select-all-checkbox-span {
-        position: relative;
-        top: 0.9em;
+      /*  position: relative;
+        top: 0.9em;*/
     }
     .select-all-checkbox {
         margin-right: 3.2em;
@@ -1116,7 +1116,7 @@ h2.diags.black {
 }
 
 .diag-row-form > div {
-    margin-top: 4em;
+    margin-top: 2em;
 }
 
 .diag-row-form {
@@ -1126,7 +1126,7 @@ h2.diags.black {
 
 @media only screen and (min-width: 480px) {
     .diag-row-form {
-        padding: 50px 0;
+        padding: 0 0;
         margin: 50px 0px;
     }
 }

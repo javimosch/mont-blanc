@@ -58,16 +58,17 @@
         </div>
     </div>
 
-    <div 
-    ng-cloak
-    ng-class="{fixed:true,hidden:!__debugDiags,bounceInLeft:true,animated:true,'top-50p':true}">
-        <ul>
-            <li>order-info-house: <span ng-bind="_order.info.house"></span></li>
-            <li ng-show="__debugPriceModifiers">Price Modifiers (+%) :</li>
-            <li ng-repeat="(k,i) in __debugPriceModifiers">
-                <span ng-bind="k"></span>:<span ng-bind="i"></span>
-            </li>
-        </ul>
+    <div class="hidden" remove-hidden>
+        <div 
+        ng-class="{fixed:true,hidden:!__debugDiags,bounceInLeft:true,animated:true,'top-50p':true}">
+            <ul ng-cloak>
+                <li ng-cloak>order-info-house: <span ng-cloak ng-bind="_order.info.house"></span></li>
+                <li ng-cloak ng-show="__debugPriceModifiers">Price Modifiers (+%) :</li>
+                <li ng-cloak ng-repeat="(k,i) in __debugPriceModifiers">
+                    <span ng-cloak ng-bind="k"></span>:<span ng-cloak ng-bind="i"></span>
+                </li>
+            </ul>
+        </div>
     </div>
 
 
@@ -104,6 +105,7 @@
     <script src="js/directives/checkbox.js"></script>
     <script src="js/directives/toggle.js"></script>
     <script src="js/directives/range.js"></script>
+    <script src="js/directives/remove-hidden.js"></script>
     <script src="js/app.services.js"></script>
     <script src="js/app.run.js"></script>
     <script src="js/app.directives.js"></script>

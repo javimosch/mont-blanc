@@ -86,20 +86,6 @@ app.config(['$routeProvider',
     }
 ]);
 
-
-app.directive('rangeSlider', function($rootScope, $timeout) {
-    return {
-        restrict: 'A',
-        link: function(scope, el, attrs) {
-            //el.replaceWith(el.children());
-
-
-        }
-    };
-});
-
-//contactFormSendToAllAdmins
-
 app.controller('ctrl.booking-contact-form', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal',
     function(db, $timeout, s, r, $uibModal) {
@@ -141,7 +127,7 @@ app.controller('ctrl.booking', ['server',
         moment.locale('fr')
 
 
-        
+
 
 
         var MESSAGES = {
@@ -178,6 +164,11 @@ app.controller('ctrl.booking', ['server',
 
             if ($U.indexOf(url, [URL.HOME]) || url == '') {
                 s.__header = 1;
+
+                setTimeout(function(){
+                    $U.emit('render-ranges');
+                },1000);
+
             }
             else {
                 s.__header = 2;
@@ -206,7 +197,7 @@ app.controller('ctrl.booking', ['server',
                 _localCursor = new Date(_localCursor);
                 s.requestSlots(_localCursor).then((d) => {
                     _data[dataPosition] = new DaySlot(_localCursor, d);
-//                    console.log('slots-days-request-end-for', _localCursor, 'at', dataPosition);
+                    //                    console.log('slots-days-request-end-for', _localCursor, 'at', dataPosition);
                     cbHell.next();
                 });
             }
@@ -1129,6 +1120,24 @@ app.controller('ctrl.booking', ['server',
                 time: param('time', ['any']),
                 clientType: param('clientType', s.CLIENT_TYPES)
             });
+
+            r.dom(function() {
+                try {
+                    var x = 0;
+                    for (var pos in s.squareMeters) {
+                        if (s.model.squareMeters == s.squareMeters[pos]) {
+                            break;
+                        }
+                        else {
+                            x++;
+                        }
+                    }
+                    $("input[type=range]").val(x);
+                    console.log('range-set-at-', x);
+                }
+                catch (e) {}
+            });
+
             $U.emitPreserve('booking-defaults-change');
 
             s.diags.forEach((diag) => {
@@ -1445,14 +1454,19 @@ app.controller('ctrl.booking', ['server',
 
         function commitOrderInfo() {
             if (!s._order) return;
-            s._order.info = Object.assign(s._order.info, {
-                house: $U.val(s.model, 'house') || s._order.info.house,
-                sell: $U.val(s.model, 'sell') || s._order.info.sell
-            });
-            
-            
-            if(s._order.info.house==undefined){
-                throw Error('The order info.house is undefined.');
+
+
+            if (s._order.info.house === undefined && s.model.house !== undefined) {
+                s._order.info.house = s.model.house;
+            }
+
+            if (s._order.info.sell === undefined && s.model.sell !== undefined) {
+                s._order.info.sell = s.model.sell;
+            }
+
+
+            if (s._order.info.house == undefined) {
+                console.warn('The order info.house is undefined.');
             }
         }
 
@@ -1634,12 +1648,12 @@ app.controller('ctrl.booking', ['server',
         s.sizePrice = () => sizePrice(s._order, s.diags, s.squareMetersPrice, s.basePrice);
         s.totalPrice = (showRounded, opt) => totalPrice(showRounded, s._order, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({
             s: s,
-            r:r
+            r: r
         }, opt || {}));
-        
+
         s.totalPriceRange = (dt) => totalPrice(true, s.model, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({
             s: s,
-            r:r,
+            r: r,
             dt
         }, {}));
 
