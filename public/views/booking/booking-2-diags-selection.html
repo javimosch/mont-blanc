@@ -28,17 +28,21 @@
             </div>
         </div>
         <div class="row diag-row margin-top-one">
-            <div class="col-sm-6">
+            <div class="col-sm-6 margin-bottom-none">
                 <i class="fa fa-chevron-right fnt-18"><span class="medium18">Les diagnostics obligatoires</span></i>
-
-
             </div>
-            <div class="col-sm-6 ">
-                <label class="float-right select-all-checkbox margin-top-none">
+            <div class="col-sm-6 margin-bottom-none">
+                <label class="float-right select-all-checkbox margin-top-none margin-bottom-none">
                     <input type="checkbox" ng-model="checks.selectAll" class="check mark-white" />
                     <span class="sky-blue"></span>
                 </label>
                 <span class="select-all-checkbox-span medium18 float-right margin-right-half">Tout sélectionner</span>
+            </div>
+        </div>
+        <div class="row diag-row margin-top-none">
+            <div class="col-sm-12">
+                <span class="booking-descr-title" ng-bind="bookingDescriptionTitle()"></span>
+                <span class="booking-descr">{{bookingDescriptionBody()}}</span>
             </div>
         </div>
         <div class="row diag-row margin-top-one">
@@ -96,9 +100,7 @@
                         Paiement simplifié et sécurisé (PCI 1, le niveau le plus élevé) avec Stripe 
                     </span>
                 </div>
-                <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 sm-float-right"
-                ng-click="proceedToDateSelection()"
-                >Prendre un rendez-vous</button>
+                <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 sm-float-right" ng-click="proceedToDateSelection()">Prendre un rendez-vous</button>
             </div>
         </div>
         <div class="row diags-bg-block-40 hidden-xs"></div>

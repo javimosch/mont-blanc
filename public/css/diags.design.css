@@ -64,6 +64,19 @@ body {
     padding: 0px;
 }
 
+.booking-descr-title {
+    font-family: 'Open Sans', sans-serif;
+    color: #5EE5AB;
+    font-size: 14px;
+    margin-left: 29px;
+}
+
+.booking-descr {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+}
+
 .diags-bg {
     background-color: #EDF5F9;
 }
@@ -1131,7 +1144,7 @@ h2.diags.black {
 
 @media only screen and (min-width: 992px) {
     .diags-form-wrapper {
-        margin-top:0px;
+        margin-top: 0px;
         border: 2px solid #C6DEE8;
         border-radius: 5px;
         padding: 2em 0px;

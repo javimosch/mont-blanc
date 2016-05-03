@@ -165,9 +165,9 @@ app.controller('ctrl.booking', ['server',
             if ($U.indexOf(url, [URL.HOME]) || url == '') {
                 s.__header = 1;
 
-                setTimeout(function(){
+                setTimeout(function() {
                     $U.emit('render-ranges');
-                },1000);
+                }, 1000);
 
             }
             else {
@@ -1335,6 +1335,48 @@ app.controller('ctrl.booking', ['server',
         };
 
 
+        s.bookingDescriptionTitle = function() {
+            if (s.model.sell) return "Pack Vente:";
+            else return "Pack Location:";
+        };
+        s.bookingDescriptionBody = function() {
+            var rta = "";
+            if (s.model.house) {
+                rta += "Maison";
+            }
+            else {
+                rta += "Appartement";
+            }
+            if (s.model.city) {
+                rta += " à " + s.model.city;
+            }
+            if (s.model.constructionPermissionDate) {
+                rta += " " + s.model.constructionPermissionDate;
+            }
+            rta += ', ' + s.model.squareMeters;
+            if (!_.includes(['Non', 'Oui, Moins de 15 ans'], s.model.gasInstallation)) {
+                rta += ', Gaz';
+            }
+            if (s.model.electricityInstallation != 'Moins de 15 ans') {
+                rta += ", Électricité";
+            }
+            rta += '.';
+            return rta;
+        };
+        s.bookingDescription = function() {
+            return s.bookingDescriptionTitle() + s.bookingDescriptionBody();
+        };
+        /*
+        PACK Vente :	PACK Location :	
+        Appartement	Maison	
+        à CITY		
+        avant 1949,	entre 1949 et 1997,	après 1997,
+        SIZE,		
+        Gaz,	BLANK (if no or YES less than 15y)
+        Électricité	BLANK (if - de 15 ans)
+        */
+
+
         s.sendPaymentLink = () => {
             s.validateBooking(_sendPaymentLink);
             //
@@ -1464,6 +1506,10 @@ app.controller('ctrl.booking', ['server',
 
             if (s._order.info.sell === undefined && s.model.sell !== undefined) {
                 s._order.info.sell = s.model.sell;
+            }
+            
+            if(!s._order.info.description && s.model){
+                s._order.info.description = s.bookingDescriptionTitle()+s.bookingDescriptionBody();
             }
 
 
