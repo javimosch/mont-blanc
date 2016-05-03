@@ -662,7 +662,7 @@ app.directive('notify', function($rootScope, $timeout) {
             var r = $rootScope;
             var s = scope;
             
-            console.log('notify-directive');
+           // console.log('notify-directive');
 
             if (s.settings && typeof s.settings == 'string') {
                 var fixedJSON = s.settings.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": ');
@@ -793,7 +793,7 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
         },
         template: '<output></output>',
         link: function(s, elem, attrs) {
-            console.log('my-alerts directive');
+            //console.log('my-alerts directive');
             var r = $rootScope;
             //s.stacked = s.stacked === 'true';
             s.decodeMessage = function(msg) {
@@ -875,7 +875,7 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
             if(s.directive == 'notify'){
                 r.notify = s.add;
                 r.message = s.add;
-                console.log('notify-directive-added-to-rootscope');
+                //console.log('notify-directive-added-to-rootscope');
             }
             
             window.ss = s;

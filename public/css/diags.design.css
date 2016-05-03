@@ -1158,9 +1158,23 @@ h2.diags.black {
     .frm-wrapper {
         min-height: 370px;
     }
-    .stripe-home-message {
+    
+    p.stripe-home-message, p.stripe-home-message > span{
+        font-family: 'Avenir-Medium';
+    }
+    p.stripe-home-message {
+        line-height: 20px;
+        color: white;
+        font-size: 30px;
+    }
+    p.stripe-home-message > span {
+        vertical-align: bottom;
+        font-size: 16px;
+    }
+    div.stripe-home-message {
         margin-top: 11em;
     }
+    
     .diags-form-wrapper.left {
         margin-right: 1em;
     }

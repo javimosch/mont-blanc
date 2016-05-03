@@ -196,6 +196,27 @@ app.controller('ctrl.booking', ['server',
             function asyncRequest(_localCursor, cbHell, dataPosition) {
                 _localCursor = new Date(_localCursor);
                 s.requestSlots(_localCursor).then((d) => {
+                    var d = _.orderBy(d,function(item){
+                        return item.start._d;
+                    });
+    
+                    if (d.length > 4) {
+                        //console.warn('slots-more-than-four-warning',d)
+                        try{
+                        db.ctrl('Log', "create", {
+                            message: "booking-warning: date slot request retrieve " + d.length + ' slots.',
+                            data: d
+                        });
+                        }catch(e){}
+                        
+                        while(d.length>4){
+                            d.pop();
+                        };
+                        //console.warn('slots-more-than-four-resolve',d)
+                    }else{
+                        
+                    }
+
                     _data[dataPosition] = new DaySlot(_localCursor, d);
                     //                    console.log('slots-days-request-end-for', _localCursor, 'at', dataPosition);
                     cbHell.next();
@@ -246,10 +267,10 @@ app.controller('ctrl.booking', ['server',
             o.request = function() {
                 var _localCursor = moment(cursor);
                 var cbHell = $U.cbHell(4, function() {
-                    console.info('slots-days-request-end');
+                   // console.info('slots-days-request-end');
                     setSelectedRangeDateUsingOrder();
                 });
-                console.info('slots-days-request-begin for', r.momentFormat(_localCursor, 'DD-MM-YY'));
+               // console.info('slots-days-request-begin for', r.momentFormat(_localCursor, 'DD-MM-YY'));
                 asyncRequest(_localCursor._d, cbHell, 0); //
                 _localCursor = _localCursor.add(1, 'days');
                 asyncRequest(_localCursor._d, cbHell, 1); //
@@ -1107,7 +1128,7 @@ app.controller('ctrl.booking', ['server',
         }
 
         function loadDefaults() {
-            console.log('loadDefaults');
+            //console.log('loadDefaults');
             s.model = Object.assign(s.model, {
                 sell: paramBool('sell') || true,
                 house: paramBool('house') || true,
@@ -1134,7 +1155,7 @@ app.controller('ctrl.booking', ['server',
                         }
                     }
                     $("input[type=range]").val(x);
-                    console.log('range-set-at-', x);
+                   // console.log('range-set-at-', x);
                 }
                 catch (e) {}
             });
@@ -1201,6 +1222,8 @@ app.controller('ctrl.booking', ['server',
                         else {
                             r.price = s.totalPriceRange(date);
                         }
+                        
+                     
 
                         db.ctrl('User', 'get', {
                             _id: r._diag
@@ -1220,9 +1243,9 @@ app.controller('ctrl.booking', ['server',
 
 
         //----------------------------------------------------------
-        s.$watch('model.date', function(date) {
-            s.requestSlots(date);
-        });
+        //s.$watch('model.date', function(date) {
+            //s.requestSlots(date);
+        //});
 
 
 
@@ -1507,9 +1530,9 @@ app.controller('ctrl.booking', ['server',
             if (s._order.info.sell === undefined && s.model.sell !== undefined) {
                 s._order.info.sell = s.model.sell;
             }
-            
-            if(!s._order.info.description && s.model){
-                s._order.info.description = s.bookingDescriptionTitle()+s.bookingDescriptionBody();
+
+            if (!s._order.info.description && s.model) {
+                s._order.info.description = s.bookingDescriptionTitle() + s.bookingDescriptionBody();
             }
 
 
