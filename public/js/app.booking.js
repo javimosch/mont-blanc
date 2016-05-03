@@ -1341,11 +1341,12 @@ app.controller('ctrl.booking', ['server',
             function _sendPaymentLink() {
                 db.ctrl('Order', 'update', s._order); //async
 
-                s.openConfirm('You want to send a payment link to ' + s._order.landLordEmail + ' ?', () => {
+                s.openConfirm('Vous souhaitez envoyer un lien de paiement pour ' + s._order.landLordEmail + ' ?', () => {
                     s.infoMsg("Sending email.");
                     db.ctrl('Email', 'orderPaymentLink', s._order).then(data => {
-                        s.infoMsg("Email sended to the landlord. Check the back-office to track your order status.");
+                        s.infoMsg("Email envoyer avec succès. Suivi de votre commande dans le back office.");
                         s._order.landLordPaymentEmailSended = true;
+                        s._order.status = 'ordered';
                         db.ctrl('Order', 'update', {
                             _id: s._order._id,
                             landLordPaymentEmailSended: true
