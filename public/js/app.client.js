@@ -1,3 +1,7 @@
+/*global angular*/
+/*global moment*/
+/*global $D*/
+/*global $U*/
 (function() {
     //
     var app = angular.module('app.client', []);
@@ -20,11 +24,15 @@
                 var n = attrs.name;
                 s.title = "Your Orders";
 
-                function update() {
+                function update(items, cb) {
                     var data = {
+                        __select: "address status diagStart diagEnd createdAt",
                         __populate: {
                             '_client': 'email userType',
                             '_diag': 'email userType firstName lastName'
+                        },
+                        __sort: {
+                            createdAt: -1
                         }
                     };
 
@@ -35,24 +43,56 @@
                         data['_client'] = r.session()._id;
                     }
 
+/*
+                    //STATUS FILTER
+                    if ($U.val(s, 'model.filter.fields')) {
+                        var status = s.model.filter.fields.status;
+                        if (status) {
+                            status = status.replaceAll(' ', '');
+                            if (status.charAt(status.length - 1) == ',') {
+                                status = status.substring(0, status.length - 1);
+                            }
+                            var statusArr = status.split(',');
+                            data.__rules = data.__rules || {};
+                            data.__rules.status = {
+                                $in: statusArr
+                            };
+                            //console.log('filter-applied',statusArr);
+                        }
+                    }*/
 
-
-                    ws.ctrl('Order', 'getAll', data).then((res) => {
+                    dbPaginate.ctrl(data, s.model).then(res => {
                         if (res.ok) {
                             res.result.forEach((v) => {
                                 v.date = moment(v.diagStart).format('dddd, DD MMMM')
                                 v.start = moment(v.diagStart).format('HH:mm');
                                 v.end = moment(v.diagEnd).format('HH:mm');
                             });
-                            s.model.update(res.result);
+                        }
+                        if (cb) {
+                            cb(res.result);
+                        }
+                        else {
+                            s.model.update(res.result, null);
                         }
                     });
+                    /*
+                                        ws.ctrl('Order', 'getAll', data).then((res) => {
+                                            if (res.ok) {
+                                                res.result.forEach((v) => {
+                                                    v.date = moment(v.diagStart).format('dddd, DD MMMM')
+                                                    v.start = moment(v.diagStart).format('HH:mm');
+                                                    v.end = moment(v.diagEnd).format('HH:mm');
+                                                });
+                                                s.model.update(res.result);
+                                            }
+                                        });*/
                 }
 
                 function payOrder(order) {
                     var modal = this;
 
-                    openStripeModalPayOrder(order, (token) => {
+                    $D.openStripeModalPayOrder(order, (token) => {
                         order.stripeToken = token.id;
                         ws.ctrl('Order', 'pay', order).then((data) => {
                             if (data.ok) {
@@ -61,9 +101,14 @@
                                 setTimeout(update, 10000);
                                 setTimeout(update, 20000);
                                 console.info('PAY-OK', data.result);
-                                r.message('Your order was paid successfully', 'success', undefined, undefined, { duration: 20000 });
-                            } else {
-                                r.message('There was a server error, try later.', 'warning', undefined, undefined, { duration: 20000 });
+                                r.message('Your order was paid successfully', 'success', undefined, undefined, {
+                                    duration: 20000
+                                });
+                            }
+                            else {
+                                r.message('There was a server error, try later.', 'warning', undefined, undefined, {
+                                    duration: 20000
+                                });
                                 console.info('PAY-FAIL', data.err);
                             }
                             modal.closeSilent();
@@ -71,9 +116,18 @@
                     });
                 }
                 s.model = {
-                    //paginate: (cb) => {
-                    //  update(null, cb)
-                    //},
+                    pagination: {
+                        itemsPerPage: 5
+                    },
+                    paginate: (cb) => {
+                        update(null, cb)
+                    },
+                   /* filter: {
+                        template: 'ordersFilterClient',
+                        rules: {
+                            status: 'contains'
+                        }
+                    },*/
                     click: (item, index) => {
                         var data = {};
                         ws.localData().then(function(d) {
@@ -89,7 +143,7 @@
                     },
                     buttons: [{
                         label: "Refresh",
-                        type: () => "btn btn-primary spacing-h-1",
+                        type: () => "btn diags-btn bg-madison spacing-h-1",
                         click: () => update()
                     }],
                     columns: [{
@@ -104,6 +158,12 @@
                     }, {
                         label: "End",
                         name: "end"
+                    }, {
+                        label: 'Created',
+                        name: 'createdAt',
+                        format: function(v, item) {
+                            return r.momentDateTime(item.createdAt);
+                        }
                     }],
                     items: []
                 };
@@ -138,18 +198,19 @@
                     }, s.model).then((res) => {
                         if (cb) {
                             cb(res.result);
-                        } else {
+                        }
+                        else {
                             s.model.update(res.result)
                         }
                     });
                 }
                 s.model = {
-                    init:()=>update(),
-                    filter:{
-                        template:'clientFilter',
-                        rules:{
-                            email:'contains',
-                            clientType:'contains'
+                    init: () => update(),
+                    filter: {
+                        template: 'clientFilter',
+                        rules: {
+                            email: 'contains',
+                            clientType: 'contains'
                         }
                     },
                     paginate: (cb) => {
@@ -186,7 +247,7 @@
                     }],
                     items: []
                 };
-                
+
             }
         };
     });
