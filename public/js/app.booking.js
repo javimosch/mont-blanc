@@ -137,7 +137,9 @@ app.controller('ctrl.booking', ['server',
         };
         
         s.STATIC = {
-            STRIPE: "Paiement simplifié et sécurisé (PCI 1, le niveau le plus élevé) avec Stripe"
+            STRIPE: "Paiement simplifié et sécurisé (PCI 1, le niveau le plus élevé) avec Stripe",
+            BOOKING_HOME_BG_TEXT_2:"Nous joindre au",
+            BOOKING_HOME_BG_TEXT_PHONE:"0899 399 039"
         };
 
         s.isDevEnv = () => window.location.hostname.indexOf('diags-javoche.c9users.io') !== -1;

@@ -15,6 +15,14 @@ app.directive("bindHtmlCompile", ["$compile", function(compile) {
                 el.html(e && e.toString());
                 var f = s;
                 attrs.bindHtmlScope && (f = s.$eval(attrs.bindHtmlScope)), compile(el.contents())(f)
+
+                var first = el.find(':first-child');
+                var tag = first && first.get(0) && first.get(0).tagName.toUpperCase() || "NONE";
+                if (tag == "SPAN" || tag == "DIV") {
+                    el.html(first.html());
+                }
+
+
             })
         }
     }

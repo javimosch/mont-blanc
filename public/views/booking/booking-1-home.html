@@ -12,8 +12,18 @@
                     </li>
                     <li>
                         <div class="diags-pill-info ">
-                            <span class="avenir-book txt-md white">Nous joindre au</span>
-                            <span class="avenir-black txt-xl white middle">0899 399 039</span>
+                            <span class="avenir-book txt-md white"
+                            bind-html-compile="html('BOOKING_HOME_BG_TEXT_2',STATIC.BOOKING_HOME_BG_TEXT_2)"
+                            >
+                                <!--"-->
+                                Nous joindre au
+                            </span>
+                            <span class="avenir-black txt-xl white middle"
+                            bind-html-compile="html('BOOKING_HOME_BG_TEXT_PHONE',STATIC.BOOKING_HOME_BG_TEXT_PHONE)"
+                            >
+                                <!-- bind-html-compile="html('BOOKING_HOME_BG_TEXT_PHONE',STATIC.BOOKING_HOME_BG_TEXT_PHONE)" -->
+                                0899 399 039
+                                </span>
                         </div>
                     </li>
                     <li>
@@ -30,7 +40,7 @@
                         <p class="stripe-home-message">
                             *
                             <span class="">
-                                Paiement simplifié et sécurisé (PCI 1, le niveau le plus élevé) avec Stripe 
+                                <out bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
                             </span>
                         </p>
 

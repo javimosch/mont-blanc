@@ -27,6 +27,24 @@
 ###In attached file a PSD with the subtitle i want under Les diagnostics obligatoires :
  - DONE
 
+###Can I edit the Content pages (ERNMT, FAQ, Home page text blocks with all the diags) in the back office with a wizywig 
+ 
+ Yes, is possible. I'm including an editor I have in BO. You can find it in 
+ Settings -> Text
+ 
+ You neet to create items that match tue CODE required in the page.
+ EX: In the ERNMT page, you have PAGE_ERNMT_BLOCK_TITLE
+ Create an item with that code and will automatically render in the site.
+ 
+ To help you guess what CODES are available in any screen, I added a list of requested CODES to the debug
+ screen I mention before. Just write 'debug' and press ENTER anywhere in the site. Press ENTER again to hide it.
+ 
+ Let me know if you have problems to add text to the site.
+ And please backup the CODE and text of every item you add in excel or somewhere because are being stored in the dev database.
+ 
+ 
+ 
+ 
 
 
 
