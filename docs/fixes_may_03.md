@@ -15,3 +15,8 @@
     Clicking ADD adds a new row to select a file. Clicking the upload icon will upload the file
     and save the diag again. 
     After the save proccess, you can press the ADD button again to add another file row.
+    
+###The colored background block on home page wich change color for each diag, could have the same width as the booking block above
+ - DONE
+
+

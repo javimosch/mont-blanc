@@ -571,6 +571,19 @@ app.controller('ctrl.booking', ['server',
             if (d.ok && d.result.length > 0) s.settings = d.result[0];
         });
 
+        db.ctrl('Text', 'getAll', {}).then(d => {
+            s.__texts = d.result;
+            s.__texts.forEach(function(item) {
+               s.__text = s.__text || {};
+               s.__text[item.code] = window.decodeURIComponent(item.content);
+            });
+        });
+       
+        s.htmlReplaceDiagName = function(str){
+            var code = str.replace('$NAME',s.diagSelected.name).toUpperCase();
+            return s.__text && s.__text[code] || code;
+        }
+
 
         function orderPaid() {
             return _.includes($D.ORDER_STATUS_PAID, s._order.status);

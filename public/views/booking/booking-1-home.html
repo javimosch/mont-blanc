@@ -17,8 +17,10 @@
                         </div>
                     </li>
                     <li>
-                        <p class="home-brandon-re-38-489">
-                            Accédez aux calendriers en live des diagnostiqueurs immobiliers certifiés, disponibles, au bon prix*
+                        <p class="home-brandon-re-38-489" bind-html-compile="__text.BOOKING_HOME_BG_TEXT_1">
+                            <!-- 'Accédez aux calendriers en live des diagnostiqueurs immobiliers certifiés, disponibles, au bon prix*'
+                            -->
+                            
                         </p>
                     </li>
                 </ul>
@@ -82,35 +84,41 @@
                 </ul>
             </div>
             <div class="table-row">
-                <h2 class="diags black">
-                    {{homeOneTitle()||"Diagnostic de Performance Énergétique"}}
+                <h2 class="diags black"
+                bind-html-compile="htmlReplaceDiagName('BOOKING_$NAME_BLOCK_LEFT_TITLE')"
+                >
+                    
                 </h2>
             </div>
             <div class="diags-pill-success"></div>
             <div class="padding-top-three padding-bottom-four">
-                <p class="avenir-book fnt-18">
-                    {{homeOneContent()|| "Il est un des documents faisant partie du dossier de diagnostics techniques (DDT)1. La durée de validité de ce DPE a été fixée à dix ans par le décret no2011-413 du 13 avril 2011. Le DPE doit être présenté lors de la vente ou location
-                    des logements et des bâtiments tertiaires (bureaux, hôtel, etc.) depuis le 1er juillet 2007. Il doit être à présent réalisé avant la mise en vente ou en location. Il vise à informer le propriétaire et le locataire de la consommation
-                    d'énergie du logement ou du bâtiment tertiaire sur son chauffage, sa climatisation, sa production d'eau chaude sanitaire (ECS), mais pas sur l'électricité spécifique (éclairage, appareils électroménagers, etc.)."}}
+                <p class="avenir-book fnt-18" 
+                bind-html-compile="htmlReplaceDiagName('BOOKING_$NAME_BLOCK_LEFT_CONTENT')"
+                >
+                   
                 </p>
             </div>
         </div>
         <div class="col-md-5">
             <div ng-class="diagRightClass()">
-                <div class="avenir-book fnt-32 white">
-                    {{homeTwoTitle()||"Il doit comporter quatre sections :"}}
+                <div class="avenir-book fnt-32 white"
+                bind-html-compile="htmlReplaceDiagName('BOOKING_HOME_$NAME_BLOCK_RIGHT_TITLE')"
+                >
+                    
 
                 </div>
-                <p class="avenir-book fnt-18 white padding-top-two">
-                    {{homeTwoContent()||"Consommation annuelle d'énergie exprimée en kWh et en euros ; Positionnement en consommation d'énergie / m2 / an et en émission de gaz à effet de serre (GES) / m2 / an ; Descriptif des données clefs : isolation et constitution murs,
-                    toiture, fenêtres, chaudière, etc. ;"}}
+                <p class="avenir-book fnt-18 white padding-top-two"
+                bind-html-compile="htmlReplaceDiagName('BOOKING_HOME_$NAME_BLOCK_RIGHT_CONTENT')"
+                >
+                  
 
                 </p>
             </div>
             <div class="diag-dialog-right-transparent margin-top-three">
-                <p class="avenir-book fnt-18 black">
-                    {{homeThreeContent()||"Descriptif des propositions d'amélioration. Il faut compter 30 à 120 minutes pour la réalisation d'un diagnostic énergétique de manière correcte. Le temps d'intervention dépend en partie de la surface du bien à expertiser, du nombre
-                    de pièces et de l'accès aux informations."}}
+                <p class="avenir-book fnt-18 black"
+                bind-html-compile="htmlReplaceDiagName('BOOKING_HOME_$NAME_BLOCK_BOTTOM')"
+                >
+                    
                 </p>
             </div>
         </div>

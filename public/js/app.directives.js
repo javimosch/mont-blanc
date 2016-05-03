@@ -4,6 +4,22 @@
 /*global $*/
 var app = angular.module('app.directives', []);
 
+
+app.directive("bindHtmlCompile", ["$compile", function(compile) {
+    return {
+        restrict: "A",
+        link: function(s, el, attrs) {
+            s.$watch(function() {
+                return s.$eval(attrs.bindHtmlCompile)
+            }, function(e) {
+                el.html(e && e.toString());
+                var f = s;
+                attrs.bindHtmlScope && (f = s.$eval(attrs.bindHtmlScope)), compile(el.contents())(f)
+            })
+        }
+    }
+}]);
+
 app.directive('tableFilter', function(
     $rootScope, $timeout, $compile, $templateRequest, $sce, tpl) {
     return {
@@ -661,8 +677,8 @@ app.directive('notify', function($rootScope, $timeout) {
         link: function(scope, elem, attrs) {
             var r = $rootScope;
             var s = scope;
-            
-           // console.log('notify-directive');
+
+            // console.log('notify-directive');
 
             if (s.settings && typeof s.settings == 'string') {
                 var fixedJSON = s.settings.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": ');
@@ -717,11 +733,11 @@ app.directive('notify', function($rootScope, $timeout) {
                 if (_.includes(['alert-info', 'alert-success'], s.type)) r.dom(scope.dismiss, 2000);
                 if (_.includes(['alert-danger', 'alert-warning'], s.type)) r.dom(scope.dismiss, 10000);
             }
-            
-            if(s.settings.scroll==true){
+
+            if (s.settings.scroll == true) {
                 r.dom($U.scrollToTop);
             }
-            
+
         }
     };
 });
@@ -871,13 +887,13 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
                     }, timeout);
                 }
             };
-            
-            if(s.directive == 'notify'){
+
+            if (s.directive == 'notify') {
                 r.notify = s.add;
                 r.message = s.add;
                 //console.log('notify-directive-added-to-rootscope');
             }
-            
+
             window.ss = s;
             //console.log('directive:my-alerts:linked');
         }

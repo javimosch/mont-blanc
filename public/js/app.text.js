@@ -10,29 +10,56 @@
     app.controller('ctrl-text-edit', ['server', '$scope', '$rootScope', '$routeParams', 'focus',
         function(db, s, r, params) {
             //
+            $U.expose('s', s);
+            //
             s.item = {
                 code: '',
                 description: '',
                 content: ''
             };
-            
-            s.save = function(){
-                if(!s.item.code) return r.warningMessage('Code required');
-                db.ctrl('Text','save',s.item).then(function(){
+            check(); //checks when the wysing lib is ready and init the components.
+            //
+            s.read = function() {
+                    db.ctrl('Text', 'get', {
+                        _id: s.item._id
+                    }).then(function(res) {
+                        if (res.ok) {
+                            s.item = res.result;
+                            s.editor.setHTML(window.decodeURIComponent(s.item.content));
+                        }
+                        else {
+                            r.warningMessage('Server issue while reading item. Try later.');
+                        }
+                    })
+                }
+                //
+            s.save = function() {
+                if (!s.item.code)           return r.warningMessage('Code required');
+                if (!s.item.description)    return r.warningMessage('Description required');
+                //
+                db.ctrl('Text', 'save', s.item).then(function() {
                     r.route('texts');
                 });
             };
-            s.delete = function(){
-              s.confirm('Delete '+s.item.code+' ?',function(){
-                  db.ctrl('Text','remove',{
-                      _d:s.item._id
-                  });
-              });
+            s.delete = function() {
+                s.confirm('Delete ' + s.item.code + ' ?', function() {
+                    db.ctrl('Text', 'remove', {
+                        _d: s.item._id
+                    });
+                });
             };
 
-            r.dom(function() {
+            function check() {
+                if (typeof window.Quill !== 'undefined') {
+                    r.dom(init, 2000);
+                }
+                else setTimeout(check, 100);
+            }
 
-                var editor = new Quill('#editor', {
+            //
+
+            function init() {
+                s.editor = new Quill('#editor', {
                     styles: {
                         '.ql-editor': {
                             'font-family': "'Avenir-Book'"
@@ -47,15 +74,21 @@
                     theme: 'snow'
                 });
 
-                editor.on('text-change', function(delta, source) {
-                    var text = editor.getText();
-                    s.item.content = window.encodeURIComponent(text);
+                s.editor.on('text-change', function(delta, source) {
+                    var html = s.editor.getHTML();
+                    s.item.content = window.encodeURIComponent(html);
                 });
-                
-                editor.setText(s.item.content);
 
-            }, 2000);
-            //
+
+
+                if (params && params.id && params.id.toString() !== '-1') {
+                    s.item._id = params.id;
+                    r.dom(s.read, 0);
+                }
+                else {
+
+                }
+            }
         }
     ]);
 
