@@ -966,13 +966,16 @@ h2.diags.black {
 
 
 /*.diags-form */
-
+.diags-label-horizontal{
+    line-height: 48px!important;
+}
 .diags-input {
     width: 286px;
     height: 48px;
     background-color: #EDF5F9;
     box-shadow: none;
-    border: 1px solid #C6DEE8;
+    border: 1px solid #C6DEE8!important;
+    border-bottom: 1px solid #C6DEE8!important;
     font-family: 'Avenir-Oblique';
     color: #8597AB;
     font-size: 14px;

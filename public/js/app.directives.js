@@ -43,7 +43,7 @@ app.directive('tableFilter', function(
             var filter = s.model.filter.template || '<h5>tableFilter requires filter.template</h5>'
             r.dom(() => {
                 var el = tpl.compile(filter, s);
-                console.info('tableFilter', s.model.filter, el);
+              //  console.info('tableFilter', s.model.filter, el);
                 elem.replaceWith(el);
 
 
@@ -67,29 +67,30 @@ app.directive('tableFilter', function(
                 storeSet();
                 if (s.model.filter && s.model.filter.update) s.model.filter.update();
             }
-            
-            s.model.filter.clear = function(){
+
+            s.model.filter.clear = function() {
                 s.model.filter.payload = {};
                 for (var x in s.model.filter.fields) {
-                    s.model.filter.fields[x]='';
+                    s.model.filter.fields[x] = '';
                 }
                 storeSet();
-                s.model.filter.update();//clear filters and search
+                s.model.filter.update(); //clear filters and search
             };
-            
-            s.model.filter.firstTime = function(){
+
+            s.model.filter.firstTime = function() {
                 storeGet();
-                s.model.filter.update();//search with store filters (or none).
+                s.model.filter.update(); //search with store filters (or none).
             }
-            
-            function storeSet(){
-                if(s.model.filter.store){
-                     $U.store.set('filter_'+s.model.filter.store+"_"+r.session()._id,s.model.filter.payload);
+
+            function storeSet() {
+                if (s.model.filter.store) {
+                    $U.store.set('filter_' + s.model.filter.store + "_" + r.session()._id, s.model.filter.payload);
                 }
             }
-             function storeGet(){
-                if(s.model.filter.store){
-                     s.model.filter.payload = $U.store.get('filter_'+s.model.filter.store+"_"+r.session()._id);
+
+            function storeGet() {
+                if (s.model.filter.store) {
+                    s.model.filter.payload = $U.store.get('filter_' + s.model.filter.store + "_" + r.session()._id);
                 }
             }
 
@@ -108,7 +109,7 @@ app.directive('tableFilter', function(
                 var fields = {};
                 for (var x in s.model.filter.fields) {
                     if (x.charAt(0) == '_') {
-                        if(s.model.filter.fields[x]){
+                        if (s.model.filter.fields[x]) {
                             fields[x] = s.model.filter.fields[x];
                         }
                     }
@@ -1145,11 +1146,16 @@ app.directive('dynamicTable', function(
                     s.data = data;
                 }
             };
+
+            s.model.columnFilter = function(item) {
+                return item.disabled == undefined || !item.disabled == true;
+            };
+
             if (s.model.init) {
                 s.model.init();
             }
             s.model.itemsOriginalRef = s.model.items;
-            expose('table', s);
+            $U.expose('table', s);
         }
     };
 });

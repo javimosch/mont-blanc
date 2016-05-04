@@ -6,7 +6,7 @@
             <thead>
                 <tr>
                     <th ng-if="model.remove"></th>
-                    <th ng-repeat="c in columns" ng-class="c.labelCls&&c.labelCls()||{}">{{c.label||c}}</th>
+                    <th ng-repeat="c in columns | filter: model.columnFilter || { disabled: undefined }" ng-class="c.labelCls&&c.labelCls()||{}">{{c.label||c}}</th>
                 </tr>
             </thead>
             <!--ng-click="!hasMouse && console.log(hasMouse)"-->
@@ -23,7 +23,7 @@
                         <i class="fa fa-times"></i>
                     </td>
                     
-                    <td  ng-repeat="c in columns" 
+                    <td  ng-repeat="c in columns | filter: model.columnFilter || { disabled: undefined }" 
                         ng-class="{link:true,'text-left':c.align==='left','text-right':c.align==='right','text-center':c.align==='center'}"
                      >
                         <out ng-if="!c.format" html-content html="item[c.name||c]"></out>

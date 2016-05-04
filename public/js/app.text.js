@@ -165,7 +165,7 @@
                         }*/
 
                         data = Object.assign(data, s.model.filter.payload);
-                        console.info('filter-payload', s.model.filter.payload);
+                        //console.info('filter-payload', s.model.filter.payload);
 
                         dbPaginate.ctrl(data, s.model).then(res => {
                             if (cb) {
@@ -238,6 +238,7 @@
                         }
                     }, {
                         label: 'Edit',
+                        disabled:true,
                         name: 'updatedAt',
                         format: (v, item) => {
                             return '<i class="fa fa-pencil-square-o link" ng-click="model.editItem(item)" aria-hidden="true"></i>';
@@ -247,6 +248,7 @@
                         var win = window.open(window.location.origin+"/admin#/texts/edit/"+item._id, '_blank');
                         //win.focus();
                     },
+                    
                     items: [],
                     records: {
                         label: 'Records',
