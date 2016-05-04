@@ -97,7 +97,7 @@
                 <div class="diags-payment-info inline-flex">
                     <span class="avenir-medium fnt-30 line-60 middle sky-blue padding-02em">*</span>
                     <span class="avenir-medium fnt-16 line-60 middle violet">
-                        Paiement simplifié et sécurisé (PCI 1, le niveau le plus élevé) avec Stripe 
+                        <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
                     </span>
                 </div>
                 <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 sm-float-right" ng-click="proceedToDateSelection()">Prendre un rendez-vous</button>

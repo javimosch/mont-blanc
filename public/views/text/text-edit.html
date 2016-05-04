@@ -4,9 +4,13 @@
     /*global $*/
     if(typeof window.Quill == 'undefined'){
         $.getScript( "https://cdn.quilljs.com/latest/quill.js" );
-    }else{
-        //console.log('quill-detected');
     }
+    
+    if(typeof window.tinymce == 'undefined'){
+        $.getScript( "https://cdn.tinymce.com/4/tinymce.min.js" );
+    }
+    
+    
 </script>
 
 
@@ -48,9 +52,11 @@
             <div class="row  margin-top-half">
                 <input ng-disabled="state.working()" ng-model="item.description" class="diags-input" placeholder="Description">
             </div>
+            
+            <!--
             <div class="row margin-top-one">
                 <div id="toolbar">
-                    <!-- Add font size dropdown -->
+                    
                     <select class="ql-size">
                         <option value="10px">Small</option>
                         <option value="13px" selected>Normal</option>
@@ -113,7 +119,8 @@
 
                 </div>
             </div>
-            <div class="row margin-top-half">
+            -->
+            <div class="row margin-top-one">
                 <div id="editor" class="diags-rich-text-editor">
                     <p></p>
                 </div>

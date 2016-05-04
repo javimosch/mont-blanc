@@ -4,6 +4,7 @@
 /*global _*/
 /*global app*/
 /*global Quill*/
+/*global tinymce*/
 (function() {
 
 
@@ -45,7 +46,8 @@
                     }).then(function(res) {
                         if (res.ok) {
                             s.item = res.result;
-                            s.editor.setHTML(window.decodeURIComponent(s.item.content));
+                            // s.editor.setHTML(window.decodeURIComponent(s.item.content));
+                            tinymce.activeEditor.setContent(window.decodeURIComponent(s.item.content));
                         }
                         else {
                             r.warningMessage('Server issue while reading item. Try later.');
@@ -59,6 +61,7 @@
                 if (!s.item._category) return r.warningMessage('Page Section required');
                 //
                 s.item.updatedByHuman = true;
+                s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
                 db.ctrl('Text', 'save', s.item).then(function() {
                     r.route('texts');
                 });
@@ -74,7 +77,7 @@
 
 
             function check() {
-                if (typeof window.Quill !== 'undefined') {
+                if (typeof window.tinymce !== 'undefined') {
                     r.dom(init);
                 }
                 else setTimeout(check, 100);
@@ -82,7 +85,7 @@
 
             //
 
-            function init() {
+            function initQuill() {
                 s.editor = new Quill('#editor', {
                     styles: {
                         '.ql-editor': {
@@ -102,7 +105,37 @@
                     var html = s.editor.getHTML();
                     s.item.content = window.encodeURIComponent(html);
                 });
+            }
 
+            function initTinyMCE() {
+
+                if (typeof(window.tinyMCE) !== 'undefined') {
+                    var length = window.tinyMCE.editors.length;
+                    for (var i = length; i > 0; i--) {
+                        window.tinyMCE.editors[i - 1].remove();
+                    };
+                }
+
+                tinymce.init({
+                    selector: '#editor',
+                    theme: 'modern',
+                    //width: 600,
+                    height: 300,
+                    plugins: [
+                        'autoresize',
+                        'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+                        'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+                        'save table contextmenu directionality emoticons template paste textcolor'
+                    ],
+                    content_css: 'css/diags.design.css',
+                    toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
+                });
+
+            }
+
+            function init() {
+                //initQuill();
+                initTinyMCE();
 
 
                 if (params && params.id && params.id.toString() !== '-1') {
@@ -183,7 +216,7 @@
                         s.model.filter.firstTime();
                     },
                     filter: {
-                        store:"TEXTS_LIST",
+                        store: "TEXTS_LIST",
                         template: 'textsFilter',
                         update: update,
                         rules: {
@@ -238,17 +271,17 @@
                         }
                     }, {
                         label: 'Edit',
-                        disabled:true,
+                        disabled: true,
                         name: 'updatedAt',
                         format: (v, item) => {
                             return '<i class="fa fa-pencil-square-o link" ng-click="model.editItem(item)" aria-hidden="true"></i>';
                         }
                     }],
                     editItem: (item) => {
-                        var win = window.open(window.location.origin+"/admin#/texts/edit/"+item._id, '_blank');
+                        var win = window.open(window.location.origin + "/admin#/texts/edit/" + item._id, '_blank');
                         //win.focus();
                     },
-                    
+
                     items: [],
                     records: {
                         label: 'Records',
