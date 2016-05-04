@@ -206,7 +206,7 @@
             if (moment().isAfter(moment().hour(13).minutes(0))) {
                 var fixed = moment().add(1, 'hour');
                 //the limit were a fixed slot can start during the afternoon is 19h00 minus the order time.
-                var limit = moment().hours(19).minutes(00).subtract(order.time.hours, 'hours').subtract(order.time.minutes, 'minutes');
+                var limit = moment().hours(19).minutes(0).subtract(order.time.hours, 'hours').subtract(order.time.minutes, 'minutes');
                 //
                 if (fixed.isBefore(limit)) {
                     var minutes = parseInt(parseInt(fixed.minutes()) / 10, 10) * 10;
