@@ -1,4 +1,0 @@
-<div class="form-group">
-    <label>Diagnostiquer</label>
-    <input ng-disabled="state.working() || item._id" type="text" class="form-control" ng-model="item._diag" placeholder="Diag" uib-typeahead="diag as diag.email for diag in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingDiags" typeahead-no-results="noResults">
-</div>

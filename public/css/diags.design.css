@@ -64,6 +64,21 @@ body {
     padding: 0px;
 }
 
+body,
+html {
+    height: 100%;
+}
+
+#wrapper {
+    min-height: 100%;
+    padding-bottom: 140px;
+}
+
+#footer {
+    height: 110px;
+    margin-top: -110px;
+}
+
 .booking-descr-title {
     font-family: 'Open Sans', sans-serif;
     color: #5EE5AB;
@@ -622,13 +637,15 @@ ul.diags li:first-child {
     margin: 0px 25px 25px 0px;
 }
 
-h2.diags, h2.diags > div {
+h2.diags,
+h2.diags > div {
     font-family: 'Avenir-Book';
     font-size: 36px;
     padding-bottom: 33px;
 }
 
-h2.diags.black, h2.diags.black > div {
+h2.diags.black,
+h2.diags.black > div {
     color: black;
 }
 
@@ -964,21 +981,34 @@ h2.diags.black, h2.diags.black > div {
     padding-top: 10px;
 }
 
-.home-title-right, .home-title-right > div{
-    font-family:'Avenir-Book';
-    font-size:32px;
-    color:white;
+.home-title-right,
+.home-title-right > div {
+    font-family: 'Avenir-Book';
+    font-size: 32px;
+    color: white;
 }
 
-.diags-crud-buttons-col{
- 
+.diags-crud-buttons-col {}
+
+.diag-no-selected {
+    text-decoration: line-through;
 }
 
 
 /*.diags-form */
-.diags-label-horizontal{
+
+.diags-label-horizontal {
     line-height: 48px!important;
 }
+
+.questions td label {
+    width: 30%;
+}
+
+.questions td input {
+    max-width: 240px;
+}
+
 .diags-input {
     width: 286px;
     height: 48px;
@@ -991,6 +1021,18 @@ h2.diags.black, h2.diags.black > div {
     font-size: 14px;
     padding: 0px 26px;
     border-radius: 5px;
+}
+
+label.minimal {
+    font-weight: bold;
+    padding: 0px;
+    margin: 0px;
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+.diags-input.minimal {
+    height: 23px;
 }
 
 .diags-form .diags-select {
@@ -1140,10 +1182,10 @@ p.stripe-home-message > span {
     font-family: 'Avenir-Medium';
 }
 
-.diags-rich-text-editor{
+.diags-rich-text-editor {
     border: 1px solid #C6DEE8;
     background-color: #EDF5F9;
-        border-radius: 5px;
+    border-radius: 5px;
 }
 
 p.stripe-home-message {

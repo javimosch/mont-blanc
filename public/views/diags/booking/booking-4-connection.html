@@ -1,0 +1,105 @@
+<div class="diags-bg">
+    <div class="diags-content container diags-selection padding-none">
+        <div class="row diags-bg-block-40 hidden-xs"></div>
+        <div class="row diag-row padding-top-one margin-bottom-half">
+            <div class="col-sm-12 ">
+                <div class='row'>
+                    <div class="col-sm-3">
+                        <div class="booking-phase">
+                            1.Choisir vos diagnostics
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="booking-phase link" ng-click="route(URL.RDV)">
+                            2.Prendre RDV
+                        </div>
+                    </div>
+                    <div class="col-sm-3 ">
+                        <div class="booking-phase active ">
+                            3.Connexion
+                        </div>
+                    </div>
+                    <div class="col-sm-3 ">
+                        <div class="booking-phase">
+                            4.Paiement
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row diag-row">
+            <div class="col-xs-12 col-sm-12 col-md-6 ">
+                <div class="row-fluid diags-form-wrapper left">
+                    <div class="diags-form">
+                        <div class="row">
+                            <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Connexion</span></i>
+                        </div>
+                        <div class="row margin-top-quarter">
+                            <p class="label">Vous avez déjà passé commande</p>
+                        </div>
+                        <div class="row margin-top-one">
+                            <input ng-model="auth.email" type="email" class="diags-input" placeholder="Adresse email">
+                        </div>
+                        <div class="row margin-top-half">
+                            <input type="password" ng-model="auth.pass" class="diags-input" placeholder="Mot de passe">
+                        </div>
+                        <div class="row margin-top-one">
+                            <a class="diags-link text-center">Mot de passe oublié ?</a>
+                        </div>
+                        <div class="row margin-top-one">
+                            <button  ng-click="login()" class="btn btn-xl bg-madison">Connexion</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-6">
+                <div class="row-fluid diags-form-wrapper right">
+                    <div class="diags-form">
+                        <div class="row">
+                            <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Inscription</span></i>
+                        </div>
+                        <div class="row margin-top-quarter">
+                            <p class="label">C’est la première fois que vous passez commande</p>
+                        </div>
+                        <div class="row margin-top-one">
+                            <input type="email" ng-model="auth.email" class="diags-input" placeholder="Adresse email">
+                        </div>
+                        <div class="row margin-top-half">
+                            <input ng-model="auth.pass" type="password" class="diags-input" placeholder="Mot de passe">
+                        </div>
+                        <div class="row margin-top-two">
+                            <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">S’inscrire en tant que </span></i>
+                        </div>
+                        <div class="row margin-top-one">
+                            <button ng-click="subscribeModeBooking('landlord')" class="btn btn-xl bg-azure-radiance">Propriéraire</button>
+                        </div>
+                        <div class="row margin-top-half">
+                            <button ng-click="subscribeModeBooking('agency')" class="btn btn-xl bg-pomegranate">Agence immobilière</button>
+                        </div>
+                        <div class="row margin-top-half">
+                            <button ng-click="subscribeModeBooking('other')" class="btn btn-xl bg-blaze-orange">Autre entreprise</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row diag-row margin-top-three padding-bottom-two">
+            <div class="col-md-12 ">
+                <div ng-include="'views/diags/booking/partials/booking-diags-icons.html'" includeReplace></div>
+            </div>
+        </div>
+        <div class="row diag-row margin-top-one padding-bottom-two">
+            <div class="col-md-12 ">
+                <p class="stripe-message"><span class="fnt-30 text-top">*</span> 
+                <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
+                </p>
+            </div>
+        </div>
+        <div class="row diags-bg-block-40 hidden-xs"></div>
+    </div>
+</div>

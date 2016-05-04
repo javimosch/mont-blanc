@@ -1083,7 +1083,7 @@ app.directive('dynamicTable', function(
         scope: {
             model: "=model"
         },
-        templateUrl: 'views/partials/partials.table.html',
+        templateUrl: 'views/common/partials/dynamic-table.html',
         link: function(s, elem, attrs) {
             var r = $rootScope;
 

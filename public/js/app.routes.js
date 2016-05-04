@@ -8,107 +8,107 @@ srv.config(['$routeProvider',
         
         //SHARED
         when('/mentions-legales', {
-            templateUrl: 'views/legal-mentions.html'
+            templateUrl: 'views/diags/legal-mentions.html'
         }).
         when('/conditions-generales-utilisation', {
-            templateUrl: 'views/general-conditions.html'
+            templateUrl: 'views/diags/general-conditions.html'
         }).
         when('/ernt', {
-            templateUrl: 'views/ernt.html'
+            templateUrl: 'views/diags/ernmt.html'
         }).
         when('/faq', {
-            templateUrl: 'views/faq.html'
+            templateUrl: 'views/diags/faq.html'
         }).
         when('/contactez-nous', {
-            templateUrl: 'views/contact-us.html'
+            templateUrl: 'views/diags/contact-us.html'
         }).
         
         //PUBLIC
         when('/login', {
-            templateUrl: 'views/public/login.html'
+            templateUrl: 'views/diags/login.html'
         }).
         when('/diag-inscription', {
-            templateUrl: 'views/public/diag-inscription.html'
+            templateUrl: 'views/diags/diag-inscription.html'
         }).
         
         //PRIVATE
         when('/', {
-            templateUrl: 'views/dashboard.html'
+            templateUrl: 'views/diags/backoffice/dashboard.html'
         }).
         when('/dashboard', {
-            templateUrl: 'views/dashboard.html'
+            templateUrl: 'views/diags/backoffice/dashboard.html'
         }).
         when('/global-calendar', {
-            templateUrl: 'views/global-calendar.html'
+            templateUrl: 'views/diags/backoffice/global-calendar.html'
         }).
 
         when('/settings', {
-            templateUrl: 'views/settings.html'
+            templateUrl: 'views/diags/backoffice/settings/settings.html'
         }).
 
         when('/notifications', {
-            templateUrl: 'views/notifications.html'
+            templateUrl: 'views/diags/backoffice/notification/notification-list.html'
         }).
 
         when('/logs', {
-            templateUrl: 'views/logs.html'
+            templateUrl: 'views/diags/backoffice/log/logs.html'
         }).
         when('/logs/edit/:id', {
-            templateUrl: 'views/logs.edit.html'
+            templateUrl: 'views/diags/backoffice/log/logs.edit.html'
         }).
 
         when('/administrators', {
-            templateUrl: 'views/admins.html'
+            templateUrl: 'views/diags/backoffice/admin/admins.html'
         }).
         when('/administrators/edit/:id', {
-            templateUrl: 'views/admin.edit.html'
+            templateUrl: 'views/diags/backoffice/admin/admin.edit.html'
         }).
 
         when('/exceptions', {
-            templateUrl: 'views/exception.list.html'
+            templateUrl: 'views/diags/backoffice/exception/exception.list.html'
         }).
         when('/exceptions/edit/:id', {
-            templateUrl: 'views/exception.edit.html'
+            templateUrl: 'views/diags/backoffice/exception/exception.edit.html'
         }).
         
          when('/texts', {
-            templateUrl: 'views/text/text-list.html'
+            templateUrl: 'views/diags/backoffice/text/text-list.html'
         }).
         when('/texts/edit/:id', {
-            templateUrl: 'views/text/text-edit.html'
+            templateUrl: 'views/diags/backoffice/text/text-edit.html'
         }).
 
         when('/clients', {
-            templateUrl: 'views/clients.html'
+            templateUrl: 'views/diags/backoffice/client/clients.html'
         }).
         when('/clients/edit/:id', {
-            templateUrl: 'views/client.edit.html'
+            templateUrl: 'views/diags/backoffice/client/client.edit.html'
         }).
 
         when('/tools', {
-            templateUrl: 'views/tools.html'
+            templateUrl: 'views/diags/backoffice/tools.html'
         }).
         when('/tools/termites-check', {
-            templateUrl: 'views/tools.termites-check.html'
+            templateUrl: 'views/diags/backoffice/tools.termites-check.html'
         }).
 
         when('/diag/balance', {
-            templateUrl: 'views/diag-balance.html'
+            templateUrl: 'views/diags/backoffice/diag/diag-balance.html'
         }).
         when('/diags', {
-            templateUrl: 'views/diags.html'
+            templateUrl: 'views/diags/backoffice/diag/diags.html'
         }).
         when('/diags/edit/:id', {
-            templateUrl: 'views/diag.edit.html'
+            templateUrl: 'views/diags/backoffice/diag/diag.edit.html'
         }).
         when('/orders', {
-            templateUrl: 'views/orders.html'
+            templateUrl: 'views/diags/backoffice/order/orders.html'
         }).
         when('/orders/edit/:id', {
-            templateUrl: 'views/order.edit.html'
+            templateUrl: 'views/diags/backoffice/order/order.edit.html'
         }).
         when('/orders/view/:id', {
-            templateUrl: 'views/order.view.html'
+            templateUrl: 'views/diags/backoffice/order/order.view.html'
         }).
         otherwise({
             redirectTo: '/'

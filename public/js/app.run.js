@@ -14,8 +14,6 @@ app.config(['$httpProvider', function($httpProvider) {
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
 }]);
 
-
-
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     //    console.info('app.admin:run');
     //TOGGLES A FLAG WRITING DEBUG ANYWHERE IN THE SITE.
@@ -45,6 +43,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     //    console.info('app.admin:run');
 
+    r.isDevEnv = () => window.location.hostname.indexOf('diags-javoche.c9users.io') !== -1;
+    
     r.URL = {
         LOGIN: 'login',
         DIAG_SIGN_UP: 'diag-inscription',
@@ -320,7 +320,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     });
 
     r.userIs = (arr) => {
-        if(!r.logged()) return false;
+        if (!r.logged()) return false;
         var type = r.session().userType;
         if (typeof arr === 'string') arr = [arr];
         return _.includes(arr, type);
@@ -351,4 +351,9 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     });
 
 
+}]);
+
+
+app.run(['server', '$timeout', '$rootScope', "dbText", function(db, $timeout, r, dbText) {
+    dbText.update(); //at app start.
 }]);

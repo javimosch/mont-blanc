@@ -60,8 +60,8 @@
                         },
                         items: ['month', 'year']
                     }),
-                    buttonsTpl: 'views/partials/partial.diag.balance.buttons.html',
-                    tfoot: 'views/partials/partial.diag.balance.footer.html',
+                    buttonsTpl: 'views/diags/backoffice/partials/diag-balance-buttons.html',
+                    tfoot: 'views/diags/backoffice/partials/diag-balance-footer.html',
                     click: (item, index) => {
                         var data = {};
                         ws.localData().then(function(d) {
@@ -83,7 +83,7 @@
                                     'init': []
                                 },
                                 item: item,
-                                templateUrl: 'views/partials/partial.modal.balance.details.html',
+                                templateUrl: 'views/diags/backoffice/partials/admin-balance-details.html',
                                 callback: (item) => {}
                             });
                         }

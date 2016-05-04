@@ -1,0 +1,65 @@
+<div class="diags-bg">
+    <div class="diags-content container diags-selection padding-none">
+        <div class="row diags-bg-block-40 hidden-xs"></div>
+        <div class="row diag-row padding-top-one">
+            <div class="col-sm-12 ">
+                <div class='row'>
+                    <div class="col-sm-3">
+                        <div class="booking-phase link" ng-click="route(URL.DIAGS)">
+                            1.Choisir vos diagnostics
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="booking-phase active">
+                            2.Prendre RDV
+                        </div>
+                    </div>
+                    <div class="col-sm-3 ">
+                        <div class="booking-phase">
+                            3.Connexion
+                        </div>
+                    </div>
+                    <div class="col-sm-3 ">
+                        <div class="booking-phase">
+                            4.Paiement
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row diag-row margin-top-one">
+            <div class="col-md-12 ">
+                <i class="fa fa-chevron-right fnt-18"><span class="medium18">Sélectionnez un rendez-vous avec un de nos diagnostiqueurs certifiés</span></i>
+            </div>
+        </div>
+
+
+        <div class="row diag-row margin-top-one">
+            <div class="col-md-12">
+                <div ng-include="'views/diags/booking/partials/booking-3-dates.html'" includeReplace></div>
+            </div>
+        </div>
+
+        <div class="row diag-row margin-top-one">
+            <div class="col-md-12 ">
+                <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 center" 
+                ng-disabled="state.working() || slotsDays.nextIsDisabled()"
+                ng-click="slotsDays.next()"
+                >Créneau suivant</button>
+            </div>
+        </div>
+
+        <div class="row diag-row margin-top-one padding-bottom-two">
+            <div class="col-md-12 ">
+                <p class="stripe-message"><span class="fnt-30 text-top">*</span> 
+                <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out></p>
+            </div>
+        </div>
+        <div class="row diag-row margin-top-one padding-bottom-two">
+            <div class="col-md-12 ">
+                <div ng-include="'views/diags/booking/partials/booking-diags-icons.html'" includeReplace></div>
+            </div>
+        </div>
+        <div class="row diags-bg-block-40 hidden-xs"></div>
+    </div>
+</div>

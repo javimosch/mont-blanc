@@ -1,0 +1,284 @@
+<div class="row margin-top-one" ng-show="item._id">
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="row margin-top-one">
+            <label class="unselectable">Description</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input class="diags-input minimal fullwidth" ng-disabled="true" ng-value="item.info.description">
+        </div>
+    </div>
+</div>
+
+<div class="row margin-top-one">
+    <div class="col-xs-12 col-sm-12 col-md-6">
+        <div class="row margin-top-half">
+            <label class="unselectable">Client</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="state.working() || item._id" type="text" class="diags-input" ng-model="item._client" placeholder="Client" uib-typeahead="client as client.email for client in getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading clients. . .'"
+            typeahead-no-results="noResults">
+        </div>
+        <div class="row margin-top-half">
+            <label class="unselectable">Diag Man</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="state.working() || item._id" type="text" class="diags-input" ng-model="item._diag" placeholder="Diag" uib-typeahead="diag as diag.email for diag in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingDiags||'Loading diags...'"
+            typeahead-no-results="noResults">
+        </div>
+        <div class="row margin-top-half">
+            <label class="unselectable">Adresse</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="state.working() || item._id" class="diags-input" data-address model="item" field="address" city="city" department="department" region="region" country="country" post-code="postCode" type="text" placeholder="Ex: 102 rue Réaumur 75002 Paris, France">
+        </div>
+
+        <div class="row margin-top-half">
+            <label class="unselectable">Questions</label>
+        </div>
+        <div class="row margin-top-quarter" ng-show="item._id">
+            <table class="table table-striped table-condensed unselectable questions">
+                <tr ng-repeat="(k,o) in item.info" ng-class="{'diag-no-selected':!o,link:true}" class="unselectable" ng-show="infoItemShow(o)">
+                    <td ng-bind="k"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="minimal">Size</label>
+                        <input class="diags-input minimal" ng-value="item.info.squareMeters">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="minimal">Construction Date</label>
+                        <input class="diags-input minimal" ng-value="item.info.constructionPermissionDate">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="minimal">Gaz</label>
+                        <input class="diags-input minimal" ng-value="item.info.gasInstallation">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="minimal">Electricity</label>
+                        <input class="diags-input minimal" ng-value="item.info.electricityInstallation">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="row margin-top-quarter" ng-show="!item._id">
+            <table class="table table-striped table-condensed unselectable questions">
+                <tr ng-repeat="(k,o) in item.info" class="unselectable" ng-show="infoItemShow(o)">
+                    <td ng-bind="k" ng-class="{'diag-no-selected':!o,link:true}" ng-click=item.info[k]=!item.info[k]></td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Size</label>
+                        <select class="diags-input minimal" ng-model="item.info.squareMeters" ng-options="item as item for item in squareMeters">
+                            <option value="">Select</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Construction Date</label>
+                        <select class="diags-input minimal" ng-model="item.info.constructionPermissionDate" ng-options="item as item for item in constructionPermissionDate">
+                            <option value="">Select</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Gaz</label>
+                        <select class="diags-input minimal" ng-model="item.info.gasInstallation" ng-options="item as item for item in gasInstallation">
+                            <option value="">Select</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Electricity</label>
+                        <select class="diags-input minimal" ng-model="item.info.electricityInstallation" ng-options="item as item for item in electricityInstallation">
+                            <option value="">Select</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="row margin-top-half">
+            <label class="unselectable">Liste diags</label>
+        </div>
+        <div class="row margin-top-quarter" ng-show="item._id">
+            <table class="table table-striped table-condensed unselectable">
+                <tr ng-repeat="(k,o) in item.diags" class="unselectable" ng-show="o">
+                    <td ng-bind="k"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="row margin-top-quarter" ng-show="!item._id">
+            <table class="table table-striped table-condensed unselectable">
+                <tr ng-repeat="(k,o) in item.diags" class="unselectable">
+                    <td ng-bind="k" ng-class="{'diag-no-selected':!o,link:true}" ng-click=item.diags[k]=!item.diags[k]></td>
+                </tr>
+            </table>
+        </div>
+        <div class="row margin-top-half">
+            <label class="unselectable">Date rules</label>
+        </div>
+        <div class="">
+            <input type="text" class="diags-input" disabled ng-value="totalTimeFormated()" />
+        </div>
+        <div class="">
+            <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalTime()">Apply</button>
+        </div>
+        <div class="row margin-top-half">
+            <label class="unselectable">Date de début</label>
+        </div>
+        <div class="row margin-top-quarter relative">
+            <input ng-show="item._id" ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.diagStart)" placeholder="Adresse">
+            <input ng-show="!item._id" ng-disabled="isPaid() || state.working() || is(['client','diag'])" type="text" class="max-w-150 diags-input" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.diagStart" min-date="datepicker.minDate" max-date="datepicker.maxDate"
+            init-date="item.diagStart" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
+            <button ng-show="!item._id" ng-disabled="state.working() || is(['client','diag'])" type="button" class="btn diags-btn" ng-click="start.opened = !start.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+        </div>
+        <div class="row margin-top-half">
+            <label class="unselectable">Date end</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.diagEnd)" placeholder="Adresse">
+        </div>
+
+
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 ">
+        <div class="row margin-top-half">
+            <label class="unselectable">Propriétaire</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="state.working()" class="diags-input" ng-model="item.landLordFullName" placeholder="Propriétaire">
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="state.working()" class="diags-input" ng-model="item.landLordEmail" placeholder="Propriétaire Email">
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="state.working()" class="diags-input" ng-model="item.landLordPhone" placeholder="Propriétaire Phone">
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="state.working()" class="diags-input" data-address model="item" field="landLordAddress" placeholder="Propriétaire Addrese">
+        </div>
+        <div class="row margin-top-half">
+            <label class="unselectable">Observations</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <textarea ng-disabled="state.working()" type="text" class="diags-input fullwidth min-height-100 no-resize" ng-model="item.obs"></textarea>
+        </div>
+        <div class="row margin-top-half">
+            <label class="unselectable">Debriefing pdf file: {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||"(not available yet)"}}</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input type="file" file-model="pdfFile" ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working()" class="diags-input" placeholder="Diag Pdf">
+            <button ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working() || !pdfFile" class="margin-top-quarter btn diags-btn bg-azure-radiance" ng-click="saveFile()">Upload</button>
+            <button ng-disabled="!item.pdfId" class="margin-top-quarter btn diags-btn bg-azure-radiance" ng-click="downloadFile()">Download</button>
+            <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
+        </div>
+
+        <div class="row margin-top-half">
+            <label class="unselectable">Clés</label>
+        </div>
+        <div class="row margin-top-one">
+            <!-- KEYS WHERE -->
+            <div class="dropdown with-caret">
+                <button class="btn btn-default diags-input dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span>{{__keysWhereSelectLabel()}}</span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu diags-select" aria-labelledby="dropdownMenu1">
+                    <li ng-repeat="(k,v) in __keysWhereItems">
+                        <a class="link" ng-click="__keysWhereSelect(k,v)">{{k}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row margin-top-half">
+            <input ng-disabled="item.keysWhere!=='other'" data-address model="item" field="keysAddress" class="diags-input" placeholder="Adresse">
+        </div>
+        <div class="row margin-top-half">
+
+            <!-- KEYS TIME FROM -->
+            <div class="dropdown with-caret">
+                <button class="btn btn-default diags-input half dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span>{{__keysTimeFromSelectLabel}}</span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu diags-select" aria-labelledby="dropdownMenu1">
+                    <li ng-repeat="(k,v) in __keysTimeFromItems">
+                        <a class="link" ng-click="__keysTimeFromSelect(k,v)">{{k}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row margin-top-half">
+            <!-- KEYS TIME TO -->
+            <div class="dropdown with-caret">
+                <button class="btn btn-default diags-input half dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span>{{__keysTimeToSelectLabel}}</span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu diags-select" aria-labelledby="dropdownMenu1">
+                    <li ng-repeat="(k,v) in __keysTimeToItems">
+                        <a class="link" ng-click="__keysTimeToSelect(k,v)">{{k}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 ">
+        <div class="row margin-top-one">
+            <label>Price Rules</label>
+            <table class="table minimal">
+                <tr ng-repeat="(k,v) in priceInfo">
+                    <td>{{k}}</td>
+                    <td>{{v}}</td>
+                </tr>
+                <tr>
+                    <td>- House size % for {{item.info.squareMeters}} is {{squareMetersPrice[item.info.squareMeters]}}%.</td>
+                    <td>Total</td>
+                </tr>
+                <tr>
+                    <td>- House size formula is {{subTotal()}}*{{squareMetersPrice[item.info.squareMeters]}}/100</td>
+                    <td ng-bind="item.price"></td>
+                </tr>
+            </table>
+            <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalPrice()">Calculate</button>
+        </div>
+        <div class="row margin-top-one">
+            <label class="unselectable">Price</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="state.working() || item._id" type="text" class="diags-input" ng-model="item.price">
+        </div>
+        <div class="row margin-top-half">
+            <label class="unselectable">Etat</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="true" type="text" class="diags-input" ng-value="item.status">
+        </div>
+    </div>
+</div>
+<div class="row margin-top-one" ng-show="item.status=='created'">
+    <div class="alert alert-info" role="alert">Admin note: An order with this status means that it was created successfuly using the booking system but it was not paid or delegated.</div>
+</div>
+<div class="row margin-top-one" ng-show="item.status=='ordered'">
+    <div class="alert alert-info" role="alert">Admin note: An order with this status means that it was created successfuly using the booking system and it was delegated to a landlord.</div>
+</div>
+<div class="row margin-top-one ">
+    <div class="col-sm-12 diags-crud-buttons-col">
+        <button ng-click="validate()" ng-disabled="state.working()" class="btn diags-btn bg-madison">Enregistrer</button>
+        <button ng-click="cancel()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance">Cancel</button>
+        <button ng-click="delete()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance">Delete</button>
+    </div>
+</div>

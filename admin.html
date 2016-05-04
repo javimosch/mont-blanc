@@ -34,33 +34,35 @@
 
 <body class="ma ma-black diags-style">
     <!-- GLOBAL LAYOUT -->
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div ng-include="'views/partials/app-header.html'"></div>
-        </div>
-    </div>
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span-12 relative">
-                <my-alerts add="notify" class="notify " directive="notify" stacked="false" settings="{clickDismissable:false,scroll:true}"></my-alerts>
+    <div id="wrapper">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div ng-include="'views/diags/backoffice/partials/app-header.html'"></div>
             </div>
         </div>
-    </div>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="diags-bg">
-                <div class=" container diags-selection padding-none">
-                    <div class="row diags-bg-block-40 hidden-xs"></div>
-                    <div ng-view class="diags-content"></div>
-                    <div class="row diags-bg-block-40 hidden-xs"></div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span-12 relative">
+                    <my-alerts add="notify" class="notify " directive="notify" stacked="false" settings="{clickDismissable:false,scroll:true}"></my-alerts>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="diags-bg">
+                    <div class=" container diags-selection padding-none">
+                        <div class="row diags-bg-block-40 hidden-xs"></div>
+                        <div ng-view class="diags-content"></div>
+                        <div class="row diags-bg-block-40 hidden-xs"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row-fluid">
-        <div ng-include="'views/partials/app-footer.html'"></div>
+    <div id="footer">
+        <div ng-include="'views/diags/backoffice/partials/app-footer.html'"></div>
     </div>
-    </div>
+
 
 
     <div class="hidden" remove-hidden>
@@ -155,7 +157,7 @@
     <script type="text/javascript" src="js/vendor/vendor.filesaver.js"></script>
     -->
     <script type="text/javascript" src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
-    <div ng-include="'views/live-reload.html'"></div>
+    <div ng-include="'views/common/live-reload.html'"></div>
 </body>
 
 </html>

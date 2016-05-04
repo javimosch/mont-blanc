@@ -126,6 +126,10 @@
 
 
             function setHelpers() {
+                
+                s.infoItemShow = function(item){
+                    return typeof item == 'boolean'; 
+                };
 
                 s.canWriteAgency = () => {
                     if (!s.item._id) {
@@ -208,6 +212,8 @@
                 s.focus = focus;
                 window.s = s;
             }
+            
+            
 
             function setDefaults() {
                 s.item = {
@@ -218,7 +224,13 @@
                     diagEnd: moment().add(1, 'day').hour(10).minutes(30).toDate(),
                     fastDiagComm: 0,
                     price: 0,
-                    diags: {}
+                    diags: {},
+                    info: {
+                        sell: false,
+                        house: false,
+                        squareMeters: undefined,
+                        constructionPermissionDate: undefined
+                    }
                 };
                 s.original = _.clone(s.item);
             }

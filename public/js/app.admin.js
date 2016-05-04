@@ -95,7 +95,7 @@
             scope: {
                 //model: "=model"
             },
-            templateUrl: 'views/partials/partial.admin.balance.html',
+            templateUrl: 'views/diags/backoffice/partials/admin-balance.html',
             link: function(s, elem, attrs) {
                 var r = $rootScope;
                 var ws = server;
@@ -202,7 +202,7 @@
                                     'init': []
                                 },
                                 item: item,
-                                templateUrl: 'views/partials/partial.modal.balance.details.html',
+                                templateUrl: 'views/diags/backoffice/partials/admin-balance-details.html',
                                 callback: (item) => {}
                             });
                         }

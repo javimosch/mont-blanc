@@ -38,46 +38,46 @@ app.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
         when('/', {
-            templateUrl: 'views/booking/booking-1-home.html'
+            templateUrl: 'views/diags/booking/booking-1-home.html'
         }).
         when('/home', {
-            templateUrl: 'views/booking/booking-1-home.html'
+            templateUrl: 'views/diags/booking/booking-1-home.html'
         }).
         when('/mentions-legales', {
-            templateUrl: 'views/legal-mentions.html'
+            templateUrl: 'views/diags/legal-mentions.html'
         }).
         when('/conditions-generales-utilisation', {
-            templateUrl: 'views/general-conditions.html'
+            templateUrl: 'views/diags/general-conditions.html'
         }).
         when('/ernmt', {
-            templateUrl: 'views/ernt.html'
+            templateUrl: 'views/diags/ernmt.html'
         }).
         when('/faq', {
-            templateUrl: 'views/faq.html'
+            templateUrl: 'views/diags/faq.html'
         }).
         when('/contactez-nous', {
-            templateUrl: 'views/contact-us.html'
+            templateUrl: 'views/diags/contact-us.html'
         }).
         when('/choix-diagnostics', {
-            templateUrl: 'views/booking/booking-2-diags-selection.html'
+            templateUrl: 'views/diags/booking/booking-2-diags-selection.html'
         }).
         when('/rendez-vous', {
-            templateUrl: 'views/booking/booking-3-date-selection.html'
+            templateUrl: 'views/diags/booking/booking-3-date-selection.html'
         }).
         when('/connexion', {
-            templateUrl: 'views/booking/booking-4-connection.html'
+            templateUrl: 'views/diags/booking/booking-4-connection.html'
         }).
         when('/new-inscription', {
-            templateUrl: 'views/booking/booking-new-inscription.html'
+            templateUrl: 'views/diags/booking/booking-new-inscription.html'
         }).
         when('/account-details', {
-            templateUrl: 'views/booking/booking-inscription-details.html'
+            templateUrl: 'views/diags/booking/booking-inscription-details.html'
         }).
         when('/inscription-details', {
-            templateUrl: 'views/booking/booking-5-inscription.html'
+            templateUrl: 'views/diags/booking/booking-5-inscription.html'
         }).
         when('/payment', {
-            templateUrl: 'views/booking/booking-6-payment.html'
+            templateUrl: 'views/diags/booking/booking-6-payment.html'
         }).
 
         otherwise({
@@ -136,14 +136,14 @@ app.controller('ctrl.booking', ['server',
             FRENCH_ADDRESS_REQUIRED: 'Adresse besoin d&#39;appartenir à France',
         };
 
-        s.STATIC = {
+        r.__textSTATIC = {
             BOOKING_STRIPE_TEXT: "Paiement simplifié et sécurisé (PCI 1, le niveau le plus élevé) avec Stripe",
             BOOKING_HOME_BG_TEXT_1: "Accédez aux calendriers en live des diagnostiqueurs immobiliers certifiés, disponibles, au bon prix*",
             BOOKING_HOME_BG_TEXT_2: "Nous joindre au",
             BOOKING_HOME_BG_TEXT_PHONE: "0899 399 039"
         };
 
-        s.isDevEnv = () => window.location.hostname.indexOf('diags-javoche.c9users.io') !== -1;
+        
 
 
 
@@ -578,77 +578,12 @@ app.controller('ctrl.booking', ['server',
             if (d.ok && d.result.length > 0) s.settings = d.result[0];
         });
 
-        db.ctrl('Text', 'getAll', {}).then(d => {
-            s.__texts = d.result;
-            s.__texts.forEach(function(item) {
-                s.__text = s.__text || {};
-                s.__text[item.code] = window.decodeURIComponent(item.content);
-            });
-        });
+        
+
 
         s.htmlReplaceDiagName = function(str) {
             var code = str.replace('$NAME', s.diagSelected.label2).toUpperCase();
-            return s.html(code);
-        }
-        s.html = function(code) {
-            var txt = s.STATIC[code] || '';
-            if (s.__text && s.__text[code]) {
-
-            }
-            else {
-                r.__textsNotFound = r.__textsNotFound || {};
-                if (!r.__textsNotFound[code]) {
-                    r.__textsNotFound[code] = code;
-                    if (s.isDevEnv()) {
-                        var payload = {
-                            code: code,
-                            categoryCode: $U.url.hashName() || 'home',
-                            categoryRootCode: "DIAGS",
-                            content:txt
-                        };
-                        stackCtrlPromise('reportNotFound', db, 'Text', 'reportNotFound', payload);
-                    }
-                }
-
-            }
-
-            return s.__text && s.__text[code] || txt || ((s.isDevEnv()) ? code : '');
-        };
-
-
-        function stackCtrlPromise(id, db, arg1, arg2, arg3) {
-            window.___stackScope = window.___stackScope || {
-                stacks: {}
-            };
-            var s = window.___stackScope;
-            s.stacks[id] = s.stacks[id] || {
-                flag: false,
-                promises: [],
-                watcher: $U.on(id + '-stack-pop', function() {
-                    var stack = s.stacks[id];
-                    if (stack.promises.length > 0) {
-                        stack.flag = true;
-                        var d = stack.promises.shift();
-                        db.ctrl(d.arg1, d.arg2, d.arg3).then(function(res) {
-                            stack.flag = false;
-                            console.log('stackCtrlPromise-watcher-resolve ' + id + '. left:' + stack.promises.length);
-                            $U.emit(id + '-stack-pop');
-                        });
-                    }
-                })
-            };
-            s.stacks[id].promises.push({
-                arg1: arg1,
-                arg2: arg2,
-                arg3: arg3
-            });
-            if (s.stacks[id].flag == false) {
-                setTimeout(function() {
-                    if (s.stacks[id].flag == false) {
-                        $U.emit(id + '-stack-pop');
-                    }
-                }, 50)
-            }
+            return r.html(code);
         }
 
 
@@ -1421,8 +1356,8 @@ app.controller('ctrl.booking', ['server',
 
 
         s.bookingDescriptionTitle = function() {
-            if (s.model.sell) return "Pack Vente:";
-            else return "Pack Location:";
+            if (s.model.sell) return "Pack Vente: ";
+            else return "Pack Location: ";
         };
         s.bookingDescriptionBody = function() {
             var rta = "";
@@ -1591,6 +1526,10 @@ app.controller('ctrl.booking', ['server',
 
             if (s._order.info.sell === undefined && s.model.sell !== undefined) {
                 s._order.info.sell = s.model.sell;
+            }
+            
+            if (s._order.info.electricityInstallation === undefined && s.model.electricityInstallation !== undefined) {
+                s._order.info.electricityInstallation = s.model.electricityInstallation;
             }
 
             if (!s._order.info.description && s.model) {

@@ -8,6 +8,44 @@
 /*global diagsGetAvailableRanges*/
 var srv = angular.module('app.services', []);
 
+srv.service('dbText', ["$rootScope", "server", function(r, db) {
+    r.__texts = [];
+    r.__text = r.__text || {};
+    this.update = function() {
+        db.ctrl('Text', 'getAll', {}).then(d => {
+            r.__texts = d.result;
+            r.__texts.forEach(function(item) {
+                r.__text[item.code] = window.decodeURIComponent(item.content);
+            });
+        });
+    }
+    
+    r.html = function(code) {
+        var txt = r.__textSTATIC[code] || '';
+        if (r.__text && r.__text[code]) {
+
+        }
+        else {
+            r.__textsNotFound = r.__textsNotFound || {};
+            if (!r.__textsNotFound[code]) {
+                r.__textsNotFound[code] = code;
+                if (r.isDevEnv()) {
+                    var payload = {
+                        code: code,
+                        categoryCode: $U.url.hashName() || 'home',
+                        categoryRootCode: "DIAGS",
+                        content: txt
+                    };
+                    db.stackCtrl('reportNotFound', 'Text', 'reportNotFound', payload);
+                }
+            }
+
+        }
+        return r.__text && r.__text[code] || txt || ((r.isDevEnv()) ? code : '');
+    };
+
+}]);
+
 srv.service('tpl', function($rootScope, $compile, $templateCache) {
     this.compile = (n, s) => {
         var raw = $templateCache.get(n + '.html');
@@ -126,16 +164,16 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     //var URL = 'http://ujkk558c0c9a.javoche.koding.io:3434';
     var URL = 'http://localhost:5000';
 
-/*
-    $.ajax({
-        url: '/data.json',
-        async: false,
-        dataType: 'json',
-        success: function(r) {
-            //URL = r.config.backendURL; //updates serverURL from express (node env serverURL);
-            //console.info('server-url-(data.json):' + URL);
-        }
-    });*/
+    /*
+        $.ajax({
+            url: '/data.json',
+            async: false,
+            dataType: 'json',
+            success: function(r) {
+                //URL = r.config.backendURL; //updates serverURL from express (node env serverURL);
+                //console.info('server-url-(data.json):' + URL);
+            }
+        });*/
 
     $.ajax("/serverURL").then(function(r) {
         URL = r.URL; //updates serverURL from express (node env serverURL);
@@ -418,8 +456,41 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
         });
     }
 
-    
 
+    function stackCtrl(id, arg1, arg2, arg3) {
+        window.___stackScope = window.___stackScope || {
+            stacks: {}
+        };
+        var s = window.___stackScope;
+        s.stacks[id] = s.stacks[id] || {
+            flag: false,
+            promises: [],
+            watcher: $U.on(id + '-stack-pop', function() {
+                var stack = s.stacks[id];
+                if (stack.promises.length > 0) {
+                    stack.flag = true;
+                    var d = stack.promises.shift();
+                    ctrl(d.arg1, d.arg2, d.arg3).then(function(res) {
+                        stack.flag = false;
+                        console.log('stackCtrlPromise-watcher-resolve ' + id + '. left:' + stack.promises.length);
+                        $U.emit(id + '-stack-pop');
+                    });
+                }
+            })
+        };
+        s.stacks[id].promises.push({
+            arg1: arg1,
+            arg2: arg2,
+            arg3: arg3
+        });
+        if (s.stacks[id].flag == false) {
+            setTimeout(function() {
+                if (s.stacks[id].flag == false) {
+                    $U.emit(id + '-stack-pop');
+                }
+            }, 50)
+        }
+    }
 
     var ws = {
         URL: () => URL,
@@ -456,6 +527,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
             globalState.async = true;
             return ws;
         },
+        stackCtrl: stackCtrl,
         ctrl: ctrl,
         $get: (url, config) => {
             return MyPromise(function(resolve, error) {

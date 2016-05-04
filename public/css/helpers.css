@@ -391,7 +391,7 @@ table.minimal td {
 }
 
 .fullwidth {
-  width: 100%;
+  width: 100%!important;
 }
 
 .size-medium {
