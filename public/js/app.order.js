@@ -56,7 +56,7 @@
                     //                console.info('adminOrders:read:success', r.data.result);
                     r.data.result = _.orderBy(r.data.result, ['created'], ['desc']);
                     s.items = r.data.result;
-                    r.successMessage('Loaded',1000);
+                    r.successMessage('Loaded', 1000);
                 });
             }
             s.refresh = read;
@@ -87,7 +87,7 @@
                     else {
                         r.toggleNavbar(true);
                         r.__hideNavMenu = true;
-                        $U.once('route-exit:'+$U.url.hashName(), function(url) {
+                        $U.once('route-exit:' + $U.url.hashName(), function(url) {
                             r.__hideNavMenu = false;
                         });
                     }
@@ -181,8 +181,8 @@
                 s.totalPrice = (showRounded) => $D.totalPrice(showRounded, s.item, s.diags, s.squareMetersPrice, s.basePrice, {
                     overwriteModel: false,
                     s: s,
-                    r:r
-                    //with the scope, a priceInfo object is created to debug price calc.
+                    r: r
+                        //with the scope, a priceInfo object is created to debug price calc.
                 });
                 s.totalTime = () => $D.OrderTotalTime(s.item.diags, s.diags);
                 s.totalTimeFormated = () => {
@@ -202,7 +202,7 @@
                         r.dom();
                     }
                 };
-                
+
                 s.type = r.session().userType;
                 s.is = (arr) => _.includes(arr, s.type);
                 s.focus = focus;
@@ -249,126 +249,276 @@
                     });
                 });
                 //
-                s.keysWhereTime = {
-                    invalidKeysTimeMessage: () => {
-                        var startTime = () => moment(s.item.diagStart).format('HH:mm');
-                        return 'Keys time should be between 8:00 and ' + startTime();
-                    },
-                    invalidKeysTime: () => {
-                        var before = (d1, h) => moment(d1).isBefore(moment(d1).hours(8));
-                        var diag = {
-                            hours: moment(s.item.diagStart).hours(),
-                            minutes: moment(s.item.diagStart).minutes()
+
+                s.CLIENT_TYPES = ['agency', 'enterprise', 'landlord', 'other'];
+                s.CLIENT_TYPES_COMPANY = ['agency', 'enterprise', 'other'];
+
+                //KEYS WHERE Version2 --------------------------------
+                s.isOrderClientLandLord = () => {
+                    return !_.includes(s.CLIENT_TYPES_COMPANY, s.item._client.clientType);
+                }
+                s.__keysWhereItems = {};
+                s.__keysWhereGetItems = () => {
+                    if (!s.item._client || !s.item._client.clientType) return {
+                        'Ou ?': () => '',
+                    };
+                    if (s.isOrderClientLandLord()) {
+                        return {
+                            'Ou ?': () => '',
+                            'Diag Address': () => s.item.address,
+                            'Client Address': () => s.item._client.address, //when landlord
+                            'Other': () => 'other'
                         };
-                        var after = (d1) => moment(d1).isAfter(moment(d1).hours(diag.hours).minutes(diag.minutes));
-                        var tfrom = s.item.keysTimeFrom;
-                        var tto = s.item.keysTimeTo;
-                        if (!tfrom || before(tfrom) || after(tfrom)) {
-                            console.warn('invalidKeysTime from', (!tfrom), before(tfrom), after(tfrom));
-                            return true;
-                        }
-                        if (!tto || before(tto) || after(tto)) {
-                            console.warn('invalidKeysTime to', (!tto), before(tto), after(tto));
-                            return true;
-                        }
-                        if (tto && tfrom && moment(tto).isBefore(moment(tfrom))) {
-                            console.warn('invalidKeysTime from <- to required.');
-                            return true;
-                        }
-
-                        return false;
-                    },
-                    init: function(self) {
-
-                    },
-                    emit: function(n) {
-                        var self = this;
-                        var arr = self.evts[n] || [];
-                        arr.forEach(evt => (evt(self)))
-                    },
-                    evts: {
-                        onItem: [(self) => {
-                            s.keysWhereTime.updateItems(self);
-                        }]
-                    },
-                    mstep: 15,
-                    hstep: 1,
-                    address: '',
-                    scope: s,
-                    val: undefined,
-                    disabled: () => s.isPaid() || r.state.working(),
-                    cls: () => ({
-                        btn: true,
-                        'btn-default': true
-                    }),
-                    filterWatch: 'item',
-                    filter: (v) => {
-                        if (s.item && s.item._client && s.item._client.clientType) {
-                            if (s.item._client.clientType !== 'agency') {
-                                if (v.val == 'agency') {
-                                    return false;
-                                }
-                            }
-                        }
-                        return true;
-                    },
-                    label: 'Select',
-                    modelPath: 'item.keysWhere',
-                    items: [],
-                    updateItems: ((self) => {
-                        var o = [{
-                            label: () => s.item && s.item.address || 'Diag Address',
-                            val: 1,
-                            get: () => s.item && s.item.address
-                        }];
-                        if (s.item._client && s.item._client.clientType == 'agency') {
-                            o.push({
-                                label: () => s.item._client.address || 'Agency address',
-                                val: 3,
-                                get: () => s.item._client.address || ''
-                            }, {
-                                label: () => s.item.landLordAddress || 'Landlord address',
-                                val: 4,
-                                disabled: () => !s.item.landLordAddress,
-                                get: () => s.item.landLordAddress || ''
-                            }); //when agency / other
-                        }
-                        else {
-                            o.push({
-                                label: () => s.item._client.address || 'Client address',
-                                val: 3,
-                                get: () => s.item._client.address || ''
-                            }); //when landlord
-                        }
-                        self.items = o;
-                    }),
-                    change: (v, self, setOldValue) => {
-                        if (!v) return;
-                        var address = v.get();
-                        if (!address) {
-                            r.notify('Address not found', {
-                                type: 'warning',
-                                duration: 5000,
-                                clickDismissable: true
-                            });
-                            self.val = undefined;
-                            setOldValue();
-                            return;
-                        }
-                        if (s.item.keysAddress && s.item.keysAddress == address) {
-                            if (!s.item.keysTime) {
-                                s.item.keysTime = moment(s.item.diagStart).hours(8).minutes(0)._d;
-                            }
-                            return;
-                        }
-                        else {
-                            s.item.keysAddress = address;
-                        }
-
+                    }
+                    else {
+                        return {
+                            'Ou ?': () => '',
+                            'Diag Address': () => s.item.address,
+                            'Agency Address': () => s.item._client.address, //when not-landlord
+                            'Landlord Address': () => s.item.landLordAddress, //when not-landlord 
+                            'Other': () => 'other'
+                        };
                     }
                 };
+                s.$watch('item', function(val) {
+                    s.__keysWhereItems = s.__keysWhereGetItems();
+                }, true);
+                s.__keysWhereSelectFirstItem = () => s.__keysWhereItems && Object.keys(s.__keysWhereItems)[0] || "Loading";
+                s.__keysWhereSelectLabel = () => s.__keysWhereSelectLabelVal || s.__keysWhereSelectFirstItem();
+                s.__keysWhereSelect = (key, val) => {
+                    s.item.keysWhere = val && val() || undefined;
+                };
+                s.$watch('item.keysWhere', function(val) {
+                    if (val == undefined) {
+                        r.dom(() => {
+                            s.item.keysAddress = 'non disponible';
+                        });
+                        r.dom(() => {
+                            s.item.keysAddress = undefined;
+                        }, 2000);
+                        //
+                        return s.__keysWhereSelectLabelVal = 'Ou ?';
+                    }
+                    Object.keys(s.__keysWhereItems).forEach(k => {
+                        if (s.__keysWhereItems[k]() == val) {
+                            s.__keysWhereSelectLabelVal = k;
+                        }
+                    });
+                    s.item.keysAddress = (val == 'other') ? '' : val;
+                });
+
+                //KEYS TIME FROM ------------------------------------------------------------------------------------------------
+                s.__keysTimeFromItems = {};
+                s.__keysTimeFromGetItems = () => {
+                    var vals = {};
+                    if (!s.item) return vals;
+                    var m = moment(s.item.diagStart).hours(8);
+                    while (m.isBefore(moment(s.item.diagStart))) {
+                        vals[r.momentTime(m)] = new Date(m.toString());
+                        m = m.add(5, 'minutes');
+                    };
+                    vals[r.momentTime(s.item.diagStart)] = new Date(moment(s.item.diagStart).toString());
+                    return vals;
+                };
+                s.__keysTimeFromSelectFirstItem = () => s.__keysTimeFromItems && Object.keys(s.__keysTimeFromItems)[0] || "Loading";
+                s.__keysTimeFromSelectLabel = 'choisir';
+                s.__keysTimeFromSelect = (key, val) => {
+                    s.item.keysTimeFrom = val;
+                    if (dtAfter(s.item.keysTimeFrom, s.item.keysTimeTo)) {
+                        s.item.keysTimeTo = undefined;
+                    }
+                };
+                s.$watch('item.keysTimeFrom', function(val) {
+                    if (!val) {
+                        s.__keysTimeFromSelectLabel = 'choisir';
+                    }
+                    else {
+                        s.__keysTimeFromSelectLabel = 'choisir';
+                        _.each(s.__keysTimeFromItems, (v, k) => {
+                            if (v == val) s.__keysTimeFromSelectLabel = k;
+                        });
+                    }
+
+                });
+                s.$watch('item.diagStart', function(val) {
+                    s.__keysTimeFromItems = s.__keysTimeFromGetItems();
+                });
+
+                //KEYS TIME TO ------------------------------------------------------------------------------------------------
+                s.__keysTimeToItems = {};
+                s.__keysTimeToGetItems = () => {
+                    var vals = {};
+                    if (!s.item) return vals;
+                    var m = moment(s.item.diagStart).hours(8).minutes(0);
+                    if (
+                        moment(s.item.keysTimeFrom).isAfter(m) &&
+                        moment(s.item.keysTimeFrom).isBefore(moment(s.item.diagStart))
+                    ) {
+                        m = m.hours(moment(s.item.keysTimeFrom).hours())
+                        m = m.minutes(moment(s.item.keysTimeFrom).minutes())
+                    }
+
+                    while (m.isBefore(moment(s.item.diagStart))) {
+                        vals[r.momentTime(m)] = new Date(m.toString());
+                        m = m.add(5, 'minutes');
+                    };
+                    vals[r.momentTime(s.item.diagStart)] = new Date(moment(s.item.diagStart).toString());
+                    return vals;
+                };
+                s.__keysTimeToSelectFirstItem = () => s.__keysTimeToItems && Object.keys(s.__keysTimeToItems)[0] || "Loading";
+                s.__keysTimeToSelectLabel = 'choisir';
+                s.__keysTimeToSelect = (key, val) => {
+                    s.item.keysTimeTo = val;
+                };
+                s.$watch('item.keysTimeTo', function(val) {
+                    if (!val) {
+                        s.__keysTimeToSelectLabel = 'choisir';
+                    }
+                    else {
+                        s.__keysTimeToSelectLabel = 'choisir';
+                        _.each(s.__keysTimeToItems, (v, k) => {
+                            if (v == val) s.__keysTimeToSelectLabel = k;
+                        });
+                    }
+
+                });
+                s.$watch('item.keysTimeFrom', function(val) {
+                    s.__keysTimeToItems = s.__keysTimeToGetItems();
+                });
+                s.$watch('item.diagStart', function(val) {
+                    s.__keysTimeToItems = s.__keysTimeToGetItems();
+                });
+                //-------------------------------------------------------------------------
 
 
+                function dtAfter(d1, d2, unit) {
+                    return moment(d1).isAfter(moment(d2), unit);
+                }
+
+                function dtBefore(d1, d2, unit) {
+                    return moment(d1).isAfter(moment(d2), unit);
+                }
+                /*
+                                s.keysWhereTime = {
+                                    invalidKeysTimeMessage: () => {
+                                        var startTime = () => moment(s.item.diagStart).format('HH:mm');
+                                        return 'Keys time should be between 8:00 and ' + startTime();
+                                    },
+                                    invalidKeysTime: () => {
+                                        var before = (d1, h) => moment(d1).isBefore(moment(d1).hours(8));
+                                        var diag = {
+                                            hours: moment(s.item.diagStart).hours(),
+                                            minutes: moment(s.item.diagStart).minutes()
+                                        };
+                                        var after = (d1) => moment(d1).isAfter(moment(d1).hours(diag.hours).minutes(diag.minutes));
+                                        var tfrom = s.item.keysTimeFrom;
+                                        var tto = s.item.keysTimeTo;
+                                        if (!tfrom || before(tfrom) || after(tfrom)) {
+                                            console.warn('invalidKeysTime from', (!tfrom), before(tfrom), after(tfrom));
+                                            return true;
+                                        }
+                                        if (!tto || before(tto) || after(tto)) {
+                                            console.warn('invalidKeysTime to', (!tto), before(tto), after(tto));
+                                            return true;
+                                        }
+                                        if (tto && tfrom && moment(tto).isBefore(moment(tfrom))) {
+                                            console.warn('invalidKeysTime from <- to required.');
+                                            return true;
+                                        }
+
+                                        return false;
+                                    },
+                                    init: function(self) {
+
+                                    },
+                                    emit: function(n) {
+                                        var self = this;
+                                        var arr = self.evts[n] || [];
+                                        arr.forEach(evt => (evt(self)))
+                                    },
+                                    evts: {
+                                        onItem: [(self) => {
+                                            s.keysWhereTime.updateItems(self);
+                                        }]
+                                    },
+                                    mstep: 15,
+                                    hstep: 1,
+                                    address: '',
+                                    scope: s,
+                                    val: undefined,
+                                    disabled: () => s.isPaid() || r.state.working(),
+                                    cls: () => ({
+                                        btn: true,
+                                        'btn-default': true
+                                    }),
+                                    filterWatch: 'item',
+                                    filter: (v) => {
+                                        if (s.item && s.item._client && s.item._client.clientType) {
+                                            if (s.item._client.clientType !== 'agency') {
+                                                if (v.val == 'agency') {
+                                                    return false;
+                                                }
+                                            }
+                                        }
+                                        return true;
+                                    },
+                                    label: 'Select',
+                                    modelPath: 'item.keysWhere',
+                                    items: [],
+                                    updateItems: ((self) => {
+                                        var o = [{
+                                            label: () => s.item && s.item.address || 'Diag Address',
+                                            val: 1,
+                                            get: () => s.item && s.item.address
+                                        }];
+                                        if (s.item._client && s.item._client.clientType == 'agency') {
+                                            o.push({
+                                                label: () => s.item._client.address || 'Agency address',
+                                                val: 3,
+                                                get: () => s.item._client.address || ''
+                                            }, {
+                                                label: () => s.item.landLordAddress || 'Landlord address',
+                                                val: 4,
+                                                disabled: () => !s.item.landLordAddress,
+                                                get: () => s.item.landLordAddress || ''
+                                            }); //when agency / other
+                                        }
+                                        else {
+                                            o.push({
+                                                label: () => s.item._client.address || 'Client address',
+                                                val: 3,
+                                                get: () => s.item._client.address || ''
+                                            }); //when landlord
+                                        }
+                                        self.items = o;
+                                    }),
+                                    change: (v, self, setOldValue) => {
+                                        if (!v) return;
+                                        var address = v.get();
+                                        if (!address) {
+                                            r.notify('Address not found', {
+                                                type: 'warning',
+                                                duration: 5000,
+                                                clickDismissable: true
+                                            });
+                                            self.val = undefined;
+                                            setOldValue();
+                                            return;
+                                        }
+                                        if (s.item.keysAddress && s.item.keysAddress == address) {
+                                            if (!s.item.keysTime) {
+                                                s.item.keysTime = moment(s.item.diagStart).hours(8).minutes(0)._d;
+                                            }
+                                            return;
+                                        }
+                                        else {
+                                            s.item.keysAddress = address;
+                                        }
+
+                                    }
+                                };
+
+                */
 
 
                 //
@@ -503,7 +653,7 @@
                         [moment(s.item.diagEnd).isValid() && moment(s.item.diagStart).isValid() && !moment(s.item.diagEnd).isSame(moment(s.item.diagStart), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
                         [moment(s.item.diagEnd).isValid() && moment(s.item.diagEnd).isBefore(moment(s.item.diagStart), 'hour'), '==', true, 'End date cannot be lower than Start date'],
 
-                        [s.keysWhereTime.invalidKeysTime(), '==', true, s.keysWhereTime.invalidKeysTimeMessage],
+                        //  [s.keysWhereTime.invalidKeysTime(), '==', true, s.keysWhereTime.invalidKeysTimeMessage],
 
                         //[s.item.fastDiagComm.toString(),'==','','Comission required'],
                         [isNaN(s.item.fastDiagComm), '==', true, 'Comission need to be a number'],
@@ -556,7 +706,7 @@
                     }
 
                     function _uploadNew() {
-                        r.infoMessage('Uploading (Do not touch anything)',9999);
+                        r.infoMessage('Uploading (Do not touch anything)', 9999);
                         db.form('File/save/', {
                             name: s.pdfFile.name,
                             file: s.pdfFile
@@ -572,11 +722,11 @@
                                     _deletePrev();
                                     //_readFile();
                                     read(s.item._id);
-                                    r.infoMessage('File upload success.',5000);
+                                    r.infoMessage('File upload success.', 5000);
                                 });
                             }
                             else {
-                                r.warningMessage('Upload fail, try later.',9999);
+                                r.warningMessage('Upload fail, try later.', 9999);
                             }
                         });
                     }
@@ -639,7 +789,7 @@
             }
 
             function onItem(item) {
-                s.keysWhereTime.emit('onItem');
+                //s.keysWhereTime.emit('onItem');
             }
 
             function read(id) {
@@ -808,7 +958,7 @@
                         label: 'Created',
                         name: 'createdAt',
                         format: (v, item) => {
-                           return r.momentFormat(item.createdAt, 'DD-MM-YY HH:mm');   
+                            return r.momentFormat(item.createdAt, 'DD-MM-YY HH:mm');
                         }
                     }],
                     items: [],

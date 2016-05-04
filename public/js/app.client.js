@@ -138,7 +138,7 @@
                             item: item,
                             prevRoute: 'dashboard'
                         };
-                        r.route('orders/view/' + item._id);
+                        r.route('orders/edit/' + item._id);
 
                     },
                     buttons: [{
