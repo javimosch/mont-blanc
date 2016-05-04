@@ -32,7 +32,8 @@
             s.item = {
                 code: '',
                 description: '',
-                content: ''
+                content: '',
+                updatedByHuman:true
             };
 
             updateCategorySelectData(s, db);
@@ -53,10 +54,11 @@
                 }
                 //
             s.save = function() {
-                if (!s.item.code)       return r.warningMessage('Code required');
-                if (!s.item.content)    return r.warningMessage('Content required');
-                if (!s.item._category)  return r.warningMessage('Page Section required');
+                if (!s.item.code) return r.warningMessage('Code required');
+                if (!s.item.description) return r.warningMessage('Description required');
+                if (!s.item._category) return r.warningMessage('Page Section required');
                 //
+                s.item.updatedByHuman=true;
                 db.ctrl('Text', 'save', s.item).then(function() {
                     r.route('texts');
                 });
@@ -124,14 +126,14 @@
             scope: {},
             templateUrl: 'views/directives/directive.fast-crud.html',
             link: function(s, elem, attrs) {
-                $D.createSiteSectionsCategories(server);
+                //$D.createSiteSectionsCategories(server);
             },
             controller: function($scope, $element, $attrs, $transclude) {
                 var r = $rootScope,
                     db = server,
                     s = $scope,
                     dbPaginate = $mongoosePaginate.get('Text');
-                $U.expose('s', s);
+                $U.expose('s', s);    
                 r.routeParams({
                     prevRoute: 'texts'
                 });
@@ -185,7 +187,7 @@
                         update: update,
                         rules: {
                             code: 'contains',
-                            _category: "match"
+                            _category:"match"
                         }
                     },
                     pagination: {
@@ -204,14 +206,11 @@
                         label: "Refresh",
                         type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => update()
-                    }, {
+                    },
+                    {
                         label: "Filtre",
-                        type: function() {
-                            return "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1";
-                        },
-                        click:function(){
-                            s.model.filter.filter();
-                        }
+                        type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
+                        click: () => s.model.filter.filter()
                     }, {
                         label: "New Item",
                         type: () => "btn diags-btn bg-azure-radiance margin-right-1",

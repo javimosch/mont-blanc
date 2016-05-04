@@ -37,7 +37,51 @@ function createSiteSectionsCategories(db) {
             _createRoot(_createPageSections)
         }
     });
-    var categories = ['ERNMT', 'BOOKING_HOME', 'GENERAL_CONDITIONS', 'FAQ','LEGAL_MENTIONS'];
+    var categories = ['ERNMT', 'BOOKING_HOME', 'GENERAL_CONDITIONS', 'FAQ', 'LEGAL_MENTIONS'];
+
+    function _createTextsItemsFor(_category) {
+        var diags = ['DPE', 'AMIANTE', 'PLOMB', 'CARREZ', 'ERNMT', 'GAZ', 'ELECTRICITE', 'PARASITAIRE'];
+        var cbCount = $U.cbHell(diags.length*5, function() {
+            console.info('create-page-category-#', diags.length*5, 'texts-created-or-updated-success');
+        });
+        
+        function _save(payload){
+            db.ctrl('Text', 'save', _.cloneDeep(payload)).then(cbCount.next);
+        }
+        
+        var content =  "Page section: BOOKING_HOME, Code: ";
+        diags.forEach(function(code) {
+            var name = code;
+            var payload = {
+                code: code,
+                description: 'Auto generated block for '+code+' when you click the card in the home page.',
+                content:'',
+                _category: _category,
+                __match: ['code']
+            };
+            
+            payload.code =  "PAGE_HOME_"+name+"_BLOCK_LEFT_TITLE";
+            payload.content = content+payload.code;
+            _save(payload);
+            
+            payload.code="PAGE_HOME_"+name+"_BLOCK_LEFT_CONTENT";
+            payload.content = content+payload.code;
+            _save(payload);
+            
+            payload.code    = "PAGE_HOME_"+name+"_BLOCK_RIGHT_TITLE",
+            payload.content = content+payload.code;
+            _save(payload);
+            
+            payload.code="PAGE_HOME_"+name+"_BLOCK_RIGHT_CONTENT"
+            payload.content = content+payload.code;
+            _save(payload);
+            
+            payload.code="PAGE_HOME_"+name+"_BLOCK_BOTTOM"
+            payload.content = content+payload.code;
+            _save(payload);
+            
+        });
+    }
 
     function _createPageSections(res) {
         if (res && res.ok && res.result) {
@@ -50,9 +94,15 @@ function createSiteSectionsCategories(db) {
                     code: cat,
                     description: 'Diags Site Section',
                     _parent: root._id,
-                    __match:['code']
+                    __match: ['code']
                 };
-                db.ctrl('Category', 'save', payload).then(cbCount.next);
+                db.ctrl('Category', 'save', payload).then(function(r){
+                    if(r&&r.ok&&r.result.code == 'BOOKING_HOME'){
+                        _createTextsItemsFor(r.result._id);
+                    }
+                    cbCount.next();
+                });
+                
             });
         }
         else {

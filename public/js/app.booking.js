@@ -135,11 +135,11 @@ app.controller('ctrl.booking', ['server',
             ANSWER_APPARTAMENT_OR_MAISON: 'Répondre Appartament / Maison',
             FRENCH_ADDRESS_REQUIRED: 'Adresse besoin d&#39;appartenir à France',
         };
-        
+
         s.STATIC = {
-            STRIPE: "Paiement simplifié et sécurisé (PCI 1, le niveau le plus élevé) avec Stripe",
-            BOOKING_HOME_BG_TEXT_2:"Nous joindre au",
-            BOOKING_HOME_BG_TEXT_PHONE:"0899 399 039"
+            BOOKING_STRIPE_TEXT: "Paiement simplifié et sécurisé (PCI 1, le niveau le plus élevé) avec Stripe",
+            BOOKING_HOME_BG_TEXT_2: "Nous joindre au",
+            BOOKING_HOME_BG_TEXT_PHONE: "0899 399 039"
         };
 
         s.isDevEnv = () => window.location.hostname.indexOf('diags-javoche.c9users.io') !== -1;
@@ -586,21 +586,69 @@ app.controller('ctrl.booking', ['server',
         });
 
         s.htmlReplaceDiagName = function(str) {
-            var code = str.replace('$NAME', s.diagSelected.name).toUpperCase();
+            var code = str.replace('$NAME', s.diagSelected.label2).toUpperCase();
             return s.html(code);
         }
-        s.html = function(code,txt) {
+        s.html = function(code) {
+            var txt = s.STATIC[code] || '';
             if (s.__text && s.__text[code]) {
 
             }
             else {
                 r.__textsNotFound = r.__textsNotFound || {};
-                r.__textsNotFound[code] = code;
+                if (!r.__textsNotFound[code]) {
+                    r.__textsNotFound[code] = code;
+                    if (s.isDevEnv()) {
+                        var payload = {
+                            code: code,
+                            categoryCode: $U.url.hashName() || 'home',
+                            categoryRootCode: "DIAGS",
+                            content:txt
+                        };
+                        stackCtrlPromise('reportNotFound', db, 'Text', 'reportNotFound', payload);
+                    }
+                }
 
             }
-            
-            return s.__text && s.__text[code] || txt || ((s.isDevEnv())?code:'');
+
+            return s.__text && s.__text[code] || txt || ((s.isDevEnv()) ? code : '');
         };
+
+
+        function stackCtrlPromise(id, db, arg1, arg2, arg3) {
+            window.___stackScope = window.___stackScope || {
+                stacks: {}
+            };
+            var s = window.___stackScope;
+            s.stacks[id] = s.stacks[id] || {
+                flag: false,
+                promises: [],
+                watcher: $U.on(id + '-stack-pop', function() {
+                    var stack = s.stacks[id];
+                    if (stack.promises.length > 0) {
+                        stack.flag = true;
+                        var d = stack.promises.shift();
+                        db.ctrl(d.arg1, d.arg2, d.arg3).then(function(res) {
+                            stack.flag = false;
+                            console.log('stackCtrlPromise-watcher-resolve ' + id + '. left:' + stack.promises.length);
+                            $U.emit(id + '-stack-pop');
+                        });
+                    }
+                })
+            };
+            s.stacks[id].promises.push({
+                arg1: arg1,
+                arg2: arg2,
+                arg3: arg3
+            });
+            if (s.stacks[id].flag == false) {
+                setTimeout(function() {
+                    if (s.stacks[id].flag == false) {
+                        $U.emit(id + '-stack-pop');
+                    }
+                }, 50)
+            }
+        }
 
 
         function orderPaid() {

@@ -82,7 +82,7 @@
     "diags": [{
 
             "label": "DPE",
-            "label2": "DPE - Diagnostic Performance Energétique",
+            "label2": "DPE",
             "name": "dpe",
             "sort":1,
             "mandatory": true,
@@ -107,7 +107,7 @@
 
         {
             "label": "Amiante",
-            "label2": "Diagnostic amiante avant vente",
+            "label2": "AMIANTE",
             "name": "dta",
             "sort":2,
             "comments": "Before 01/07/1997",
@@ -130,7 +130,7 @@
             }
         }, {
             "label": "Plomb",
-            "label2": "Diagnostic Plomb",
+            "label2": "PLOMB",
             "name": "crep",
             "sort":3,
             "comments": "Before 01/01/1949",
@@ -153,7 +153,7 @@
             }
         }, {
             "label": "Carrez",
-            "label2": "Diagnostic loi Carrez",
+            "label2": "CARREZ",
             "name": "loiCarrez",
             "sort":4,
             "mandatory": true,
@@ -199,7 +199,7 @@
             }
         }, {
             "label": "Termites",
-            "label2": "Diagnostic Termites",
+            "label2": "TERMITES",
             "name": "termites",
             "sort":6,
             "mandatory": false,
@@ -222,7 +222,7 @@
             }
         }, {
             "label": "Gaz",
-            "label2": "Diagnostic Gaz",
+            "label2": "GAZ",
             "name": "gaz",
             "sort":7,
             "mandatory": false,
@@ -245,7 +245,7 @@
             }
         }, {
             "label": "Electricité",
-            "label2": "Electricity",
+            "label2": "ELECTRICITE",
             "name": "electricity",
             "sort":8,
             "mandatory": false,
@@ -268,7 +268,7 @@
             }
         }, {
             "label": "Parasitaire",
-            "label2": "Diagnostic Etat Parasitaire",
+            "label2": "PARASITAIRE",
             "name": "parasitaire",
             "mandatory": false,
             "disabled": true,
