@@ -180,9 +180,10 @@
                 s.model = {
                     init: function() {
                         updateCategorySelectData(s.model, db);
-                        update();
+                        s.model.filter.firstTime();
                     },
                     filter: {
+                        store:"TEXTS_LIST",
                         template: 'textsFilter',
                         update: update,
                         rules: {

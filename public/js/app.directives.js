@@ -64,6 +64,7 @@ app.directive('tableFilter', function(
                 };
                 s.model.filter.payload = Object.assign(s.model.filter.payload,
                     collectionPointersFields());
+                storeSet();
                 if (s.model.filter && s.model.filter.update) s.model.filter.update();
             }
             
@@ -72,8 +73,25 @@ app.directive('tableFilter', function(
                 for (var x in s.model.filter.fields) {
                     s.model.filter.fields[x]='';
                 }
+                storeSet();
                 s.model.filter.update();//clear filters and search
             };
+            
+            s.model.filter.firstTime = function(){
+                storeGet();
+                s.model.filter.update();//search with store filters (or none).
+            }
+            
+            function storeSet(){
+                if(s.model.filter.store){
+                     $U.store.set('filter_'+s.model.filter.store+"_"+r.session()._id,s.model.filter.payload);
+                }
+            }
+             function storeGet(){
+                if(s.model.filter.store){
+                     s.model.filter.payload = $U.store.get('filter_'+s.model.filter.store+"_"+r.session()._id);
+                }
+            }
 
             function regexpFields() {
                 var fields = {};

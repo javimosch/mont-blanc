@@ -1,7 +1,46 @@
 /*global $*/
 /*global google*/
 /*global _*/
+/*global localStorage*/
 "use strict";
+
+
+/* global localStorage */
+var store = (() => {
+    return {
+        set: (id, raw) => {
+            //return new Promise((resolve, error) => {
+            id = 'store#' + id;
+            try {
+                raw = JSON.stringify(raw);
+                localStorage.setItem(id, raw);
+                // resolve();
+                return true;
+            }
+            catch (e) {
+                console.warn('store setData fails');
+                // error();
+                return false;
+            }
+            // });
+        },
+        get: (id) => {
+            //return new Promise((resolve, error) => {
+            id = 'store#' + id;
+            try {
+                var localData = JSON.parse(localStorage.getItem(id));
+                //     resolve(localData);
+                return localData;
+            }
+            catch (e) {
+                console.warn('store getData fails');
+                //      error();
+                return null;
+            }
+            //})
+        }
+    }
+})();
 
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
@@ -613,6 +652,7 @@ else {
     window.ifThenMessage = ifThenMessage;
 
     window.$U = {
+        store:store,
         whenProperties: whenProperties,
         expose: expose,
         fetchCountry: fetchCountry,
