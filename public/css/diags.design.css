@@ -1127,6 +1127,12 @@ p.stripe-home-message > span {
     font-family: 'Avenir-Medium';
 }
 
+.diags-rich-text-editor{
+    border: 1px solid #C6DEE8;
+    background-color: #EDF5F9;
+        border-radius: 5px;
+}
+
 p.stripe-home-message {
     line-height: 20px;
     color: white;
