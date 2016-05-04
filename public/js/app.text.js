@@ -75,7 +75,7 @@
 
             function check() {
                 if (typeof window.Quill !== 'undefined') {
-                    r.dom(init, 2000);
+                    r.dom(init);
                 }
                 else setTimeout(check, 100);
             }
