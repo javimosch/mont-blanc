@@ -27,8 +27,8 @@
                         ng-class="{link:true,'text-left':c.align==='left','text-right':c.align==='right','text-center':c.align==='center'}"
                      >
                         <out ng-if="!c.format" html-content html="item[c.name||c]"></out>
-                        <out ng-if="c.format">
-                            {{c.format(item[c.name||c],item);}}
+                        <out ng-if="c.format" bind-html-compile="c.format(item[c.name||c],item)">
+                            <!--{{c.format(item[c.name||c],item);}}-->
                         </out>
                      </td>
 

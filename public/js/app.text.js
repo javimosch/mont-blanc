@@ -33,7 +33,7 @@
                 code: '',
                 description: '',
                 content: '',
-                updatedByHuman:true
+                updatedByHuman: true
             };
 
             updateCategorySelectData(s, db);
@@ -58,7 +58,7 @@
                 if (!s.item.description) return r.warningMessage('Description required');
                 if (!s.item._category) return r.warningMessage('Page Section required');
                 //
-                s.item.updatedByHuman=true;
+                s.item.updatedByHuman = true;
                 db.ctrl('Text', 'save', s.item).then(function() {
                     r.route('texts');
                 });
@@ -133,7 +133,7 @@
                     db = server,
                     s = $scope,
                     dbPaginate = $mongoosePaginate.get('Text');
-                $U.expose('s', s);    
+                $U.expose('s', s);
                 r.routeParams({
                     prevRoute: 'texts'
                 });
@@ -187,7 +187,7 @@
                         update: update,
                         rules: {
                             code: 'contains',
-                            _category:"match"
+                            _category: "match"
                         }
                     },
                     pagination: {
@@ -206,8 +206,7 @@
                         label: "Refresh",
                         type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => update()
-                    },
-                    {
+                    }, {
                         label: "Filtre",
                         type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => s.model.filter.filter()
@@ -236,7 +235,17 @@
                         format: (v, item) => {
                             return r.momentFormat(item.updatedAt, 'DD-MM-YY HH:mm');
                         }
+                    }, {
+                        label: 'Edit',
+                        name: 'updatedAt',
+                        format: (v, item) => {
+                            return '<i class="fa fa-pencil-square-o link" ng-click="model.editItem(item)" aria-hidden="true"></i>';
+                        }
                     }],
+                    editItem: (item) => {
+                        var win = window.open(window.location.origin+"/admin#/texts/edit/"+item._id, '_blank');
+                        //win.focus();
+                    },
                     items: [],
                     records: {
                         label: 'Records',
