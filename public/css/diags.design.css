@@ -622,13 +622,13 @@ ul.diags li:first-child {
     margin: 0px 25px 25px 0px;
 }
 
-h2.diags {
+h2.diags, h2.diags > div {
     font-family: 'Avenir-Book';
     font-size: 36px;
     padding-bottom: 33px;
 }
 
-h2.diags.black {
+h2.diags.black, h2.diags.black > div {
     color: black;
 }
 
@@ -962,6 +962,12 @@ h2.diags.black {
 
 .diags-form textarea.diags-input {
     padding-top: 10px;
+}
+
+.home-title-right, .home-title-right > div{
+    font-family:'Avenir-Book';
+    font-size:32px;
+    color:white;
 }
 
 

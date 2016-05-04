@@ -40,7 +40,7 @@
                         <p class="stripe-home-message">
                             *
                             <span class="">
-                                <out bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
+                                <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
                             </span>
                         </p>
 
@@ -112,7 +112,7 @@
         </div>
         <div class="col-md-5">
             <div ng-class="diagRightClass()">
-                <div class="avenir-book fnt-32 white"
+                <div class="avenir-book fnt-32 white home-title-right"
                 bind-html-compile="htmlReplaceDiagName('PAGE_HOME_$NAME_BLOCK_RIGHT_TITLE')"
                 >
                     
