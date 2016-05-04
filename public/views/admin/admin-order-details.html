@@ -177,6 +177,12 @@
         </div>
     </div>
 </div>
+<div class="row margin-top-one" ng-show="item.status=='created'">
+    <div class="alert alert-info" role="alert">Admin note: An order with this status means that it was created successfuly using the booking system but it was not paid or delegated.</div>
+</div>
+<div class="row margin-top-one" ng-show="item.status=='ordered'">
+    <div class="alert alert-info" role="alert">Admin note: An order with this status means that it was created successfuly using the booking system and it was delegated to a landlord.</div>
+</div>
 <div class="row margin-top-one ">
     <div class="col-sm-12 diags-crud-buttons-col">
         <button ng-click="validate()" ng-disabled="state.working()" class="btn diags-btn bg-madison">Enregistrer</button>
