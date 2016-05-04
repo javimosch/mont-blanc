@@ -6,7 +6,7 @@
 
 (function() {
     var app = angular.module('app.diag', []);
-    
+
     app.directive('diagsList', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
         return {
@@ -51,6 +51,10 @@
                     columns: [{
                         label: 'Priority',
                         name: 'priority'
+                    }, {
+                        label: "Description",
+                        name: "firstName",
+                        format: (x, item) => item.firstName + " " + item.lastName
                     }, {
                         label: "Email",
                         name: 'email'
@@ -107,8 +111,8 @@
                     if (params && params.id) {
                         rules._user = params.id;
                     }
-                    
-                    if(!rules._user || rules._user.toString() == '-1'){
+
+                    if (!rules._user || rules._user.toString() == '-1') {
                         return console.warn('time-range: insufficients rules.');
                     }
 
@@ -116,7 +120,8 @@
                         if (res.ok) {
                             if (cb) {
                                 cb(res.result);
-                            } else {
+                            }
+                            else {
                                 s.model.update(res.result, null);
                             }
                         }
@@ -131,7 +136,8 @@
                 var prevRoute = () => {
                     if (params.id) {
                         return 'diags/edit/' + params.id;
-                    } else {
+                    }
+                    else {
                         return 'exceptions';
                     }
                 };
@@ -179,7 +185,9 @@
                     remove: (item, index) => {
                         var msg = 'Delete ' + item.description + ' ' + item.startFormat + ' - ' + item.endFormat + ' (' + item.dayFormat + ')';
                         s.confirm(msg, () => {
-                            db.ctrl('TimeRange', 'remove', { _id: item._id }).then(() => {
+                            db.ctrl('TimeRange', 'remove', {
+                                _id: item._id
+                            }).then(() => {
                                 update();
                             });
                         });
@@ -289,7 +297,9 @@
                 return db.http('User', 'getAll', {
                     userType: 'diag',
                     __rules: {
-                        disabled: { $ne: true },
+                        disabled: {
+                            $ne: true
+                        },
                     },
                     __regexp: {
                         email: val
@@ -324,7 +334,8 @@
                     s.item = r.params.item;
                     r.params.item = null;
                     s.onLoad();
-                } else {
+                }
+                else {
                     db.ctrl('TimeRange', 'get', {
                         _id: params.id,
                         __populate: {
@@ -334,7 +345,8 @@
                         if (d.ok) {
                             s.item = d.result;
                             s.onLoad();
-                        } else {
+                        }
+                        else {
                             r.notify({
                                 message: 'Loading error, try later',
                                 type: "warning"
@@ -342,7 +354,8 @@
                         }
                     })
                 }
-            } else {
+            }
+            else {
                 s.onLoad(true);
             }
             s.save = () => {
@@ -354,7 +367,9 @@
             s.delete = () => {
                 var msg = 'Delete ' + s.item.description + ' ' + s.item.startFormat + ' - ' + s.item.endFormat + ' (' + s.item.dayFormat + ')';
                 s.confirm(msg, () => {
-                    db.ctrl('TimeRange', 'remove', { _id: s.item._id }).then(() => {
+                    db.ctrl('TimeRange', 'remove', {
+                        _id: s.item._id
+                    }).then(() => {
                         s.cancel();
                     });
                 });
@@ -364,18 +379,19 @@
                     __select: 'diagStart diagEnd',
                     _diag: s.item._user
                 }).then((d) => {
-                    if (d.ok){
-                        d.result.forEach(v=>{
-                            if($D.rangeCollide(v.diagStart,v.diagEnd,s.item.start,s.item.end)){
+                    if (d.ok) {
+                        d.result.forEach(v => {
+                            if ($D.rangeCollide(v.diagStart, v.diagEnd, s.item.start, s.item.end)) {
                                 return yes(v);
                             }
                         });
                         return no();
-                    }else{
+                    }
+                    else {
                         console.warn('rangeCollide order fetch error');
                         return no();
                     }
-                }).error(()=>{
+                }).error(() => {
                     console.warn('rangeCollide order fetch error');
                 });
             };
@@ -385,7 +401,7 @@
 
                 s.rangeCollideWithOrder((order) => {
                     //r.momentDateTime(order.diagStart);
-                   return r.warningMessage('An order exists for this date.');
+                    return r.warningMessage('An order exists for this date.');
                 }, () => {
 
                     $U.ifThenMessage([
@@ -400,7 +416,8 @@
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             r.notify(m[0](), 'warning');
-                        } else {
+                        }
+                        else {
                             r.notify(m[0], 'warning');
                         }
                     }, s.save);

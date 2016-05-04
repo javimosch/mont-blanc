@@ -11,6 +11,7 @@ var srv = angular.module('app.services', []);
 srv.service('dbText', ["$rootScope", "server", function(r, db) {
     r.__texts = [];
     r.__text = r.__text || {};
+    r.__textSTATIC = r.__textSTATIC || {};
     this.update = function() {
         db.ctrl('Text', 'getAll', {}).then(d => {
             r.__texts = d.result;

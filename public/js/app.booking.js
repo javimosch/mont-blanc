@@ -15,7 +15,6 @@ var app = angular.module('app', [
     'app.run',
     'app.services',
     'app.directives',
-    'app.static.calendar',
     'ngRoute',
     'ui.bootstrap'
 ]);

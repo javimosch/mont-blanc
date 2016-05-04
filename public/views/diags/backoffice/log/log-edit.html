@@ -1,10 +1,14 @@
-<modal-confirm open="confirm"></modal-confirm>
-<div class="container" ng-controller="logEdit">
-    <div class="row">
-        <div class="col-sm-12">
-            <h3 class="v-margin-2 padding-0">Log Details</h3>
-        </div>
+<div class="row">
+    <div class="col-sm-12 padding-none">
+        <ol class="breadcrumb">
+            <li><a class="link" ng-click="route('settings')">Settings</a></li>
+            <li><a class="link" ng-click="route('logs')">Server Log</a></li>
+            <li>Log Details</li>
+        </ol>
     </div>
+</div>
+<div class="container" ng-controller="logEdit">
+    <modal-confirm open="confirm"></modal-confirm>
     <div class="row">
         <div class="col-sm-8">
             <ul class="form-tiny labelx2 center-block">

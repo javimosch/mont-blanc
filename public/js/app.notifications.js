@@ -2,7 +2,7 @@
 (() => {
     //QUICK CRUD
     var vars = {
-        TITLE: 'Notifications',
+        TITLE: '', //Notifications
         TPL_CRUD: 'views/directives/directive.fast-crud.html',
         //TPL_CRUD_TFOOT : 'views/partials/partial.diag.balance.footer.html',
         //TPL_CRUD_BUTTONS : 'views/partials/partial.diag.balance.buttons.html'

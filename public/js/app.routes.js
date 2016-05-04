@@ -1,11 +1,11 @@
 /*global angular*/
 var srv = angular.module('app.routes', []);
 srv.config(['$routeProvider',
-    function($routeProvider,$rootScope) {
-        
-       
+    function($routeProvider, $rootScope) {
+
+
         $routeProvider.
-        
+
         //SHARED
         when('/mentions-legales', {
             templateUrl: 'views/diags/legal-mentions.html'
@@ -22,7 +22,7 @@ srv.config(['$routeProvider',
         when('/contactez-nous', {
             templateUrl: 'views/diags/contact-us.html'
         }).
-        
+
         //PUBLIC
         when('/login', {
             templateUrl: 'views/diags/login.html'
@@ -30,7 +30,7 @@ srv.config(['$routeProvider',
         when('/diag-inscription', {
             templateUrl: 'views/diags/diag-inscription.html'
         }).
-        
+
         //PRIVATE
         when('/', {
             templateUrl: 'views/diags/backoffice/dashboard.html'
@@ -43,7 +43,7 @@ srv.config(['$routeProvider',
         }).
 
         when('/settings', {
-            templateUrl: 'views/diags/backoffice/settings/settings.html'
+            templateUrl: 'views/diags/backoffice/settings/diags-settings.html'
         }).
 
         when('/notifications', {
@@ -51,10 +51,10 @@ srv.config(['$routeProvider',
         }).
 
         when('/logs', {
-            templateUrl: 'views/diags/backoffice/log/logs.html'
+            templateUrl: 'views/diags/backoffice/log/log-list.html'
         }).
         when('/logs/edit/:id', {
-            templateUrl: 'views/diags/backoffice/log/logs.edit.html'
+            templateUrl: 'views/diags/backoffice/log/log-edit.html'
         }).
 
         when('/administrators', {
@@ -70,8 +70,8 @@ srv.config(['$routeProvider',
         when('/exceptions/edit/:id', {
             templateUrl: 'views/diags/backoffice/exception/exception.edit.html'
         }).
-        
-         when('/texts', {
+
+        when('/texts', {
             templateUrl: 'views/diags/backoffice/text/text-list.html'
         }).
         when('/texts/edit/:id', {
@@ -83,6 +83,10 @@ srv.config(['$routeProvider',
         }).
         when('/clients/edit/:id', {
             templateUrl: 'views/diags/backoffice/client/client.edit.html'
+        }).
+
+        when('/price-modifiers', {
+            templateUrl: 'views/diags/backoffice/price-modifiers.html'
         }).
 
         when('/tools', {

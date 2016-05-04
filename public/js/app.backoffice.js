@@ -12,6 +12,8 @@
         'ui.bootstrap.datetimepicker',
 
         'srv.crud',
+        
+        "diags_ctrl_settings",
 
         'app.admin',
         'app.routes',

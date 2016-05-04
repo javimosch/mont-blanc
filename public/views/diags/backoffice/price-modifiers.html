@@ -1,0 +1,30 @@
+<div class="row">
+    <div class="col-sm-12 padding-none">
+        <ol class="breadcrumb">
+            <li><a class="link" ng-click="route('settings')">Settings</a></li>
+            <li>Price Modifiers</li>
+        </ol>
+    </div>
+</div>
+<div class="container" ng-controller="diags_ctrl_settings">
+    <div class="row margin-top-two">
+        <div class="col-sm-12">
+            <table class="table table-striped table-condensed link questions">
+                <tr ng-repeat="(k,o) in priceModifiers">
+                    <td>
+                        <label class="minimal" ng-bind="k"></label>
+                        <input 
+                        class="diags-input minimal" 
+                        placeholder="%" 
+                        ng-model="item.pricePercentageIncrease[o]" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row margin-bottom-three">
+        <div class="col-sm-12">
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Save</button>
+        </div>
+    </div>
+</div>
