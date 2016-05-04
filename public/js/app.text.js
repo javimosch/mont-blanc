@@ -205,11 +205,11 @@
                     buttons: [{
                         label: "Refresh",
                         type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
-                        click: () => update()
-                    }, {
-                        label: "Filtre",
-                        type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => s.model.filter.filter()
+                    }, {
+                        label: "Clear Filters",
+                        type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
+                        click: () => s.model.filter.clear && s.model.filter.clear()
                     }, {
                         label: "New Item",
                         type: () => "btn diags-btn bg-azure-radiance margin-right-1",

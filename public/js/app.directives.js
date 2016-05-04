@@ -66,6 +66,14 @@ app.directive('tableFilter', function(
                     collectionPointersFields());
                 if (s.model.filter && s.model.filter.update) s.model.filter.update();
             }
+            
+            s.model.filter.clear = function(){
+                s.model.filter.payload = {};
+                for (var x in s.model.filter.fields) {
+                    s.model.filter.fields[x]='';
+                }
+                s.model.filter.update();//clear filters and search
+            };
 
             function regexpFields() {
                 var fields = {};
@@ -81,7 +89,11 @@ app.directive('tableFilter', function(
             function collectionPointersFields() {
                 var fields = {};
                 for (var x in s.model.filter.fields) {
-                    if (x.charAt(0) == '_') fields[x] = s.model.filter.fields[x];
+                    if (x.charAt(0) == '_') {
+                        if(s.model.filter.fields[x]){
+                            fields[x] = s.model.filter.fields[x];
+                        }
+                    }
                     else continue;
                 }
                 return fields;
