@@ -481,7 +481,14 @@ a.diag-btn-info:hover {
     font-family: 'Avenir-Medium';
 }
 
+
+
+.dynamic-table-wrapper .button-group > button {
+    margin-bottom: 0.2em;
+}
+
 @media only screen and (min-width: 480px) {
+    
     .booking-form {
         width: 450px;
     }

@@ -20,14 +20,22 @@
         </div>
         <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one">
             <label class="sm-float-left">
-                <input type="checkbox" check-box-group check-box-model='model.house' name="type" value="false"/><span class=""></span></label>
+                <input type="checkbox" check-box-group check-box-model='model.house' name="type" value="false" /><span class=""></span></label>
             <span class="padding-left-halve sm-float-left padding-top-01em">Appartament</span>
         </div>
-        <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one">
+        <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one 
+        visible-sm-block visible-md-block visible-lg-block visible-xl-block">
             <span class="padding-left-halve float-right padding-top-01em">Maison</span>
             <label class="float-right">
                 <input type="checkbox" check-box-group check-box-model='model.house' name="type" value="true" ng-model="model.house" /><span class=""></span></label>
-            
+
+        </div>
+        <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one 
+        visible-xs-block">
+
+            <label class="">
+                <input type="checkbox" check-box-group check-box-model='model.house' name="type" value="true" ng-model="model.house" /><span class=""></span></label>
+            <span class="padding-left-halve  padding-top-01em">Maison</span>
         </div>
 
     </div>
@@ -50,7 +58,7 @@
         <div class="col-sm-7 diag-col-label margin-bottom-one">
             <label>Permis de construire</label>
             <div class="dropdown with-caret">
-                
+
                 <button class="btn btn-default btn-permis-de-construire dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span>{{__constructionPermissionDateSelectLabel}}</span>
                     <span class="caret"></span>
@@ -69,7 +77,7 @@
                     <span>{{__gazSelectLabel}}</span>
                     <span class="caret"></span>
                 </button>
-                
+
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                     <li ng-repeat="(k,v) in gasInstallation">
                         <a class="link" ng-click="__gazSelect(k,v)">{{k}}</a>
@@ -85,12 +93,12 @@
         </div>
         <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one">
             <label class="sm-float-left">
-                <input type="checkbox" check-box-group check-box-model='model.electricityInstallation' name="electricityInstallation" value="Moins de 15 ans"/><span class=""></span></label>
+                <input type="checkbox" check-box-group check-box-model='model.electricityInstallation' name="electricityInstallation" value="Moins de 15 ans" /><span class=""></span></label>
             <span class="padding-left-halve sm-float-left">-&nbsp;de 15 ans</span>
         </div>
         <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one">
             <label class="sm-float-left">
-                <input type="checkbox" check-box-group check-box-model='model.electricityInstallation' name="electricityInstallation" value="Plus de 15 ans"/><span class=""></span></label>
+                <input type="checkbox" check-box-group check-box-model='model.electricityInstallation' name="electricityInstallation" value="Plus de 15 ans" /><span class=""></span></label>
             <span class="padding-left-halve sm-float-left">+&nbsp;de 15 ans</span>
         </div>
 
@@ -101,23 +109,15 @@
 
             <div class="input-group address">
                 <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
-                <input type="text" class="form-control" 
-                data-address 
-                model="model" 
-                field="address"
-                city="city"
-                department="department"
-                region="region"
-                country="country" 
-                post-code="postCode" placeholder="Ex: 102 rue Réaumur 75002 Paris, France">
+                <input type="text" class="form-control" data-address model="model" field="address" city="city" department="department" region="region" country="country" post-code="postCode" placeholder="Ex: 102 rue Réaumur 75002 Paris, France">
             </div>
 
         </div>
     </div>
-    
+
     <div class="row diag-row width90p center">
         <div class="col-sm-12 padding-none margin-bottom-one">
-           <button class="btn diag-btn-main" ng-click="proceedToDiagsSelection()">Choisir vos diagnostics</button>
+            <button class="btn diag-btn-main" ng-click="proceedToDiagsSelection()">Choisir vos diagnostics</button>
         </div>
     </div>
 

@@ -54,7 +54,7 @@
                     }, {
                         label: "Description",
                         name: "firstName",
-                        format: (x, item) => item.firstName + " " + item.lastName
+                        format: (x, o) => o.firstName+((o.lastName)?', '+o.lastName:'')
                     }, {
                         label: "Email",
                         name: 'email'

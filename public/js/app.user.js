@@ -1,3 +1,7 @@
+/*global angular*/
+/*global _*/
+/*global $U*/
+
 var app = angular.module('app.user', []);
 
 
@@ -72,7 +76,7 @@ app.controller('adminUsersEdit', [
         r.secureSection(s);
         r.dom();
         //
-        expose('s', s);
+        $U.expose('s', s);
         //
         s.item = {
             email: '',
@@ -152,14 +156,15 @@ app.controller('adminUsersEdit', [
         s.isClient=()=>s.item.userType=='client';
 
         s.validate = () => {
-            ifThenMessage([
-                [s.item.userType, '==', undefined, "User type required"],
-                [!s.item.email, '==', true, "Email required"],
-                [!s.item.password, '==', true, "Password required"],
-                [s.item.email, '==', '', "Email cannot be empty"],
-                [s.item.password, '==', '', "Password cannot be empty"],
+            $U.ifThenMessage([
+                [s.item.userType, '==', undefined, "User type est nécessaire"],
+                [!s.item.firstName, '==', true, "Prénom est nécessaire"],
+                [!s.item.email, '==', true, "Email est nécessaire"],
+                [!s.item.password, '==', true, "Password est nécessaire"],
+                [s.item.email, '==', '', "Email est nécessairey"],
+                [s.item.password, '==', '', "Password est nécessaire"],
 
-                [s.isClient()&&s.item.discount==undefined,'==',true,"Discount required"],
+                [s.isClient()&&s.item.discount==undefined,'==',true,"Discount est nécessaire"],
                 [s.isClient()&&isNaN(s.item.discount), '==', true, "Discount allowed values are 0..100"],
                 [s.isClient()&&(s.item.discount<0||s.item.discount>100),'==',true,"Discount allowed values are 0..100"]
 

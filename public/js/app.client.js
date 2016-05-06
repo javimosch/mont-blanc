@@ -235,6 +235,10 @@
                         label: "Type",
                         name: 'clientType'
                     }, {
+                        label:"Description",
+                        name:"firstName",
+                        format:(x,o)=>o.firstName+((o.lastName)?', '+o.lastName:'')
+                    },{
                         label: "Email",
                         name: 'email'
                     }, {
