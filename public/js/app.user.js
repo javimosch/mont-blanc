@@ -1,6 +1,7 @@
 /*global angular*/
 /*global _*/
 /*global $U*/
+/*global moment*/
 
 var app = angular.module('app.user', []);
 
@@ -33,7 +34,7 @@ app.controller('adminUsers', [
                 console.log('adminUsers:removeAll:in-progress');
                 s.message('deleting . . .', 'info');
                 s.requesting = true;
-                db.custom('user', 'removeAll', {
+                db.ctrl('User', 'removeAll', {
                     ids: s.selectedItems
                 }).then(function(res) {
                     s.requesting = false;
@@ -55,9 +56,8 @@ app.controller('adminUsers', [
 
         function read() {
             s.message('Loading . . .', 'info');
-            db.custom('user', 'getAll', {}).then(function(r) {
-                //                console.info('adminUsers:read:success');
-                s.items = r.data.result;
+            db.ctrl('User', 'getAll', {}).then(function(r) {
+                s.items = r.result;
                 s.message('Loaded', 'success', 1000);
             });
         }
@@ -83,8 +83,8 @@ app.controller('adminUsersEdit', [
             password: ''
         };
 
-        if(r.params&&r.params.item){
-            s.item=Object.assign(r.params.item);
+        if (r.params && r.params.item) {
+            s.item = Object.assign(r.params.item);
             delete r.params.item;
         }
 
@@ -108,7 +108,8 @@ app.controller('adminUsersEdit', [
                         }
                     }
                     return;
-                } else {
+                }
+                else {
                     s.item.userType = choice.label.toString().toLowerCase();
                     s.types.selected = choice.label;
                 }
@@ -118,7 +119,8 @@ app.controller('adminUsersEdit', [
         if (params && params.id && params.id.toString() !== '-1') {
             //            console.info('adminUsersEdit:params', params);
             r.dom(read, 1000);
-        } else {
+        }
+        else {
 
             if (r.userIs(['diag', 'client'])) {
                 //can't create an user
@@ -130,16 +132,18 @@ app.controller('adminUsersEdit', [
         s.back = () => {
             if (r.userIs(['diag', 'client'])) {
                 r.route('dashboard');
-            } else {
+            }
+            else {
                 if (r.params && r.params.prevRoute) {
-                    return r.route(r.params.prevRoute);
+                    var _r = r.params.prevRoute;
                     delete r.params.prevRoute;
-                } else {
+                    return r.route(_r);
+                }
+                else {
                     //r.route('users');
                     console.warn('r.params.prevRoute required');
                     r.route('dashboard');
                 }
-
             }
         };
         //
@@ -147,26 +151,25 @@ app.controller('adminUsersEdit', [
             s.back();
         };
 
-        s.isCurrent=()=>{
+        s.isCurrent = () => {
             return r.session()._id == s.item._id;
         };
 
-        s.isAdmin=()=>s.item.userType=='admin';        
+        s.isAdmin = () => s.item.userType == 'admin';
 
-        s.isClient=()=>s.item.userType=='client';
+        s.isClient = () => s.item.userType == 'client';
 
         s.validate = () => {
             $U.ifThenMessage([
-                [s.item.userType, '==', undefined, "User type est nécessaire"],
+                [!s.item.userType, '==', true, "User type est nécessaire"],
                 [!s.item.firstName, '==', true, "Prénom est nécessaire"],
                 [!s.item.email, '==', true, "Email est nécessaire"],
                 [!s.item.password, '==', true, "Password est nécessaire"],
-                [s.item.email, '==', '', "Email est nécessairey"],
-                [s.item.password, '==', '', "Password est nécessaire"],
+                [s.item.userType !== 'admin' && !s.item.clientType, '==', true, "clientType est nécessaire"],
 
-                [s.isClient()&&s.item.discount==undefined,'==',true,"Discount est nécessaire"],
-                [s.isClient()&&isNaN(s.item.discount), '==', true, "Discount allowed values are 0..100"],
-                [s.isClient()&&(s.item.discount<0||s.item.discount>100),'==',true,"Discount allowed values are 0..100"]
+                [s.isClient() && s.item.discount == undefined, '==', true, "Discount est nécessaire"],
+                [s.isClient() && isNaN(s.item.discount), '==', true, "Discount allowed values are 0..100"],
+                [s.isClient() && (s.item.discount < 0 || s.item.discount > 100), '==', true, "Discount allowed values are 0..100"]
 
             ], (m) => {
                 s.message(m[0], 'warning', 0, true);
@@ -184,48 +187,47 @@ app.controller('adminUsersEdit', [
                     var _item = data.result[0];
                     if (s.item._id && s.item._id == _item._id) {
                         _save(); //same user
-                    } else {
+                    }
+                    else {
                         s.message('Email address in use.');
                     }
-                } else {
+                }
+                else {
                     _save(); //do not exist.
                 }
             });
 
             function _save() {
-                s.requesting = true;
-                db.custom('user', 'save', s.item).then(function(res) {
-                    s.requesting = false;
-                    var _r = res.data;
-                    if (_r.ok) {
+                db.ctrl('User', 'save', s.item).then(function(res) {
+                    if (res.ok) {
 
                         //if current user, update session.
-                        if (_r.result) {
-                            if (_r.result._id == r.session()._id) {
-                                r.session(_r.result);
+                        if (res.result) {
+                            if (res.result._id == r.session()._id) {
+                                r.session(res.result);
                             }
                         }
 
                         s.message('saved', 'success');
                         s.back();
-                    } else {
+                    }
+                    else {
                         s.message('error, try later', 'danger');
                     }
-                }).error(function(err) {
-                    s.requesting = false;
+                }).error(function(_err) {
                     s.message('error, try later.', 'danger');
                 });
             }
 
         };
         s.delete = function() {
-            userHasRelatedOrders().on('yes', (err, r) => {
+            userHasRelatedOrders().on('yes', (_err, r) => {
                 s.relatedOrders = r.relatedOrders || [
                     'data.relatedOrders required'
                 ];
                 s.okModal({
                     messageEl: tpl.compile('user.delete.associated-orders', s)
-                },()=>{
+                }, () => {
                     delete s.relatedOrders;
                 });
 
@@ -235,21 +237,15 @@ app.controller('adminUsersEdit', [
 
             function _proceedDelete() {
                 s.confirm('Delete User ' + s.item.email + ' ?', function() {
-                    console.log('adminUsersEdit:remove:in-progress');
-                    s.message('deleting . . .', 'info');
-                    s.requesting = true;
-                    db.custom('user', 'remove', {
+                    db.ctrl('User', 'remove', {
                         _id: s.item._id
                     }).then(function(res) {
-                        s.requesting = false;
                         s.message('deleted', 'info');
                         reset();
                         s.back();
-                        console.info('adminUsersEdit:remove:success', r.data);
-                    }).error(function(err) {
+                    }).error(function(_err) {
                         s.requesting = false;
                         s.message('error, try later.', 'danger');
-                        console.warn('adminUsersEdit:remove:error', err);
                     });
                 });
             }
@@ -271,14 +267,14 @@ app.controller('adminUsersEdit', [
             //s.message('Loading . . .', 'info');
 
             s.requesting = true;
-            db.custom('user', 'get', {
+            db.ctrl('User', 'get', {
                 _id: params.id
             }).then(function(res) {
-                s.requesting = false;
-                s.item = res.data.result;
-                if (!res.data.ok) {
+                s.item = res.result;
+                if (!res.ok) {
                     s.message('not found, maybe it was deleted!', 'warning', 5000);
-                } else {
+                }
+                else {
                     s.types.click(s.item.userType);
                     //s.message('Loaded', 'success', 2000);
                 }
@@ -289,7 +285,7 @@ app.controller('adminUsersEdit', [
         function userHasRelatedOrders(cb) {
             var time = (d) => moment(d).format('HH:mm');
             var descr = (_order) => _order.address + ' (' + time(_order.diagStart) + ' - ' + time(_order.diagEnd) + ')'
-            return MyPromise((resolve, error, emit) => {
+            return $U.MyPromise((resolve, error, emit) => {
                 if (s.item.userType === 'admin') {
                     return emit('no'); //admin has no orders associated.
                 }
@@ -303,7 +299,7 @@ app.controller('adminUsersEdit', [
                     rules['_diag'] = s.item._id
                 }
                 db.ctrl('Order', 'getAll', rules).then(data => {
-                    if (data.ok && data.result && data.result.length>0) {
+                    if (data.ok && data.result && data.result.length > 0) {
                         var relatedOrders = [];
                         data.result.forEach(_order => {
                             relatedOrders.push(descr(_order));
@@ -311,7 +307,8 @@ app.controller('adminUsersEdit', [
                         emit('yes', null, {
                             relatedOrders: relatedOrders
                         });
-                    } else {
+                    }
+                    else {
                         emit('no');
                     }
                 });

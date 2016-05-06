@@ -28,39 +28,44 @@
 
     <link rel="stylesheet" href="css/diags.design.css" type="text/css" />
     <link rel="stylesheet" href="css/diags-checkbox.css" type="text/css" />
-
+    
+    <link rel="stylesheet" href="css/table-responsive.css" type="text/css" />
+<!--
     <link href="https://cdn.quilljs.com/latest/quill.snow.css" rel="stylesheet">
+    -->
 </head>
 
 <body class="ma ma-black diags-style">
     <!-- GLOBAL LAYOUT -->
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div ng-include="'views/diags/backoffice/partials/app-header.html'"></div>
-        </div>
-    </div>
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span-12 relative">
-                <my-alerts add="notify" class="notify " directive="notify" stacked="false" settings="{clickDismissable:false,scroll:true}"></my-alerts>
+    <div id="wrapper">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div ng-include="'views/diags/backoffice/partials/app-header.html'"></div>
             </div>
         </div>
-    </div>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="diags-bg">
-                <div class=" container diags-selection padding-none">
-                    <div class="row diags-bg-block-40 hidden-xs"></div>
-                    <div ng-view class="diags-content"></div>
-                    <div class="row diags-bg-block-40 hidden-xs"></div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span-12 relative">
+                    <my-alerts add="notify" class="notify " directive="notify" stacked="false" settings="{clickDismissable:false,scroll:true}"></my-alerts>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="diags-bg">
+                    <div class=" container diags-selection padding-none">
+                        <div class="row diags-bg-block-40 hidden-xs"></div>
+                        <div ng-view class="diags-content"></div>
+                        <div class="row diags-bg-block-40 hidden-xs"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row-fluid">
+    <div id="footer">
         <div ng-include="'views/diags/backoffice/partials/app-footer.html'"></div>
     </div>
-    </div>
+
 
 
     <div class="hidden" remove-hidden>
@@ -86,7 +91,7 @@
     <span data-debug show="showDebug"></span>
     <!--TEMPLATES-->
     <div ng-include="'views/templates/templates.user.html'"></div>
-     <!--VENDOR-->
+    <!--VENDOR-->
     <script src="js/vendor/vendor.jquery.js"></script>
     <script src="js/vendor/vendor.jquery.fullpage.js"></script>
     <script src="js/vendor/vendor.angular.unzip.js"></script>
@@ -105,7 +110,10 @@
     <script src="js/vendor/vendor.angular.bcalendar.tpls.js"></script>
     <script src="js/vendor/vendor.lodash.js"></script>
     <script src="js/vendor/vendor.db.js"></script>
+
     <script src="js/vendor/vendor.awesomplete.min.js"></script>
+
+
     <!--BUNDLE-->
     <script src="app.bundle.js"></script>
     <!-- BACKOFFICE THIRD PARTY (We load in the end because is not important to rendering.) -->
