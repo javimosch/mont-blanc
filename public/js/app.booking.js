@@ -92,7 +92,8 @@ app.controller('ctrl.booking-contact-form', ['server',
 
         };
         s.send = function() {
-            db.ctrl('Email', 'contactFormSendToAllAdmins', s._email).then(function(d) {
+            
+            db.ctrl('Notification', 'NEW_CONTACT_FORM_MESSAGE',s._email).then(function(d) {
                 if (d.ok) {
                     r.infoMessage('Message envoyé');
                 }
@@ -100,6 +101,7 @@ app.controller('ctrl.booking-contact-form', ['server',
                     r.infoMessage('Problème de serveur , réessayer plus tard');
                 }
             });
+            
         };
         s.validate = function() {
             ifThenMessage([
@@ -1404,7 +1406,7 @@ app.controller('ctrl.booking', ['server',
 
                 s.openConfirm('Vous souhaitez envoyer un lien de paiement pour ' + s._order.landLordEmail + ' ?', () => {
                     s.infoMsg("Sending email.");
-                    db.ctrl('Email', 'orderPaymentLink', s._order).then(data => {
+                    db.ctrl('Notification', 'PAYMENT_LINK', s._order).then(data => {
                         s.infoMsg("Email envoyer avec succès. Suivi de votre commande dans le back office.");
                         s._order.landLordPaymentEmailSended = true;
                         s._order.status = 'ordered';

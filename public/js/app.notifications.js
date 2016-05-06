@@ -10,7 +10,7 @@
     };
     var app = angular.module('app.notifications', []);
 
-    
+
 
 
     app.directive('sectionNotifications', function(
@@ -40,14 +40,17 @@
                     }
                     var data = {
                         __populate: {
+                            _user: 'email',
                             _config: '',
                         },
-                        __sort:"-created"
+                        __sort: "-created"
                     };
+                    data = Object.assign(data, s.model.filter.payload);
                     dbPaginate.ctrl(data, s.model).then(res => {
                         if (cb) {
                             cb(res.result);
-                        } else {
+                        }
+                        else {
                             s.model.update(res.result, null);
                         }
                     }).on('cache', res => {
@@ -67,7 +70,7 @@
                                 subject: item.subject
                             }).then(d => {
                                 console.info(d);
-                                r.infoMessage('Copy send to '+item.to);
+                                r.infoMessage('Copy send to ' + item.to);
                                 update();
                             });
                         });
@@ -75,16 +78,36 @@
                 };
 
                 s.model = {
+                    init: () => {
+                        //update()
+                        s.model.filter.firstTime();
+                    },
                     filter: {
+                        store: "NOTIFICATIONS_LIST",
                         template: 'notificationFilter',
+                        update: update,
                         rules: {
-                            to: 'contains'
+                            to: 'contains',
+                            _user: "match"
                         }
                     },
-                    init: () => update(),
+                    pagination: {
+                        itemsPerPage: 5
+                    },
                     paginate: (cb) => {
                         update(null, cb)
                     },
+                    getUsers: function(val) {
+                        return db.http('User', 'getAll', {
+                            //userType: 'client',
+                            __regexp: {
+                                email: val
+                            }
+                        }).then(function(res) {
+                            return res.data.result;
+                        });
+                    },
+
                     remove: (item, index) => {
                         var rule = {
                             _id: item._id
@@ -114,10 +137,18 @@
                     },
                     buttons: [{
                         label: "Refresh",
-                        type: () => "btn btn-default",
-                        click: () => update()
+                        type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
+                        click: () => s.model.filter.filter()
+                    }, {
+                        label: "Clear Filters",
+                        type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
+                        click: () => s.model.filter.clear && s.model.filter.clear()
                     }],
                     columns: [{
+                        label: 'User',
+                        name: 'to',
+                        format: (x, item) => item._user && item._user.email || ''
+                    }, {
                         label: 'To',
                         name: 'to'
                     }, {
@@ -136,9 +167,9 @@
                             return r.momentFormat(v, "DD-MM-YY HH:mm");
                         }
                     }],
-                    records:{
-                        label:'Records',
-                        show:true
+                    records: {
+                        label: 'Records',
+                        show: true
                     }
                 };
 

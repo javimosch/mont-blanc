@@ -1,6 +1,7 @@
 ###Can you explain me all the order status in a mail please ? and what is triggered ?
 
 I will review the different status and what is triggered and I will create a faq page for admins in the BO so the info is static in one place.
+Its is Settings -> Documentation ( /admin#/documentation )
 
 ###Why it propose only one slot for today ?
 

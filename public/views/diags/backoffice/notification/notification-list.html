@@ -16,8 +16,22 @@
 <script type="text/ng-template" id="notificationFilter.html">
     <ul class="form-tiny center-block float-right">
         <li>
-            <label>To</label>
-            <input ng-model="model.filter.fields.to" placeholder="Filter" />
+            <label class="diags-label-horizontal">User</label>
+            <input  
+                type="text" 
+                class="diags-input" 
+                ng-model="model.filter.fields._user" 
+                placeholder="User" 
+                uib-typeahead="o as o.email for o in model.getUsers($viewValue) | limitTo:8" 
+                typeahead-loading="'Loading users. . .'"
+                typeahead-no-results="noResults"
+            >
+        </li>
+        <li>
+            <label class="diags-label-horizontal">To</label>
+            <input 
+            class="diags-input" 
+            ng-model="model.filter.fields.to" placeholder="Filter" />
         </li>
     </ul>
 </script>

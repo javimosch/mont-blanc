@@ -481,7 +481,10 @@ a.diag-btn-info:hover {
     font-family: 'Avenir-Medium';
 }
 
-
+ul.docs-notification-types h6{
+    font-family: 'Avenir-Oblique'!important;
+    font-weight: 700;
+}
 
 .dynamic-table-wrapper .button-group > button {
     margin-bottom: 0.2em;
