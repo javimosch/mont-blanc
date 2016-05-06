@@ -39,3 +39,9 @@ I will give you a bonus anyway, its good job
 Can you display real name of diag on the « liste diags »
 Can you display All the Propriétaire info and not only name. 
 Clés / Adresse DOES NOT display, the client selected an address for the key but its not embed in the diag on Diag back office
+
+
+
+Orthographe mistake:  Appartement
+
+And as you can sée in attached file its not properly aligned

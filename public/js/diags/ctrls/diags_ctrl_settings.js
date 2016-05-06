@@ -17,7 +17,8 @@
                 'Notifications':'notifications',
                 'Logs':'logs',
                 "Tools":'tools',
-                "Price Modifiers":"price-modifiers"
+                "Price Modifiers":"price-modifiers",
+                "Documentation":"documentation"
             };
             
             s.priceModifiers = {

@@ -88,6 +88,10 @@ srv.config(['$routeProvider',
         when('/price-modifiers', {
             templateUrl: 'views/diags/backoffice/price-modifiers.html'
         }).
+        
+        when('/documentation', {
+            templateUrl: 'views/diags/backoffice/diags-docs.html'
+        }).
 
         when('/tools', {
             templateUrl: 'views/diags/backoffice/tools.html'
