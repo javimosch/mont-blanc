@@ -50,7 +50,7 @@ var path = require('path');
                 presets: ['es2015']
             }))
             .pipe(uglify({mangle:false})) //output: { beautify: true }
-            .pipe(strip())
+           .pipe(strip())
             .pipe(minify({ ext: '.js' }))
             .pipe(gulp.dest(outPath || 'dist'));
         console.log('scripts-bundler ',htmlPath,JSON.stringify(opt));

@@ -1407,6 +1407,10 @@ app.controller('ctrl.booking', ['server',
                 s.openConfirm('Vous souhaitez envoyer un lien de paiement pour ' + s._order.landLordEmail + ' ?', () => {
                     s.infoMsg("Sending email.");
                     db.ctrl('Notification', 'PAYMENT_LINK', s._order).then(data => {
+                        if(!data.ok){
+                            return r.warningMessage("Le courriel ne peut être envoyé à ce moment , d'essayer de nouveau de backoffice",10000);   
+                        }
+                        
                         s.infoMsg("Email envoyer avec succès. Suivi de votre commande dans le back office.");
                         s._order.landLordPaymentEmailSended = true;
                         s._order.status = 'ordered';

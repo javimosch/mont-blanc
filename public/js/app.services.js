@@ -496,12 +496,12 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     var ws = {
         URL: () => URL,
         getAvailableRanges: (order) => diagsGetAvailableRanges(order, ctrl),
-        login: login,
-        save: save,
-        get: getSingle,
-        getAll: getAll,
+       // login: login,
+       // save: save,
+       // get: getSingle,
+       // getAll: getAll,
         localData: getLocalData,
-        custom: custom,
+        //custom: custom,
         http: function(ctrl, action, data) {
             return http.post(URL + '/' + 'ctrl/' + ctrl + '/' + action, data);
         },
@@ -532,7 +532,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
         ctrl: ctrl,
         $get: (url, config) => {
             return MyPromise(function(resolve, error) {
-                var _log = logger(url, data);
+                var _log = logger(url, {});
                 http.get(url, config).then((res) => {
                     _log({
                         ok: true,

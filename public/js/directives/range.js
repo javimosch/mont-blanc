@@ -1,33 +1,56 @@
 /*global app*/
 /*global $*/
 /*global $U*/
+/*global noUiSlider*/
+
+
+
 app.directive('rangeModel', function($rootScope, $timeout, $compile) {
     return {
         restrict: 'A',
         link: function(scope, el, attrs) {
             if (!attrs.rangeValues) throw Error('rangeModel: rangeValues attribute requited.');
             var vals = scope[attrs.rangeValues];
-
+            var handler = el.get(0);
             $timeout(function() {
                 el.attr('min', 0);
                 el.attr('max', Object.keys(vals).length - 1);
                 el.attr('step', 1);
+
+
+               // console.log('init-range', handler);
+                noUiSlider.create(handler, {
+                    start: [0],
+                    step: 1,
+                    range: {
+                        'min': [0],
+                        'max': [Object.keys(vals).length - 1]
+                    }
+                });
+
+                handler.noUiSlider.on('change', function() {
+                    update();
+                });
+
                 $rootScope.$apply();
             })
 
             function update() {
-                var index = el.val();
-                set(get(index), scope);
+                ///var index = el.val();
+                var index = Math.round(parseInt(handler.noUiSlider.get()));
+                var val = get(index);
+                //console.info('range', index, val);
+                set(val,scope);
                 $timeout(function() {
                     $rootScope.$apply();
                 });
             }
 
-            el.on('input', update);
-            
-            $U.on('render-ranges',function(){
-                //render dom val
-                setDomVal($U.val(scope,attrs.rangeModel),vals);
+            // el.on('input', update);
+
+            $U.on('render-ranges', function() {
+                //console.info('init-render-ranges',$U.val(scope, attrs.rangeModel));
+                setDomVal($U.val(scope, attrs.rangeModel), vals);
             });
 
             function get(index) {
@@ -46,6 +69,8 @@ app.directive('rangeModel', function($rootScope, $timeout, $compile) {
             }
 
             function setDomVal(val, valsObject) {
+                
+                
                 $rootScope.dom(function() {
                     try {
                         var x = 0;
@@ -57,8 +82,9 @@ app.directive('rangeModel', function($rootScope, $timeout, $compile) {
                                 x++;
                             }
                         }
-                        $("input[type=range]").val(x);
-                       // console.log('range: set-dom-val-at-', x);
+                        //$("input[type=range]").val(x);
+                        handler.noUiSlider.set(x);
+                        // console.log('range: set-dom-val-at-', x);
                     }
                     catch (e) {}
                 });

@@ -1,3 +1,6 @@
+.cssfx {}
+
+
 /*
 SMOTH
 -webkit-text-stroke: .025em rgba(51,51,51,0.50);
@@ -165,7 +168,7 @@ html {
     line-height: 28px;
     height: 28px;
     padding: 0px 20px;
-    margin: 0px 10px;
+    margin: 10px 10px 0px 10px;
     border-radius: 15px;
     color: white;
     max-width: 232px;
@@ -189,7 +192,7 @@ html {
 @media screen and (min-width: 768px) {
     .diags-navbar-2 div, .diags-navbar-2 ul, .diags-navbar-2 li {
         height: 45px!important;
-        line-height: 45px!important;
+        /*line-height: 45px!important;*/
         vertical-align: middle!important;
         padding: 0px;
         margin: 0px;
@@ -481,7 +484,12 @@ a.diag-btn-info:hover {
     font-family: 'Avenir-Medium';
 }
 
-ul.docs-notification-types h6{
+.modal-open {
+    overflow: hidden;
+    margin-right: 15px!important;
+}
+
+ul.docs-notification-types h6 {
     font-family: 'Avenir-Oblique'!important;
     font-weight: 700;
 }
@@ -491,7 +499,6 @@ ul.docs-notification-types h6{
 }
 
 @media only screen and (min-width: 480px) {
-    
     .booking-form {
         width: 450px;
     }
@@ -942,7 +949,15 @@ h2.diags.black > div {
 
 .diags-date-day-item {
     height: 74px;
-    display: inline-flex;
+    display: -webkit-box;
+    /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box;
+    /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;
+    /* TWEENER - IE 10 */
+    display: -webkit-flex;
+    /* NEW - Chrome */
+    display: flex;
     background-color: transparent;
     width: 100%;
 }
@@ -1111,6 +1126,14 @@ label.minimal {
 
 .notify .box {
     border: 0px;
+    display: -webkit-box;
+    /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box;
+    /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;
+    /* TWEENER - IE 10 */
+    display: -webkit-flex;
+    /* NEW - Chrome */
     display: flex;
     width: 100%;
     position: relative;
@@ -1390,4 +1413,179 @@ p.stripe-home-message > span {
     font-family: 'Avenir-Light'!important;
     font-size: 12px!important;
     font-weight: 800;
+}
+.round {
+    border-radius: 200px 200px 200px 200px;
+    -moz-border-radius: 200px 200px 200px 200px;
+    -webkit-border-radius: 200px 200px 200px 200px;
+    border: 0px solid #000000;
+}
+
+
+/* Functional styling;
+ * These styles are required for noUiSlider to function.
+ * You don't need to change these rules to apply your design.
+ */
+.noUi-target,
+.noUi-target * {
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+-ms-touch-action: none;
+	touch-action: none;
+-ms-user-select: none;
+-moz-user-select: none;
+	user-select: none;
+-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.noUi-target {
+	position: relative;
+	direction: ltr;
+}
+.noUi-base {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	z-index: 1; /* Fix 401 */
+}
+.noUi-origin {
+	position: absolute;
+	right: 0;
+	top: 0;
+	left: 0;
+	bottom: 0;
+}
+.noUi-handle {
+	position: relative;
+	z-index: 1;
+}
+.noUi-stacking .noUi-handle {
+/* This class is applied to the lower origin when
+   its values is > 50%. */
+	z-index: 10;
+}
+.noUi-state-tap .noUi-origin {
+-webkit-transition: left 0.3s, top 0.3s;
+	transition: left 0.3s, top 0.3s;
+}
+.noUi-state-drag * {
+	cursor: inherit !important;
+}
+
+/* Painting and performance;
+ * Browsers can paint handles in their own layer.
+ */
+.noUi-base,
+.noUi-handle {
+	-webkit-transform: translate3d(0,0,0);
+	transform: translate3d(0,0,0);
+}
+
+/* Slider size and handle placement;
+ */
+.noUi-horizontal {
+	height: 18px;
+}
+.noUi-horizontal .noUi-handle {
+	width: 28px;
+	height: 28px;
+	left: -17px;
+	top: -11px;
+}
+.noUi-vertical {
+	width: 18px;
+}
+.noUi-vertical .noUi-handle {
+	width: 28px;
+	height: 34px;
+	left: -6px;
+	top: -17px;
+}
+
+/* Styling;
+ */
+.noUi-background {
+	background: #FAFAFA;
+	box-shadow:  inset 0 1px 1px #f0f0f0;
+}
+.noUi-connect {
+	background: #3FB8AF;
+	box-shadow: inset 0 0 3px rgba(51,51,51,0.45);
+-webkit-transition: background 450ms;
+	transition: background 450ms;
+}
+.noUi-origin {
+	border-radius: 2px;
+}
+.noUi-target {
+    border-radius: 5px;
+    border: none;
+    box-shadow: none;
+    height: 7px;
+}
+.noUi-target.noUi-connect {
+	box-shadow: none;
+}
+
+/* Handles and cursors;
+ */
+.noUi-draggable {
+	cursor: w-resize;
+}
+.noUi-vertical .noUi-draggable {
+	cursor: n-resize;
+}
+.noUi-handle {
+	border: 1px solid #D9D9D9;
+	border-radius: 3px;
+	background: #FFF;
+	cursor: default;
+	box-shadow: none;
+				border-radius: 200px 200px 200px 200px;
+    -moz-border-radius: 200px 200px 200px 200px;
+    -webkit-border-radius: 200px 200px 200px 200px;
+    border: 0px solid #000000;
+}
+.noUi-active {
+	box-shadow: inset 0 0 1px #FFF,
+				inset 0 1px 7px #DDD,
+				0 3px 6px -3px #BBB;
+}
+
+/* Handle stripes;
+ *//*
+.noUi-handle:before,
+.noUi-handle:after {
+	content: "";
+	display: block;
+	position: absolute;
+	height: 14px;
+	width: 1px;
+	background: #E8E7E6;
+	left: 14px;
+	top: 6px;
+}*/
+.noUi-handle:after {
+	left: 17px;
+}
+.noUi-vertical .noUi-handle:before,
+.noUi-vertical .noUi-handle:after {
+	width: 14px;
+	height: 1px;
+	left: 6px;
+	top: 14px;
+}
+.noUi-vertical .noUi-handle:after {
+	top: 17px;
+}
+
+/* Disabled state;
+ */
+[disabled].noUi-connect,
+[disabled] .noUi-connect {
+	background: #B8B8B8;
+}
+[disabled].noUi-origin,
+[disabled] .noUi-handle {
+	cursor: not-allowed;
 }

@@ -73,9 +73,9 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
             r.db.createSession(true);
         }
 
-        db.custom('user', 'login', r._login).then(function(res) {
-            if (res.data.ok && res.data.result != null) {
-                r.session(res.data.result);
+        db.ctrl('User', 'login', r._login).then(function(res) {
+            if (res.ok && res.result != null) {
+                r.session(res.result);
                 //                console.log('adminLogin: server says user is logged', res.data);
                 r.route('dashboard');
             }
