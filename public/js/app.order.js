@@ -189,11 +189,15 @@
                         //with the scope, a priceInfo object is created to debug price calc.
                 });
                 s.totalTime = () => $D.OrderTotalTime(s.item.diags, s.diags);
+                
+                var _totalTimeFormatedDate = moment();
                 s.totalTimeFormated = () => {
+                    if(!s.item.diags||!s.diags) return '';
                     var t = $D.OrderTotalTime(s.item.diags, s.diags);
-                    var m = moment().hours(t.hours).minutes(t.minutes).format('HH:mm');
+                    var m = _totalTimeFormatedDate.hours(t.hours).minutes(t.minutes).format('HH:mm');
                     return m;
                 };
+                
                 s.applyTotalPrice = () => {
                     s.item.price = s.totalPrice(true);
                     r.dom();
@@ -682,9 +686,9 @@
                     }, s.save);
                 };
                 s.save = function() {
-                    s.requesting = true;
+                    
                     db.ctrl('Order', 'save', s.item).then(function(data) {
-                        s.requesting = false;
+                        
                         if (data.ok) {
                             r.infoMessage('Changes saved', 'success');
                             s.back();
@@ -761,14 +765,14 @@
                     var time = (d) => moment(d).format('HH:mm');
                     var descr = s.item.address + ' (' + time(s.item.diagStart) + ' - ' + time(s.item.diagEnd) + ')';
                     s.confirm('Delete Order ' + descr + ' ?', function() {
-                        s.message('deleting . . .', 'info');
-                        s.requesting = true;
+                       // s.message('deleting . . .', 'info');
+                        
                         db.ctrl('Order', 'remove', {
                             _id: s.item._id
                         }).then(function(data) {
-                            s.requesting = false;
+                        
                             if (data.ok) {
-                                s.message('deleted', 'info');
+                                //s.message('deleted', 'info');
                                 s.back();
                             }
                             else {
@@ -780,7 +784,7 @@
             }
 
             function handleError(er) {
-                s.requesting = false;
+                
                 s.message('error, try later.', 'danger', 0, true);
             }
 
@@ -811,7 +815,7 @@
                 }
 
                 //s.message('loading . . .', 'info');
-                s.requesting = true;
+                
                 db.ctrl('Order', 'get', {
                     _id: id || params.id || s.item._id,
                     __populate: {
@@ -819,7 +823,7 @@
                         '_diag': 'email address'
                     }
                 }).then(function(data) {
-                    s.requesting = false;
+                    
                     if (data.ok && data.result !== null) {
                         data.result = Object.assign(data.result, {
                             diagStart: new Date(data.result.diagStart),
@@ -830,7 +834,7 @@
                         autoPay();
                         _readFile();
                         //                    console.info('READ', s.item);
-                        s.message('Loaded', 'success', 2000);
+                        //s.message('Loaded', 'success', 2000);
                     }
                     else {
                         handleError(data);
