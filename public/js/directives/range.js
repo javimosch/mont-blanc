@@ -31,6 +31,9 @@ app.directive('rangeModel', function($rootScope, $timeout, $compile) {
                 handler.noUiSlider.on('change', function() {
                     update();
                 });
+                 handler.noUiSlider.on('slide', function() {
+                    update();
+                });
 
                 $rootScope.$apply();
             })
