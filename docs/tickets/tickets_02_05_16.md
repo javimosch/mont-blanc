@@ -1,14 +1,14 @@
-##—— HomePage ——
-- *stripe sentence is not integrated (check design).. its there in all booking page  
+####—— HomePage ——
+####*stripe sentence is not integrated (check design).. its there in all booking page  
         DONE
 
-- Appartement AND the Maison Box are too closed to each other… Move to right the Maison choice
+####Appartement AND the Maison Box are too closed to each other… Move to right the Maison choice
         DONE
 
-- select 90-110m2 by default
+####select 90-110m2 by default
         DONE
 
-- Give me explanation how to integrate parameters in URL
+####Give me explanation how to integrate parameters in URL
         
         It works as always.
         First parameter, you put '?' after the current url.
@@ -36,36 +36,36 @@
         The anchor must be located prior to the parameters. That's a requirement.
         
 
-- In the header replace ERNT into ERNMT
+####In the header replace ERNT into ERNMT
         DONE
 
-- In all the purple cards ERNMT… The text inside is "État des risques naturels, miniers et technologiques » … even in the diag name we have in the Diag choices pages you should change there the title
+####In all the purple cards ERNMT… The text inside is "État des risques naturels, miniers et technologiques » … even in the diag name we have in the Diag choices pages you should change there the title
         DONE
 
-- When we check a box it should be in white when background is this light blue
+####When we check a box it should be in white when background is this light blue
         DONE
 
         Note: The color of the checkbox mark (when checked) in the home page. 
         This is what I resolve. If you were refering to something else let me know.
         
 
-- Add a space between - AND de 15 ans (same for +)
+####Add a space between - AND de 15 ans (same for +)
         DONE
 
 ——
 
-##— Booking problem —
-I cannot subscribe through the booking process : flash message : « Password required »…. 
+####— Booking problem —
+####I cannot subscribe through the booking process : flash message : « Password required »…. 
         DONE
 
-Can you move all the flash message just below the header ?
+####Can you move all the flash message just below the header ?
         DONE
 
-- When the client is a « Propriétaire », there is an integration problem : check attached file (its shifted)
+####When the client is a « Propriétaire », there is an integration problem : check attached file (its shifted)
         DONE
 
 
-- When its a MAISON … On the Confirm and payment page Batim / Code / Etage fields should be hidden
+####When its a MAISON … On the Confirm and payment page Batim / Code / Etage fields should be hidden
         
         When Maison (House), those fields are currently being hide.
         
@@ -73,10 +73,10 @@ Can you move all the flash message just below the header ?
         You will see the current status of "order.info.house" (on the middle-left) who determine if those fields are hidden or not.
 
 
-- When its an Appartement, fields are ok : Batim field should be by default « sur rue » ...
+####When its an Appartement, fields are ok : Batim field should be by default « sur rue » ...
         DONE (Batiment changed to rue)
 
-##—— Contactez-nous page ——
+####—— Contactez-nous page ——
 
 Its a form with fields :
 - Prénom Nom
@@ -88,8 +88,8 @@ ENVOYER button (to send)
 
         DONE
 
-##—— Admin page ——
-There is possibility to log in and to subscribe as a diagnostiqueur. When I click on S’inscrire, I should find here all the fields we have in back office for each diagnostiqueur.  When click on S’inscrire it adds the diagnostiqueur in BO but Inactivate and Superadmin receive an email… In BO SUperadmin can check the details and activate the diag man
+####—— Admin page ——
+####There is possibility to log in and to subscribe as a diagnostiqueur. When I click on S’inscrire, I should find here all the fields we have in back office for each diagnostiqueur.  When click on S’inscrire it adds the diagnostiqueur in BO but Inactivate and Superadmin receive an email… In BO SUperadmin can check the details and activate the diag man
 
         DONE
         All the fields were added. The working exceptions are only accesible in BO when logged.
@@ -98,11 +98,11 @@ There is possibility to log in and to subscribe as a diagnostiqueur. When I clic
         Diag inscription is accesible with the anchor: #/diag-inscription
         
 
-- What is browse in header…. weird 
+####What is browse in header…. weird 
         Now is different, without 'browse'.
 ———
 
-##— Price structure ——
+####— Price structure ——
 
 From Monday to Friday : Normal price
 Saturday : + 30%
