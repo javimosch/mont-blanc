@@ -16,6 +16,7 @@ var app = angular.module('app', [
     'app.services',
     'app.directives',
     'ngRoute',
+    'diags_ctrl_contact_form',
     'ui.bootstrap'
 ]);
 var URL = {
@@ -85,36 +86,7 @@ app.config(['$routeProvider',
     }
 ]);
 
-app.controller('ctrl.booking-contact-form', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal',
-    function(db, $timeout, s, r, $uibModal) {
-        s._email = {
 
-        };
-        s.send = function() {
-            
-            db.ctrl('Notification', 'NEW_CONTACT_FORM_MESSAGE',s._email).then(function(d) {
-                if (d.ok) {
-                    r.infoMessage('Message envoyé');
-                }
-                else {
-                    r.infoMessage('Problème de serveur , réessayer plus tard');
-                }
-            });
-            
-        };
-        s.validate = function() {
-            ifThenMessage([
-                [!s._email.fullname, '==', true, 'Prénom Nom requis'],
-                [!s._email.email, '==', true, 'Email requis'],
-                [!s._email.phone, '==', true, 'Phone requis'],
-                [!s._email.message, '==', true, 'Message requis'],
-            ], (m) => {
-                s.warningMsg(m[0], 10000);
-            }, s.send);
-        }
-    }
-]);
 
 app.controller('ctrl.booking', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal',
@@ -1406,7 +1378,10 @@ app.controller('ctrl.booking', ['server',
 
                 s.openConfirm('Vous souhaitez envoyer un lien de paiement pour ' + s._order.landLordEmail + ' ?', () => {
                     s.infoMsg("Sending email.");
-                    db.ctrl('Notification', 'PAYMENT_LINK', s._order).then(data => {
+                    db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
+                        _user:s._user, //the agency
+                        _order:s._order
+                    }).then(data => {
                         if(!data.ok){
                             return r.warningMessage("Le courriel ne peut être envoyé à ce moment , d'essayer de nouveau de backoffice",10000);   
                         }

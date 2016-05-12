@@ -43,7 +43,7 @@
                             _user: 'email',
                             _config: '',
                         },
-                        __sort: "-created"
+                        __sort: "-createdAt"
                     };
                     data = Object.assign(data, s.model.filter.payload);
                     dbPaginate.ctrl(data, s.model).then(res => {

@@ -331,8 +331,12 @@ app.controller('ctrl-diag-edit', [
         });
 
         s.$watch('item.priority', (v) => {
+
+        });
+
+        s.validatePriority = (v, okCb) => {
             if (!_.isUndefined(v) && !_.isNull(v) && isFinite(v) && !isNaN(v)) {
-                if (v === s.original.priority) return;
+                if (v === s.original.priority) return okCb();
                 db.ctrl('User', 'get', {
                     userType: 'diag',
                     priority: v,
@@ -342,9 +346,13 @@ app.controller('ctrl-diag-edit', [
                         s.item.priority = s.original.priority;
                         r.warningMessage('Priority ' + v + ' is alredy assigned to ' + data.result.email, 5000);
                     }
+                    else {
+                        okCb();
+                    }
                 });
             }
-        });
+        };
+
 
         s.$watch('item.address', (v) => {
             //            console.info('ADDRESS:CHANGE', v);
@@ -379,7 +387,11 @@ app.controller('ctrl-diag-edit', [
                 [(s.item.priority < 0 || s.item.priority > 100), '==', true, "Priority allowed values are 0..100"]
             ], (m) => {
                 r.warningMessage(m[0], 5000);
-            }, s.save);
+            }, () => {
+                s.validatePriority(s.item.priority, () => {
+                    s.save();
+                })
+            });
         };
 
 
@@ -398,10 +410,15 @@ app.controller('ctrl-diag-edit', [
         };
         s.diplomesExpirationDateNotificationEnabled = (_id) => {
             if (!s.item.diplomesInfo) return false;
-            if (s.item.diplomesInfo[_id].expirationDateNotificationEnabled == undefined) {
-                s.item.diplomesInfo[_id].expirationDateNotificationEnabled = false;
+            if (s.item.diplomesInfo[_id]) {
+                if (s.item.diplomesInfo[_id].expirationDateNotificationEnabled == undefined) {
+                    s.item.diplomesInfo[_id].expirationDateNotificationEnabled = false;
+                }
+                return s.item.diplomesInfo[_id].expirationDateNotificationEnabled;
+            }else{
+                return false;
             }
-            return s.item.diplomesInfo[_id].expirationDateNotificationEnabled;
+            
         };
         s.diplomesEnableExpirationDateNotification = (_id) => {
             if (!s.item.diplomesInfo) {
@@ -441,8 +458,8 @@ app.controller('ctrl-diag-edit', [
                     }).then(data => {
                         var file = data.result;
                         if (data.ok && file) {
-                            if (!s.item.diplomesInfo) {
-                                s.item.diplomesInfo = {};
+                            s.item.diplomesInfo = s.item.diplomesInfo || {};
+                            if (!s.item.diplomesInfo[_id]) {
                                 //
                                 s.item.diplomesInfo[_id] = {
                                     //obtentionDate: data.info.obtentionDate,
@@ -456,12 +473,14 @@ app.controller('ctrl-diag-edit', [
                                     diplomesInfo: s.item.diplomesInfo
                                 });
                                 //
+                                console.info('diplome-info-created',_id);
                             }
                             file = Object.assign(file, s.item.diplomesInfo && s.item.diplomesInfo[file._id] || {});
                             s.diplomesData[file._id] = s.diplomesDataCreate(file);
                         }
                         else {
                             //if is unable to fetch the diplome, we assume that was removed from the db, so we delete the reference.
+                            console.info('diplome-fetch-fail: deleting-reference',_id);
                             s.item.diplomes = _.pull(s.item.diplomes, _id);
                             s.item.diplomesInfo = _.pull(s.item.diplomesInfo, _id);
                             if (s.diplomesData[_id]) {
@@ -642,32 +661,31 @@ app.controller('ctrl-diag-edit', [
             }
         };
 
-      
+
 
         s.needToBeNotifiedAboutActivation = (_user) => {
-            var rta = (_user.userType === 'diag')
-            && _user.disabled === false 
-            && (_user.notifications==undefined || _user.notifications.DIAGS_DIAG_ACCOUNT_ACTIVATED===undefined||_user.notifications.DIAGS_DIAG_ACCOUNT_ACTIVATED==false);
-            console.info('needToBeNotifiedAboutActivation',rta);
+            var rta = (_user.userType === 'diag') && _user.disabled === false && (_user.notifications == undefined || _user.notifications.DIAGS_DIAG_ACCOUNT_ACTIVATED === undefined || _user.notifications.DIAGS_DIAG_ACCOUNT_ACTIVATED == false);
+            console.info('needToBeNotifiedAboutActivation', rta);
             return rta;
         };
         s.notifyAboutActivation = (_user) => {
             s.item = _user;
-            db.ctrl('Notification', 'DIAGS_DIAG_ACCOUNT_ACTIVATED', s.item).then(res => {
+            db.ctrl('Notification', 'DIAG_DIAG_ACCOUNT_CREATED', s.item).then(res => {
                 if (res.ok) {
                     s.item.notifications = s.item.notifications || {};
                     s.item.notifications.DIAGS_DIAG_ACCOUNT_ACTIVATED = true;
-                    db.ctrl('User','save',s.item);
-                    console.info('notifyAboutActivation:success',res.message);
-                }else{
-                    console.info('notifyAboutActivation:failed',res.err);
+                    db.ctrl('User', 'save', s.item);
+                    console.info('notifyAboutActivation:success', res.message);
+                }
+                else {
+                    console.info('notifyAboutActivation:failed', res.err);
                 }
             });
         };
 
         s.adminsNeedToBeNotifiedAboutDiagAccountCreation = (_user) => {
-            var rta = (_user.userType === 'diag') && _user.disabled == true && (!_user.notifications || _user.notifications.DIAGS_DIAG_ACCOUNT_CREATED==undefined||_user.notifications.DIAGS_DIAG_ACCOUNT_CREATED==false);
-            console.info('adminsNeedToBeNotifiedAboutDiagAccountCreation',rta);
+            var rta = (_user.userType === 'diag') && _user.disabled == true && (!_user.notifications || _user.notifications.DIAGS_DIAG_ACCOUNT_CREATED == undefined || _user.notifications.DIAGS_DIAG_ACCOUNT_CREATED == false);
+            console.info('adminsNeedToBeNotifiedAboutDiagAccountCreation', rta);
             return rta;
         };
         s.notifyAdminsAboutDiagAccountCreation = (_diag) => {
@@ -675,17 +693,17 @@ app.controller('ctrl-diag-edit', [
                 userType: 'admin',
                 __select: "email"
             }).then(res => {
-                console.info('notifyAdminsAboutDiagAccountCreation:admins:',res.result.length);
+                console.info('notifyAdminsAboutDiagAccountCreation:admins:', res.result.length);
                 if (res.ok) {
                     var cbHell = $U.cbHell(res.result.length, () => {
                         Object.assign(s.item, _diag);
                         s.item.notifications = s.item.notifications || {};
                         s.item.notifications.DIAGS_DIAG_ACCOUNT_CREATED = 1;
-                        db.ctrl('User','save',s.item);
+                        db.ctrl('User', 'save', s.item);
                         console.info('notifyAdminsAboutDiagAccountCreation:success');
                     });
                     res.result.forEach(_admin => {
-                        db.ctrl('Notification', 'DIAGS_DIAG_ACCOUNT_CREATED', {
+                        db.ctrl('Notification', 'ADMIN_DIAG_ACCOUNT_CREATED', {
                             _user: _diag,
                             adminEmail: _admin.email
                         }).then(rta => {

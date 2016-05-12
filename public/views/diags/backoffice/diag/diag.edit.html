@@ -147,7 +147,7 @@
                             <i ng-show="diplomesExists(id) && !diplomesExpirationDateNotificationEnabled(id)" ng-disabled="!item._id || state.working()" class="fa fa-hourglass-start file-button" ng-click="diplomesEnableExpirationDateNotification(id)"></i>
                             <i ng-show="diplomesExists(id)" class="fa fa-question file-button" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
                         </div>
-                        <div>
+                        <div ng-show="item.diplomesInfo[id]">
                             <p class="input-group diplome-info">
                                 <label>Obtention Date</label>
                                 <input type="text" class="border-sutil link text-center" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="diplomesData[id].info.obtentionDate" is-open="d.obtentionDateOpen" max-date="d.obtentionMaxDate" datepicker-options="d.dateOptions" date-disabled="false"

@@ -16,6 +16,7 @@
         'srv.diagSlots',
         
         "diags_ctrl_settings",
+        'diags_ctrl_contact_form',
 
         'app.admin',
         'app.routes',
