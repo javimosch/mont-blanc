@@ -147,6 +147,16 @@ app.controller('adminUsersEdit', [
             }
         };
         //
+
+
+        s.notifyClientNewAccount = () => {
+            db.ctrl('Notification', 'CLIENT_NEW_ACCOUNT', s.item).then(res => {
+                console.info('RTA', res.result);
+            });
+        };
+
+        
+
         s.cancel = function() {
             s.back();
         };
@@ -175,6 +185,10 @@ app.controller('adminUsersEdit', [
                 s.message(m[0], 'warning', 0, true);
             }, s.save);
         };
+
+        
+        
+
         s.save = function() {
             db.ctrl('User', 'getAll', {
                 email: s.item.email,
@@ -182,7 +196,7 @@ app.controller('adminUsersEdit', [
                 clientType: s.item.clientType
             }).then(function(data) {
                 var result = data.result;
-                s.requesting = false;
+
                 if (data.result.length > 0) {
                     var _item = data.result[0];
                     if (s.item._id && s.item._id == _item._id) {
@@ -207,6 +221,15 @@ app.controller('adminUsersEdit', [
                                 r.session(res.result);
                             }
                         }
+
+
+
+                        
+
+
+
+
+
 
                         s.message('saved', 'success');
                         s.back();
@@ -284,13 +307,13 @@ app.controller('adminUsersEdit', [
 
         function userHasRelatedOrders(cb) {
             var time = (d) => moment(d).format('HH:mm');
-            var descr = (_order) => _order.address + ' (' + time(_order.diagStart) + ' - ' + time(_order.diagEnd) + ')'
+            var descr = (_order) => _order.address + ' (' + time(_order.start) + ' - ' + time(_order.end) + ')'
             return $U.MyPromise((resolve, error, emit) => {
                 if (s.item.userType === 'admin') {
                     return emit('no'); //admin has no orders associated.
                 }
                 var rules = {
-                    __select: "diagStart diagEnd address" //we only need those 3 fields to build the description.
+                    __select: "start end address" //we only need those 3 fields to build the description.
                 };
                 if (s.item.userType === 'client') {
                     rules['_client'] = s.item._id

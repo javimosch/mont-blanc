@@ -47,9 +47,9 @@ app.directive('diagOrders', function(
                 ws.ctrl('Order', 'getAll', data).then((res) => {
                     if (res.ok) {
                         res.result.forEach((v) => {
-                            v.date = moment(v.diagStart).format('dddd, DD MMMM')
-                            v.start = moment(v.diagStart).format('HH:mm');
-                            v.end = moment(v.diagEnd).format('HH:mm');
+                            v.date = moment(v.start).format('dddd, DD MMMM')
+                            v.start = moment(v.start).format('HH:mm');
+                            v.end = moment(v.end).format('HH:mm');
                         });
                         s.model.update(res.result);
                     }
@@ -183,14 +183,14 @@ app.directive('diagCalendar', function(
                     if (res.ok) {
                         var evts = [];
                         res.result.forEach((v) => {
-                            v.start = moment(v.diagStart).format('HH:mm');
-                            v.end = moment(v.diagEnd).format('HH:mm');
+                            v.start = moment(v.start).format('HH:mm');
+                            v.end = moment(v.end).format('HH:mm');
                             evts.push({
                                 item: v,
                                 title: 'Order ',
                                 type: 'info',
-                                startsAt: new Date(v.diagStart),
-                                endsAt: new Date(v.diagEnd),
+                                startsAt: new Date(v.start),
+                                endsAt: new Date(v.end),
                                 editable: false,
                                 deletable: false,
                                 draggable: false,
@@ -642,21 +642,72 @@ app.controller('ctrl-diag-edit', [
             }
         };
 
+      
 
+        s.needToBeNotifiedAboutActivation = (_user) => {
+            var rta = (_user.userType === 'diag')
+            && _user.disabled === false 
+            && (_user.notifications==undefined || _user.notifications.DIAGS_DIAG_ACCOUNT_ACTIVATED===undefined||_user.notifications.DIAGS_DIAG_ACCOUNT_ACTIVATED==false);
+            console.info('needToBeNotifiedAboutActivation',rta);
+            return rta;
+        };
+        s.notifyAboutActivation = (_user) => {
+            s.item = _user;
+            db.ctrl('Notification', 'DIAGS_DIAG_ACCOUNT_ACTIVATED', s.item).then(res => {
+                if (res.ok) {
+                    s.item.notifications = s.item.notifications || {};
+                    s.item.notifications.DIAGS_DIAG_ACCOUNT_ACTIVATED = true;
+                    db.ctrl('User','save',s.item);
+                    console.info('notifyAboutActivation:success',res.message);
+                }else{
+                    console.info('notifyAboutActivation:failed',res.err);
+                }
+            });
+        };
 
+        s.adminsNeedToBeNotifiedAboutDiagAccountCreation = (_user) => {
+            var rta = (_user.userType === 'diag') && _user.disabled == true && (!_user.notifications || _user.notifications.DIAGS_DIAG_ACCOUNT_CREATED==undefined||_user.notifications.DIAGS_DIAG_ACCOUNT_CREATED==false);
+            console.info('adminsNeedToBeNotifiedAboutDiagAccountCreation',rta);
+            return rta;
+        };
+        s.notifyAdminsAboutDiagAccountCreation = (_diag) => {
+            db.ctrl('User', 'getAll', {
+                userType: 'admin',
+                __select: "email"
+            }).then(res => {
+                console.info('notifyAdminsAboutDiagAccountCreation:admins:',res.result.length);
+                if (res.ok) {
+                    var cbHell = $U.cbHell(res.result.length, () => {
+                        Object.assign(s.item, _diag);
+                        s.item.notifications = s.item.notifications || {};
+                        s.item.notifications.DIAGS_DIAG_ACCOUNT_CREATED = 1;
+                        db.ctrl('User','save',s.item);
+                        console.info('notifyAdminsAboutDiagAccountCreation:success');
+                    });
+                    res.result.forEach(_admin => {
+                        db.ctrl('Notification', 'DIAGS_DIAG_ACCOUNT_CREATED', {
+                            _user: _diag,
+                            adminEmail: _admin.email
+                        }).then(rta => {
+                            cbHell.next();
+                        });
+                    });
+                }
+            });
 
+        };
 
 
 
 
 
         s.save = function() {
-            db.custom('user', 'find', {
+            db.ctrl('User', 'find', {
                 email: s.item.email,
                 userType: 'diag'
             }).then(function(res) {
-                if (res.data.result.length > 0) {
-                    var _item = res.data.result[0];
+                if (res.result.length > 0) {
+                    var _item = res.result[0];
                     if (s.item._id && s.item._id == _item._id) {
                         _save(); //same diag
                     }
@@ -686,6 +737,16 @@ app.controller('ctrl-diag-edit', [
                             }
                         }
                         else {
+
+                            if (s.adminsNeedToBeNotifiedAboutDiagAccountCreation(s.item)) {
+                                s.notifyAdminsAboutDiagAccountCreation(s.item);
+                            }
+                            else {
+                                if (s.needToBeNotifiedAboutActivation(s.item)) {
+                                    s.notifyAboutActivation(s.item);
+                                }
+                            }
+
                             r.route('diags', 0);
                         }
 
@@ -700,7 +761,7 @@ app.controller('ctrl-diag-edit', [
         };
         s.delete = function() {
             s.confirm('Delete Diag ' + s.item.email + ' ?', function() {
-                db.custom('user', 'remove', {
+                db.ctrl('User', 'remove', {
                     _id: s.item._id
                 }).then(function(res) {
                     r.infoMessage('Deleted');
@@ -720,19 +781,19 @@ app.controller('ctrl-diag-edit', [
 
         function read() {
             var id = params.id;
-            if(s.item._id){
-                id  = s.item._id;
+            if (s.item._id) {
+                id = s.item._id;
             }
-            
-            s.infoMessage('Loading . . .');
-            db.custom('user', 'get', {
+
+            //s.infoMessage('Loading . . .');
+            db.ctrl('User', 'get', {
                 _id: id,
-                userType:'diag'
+                userType: 'diag'
             }).then(function(res) {
-                s.original = _.clone(res.data.result);
-                s.item = res.data.result;
+                s.original = _.clone(res.result);
+                s.item = res.result;
                 s.diplomesUpdate();
-                if (!res.data.ok) {
+                if (!res.ok) {
                     r.infoMessage('Registry not found, maybe it was deleted.', 'warning', 5000);
                 }
                 else {

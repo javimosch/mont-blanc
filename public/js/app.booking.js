@@ -483,8 +483,8 @@ app.controller('ctrl.booking', ['server',
         }
         s.validateDate = function(cb, err) {
             ifThenMessage([
-                [s.model.diagStart, '==', undefined, ""],
-                [s.model.diagEnd, '==', undefined, ""],
+                [s.model.start, '==', undefined, ""],
+                [s.model.end, '==', undefined, ""],
                 [s.model._diag, '==', undefined, ""],
             ], (m) => {
                 s.warningMsg("Sélectionner une date");
@@ -517,8 +517,8 @@ app.controller('ctrl.booking', ['server',
             if (!id) return;
             var data = JSON.parse(window.atob(id));
             s.model._diag = data._diag;
-            s.model.diagStart = data.start;
-            s.model.diagEnd = data.end;
+            s.model.start = data.start;
+            s.model.end = data.end;
         });
 
         function setSelectedRangeIDUsingOrder(slots, rngId) {
@@ -527,7 +527,7 @@ app.controller('ctrl.booking', ['server',
             slots.forEach(v => {
                 var data = JSON.parse(window.atob(v.id));
                 if (data._diag == s._order._diag || data._diag == s._order._diag._id) {
-                    if (data.start == s._order.diagStart && data.end == s._order.diagEnd) {
+                    if (data.start == s._order.start && data.end == s._order.end) {
                         r.dom(function() {
                             s.model.range = v.id;
                             return v.id;
@@ -556,7 +556,7 @@ app.controller('ctrl.booking', ['server',
 
         s.orderDateFormatted = function() {
             if (!s._order) console.warn('invalid-order');
-            var _date = s._order && s._order.diagStart;
+            var _date = s._order && s._order.start;
             var m = moment(_date).format('dddd D MMMM YYYY');
             m += 'à ' + r.momentTime(_date);
             return m.substring(0, 1).toUpperCase() + m.slice(1);
@@ -716,12 +716,12 @@ app.controller('ctrl.booking', ['server',
         s.__keysTimeFromGetItems = () => {
             var vals = {};
             if (!s._order) return vals;
-            var m = moment(s._order.diagStart).hours(8);
-            while (m.isBefore(moment(s._order.diagStart))) {
+            var m = moment(s._order.start).hours(8);
+            while (m.isBefore(moment(s._order.start))) {
                 vals[r.momentTime(m)] = new Date(m.toString());
                 m = m.add(5, 'minutes');
             };
-            vals[r.momentTime(s._order.diagStart)] = new Date(moment(s._order.diagStart).toString());
+            vals[r.momentTime(s._order.start)] = new Date(moment(s._order.start).toString());
             return vals;
         };
         s.__keysTimeFromSelectFirstItem = () => s.__keysTimeFromItems && Object.keys(s.__keysTimeFromItems)[0] || "Loading";
@@ -744,7 +744,7 @@ app.controller('ctrl.booking', ['server',
             }
 
         });
-        s.$watch('_order.diagStart', function(val) {
+        s.$watch('_order.start', function(val) {
             s.__keysTimeFromItems = s.__keysTimeFromGetItems();
         });
 
@@ -763,20 +763,20 @@ app.controller('ctrl.booking', ['server',
         s.__keysTimeToGetItems = () => {
             var vals = {};
             if (!s._order) return vals;
-            var m = moment(s._order.diagStart).hours(8).minutes(0);
+            var m = moment(s._order.start).hours(8).minutes(0);
             if (
                 moment(s._order.keysTimeFrom).isAfter(m) &&
-                moment(s._order.keysTimeFrom).isBefore(moment(s._order.diagStart))
+                moment(s._order.keysTimeFrom).isBefore(moment(s._order.start))
             ) {
                 m = m.hours(moment(s._order.keysTimeFrom).hours())
                 m = m.minutes(moment(s._order.keysTimeFrom).minutes())
             }
 
-            while (m.isBefore(moment(s._order.diagStart))) {
+            while (m.isBefore(moment(s._order.start))) {
                 vals[r.momentTime(m)] = new Date(m.toString());
                 m = m.add(5, 'minutes');
             };
-            vals[r.momentTime(s._order.diagStart)] = new Date(moment(s._order.diagStart).toString());
+            vals[r.momentTime(s._order.start)] = new Date(moment(s._order.start).toString());
             return vals;
         };
         s.__keysTimeToSelectFirstItem = () => s.__keysTimeToItems && Object.keys(s.__keysTimeToItems)[0] || "Loading";
@@ -799,7 +799,7 @@ app.controller('ctrl.booking', ['server',
         s.$watch('_order.keysTimeFrom', function(val) {
             s.__keysTimeToItems = s.__keysTimeToGetItems();
         });
-        s.$watch('_order.diagStart', function(val) {
+        s.$watch('_order.start', function(val) {
             s.__keysTimeToItems = s.__keysTimeToGetItems();
         });
         //-------------------------------------------------------------------------
@@ -1500,7 +1500,7 @@ app.controller('ctrl.booking', ['server',
                 db.ctrl('Order', 'getById', payload)
                     .then(d => {
                         if (d.ok) {
-                            console.info('fetch-order', payload._id, r.momentDateTime(d.result.diagStart));
+                            console.info('fetch-order', payload._id, r.momentDateTime(d.result.start));
                             r.dom(function() {
                                 setOrder(d.result);
                             });
@@ -1560,18 +1560,18 @@ app.controller('ctrl.booking', ['server',
                 }
 
                 //defaults for keysTime
-                if (!s.model.keysTimeFrom && s.model.diagStart) {
-                    s.model.keysTimeFrom = moment(s.model.diagStart).subtract(2, 'hour');
+                if (!s.model.keysTimeFrom && s.model.start) {
+                    s.model.keysTimeFrom = moment(s.model.start).subtract(2, 'hour');
                 }
-                if (!s.model.keysTimeTo && s.model.diagStart) {
-                    s.model.keysTimeTo = moment(s.model.diagStart);
+                if (!s.model.keysTimeTo && s.model.start) {
+                    s.model.keysTimeTo = moment(s.model.start);
                 }
 
                 //update price
                 //s.model.price = s.totalPrice(true);
                 s.model.price = 0;
 
-                if ($U.hasUndefinedProps(s.model, ['_diag', 'diagStart', 'diagEnd'])) {
+                if ($U.hasUndefinedProps(s.model, ['_diag', 'start', 'end'])) {
                     s.warningMsg('Select one available date');
                     return r.route(URL.RDV);
                 }
@@ -1715,9 +1715,9 @@ app.controller('ctrl.booking', ['server',
 
         s.getDate = () => {
             return {
-                date: moment(s.model.diagStart).format('DD-MM-YY'),
-                start: moment(s.model.diagStart).format('HH[h]mm'),
-                end: moment(s.model.diagEnd).format('HH[h]mm')
+                date: moment(s.model.start).format('DD-MM-YY'),
+                start: moment(s.model.start).format('HH[h]mm'),
+                end: moment(s.model.end).format('HH[h]mm')
             };
         };
 
@@ -1735,9 +1735,9 @@ app.controller('ctrl.booking', ['server',
         }, {}));
 
         s.pickTimeRange = function(timeRange) {
-            s.model.diagStart = timeRange.start;
+            s.model.start = timeRange.start;
             s.model._diag = timeRange._diag;
-            s.model.diagEnd = timeRange.end;
+            s.model.end = timeRange.end;
             s.model.price = timeRange.price;
             if (!timeRange.price) {
                 console.warn('time-range invalid price attribute', timeRange);

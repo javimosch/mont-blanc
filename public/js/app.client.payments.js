@@ -34,9 +34,9 @@ app.directive('clientPayments', function(
                 ws.ctrl('Order', 'getAll', data).then((res) => {
                     if (res.ok) {
                         res.result.forEach((v) => {
-                            v.date = moment(v.diagStart).format('DD-MM-YY')
-                            v.start = moment(v.diagStart).format('HH:mm');
-                            v.end = moment(v.diagEnd).format('HH:mm');
+                            v.date = moment(v.start).format('DD-MM-YY')
+                            v.start = moment(v.start).format('HH:mm');
+                            v.end = moment(v.end).format('HH:mm');
                             v.description = v.address + '<br>' + v.date + '<br>' + v.start + ' - ' + v.end;
                             v.status = 'Not yett';
                         });

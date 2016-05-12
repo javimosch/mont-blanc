@@ -103,9 +103,9 @@
                                     _id: '!@#!@#!@',
                                     description: 'Zararara'
                                 };
-                                //v.date = moment(v.diagStart).format('dddd, DD MMMM')
-                                //v.start = moment(v.diagStart).format('HH:mm');
-                                //v.end = moment(v.diagEnd).format('HH:mm');
+                                //v.date = moment(v.start).format('dddd, DD MMMM')
+                                //v.start = moment(v.start).format('HH:mm');
+                                //v.end = moment(v.end).format('HH:mm');
                             });
                             //                        console.info('TRANSACTIONS', res.result.data);
                             s.model.update(res.result.data);

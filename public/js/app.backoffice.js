@@ -12,6 +12,8 @@
         'ui.bootstrap.datetimepicker',
 
         'srv.crud',
+        'srv.diagPrice',
+        'srv.diagSlots',
         
         "diags_ctrl_settings",
 

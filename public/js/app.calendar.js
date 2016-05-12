@@ -45,7 +45,7 @@ app.directive('globalCalendar', function(
                             $ne: ['created']
                         }
                     },
-                    __select: "_client _diag email diagStart diagEnd status",
+                    __select: "_client _diag email start end status",
                     __populate: {
                         '_client': "email firstName lastName",
                         '_diag': "email firstName lastName"
@@ -54,15 +54,15 @@ app.directive('globalCalendar', function(
                     if (res.ok) {
                         var evts = [];
                         res.result.forEach((v) => {
-                            v.start = moment(v.diagStart).format('HH:mm');
-                            v.end = moment(v.diagEnd).format('HH:mm');
+                            v.start = moment(v.start).format('HH:mm');
+                            v.end = moment(v.end).format('HH:mm');
                             v.diag = v._diag.firstName + ", " + v._diag.lastName.toUpperCase().substring(0, 1);
                             evts.push({
                                 item: v,
                                 title: 'Order (Status: ' + v.status + ', Diag: ' + v.diag + ')',
                                 type: 'info',
-                                startsAt: new Date(v.diagStart),
-                                endsAt: new Date(v.diagEnd),
+                                startsAt: new Date(v.start),
+                                endsAt: new Date(v.end),
                                 editable: false,
                                 deletable: false,
                                 draggable: false,

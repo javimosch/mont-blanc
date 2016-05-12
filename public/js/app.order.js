@@ -50,7 +50,7 @@
                     __populate: {
                         '_client': 'email',
                         '_diag': 'email',
-                        __select: "address diagStart diagEnd status created"
+                        __select: "address start end status created"
                     }
                 }).then(function(r) {
                     //                console.info('adminOrders:read:success', r.data.result);
@@ -68,8 +68,8 @@
 
     app.controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'focus',
-        function(db, s, r, params, focus) {
+        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagPrice', 'diagSlots',
+        function(db, s, r, params, focus, diagPrice, diagSlots) {
             r.setCurrentCtrl(s);
 
             s.item = {
@@ -126,9 +126,36 @@
 
 
             function setHelpers() {
-                
-                s.infoItemShow = function(item){
-                    return typeof item == 'boolean'; 
+
+               
+
+                s.diagSlots = diagSlots(s, s.item);
+
+                s.__rdvInit = false;
+                s.rdvConditions = () => {
+                    var rta = s.item.info.squareMeters !== undefined && s.item._client !== undefined;
+                    if (rta && !s.__rdvInit) {
+                        s.__rdvInit = true;
+                        s.diagSlots.init();
+                    }
+                    return rta;
+                };
+
+                s.drawRange = function(rng) {
+                    var rta = moment(rng.start).format("HH[h]mm");
+                    rta += ' - ' + rng.price + ' €';
+                    return rta;
+                };
+
+                s.unwrapRange = (range) => {
+                    //var data = JSON.parse(window.atob(range));
+                    var data = range;
+                    s.item.start = data.start;
+                    s.item.end = data.end;
+                };
+
+                s.infoItemShow = function(item) {
+                    return typeof item == 'boolean';
                 };
 
                 s.canWriteAgency = () => {
@@ -180,32 +207,36 @@
                 s.currentClientType = () =>
                     s.item && s.item._client && '(' + s.item._client.clientType + ')' || '';
 
-                s.subTotal = () => $D.subTotal(s.item, s.diags, s.basePrice);
-                s.sizePrice = () => $D.sizePrice(s.item, s.diags, s.squareMetersPrice, s.basePrice);
-                s.totalPrice = (showRounded) => $D.totalPrice(showRounded, s.item, s.diags, s.squareMetersPrice, s.basePrice, {
-                    overwriteModel: false,
-                    s: s,
-                    r: r
-                        //with the scope, a priceInfo object is created to debug price calc.
-                });
+                /*
+                                s.subTotal = () => $D.subTotal(s.item, s.diags, s.basePrice);
+                                s.sizePrice = () => $D.sizePrice(s.item, s.diags, s.squareMetersPrice, s.basePrice);
+                                s.totalPrice = (showRounded) => $D.totalPrice(showRounded, s.item, s.diags, s.squareMetersPrice, s.basePrice, {
+                                    overwriteModel: false,
+                                    s: s,
+                                    r: r
+                                        //with the scope, a priceInfo object is created to debug price calc.
+                                });
+                                */
+
                 s.totalTime = () => $D.OrderTotalTime(s.item.diags, s.diags);
-                
+
                 var _totalTimeFormatedDate = moment();
                 s.totalTimeFormated = () => {
-                    if(!s.item.diags||!s.diags) return '';
+                    if (!s.item.diags || !s.diags) return '';
                     var t = $D.OrderTotalTime(s.item.diags, s.diags);
                     var m = _totalTimeFormatedDate.hours(t.hours).minutes(t.minutes).format('HH:mm');
                     return m;
                 };
-                
+
                 s.applyTotalPrice = () => {
-                    s.item.price = s.totalPrice(true);
+                    //s.item.price = s.totalPrice(true);
+                    s.item.price = diagPrice.getPriceQuote(s);
                     r.dom();
                 };
                 s.applyTotalTime = () => {
                     var t = $D.OrderTotalTime(s.item.diags, s.diags);
-                    if (s.item && s.item.diagStart) {
-                        s.item.diagEnd = moment(s.item.diagStart)
+                    if (s.item && s.item.start) {
+                        s.item.end = moment(s.item.start)
                             .add(t.hours, 'hours').add(t.minutes, 'minutes')._d;
                         r.dom();
                     }
@@ -216,16 +247,16 @@
                 s.focus = focus;
                 window.s = s;
             }
-            
-            
+
+
 
             function setDefaults() {
-                s.item = {
+                window.Object.assign(s.item, {
                     email: '',
                     password: '',
                     status: 'ordered',
-                    diagStart: moment().add(1, 'day').hour(9).minutes(0).toDate(),
-                    diagEnd: moment().add(1, 'day').hour(10).minutes(30).toDate(),
+                    start: moment().add(1, 'day').hour(9).minutes(0).toDate(),
+                    end: moment().add(1, 'day').hour(10).minutes(30).toDate(),
                     fastDiagComm: 0,
                     price: 0,
                     diags: {},
@@ -235,7 +266,7 @@
                         squareMeters: undefined,
                         constructionPermissionDate: undefined
                     }
-                };
+                });
                 s.original = _.clone(s.item);
             }
 
@@ -252,7 +283,7 @@
                     if (d.ok && d.result.length > 0) s.settings = d.result[0];
                 });
 
-                s.$watch('item.diagStart', (v) => {
+                s.$watch('item.start', (v) => {
                     s.item.date = v; //fallback for total price calculation.
                 });
 
@@ -273,6 +304,12 @@
                 s.isOrderClientLandLord = () => {
                     return !_.includes(s.CLIENT_TYPES_COMPANY, s.item._client.clientType);
                 }
+                 s.isOrderClientAgency = () => {
+                    return !s.isOrderClientLandLord();
+                };
+                
+               
+                
                 s.__keysWhereItems = {};
                 s.__keysWhereGetItems = () => {
                     if (!s.item._client || !s.item._client.clientType) return {
@@ -328,12 +365,12 @@
                 s.__keysTimeFromGetItems = () => {
                     var vals = {};
                     if (!s.item) return vals;
-                    var m = moment(s.item.diagStart).hours(8);
-                    while (m.isBefore(moment(s.item.diagStart))) {
+                    var m = moment(s.item.start).hours(8);
+                    while (m.isBefore(moment(s.item.start))) {
                         vals[r.momentTime(m)] = new Date(m.toString());
                         m = m.add(5, 'minutes');
                     };
-                    vals[r.momentTime(s.item.diagStart)] = new Date(moment(s.item.diagStart).toString());
+                    vals[r.momentTime(s.item.start)] = new Date(moment(s.item.start).toString());
                     return vals;
                 };
                 s.__keysTimeFromSelectFirstItem = () => s.__keysTimeFromItems && Object.keys(s.__keysTimeFromItems)[0] || "Loading";
@@ -356,7 +393,7 @@
                     }
 
                 });
-                s.$watch('item.diagStart', function(val) {
+                s.$watch('item.start', function(val) {
                     s.__keysTimeFromItems = s.__keysTimeFromGetItems();
                 });
 
@@ -365,20 +402,20 @@
                 s.__keysTimeToGetItems = () => {
                     var vals = {};
                     if (!s.item) return vals;
-                    var m = moment(s.item.diagStart).hours(8).minutes(0);
+                    var m = moment(s.item.start).hours(8).minutes(0);
                     if (
                         moment(s.item.keysTimeFrom).isAfter(m) &&
-                        moment(s.item.keysTimeFrom).isBefore(moment(s.item.diagStart))
+                        moment(s.item.keysTimeFrom).isBefore(moment(s.item.start))
                     ) {
                         m = m.hours(moment(s.item.keysTimeFrom).hours())
                         m = m.minutes(moment(s.item.keysTimeFrom).minutes())
                     }
 
-                    while (m.isBefore(moment(s.item.diagStart))) {
+                    while (m.isBefore(moment(s.item.start))) {
                         vals[r.momentTime(m)] = new Date(m.toString());
                         m = m.add(5, 'minutes');
                     };
-                    vals[r.momentTime(s.item.diagStart)] = new Date(moment(s.item.diagStart).toString());
+                    vals[r.momentTime(s.item.start)] = new Date(moment(s.item.start).toString());
                     return vals;
                 };
                 s.__keysTimeToSelectFirstItem = () => s.__keysTimeToItems && Object.keys(s.__keysTimeToItems)[0] || "Loading";
@@ -401,7 +438,7 @@
                 s.$watch('item.keysTimeFrom', function(val) {
                     s.__keysTimeToItems = s.__keysTimeToGetItems();
                 });
-                s.$watch('item.diagStart', function(val) {
+                s.$watch('item.start', function(val) {
                     s.__keysTimeToItems = s.__keysTimeToGetItems();
                 });
                 //-------------------------------------------------------------------------
@@ -417,14 +454,14 @@
                 /*
                                 s.keysWhereTime = {
                                     invalidKeysTimeMessage: () => {
-                                        var startTime = () => moment(s.item.diagStart).format('HH:mm');
+                                        var startTime = () => moment(s.item.start).format('HH:mm');
                                         return 'Keys time should be between 8:00 and ' + startTime();
                                     },
                                     invalidKeysTime: () => {
                                         var before = (d1, h) => moment(d1).isBefore(moment(d1).hours(8));
                                         var diag = {
-                                            hours: moment(s.item.diagStart).hours(),
-                                            minutes: moment(s.item.diagStart).minutes()
+                                            hours: moment(s.item.start).hours(),
+                                            minutes: moment(s.item.start).minutes()
                                         };
                                         var after = (d1) => moment(d1).isAfter(moment(d1).hours(diag.hours).minutes(diag.minutes));
                                         var tfrom = s.item.keysTimeFrom;
@@ -523,7 +560,7 @@
                                         }
                                         if (s.item.keysAddress && s.item.keysAddress == address) {
                                             if (!s.item.keysTime) {
-                                                s.item.keysTime = moment(s.item.diagStart).hours(8).minutes(0)._d;
+                                                s.item.keysTime = moment(s.item.start).hours(8).minutes(0)._d;
                                             }
                                             return;
                                         }
@@ -597,10 +634,10 @@
                         [!s.item.landLordFullName, '==', true, "Landlord Name required."],
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
-                            r.warningMessage(m[0](), 'warning');
+                            r.warningMessage(m[0]());
                         }
                         else {
-                            r.warningMessage(m[0], 'warning');
+                            r.warningMessage(m[0]);
                         }
                     }, _sendPaymentLink);
 
@@ -651,23 +688,32 @@
                     s.back();
                 };
 
+
+
                 s.mm = (d) => moment(d).minutes();
                 s.mmOK = (d) => _.includes([0, 30], s.mm(d));
 
                 s.validate = () => {
                     $U.ifThenMessage([
                         [typeof s.item._client, '!=', 'object', "Client required"],
+                        [typeof s.item._diag, '!=', 'object', "Diag Man required"],
                         [_.isUndefined(s.item.address) || _.isNull(s.item.address) || s.item.address === '', '==', true, 'Address required'],
-                        [_.isNull(s.item.diagStart) || _.isUndefined(s.item.diagStart), '==', true, 'Start date required'],
-                        [_.isNull(s.item.diagEnd) || _.isUndefined(s.item.diagEnd), '==', true, 'Start date required'],
-                        [moment(s.item.diagStart || null).isValid(), '==', false, "Start date invalid"],
-                        [moment(s.item.diagEnd || null).isValid(), '==', false, "End date invalid"],
+                        [!s.item.start, '==', true, 'start date est requis'],
+                        [!s.item.end, '==', true, 'end date est requis'],
+                        [moment(s.item.start || null).isValid(), '==', false, "start date invalide"],
+                        [moment(s.item.end || null).isValid(), '==', false, "end date invalide"],
 
-                        [s.mmOK(s.item.diagStart), '==', false, "Start date minutes need to be 0 or 30."],
-                        //[s.mmOK(s.item.diagEnd), '==', false, "End date minutes need to be 0 or 30."],
+                        [s.isOrderClientAgency() && !s.item.landLordEmail, '==', true, "E-mail du propriétaire requis"],
+                        [s.isOrderClientAgency() && !s.item.landLordFullName, '==', true, "Nom du propriétaire requis"],
+                        [!s.item.keysAddress, '==', true, 'Clés Adresse requise'],
+                        [!s.item.keysTimeFrom, '==', true, 'Clés Temps "De" requis'],
+                        [!s.item.keysTimeTo, '==', true, 'Clés Temps "To" requis'],
 
-                        [moment(s.item.diagEnd).isValid() && moment(s.item.diagStart).isValid() && !moment(s.item.diagEnd).isSame(moment(s.item.diagStart), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
-                        [moment(s.item.diagEnd).isValid() && moment(s.item.diagEnd).isBefore(moment(s.item.diagStart), 'hour'), '==', true, 'End date cannot be lower than Start date'],
+                        //[s.mmOK(s.item.start), '==', false, "start date minutes need to be 0 or 30."],
+                        //[s.mmOK(s.item.end), '==', false, "End date minutes need to be 0 or 30."],
+
+                        [moment(s.item.end).isValid() && moment(s.item.start).isValid() && !moment(s.item.end).isSame(moment(s.item.start), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
+                        [moment(s.item.end).isValid() && moment(s.item.end).isBefore(moment(s.item.start), 'hour'), '==', true, 'End date cannot be lower than Start date'],
 
                         //  [s.keysWhereTime.invalidKeysTime(), '==', true, s.keysWhereTime.invalidKeysTimeMessage],
 
@@ -678,23 +724,23 @@
                         [s.item.status, '==', '', 'Status required']
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
-                            r.warningMessage(m[0](), 'warning');
+                            r.warningMessage(m[0]());
                         }
                         else {
-                            r.warningMessage(m[0], 'warning');
+                            r.warningMessage(m[0]);
                         }
                     }, s.save);
                 };
                 s.save = function() {
-                    
-                    db.ctrl('Order', 'save', s.item).then(function(data) {
-                        
-                        if (data.ok) {
+
+                    db.ctrl('Order', 'save', s.item).then(function(res) {
+
+                        if (res.ok) {
                             r.infoMessage('Changes saved', 'success');
                             s.back();
                         }
                         else {
-                            handleError(data);
+                            handleError(res);
                         }
                     }).error(handleError);
                 };
@@ -763,14 +809,14 @@
                     }
 
                     var time = (d) => moment(d).format('HH:mm');
-                    var descr = s.item.address + ' (' + time(s.item.diagStart) + ' - ' + time(s.item.diagEnd) + ')';
+                    var descr = s.item.address + ' (' + time(s.item.start) + ' - ' + time(s.item.end) + ')';
                     s.confirm('Delete Order ' + descr + ' ?', function() {
-                       // s.message('deleting . . .', 'info');
-                        
+                        // s.message('deleting . . .', 'info');
+
                         db.ctrl('Order', 'remove', {
                             _id: s.item._id
                         }).then(function(data) {
-                        
+
                             if (data.ok) {
                                 //s.message('deleted', 'info');
                                 s.back();
@@ -784,8 +830,7 @@
             }
 
             function handleError(er) {
-                
-                s.message('error, try later.', 'danger', 0, true);
+                s.warningMessage("Problème technique. S'il vous plaît réessayer plus tard");
             }
 
             function reset() {
@@ -815,7 +860,7 @@
                 }
 
                 //s.message('loading . . .', 'info');
-                
+
                 db.ctrl('Order', 'get', {
                     _id: id || params.id || s.item._id,
                     __populate: {
@@ -823,11 +868,11 @@
                         '_diag': 'email address'
                     }
                 }).then(function(data) {
-                    
+
                     if (data.ok && data.result !== null) {
                         data.result = Object.assign(data.result, {
-                            diagStart: new Date(data.result.diagStart),
-                            diagEnd: new Date(data.result.diagEnd)
+                            start: new Date(data.result.start),
+                            end: new Date(data.result.end)
                         });
                         s.item = data.result;
                         onItem(s.item);
@@ -875,7 +920,7 @@
 
                 function update(items, cb) {
                     var data = {
-                        __select: "_client _diag address diagStart diagEnd price status created createdAt",
+                        __select: "_client _diag address start end price status created createdAt",
                         __populate: {
                             '_client': 'email',
                             '_diag': 'email'
@@ -958,12 +1003,12 @@
                         name: 'address'
                     }, {
                         label: "When",
-                        name: "diagStart",
-                        format: (v, item) => r.momentFormat(item.diagStart, 'DD-MM-YY')
+                        name: "start",
+                        format: (v, item) => r.momentFormat(item.start, 'DD-MM-YY')
                     }, {
                         label: "Hour",
-                        name: "diagStart",
-                        format: (v, item) => r.momentTime(item.diagStart) + ' - ' + r.momentTime(item.diagEnd)
+                        name: "start",
+                        format: (v, item) => r.momentTime(item.start) + ' - ' + r.momentTime(item.end)
                     }, {
                         label: 'Price',
                         name: 'price'

@@ -376,12 +376,12 @@
             };
             s.rangeCollideWithOrder = (yes, no) => {
                 db.ctrl('Order', 'getAll', {
-                    __select: 'diagStart diagEnd',
+                    __select: 'start end',
                     _diag: s.item._user
                 }).then((d) => {
                     if (d.ok) {
                         d.result.forEach(v => {
-                            if ($D.rangeCollide(v.diagStart, v.diagEnd, s.item.start, s.item.end)) {
+                            if ($D.rangeCollide(v.start, v.end, s.item.start, s.item.end)) {
                                 return yes(v);
                             }
                         });
@@ -400,7 +400,7 @@
                 if (!s.item._user) return console.warn('item._user missing.');
 
                 s.rangeCollideWithOrder((order) => {
-                    //r.momentDateTime(order.diagStart);
+                    //r.momentDateTime(order.start);
                     return r.warningMessage('An order exists for this date.');
                 }, () => {
 

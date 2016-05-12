@@ -135,19 +135,89 @@
         <div class="row margin-top-half">
             <label class="unselectable">Date de début</label>
         </div>
-        <div class="row margin-top-quarter relative">
-            <input ng-show="item._id" ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.diagStart)" placeholder="Adresse">
-            <input ng-show="!item._id" ng-disabled="isPaid() || state.working() || is(['client','diag'])" type="text" class="max-w-150 diags-input" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.diagStart" min-date="datepicker.minDate" max-date="datepicker.maxDate"
-            init-date="item.diagStart" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
+        <div class="row margin-top-quarter">
+            <input ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.start)" placeholder="Start">
+        </div>
+        <div class="row margin-top-quarter relative" ng-if="false">
+            <input ng-show="item._id" ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.start)" placeholder="Adresse">
+            <input ng-show="!item._id" ng-disabled="isPaid() || state.working() || is(['client','diag'])" type="text" class="max-w-150 diags-input" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.start" min-date="datepicker.minDate" max-date="datepicker.maxDate"
+            init-date="item.start" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
             <button ng-show="!item._id" ng-disabled="state.working() || is(['client','diag'])" type="button" class="btn diags-btn" ng-click="start.opened = !start.opened"><i class="glyphicon glyphicon-calendar"></i></button>
         </div>
         <div class="row margin-top-half">
             <label class="unselectable">Date end</label>
         </div>
         <div class="row margin-top-quarter">
-            <input ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.diagEnd)" placeholder="Adresse">
+            <input ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.end)" placeholder="End">
         </div>
 
+        <div class="row margin-top-one">
+            <label>Price Rules</label>
+            <table class="table minimal">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>+</th>
+                        <th>-</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td ng-bind="'Base price'"></td>
+                        <td ng-bind="__priceQuote.basePrice"></td>
+                        <td></td>
+                    </tr>
+                    <tr ng-repeat="(name,price) in __priceQuote.diags">
+                        <td ng-bind="name"></td>
+                        <td ng-bind="price"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="'Extra Building Price '+__priceQuote.extraBuildingSizePorc+'%'"></td>
+                        <td ng-bind="__priceQuote.extraBuildingSizePrice"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="'Extra Date Price '+__priceQuote.extraDatePriceType+' '+__priceQuote.extraDatePricePorc+'%'"></td>
+                        <td ng-bind="__priceQuote.extraDatePrice"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="'Discount Client '+__priceQuote.discountClientPorc+'%'"></td>
+                        <td></td>
+                        <td ng-bind="__priceQuote.discountClientPrice"></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td ng-bind="'Diags price '"></td>
+                        <td ng-bind="__priceQuote.selectedDiagsTotalPrice"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="'Subtotal'"></td>
+                        <td ng-bind="__priceQuote.subTotal"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="'Total raw'"></td>
+                        <td ng-bind="__priceQuote.total"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="'Difference'"></td>
+                        <td></td>
+                        <td ng-bind="__priceQuote.totalRoundedValue"></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="'Total'"></td>
+                        <td ng-bind="__priceQuote.totalRounded"></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalPrice()">Calculate</button>
+        </div>
 
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6 ">
@@ -232,29 +302,25 @@
             </div>
         </div>
 
+        <div class="row margin-top-half">
+            <label class="unselectable">RDV</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <out ng-show="!rdvConditions()">
+                <div ng-show="!item.info.squareMeters" class="alert alert-info" role="alert">Answer question size.</div>
+                <div ng-show="!item._client" class="alert alert-info" role="alert">Choice a client.</div>
+            </out>
+            <out ng-show="rdvConditions()">
+                <div ng-include="'views/diags/backoffice/admin/admin-order-details-slots.html'" includeReplace></div>
+            </out>
+        </div>
+
 
     </div>
 </div>
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-6 ">
-        <div class="row margin-top-one">
-            <label>Price Rules</label>
-            <table class="table minimal">
-                <tr ng-repeat="(k,v) in priceInfo">
-                    <td>{{k}}</td>
-                    <td>{{v}}</td>
-                </tr>
-                <tr>
-                    <td>- House size % for {{item.info.squareMeters}} is {{squareMetersPrice[item.info.squareMeters]}}%.</td>
-                    <td>Total</td>
-                </tr>
-                <tr>
-                    <td>- House size formula is {{subTotal()}}*{{squareMetersPrice[item.info.squareMeters]}}/100</td>
-                    <td ng-bind="item.price"></td>
-                </tr>
-            </table>
-            <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalPrice()">Calculate</button>
-        </div>
+
         <div class="row margin-top-one">
             <label class="unselectable">Price</label>
         </div>

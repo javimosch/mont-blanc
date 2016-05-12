@@ -26,7 +26,7 @@
 
                 function update(items, cb) {
                     var data = {
-                        __select: "address status diagStart diagEnd createdAt",
+                        __select: "address status start end createdAt",
                         __populate: {
                             '_client': 'email userType',
                             '_diag': 'email userType firstName lastName'
@@ -64,9 +64,9 @@
                     dbPaginate.ctrl(data, s.model).then(res => {
                         if (res.ok) {
                             res.result.forEach((v) => {
-                                v.date = moment(v.diagStart).format('dddd, DD MMMM')
-                                v.start = moment(v.diagStart).format('HH:mm');
-                                v.end = moment(v.diagEnd).format('HH:mm');
+                                v.date = moment(v.start).format('dddd, DD MMMM')
+                                v.start = moment(v.start).format('HH:mm');
+                                v.end = moment(v.end).format('HH:mm');
                             });
                         }
                         if (cb) {
@@ -80,9 +80,9 @@
                                         ws.ctrl('Order', 'getAll', data).then((res) => {
                                             if (res.ok) {
                                                 res.result.forEach((v) => {
-                                                    v.date = moment(v.diagStart).format('dddd, DD MMMM')
-                                                    v.start = moment(v.diagStart).format('HH:mm');
-                                                    v.end = moment(v.diagEnd).format('HH:mm');
+                                                    v.date = moment(v.start).format('dddd, DD MMMM')
+                                                    v.start = moment(v.start).format('HH:mm');
+                                                    v.end = moment(v.end).format('HH:mm');
                                                 });
                                                 s.model.update(res.result);
                                             }

@@ -41,7 +41,7 @@
 
         function timeRangesDiagIsWorking(order, cb) {
             ctrl('Order', 'getAll', {
-                __select: 'diagStart diagEnd _diag',
+                __select: 'start end _diag',
                 __rules: {
                     status: {
                         $ne: 'complete'
@@ -50,13 +50,13 @@
             }).then((data) => {
 
                 data.result = data.result.filter(v => {
-                    return moment(v.diagStart).isSame(moment(order.day), 'day');
+                    return moment(v.start).isSame(moment(order.day), 'day');
                 });
 
                 cb(data.result.map((v) => ({
                     _user: v._diag,
-                    start: v.diagStart,
-                    end: v.diagEnd
+                    start: v.start,
+                    end: v.end
                 })));
             })
         }

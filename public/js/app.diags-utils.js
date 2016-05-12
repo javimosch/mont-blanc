@@ -367,7 +367,7 @@ function totalPrice(showRounded, model, diags, squareMetersPrice, basePrice, opt
 
     if (opt.s) {
 
-        var date = model.diagStart;
+        var date = model.start;
         if (opt.dt) date = opt.dt;
 
         if (opt.s.settings) {

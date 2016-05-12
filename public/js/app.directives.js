@@ -173,7 +173,7 @@ app.directive('ctrlDtp', function($rootScope) {
                 show: () => true,
                 digest: (self) => {
                     if (!self._set && s.item) {
-                        self.minDate = moment(s.item.diagStart).hours(8).minutes(0)._d;
+                        self.minDate = moment(s.item.start).hours(8).minutes(0)._d;
                         self.maxDate = moment(s.item.digStart).subtract(1,'days')._d;
                         //s.item.keyDateTime = 
                         self._set = true;
