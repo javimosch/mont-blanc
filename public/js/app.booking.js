@@ -541,7 +541,7 @@ app.controller('ctrl.booking', ['server',
             if (!s._order) console.warn('invalid-order');
             var _date = s._order && s._order.start;
             var m = moment(_date).format('dddd D MMMM YYYY');
-            m += 'à ' + r.momentTime(_date);
+            m += ' à ' + r.momentTime(_date);
             return m.substring(0, 1).toUpperCase() + m.slice(1);
         };
         s.orderDiagFormatted = function() {
@@ -748,7 +748,7 @@ app.controller('ctrl.booking', ['server',
                 _.each(s.__keysTimeFromItems, (v, k) => {
                     if (v == val) s.__keysTimeFromSelectLabel = k;
                 });
-                if(s.__keysTimeFromSelectLabel=='choisir' && s.__keysTimeFromSelectKey){
+                if (s.__keysTimeFromSelectLabel == 'choisir' && s.__keysTimeFromSelectKey) {
                     s.__keysTimeFromSelectLabel = s.__keysTimeFromSelectKey;
                 }
             }
@@ -807,7 +807,7 @@ app.controller('ctrl.booking', ['server',
                 _.each(s.__keysTimeToItems, (v, k) => {
                     if (v == val) s.__keysTimeToSelectLabel = k;
                 });
-                if(s.__keysTimeToSelectLabel=='choisir' && s.__keysTimeToSelectKey){
+                if (s.__keysTimeToSelectLabel == 'choisir' && s.__keysTimeToSelectKey) {
                     s.__keysTimeToSelectLabel = s.__keysTimeToSelectKey;
                 }
             }
@@ -1415,7 +1415,14 @@ app.controller('ctrl.booking', ['server',
             function _sendPaymentLink() {
                 db.ctrl('Order', 'update', s._order); //async
 
-                s.openConfirm('Vous souhaitez envoyer un lien de paiement pour ' + s._order.landLordEmail + ' ?', () => {
+                s.openConfirm({
+                    message: 'Vous souhaitez envoyer un lien de paiement pour ' + s._order.landLordEmail + ' ?',
+                    templateUrl:"views/diags/booking/partials/booking-delegate-popup.html",
+                    data: {
+                        title: "Confirmer la délégation",
+                        
+                    }
+                }, () => {
                     s.infoMsg("Sending email.");
                     db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
                         _user: s._user, //the agency

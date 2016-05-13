@@ -51,7 +51,9 @@
                                     <input ng-model="_order.info.addressCode" class="diags-input xs" placeholder="Code">
                                 </div>
                                 <div class="col-xs-4">
-                                    <input ng-model="_order.info.addressEtage" class="diags-input xs" placeholder="Etage">
+                                    <input 
+                                    style="padding-left: 25px;"
+                                    ng-model="_order.info.addressEtage" class="diags-input xs" placeholder="Étage">
                                 </div>
                             </div>
                         </div>
@@ -187,7 +189,7 @@
                             <button class="btn btn-xl bg-madison"
                             ng-click="sendPaymentLink()"
                             ng-disabled="state.working() || !orderSaved() || paymentDelegated()"
-                            >Déléguer</button>
+                            >Déléguer au propriétaire</button>
                         </div>
                     </div>
                 </div>
