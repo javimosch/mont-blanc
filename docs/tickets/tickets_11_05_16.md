@@ -19,7 +19,7 @@ Other (same rules from 8 to 30 minutes before diag starting time)
 Block Votre Rendez-vous (attached) : 
 - Etage —> Étage  (and placeholder is cut a little bit)
 - add a space after YYYY ( 2016 in attached file)
-
+    
     DONE
 
 ####----
