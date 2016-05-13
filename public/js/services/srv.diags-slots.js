@@ -133,6 +133,16 @@
                         cursor = cursor.add(4, 'days');
                         o.request();
                     };
+                    o.back = function() {
+                        if(cursor.isSame(moment(),'days')) return; //on today ,back is not possible.
+                        cursor = cursor.subtract(4, 'days');
+                        if(cursor.isBefore(moment(),'days')){
+                            cursor = moment();
+                        }else{
+                            _nextTimes--;
+                        }
+                        o.request();
+                    };
                     o.request = function() {
                         var _localCursor = moment(cursor);
                         var cbHell = $U.cbHell(4, function() {
