@@ -65,6 +65,10 @@
                     }, {
                         label: "Comission",
                         name: "commission"
+                    },{
+                        label: "Activated",
+                        name: "commission",
+                        format:(v,item)=>!item.disabled
                     }],
                     items: []
                 };

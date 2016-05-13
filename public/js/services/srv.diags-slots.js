@@ -38,7 +38,7 @@
                                 
                                 //IF SUNDAY +100% to base price ???
                                 
-                                r.price = diagPrice.getPriceQuote(scope);
+                                r.price = diagPrice.getPriceQuote(scope,date);
                                 
                                 
                                 //

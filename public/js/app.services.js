@@ -20,7 +20,7 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
             });
         });
     }
-    
+
     r.html = function(code) {
         var txt = r.__textSTATIC[code] || '';
         if (r.__text && r.__text[code]) {
@@ -132,13 +132,23 @@ srv.service('localdb', ['$http', function(http) {
 srv.directive('fileModel', ['$parse', function($parse) {
     return {
         restrict: 'A',
+        scope: {
+            model: "=fileModel",
+            field: "@field"
+        },
         link: function(scope, element, attrs) {
             var model = $parse(attrs.fileModel);
             var modelSetter = model.assign;
 
             element.bind('change', function() {
                 scope.$apply(function() {
-                    modelSetter(scope, element[0].files[0]);
+                    //modelSetter(scope, element[0].files[0];);
+                    try {
+                        scope.model[scope.field || 'file'] = element[0].files[0];
+                    }
+                    catch (e) {
+                        modelSetter(element[0].files[0]);
+                    }
                 });
             });
         }
@@ -496,10 +506,10 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     var ws = {
         URL: () => URL,
         getAvailableRanges: (order) => diagsGetAvailableRanges(order, ctrl),
-       // login: login,
-       // save: save,
-       // get: getSingle,
-       // getAll: getAll,
+        // login: login,
+        // save: save,
+        // get: getSingle,
+        // getAll: getAll,
         localData: getLocalData,
         //custom: custom,
         http: function(ctrl, action, data) {

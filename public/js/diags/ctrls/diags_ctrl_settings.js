@@ -48,6 +48,7 @@
                     mondayToFriday: 0,
                     saturday: 30,
                     sunday: 100,
+                    VATRate:20
                 }
             };
             function validNumber(input) {

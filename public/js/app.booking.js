@@ -17,7 +17,9 @@ var app = angular.module('app', [
     'app.directives',
     'ngRoute',
     'diags_ctrl_contact_form',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'srv.diagPrice',
+    'srv.diagSlots'
 ]);
 var URL = {
     HOME: 'home',
@@ -89,17 +91,19 @@ app.config(['$routeProvider',
 
 
 app.controller('ctrl.booking', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal',
-    function(db, $timeout, s, r, $uibModal) {
+    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagPrice', 'diagSlots',
+    function(db, $timeout, s, r, $uibModal, diagPrice, diagSlots) {
         r.URL = URL;
-        window.r = r;
-        window.s = s;
-        window.booking = s;
         r.dom(); //compile directives
+
+        $U.expose('r', r);
+        $U.expose('s', s);
 
         moment.locale('fr')
 
-
+        function creatediagSlots() {
+            s.diagSlots = diagSlots(s, s.item);
+        }
 
 
 
@@ -116,7 +120,7 @@ app.controller('ctrl.booking', ['server',
             BOOKING_HOME_BG_TEXT_PHONE: "0899 399 039"
         };
 
-        
+
 
 
 
@@ -147,7 +151,11 @@ app.controller('ctrl.booking', ['server',
             }
 
             if (url.indexOf(URL.RDV) !== -1) {
-                slotsDays.init();
+                var wait = setInterval(() => {
+                    if (!s.diagSlots) return;
+                    clearInterval(wait);
+                    s.diagSlots.init();
+                }, 100)
             }
 
             if ($U.indexOf(url, [URL.ACCOUNT_DETAILS])) {
@@ -163,8 +171,10 @@ app.controller('ctrl.booking', ['server',
         });
 
 
+
+        /*
         //this component is a high-level wrapper to retrive diags available slots.
-        var slotsDays = function() {
+        var diagSlots = function() {
             function asyncRequest(_localCursor, cbHell, dataPosition) {
                 _localCursor = new Date(_localCursor);
                 s.requestSlots(_localCursor).then((d) => {
@@ -255,7 +265,8 @@ app.controller('ctrl.booking', ['server',
             };
             return o;
         }();
-        s.slotsDays = slotsDays;
+        s.diagSlots = diagSlots;
+        */
 
         function resolvePaymentScreenAuth() {
             return $U.MyPromise(function(resolve, err, emit) {
@@ -333,8 +344,8 @@ app.controller('ctrl.booking', ['server',
 
 
         function atLeastOneDiagSelected() {
-            for (var x in s.model.diags) {
-                if (s.model.diags[x] == true) return true;
+            for (var x in s.item.diags) {
+                if (s.item.diags[x] == true) return true;
             }
             return false;
         }
@@ -455,9 +466,9 @@ app.controller('ctrl.booking', ['server',
         }
         s.validateDate = function(cb, err) {
             ifThenMessage([
-                [s.model.start, '==', undefined, ""],
-                [s.model.end, '==', undefined, ""],
-                [s.model._diag, '==', undefined, ""],
+                [s.item.start, '==', undefined, ""],
+                [s.item.end, '==', undefined, ""],
+                [s.item._diag, '==', undefined, ""],
             ], (m) => {
                 s.warningMsg("Sélectionner une date");
                 if (err) err();
@@ -468,16 +479,16 @@ app.controller('ctrl.booking', ['server',
 
         s.validateQuestions = function(cb, err) {
             ifThenMessage([
-                [s.model.sell, '==', undefined, MESSAGES.ANSWER_SELL_OR_RENT],
-                [s.model.house, '==', undefined, MESSAGES.ANSWER_APPARTAMENT_OR_MAISON],
-                [s.model.squareMeters, '==', undefined, "Répondre Superficie"],
-                [s.model.constructionPermissionDate, '==', undefined, "Répondre Permis de construire"],
-                [s.model.gasInstallation, '==', undefined, "Répondre Gaz"],
-                [s.model.electricityInstallation, '==', undefined, "Répondre Electricité"],
-                [s.model.address, '==', undefined, "Répondre Address"],
+                [s.item.sell, '==', undefined, MESSAGES.ANSWER_SELL_OR_RENT],
+                [s.item.house, '==', undefined, MESSAGES.ANSWER_APPARTAMENT_OR_MAISON],
+                [s.item.squareMeters, '==', undefined, "Répondre Superficie"],
+                [s.item.constructionPermissionDate, '==', undefined, "Répondre Permis de construire"],
+                [s.item.gasInstallation, '==', undefined, "Répondre Gaz"],
+                [s.item.electricityInstallation, '==', undefined, "Répondre Electricité"],
+                [s.item.address, '==', undefined, "Répondre Address"],
                 [_.includes(['France', 'Francia', 'Frankrig', 'Frankrijk',
                     'Frankreich', 'Frankrike', 'Francja'
-                ], s.model.country), '==', false, MESSAGES.FRENCH_ADDRESS_REQUIRED]
+                ], s.item.country), '==', false, MESSAGES.FRENCH_ADDRESS_REQUIRED]
             ], (m) => {
                 s.warningMsg(m[0]);
                 if (err) err();
@@ -485,12 +496,12 @@ app.controller('ctrl.booking', ['server',
         };
 
         //DIAG DATE SELECTION -> Get the slot that the user had selected to the right place.
-        s.$watch('model.range', function(id) {
+        s.$watch('item.range', function(id) {
             if (!id) return;
             var data = JSON.parse(window.atob(id));
-            s.model._diag = data._diag;
-            s.model.start = data.start;
-            s.model.end = data.end;
+            s.item._diag = data._diag;
+            s.item.start = data.start;
+            s.item.end = data.end;
         });
 
         function setSelectedRangeIDUsingOrder(slots, rngId) {
@@ -501,7 +512,7 @@ app.controller('ctrl.booking', ['server',
                 if (data._diag == s._order._diag || data._diag == s._order._diag._id) {
                     if (data.start == s._order.start && data.end == s._order.end) {
                         r.dom(function() {
-                            s.model.range = v.id;
+                            s.item.range = v.id;
                             return v.id;
                         });
                     }
@@ -520,7 +531,7 @@ app.controller('ctrl.booking', ['server',
 
         //DOM CLASS
         s.dateSlotSelected = function(rng) {
-            return (s.model.range && (s.model.range == rng.id));
+            return (s.item.range && (s.item.range == rng.id));
         }
 
 
@@ -542,7 +553,7 @@ app.controller('ctrl.booking', ['server',
         s.$watch('checks.selectAll', function() {
             if (!s.diags) return;
             s.diags.forEach(d => {
-                s.model.diags[d.name] = s.checks.selectAll;
+                s.item.diags[d.name] = s.checks.selectAll;
             });
         }, true);
 
@@ -551,7 +562,7 @@ app.controller('ctrl.booking', ['server',
             if (d.ok && d.result.length > 0) s.settings = d.result[0];
         });
 
-        
+
 
 
         s.htmlReplaceDiagName = function(str) {
@@ -567,8 +578,8 @@ app.controller('ctrl.booking', ['server',
         s.orderPaid = orderPaid;
 
         s.departmentHasTermites = () => {
-            if (s.model.department) {
-                var code = s.model.postCode.substring(0, 2);
+            if (s.item.department) {
+                var code = s.item.postCode.substring(0, 2);
                 return _.includes(s.termitesDepartments.map(v => (v.toString())), code);
             }
         };
@@ -803,7 +814,7 @@ app.controller('ctrl.booking', ['server',
             return !s.isLandLord();
         };
 
-        s.model = {
+        s.item = {
             date: undefined,
             diags: {},
             clientType: 'landlord'
@@ -832,19 +843,19 @@ app.controller('ctrl.booking', ['server',
 
         s.__constructionPermissionDateSelectLabel = 'choisir';
         s.__constructionPermissionDateSelect = (key, val) => {
-            s.model.constructionPermissionDate = val;
+            s.item.constructionPermissionDate = val;
 
         };
-        s.$watch('model.constructionPermissionDate', function(val) {
+        s.$watch('item.constructionPermissionDate', function(val) {
             s.__constructionPermissionDateSelectLabel = val ? val : 'choisir';
             r.dom();
         });
 
         s.__gazSelectLabel = 'choisir';
         s.__gazSelect = (key, val) => {
-            s.model.gasInstallation = val;
+            s.item.gasInstallation = val;
         };
-        s.$watch('model.gasInstallation', function(val) {
+        s.$watch('item.gasInstallation', function(val) {
             s.__gazSelectLabel = val ? val : 'choisir';
             r.dom();
         });
@@ -882,6 +893,8 @@ app.controller('ctrl.booking', ['server',
                 s.diag[diag.name] = diag;
             });
             s.diagSelected = s.diag.dpe;
+
+
 
             updateChecksVisibilityOnDemand();
             waitForProperties([loadDefaults, r.dom], ['notify']);
@@ -1016,72 +1029,72 @@ app.controller('ctrl.booking', ['server',
                     if ((n && diag.name == n) || !n) {
                         diag.show = val;
                         if (diag.show == false) {
-                            s.model.diags[diag.name] = false;
+                            s.item.diags[diag.name] = false;
                         }
                     }
                 });
             };
             s.diags.forEach(function(val, key) {
-                s.model.diags[val.name] = (val.mandatory) ? true : false;
+                s.item.diags[val.name] = (val.mandatory) ? true : false;
             });
 
-            s.$watch('model.constructionPermissionDate', updateChecks);
-            s.$watch('model.sell', updateChecks);
-            s.$watch('model.gasInstallation', updateChecks);
-            s.$watch('model.address', updateChecks);
-            s.$watch('model.electricityInstallation', updateChecks);
+            s.$watch('item.constructionPermissionDate', updateChecks);
+            s.$watch('item.sell', updateChecks);
+            s.$watch('item.gasInstallation', updateChecks);
+            s.$watch('item.address', updateChecks);
+            s.$watch('item.electricityInstallation', updateChecks);
 
             function updateChecks() {
 
                 /*alredt done in questions validations
                                 setTimeout(function() {
-                                    if (s.model.country !== 'France') {
+                                    if (s.item.country !== 'France') {
                                         s.warningMsg(MESSAGES.FRENCH_ADDRESS_REQUIRED);
                                     }
                                 }, 2000);*/
 
 
-                if (s.model.constructionPermissionDate === 'Avant le 01/01/1949') {
+                if (s.item.constructionPermissionDate === 'Avant le 01/01/1949') {
                     toggle('crep', true);
-                    s.model.diags.crep = true; //mandatory
+                    s.item.diags.crep = true; //mandatory
                     toggleMandatory('crep', true);
                 }
                 else {
-                    s.model.diags.crep = false; //
+                    s.item.diags.crep = false; //
                     toggle('crep', true);
                     toggleMandatory('crep', false);
                 }
 
                 if (s.departmentHasTermites()) {
                     toggle('termites', true);
-                    s.model.diags.termites = true;
+                    s.item.diags.termites = true;
                     toggleMandatory('termites', true);
                 }
                 else {
                     toggle('termites', false);
-                    s.model.diags.termites = false;
+                    s.item.diags.termites = false;
                     toggleMandatory('termites', false);
                 }
 
-                if (_.includes(['Avant le 01/01/1949', 'Entre 1949 et le 01/07/1997'], s.model.constructionPermissionDate)) {
+                if (_.includes(['Avant le 01/01/1949', 'Entre 1949 et le 01/07/1997'], s.item.constructionPermissionDate)) {
                     toggle('dta', true);
-                    s.model.diags.dta = true; //mandatory
+                    s.item.diags.dta = true; //mandatory
                     toggleMandatory('dta', true);
                 }
                 else {
                     toggle('dta', true);
-                    s.model.diags.dta = false;
+                    s.item.diags.dta = false;
                     toggleMandatory('dta', false);
                 }
 
-                if (_.includes(['Oui, Plus de 15 ans', 'Oui, Moins de 15 ans'], s.model.gasInstallation)) {
+                if (_.includes(['Oui, Plus de 15 ans', 'Oui, Moins de 15 ans'], s.item.gasInstallation)) {
                     toggle('gaz', true);
-                    if (s.model.sell == true && s.model.gasInstallation === 'Oui, Plus de 15 ans') {
-                        s.model.diags.gaz = true;
+                    if (s.item.sell == true && s.item.gasInstallation === 'Oui, Plus de 15 ans') {
+                        s.item.diags.gaz = true;
                         toggleMandatory('gaz', true);
                     }
                     else {
-                        s.model.diags.gaz = false;
+                        s.item.diags.gaz = false;
                         toggleMandatory('gaz', false);
                     }
                 }
@@ -1089,14 +1102,14 @@ app.controller('ctrl.booking', ['server',
                     toggle('gaz', false);
                     toggleMandatory('gaz', false);
                 }
-                if (_.includes(['Plus de 15 ans', 'Moins de 15 ans'], s.model.electricityInstallation)) {
+                if (_.includes(['Plus de 15 ans', 'Moins de 15 ans'], s.item.electricityInstallation)) {
                     toggle('electricity', true);
-                    if (s.model.sell == true && s.model.electricityInstallation === 'Plus de 15 ans') {
-                        s.model.diags.electricity = true;
+                    if (s.item.sell == true && s.item.electricityInstallation === 'Plus de 15 ans') {
+                        s.item.diags.electricity = true;
                         toggleMandatory('electricity', true);
                     }
                     else {
-                        s.model.diags.electricity = false;
+                        s.item.diags.electricity = false;
                         toggleMandatory('electricity', false);
                     }
                 }
@@ -1111,7 +1124,7 @@ app.controller('ctrl.booking', ['server',
 
         function loadDefaults() {
             //console.log('loadDefaults');
-            s.model = Object.assign(s.model, {
+            s.item = Object.assign(s.item, {
                 sell: paramBool('sell') || true,
                 house: paramBool('house') || undefined,
                 squareMeters: param('squareMeters', s.squareMeters) || '90 - 110m²', // '- de 20m²',
@@ -1125,11 +1138,13 @@ app.controller('ctrl.booking', ['server',
                 clientType: param('clientType', s.CLIENT_TYPES)
             });
 
+            creatediagSlots();
+
             r.dom(function() {
                 try {
                     var x = 0;
                     for (var pos in s.squareMeters) {
-                        if (s.model.squareMeters == s.squareMeters[pos]) {
+                        if (s.item.squareMeters == s.squareMeters[pos]) {
                             break;
                         }
                         else {
@@ -1147,25 +1162,17 @@ app.controller('ctrl.booking', ['server',
             s.diags.forEach((diag) => {
                 var val = paramBool(diag.name);
                 if (!_.isUndefined(val) && !_.isNull(val)) {
-                    s.model.diags[diag.name] = val;
+                    s.item.diags[diag.name] = val;
                 }
             });
         }
 
-
+        /*
         s.requestSlots = function(date) {
             return $U.MyPromise(function(resolve, error, evt) {
                 if (!isFinite(new Date(date))) return; //invalid
 
-                //if sunday, skip
-                /*
-                if (moment(date).day() === 0) {
-                    s.warningMsg('Sunday is an exception.');
-                    r.dom(() => {
-                        s.model.date = moment(s.model.date).subtract(1, 'days')._d;
-                    }, 1000);
-                    return;
-                }*/
+               
 
 
                 var time = s.totalTime();
@@ -1176,7 +1183,7 @@ app.controller('ctrl.booking', ['server',
                 db.getAvailableRanges(order).then(function(data) {
                     //console.log('slots', data);
                     data = data.length > 0 && data || null;
-                    if (s.model.time == 'any') {
+                    if (s.item.time == 'any') {
                         if (data && s.availableTimeRanges.length > 0) {
                             s.pickTimeRange(data[0]);
                         }
@@ -1194,10 +1201,7 @@ app.controller('ctrl.booking', ['server',
                         if (moment(date).day() === 0) {
                             //on sundays, this rngs had a different basic price (+100%)
                             var basePriceIncr = 100;
-                            /*
-                            r.price = s.totalPrice(true,{
-                                basePrice: s.basePrice + (s.basePrice*basePriceIncr/100)
-                            });*/
+                           
                             r.price = s.totalPriceRange(date);
                             r.price += r.price * basePriceIncr / 100;
                         }
@@ -1223,9 +1227,10 @@ app.controller('ctrl.booking', ['server',
             });
         };
 
+*/
 
         //----------------------------------------------------------
-        //s.$watch('model.date', function(date) {
+        //s.$watch('item.date', function(date) {
         //s.requestSlots(date);
         //});
 
@@ -1235,7 +1240,7 @@ app.controller('ctrl.booking', ['server',
 
 
         s.selectedDate = function() {
-            return moment(s.model.date).format('DD MMMM YYYY');
+            return moment(s.item.date).format('DD MMMM YYYY');
         };
         s.drawRange = function(rng) {
             var rta = moment(rng.start).format("HH[h]mm");
@@ -1292,7 +1297,7 @@ app.controller('ctrl.booking', ['server',
                 }).then(_user => {
                     _user = _user.ok && _user.result || null;
                     if (_user) {
-                        s.model.clientType = _user.clientType;
+                        s.item.clientType = _user.clientType;
                         s._user = _user;
 
                         s.validateBeforePayment(function() {
@@ -1329,28 +1334,28 @@ app.controller('ctrl.booking', ['server',
 
 
         s.bookingDescriptionTitle = function() {
-            if (s.model.sell) return "Pack Vente: ";
+            if (s.item.sell) return "Pack Vente: ";
             else return "Pack Location: ";
         };
         s.bookingDescriptionBody = function() {
             var rta = "";
-            if (s.model.house) {
+            if (s.item.house) {
                 rta += "Maison";
             }
             else {
                 rta += "Appartement";
             }
-            if (s.model.city) {
-                rta += " à " + s.model.city;
+            if (s.item.city) {
+                rta += " à " + s.item.city;
             }
-            if (s.model.constructionPermissionDate) {
-                rta += " " + s.model.constructionPermissionDate;
+            if (s.item.constructionPermissionDate) {
+                rta += " " + s.item.constructionPermissionDate;
             }
-            rta += ', ' + s.model.squareMeters;
-            if (!_.includes(['Non', 'Oui, Moins de 15 ans'], s.model.gasInstallation)) {
+            rta += ', ' + s.item.squareMeters;
+            if (!_.includes(['Non', 'Oui, Moins de 15 ans'], s.item.gasInstallation)) {
                 rta += ', Gaz';
             }
-            if (s.model.electricityInstallation != 'Moins de 15 ans') {
+            if (s.item.electricityInstallation != 'Moins de 15 ans') {
                 rta += ", Électricité";
             }
             rta += '.';
@@ -1379,13 +1384,13 @@ app.controller('ctrl.booking', ['server',
                 s.openConfirm('Vous souhaitez envoyer un lien de paiement pour ' + s._order.landLordEmail + ' ?', () => {
                     s.infoMsg("Sending email.");
                     db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
-                        _user:s._user, //the agency
-                        _order:s._order
+                        _user: s._user, //the agency
+                        _order: s._order
                     }).then(data => {
-                        if(!data.ok){
-                            return r.warningMessage("Le courriel ne peut être envoyé à ce moment , d'essayer de nouveau de backoffice",10000);   
+                        if (!data.ok) {
+                            return r.warningMessage("Le courriel ne peut être envoyé à ce moment , d'essayer de nouveau de backoffice", 10000);
                         }
-                        
+
                         s.infoMsg("Email envoyer avec succès. Suivi de votre commande dans le back office.");
                         s._order.landLordPaymentEmailSended = true;
                         s._order.status = 'ordered';
@@ -1491,7 +1496,8 @@ app.controller('ctrl.booking', ['server',
 
         function setOrder(_order) {
             s._order = _order;
-            s._order.price = s.totalPrice(true);
+            //s._order.price = s.totalPrice(true);
+            s._order.price = diagPrice.getPriceQuote(s);
             commitOrderInfo();
             updateAutoSave();
         }
@@ -1500,19 +1506,19 @@ app.controller('ctrl.booking', ['server',
             if (!s._order) return;
 
 
-            if (s._order.info.house === undefined && s.model.house !== undefined) {
-                s._order.info.house = s.model.house;
+            if (s._order.info.house === undefined && s.item.house !== undefined) {
+                s._order.info.house = s.item.house;
             }
 
-            if (s._order.info.sell === undefined && s.model.sell !== undefined) {
-                s._order.info.sell = s.model.sell;
-            }
-            
-            if (s._order.info.electricityInstallation === undefined && s.model.electricityInstallation !== undefined) {
-                s._order.info.electricityInstallation = s.model.electricityInstallation;
+            if (s._order.info.sell === undefined && s.item.sell !== undefined) {
+                s._order.info.sell = s.item.sell;
             }
 
-            if (!s._order.info.description && s.model) {
+            if (s._order.info.electricityInstallation === undefined && s.item.electricityInstallation !== undefined) {
+                s._order.info.electricityInstallation = s.item.electricityInstallation;
+            }
+
+            if (!s._order.info.description && s.item) {
                 s._order.info.description = s.bookingDescriptionTitle() + s.bookingDescriptionBody();
             }
 
@@ -1528,30 +1534,30 @@ app.controller('ctrl.booking', ['server',
 
 
                 if (s._user) {
-                    //s.model._client = s._user._id;
-                    s.model._client = s._user; //we need the full user ref for price discount calcs.
-                    s.model.email = s._user.email;
-                    s.model.clientType = s._user.clientType;
+                    //s.item._client = s._user._id;
+                    s.item._client = s._user; //we need the full user ref for price discount calcs.
+                    s.item.email = s._user.email;
+                    s.item.clientType = s._user.clientType;
                 }
 
                 //defaults for keysTime
-                if (!s.model.keysTimeFrom && s.model.start) {
-                    s.model.keysTimeFrom = moment(s.model.start).subtract(2, 'hour');
+                if (!s.item.keysTimeFrom && s.item.start) {
+                    s.item.keysTimeFrom = moment(s.item.start).subtract(2, 'hour');
                 }
-                if (!s.model.keysTimeTo && s.model.start) {
-                    s.model.keysTimeTo = moment(s.model.start);
+                if (!s.item.keysTimeTo && s.item.start) {
+                    s.item.keysTimeTo = moment(s.item.start);
                 }
 
                 //update price
-                //s.model.price = s.totalPrice(true);
-                s.model.price = 0;
+                //s.item.price = s.totalPrice(true);
+                s.item.price = 0;
 
-                if ($U.hasUndefinedProps(s.model, ['_diag', 'start', 'end'])) {
+                if ($U.hasUndefinedProps(s.item, ['_diag', 'start', 'end'])) {
                     s.warningMsg('Select one available date');
                     return r.route(URL.RDV);
                 }
 
-                db.ctrl('Order', 'saveWithEmail', s.model).then(data => {
+                db.ctrl('Order', 'saveWithEmail', s.item).then(data => {
                     var saved = data.ok;
 
                     console.info('save-order', data.err)
@@ -1690,9 +1696,9 @@ app.controller('ctrl.booking', ['server',
 
         s.getDate = () => {
             return {
-                date: moment(s.model.start).format('DD-MM-YY'),
-                start: moment(s.model.start).format('HH[h]mm'),
-                end: moment(s.model.end).format('HH[h]mm')
+                date: moment(s.item.start).format('DD-MM-YY'),
+                start: moment(s.item.start).format('HH[h]mm'),
+                end: moment(s.item.end).format('HH[h]mm')
             };
         };
 
@@ -1703,17 +1709,17 @@ app.controller('ctrl.booking', ['server',
             r: r
         }, opt || {}));
 
-        s.totalPriceRange = (dt) => totalPrice(true, s.model, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({
+        s.totalPriceRange = (dt) => totalPrice(true, s.item, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({
             s: s,
             r: r,
             dt
         }, {}));
 
         s.pickTimeRange = function(timeRange) {
-            s.model.start = timeRange.start;
-            s.model._diag = timeRange._diag;
-            s.model.end = timeRange.end;
-            s.model.price = timeRange.price;
+            s.item.start = timeRange.start;
+            s.item._diag = timeRange._diag;
+            s.item.end = timeRange.end;
+            s.item.price = timeRange.price;
             if (!timeRange.price) {
                 console.warn('time-range invalid price attribute', timeRange);
             }
@@ -1721,9 +1727,9 @@ app.controller('ctrl.booking', ['server',
 
         s.totalTime = function() {
             var total = 0;
-            s.model.diags = s.model.diags || {};
-            Object.keys(s.model.diags).forEach(function(mkey) {
-                if (!s.model.diags[mkey]) return;
+            s.item.diags = s.item.diags || {};
+            Object.keys(s.item.diags).forEach(function(mkey) {
+                if (!s.item.diags[mkey]) return;
                 s.diags.forEach(function(dval, dkey) {
                     if (dval.name == mkey) {
                         dval.time = dval.price / 4;

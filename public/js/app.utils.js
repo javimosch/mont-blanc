@@ -621,6 +621,7 @@ function fetchCountry(address) {
         geocoder.geocode({
             "address": address
         }, function(results) {
+            if(!results)return;
             for (var i = 0; i < results[0].address_components.length; i++) {
                 for (var j = 0; j < results[0].address_components[i].types.length; j++) {
                     if (results[0].address_components[i].types[j] == "country") {

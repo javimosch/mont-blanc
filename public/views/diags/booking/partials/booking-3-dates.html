@@ -1,5 +1,5 @@
 <div class="row booking-date-row">
-    <div class="col-xs-12 col-md-6 col-lg-3" ng-repeat="d in diagSlots.get() track by $index">
+    <div class="col-xs-12 col-md-6 col-lg-3" ng-repeat="d in diagSlots.get() track by $index" ng-show="d.slots.length>0">
         <div class="diags-date-day-wrapper">
             <div class="diags-date-day-header">{{d.label()}}</div>
             <div ng-repeat="(key,range) in d.slots track by $index" ng-class="{'diags-date-day-item':true,'selected':dateSlotSelected(range)}">
@@ -7,7 +7,7 @@
                     <nice-check-box 
                     class="diag46" 
                     template='diags-date-slot' 
-                    model="model" 
+                    model="item" 
                     data="range"
                     click="proceedToConnect"
                     ></nice-check-box>

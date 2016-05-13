@@ -45,11 +45,11 @@
             };
 
             function read() {
-                r.infoMessage('Loading . . .');
+                //r.infoMessage('Loading . . .');
                 db.custom('order', 'getAll', {
                     __populate: {
                         '_client': 'email',
-                        '_diag': 'email',
+                        '_diag': 'email commission ',
                         __select: "address start end status created"
                     }
                 }).then(function(r) {
@@ -72,6 +72,9 @@
         function(db, s, r, params, focus, diagPrice, diagSlots) {
             r.setCurrentCtrl(s);
 
+            s.pdf = {
+                file: null
+            };
             s.item = {
 
             };
@@ -127,12 +130,14 @@
 
             function setHelpers() {
 
-               
+
 
                 s.diagSlots = diagSlots(s, s.item);
 
                 s.__rdvInit = false;
                 s.rdvConditions = () => {
+                    if (s.item._id) return false;
+                    if (!s.item.info) return false;
                     var rta = s.item.info.squareMeters !== undefined && s.item._client !== undefined;
                     if (rta && !s.__rdvInit) {
                         s.__rdvInit = true;
@@ -231,6 +236,14 @@
                 s.applyTotalPrice = () => {
                     //s.item.price = s.totalPrice(true);
                     s.item.price = diagPrice.getPriceQuote(s);
+
+                    if (s.item._diag) {
+                        diagPrice.setPrices(s, s.item);
+                    }
+                    else {
+                        console.warn('set-prices-skip _diag undefined ')
+                    }
+
                     r.dom();
                 };
                 s.applyTotalTime = () => {
@@ -254,7 +267,7 @@
                 window.Object.assign(s.item, {
                     email: '',
                     password: '',
-                    status: 'ordered',
+                    status: 'created',
                     start: moment().add(1, 'day').hour(9).minutes(0).toDate(),
                     end: moment().add(1, 'day').hour(10).minutes(30).toDate(),
                     fastDiagComm: 0,
@@ -271,6 +284,7 @@
             }
 
             function setDefaultsDiags() {
+                s.item.diags = s.item.diags || {};
                 s.diags.forEach(function(val, key) {
                     s.item.diags[val.name] = (val.mandatory) ? true : false;
                 });
@@ -304,12 +318,12 @@
                 s.isOrderClientLandLord = () => {
                     return !_.includes(s.CLIENT_TYPES_COMPANY, s.item._client.clientType);
                 }
-                 s.isOrderClientAgency = () => {
+                s.isOrderClientAgency = () => {
                     return !s.isOrderClientLandLord();
                 };
-                
-               
-                
+
+
+
                 s.__keysWhereItems = {};
                 s.__keysWhereGetItems = () => {
                     if (!s.item._client || !s.item._client.clientType) return {
@@ -386,6 +400,9 @@
                         s.__keysTimeFromSelectLabel = 'choisir';
                     }
                     else {
+                        if (s.item._id) {
+                            return s.__keysTimeFromSelectLabel = r.momentTime(s.item.keysTimeFrom);
+                        }
                         s.__keysTimeFromSelectLabel = 'choisir';
                         _.each(s.__keysTimeFromItems, (v, k) => {
                             if (v == val) s.__keysTimeFromSelectLabel = k;
@@ -428,6 +445,9 @@
                         s.__keysTimeToSelectLabel = 'choisir';
                     }
                     else {
+                        if (s.item._id) {
+                            return s.__keysTimeToSelectLabel = r.momentTime(s.item.keysTimeTo);
+                        }
                         s.__keysTimeToSelectLabel = 'choisir';
                         _.each(s.__keysTimeToItems, (v, k) => {
                             if (v == val) s.__keysTimeToSelectLabel = k;
@@ -451,127 +471,7 @@
                 function dtBefore(d1, d2, unit) {
                     return moment(d1).isAfter(moment(d2), unit);
                 }
-                /*
-                                s.keysWhereTime = {
-                                    invalidKeysTimeMessage: () => {
-                                        var startTime = () => moment(s.item.start).format('HH:mm');
-                                        return 'Keys time should be between 8:00 and ' + startTime();
-                                    },
-                                    invalidKeysTime: () => {
-                                        var before = (d1, h) => moment(d1).isBefore(moment(d1).hours(8));
-                                        var diag = {
-                                            hours: moment(s.item.start).hours(),
-                                            minutes: moment(s.item.start).minutes()
-                                        };
-                                        var after = (d1) => moment(d1).isAfter(moment(d1).hours(diag.hours).minutes(diag.minutes));
-                                        var tfrom = s.item.keysTimeFrom;
-                                        var tto = s.item.keysTimeTo;
-                                        if (!tfrom || before(tfrom) || after(tfrom)) {
-                                            console.warn('invalidKeysTime from', (!tfrom), before(tfrom), after(tfrom));
-                                            return true;
-                                        }
-                                        if (!tto || before(tto) || after(tto)) {
-                                            console.warn('invalidKeysTime to', (!tto), before(tto), after(tto));
-                                            return true;
-                                        }
-                                        if (tto && tfrom && moment(tto).isBefore(moment(tfrom))) {
-                                            console.warn('invalidKeysTime from <- to required.');
-                                            return true;
-                                        }
 
-                                        return false;
-                                    },
-                                    init: function(self) {
-
-                                    },
-                                    emit: function(n) {
-                                        var self = this;
-                                        var arr = self.evts[n] || [];
-                                        arr.forEach(evt => (evt(self)))
-                                    },
-                                    evts: {
-                                        onItem: [(self) => {
-                                            s.keysWhereTime.updateItems(self);
-                                        }]
-                                    },
-                                    mstep: 15,
-                                    hstep: 1,
-                                    address: '',
-                                    scope: s,
-                                    val: undefined,
-                                    disabled: () => s.isPaid() || r.state.working(),
-                                    cls: () => ({
-                                        btn: true,
-                                        'btn-default': true
-                                    }),
-                                    filterWatch: 'item',
-                                    filter: (v) => {
-                                        if (s.item && s.item._client && s.item._client.clientType) {
-                                            if (s.item._client.clientType !== 'agency') {
-                                                if (v.val == 'agency') {
-                                                    return false;
-                                                }
-                                            }
-                                        }
-                                        return true;
-                                    },
-                                    label: 'Select',
-                                    modelPath: 'item.keysWhere',
-                                    items: [],
-                                    updateItems: ((self) => {
-                                        var o = [{
-                                            label: () => s.item && s.item.address || 'Diag Address',
-                                            val: 1,
-                                            get: () => s.item && s.item.address
-                                        }];
-                                        if (s.item._client && s.item._client.clientType == 'agency') {
-                                            o.push({
-                                                label: () => s.item._client.address || 'Agency address',
-                                                val: 3,
-                                                get: () => s.item._client.address || ''
-                                            }, {
-                                                label: () => s.item.landLordAddress || 'Landlord address',
-                                                val: 4,
-                                                disabled: () => !s.item.landLordAddress,
-                                                get: () => s.item.landLordAddress || ''
-                                            }); //when agency / other
-                                        }
-                                        else {
-                                            o.push({
-                                                label: () => s.item._client.address || 'Client address',
-                                                val: 3,
-                                                get: () => s.item._client.address || ''
-                                            }); //when landlord
-                                        }
-                                        self.items = o;
-                                    }),
-                                    change: (v, self, setOldValue) => {
-                                        if (!v) return;
-                                        var address = v.get();
-                                        if (!address) {
-                                            r.notify('Address not found', {
-                                                type: 'warning',
-                                                duration: 5000,
-                                                clickDismissable: true
-                                            });
-                                            self.val = undefined;
-                                            setOldValue();
-                                            return;
-                                        }
-                                        if (s.item.keysAddress && s.item.keysAddress == address) {
-                                            if (!s.item.keysTime) {
-                                                s.item.keysTime = moment(s.item.start).hours(8).minutes(0)._d;
-                                            }
-                                            return;
-                                        }
-                                        else {
-                                            s.item.keysAddress = address;
-                                        }
-
-                                    }
-                                };
-
-                */
 
 
                 //
@@ -627,7 +527,7 @@
             function setActions() {
 
 
-                s.sendPaymentLink = () => {
+                s.sendPaymentLink = (cb) => {
 
                     $U.ifThenMessage([
                         [!s.item.landLordEmail, '==', true, "Landlord Email required."],
@@ -644,8 +544,19 @@
                     function _sendPaymentLink() {
                         s.confirm('You want to send a payment link to ' + s.item.landLordEmail + ' ?', () => {
                             s.infoMsg("Sending email.");
-                            db.ctrl('Email', 'orderPaymentLink', s.item).then(data => {
+                            db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
+                                _user: s.item._client,
+                                _order: s.item
+                            }).then(data => {
+
+                                if (s.item.status == 'created') {
+                                    s.item.status = 'ordered';
+                                    db.ctrl('Order', 'update', s.item);
+                                }
+
+
                                 s.infoMsg("Email sended.");
+                                if (cb) cb();
                             });
                         });
                     }
@@ -736,8 +647,21 @@
                     db.ctrl('Order', 'save', s.item).then(function(res) {
 
                         if (res.ok) {
-                            r.infoMessage('Changes saved', 'success');
-                            s.back();
+
+                            if (s.item.notifications && s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED == true) {
+                                r.infoMessage('Changes saved', 'success');
+                                s.back();
+                            }
+                            else {
+                                s.item._id = res.result._id;
+                                s.sendPaymentLink(() => {
+                                    r.infoMessage('Changes saved', 'success');
+                                    s.back();
+                                });
+                            }
+
+
+
                         }
                         else {
                             handleError(res);
@@ -753,7 +677,7 @@
                     }
                 };
                 s.saveFile = () => {
-                    if (!s.pdfFile) {
+                    if (!s.pdf.file) {
                         return r.warningMessage("File required", 5000);
                     }
                     var pdfId_prev = s.item.pdfId;
@@ -770,8 +694,8 @@
                     function _uploadNew() {
                         r.infoMessage('Uploading (Do not touch anything)', 9999);
                         db.form('File/save/', {
-                            name: s.pdfFile.name,
-                            file: s.pdfFile
+                            name: s.pdf.file.name,
+                            file: s.pdf.file
                         }).then((data) => {
                             //console.info('INFO', data);
                             if (data.ok) {

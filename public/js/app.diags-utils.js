@@ -205,7 +205,7 @@ function openStripeModalPayOrder(order, cb, opt) {
     handler.open({
         name: opt.config.companyName || "[r.config.companyName]",
         description: 'Order payment',
-        email: opt.email || order._client.email,
+        //email: opt.email || order._client.email, //email need to be ingresed.
         currency: "eur",
         amount: order.price * 100,
         //billingAddress:true,

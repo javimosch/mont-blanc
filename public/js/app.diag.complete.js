@@ -384,7 +384,10 @@ app.controller('ctrl-diag-edit', [
                 [(s.item.commission < 0 || s.item.commission > 100), '==', true, "Commission allowed values are 0..100"],
                 [!s.item.priority, '==', true, "Priority required"],
                 [isNaN(s.item.priority), '==', true, "Priority allowed values are 0..100"],
-                [(s.item.priority < 0 || s.item.priority > 100), '==', true, "Priority allowed values are 0..100"]
+                [(s.item.priority < 0 || s.item.priority > 100), '==', true, "Priority allowed values are 0..100"],
+                
+                [s.item._id && (!s.item.diplomes || (s.item.diplomes && s.item.diplomes.length==0)), '==',true,'A Diplome est nécessaire']
+                
             ], (m) => {
                 r.warningMessage(m[0], 5000);
             }, () => {
@@ -409,16 +412,18 @@ app.controller('ctrl-diag-edit', [
             }
         };
         s.diplomesExpirationDateNotificationEnabled = (_id) => {
+            if(!r.userIs('admin')) return false;
             if (!s.item.diplomesInfo) return false;
             if (s.item.diplomesInfo[_id]) {
                 if (s.item.diplomesInfo[_id].expirationDateNotificationEnabled == undefined) {
                     s.item.diplomesInfo[_id].expirationDateNotificationEnabled = false;
                 }
                 return s.item.diplomesInfo[_id].expirationDateNotificationEnabled;
-            }else{
+            }
+            else {
                 return false;
             }
-            
+
         };
         s.diplomesEnableExpirationDateNotification = (_id) => {
             if (!s.item.diplomesInfo) {
@@ -473,14 +478,14 @@ app.controller('ctrl-diag-edit', [
                                     diplomesInfo: s.item.diplomesInfo
                                 });
                                 //
-                                console.info('diplome-info-created',_id);
+                                console.info('diplome-info-created', _id);
                             }
                             file = Object.assign(file, s.item.diplomesInfo && s.item.diplomesInfo[file._id] || {});
                             s.diplomesData[file._id] = s.diplomesDataCreate(file);
                         }
                         else {
                             //if is unable to fetch the diplome, we assume that was removed from the db, so we delete the reference.
-                            console.info('diplome-fetch-fail: deleting-reference',_id);
+                            console.info('diplome-fetch-fail: deleting-reference', _id);
                             s.item.diplomes = _.pull(s.item.diplomes, _id);
                             s.item.diplomesInfo = _.pull(s.item.diplomesInfo, _id);
                             if (s.diplomesData[_id]) {
@@ -743,8 +748,18 @@ app.controller('ctrl-diag-edit', [
                 db.ctrl('User', 'save', s.item).then((res) => {
                     var _r = res;
                     if (_r.ok) {
+                        s.item._id = res.result._id;
+                        if (s.adminsNeedToBeNotifiedAboutDiagAccountCreation(s.item)) {
+                            s.notifyAdminsAboutDiagAccountCreation(s.item);
+                        }
+                        else {
+                            if (s.needToBeNotifiedAboutActivation(s.item)) {
+                                s.notifyAboutActivation(s.item);
+                            }
+                        }
+
                         if (!logged) {
-                            if (s.item._id) {
+                            if (s.diplomes && s.diplomes.length>0) {
                                 r.route('login');
                                 return r.infoMessage("Votre compte a été créé et sera examinée par un administrateur");
                             }
@@ -756,14 +771,7 @@ app.controller('ctrl-diag-edit', [
                         }
                         else {
 
-                            if (s.adminsNeedToBeNotifiedAboutDiagAccountCreation(s.item)) {
-                                s.notifyAdminsAboutDiagAccountCreation(s.item);
-                            }
-                            else {
-                                if (s.needToBeNotifiedAboutActivation(s.item)) {
-                                    s.notifyAboutActivation(s.item);
-                                }
-                            }
+
 
                             r.route('diags', 0);
                         }

@@ -1,4 +1,5 @@
 /*global angular*/
+/*global _*/
 /*global moment*/
 /*global $U*/
 (function() {
@@ -97,9 +98,33 @@
         }
 
         return {
+            setPrices:function(scope,_order){
+                //price represent the priceQuote with VAT (TTC).
+                var diagCommissionRate = _order._diag.commission;
+                if(diagCommissionRate==undefined) return console.warn('setPrices _order._diag.commission required');
+                var vatRate = scope.settings.pricePercentageIncrease.VATRate || 20;
+                //without vat formula : s.item.price / ((20/100)+1)
+                var priceHT = _order.price / ((vatRate/100)+1);
+                //
+                _order.priceHT = priceHT; //price without taxes
+                
+                _order.diagRemunerationHT =  (_order.priceHT*diagCommissionRate/100); //revenue for the diag man
+                debug('diagRemunerationHT', _order.diagRemunerationHT);
+                debug('diagCommissionRate', diagCommissionRate);
+                debug('revenueRate', 100-diagCommissionRate);
+                
+                _order.revenueHT = _order.priceHT - _order.diagRemunerationHT; //revenue for diagnostical
+                debug('revenueHT',  _order.revenueHT);
+                _order.vatRate = vatRate; //vat rate at the moment of the calculation
+            },
             getPriceQuote: function(scope, date) {
                 debug(undefined);
-                var _order                      = scope._order || scope.item;
+                var _order                      = scope.item;
+                if(scope._order && scope._order._id) _order = scope._order;
+                _order = _.cloneDeep(_order); //read-only
+                
+                if(!_order.info) _order.info = _order; //patch for booking.
+                
                 
                 debug('_order', _order);
                 if (!_order)                    return warn('_order required.');
@@ -130,6 +155,7 @@
                 debug('extraDatePrice', extraDatePrice);
                 //
                 if(!_order._client||_order._client.discount==undefined||isNaN(_order._client.discount)){
+                    _order._client = _order._client || {};
                     _order._client.discount = 0;
                     warn('_order._client.discount 0 .. 100 required (warning)');
                 }
@@ -147,7 +173,16 @@
                 var rtaRounded = parseInt(parseInt(rta) / 10, 10) * 10;
                 debug('total', rta);
                 debug('totalRoundedValue', Math.abs(rta - rtaRounded));
-                debug('totalRounded', rtaRounded);
+                debug('totalRoundedHT', rtaRounded);
+                //
+                var vatPrice = scope.settings.pricePercentageIncrease.VATRate || 20;
+                debug('vatRate', vatPrice);
+                vatPrice = rtaRounded * vatPrice / 100;
+                debug('vatPrice', vatPrice);
+                //
+                rtaRounded+=vatPrice;
+                debug('totalRoundedTTC', rtaRounded);
+                //
                 return rtaRounded;
             }
         };

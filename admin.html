@@ -77,6 +77,92 @@
                 <li ng-cloak ng-repeat="(k,i) in __debugPriceModifiers">
                     <span ng-cloak ng-bind="k"></span>:<span ng-cloak ng-bind="i"></span>
                 </li>
+                <li>
+                    <label ng-cloak>Price Rules</label>
+                    <table class="table minimal" ng-cloak>
+                        <thead ng-cloak>
+                            <tr>
+                                <th></th>
+                                <th>+</th>
+                                <th>-</th>
+                            </tr>
+                        </thead>
+                        <tbody ng-cloak>
+                            <tr ng-cloak>
+                                <td ng-bind="'Base price'"></td>
+                                <td ng-bind="__priceQuote.basePrice"></td>
+                                <td></td>
+                            </tr>
+                            <tr ng-cloak ng-repeat="(name,price) in __priceQuote.diags">
+                                <td ng-bind="name"></td>
+                                <td ng-bind="price"></td>
+                                <td></td>
+                            </tr>
+                            <tr ng-cloak>
+                                <td ng-bind="'Extra Building Price '+__priceQuote.extraBuildingSizePorc+'%'"></td>
+                                <td ng-bind="__priceQuote.extraBuildingSizePrice"></td>
+                                <td></td>
+                            </tr>
+                            <tr ng-cloak>
+                                <td ng-bind="'Extra Date Price '+__priceQuote.extraDatePriceType+' '+__priceQuote.extraDatePricePorc+'%'"></td>
+                                <td ng-bind="__priceQuote.extraDatePrice"></td>
+                                <td></td>
+                            </tr>
+                            <tr ng-cloak>
+                                <td ng-bind="'Discount Client '+__priceQuote.discountClientPorc+'%'"></td>
+                                <td></td>
+                                <td ng-bind="__priceQuote.discountClientPrice"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot ng-cloak>
+                            <tr ng-cloak>
+                                <td ng-bind="'Diags price '"></td>
+                                <td ng-bind="__priceQuote.selectedDiagsTotalPrice"></td>
+                                <td></td>
+                            </tr>
+                            <tr ng-cloak>
+                                <td ng-bind="'Subtotal'"></td>
+                                <td ng-bind="__priceQuote.subTotal"></td>
+                                <td></td>
+                            </tr>
+                            <tr ng-cloak>
+                                <td ng-bind="'Total raw'"></td>
+                                <td ng-bind="__priceQuote.total"></td>
+                                <td></td>
+                            </tr>
+                            <tr ng-cloak <td ng-bind="'Difference (tenth  10)'">
+                                </td>
+                                <td></td>
+                                <td ng-bind="__priceQuote.totalRoundedValue"></td>
+                            </tr>
+                            <tr ng-cloak>
+                                <td ng-bind="'TotalHT'"></td>
+                                <td ng-bind="__priceQuote.totalRoundedHT"></td>
+                                <td></td>
+                            </tr>
+                            <tr ng-cloak>
+                                <td ng-bind="'VAT '+__priceQuote.vatRate+'%'"></td>
+                                <td ng-bind="__priceQuote.vatPrice"></td>
+                                <td></td>
+                            </tr>
+                            <tr ng-cloak>
+                                <td ng-bind="'TotalTTC (For Client)'"></td>
+                                <td ng-bind="__priceQuote.totalRoundedTTC"></td>
+                                <td></td>
+                            </tr>
+                            <tr ng-cloak>
+                                <td ng-bind="'RemunerationHT '+__priceQuote.diagCommissionRate+'%'"></td>
+                                <td ng-bind="__priceQuote.diagRemunerationHT"></td>
+                                <td></td>
+                            </tr>
+                            <tr ng-cloak>
+                                <td ng-bind="'RevenueHT '+__priceQuote.revenueRate+'%'"></td>
+                                <td ng-bind="__priceQuote.revenueHT"></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </li>
                 <li ng-show="__textsNotFound">Texts codes requested:</li>
                 <li ng-cloak ng-repeat="item in __textsNotFound" ng-bind="item">
                 </li>

@@ -123,13 +123,13 @@
                 </tr>
             </table>
         </div>
-        <div class="row margin-top-half">
+        <div class="row margin-top-half" ng-show="!item._id">
             <label class="unselectable">Date rules</label>
         </div>
-        <div class="">
+        <div class="" ng-show="!item._id">
             <input type="text" class="diags-input" disabled ng-value="totalTimeFormated()" />
         </div>
-        <div class="">
+        <div class="" ng-show="!item._id">
             <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalTime()">Apply</button>
         </div>
         <div class="row margin-top-half">
@@ -151,7 +151,7 @@
             <input ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.end)" placeholder="End">
         </div>
 
-        <div class="row margin-top-one">
+        <div class="row margin-top-one" ng-show="!item._id">
             <label>Price Rules</label>
             <table class="table minimal">
                 <thead>
@@ -172,21 +172,7 @@
                         <td ng-bind="price"></td>
                         <td></td>
                     </tr>
-                    <tr>
-                        <td ng-bind="'Extra Building Price '+__priceQuote.extraBuildingSizePorc+'%'"></td>
-                        <td ng-bind="__priceQuote.extraBuildingSizePrice"></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td ng-bind="'Extra Date Price '+__priceQuote.extraDatePriceType+' '+__priceQuote.extraDatePricePorc+'%'"></td>
-                        <td ng-bind="__priceQuote.extraDatePrice"></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td ng-bind="'Discount Client '+__priceQuote.discountClientPorc+'%'"></td>
-                        <td></td>
-                        <td ng-bind="__priceQuote.discountClientPrice"></td>
-                    </tr>
+                   
                 </tbody>
                 <tfoot>
                     <tr>
@@ -199,19 +185,55 @@
                         <td ng-bind="__priceQuote.subTotal"></td>
                         <td></td>
                     </tr>
+                     <tr>
+                        <td ng-bind="'Extra Building Price '+__priceQuote.extraBuildingSizePorc+'%'"></td>
+                        <td ng-bind="__priceQuote.extraBuildingSizePrice"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="'Extra Date Price '+__priceQuote.extraDatePriceType+' '+__priceQuote.extraDatePricePorc+'%'"></td>
+                        <td ng-bind="__priceQuote.extraDatePrice"></td>
+                        <td></td>
+                    </tr>
+                   
+                    <tr>
+                        <td ng-bind="'Discount Client '+__priceQuote.discountClientPorc+'%'"></td>
+                        <td></td>
+                        <td ng-bind="__priceQuote.discountClientPrice"></td>
+                    </tr>
                     <tr>
                         <td ng-bind="'Total raw'"></td>
                         <td ng-bind="__priceQuote.total"></td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td ng-bind="'Difference'"></td>
+                        <td ng-bind="'Difference (tenth  10)'"></td>
                         <td></td>
                         <td ng-bind="__priceQuote.totalRoundedValue"></td>
                     </tr>
                     <tr>
-                        <td ng-bind="'Total'"></td>
-                        <td ng-bind="__priceQuote.totalRounded"></td>
+                        <td ng-bind="'TotalHT'"></td>
+                        <td ng-bind="__priceQuote.totalRoundedHT"></td>
+                        <td></td>
+                    </tr>
+                     <tr>
+                        <td ng-bind="'VAT '+__priceQuote.vatRate+'%'"></td>
+                        <td ng-bind="__priceQuote.vatPrice"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="'TotalTTC (For Client)'"></td>
+                        <td ng-bind="__priceQuote.totalRoundedTTC"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="'RemunerationHT '+__priceQuote.diagCommissionRate+'%'"></td>
+                        <td ng-bind="__priceQuote.diagRemunerationHT"></td>
+                        <td></td>
+                    </tr>
+                     <tr>
+                        <td ng-bind="'RevenueHT '+__priceQuote.revenueRate+'%'"></td>
+                        <td ng-bind="__priceQuote.revenueHT"></td>
                         <td></td>
                     </tr>
                 </tfoot>
@@ -246,8 +268,8 @@
             <label class="unselectable">Debriefing pdf file: {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||"(not available yet)"}}</label>
         </div>
         <div class="row margin-top-quarter">
-            <input type="file" file-model="pdfFile" ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working()" class="diags-input" placeholder="Diag Pdf">
-            <button ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working() || !pdfFile" class="margin-top-quarter btn diags-btn bg-azure-radiance" ng-click="saveFile()">Upload</button>
+            <input type="file" file-model="pdf" ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working()" class="diags-input" placeholder="Diag Pdf">
+            <button ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working() || !pdf.file" class="margin-top-quarter btn diags-btn bg-azure-radiance" ng-click="saveFile()">Upload</button>
             <button ng-disabled="!item.pdfId" class="margin-top-quarter btn diags-btn bg-azure-radiance" ng-click="downloadFile()">Download</button>
             <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
         </div>
@@ -255,7 +277,7 @@
         <div class="row margin-top-half">
             <label class="unselectable">Clés</label>
         </div>
-        <div class="row margin-top-one">
+        <div class="row margin-top-one" ng-show="!item._id">
             <!-- KEYS WHERE -->
             <div class="dropdown with-caret">
                 <button class="btn btn-default diags-input dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -269,14 +291,16 @@
                 </ul>
             </div>
         </div>
-        <div class="row margin-top-half">
+        <div class="row margin-top-half" >
             <input ng-disabled="item.keysWhere!=='other'" data-address model="item" field="keysAddress" class="diags-input" placeholder="Adresse">
         </div>
         <div class="row margin-top-half">
 
             <!-- KEYS TIME FROM -->
             <div class="dropdown with-caret">
-                <button class="btn btn-default diags-input half dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button 
+                ng-disabled="state.working() || item._id"
+                class="btn btn-default diags-input half dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span>{{__keysTimeFromSelectLabel}}</span>
                     <span class="caret"></span>
                 </button>
@@ -290,7 +314,9 @@
         <div class="row margin-top-half">
             <!-- KEYS TIME TO -->
             <div class="dropdown with-caret">
-                <button class="btn btn-default diags-input half dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button 
+                    ng-disabled="state.working() || item._id"
+                    class="btn btn-default diags-input half dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span>{{__keysTimeToSelectLabel}}</span>
                     <span class="caret"></span>
                 </button>
@@ -302,7 +328,7 @@
             </div>
         </div>
 
-        <div class="row margin-top-half">
+        <div class="row margin-top-half" ng-show="!item._id">
             <label class="unselectable">RDV</label>
         </div>
         <div class="row margin-top-quarter">
@@ -322,10 +348,28 @@
     <div class="col-xs-12 col-sm-12 col-md-6 ">
 
         <div class="row margin-top-one">
-            <label class="unselectable">Price</label>
+            <label class="unselectable">PriceTTC</label>
         </div>
         <div class="row margin-top-quarter">
-            <input ng-disabled="state.working() || item._id" type="text" class="diags-input" ng-model="item.price">
+            <input ng-disabled="true" type="text" class="diags-input" ng-model="item.price">
+        </div>
+        <div class="row margin-top-one">
+            <label class="unselectable">PriceHT</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="true" type="text" class="diags-input" ng-model="item.priceHT">
+        </div>
+        <div class="row margin-top-one">
+            <label class="unselectable">RumunerationHT</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="true" type="text" class="diags-input" ng-model="item.diagRemunerationHT">
+        </div>
+        <div class="row margin-top-one">
+            <label class="unselectable">RevenueHT</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="true" type="text" class="diags-input" ng-model="item.revenueHT">
         </div>
         <div class="row margin-top-half">
             <label class="unselectable">Etat</label>

@@ -10,7 +10,7 @@
         };
         s.send = function() {
             
-            db.ctrl('Notification', 'NEW_CONTACT_FORM_MESSAGE',s._email).then(function(d) {
+            db.ctrl('Notification', 'ADMIN_NEW_CONTACT_FORM_MESSAGE',s._email).then(function(d) {
                 if (d.ok) {
                     r.infoMessage('Message envoyé');
                 }
