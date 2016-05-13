@@ -1,38 +1,56 @@
 /*global angular*/
 /*global $U*/
-(function(){
+(function() {
     var app = angular.module('diags_ctrl_settings', []);
-     app.controller('diags_ctrl_settings', ['server', '$scope', '$rootScope',
+    app.controller('diags_ctrl_settings', ['server', '$scope', '$rootScope',
         function(db, s, r) {
+
+            s.deleteAll = (t) => {
+                r.openConfirm({
+                    message: "You want to delete all the objects of type " + t + ' ?',
+                    data: {
+                        title: "Delete Confirmation"
+                    }
+                }, () => {
+                    db.ctrl(t, 'removeWhen', {}).then((res) => {
+                        if (res.ok) {
+                            r.okModal('All the objects of type ' + t + ' were deleted from the database.');
+                        }
+                    })
+                });
+            };
+
+
             $U.expose('s', s);
             r.toggleNavbar(true);
             r.secureSection(s);
             if (r.userIs(['diag', 'client'])) {
                 return r.handleSecurityRouteViolation();
             }
-            $U.expose('s',s);
-            
+            $U.expose('s', s);
+
             s.menuItems = {
-                'Texts':'texts',
-                'Notifications':'notifications',
-                'Logs':'logs',
-                "Tools":'tools',
-                "Price Modifiers":"price-modifiers",
-                "Documentation":"documentation"
+                'Texts': 'texts',
+                'Notifications': 'notifications',
+                'Logs': 'logs',
+                "Tools": 'tools',
+                "Price Modifiers": "price-modifiers",
+                "Documentation": "documentation",
+                "Database": "settings-database"
             };
-            
+
             s.priceModifiers = {
-                "Today Monday to Friday (+%)":"todayMondayToFriday",
-                "Today Saturday (+%)":"todaySaturday",
-                "Today Sunday (+%)":"todaySunday",
-                "Tomorrow Monday to Friday (+%)":"tomorrowMondayToFriday",
-                "Tomorrow Saturday (+%)":"tomorrowSaturday",
-                "Tomorrow Sunday (+%)":"tomorrowSunday",
-                "Monday to Friday (+%)":"mondayToFriday",
-                "Saturday (+%)":"saturday",
-                "Sunday (+%)":"sunday"
+                "Today Monday to Friday (+%)": "todayMondayToFriday",
+                "Today Saturday (+%)": "todaySaturday",
+                "Today Sunday (+%)": "todaySunday",
+                "Tomorrow Monday to Friday (+%)": "tomorrowMondayToFriday",
+                "Tomorrow Saturday (+%)": "tomorrowSaturday",
+                "Tomorrow Sunday (+%)": "tomorrowSunday",
+                "Monday to Friday (+%)": "mondayToFriday",
+                "Saturday (+%)": "saturday",
+                "Sunday (+%)": "sunday"
             };
-            
+
             s.item = {
                 pricePercentageIncrease: {
                     //today: 0, //deprecated for today[DAY]
@@ -48,9 +66,10 @@
                     mondayToFriday: 0,
                     saturday: 30,
                     sunday: 100,
-                    VATRate:20
+                    VATRate: 20
                 }
             };
+
             function validNumber(input) {
                 var rta = !input;
                 if (rta) return false;
@@ -64,8 +83,8 @@
                 var rules = [];
                 for (var x in s.item.pricePercentageIncrease) {
                     rules.push([
-                        validNumber(s.item.pricePercentageIncrease[x]), '==', false, 
-                        x+ " valid value in  0 .. 500"
+                        validNumber(s.item.pricePercentageIncrease[x]), '==', false,
+                        x + " valid value in  0 .. 500"
                     ]);
                 }
                 $U.ifThenMessage(rules, r.warningMessage, s.save);
@@ -86,6 +105,8 @@
                 });
             };
             s.read();
+
+
         }
     ]);
 })();

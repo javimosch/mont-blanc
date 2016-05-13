@@ -10,11 +10,17 @@
 
         var isSaturday = (d) => moment(d).day() === 6;
         var isSunday = (d) => moment(d).day() === 0;
-        var isTomorrowSaturday = (d) => moment(d).add(1, 'day').day() === 6;
-        var isTomorrowSunday = (d) => moment(d).add(1, 'day').day() === 0;
-        var isTodaySaturday = (d) => moment(d).day() === 6 && moment().isSame(d, 'day');
-        var isTodaySunday = (d) => moment(d).day() === 0 && moment().isSame(d, 'day');
-        var isToday = (d) => moment().isSame(d, 'day');
+        
+        var isTomorrowSaturday = (d) => moment().add(1, 'day').day() === 6 
+            && moment(d).isSame(moment().add(1, 'day'), 'day');
+        
+        var isTomorrowSunday = (d) => moment().add(1, 'day').day() === 0 
+            && moment(d).isSame(moment().add(1, 'day'), 'day');
+            
+        var isTodaySaturday = (d) => moment().day() === 6 && moment().isSame(moment(d), 'day');
+        var isTodaySunday = (d) => moment().day() === 0 && moment().isSame(moment(d), 'day');
+        
+        var isToday = (d) => moment().isSame(moment(d), 'day');
 
         function diagsPrice(_order, diagsArr) {
             var _diags = {};

@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="col-sm-12 padding-none">
+        <ol class="breadcrumb">
+            <li><a class="link" ng-click="route('settings')">Settings</a></li>
+            <li>Database</li>
+        </ol>
+    </div>
+</div>
+<div class="container" ng-controller="diags_ctrl_settings">
+    <div class="row margin-top-two">
+        <div class="col-sm-12">
+            <table class="table table-striped table-condensed link questions">
+                <tr class="link" ng-click="deleteAll('Order')">
+                    <td class="link">
+                        <label class="link minimal">Delete all the orders</label>
+                    </td>
+                </tr>
+                <tr class="link" ng-click="deleteAll('Notification')">
+                    <td class="link">
+                        <label class="link minimal">Delete all the notifications</label>
+                    </td>
+                </tr>
+                <tr class="link" ng-click="deleteAll('Log')">
+                    <td class="link">
+                        <label class="link minimal">Delete all the logs</label>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
