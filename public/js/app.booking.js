@@ -652,17 +652,17 @@ app.controller('ctrl.booking', ['server',
             if (s.isLandLord()) {
                 return {
                     'Ou ?': () => '',
-                    'Diag Address': () => s._order.address,
-                    'Client Address': () => s._user.address, //when landlord
+                    'Sur Place': () => s._order.address,
+                    'Votre adresse': () => s._user.address, //when landlord
                     'Other': () => 'other'
                 };
             }
             else {
                 return {
                     'Ou ?': () => '',
-                    'Diag Address': () => s._order.address,
-                    'Agency Address': () => s._user.address, //when not-landlord
-                    'Landlord Address': () => s._order.landLordAddress, //when not-landlord 
+                    'Sur Place': () => s._order.address,
+                    'Votre adresse': () => s._user.address, //when not-landlord
+                    'Résidence Principal': () => s._order.landLordAddress, //when not-landlord 
                     'Other': () => 'other'
                 };
             }
@@ -692,6 +692,27 @@ app.controller('ctrl.booking', ['server',
                 }
             });
             s._order.keysAddress = (val == 'other') ? '' : val;
+
+
+            r.dom(() => {
+                //auto set from
+                if (s.__keysWhereSelectLabel() == "Sur Place") {
+                    s.__keysTimeFromSelect(r.momentTime(s._order.start), new Date(moment(s._order.start).toString()));
+                }
+                else {
+                    var m = moment(s._order.start).hours(8);
+                    s.__keysTimeFromSelect(r.momentTime(m), new Date(m.toString()));
+                }
+                //auto set to
+                if (s.__keysWhereSelectLabel() == "Sur Place") {
+                    s.__keysTimeToSelect(r.momentTime(s._order.start), new Date(moment(s._order.start).toString()));
+                }
+                else {
+                    var m = moment(s._order.start).subtract(30, 'minutes');
+                    s.__keysTimeToSelect(r.momentTime(m), new Date(m.toString()));
+                }
+            }, 200);
+
         });
 
         //KEYS TIME FROM ------------------------------------------------------------------------------------------------
@@ -705,6 +726,8 @@ app.controller('ctrl.booking', ['server',
                 m = m.add(5, 'minutes');
             };
             vals[r.momentTime(s._order.start)] = new Date(moment(s._order.start).toString());
+
+
             return vals;
         };
         s.__keysTimeFromSelectFirstItem = () => s.__keysTimeFromItems && Object.keys(s.__keysTimeFromItems)[0] || "Loading";
@@ -714,6 +737,7 @@ app.controller('ctrl.booking', ['server',
             if (dtAfter(s._order.keysTimeFrom, s._order.keysTimeTo)) {
                 s._order.keysTimeTo = undefined;
             }
+            s.__keysTimeFromSelectKey = key;
         };
         s.$watch('_order.keysTimeFrom', function(val) {
             if (!val) {
@@ -724,6 +748,9 @@ app.controller('ctrl.booking', ['server',
                 _.each(s.__keysTimeFromItems, (v, k) => {
                     if (v == val) s.__keysTimeFromSelectLabel = k;
                 });
+                if(s.__keysTimeFromSelectLabel=='choisir' && s.__keysTimeFromSelectKey){
+                    s.__keysTimeFromSelectLabel = s.__keysTimeFromSelectKey;
+                }
             }
 
         });
@@ -760,12 +787,16 @@ app.controller('ctrl.booking', ['server',
                 m = m.add(5, 'minutes');
             };
             vals[r.momentTime(s._order.start)] = new Date(moment(s._order.start).toString());
+
+
+
             return vals;
         };
         s.__keysTimeToSelectFirstItem = () => s.__keysTimeToItems && Object.keys(s.__keysTimeToItems)[0] || "Loading";
         s.__keysTimeToSelectLabel = 'choisir';
         s.__keysTimeToSelect = (key, val) => {
             s._order.keysTimeTo = val;
+            s.__keysTimeToSelectKey = key;
         };
         s.$watch('_order.keysTimeTo', function(val) {
             if (!val) {
@@ -776,6 +807,9 @@ app.controller('ctrl.booking', ['server',
                 _.each(s.__keysTimeToItems, (v, k) => {
                     if (v == val) s.__keysTimeToSelectLabel = k;
                 });
+                if(s.__keysTimeToSelectLabel=='choisir' && s.__keysTimeToSelectKey){
+                    s.__keysTimeToSelectLabel = s.__keysTimeToSelectKey;
+                }
             }
 
         });
