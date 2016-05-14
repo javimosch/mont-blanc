@@ -14,8 +14,11 @@
                 <tr class="link">
                     <td class="link">
                         <label class="link minimal">Month report</label>
-                        <div class="alert alert-info" role="alert">
-                            Orders NB  / Diag date / Order Status / Diagnostiqueur Name / diag adress / List of diags separated by , / Price paid by client / Price paid by client without VAT / Diagnostical commission without VAT / Diagnostiqueur commission without VAT)
+                        <div class="alert alert-info text-left" role="alert">
+                            filter: <br>
+                            status in : prepaid, delivered<br>
+                            columns:<br>
+                            orderID, start, status, diag_fullname, address, diags_list (separated by comma), priceTTC, priceHT, revenueHT, diagRemunerationHT
                         </div>
                         <div>
                             <select class="diags-input minimal" ng-model="reports.input.month" ng-options="index as month for (index,month) in months()">

@@ -171,11 +171,12 @@
             };
 
             s.download = (data) => {
-                if(data.length==0) return r.okModal('No results');
+                if (data.length == 0) return r.okModal('No results');
                 r.openConfirm({
                     message: data.length + " items found, extract?",
                     data: {
-                        title: "Extract Confirmation"
+                        title: "Extract Confirmation for " +
+                            moment().month(parseInt(s.reports.input.month)).format('MMMM')
                     }
                 }, () => {
                     $U.downloadContent($U.toCSV({
