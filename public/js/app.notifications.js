@@ -31,7 +31,7 @@
                     "SENDING_DISABLED_TYPE"
                 ]);
 
-
+                $U.expose('s',s);
 
                 function update(items, cb) {
                     if (items) {
@@ -124,6 +124,7 @@
                     buttonsTpl: vars.TPL_CRUD_BUTTONS,
                     tfoot: vars.TPL_CRUD_TFOOT,
                     click: (item, index) => {
+                        s.item = item;
                         s.open({
                             title: 'Notification Details',
                             data: modalData,

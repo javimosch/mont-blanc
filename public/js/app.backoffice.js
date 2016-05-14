@@ -14,7 +14,7 @@
         'srv.crud',
         'srv.diagPrice',
         'srv.diagSlots',
-        
+
         "diags_ctrl_settings",
         'diags_ctrl_contact_form',
 
@@ -36,5 +36,9 @@
         'app.services',
         'app.tools'
     ]);
-    expose('app',app);
+    expose('app', app);
 })();
+
+
+//diags
+moment.locale('fr')

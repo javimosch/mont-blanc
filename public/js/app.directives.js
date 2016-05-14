@@ -430,7 +430,7 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
         },
         template: '<output></output>',
         link: function(s, elem, attrs) {
-
+            var r = $rootScope;
             var fire = (n, p, ctx) => {
                 if (s.evts) {
                     s.evts[n] = s.evts[n] || [];
@@ -459,7 +459,7 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
                         Object.assign(s, opt);
                         s.save = s.validate = () => {
                             if (s.validate && s.validate.when && s.validate.fail) {
-                                ifThenMessage(s.validate.when(s), s.validate.fail(s), () => {
+                                $U.ifThenMessage(s.validate.when(s), s.validate.fail(s), () => {
                                     s.close();
                                 });
                             }

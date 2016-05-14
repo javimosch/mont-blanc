@@ -145,6 +145,19 @@
                     }
                     return rta;
                 };
+                
+                s.delegate = ()=>{
+                    s.item.notifications=s.item.notifications||{};
+                    if(s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED){
+                        r.openConfirm({
+                            message:"Already sended, send again?"
+                        },()=>{
+                            s.sendPaymentLink();
+                        });
+                    }else{
+                        s.sendPaymentLink();
+                    }
+                };
 
                 s.dateSlotSelected = function(rng) {
                     return (s.item.start && (s.item.start == rng.start));

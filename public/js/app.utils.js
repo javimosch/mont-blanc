@@ -430,7 +430,7 @@ var Eventify = (function(self) { //event handling snippet
         catch (e) {
             pp = p
         }
-      //  console.log('emit', n, pp, opt);
+        //  console.log('emit', n, pp, opt);
     };
     self.once = function(n, handler) {
         if (once[n]) return firePreserve(n, handler);
@@ -621,7 +621,7 @@ function fetchCountry(address) {
         geocoder.geocode({
             "address": address
         }, function(results) {
-            if(!results)return;
+            if (!results) return;
             for (var i = 0; i < results[0].address_components.length; i++) {
                 for (var j = 0; j < results[0].address_components[i].types.length; j++) {
                     if (results[0].address_components[i].types[j] == "country") {
@@ -634,6 +634,62 @@ function fetchCountry(address) {
             }
         });
     });
+}
+
+function toCSV(args) {
+    var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+    data = args.data || null;
+    if (data == null || !data.length) {
+        return null;
+    }
+    columnDelimiter = args.columnDelimiter || ',';
+    lineDelimiter = args.lineDelimiter || '\n';
+    keys = Object.keys(data[0]);
+    result = '';
+    result += keys.join(columnDelimiter);
+    result += lineDelimiter;
+    data.forEach(function(item) {
+        ctr = 0;
+        keys.forEach(function(key) {
+            if (ctr > 0) result += columnDelimiter;
+
+            result += '"'+item[key]+'"';
+            ctr++;
+        });
+        result += lineDelimiter;
+    });
+    return result;
+}
+
+function downloadContent(content, fileName, mimeType) {
+    mimeType = mimeType || 'text/csv';
+    var a = document.createElement('a');
+    mimeType = mimeType || 'application/octet-stream';
+    if (window.navigator.msSaveBlob) { // IE10
+        return window.navigator.msSaveBlob(new window.Blob([content], {
+            type: mimeType
+        }), fileName);
+    }
+    else if ('download' in a) { //html5 A[download]
+        a.href = 'data:' + mimeType + ',' + encodeURIComponent(content);
+        a.setAttribute('download', fileName);
+        document.body.appendChild(a);
+        setTimeout(function() {
+            a.click();
+            document.body.removeChild(a);
+        }, 66);
+        return true;
+    }
+    else { //do iframe dataURL download (old ch+FF):
+        var f = document.createElement('iframe');
+        document.body.appendChild(f);
+        f.src = 'data:' + mimeType + ',' + encodeURIComponent(content);
+
+        setTimeout(function() {
+            document.body.removeChild(f);
+        }, 333);
+        return true;
+    }
 }
 
 if (typeof exports !== 'undefined') {
@@ -653,7 +709,9 @@ else {
     window.ifThenMessage = ifThenMessage;
 
     window.$U = {
-        store:store,
+        store: store,
+        toCSV: toCSV,
+        downloadContent: downloadContent,
         whenProperties: whenProperties,
         expose: expose,
         fetchCountry: fetchCountry,
@@ -665,7 +723,7 @@ else {
         onAnchorChange: onAnchorChange,
         valid: valid,
         val: val,
-        setVal:setVal,
+        setVal: setVal,
         numberBetween: numberBetween,
         MyPromise: MyPromise,
         getHashParams: getHashParams,

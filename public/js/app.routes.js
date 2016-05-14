@@ -49,6 +49,14 @@ srv.config(['$routeProvider',
         when('/settings-database', {
             templateUrl: 'views/diags/backoffice/settings/diags-settings-database.html'
         }).
+        
+        when('/settings-exportation', {
+            templateUrl: 'views/diags/backoffice/settings/diags-settings-exportation.html'
+        }).
+        
+        when('/settings-exportation-orders', {
+            templateUrl: 'views/diags/backoffice/settings/diags-settings-exportation-orders.html'
+        }).
 
         when('/notifications', {
             templateUrl: 'views/diags/backoffice/notification/notification-list.html'
