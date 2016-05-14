@@ -1035,6 +1035,17 @@ h2.diags.black > div {
     text-decoration: line-through;
 }
 
+table.dg-dates tr{}
+table.dg-dates td{
+    padding:2px!important;
+}
+table.dg-dates td span{
+    font-size:12px;
+}
+table.dg-dates tr.selected{
+    border-right: 10px solid rgba(0,0,0,.08);
+}
+
 
 /*.diags-form */
 

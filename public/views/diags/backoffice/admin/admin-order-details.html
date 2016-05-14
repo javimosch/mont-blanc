@@ -1,10 +1,10 @@
-<div class="row margin-top-one" ng-show="item._id">
+<div class="row margin-top-one" >
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="row margin-top-one">
             <label class="unselectable">Description</label>
         </div>
         <div class="row margin-top-quarter">
-            <input class="diags-input minimal fullwidth" ng-disabled="true" ng-value="item.info.description">
+            <input class="diags-input minimal fullwidth" ng-disabled="true" ng-value="orderDescription()">
         </div>
     </div>
 </div>
@@ -238,7 +238,9 @@
                     </tr>
                 </tfoot>
             </table>
+            <!--
             <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalPrice()">Calculate</button>
+            -->
         </div>
 
     </div>

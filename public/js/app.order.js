@@ -146,6 +146,10 @@
                     return rta;
                 };
 
+                s.dateSlotSelected = function(rng) {
+                    return (s.item.start && (s.item.start == rng.start));
+                }
+
                 s.drawRange = function(rng) {
                     var rta = moment(rng.start).format("HH[h]mm");
                     rta += ' - ' + rng.price + ' €';
@@ -157,6 +161,8 @@
                     var data = range;
                     s.item.start = data.start;
                     s.item.end = data.end;
+                    //
+                    s.applyTotalPrice();
                 };
 
                 s.infoItemShow = function(item) {
@@ -231,6 +237,12 @@
                     var t = $D.OrderTotalTime(s.item.diags, s.diags);
                     var m = _totalTimeFormatedDate.hours(t.hours).minutes(t.minutes).format('HH:mm');
                     return m;
+                };
+
+                s.orderDescription = () => {
+                    var d = $D.createOrderDescription(s.item);
+                    s.item.info.description = d;
+                    return d;
                 };
 
                 s.applyTotalPrice = () => {

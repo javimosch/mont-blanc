@@ -315,6 +315,10 @@ table.minimal td {
   margin: 0 auto!important;
 }
 
+.min-height-45px{
+  min-height: 45px!important;
+}
+
 .vertical-center {
   min-height: 100%;
   /* Fallback for browsers do NOT support vh unit */

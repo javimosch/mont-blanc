@@ -18,7 +18,7 @@
     </div>
 </div>
 -->
-<table class="table table-striped table-condensed unselectable questions" ng-repeat="d in diagSlots.get() track by $index" ng-show="d.slots.length>0">
+<table class="table table-striped table-condensed unselectable questions dg-dates" ng-repeat="d in diagSlots.get() track by $index" ng-show="d.slots.length>0">
     <thead>
         <tr>
             <th><b ng-bind="d.label()"></b></th>
@@ -27,17 +27,22 @@
     <tbody>
         <tr ng-repeat="(key,range) in d.slots track by $index" ng-class="{'link':true,'selected':dateSlotSelected(range)}" ng-click="unwrapRange(range)">
             <td>
-                <div class="time-price" ng-bind="drawRange(range)||'1h - 224 €'">
-                </div>
-                <div class="diag-guy" ng-bind="range.name||'Pepe, G'">
-                </div>
+                <span class="time-price" ng-bind="drawRange(range)||'1h - 224 € &nbsp;'">
+                </span>
+                <span class="diag-guy" ng-bind="range.name||'Pepe, G'">
+                </span>
             </td>
         </tr>
     </tbody>
 </table>
-<div>
-    <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 center" ng-disabled="state.working() || diagSlots.nextIsDisabled()" ng-click="diagSlots.next()">Créneau suivant</button>
-</div>
-<div>
-    <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 center" ng-disabled="state.working()" ng-click="diagSlots.init()">Refresh</button>
+<div class="row">
+    <div class="col-sm-12 col-md-12 margin-top-quarter">
+        <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 center" ng-disabled="state.working() || diagSlots.backIsDisabled()" ng-click="diagSlots.back()">Créneau précédent</button>
+    </div>
+    <div class="col-sm-12 col-md-12 margin-top-quarter">
+        <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 center" ng-disabled="state.working() || diagSlots.nextIsDisabled()" ng-click="diagSlots.next()">Créneau suivant</button>
+    </div>
+    <div class="col-sm-12 col-md-12 margin-top-quarter">
+        <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 center" ng-disabled="state.working()" ng-click="diagSlots.init()">Refresh</button>
+    </div>
 </div>

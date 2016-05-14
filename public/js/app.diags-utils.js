@@ -6,6 +6,7 @@
 var $D = {
     openStripeModalPayOrder: openStripeModalPayOrder,
     rangeCollide: rangeCollide,
+    createOrderDescription:createOrderDescription,
     normalizeOrderStartTime: normalizeOrderStartTime,
     OrderTotalTime: OrderTotalTime,
     subTotal: subTotal,
@@ -41,45 +42,45 @@ function createSiteSectionsCategories(db) {
 
     function _createTextsItemsFor(_category) {
         var diags = ['DPE', 'AMIANTE', 'PLOMB', 'CARREZ', 'ERNMT', 'GAZ', 'ELECTRICITE', 'PARASITAIRE'];
-        var cbCount = $U.cbHell(diags.length*5, function() {
-            console.info('create-page-category-#', diags.length*5, 'texts-created-or-updated-success');
+        var cbCount = $U.cbHell(diags.length * 5, function() {
+            console.info('create-page-category-#', diags.length * 5, 'texts-created-or-updated-success');
         });
-        
-        function _save(payload){
+
+        function _save(payload) {
             db.ctrl('Text', 'save', _.cloneDeep(payload)).then(cbCount.next);
         }
-        
-        var content =  "Page section: BOOKING_HOME, Code: ";
+
+        var content = "Page section: BOOKING_HOME, Code: ";
         diags.forEach(function(code) {
             var name = code;
             var payload = {
                 code: code,
-                description: 'Auto generated block for '+code+' when you click the card in the home page.',
-                content:'',
+                description: 'Auto generated block for ' + code + ' when you click the card in the home page.',
+                content: '',
                 _category: _category,
                 __match: ['code']
             };
-            
-            payload.code =  "PAGE_HOME_"+name+"_BLOCK_LEFT_TITLE";
-            payload.content = content+payload.code;
+
+            payload.code = "PAGE_HOME_" + name + "_BLOCK_LEFT_TITLE";
+            payload.content = content + payload.code;
             _save(payload);
-            
-            payload.code="PAGE_HOME_"+name+"_BLOCK_LEFT_CONTENT";
-            payload.content = content+payload.code;
+
+            payload.code = "PAGE_HOME_" + name + "_BLOCK_LEFT_CONTENT";
+            payload.content = content + payload.code;
             _save(payload);
-            
-            payload.code    = "PAGE_HOME_"+name+"_BLOCK_RIGHT_TITLE",
-            payload.content = content+payload.code;
+
+            payload.code = "PAGE_HOME_" + name + "_BLOCK_RIGHT_TITLE",
+                payload.content = content + payload.code;
             _save(payload);
-            
-            payload.code="PAGE_HOME_"+name+"_BLOCK_RIGHT_CONTENT"
-            payload.content = content+payload.code;
+
+            payload.code = "PAGE_HOME_" + name + "_BLOCK_RIGHT_CONTENT"
+            payload.content = content + payload.code;
             _save(payload);
-            
-            payload.code="PAGE_HOME_"+name+"_BLOCK_BOTTOM"
-            payload.content = content+payload.code;
+
+            payload.code = "PAGE_HOME_" + name + "_BLOCK_BOTTOM"
+            payload.content = content + payload.code;
             _save(payload);
-            
+
         });
     }
 
@@ -96,13 +97,13 @@ function createSiteSectionsCategories(db) {
                     _parent: root._id,
                     __match: ['code']
                 };
-                db.ctrl('Category', 'save', payload).then(function(r){
-                    if(r&&r.ok&&r.result.code == 'BOOKING_HOME'){
+                db.ctrl('Category', 'save', payload).then(function(r) {
+                    if (r && r.ok && r.result.code == 'BOOKING_HOME') {
                         _createTextsItemsFor(r.result._id);
                     }
                     cbCount.next();
                 });
-                
+
             });
         }
         else {
@@ -213,6 +214,39 @@ function openStripeModalPayOrder(order, cb, opt) {
         allowRememberMe: false
     });
 
+}
+
+
+function createOrderDescription(_order) {
+    //requires: info.sell, info.house, .city, .info.constructionPermissionDate, .info.squareMeters,
+    //info.gasInstallation, info.electricityInstallation.
+    _order.info = _order.info || {};
+    var rta = "";
+    if (_order.info.sell) rta += "Pack Vente: ";
+    else rta += "Pack Location: ";
+    if (_order.info.house) {
+        rta += "Maison";
+    }
+    else {
+        rta += "Appartement";
+    }
+    if (_order.city) {
+        rta += " à " + _order.city;
+    }
+    if (_order.info.constructionPermissionDate) {
+        rta += " " + _order.info.constructionPermissionDate;
+    }
+    if(_order.info.squareMeters){
+        rta += ', ' + _order.info.squareMeters;
+    }
+    if (_order.info.gasInstallation && !_.includes(['Non', 'Oui, Moins de 15 ans'], _order.info.gasInstallation)) {
+        rta += ', Gaz';
+    }
+    if (_order.info.electricityInstallation && _order.info.electricityInstallation != 'Moins de 15 ans') {
+        rta += ", Électricité";
+    }
+    rta += '.';
+    return rta;
 }
 
 function normalizeOrderStartTime(t, forwardOnly, backwardOnly) {

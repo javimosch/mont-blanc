@@ -29,9 +29,9 @@ Pop up :
 Confirmation —> Confirmer la délégation
 Vous souhaitez …. 
 —>
-Vous vous apprêtez à déléguer le paiement au propriétaire, qui devra effectuer le paiement sous 4h pour confirmer la réservation.
+Vous apprêtez à déléguer le paiement au propriétaire, qui devra effectuer le paiement sous 4h pour confirmer la réservation.
 Confirmez-vous l’envoie du lien de paiement au propriétaire à : MAIL
 Button : Envoyer   /    Annuler   can you add out style of this pop up
 
-    WORKING
+    DONE
     

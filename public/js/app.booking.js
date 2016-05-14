@@ -973,10 +973,12 @@ app.controller('ctrl.booking', ['server',
             if (!v) return;
             return diag(n).label;
         };
+        
+        /*
         s.diagPrice = (n, v) => {
             if (!v) return;
             return diag(n).price;
-        };
+        };*/
 
         var param = (n, validate) => {
             var val = getParameterByName(n);
@@ -1398,32 +1400,20 @@ app.controller('ctrl.booking', ['server',
         s.bookingDescription = function() {
             return s.bookingDescriptionTitle() + s.bookingDescriptionBody();
         };
-        /*
-        PACK Vente :	PACK Location :	
-        Appartement	Maison	
-        à CITY		
-        avant 1949,	entre 1949 et 1997,	après 1997,
-        SIZE,		
-        Gaz,	BLANK (if no or YES less than 15y)
-        Électricité	BLANK (if - de 15 ans)
-        */
 
 
         s.sendPaymentLink = () => {
             s.validateBooking(_sendPaymentLink);
-            //
             function _sendPaymentLink() {
                 db.ctrl('Order', 'update', s._order); //async
-
                 s.openConfirm({
-                    message: 'Vous souhaitez envoyer un lien de paiement pour ' + s._order.landLordEmail + ' ?',
                     templateUrl:"views/diags/booking/partials/booking-delegate-popup.html",
                     data: {
+                        email:s._order.landLordEmail,
                         title: "Confirmer la délégation",
                         
                     }
                 }, () => {
-                    s.infoMsg("Sending email.");
                     db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
                         _user: s._user, //the agency
                         _order: s._order
@@ -1431,14 +1421,15 @@ app.controller('ctrl.booking', ['server',
                         if (!data.ok) {
                             return r.warningMessage("Le courriel ne peut être envoyé à ce moment , d'essayer de nouveau de backoffice", 10000);
                         }
-
-                        s.infoMsg("Email envoyer avec succès. Suivi de votre commande dans le back office.");
-                        s._order.landLordPaymentEmailSended = true;
+                        //s.infoMsg("Email envoyer avec succès. Suivi de votre commande dans le back office.");
+                        s.infoMsg("Commande Créée",10000);
+                        s._order.notifications = s._order.notifications  || {};
+                        s._order.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED = true;
                         s._order.status = 'ordered';
                         db.ctrl('Order', 'update', {
                             _id: s._order._id,
-                            landLordPaymentEmailSended: true
-                        }); //async
+                            notifications: s._order.notifications
+                        }); 
                         s.booking.complete = true; //
                     });
                 });

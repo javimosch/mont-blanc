@@ -27,8 +27,9 @@
                         };
                         db.getAvailableRanges(order).then(function(data) {
                             //console.log('slots', data);
-                            data = data.length > 0 && data || null;
-                            if (!data) return;
+                            //data = data.length > 0 && data || null;
+                            //if (!data) return;
+                            
                             var cbHell = $U.cbHell(data.length, function() {
                                 //   console.log('slots-ok', data);
                                 resolve(data);
@@ -54,6 +55,9 @@
                                     }
                                 });
                             });
+                            
+                            if(data.length==0) cbHell.call();
+                            
                         });
                     });
                 };
@@ -117,10 +121,13 @@
                     o.get = function() {
                         return _data;
                     };
-                    o.init = function() {
-                        cursor = moment(); //today, tomorrow, tomorrow morrow y tomorrow morrow morrow. 
+                    o.init = function(d) {
+                        cursor = moment(d); //today, tomorrow, tomorrow morrow y tomorrow morrow morrow. 
                         o.request();
                     };
+                    o.backIsDisabled = function(){
+                        return cursor.isSame(moment(),'days');
+                    },
                     o.nextIsDisabled = function() {
                         return false; //_nextTimes > 1;
                     }
@@ -147,7 +154,12 @@
                         var _localCursor = moment(cursor);
                         var cbHell = $U.cbHell(4, function() {
                             // console.info('slots-days-request-end');
-
+                                
+                            //if the first day is today and there is 0 slots, we move one day ahead.
+                            if(o.get()[0].date.isSame(moment(),'day')&&o.get()[0].slots.length == 0){
+                                o.init(moment().add(1,'days').toDate());
+                            }
+                                
                         });
                         // console.info('slots-days-request-begin for', r.momentFormat(_localCursor, 'DD-MM-YY'));
                         asyncRequest(_localCursor._d, cbHell, 0); //
