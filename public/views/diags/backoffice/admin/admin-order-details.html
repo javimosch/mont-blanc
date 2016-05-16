@@ -410,7 +410,11 @@
             ng-click="pay()" ng-disabled="state.working()" 
             class="btn diags-btn bg-blaze-orange">Pay</button>
         
+        <button ng-click="viewPDF()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance">Invoice PDF</button>
+        
         <button ng-click="cancel()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance">Cancel</button>
         <button ng-click="delete()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance">Delete</button>
+        
+        
     </div>
 </div>

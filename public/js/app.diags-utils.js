@@ -9,6 +9,7 @@ var $D = {
     createOrderDescription:createOrderDescription,
     normalizeOrderStartTime: normalizeOrderStartTime,
     OrderTotalTime: OrderTotalTime,
+    OrderReplaceHTML:OrderReplaceHTML,
     subTotal: subTotal,
     sizePrice: sizePrice,
     totalPrice: totalPrice,
@@ -214,6 +215,18 @@ function openStripeModalPayOrder(order, cb, opt) {
         allowRememberMe: false
     });
 
+}
+
+function OrderReplaceHTML(html,_order,r){
+    _order["LOGO"] = "<img src='"+window.location.origin+'/img/logo.jpg'+"'>";
+    _order['ORDER_DESCRIPTION'] = _order.info.description;
+    _order['CLIENT_FULLNAME'] = _order._client.firstName+' '+(_order._client.lastName||'');
+    _order['CLIENT_FIRSTNAME'] = _order._client.firstName;
+    _order['CLIENT_LASTNAME'] = _order._client.lastName||'';
+    _order['CLIENT_EMAIL'] = _order._client.email;
+    _order['CLIENT_ADDRESS'] = _order._client.address;
+    _order.createdAt = r.momentDateTime(_order.createdAt);
+    return $U.replaceHTML(html,_order);
 }
 
 

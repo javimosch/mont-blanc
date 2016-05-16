@@ -145,16 +145,76 @@
                     }
                     return rta;
                 };
-                
-                s.delegate = ()=>{
-                    s.item.notifications=s.item.notifications||{};
-                    if(s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED){
+
+                s.getInvoiceHTMLContent = (cb) => {
+                    db.ctrl('Category', "createUpdate", {
+                        code: "DIAGS_SETTINGS",
+                        __match: ['code']
+                    }).then(function(_res) {
+                        if (_res && _res.ok && _res.result) {
+                            var _category = _res.result._id;
+                            db.ctrl('Text', 'get', {
+                                code: 'INVOICE',
+                            }).then(function(res) {
+                                if (res.ok) {
+                                    var html =
+                                        window.encodeURIComponent(
+                                            $D.OrderReplaceHTML(window.decodeURIComponent(res.result.content), _.cloneDeep(s.item), r));
+                                    cb(html);
+                                }
+                                else {
+                                    r.warningMessage('Configure the Invoice template first.');
+                                }
+                            });
+                        }
+                    });
+                };
+
+                s.viewPDF = () => {
+                    s.getInvoiceHTMLContent(function(res) {
+                        if (res.ok) {
+                            var html =
+                                window.encodeURIComponent(
+                                    $D.OrderReplaceHTML(window.decodeURIComponent(res.result.content), s.item, r));
+
+                            r.ws.ctrl("Pdf", "view", {
+                                html: html
+                            }).then(res => {
+                                if (res.ok) {
+                                    var win = window.open(res.result, '_blank');
+                                    win.focus();
+                                }
+                                else {
+                                    res.warningMessage('Server Issue, try later.');
+                                }
+                            });
+
+                        }
+                        else {
+                            r.warningMessage('Configure the Invoice template first.');
+                        }
+                    });
+                };
+
+                s.delegate = () => {
+                    s.item.notifications = s.item.notifications || {};
+                    if (s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED) {
                         r.openConfirm({
-                            message:"Already sended, send again?"
-                        },()=>{
-                            s.sendPaymentLink();
+                            message: "Already sended, send again?"
+                        }, () => {
+                            
+                            s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED=false;
+                            db.ctrl('Order','update',{
+                                _id:s.item._id,
+                                notifications:s.item.notifications
+                            }).then(res=>{
+                                s.sendPaymentLink();    
+                            })
+                            
+                            
                         });
-                    }else{
+                    }
+                    else {
                         s.sendPaymentLink();
                     }
                 };
@@ -567,22 +627,31 @@
                     }, _sendPaymentLink);
 
                     function _sendPaymentLink() {
-                        s.confirm('You want to send a payment link to ' + s.item.landLordEmail + ' ?', () => {
+                        s.confirm({
+                            message:'You want to send a payment link to ' + s.item.landLordEmail + ' ?',
+                            templateUrl:'views/directives/modal.yes-not-now.html'
+                        }, () => {
                             s.infoMsg("Sending email.");
-                            db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
-                                _user: s.item._client,
-                                _order: s.item
-                            }).then(data => {
 
-                                if (s.item.status == 'created') {
-                                    s.item.status = 'ordered';
-                                    db.ctrl('Order', 'update', s.item);
-                                }
+                            s.getInvoiceHTMLContent(html => {
+                                db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
+                                    _user: s.item._client,
+                                    _order: s.item,
+                                    attachmentPDFHTML:html
+                                }).then(data => {
+
+                                    if (s.item.status == 'created') {
+                                        s.item.status = 'ordered';
+                                        db.ctrl('Order', 'update', s.item);
+                                    }
 
 
-                                s.infoMsg("Email sended.");
-                                if (cb) cb();
+                                    s.infoMsg("Email sended.");
+                                    if (cb) cb();
+                                });
                             });
+
+
                         });
                     }
                 };
@@ -813,7 +882,7 @@
                 db.ctrl('Order', 'get', {
                     _id: id || params.id || s.item._id,
                     __populate: {
-                        '_client': 'email clientType address discount',
+                        '_client': 'email clientType address discount firstName lastName',
                         '_diag': 'email address'
                     }
                 }).then(function(data) {

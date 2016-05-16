@@ -111,6 +111,7 @@
                 var vatRate = scope.settings.pricePercentageIncrease.VATRate || 20;
                 //without vat formula : s.item.price / ((20/100)+1)
                 var priceHT = _order.price / ((vatRate/100)+1);
+                _order.vatPrice = _order.price - priceHT;
                 //
                 _order.priceHT = priceHT; //price without taxes
                 

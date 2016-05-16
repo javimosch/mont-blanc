@@ -1,7 +1,9 @@
 /*global angular*/
 /*global $U*/
+/*global $D*/
 /*global moment*/
 /*global _*/
+/*global tinymce*/
 (function() {
     var app = angular.module('diags_ctrl_settings', []);
     app.controller('diags_ctrl_settings', ['server', '$scope', '$rootScope',
@@ -43,7 +45,8 @@
                 "Price Modifiers": "price-modifiers",
                 "Documentation": "documentation",
                 "Database": "settings-database",
-                "Exportation": "settings-exportation"
+                "Exportation": "settings-exportation",
+                "Invoice Template": "settings-invoice"
             };
 
             s.priceModifiers = {
@@ -188,4 +191,178 @@
 
         }
     ]);
+
+
+    app.controller('ctrl-settings-invoice', ['server', '$scope', '$rootScope', '$routeParams', 'focus',
+        function(db, s, r, params) {
+            //
+            $U.expose('s', s);
+            //
+            s.item = {
+                code: '',
+                description: '',
+                content: '',
+                updatedByHuman: true
+            };
+            //
+            check(); //checks when the wysing lib is ready and init the components.
+
+            s.variables = 
+            {
+                "{{LOGO}}":"Diagnostical Logo",
+                "{{ORDER_DESCRIPTION}}":"Ex: Pack Vent: ...",
+                "{{ADDRESS}}":"Diag Address",
+                "{{CLIENT_FULLNAME}}":"Particular Client / Agency / Other first & last name",
+                "{{CLIENT_FIRSTNAME}}":"Particular Client / Agency / Other first name",
+                "{{CLIENT_LASTNAME}}":"Particular Client / Agency / Other last name",
+                "{{CLIENT_EMAIL}}":"Particular Client / Agency / Other email",
+                "{{CLIENT_ADDRESS}}":"Particular Client / Agency / Other address",
+                '{{LANDLORDFULLNAME}}':"Landlord Fullname (Agency / Other only)",
+                '{{LANDLORDEMAIL}}':"Landlord Email (Agency / Other only)",
+                '{{LANDLORDPHONE}}':"Landlord Phone (Agency / Other only)",
+                '{{LANDLORDADDRESS}}':"Landlord Address (Agency / Other only)",
+                '{{CREATEDAT}}':"Order creation date Ex: 16/06/2016 10h29",
+                '{{START}}':"Order diag start date Ex: 16/06/2016 10h29",
+                '{{END}}':"Order diag start date Ex: 16/06/2016 10h29",
+                "{{PRICE}}":"Order TTC Price",
+                "{{PRICEHT}}":"Order HT Price",
+                "{{VATRATE}}":"Order VAT Rate Applied",
+                "{{VATPRICE}}":"Order VAT Price Applied",
+                "{{REVENUEHT}}":"Diagnostical Revenue HT Price",
+                "{{DIAGREMUNERATIONHT}}":"Diag Remuneration HT",
+            }
+            //['PRICE', 'PRICEHT', 'REVENUEHT', 'DIAGREMUNERATIONHT', 'ADDRESS', 'START', 'END'];
+            
+
+            db.ctrl('Order', 'get', {
+                __populate: {
+                    _client: "email firstName lastName landlordFullName landlordEmail address"
+                }
+            }).then(res => {
+                if (res.ok) {
+                    s.randomOrder = res.result;
+
+                }
+            });
+            //
+            s.preview = () => {
+                s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
+                var html =
+                    window.encodeURIComponent(
+                        $D.OrderReplaceHTML(window.decodeURIComponent(s.item.content), s.randomOrder,r));
+                r.ws.ctrl("Pdf", "view", {
+                    html: html
+                }).then(res => {
+                    if (res.ok) {
+                        s.save();
+                        var win = window.open(res.result, '_blank');
+                        win.focus();
+                    }
+                    else {
+                        res.warningMessage('Server Issue, try later.');
+                    }
+                });
+            };
+            //
+            s.read = function() {
+
+                db.ctrl('Category', "createUpdate", {
+                    code: "DIAGS_SETTINGS",
+                    __match: ['code']
+                }).then(function(_res) {
+                    if (_res && _res.ok && _res.result) {
+                        //
+                        var _category = _res.result._id;
+
+                        db.ctrl('Text', 'get', {
+                            _category: _category,
+                            code: 'INVOICE',
+                        }).then(function(res) {
+                            if (res.ok) {
+                                if (res.result) {
+                                    s.item = res.result;
+                                    tinymce.activeEditor.setContent(window.decodeURIComponent(s.item.content));
+                                }
+                                else {
+                                    db.ctrl('Text', 'createUpdate', {
+                                        _category: _category,
+                                        code: 'INVOICE',
+                                        description: 'diags-invoice-template',
+                                        content: window.encodeURIComponent("&nbsp;"),
+                                        __match: ['code']
+                                    }).then(function(res) {
+                                        if (res.ok && res.result) {
+                                            s.item = res.result;
+                                            tinymce.activeEditor.setContent(window.decodeURIComponent(s.item.content));
+                                        }
+                                    });
+                                }
+                            }
+                            else {
+                                r.warningMessage('Server issue while reading item. Try later.');
+                            }
+                        });
+                        //
+                    }
+                });
+
+
+            };
+            //
+            s.save = function() {
+                if (!s.item.code) return r.warningMessage('Code required');
+                if (!s.item.description) return r.warningMessage('Description required');
+                if (!s.item._category) return r.warningMessage('Page Section required');
+                //
+                s.item.updatedByHuman = true;
+                s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
+                db.ctrl('Text', 'save', s.item).then(function() {
+                    //r.route('texts');
+                    r.infoMessage("Changes saved", 5000);
+                });
+            };
+
+            function check() {
+                if (typeof window.tinymce !== 'undefined') {
+                    r.dom(init);
+                }
+                else setTimeout(check, 100);
+            }
+
+            function initTinyMCE() {
+
+                if (typeof(window.tinyMCE) !== 'undefined') {
+                    var length = window.tinyMCE.editors.length;
+                    for (var i = length; i > 0; i--) {
+                        window.tinyMCE.editors[i - 1].remove();
+                    };
+                }
+
+                tinymce.init({
+                    selector: '#editor',
+                    theme: 'modern',
+                    //width: 600,
+                    height: 300,
+                    plugins: [
+                        //'autoresize',
+                        'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+                        'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+                        'save table contextmenu directionality emoticons template paste textcolor'
+                    ],
+                    content_css: 'css/diags.design.css',
+                    toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
+                });
+
+            }
+
+            function init() {
+                initTinyMCE();
+                r.dom(s.read, 0);
+            }
+        }
+    ]);
+
+
+
+    //
 })();

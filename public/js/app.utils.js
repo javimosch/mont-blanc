@@ -42,6 +42,7 @@ var store = (() => {
     }
 })();
 
+
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
@@ -692,6 +693,13 @@ function downloadContent(content, fileName, mimeType) {
     }
 }
 
+function replaceHTML(html,obj){
+    for(var x in obj){
+        html = html.replaceAll("{{"+x.toUpperCase()+"}}",obj[x]);
+    }
+    return html;
+}
+
 if (typeof exports !== 'undefined') {
     exports.MyPromise = MyPromise;
     exports.getHashParams = getHashParams;
@@ -710,6 +718,7 @@ else {
 
     window.$U = {
         store: store,
+        replaceHTML:replaceHTML,
         toCSV: toCSV,
         downloadContent: downloadContent,
         whenProperties: whenProperties,

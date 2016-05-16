@@ -8,7 +8,7 @@
 (function() {
 
 
-    function updateCategorySelectData(s, db) {
+    function updateCategorySelectData(s, db,cb) {
         s.categories = [];
         db.ctrl('Category', "get", {
             code: "DIAGS"
@@ -19,6 +19,7 @@
                 }).then(function(r) {
                     if (r && r.ok && r.result) {
                         s.categories = r.result;
+                        if(cb) cb();
                     }
                 });
             }
@@ -178,7 +179,11 @@
                         //__select: "_client _diag address start end price status created createdAt",
                         __populate: {
                             '_category': 'code',
-
+                        },
+                        __rules:{
+                            _category:{
+                                $in: s.model.categories.map(c=>c._id)
+                            }
                         },
                         __sort: "-createdAt",
 
@@ -212,8 +217,10 @@
                 }
                 s.model = {
                     init: function() {
-                        updateCategorySelectData(s.model, db);
-                        s.model.filter.firstTime();
+                        updateCategorySelectData(s.model, db,()=>{
+                            s.model.filter.firstTime();    
+                        });
+                        
                     },
                     filter: {
                         store: "TEXTS_LIST",
