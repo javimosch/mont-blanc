@@ -973,7 +973,7 @@ app.controller('ctrl.booking', ['server',
             if (!v) return;
             return diag(n).label;
         };
-        
+
         /*
         s.diagPrice = (n, v) => {
             if (!v) return;
@@ -1404,34 +1404,54 @@ app.controller('ctrl.booking', ['server',
 
         s.sendPaymentLink = () => {
             s.validateBooking(_sendPaymentLink);
+
             function _sendPaymentLink() {
                 db.ctrl('Order', 'update', s._order); //async
                 s.openConfirm({
-                    templateUrl:"views/diags/booking/partials/booking-delegate-popup.html",
+                    templateUrl: "views/diags/booking/partials/booking-delegate-popup.html",
                     data: {
-                        email:s._order.landLordEmail,
+                        email: s._order.landLordEmail,
                         title: "Confirmer la délégation",
-                        
+
                     }
                 }, () => {
-                    db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
-                        _user: s._user, //the agency
-                        _order: s._order
-                    }).then(data => {
-                        if (!data.ok) {
-                            return r.warningMessage("Le courriel ne peut être envoyé à ce moment , d'essayer de nouveau de backoffice", 10000);
-                        }
-                        //s.infoMsg("Email envoyer avec succès. Suivi de votre commande dans le back office.");
-                        s.infoMsg("Commande Créée",10000);
-                        s._order.notifications = s._order.notifications  || {};
-                        s._order.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED = true;
-                        s._order.status = 'ordered';
-                        db.ctrl('Order', 'update', {
-                            _id: s._order._id,
-                            notifications: s._order.notifications
-                        }); 
-                        s.booking.complete = true; //
+
+
+
+                    $D.getInvoiceHTMLContent(db, s._order, r, html => {
+                        db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
+                            _user: s._user,
+                            _order: s._order,
+                            attachmentPDFHTML: html
+                        }).then(data => {
+                            _sendPaymentLinkNext(data);
+                        });
                     });
+
+                    function _sendPaymentLinkNext(data) {
+                        db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
+                            _user: s._user, //the agency
+                            _order: s._order
+                        }).then(data => {
+                            if (!data.ok) {
+                                return r.warningMessage("Le courriel ne peut être envoyé à ce moment , d'essayer de nouveau de backoffice", 10000);
+                            }
+                            //s.infoMsg("Email envoyer avec succès. Suivi de votre commande dans le back office.");
+                            s.infoMsg("Commande Créée", 10000);
+                            s._order.notifications = s._order.notifications || {};
+                            s._order.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED = true;
+                            s._order.status = 'ordered';
+                            db.ctrl('Order', 'update', {
+                                _id: s._order._id,
+                                notifications: s._order.notifications
+                            });
+                            s.booking.complete = true;
+                            r.route('home');
+                        });
+                    }
+
+
+
                 });
             }
         };

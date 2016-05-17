@@ -146,32 +146,10 @@
                     return rta;
                 };
 
-                s.getInvoiceHTMLContent = (cb) => {
-                    db.ctrl('Category', "createUpdate", {
-                        code: "DIAGS_SETTINGS",
-                        __match: ['code']
-                    }).then(function(_res) {
-                        if (_res && _res.ok && _res.result) {
-                            var _category = _res.result._id;
-                            db.ctrl('Text', 'get', {
-                                code: 'INVOICE',
-                            }).then(function(res) {
-                                if (res.ok) {
-                                    var html =
-                                        window.encodeURIComponent(
-                                            $D.OrderReplaceHTML(window.decodeURIComponent(res.result.content), _.cloneDeep(s.item), r));
-                                    cb(html);
-                                }
-                                else {
-                                    r.warningMessage('Configure the Invoice template first.');
-                                }
-                            });
-                        }
-                    });
-                };
+               
 
                 s.viewPDF = () => {
-                    s.getInvoiceHTMLContent(function(res) {
+                    $D.getInvoiceHTMLContent(db,s.item,r,function(res) {
                         if (res.ok) {
                             var html =
                                 window.encodeURIComponent(
@@ -633,7 +611,7 @@
                         }, () => {
                             s.infoMsg("Sending email.");
 
-                            s.getInvoiceHTMLContent(html => {
+                            $D.getInvoiceHTMLContent(db,s.item,r,html => {
                                 db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
                                     _user: s.item._client,
                                     _order: s.item,

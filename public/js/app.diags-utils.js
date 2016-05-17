@@ -6,10 +6,11 @@
 var $D = {
     openStripeModalPayOrder: openStripeModalPayOrder,
     rangeCollide: rangeCollide,
-    createOrderDescription:createOrderDescription,
+    getInvoiceHTMLContent:getInvoiceHTMLContent,
+    createOrderDescription: createOrderDescription,
     normalizeOrderStartTime: normalizeOrderStartTime,
     OrderTotalTime: OrderTotalTime,
-    OrderReplaceHTML:OrderReplaceHTML,
+    OrderReplaceHTML: OrderReplaceHTML,
     subTotal: subTotal,
     sizePrice: sizePrice,
     totalPrice: totalPrice,
@@ -217,16 +218,40 @@ function openStripeModalPayOrder(order, cb, opt) {
 
 }
 
-function OrderReplaceHTML(html,_order,r){
-    _order["LOGO"] = "<img src='"+window.location.origin+'/img/logo.jpg'+"'>";
+function getInvoiceHTMLContent(db, item, r, cb) {
+    db.ctrl('Category', "createUpdate", {
+        code: "DIAGS_SETTINGS",
+        __match: ['code']
+    }).then(function(_res) {
+        if (_res && _res.ok && _res.result) {
+            var _category = _res.result._id;
+            db.ctrl('Text', 'get', {
+                code: 'INVOICE',
+            }).then(function(res) {
+                if (res.ok) {
+                    var html =
+                        window.encodeURIComponent(
+                            $D.OrderReplaceHTML(window.decodeURIComponent(res.result.content), _.cloneDeep(item), r));
+                    cb(html);
+                }
+                else {
+                    r.warningMessage('Configure the Invoice template first.');
+                }
+            });
+        }
+    });
+}
+
+function OrderReplaceHTML(html, _order, r) {
+    _order["LOGO"] = "<img src='" + window.location.origin + '/img/logo.jpg' + "'>";
     _order['ORDER_DESCRIPTION'] = _order.info.description;
-    _order['CLIENT_FULLNAME'] = _order._client.firstName+' '+(_order._client.lastName||'');
+    _order['CLIENT_FULLNAME'] = _order._client.firstName + ' ' + (_order._client.lastName || '');
     _order['CLIENT_FIRSTNAME'] = _order._client.firstName;
-    _order['CLIENT_LASTNAME'] = _order._client.lastName||'';
+    _order['CLIENT_LASTNAME'] = _order._client.lastName || '';
     _order['CLIENT_EMAIL'] = _order._client.email;
     _order['CLIENT_ADDRESS'] = _order._client.address;
     _order.createdAt = r.momentDateTime(_order.createdAt);
-    return $U.replaceHTML(html,_order);
+    return $U.replaceHTML(html, _order);
 }
 
 
@@ -249,7 +274,7 @@ function createOrderDescription(_order) {
     if (_order.info.constructionPermissionDate) {
         rta += " " + _order.info.constructionPermissionDate;
     }
-    if(_order.info.squareMeters){
+    if (_order.info.squareMeters) {
         rta += ', ' + _order.info.squareMeters;
     }
     if (_order.info.gasInstallation && !_.includes(['Non', 'Oui, Moins de 15 ans'], _order.info.gasInstallation)) {
