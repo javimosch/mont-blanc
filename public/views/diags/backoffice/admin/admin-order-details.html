@@ -245,19 +245,19 @@
 
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6 ">
-        <div class="row margin-top-half">
+        <div class="row margin-top-half" ng-show="isOrderClientAgency()">
             <label class="unselectable">Propriétaire</label>
         </div>
-        <div class="row margin-top-quarter">
+        <div class="row margin-top-quarter" ng-show="isOrderClientAgency()">
             <input ng-disabled="state.working()" class="diags-input" ng-model="item.landLordFullName" placeholder="Propriétaire">
         </div>
-        <div class="row margin-top-quarter">
+        <div class="row margin-top-quarter" ng-show="isOrderClientAgency()">
             <input ng-disabled="state.working()" class="diags-input" ng-model="item.landLordEmail" placeholder="Propriétaire Email">
         </div>
-        <div class="row margin-top-quarter">
+        <div class="row margin-top-quarter" ng-show="isOrderClientAgency()">
             <input ng-disabled="state.working()" class="diags-input" ng-model="item.landLordPhone" placeholder="Propriétaire Phone">
         </div>
-        <div class="row margin-top-quarter">
+        <div class="row margin-top-quarter" ng-show="isOrderClientAgency()">
             <input ng-disabled="state.working()" class="diags-input" data-address model="item" field="landLordAddress" placeholder="Propriétaire Addrese">
         </div>
         <div class="row margin-top-half">
@@ -401,19 +401,21 @@
 </div>
 <div class="row margin-top-one ">
     <div class="col-sm-12 diags-crud-buttons-col">
-        <button ng-click="validate()" ng-disabled="state.working()" class="btn diags-btn bg-madison">Enregistrer</button>
+        <button ng-click="validate()" ng-disabled="state.working()" class="btn diags-btn bg-madison margin-top-quarter">Enregistrer</button>
         
-        <button ng-click="delegate()" ng-disabled="state.working()" class="btn diags-btn bg-madison">Delegate</button>
+        <button 
+            ng-show="!isPaid() && isOrderClientAgency()"
+            ng-click="delegate()" ng-disabled="state.working()" class="btn diags-btn bg-madison margin-top-quarter">Delegate</button>
         
         <button 
             ng-show="item._id && item.status!=='prepaid' && item.status !=='completed'"
             ng-click="pay()" ng-disabled="state.working()" 
-            class="btn diags-btn bg-blaze-orange">Pay</button>
+            class="btn diags-btn bg-blaze-orange margin-top-quarter">Pay</button>
         
-        <button ng-click="viewPDF()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance">Invoice PDF</button>
+        <button ng-click="viewPDF()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance margin-top-quarter">Invoice PDF</button>
         
-        <button ng-click="cancel()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance">Cancel</button>
-        <button ng-click="delete()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance">Delete</button>
+        <button ng-click="cancel()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-quarter">Cancel</button>
+        <button ng-click="delete()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance margin-top-quarter">Delete</button>
         
         
     </div>

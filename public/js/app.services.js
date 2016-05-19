@@ -80,6 +80,18 @@ srv.service('$mongoosePaginate', ['server', function(db) {
                 }
                 if (self.working) return console.warn('$mongoosePaginate is working, wait.');
                 self.working = true;
+                self.workingTS = Date.now();
+
+                //Cut the call restriction after 10 sec (even if the async operation is not finished).
+                ((ts) => {
+                    setTimeout(() => {
+                        if (self.workingTS == ts && self.working == true) {
+                            self.working = false;
+                        }
+                    }, 10000)
+                })(self.workingTS);
+
+
                 db.ctrl(modelName, 'paginate', Object.assign({
                     __limit: model.pagination.itemsPerPage,
                     __lean: true,
@@ -102,6 +114,7 @@ srv.service('$mongoosePaginate', ['server', function(db) {
                     r.result = r.result.docs;
                     resolve(r);
                 });
+
             });
         }
     }

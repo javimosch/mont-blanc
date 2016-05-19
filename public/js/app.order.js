@@ -146,10 +146,10 @@
                     return rta;
                 };
 
-               
+
 
                 s.viewPDF = () => {
-                    $D.getInvoiceHTMLContent(db,s.item,r,function(res) {
+                    $D.getInvoiceHTMLContent(db, s.item, r, function(res) {
                         if (res.ok) {
                             var html =
                                 window.encodeURIComponent(
@@ -176,20 +176,21 @@
 
                 s.delegate = () => {
                     s.item.notifications = s.item.notifications || {};
+                    ////LANDLORD//#1 OK app.order
                     if (s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED) {
                         r.openConfirm({
                             message: "Already sended, send again?"
                         }, () => {
-                            
-                            s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED=false;
-                            db.ctrl('Order','update',{
-                                _id:s.item._id,
-                                notifications:s.item.notifications
-                            }).then(res=>{
-                                s.sendPaymentLink();    
+
+                            s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED = false;
+                            db.ctrl('Order', 'update', {
+                                _id: s.item._id,
+                                notifications: s.item.notifications
+                            }).then(res => {
+                                s.sendPaymentLink();
                             })
-                            
-                            
+
+
                         });
                     }
                     else {
@@ -240,7 +241,7 @@
                 };
 
                 s.isPaid = () => {
-                    return _.includes(['prepaid', 'delivered', 'completed'], s.item.status);
+                    return _.includes(['prepaid', 'completed'], s.item.status);
                 };
 
                 s.isDiag = () => {
@@ -379,6 +380,8 @@
 
                 //KEYS WHERE Version2 --------------------------------
                 s.isOrderClientLandLord = () => {
+                    if (!s.item || !s.item._client || !s.item._client.clientType) return true;
+                    //
                     return !_.includes(s.CLIENT_TYPES_COMPANY, s.item._client.clientType);
                 }
                 s.isOrderClientAgency = () => {
@@ -418,7 +421,11 @@
                 s.__keysWhereSelect = (key, val) => {
                     s.item.keysWhere = val && val() || undefined;
                 };
+
+
                 s.$watch('item.keysWhere', function(val) {
+                    if (s.item._id) return; //this select do not work after order creation.
+                    //
                     if (val == undefined) {
                         r.dom(() => {
                             s.item.keysAddress = 'non disponible';
@@ -606,16 +613,16 @@
 
                     function _sendPaymentLink() {
                         s.confirm({
-                            message:'You want to send a payment link to ' + s.item.landLordEmail + ' ?',
-                            templateUrl:'views/directives/modal.yes-not-now.html'
+                            message: 'You want to send a payment link to ' + s.item.landLordEmail + ' ?',
+                            templateUrl: 'views/directives/modal.yes-not-now.html'
                         }, () => {
                             s.infoMsg("Sending email.");
 
-                            $D.getInvoiceHTMLContent(db,s.item,r,html => {
+                            $D.getInvoiceHTMLContent(db, s.item, r, html => {
                                 db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
                                     _user: s.item._client,
                                     _order: s.item,
-                                    attachmentPDFHTML:html
+                                    attachmentPDFHTML: html
                                 }).then(data => {
 
                                     if (s.item.status == 'created') {
@@ -640,8 +647,8 @@
                         order.stripeToken = token.id;
                         db.ctrl('Order', 'pay', order).then((data) => {
                             if (data.ok) {
-                                console.info('PAY-OK', data.result);
-                                s.successMsg('The order was paid successfully');
+                                s.item.status = (s.item === 'delivered') ? 'completed' : 'prepaid';
+                                s.successMsg('Commande payée');
                                 r.dom(read, 5000);
                             }
                             else {
@@ -649,6 +656,8 @@
                                 console.info('PAY-FAIL', data.err);
                             }
                         });
+                    },{
+                        config:r.config
                     });
                 };
 
@@ -721,15 +730,22 @@
                         if (res.ok) {
 
                             if (s.item.notifications && s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED == true) {
-                                r.infoMessage('Changes saved', 'success');
+                                r.infoMessage('Changes saved');
                                 s.back();
                             }
                             else {
                                 s.item._id = res.result._id;
-                                s.sendPaymentLink(() => {
-                                    r.infoMessage('Changes saved', 'success');
+
+                                if (s.isOrderClientLandLord()) {
                                     s.back();
-                                });
+                                }
+                                else {
+                                    s.sendPaymentLink(() => {
+                                        s.back();
+                                    });
+                                }
+
+                                r.infoMessage('Changes saved');
                             }
 
 
@@ -861,7 +877,7 @@
                     _id: id || params.id || s.item._id,
                     __populate: {
                         '_client': 'email clientType address discount firstName lastName',
-                        '_diag': 'email address'
+                        '_diag': 'email address commission firstName lastName'
                     }
                 }).then(function(data) {
 

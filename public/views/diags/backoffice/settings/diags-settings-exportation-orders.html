@@ -13,20 +13,24 @@
             <table class="table table-striped table-condensed link questions">
                 <tr class="link">
                     <td class="link">
-                        <label class="link minimal">Month report</label>
-                        <div class="alert alert-info text-left" role="alert">
-                            filter: <br>
-                            status in : prepaid, delivered<br>
-                            columns:<br>
-                            orderID, start, status, diag_fullname, address, diags_list (separated by comma), priceTTC, priceHT, revenueHT, diagRemunerationHT
+                        <div class="row margin-top-quarter">
+                            <label class="link minimal">Month report</label>
                         </div>
-                        <div>
+                        <div class="row margin-top-quarter">
+                            <div class="alert alert-info text-left" role="alert">
+                                filter:
+                                <br> status in : prepaid, delivered
+                                <br> columns:
+                                <br> orderID, start, status, diag_fullname, address, diags_list (separated by comma), priceTTC, priceHT, revenueHT, diagRemunerationHT
+                            </div>
+                        </div>
+                        <div class="row margin-top-quarter">
                             <select class="diags-input minimal" ng-model="reports.input.month" ng-options="index as month for (index,month) in months()">
                                 <option value="">Select</option>
                             </select>
                         </div>
-                        <div>
-                            <button ng-click="reports.orders.monthReport()">Generate</button>
+                        <div class="row margin-top-quarter">
+                            <button ng-click="reports.orders.monthReport()">Export</button>
                         </div>
                     </td>
                 </tr>

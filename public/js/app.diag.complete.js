@@ -386,7 +386,9 @@ app.controller('ctrl-diag-edit', [
                 [isNaN(s.item.priority), '==', true, "Priority allowed values are 0..100"],
                 [(s.item.priority < 0 || s.item.priority > 100), '==', true, "Priority allowed values are 0..100"],
                 
-                [s.item._id && (!s.item.diplomes || (s.item.diplomes && s.item.diplomes.length==0)), '==',true,'A Diplome est nécessaire']
+                [
+                    s.item.notifications && s.item.notifications.DIAG_DIAG_ACCOUNT_CREATED==true 
+                    && s.item._id && (!s.item.diplomes || (s.item.diplomes && s.item.diplomes.length==0)), '==',true,'A Diplome est nécessaire']
                 
             ], (m) => {
                 r.warningMessage(m[0], 5000);
@@ -675,7 +677,9 @@ app.controller('ctrl-diag-edit', [
         };
         s.notifyAboutActivation = (_user) => {
             s.item = _user;
-            db.ctrl('Notification', 'DIAG_DIAG_ACCOUNT_CREATED', s.item).then(res => {
+            db.ctrl('Notification', 'DIAG_DIAG_ACCOUNT_CREATED', {
+                _user:s.item
+            }).then(res => {
                 if (res.ok) {
                     s.item.notifications = s.item.notifications || {};
                     s.item.notifications.DIAGS_DIAG_ACCOUNT_ACTIVATED = true;
@@ -710,7 +714,9 @@ app.controller('ctrl-diag-edit', [
                     res.result.forEach(_admin => {
                         db.ctrl('Notification', 'ADMIN_DIAG_ACCOUNT_CREATED', {
                             _user: _diag,
-                            adminEmail: _admin.email
+                            _admin: {
+                                email:_admin.email
+                            }
                         }).then(rta => {
                             cbHell.next();
                         });

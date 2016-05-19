@@ -45,7 +45,7 @@
                 "Price Modifiers": "price-modifiers",
                 "Documentation": "documentation",
                 "Database": "settings-database",
-                "Exportation": "settings-exportation",
+                "Extract Data": "settings-exportation",
                 "Invoice Template": "settings-invoice"
             };
 
@@ -117,6 +117,50 @@
             s.read();
 
 
+            s.input = {
+                file: null
+            };
+
+            s.import = {
+                texts: () => {
+                    if (!s.input.file) return r.warningMessage('Select a file');
+                    var reader = new FileReader();
+                    reader.onload = (function(theFile) {
+                        return function(e) {
+                            try {
+                                var arr = JSON.parse(window.decodeURIComponent(e.target.result));
+                                arr.map(o => {
+                                    delete o._id;
+                                    return o;
+                                });
+                                console.info(arr)
+
+                                r.openConfirm({
+                                    message: "Upload " + arr.length + " items? Data will be replaced."
+                                }, () => {
+                                    
+                                    db.ctrl('Text', 'importAll', {
+                                        items: arr
+                                    }).then(res => {
+                                        if (res.ok) {
+                                            r.okModal({
+                                                message: "Data uploaded ok."
+                                            });
+                                        }
+                                    });
+                                });
+
+                            }
+                            catch (ex) {
+                                r.warningMessage('Import issue, try later.');
+                                console.warn(ex);
+                            }
+                        }
+                    })(s.input.file);
+                    reader.readAsText(s.input.file);
+                }
+            }
+
             //reports
             s.reports = {
                 input: {
@@ -124,21 +168,57 @@
                     diagSeparator: ', ',
                     fileName: "report.csv"
                 },
+                texts: {
+                    all: () => {
+                        db.ctrl('Category', 'getAll', {
+                            __select: "code description _parent"
+                        }).then(rr => {
+                            var cats = rr.result;
+                            cats.map(item => {
+                                if (item._parent) {
+                                    var _p = _.cloneDeep(cats.filter(c => c._id == item._parent)[0]);
+                                    delete _p._id;
+                                    item._parent = _p;
+                                }
+                            })
+                            db.ctrl('Text', 'getAll', {
+                                __select: "_category code description content"
+                            }).then(res => {
+                                if (res.ok && res.result) {
+                                    res.result.map(item => {
+                                        delete item._id;
+                                        delete item._v;
+                                        item._category = cats.filter(c => c._id == item._category)[0];
+                                    });
+                                    res.result.map(item => {
+                                        delete item._category._id;
+                                        delete item._category._v;
+                                    });
+                                    s.reports.input.fileName =
+                                        'text_' + res.result.length + "_items_" + r.momentDateTime(Date.now()).toString().replaceAll(' ', '_') + '.json';
+
+                                    s.download(res.result, true);
+                                }
+                            })
+                        });
+
+                    }
+                },
                 orders: {
                     monthReportFilename: "report_orders_month_.csv",
                     monthReport: () => {
                         var date = moment().month(parseInt(s.reports.input.month));
                         s.reports.orders.monthReportFilename = 'report_orders_month_' + date.format('MMMM') + '.csv';
                         db.ctrl('Order', 'getAll', {
-                            __select: "_id status _diag address start price priceHT revenueHT diagRemunerationHT diags",
+                            __select: "_id status _diag address start price priceHT revenueHT diagRemunerationHT diags deliveredAt",
                             __populate: {
                                 _diag: "firstName lastName"
                             },
                             __rules: {
                                 status: {
-                                    $in: ['prepaid', 'delivered']
+                                    $in: ['completed', 'delivered']
                                 },
-                                start: {
+                                deliveredAt: {
                                     $gte: date.startOf('month').toDate().toString(),
                                     $lt: date.endOf('month').toDate().toString()
                                 }
@@ -150,7 +230,8 @@
                                 res.result.forEach(d => {
                                     rta.push({
                                         orderID: d._id,
-                                        start: r.momentDateTime(d.start),
+                                        start_date: r.momentDateTime(d.start),
+                                        delivered_date: r.momentDateTime(d.deliveredAt),
                                         status: d.status,
                                         diag_fullname: d._diag.firstName + " " + d._diag.lastName,
                                         address: d.address,
@@ -173,18 +254,24 @@
                 }
             };
 
-            s.download = (data) => {
+            s.download = (data, isJSON) => {
+                isJSON = isJSON || false;
                 if (data.length == 0) return r.okModal('No results');
                 r.openConfirm({
                     message: data.length + " items found, extract?",
                     data: {
-                        title: "Extract Confirmation for " +
-                            moment().month(parseInt(s.reports.input.month)).format('MMMM')
+                        title: (isJSON) ? "Confirmation" : ("Extract Confirmation for " +
+                            moment().month(parseInt(s.reports.input.month)).format('MMMM'))
                     }
                 }, () => {
-                    $U.downloadContent($U.toCSV({
-                        data: data
-                    }), s.reports.orders.monthReportFilename);
+                    if (!isJSON) {
+                        $U.downloadContent($U.toCSV({
+                            data: data
+                        }), s.reports.orders.monthReportFilename);
+                    }
+                    else {
+                        $U.downloadContent(window.encodeURIComponent(JSON.stringify(data)), s.reports.input.fileName);
+                    }
                 })
             }
 
@@ -207,32 +294,31 @@
             //
             check(); //checks when the wysing lib is ready and init the components.
 
-            s.variables = 
-            {
-                "{{LOGO}}":"Diagnostical Logo",
-                "{{ORDER_DESCRIPTION}}":"Ex: Pack Vent: ...",
-                "{{ADDRESS}}":"Diag Address",
-                "{{CLIENT_FULLNAME}}":"Particular Client / Agency / Other first & last name",
-                "{{CLIENT_FIRSTNAME}}":"Particular Client / Agency / Other first name",
-                "{{CLIENT_LASTNAME}}":"Particular Client / Agency / Other last name",
-                "{{CLIENT_EMAIL}}":"Particular Client / Agency / Other email",
-                "{{CLIENT_ADDRESS}}":"Particular Client / Agency / Other address",
-                '{{LANDLORDFULLNAME}}':"Landlord Fullname (Agency / Other only)",
-                '{{LANDLORDEMAIL}}':"Landlord Email (Agency / Other only)",
-                '{{LANDLORDPHONE}}':"Landlord Phone (Agency / Other only)",
-                '{{LANDLORDADDRESS}}':"Landlord Address (Agency / Other only)",
-                '{{CREATEDAT}}':"Order creation date Ex: 16/06/2016 10h29",
-                '{{START}}':"Order diag start date Ex: 16/06/2016 10h29",
-                '{{END}}':"Order diag start date Ex: 16/06/2016 10h29",
-                "{{PRICE}}":"Order TTC Price",
-                "{{PRICEHT}}":"Order HT Price",
-                "{{VATRATE}}":"Order VAT Rate Applied",
-                "{{VATPRICE}}":"Order VAT Price Applied",
-                "{{REVENUEHT}}":"Diagnostical Revenue HT Price",
-                "{{DIAGREMUNERATIONHT}}":"Diag Remuneration HT",
-            }
-            //['PRICE', 'PRICEHT', 'REVENUEHT', 'DIAGREMUNERATIONHT', 'ADDRESS', 'START', 'END'];
-            
+            s.variables = {
+                    "{{LOGO}}": "Diagnostical Logo",
+                    "{{ORDER_DESCRIPTION}}": "Ex: Pack Vent: ...",
+                    "{{ADDRESS}}": "Diag Address",
+                    "{{CLIENT_FULLNAME}}": "Particular Client / Agency / Other first & last name",
+                    "{{CLIENT_FIRSTNAME}}": "Particular Client / Agency / Other first name",
+                    "{{CLIENT_LASTNAME}}": "Particular Client / Agency / Other last name",
+                    "{{CLIENT_EMAIL}}": "Particular Client / Agency / Other email",
+                    "{{CLIENT_ADDRESS}}": "Particular Client / Agency / Other address",
+                    '{{LANDLORDFULLNAME}}': "Landlord Fullname (Agency / Other only)",
+                    '{{LANDLORDEMAIL}}': "Landlord Email (Agency / Other only)",
+                    '{{LANDLORDPHONE}}': "Landlord Phone (Agency / Other only)",
+                    '{{LANDLORDADDRESS}}': "Landlord Address (Agency / Other only)",
+                    '{{CREATEDAT}}': "Order creation date Ex: 16/06/2016 10h29",
+                    '{{START}}': "Order diag start date Ex: 16/06/2016 10h29",
+                    '{{END}}': "Order diag start date Ex: 16/06/2016 10h29",
+                    "{{PRICE}}": "Order TTC Price",
+                    "{{PRICEHT}}": "Order HT Price",
+                    "{{VATRATE}}": "Order VAT Rate Applied",
+                    "{{VATPRICE}}": "Order VAT Price Applied",
+                    "{{REVENUEHT}}": "Diagnostical Revenue HT Price",
+                    "{{DIAGREMUNERATIONHT}}": "Diag Remuneration HT",
+                }
+                //['PRICE', 'PRICEHT', 'REVENUEHT', 'DIAGREMUNERATIONHT', 'ADDRESS', 'START', 'END'];
+
 
             db.ctrl('Order', 'get', {
                 __populate: {
@@ -249,7 +335,7 @@
                 s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
                 var html =
                     window.encodeURIComponent(
-                        $D.OrderReplaceHTML(window.decodeURIComponent(s.item.content), s.randomOrder,r));
+                        $D.OrderReplaceHTML(window.decodeURIComponent(s.item.content), s.randomOrder, r));
                 r.ws.ctrl("Pdf", "view", {
                     html: html
                 }).then(res => {

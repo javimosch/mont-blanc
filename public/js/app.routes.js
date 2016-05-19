@@ -45,22 +45,33 @@ srv.config(['$routeProvider',
         when('/settings', {
             templateUrl: 'views/diags/backoffice/settings/diags-settings.html'
         }).
-        
+
         when('/settings-invoice', {
             templateUrl: 'views/diags/backoffice/settings/diags-settings-invoice.html'
         }).
-        
+
         when('/settings-database', {
             templateUrl: 'views/diags/backoffice/settings/diags-settings-database.html'
         }).
         
+        when('/settings-database-text', {
+            templateUrl: 'views/diags/backoffice/settings/diags-settings-database-text.html'
+        }).
+
         when('/settings-exportation', {
             templateUrl: 'views/diags/backoffice/settings/diags-settings-exportation.html'
         }).
-        
+
         when('/settings-exportation-orders', {
             templateUrl: 'views/diags/backoffice/settings/diags-settings-exportation-orders.html'
         }).
+
+        when('/settings-exportation-texts', {
+            templateUrl: 'views/diags/backoffice/settings/diags-settings-exportation-texts.html'
+        }).
+
+       
+      
 
         when('/notifications', {
             templateUrl: 'views/diags/backoffice/notification/notification-list.html'
@@ -104,12 +115,12 @@ srv.config(['$routeProvider',
         when('/price-modifiers', {
             templateUrl: 'views/diags/backoffice/price-modifiers.html'
         }).
-        
+
         when('/documentation', {
             templateUrl: 'views/diags/backoffice/diags-docs.html'
         }).
-        
-        
+
+
 
         when('/tools', {
             templateUrl: 'views/diags/backoffice/tools.html'

@@ -1419,6 +1419,7 @@ app.controller('ctrl.booking', ['server',
 
 
                     $D.getInvoiceHTMLContent(db, s._order, r, html => {
+                        ////LANDLORD//#1 OK app.booking
                         db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
                             _user: s._user,
                             _order: s._order,
