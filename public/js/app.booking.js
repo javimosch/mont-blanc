@@ -1523,9 +1523,9 @@ app.controller('ctrl.booking', ['server',
             return $U.MyPromise(function(resolve, err, emit) {
                 var payload = Object.assign(s._order, {
                     __populate: {
-                        _client: '_id email clientType address',
-                        _diag: '_id email clientType address firstName lastName'
-                    }
+                                    _client: '_id email clientType address discount',
+                                    _diag: '_id email clientType address firstName lastName commission'
+                                }
                 });
                 if (_order_id) {
                     payload._id = _order_id;
@@ -1551,6 +1551,7 @@ app.controller('ctrl.booking', ['server',
             s._order = _order;
             //s._order.price = s.totalPrice(true);
             s._order.price = diagPrice.getPriceQuote(s);
+            diagPrice.setPrices(s, s._order);
             commitOrderInfo();
             updateAutoSave();
         }
@@ -1634,7 +1635,7 @@ app.controller('ctrl.booking', ['server',
                         db.ctrl('Order', 'getById', Object.assign(s._order, {
                                 __populate: {
                                     _client: '_id email clientType address discount',
-                                    _diag: '_id email clientType address firstName lastName'
+                                    _diag: '_id email clientType address firstName lastName commission'
                                 }
                             }))
                             .then(d => {
