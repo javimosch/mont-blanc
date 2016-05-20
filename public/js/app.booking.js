@@ -1702,6 +1702,7 @@ app.controller('ctrl.booking', ['server',
                 var order = s._order;
                 openStripeModalPayOrder(order, (token) => {
                     order.stripeToken = token.id;
+                    order.stripeTokenEmail = token.email;
                     db.ctrl('Order', 'pay', order).then((data) => {
                         if (data.ok) {
 
@@ -1723,13 +1724,13 @@ app.controller('ctrl.booking', ['server',
                         }
                         else {
                             console.info('PAY-FAIL', data.err);
-                            s.notify('There was a server issue during the payment proccess. You pay later from the back-office.', {
+                            s.notify('Le paiement ne peut être traitée en ce moment.', {
                                 type: 'warning',
                                 duration: 100000
                             });
                         }
                     }).error(() => {
-                        s.notify('There was a server issue during the payment proccess. You pay later from the back-office.', {
+                        s.notify('Le paiement ne peut être traitée en ce moment.', {
                             type: 'warning',
                             duration: 100000
                         });
