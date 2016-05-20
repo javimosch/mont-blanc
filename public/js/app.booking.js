@@ -1523,9 +1523,9 @@ app.controller('ctrl.booking', ['server',
             return $U.MyPromise(function(resolve, err, emit) {
                 var payload = Object.assign(s._order, {
                     __populate: {
-                                    _client: '_id email clientType address discount',
-                                    _diag: '_id email clientType address firstName lastName commission'
-                                }
+                        _client: '_id email clientType address discount',
+                        _diag: '_id email clientType address firstName lastName commission'
+                    }
                 });
                 if (_order_id) {
                     payload._id = _order_id;

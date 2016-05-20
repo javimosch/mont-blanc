@@ -6,4 +6,4 @@ please dont propose it to the one who book the diag
 ####----------
 Yes, the diag remu price is not being updated. I will check it. 
 
-    WORKING
+    DONE
