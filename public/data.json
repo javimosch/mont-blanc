@@ -158,6 +158,7 @@
             "label": "Parasitaire",
             "label2": "PARASITAIRE",
             "name": "parasitaire",
+            "hide":true,
             "mandatory": false,
             "disabled": true,
             "comments": "Always optional",

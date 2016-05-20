@@ -48,7 +48,7 @@
         <div class="row diag-row margin-top-one">
             <div class="col-md-12">
                 <ul class="diags-list list-bare padding-none">
-                    <li ng-repeat="(k,v) in diags" ng-show="v.mandatory" class="margin-right-quarter margin-bottom-quarter float-left">
+                    <li ng-repeat="(k,v) in diags" ng-show="v.mandatory && (v.hide==undefined||v.hide==false)" class="margin-right-quarter margin-bottom-quarter float-left">
                         <div class="diag check row">
                             <div class="col-xs-2 padding-none">
                                 <img ng-src="img/icons/icon_{{v.name}}.png">
@@ -72,7 +72,7 @@
             <div class="col-md-12 ">
                 <i class="fa fa-chevron-right fnt-18"><span class="medium18">Les diagnostics en options</span></i>
                 <ul class="diags-list margin-top-one list-bare padding-none">
-                    <li ng-repeat="(k,v) in diags" ng-show="!v.mandatory" class="margin-right-quarter margin-bottom-quarter float-left">
+                    <li ng-repeat="(k,v) in diags" ng-show="!v.mandatory && (v.hide==undefined||v.hide==false)" class="margin-right-quarter margin-bottom-quarter float-left">
                         <div class="diag check row">
                             <div class="col-xs-2 padding-none">
                                 <img ng-src="img/icons/icon_{{v.name}}.png">
