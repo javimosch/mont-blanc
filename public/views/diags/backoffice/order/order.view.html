@@ -103,13 +103,13 @@
     <div class="row margin-top-one" ng-show="isPaid()">
         <div class="col-sm-12">
             <div class="alert alert-info">
-                This order is already paid
+                Cette commande est déjà payé
             </div>
         </div>
     </div>
     <div class="row margin-top-one">
         <div class="col-sm-12">
-            <button ng-show="item._id && item.status!=='prepaid' && item.status !=='completed'" ng-disabled="state.working()" class="btn diags-btn bg-blaze-orange" ng-click="pay()">Pay now</button>
+            <button ng-show="item._id && item.status!=='prepaid' && item.status !=='completed'" ng-disabled="state.working()" class="btn diags-btn bg-blaze-orange" ng-click="pay()">Payez Maintenant</button>
         </div>
     </div>
 </div>

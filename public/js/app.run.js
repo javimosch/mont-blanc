@@ -289,7 +289,16 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         r.dom();
     };
 
-
+    r.routeRelative = function(url,delay){
+        setTimeout(function() {
+            var path = window.location.origin;
+            path +=  (window.location.pathname +'/' + url).replaceAll('//','/');
+            $U.emit('route-exit:' + $U.url.hashName());
+            window.location.href = path;
+        }, delay || 0);
+        r.__route = url;
+        return url;
+    }
 
     r.route = function(url, delay) {
 

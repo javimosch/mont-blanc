@@ -34,8 +34,9 @@ var URL = {
     NEW_ACCOUNT: 'new-inscription',
     ACCOUNT_DETAILS: 'account-details',
     ACCOUNT_DETAILS_BOOKING: 'inscription-details',
-    PAYMENT: 'payment'
+    PAYMENT: 'payment',
 };
+
 app.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
@@ -1447,7 +1448,8 @@ app.controller('ctrl.booking', ['server',
                                 notifications: s._order.notifications
                             });
                             s.booking.complete = true;
-                            r.route('home');
+                            //r.route('home');
+                            r.routeRelative('admin#/orders/view/'+s._order._id);
                         });
                     }
 
@@ -1651,11 +1653,11 @@ app.controller('ctrl.booking', ['server',
 
                         //
                         if (saved) {
-                            s.successMsg('Order created');
+                            //s.successMsg('Order created');
                         }
                         if (exists) {
                             //s.warningMsg('Order already exists.');
-                            s.successMsg('Order retaken');
+                            //s.successMsg('Order retaken');
                         }
                         if (taken) {
                             //s.successMsg("An order with the same address and time is taken by another client. You can't proceed until you change order time or address.");
@@ -1712,15 +1714,19 @@ app.controller('ctrl.booking', ['server',
                             s.booking.payment.complete = true;
                             db.ctrl('Order', 'update', s._order); //async
                             console.info('PAY-OK', data.result);
-                            s.notify('Order payment success. We send you an email.', {
-                                type: 'success',
-                                duration: 100000
+
+                            s.infoMsg("Commande Créée", 10000);
+
+
+
+                            r.dom(() => {
+
+                                updateAutoSave(false);
+                                $U.url.clear();
+                                r.routeRelative('admin#/orders/view/'+s._order._id);
+                                s._order = {}
                             });
 
-                            r.dom(() => (s._order = {}));
-                            updateAutoSave(false);
-                            $U.url.clear();
-                            r.route(URL.HOME);
                         }
                         else {
                             console.info('PAY-FAIL', data.err);
