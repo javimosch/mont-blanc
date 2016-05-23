@@ -9,3 +9,4 @@ Finally, We should arrive on a confirmation page, with the same data that the cl
 I ve just made an order on diags-dev.herokuapp.com and diagnostiqueur AND the client did not receive the email ! do you know why ?
 
     WORKING
+    
