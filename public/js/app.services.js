@@ -147,6 +147,7 @@ srv.directive('fileModel', ['$parse', function($parse) {
         restrict: 'A',
         scope: {
             model: "=fileModel",
+            overwrite: "=fileModelOverwrite",
             field: "@field"
         },
         link: function(scope, element, attrs) {
@@ -157,7 +158,17 @@ srv.directive('fileModel', ['$parse', function($parse) {
                 scope.$apply(function() {
                     //modelSetter(scope, element[0].files[0];);
                     try {
-                        scope.model[scope.field || 'file'] = element[0].files[0];
+                        scope.model = scope.model || {};
+                        scope.overwrite = (scope.overwrite==undefined)?false:scope.overwrite;
+                        scope.overwrite = (typeof scope.overwrite !== 'boolean')?false:scope.overwrite;
+                        //console.info('scope.overwrite',scope.overwrite);
+                        if (scope.overwrite) {
+                            scope.model = element[0].files[0];
+                        }
+                        else {
+                            scope.model[scope.field || 'file'] = element[0].files[0];
+                        }
+
                     }
                     catch (e) {
                         modelSetter(element[0].files[0]);

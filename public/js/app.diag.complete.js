@@ -257,7 +257,9 @@ app.controller('ctrl-diag-edit', [
     function(db, s, r, params) {
         //        console.info('app.admin.diag:adminDiagsEdit');
         //
-
+        s.pdf = {
+            file: null
+        };
 
         //
         var isAdmin = r.userIs(['admin']);
@@ -385,11 +387,11 @@ app.controller('ctrl-diag-edit', [
                 [!s.item.priority, '==', true, "Priority required"],
                 [isNaN(s.item.priority), '==', true, "Priority allowed values are 0..100"],
                 [(s.item.priority < 0 || s.item.priority > 100), '==', true, "Priority allowed values are 0..100"],
-                
+
                 [
-                    s.item.notifications && s.item.notifications.DIAG_DIAG_ACCOUNT_CREATED==true 
-                    && s.item._id && (!s.item.diplomes || (s.item.diplomes && s.item.diplomes.length==0)), '==',true,'A Diplome est nécessaire']
-                
+                    s.item.notifications && s.item.notifications.DIAG_DIAG_ACCOUNT_CREATED == true && s.item._id && (!s.item.diplomes || (s.item.diplomes && s.item.diplomes.length == 0)), '==', true, 'A Diplome est nécessaire'
+                ]
+
             ], (m) => {
                 r.warningMessage(m[0], 5000);
             }, () => {
@@ -414,7 +416,7 @@ app.controller('ctrl-diag-edit', [
             }
         };
         s.diplomesExpirationDateNotificationEnabled = (_id) => {
-            if(!r.userIs('admin')) return false;
+            if (!r.userIs('admin')) return false;
             if (!s.item.diplomesInfo) return false;
             if (s.item.diplomesInfo[_id]) {
                 if (s.item.diplomesInfo[_id].expirationDateNotificationEnabled == undefined) {
@@ -678,7 +680,7 @@ app.controller('ctrl-diag-edit', [
         s.notifyAboutActivation = (_user) => {
             s.item = _user;
             db.ctrl('Notification', 'DIAG_DIAG_ACCOUNT_CREATED', {
-                _user:s.item
+                _user: s.item
             }).then(res => {
                 if (res.ok) {
                     s.item.notifications = s.item.notifications || {};
@@ -715,7 +717,7 @@ app.controller('ctrl-diag-edit', [
                         db.ctrl('Notification', 'ADMIN_DIAG_ACCOUNT_CREATED', {
                             _user: _diag,
                             _admin: {
-                                email:_admin.email
+                                email: _admin.email
                             }
                         }).then(rta => {
                             cbHell.next();
@@ -765,7 +767,7 @@ app.controller('ctrl-diag-edit', [
                         }
 
                         if (!logged) {
-                            if (s.diplomes && s.diplomes.length>0) {
+                            if (s.diplomes && s.diplomes.length > 0) {
                                 r.route('login');
                                 return r.infoMessage("Votre compte a été créé et sera examinée par un administrateur");
                             }

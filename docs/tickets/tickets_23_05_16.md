@@ -8,5 +8,11 @@ Finally, We should arrive on a confirmation page, with the same data that the cl
 ####--------
 I ve just made an order on diags-dev.herokuapp.com and diagnostiqueur AND the client did not receive the email ! do you know why ?
 
-    WORKING
+    DONE
+    
+####------------
+Il do not manage to subscribe as a diagnotiqueur. I try to add thé diplôme..
+And then click on s'inscrire but it does notre work !
+
+    DONE
     
