@@ -767,14 +767,15 @@ app.controller('ctrl-diag-edit', [
                         }
 
                         if (!logged) {
-                            if (s.diplomes && s.diplomes.length > 0) {
+                            if (s.item && s.item.diplomes && s.item.diplomes.length > 0) {
                                 r.route('login');
-                                return r.infoMessage("Votre compte a été créé et sera examinée par un administrateur");
+                                return r.infoMessage("Votre compte a été créé et sera examinée par un administrateur",10000);
                             }
                             else {
                                 s.item = res.result;
                                 s.inscriptionLabel.update();
-                                return r.dom();
+                                r.dom();
+                                return r.infoMessage("téléverser un diplome s'il vous plaît",10000);
                             }
                         }
                         else {
