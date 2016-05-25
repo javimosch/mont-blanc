@@ -127,10 +127,22 @@
                 }
             }
 
+            function diagNameConvertion(key) {
+                if (key == 'electricity') return 'Electricité';
+                if (key == 'parasitaire') return 'Parasitaire';
+                if (key == 'gaz') return 'Gaz';
+                if (key == 'termites') return 'Termites';
+                if (key == 'ernt') return 'État des risques naturels, miniers et technologiques';
+                if (key == 'loiCarrez') return 'Carrez';
+                if (key == 'crep') return 'Plomb';
+                if (key == 'dta') return 'Amiante';
+                if (key == 'dpe') return 'DPE';
+                return key;
+            }
 
             function setHelpers() {
 
-
+                s.diagNameConvertion = diagNameConvertion;
 
                 s.diagSlots = diagSlots(s, s.item);
 
@@ -656,8 +668,8 @@
                                 console.info('PAY-FAIL', data.err);
                             }
                         });
-                    },{
-                        config:r.config
+                    }, {
+                        config: r.config
                     });
                 };
 
@@ -1011,7 +1023,7 @@
                         name: '_client',
                         format: (v, item) => item._client.email
                     }, {
-                        label: "Address",
+                        label: "Adresse",
                         name: 'address'
                     }, {
                         label: "When",
@@ -1025,7 +1037,7 @@
                         label: 'Price',
                         name: 'price'
                     }, {
-                        label: 'Status',
+                        label: 'Statut',
                         name: 'status'
                     }, {
                         label: 'Created',

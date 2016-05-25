@@ -6,10 +6,26 @@ var app = angular.module('app.diag.complete', []);
 
 
 
+function TABLE_COLUMNS(r) {
+    return [{
+        label: "Adresse",
+        name: 'address'
+    }, {
+        label: "Statut",
+        name: 'status'
+    }, {
+        label: "Début",
+        name: "start",
+        format: (x, item) => r.momentDateTime(item.start)
+    }, {
+        label: "Fin",
+        name: "end",
+        format: (x, item) => r.momentTime(item.end)
+    }];
+}
 
-//------------------------------------------------------------ ORDER MODAL READONLY
 app.directive('diagOrders', function(
-    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
     return {
         restrict: 'AE',
         replace: true,
@@ -18,12 +34,16 @@ app.directive('diagOrders', function(
         },
         templateUrl: 'views/directives/directive.fast-crud.html',
         link: function(s, elem, attrs) {
-            var r = $rootScope;
-            var ws = server;
+            var r = $rootScope,
+                ws = server,
+                dbPaginate = $mongoosePaginate.get('Order');
             var n = attrs.name;
-            s.title = "Your Orders";
+            s.title = "Rendez-vous à venir";
 
-            function update() {
+            function update(items, cb) {
+                if (items) {
+                    return s.model.update(items);
+                }
                 var data = {
                     __populate: {
                         '_client': 'email userType',
@@ -38,24 +58,39 @@ app.directive('diagOrders', function(
                     data['_client'] = r.session()._id;
                 }
 
+                data.__sort = {
+                    start: 1
+                };
+
                 data.__rules = {
+                    start: {
+                        "$gt": moment().toDate()
+                    },
                     status: {
-                        "$ne": 'created'
+                        "$nin": ['completed', 'delivered', 'created']
                     }
                 };
 
-                ws.ctrl('Order', 'getAll', data).then((res) => {
-                    if (res.ok) {
-                        res.result.forEach((v) => {
-                            v.date = moment(v.start).format('dddd, DD MMMM')
-                            v.start = moment(v.start).format('HH:mm');
-                            v.end = moment(v.end).format('HH:mm');
-                        });
-                        s.model.update(res.result);
+                dbPaginate.ctrl(data, s.model).then(res => {
+                    if (cb) {
+                        cb(res.result);
+                    }
+                    else {
+                        s.model.update(res.result, null);
                     }
                 });
             }
             s.model = {
+                init: () => {
+                    //s.model.filter.firstTime();
+                    update();
+                },
+                pagination: {
+                    itemsPerPage: 10
+                },
+                paginate: (cb) => {
+                    update(null, cb)
+                },
                 click: (item, index) => {
                     var data = {};
                     ws.localData().then(function(d) {
@@ -70,23 +105,105 @@ app.directive('diagOrders', function(
 
                 },
                 buttons: [{
-                    label: "Refresh",
-                    type: () => "btn btn-primary spacing-h-1",
+                    label: "Rafraichir",
+                    type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                     click: () => update()
                 }],
-                columns: [{
-                    label: "Address",
-                    name: 'address'
-                }, {
-                    label: "Status",
-                    name: 'status'
-                }, {
-                    label: "Start",
-                    name: "start"
-                }, {
-                    label: "End",
-                    name: "end"
+                columns: TABLE_COLUMNS(r),
+                items: []
+            };
+            update();
+        }
+    };
+});
+
+app.directive('diagOrdersSucceded', function(
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
+    return {
+        restrict: 'AE',
+        replace: true,
+        scope: {
+            //model: "=model"
+        },
+        templateUrl: 'views/directives/directive.fast-crud.html',
+        link: function(s, elem, attrs) {
+            var r = $rootScope,
+                ws = server,
+                dbPaginate = $mongoosePaginate.get('Order');
+            var n = attrs.name;
+            s.title = "Rendez-vous effectués";
+
+            function update(items, cb) {
+                if (items) {
+                    return s.model.update(items);
+                }
+                var data = {
+                    __populate: {
+                        '_client': 'email userType',
+                        '_diag': 'email userType'
+                    }
+                };
+
+                if (r.userIs(['diag'])) {
+                   data['_diag'] = r.session()._id;
+                }
+                if (r.userIs(['client'])) {
+                   data['_client'] = r.session()._id;
+                }
+
+                data.__sort = {
+                    start: -1
+                };
+
+                data.__rules = {
+                    end: {
+                        "$lt": moment().toDate()
+                    },
+                    status: {
+                        "$in": ['completed', 'prepaid', 'delivered']
+                    }
+                };
+                
+
+                dbPaginate.ctrl(data, s.model).then(res => {
+                    if (cb) {
+                        cb(res.result);
+                    }
+                    else {
+                        s.model.update(res.result, null);
+                    }
+                });
+            }
+            s.model = {
+                init: () => {
+                    //s.model.filter.firstTime();
+                    update();
+                },
+                pagination: {
+                    itemsPerPage: 10
+                },
+                paginate: (cb) => {
+                    update(null, cb)
+                },
+                click: (item, index) => {
+                    var data = {};
+                    ws.localData().then(function(d) {
+                        Object.assign(data, d);
+                    });
+
+                    r.params = {
+                        item: item,
+                        prevRoute: 'dashboard'
+                    };
+                    r.route('orders/edit/' + item._id);
+
+                },
+                buttons: [{
+                    label: "Rafraichir",
+                    type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
+                    click: () => update()
                 }],
+                columns: TABLE_COLUMNS(r),
                 items: []
             };
             update();
@@ -180,11 +297,12 @@ app.directive('diagCalendar', function(
                 };
 
                 ws.ctrl('Order', 'getAll', conditions).then((res) => {
+                    console.info(res);
                     if (res.ok) {
                         var evts = [];
                         res.result.forEach((v) => {
-                            v.start = moment(v.start).format('HH:mm');
-                            v.end = moment(v.end).format('HH:mm');
+                            //v.start = moment(v.start).format('HH:mm');
+                            //v.end = moment(v.end).format('HH:mm');
                             evts.push({
                                 item: v,
                                 title: 'Order ',

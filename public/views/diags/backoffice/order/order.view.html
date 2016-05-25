@@ -27,7 +27,7 @@
             <div class="row margin-top-quarter">
                 <table class="table table-striped table-condensed unselectable">
                     <tr ng-repeat="(k,o) in item.diags" class="unselectable" ng-show="o">
-                        <td ng-bind="k"></td>
+                        <td ng-bind="diagNameConvertion(k)"></td>
                     </tr>
                 </table>
             </div>

@@ -1,5 +1,6 @@
 /*global angular*/
 /*global expose*/
+/*global moment*/
 (function() {
     var app = angular.module('app', [
         'app.run',
@@ -36,9 +37,16 @@
         'app.services',
         'app.tools'
     ]);
+
+    app.run(function(uibPaginationConfig) {
+        uibPaginationConfig.firstText = 'Premier';
+        uibPaginationConfig.nextText = 'Suivant';
+        uibPaginationConfig.previousText = 'Précédent';
+        uibPaginationConfig.lastText = 'Dernier';
+    });
+
+    //diags
+    moment.locale('fr')
+
     expose('app', app);
 })();
-
-
-//diags
-moment.locale('fr')

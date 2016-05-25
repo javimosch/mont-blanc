@@ -204,11 +204,11 @@
                         r.route('exceptions/edit/' + item._id);
                     },
                     buttons: [{
-                        label: "Refresh",
+                        label: "Rafraichir",
                         type: () => "btn diags-btn bg-azure-radiance spacing-h-1",
                         click: () => update()
                     }, {
-                        label: "New",
+                        label: "Ajouter une indisponibilité",
                         type: () => "btn diags-btn bg-azure-radiance spacing-h-1",
                         click: () => {
                             r.routeParams({

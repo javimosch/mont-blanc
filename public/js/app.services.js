@@ -70,6 +70,7 @@ srv.service('$mongoosePaginate', ['server', function(db) {
 
     function handler(modelName) {
         var self = this;
+        self.id = Date.now();
         self.working = false;
         self.ctrl = function(data, model) {
             return MyPromise((resolve, err, emit) => {
@@ -78,7 +79,8 @@ srv.service('$mongoosePaginate', ['server', function(db) {
                     console.warn('$mongoosePaginate model.pagination required.');
                     return;
                 }
-                if (self.working) return console.warn('$mongoosePaginate is working, wait.');
+                if (self.working) return; // console.warn('$mongoosePaginate is working, wait.',self.id);
+               // console.log('$mongoosePaginate:start',self.id);
                 self.working = true;
                 self.workingTS = Date.now();
 
@@ -97,13 +99,15 @@ srv.service('$mongoosePaginate', ['server', function(db) {
                     __lean: true,
                     __page: model.pagination.currentPage
                 }, data)).then(r => {
+                    self.working = false;
+                   // console.log('$mongoosePaginate:end',self.id,'items',r.result.docs.length);
                     if (!r.ok) {
                         self.working = false;
                         return;
                     }
                     var numberOfPages = r.result.pages;
                     //                    console.info(model.pagination.currentPage,model.pagination,numberOfPages);
-                    self.working = false;
+                    
                     if (model.pagination) {
                         model.pagination.update({
                             itemsLength: r.result.docs.length,
@@ -121,12 +125,13 @@ srv.service('$mongoosePaginate', ['server', function(db) {
     var handlers = {};
     return {
         get: function(modelName) {
-            if (!handlers[modelName]) {
+           // if (!handlers[modelName]) {
                 // console.info('$mongoosePaginate creating handler for ' + modelName);
-                handlers[modelName] = new handler(modelName);
-            }
+                //handlers[modelName] =
+                return new handler(modelName);
+            //}
             //console.info('$mongoosePaginate delivering handler for ' + modelName);
-            return handlers[modelName];
+           // return handlers[modelName];
         }
     };
 }]);
