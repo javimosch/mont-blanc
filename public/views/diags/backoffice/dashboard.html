@@ -6,13 +6,13 @@
             </ol>
         </div>
     </div>
-    <div class="row">
+    <div class="row padding-three">
         <div class="col-sm-12 padding-none">
-            <div class="jumbotron">
+            <div class="jumbotron2">
                 <h1>Dashboard</h1>
-                <h4>Welcome {{session().firstName || session().email}}</h4>
-                <h5 class="margin-top-two">Shorcuts</h5>
-                <h6 ng-show="userIs('admin')">Open <a href="/" target="_blank">booking</a> in a new tab.</h6>
+                <h4>{{session().firstName || session().email}}, Bienvenue dans votre tableau de bord</h4>
+                <h5 ng-show="userIs('admin')" class="margin-top-two">Shorcuts</h5>
+                <h6 ng-show="userIs('admin')">Open <a href="/" target="_blank" >booking</a> in a new tab.</h6>
             </div>
         </div>
     </div>

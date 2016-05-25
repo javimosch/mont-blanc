@@ -45,7 +45,9 @@
                         <div class="row margin-top-half" ng-show="!_order.info.house">
                             <div class="diags-btn-group row">
                                 <div class="col-xs-4">
-                                    <input ng-model="_order.info.addressBatiment" class="diags-input xs" placeholder="Rue">
+                                    <input 
+                                    
+                                    ng-model="_order.info.addressBatiment" class="diags-input xs" placeholder="Rue">
                                 </div>
                                 <div class="col-xs-4">
                                     <input ng-model="_order.info.addressCode" class="diags-input xs" placeholder="Code">
@@ -102,7 +104,7 @@
                         <div class="row margin-top-half">
                             <input 
                             data-address model="_order" field="landLordAddress" 
-                             class="diags-input" placeholder="Adresse du Propriétaire">
+                             class="diags-input" placeholder="Adresse de la résidence principale">
                         </div>
                         <div class="row margin-top-half">
                             <input ng-model="_order.landLordPhone" class="diags-input" placeholder="Téléphone du Propriétaire">

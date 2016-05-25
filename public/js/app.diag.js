@@ -158,21 +158,21 @@
                     label: "Description",
                     name: 'description'
                 }, {
-                    label: "Start",
+                    label: "de",
                     name: 'start',
                     format: (v, item) => {
                         if (item.repeat !== 'none') return r.momentTime(item.start);
                         return moment(item.start).format('DD-MM-YY HH[h]mm')
                     }
                 }, {
-                    label: "End",
+                    label: "à",
                     name: 'end',
                     format: (v, item) => {
                         if (item.repeat !== 'none') return r.momentTime(item.end);
                         return moment(item.end).format('DD-MM-YY HH[h]mm')
                     }
                 }, {
-                    label: "Repeat rule",
+                    label: "Règle",
                     name: 'repeat',
                     format: (v, item) => {
                         if (item.repeat == 'none') return 'Specific date';
@@ -183,7 +183,7 @@
                 });
 
                 s.model = {
-                    title: 'Working Exceptions',
+                    title: 'Indisponibilités',
                     paginate: (cb) => update(null, cb),
                     init: () => update(),
                     remove: (item, index) => {

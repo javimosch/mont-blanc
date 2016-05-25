@@ -148,11 +148,14 @@ srv.directive('fileModel', ['$parse', function($parse) {
         scope: {
             model: "=fileModel",
             overwrite: "=fileModelOverwrite",
-            field: "@field"
+            field: "@field",
+            //change:'fileModelChange'
         },
         link: function(scope, element, attrs) {
             var model = $parse(attrs.fileModel);
             var modelSetter = model.assign;
+
+            $U.expose('fileModel',scope);
 
             element.bind('change', function() {
                 scope.$apply(function() {
@@ -167,6 +170,9 @@ srv.directive('fileModel', ['$parse', function($parse) {
                         }
                         else {
                             scope.model[scope.field || 'file'] = element[0].files[0];
+                        }
+                        if(attrs.fileModelChange){
+                            scope.$parent.$eval(attrs.fileModelChange);
                         }
 
                     }

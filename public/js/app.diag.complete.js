@@ -272,7 +272,7 @@ app.controller('ctrl-diag-edit', [
             update: function() {
                 r.dom(function() {
                     if (s.item._id) {
-                        s.inscriptionLabel.val = "S'inscrire";
+                        s.inscriptionLabel.val = "Suivante";
                     }
                     else {
                         s.inscriptionLabel.val = "Suivante"
@@ -514,6 +514,13 @@ app.controller('ctrl-diag-edit', [
         s.diplomesFile = {
 
         };
+        s.diplomesFileChange = (id) => {
+            console.info(id);
+            setTimeout(() => {
+                s.diplomesSave(id);
+            }, 1000)
+
+        };
         s.diplomesData = {};
         s.diplomesDelete = (_id) => {
             if (!s.diplomesExists(_id)) return;
@@ -556,10 +563,10 @@ app.controller('ctrl-diag-edit', [
             else {
                 d = s.diplomesFile[_id];
                 if (d && d.name) {
-                    return 'Selected: ' + d.name.toLowerCase() + ' (click upload button)';
+                    return 'Sélectionné: ' + d.name.toLowerCase() + ' ';
                 }
                 else {
-                    return 'select a file and click the upload button';
+                    return 'Sélectionnez le fichier';
                 }
             }
         };
@@ -578,7 +585,7 @@ app.controller('ctrl-diag-edit', [
                     startingDay: 1
                 },
                 info: info || {
-                    filename: 'select a file and click the upload button',
+                    filename: 'Sélectionnez le fichier',
                 }
             };
             o.info.obtentionDate = isFinite(new Date(o.info.obtentionDate)) && new Date(o.info.obtentionDate) || new Date();
@@ -629,7 +636,7 @@ app.controller('ctrl-diag-edit', [
                     }
                 }
 
-                r.infoMessage('Uploading (Do not touch anything)', 99999);
+                r.infoMessage('Patientez, le chargement de vos certifications est en cours', 99999);
 
 
                 db.form('File/save/', {
@@ -655,16 +662,16 @@ app.controller('ctrl-diag-edit', [
                                 if (s.diplomesExists(curr)) {
                                     _deleteCurr();
                                 }
-                                r.infoMessage('File upload success.', 5000);
+                                r.infoMessage('Vos certifications ont été chargées avec succès.', 5000);
                             }
                             else {
-                                r.warningMessage('Upload fail, try later.', 99999);
+                                r.warningMessage('Upload échoué, essayez plus tard.', 99999);
                             }
                             read(s.item._id);
                         });
                     }
                     else {
-                        r.warningMessage('Upload fail, try later.', 99999);
+                        r.warningMessage('Upload échoué, essayez plus tard.', 99999);
                     }
                 });
             }
@@ -769,13 +776,13 @@ app.controller('ctrl-diag-edit', [
                         if (!logged) {
                             if (s.item && s.item.diplomes && s.item.diplomes.length > 0) {
                                 r.route('login');
-                                return r.infoMessage("Votre compte a été créé et sera examinée par un administrateur",10000);
+                                return r.infoMessage("Votre compte Diagnostiqueur est en cours de création. Un agent Diagnostical vous contactera prochainement pour finaliser votre inscription.", 10000);
                             }
                             else {
                                 s.item = res.result;
                                 s.inscriptionLabel.update();
                                 r.dom();
-                                return r.infoMessage("téléverser un diplome s'il vous plaît",10000);
+                                return r.infoMessage("téléverser un diplome s'il vous plaît", 10000);
                             }
                         }
                         else {

@@ -32,8 +32,8 @@ var URL = {
     DIAGS: 'choix-diagnostics',
     RDV: 'rendez-vous',
     LOGIN: 'connexion',
-    ESPACE_ENTERPRISE:'espace-enterprise',
-    ESPACE_DIAG:'espace-diagnostiqueur',
+    ESPACE_ENTERPRISE: 'espace-enterprise',
+    ESPACE_DIAG: 'espace-diagnostiqueur',
     ACCOUNT_DETAILS: 'account-details',
     ACCOUNT_DETAILS_BOOKING: 'inscription-details',
     PAYMENT: 'payment',
@@ -75,15 +75,15 @@ app.config(['$routeProvider',
         when('/new-inscription', {
             templateUrl: 'views/diags/booking/booking-espace-enterprise.html'
         }).
-        
+
         when('/espace-enterprise', {
             templateUrl: 'views/diags/booking/booking-espace-enterprise.html'
         }).
-        
+
         when('/espace-diagnostiqueur', {
             templateUrl: 'views/diags/booking/booking-espace-diagnostiqueur.html'
         }).
-        
+
         when('/account-details', {
             templateUrl: 'views/diags/booking/booking-inscription-details.html'
         }).
@@ -105,9 +105,9 @@ app.config(['$routeProvider',
 app.controller('ctrl.booking', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal', 'diagPrice', 'diagSlots',
     function(db, $timeout, s, r, $uibModal, diagPrice, diagSlots) {
-        
-        r.URL = Object.assign(r.URL,URL);
-        
+
+        r.URL = Object.assign(r.URL, URL);
+
         r.dom(); //compile directives
 
         $U.expose('r', r);
@@ -1462,7 +1462,7 @@ app.controller('ctrl.booking', ['server',
                             });
                             s.booking.complete = true;
                             //r.route('home');
-                            r.routeRelative('admin#/orders/view/'+s._order._id);
+                            r.routeRelative('admin#/orders/view/' + s._order._id);
                         });
                     }
 
@@ -1574,6 +1574,9 @@ app.controller('ctrl.booking', ['server',
         function commitOrderInfo() {
             if (!s._order) return;
 
+            if (s._order.info.addressBatiment === undefined) {
+                s._order.info.addressBatiment = 'Sur rue';
+            }
 
             if (s._order.info.house === undefined && s.item.house !== undefined) {
                 s._order.info.house = s.item.house;
@@ -1736,7 +1739,7 @@ app.controller('ctrl.booking', ['server',
 
                                 updateAutoSave(false);
                                 $U.url.clear();
-                                r.routeRelative('admin#/orders/view/'+s._order._id);
+                                r.routeRelative('admin#/orders/view/' + s._order._id);
                                 s._order = {}
                             });
 
