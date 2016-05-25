@@ -17,6 +17,8 @@
         var isTomorrowSunday = (d) => moment().add(1, 'day').day() === 0 
             && moment(d).isSame(moment().add(1, 'day'), 'day');
             
+        var isTomorrow = (d) =>moment(d).isSame(moment().add(1, 'day'), 'day');
+            
         var isTodaySaturday = (d) => moment().day() === 6 && moment().isSame(moment(d), 'day');
         var isTodaySunday = (d) => moment().day() === 0 && moment().isSame(moment(d), 'day');
         
@@ -69,6 +71,12 @@
                 debug('extraDatePriceType','tomorrowSunday');
                 debug('extraDatePricePorc',porcentages.tomorrowSunday);
                 return price*porcentages.tomorrowSunday/100;
+            }
+             if (isTomorrow(date)) {
+                debug('extraDatePrice',price*porcentages.tomorrowMondayToFriday/100);
+                debug('extraDatePriceType','tomorrowMondayToFriday');
+                debug('extraDatePricePorc',porcentages.tomorrowMondayToFriday);
+                return price*porcentages.tomorrowMondayToFriday/100;
             }
             if (isSaturday(date)) {
                 debug('extraDatePrice',price*porcentages.saturday/100);
