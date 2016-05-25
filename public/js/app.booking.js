@@ -15,6 +15,7 @@ var app = angular.module('app', [
     'app.run',
     'app.services',
     'app.directives',
+    'app.login',
     'ngRoute',
     'diags_ctrl_contact_form',
     'ui.bootstrap',
@@ -31,7 +32,8 @@ var URL = {
     DIAGS: 'choix-diagnostics',
     RDV: 'rendez-vous',
     LOGIN: 'connexion',
-    NEW_ACCOUNT: 'new-inscription',
+    ESPACE_ENTERPRISE:'espace-enterprise',
+    ESPACE_DIAG:'espace-diagnostiqueur',
     ACCOUNT_DETAILS: 'account-details',
     ACCOUNT_DETAILS_BOOKING: 'inscription-details',
     PAYMENT: 'payment',
@@ -71,8 +73,17 @@ app.config(['$routeProvider',
             templateUrl: 'views/diags/booking/booking-4-connection.html'
         }).
         when('/new-inscription', {
-            templateUrl: 'views/diags/booking/booking-new-inscription.html'
+            templateUrl: 'views/diags/booking/booking-espace-enterprise.html'
         }).
+        
+        when('/espace-enterprise', {
+            templateUrl: 'views/diags/booking/booking-espace-enterprise.html'
+        }).
+        
+        when('/espace-diagnostiqueur', {
+            templateUrl: 'views/diags/booking/booking-espace-diagnostiqueur.html'
+        }).
+        
         when('/account-details', {
             templateUrl: 'views/diags/booking/booking-inscription-details.html'
         }).
@@ -94,7 +105,9 @@ app.config(['$routeProvider',
 app.controller('ctrl.booking', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal', 'diagPrice', 'diagSlots',
     function(db, $timeout, s, r, $uibModal, diagPrice, diagSlots) {
-        r.URL = URL;
+        
+        r.URL = Object.assign(r.URL,URL);
+        
         r.dom(); //compile directives
 
         $U.expose('r', r);
@@ -899,8 +912,8 @@ app.controller('ctrl.booking', ['server',
         s.diagRightClass = function() {
             var cls = {
                 'diag-dialog-right': true,
-                'margin-top-three': true,
-                'padding-three': true
+                //'margin-top-three': true,
+                'padding-one': true
             };
             cls['bg-' + s.diagSelected.name] = true;
             return cls;

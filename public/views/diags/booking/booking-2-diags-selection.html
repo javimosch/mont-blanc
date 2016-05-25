@@ -31,7 +31,7 @@
             <div class="col-sm-6 margin-bottom-none">
                 <i class="fa fa-chevron-right fnt-18"><span class="medium18">Les diagnostics obligatoires</span></i>
             </div>
-            <div class="col-sm-6 margin-bottom-none">
+            <div class="col-sm-6 margin-bottom-none" ng-if="false">
                 <label class="float-right select-all-checkbox margin-top-none margin-bottom-none">
                     <input type="checkbox" ng-model="checks.selectAll" class="check mark-white" />
                     <span class="sky-blue"></span>
@@ -100,7 +100,7 @@
                         <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
                     </span>
                 </div>
-                <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 sm-float-right" ng-click="proceedToDateSelection()">Prendre un rendez-vous</button>
+                <button class="btn-prende-un-rendez-vous btn md-margin-top-one  diag-btn-main diag-btn-width306 sm-float-right" ng-click="proceedToDateSelection()">Prendre un rendez-vous</button>
             </div>
         </div>
         <div class="row diags-bg-block-40 hidden-xs"></div>

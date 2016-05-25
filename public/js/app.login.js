@@ -99,7 +99,7 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
             email: r._login.email
         }).then((res) => {
             if (res.ok) {
-                r.message('A new password has been send to ' + r._login.email, 'info', undefined, undefined, {
+                r.message('Un nouveau mot de passe a été envoyé par e-mail', 'info', undefined, undefined, {
                     duration: 10000
                 })
                 s.loginFailedTimes = 0;
@@ -144,5 +144,46 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
                 r.session(data.result);
             }
         })
+    }
+}]);
+
+
+
+
+app.controller('adminLoginExternal', ['server', '$scope', '$rootScope', function(db, s, r) {
+    s.login = function() {
+        var session = r.session();
+        if (session.email && session.expire < new Date().getTime()) {
+            r.db.createSession(true);
+        }
+        db.ctrl('User', 'login', r._login).then(function(res) {
+            if (res.ok && res.result != null) {
+                r.session(res.result);
+                var path = 'admin#/login?email=' + r._login.email + '&k=' + window.btoa(r._login.password||'dummy');
+                r.routeRelative(path);
+            }
+            else {
+                r.warningMessage('Login incorrect');
+            }
+        }).error(function(res) {
+            s.sendingRequest = false;
+            r.errorMessage('Server down, try later.');
+        });
+
+    };
+    s.resetPassword = () => {
+        if (!r._login.email) {
+            return r.warningMessage("Email est requis");
+        }
+        db.ctrl('User', 'passwordReset', {
+            email: r._login.email
+        }).then((res) => {
+            if (res.ok) {
+                r.message('Un nouveau mot de passe a été envoyé par e-mail', 'info', undefined, undefined, {
+                    duration: 10000
+                })
+                r.dom();
+            }
+        });
     }
 }]);
