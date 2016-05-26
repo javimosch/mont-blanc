@@ -390,10 +390,10 @@ app.controller('ctrl-diag-edit', [
             update: function() {
                 r.dom(function() {
                     if (s.item._id) {
-                        s.inscriptionLabel.val = "Suivante";
+                        s.inscriptionLabel.val = "Suivant";
                     }
                     else {
-                        s.inscriptionLabel.val = "Suivante"
+                        s.inscriptionLabel.val = "Suivant"
                     }
                 });
             }

@@ -128,16 +128,7 @@
             }
 
             function diagNameConvertion(key) {
-                if (key == 'electricity') return 'Electricité';
-                if (key == 'parasitaire') return 'Parasitaire';
-                if (key == 'gaz') return 'Gaz';
-                if (key == 'termites') return 'Termites';
-                if (key == 'ernt') return 'État des risques naturels, miniers et technologiques';
-                if (key == 'loiCarrez') return 'Carrez';
-                if (key == 'crep') return 'Plomb';
-                if (key == 'dta') return 'Amiante';
-                if (key == 'dpe') return 'DPE';
-                return key;
+                return $D.diagNameConvertion(key);
             }
 
             function setHelpers() {
@@ -622,6 +613,8 @@
                             r.warningMessage(m[0]);
                         }
                     }, _sendPaymentLink);
+
+                   
 
                     function _sendPaymentLink() {
                         s.confirm({

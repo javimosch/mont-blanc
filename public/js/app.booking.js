@@ -913,7 +913,7 @@ app.controller('ctrl.booking', ['server',
             var cls = {
                 'diag-dialog-right': true,
                 //'margin-top-three': true,
-                'padding-one': true
+                'padding-two': true
             };
             cls['bg-' + s.diagSelected.name] = true;
             return cls;
@@ -1217,76 +1217,36 @@ app.controller('ctrl.booking', ['server',
             });
         }
 
-        /*
-        s.requestSlots = function(date) {
-            return $U.MyPromise(function(resolve, error, evt) {
-                if (!isFinite(new Date(date))) return; //invalid
-
-               
 
 
-                var time = s.totalTime();
-                var order = {
-                    day: date,
-                    time: time
-                };
-                db.getAvailableRanges(order).then(function(data) {
-                    //console.log('slots', data);
-                    data = data.length > 0 && data || null;
-                    if (s.item.time == 'any') {
-                        if (data && s.availableTimeRanges.length > 0) {
-                            s.pickTimeRange(data[0]);
-                        }
-                    }
-                    if (!data) return;
-                    var cbHell = $U.cbHell(data.length, function() {
-                        //   console.log('slots-ok', data);
-                        resolve(data);
-                    });
+        function getOrderPopupData() {
+            var keysInfo = s._order.keysAddress + ' / ' + r.momentDateTimeWords(s._order.keysTimeFrom) + ' - ' + r.momentTime(s._order.keysTimeFrom);
+            return {
+                diagNameConvertion: $D.diagNameConvertion,
+                keysInfo: keysInfo,
+                _order: s._order,
+                _client: s._user
+            }
+        }
 
-                    data.forEach(r => {
-
-                        r.id = window.btoa(JSON.stringify(r));
-
-                        if (moment(date).day() === 0) {
-                            //on sundays, this rngs had a different basic price (+100%)
-                            var basePriceIncr = 100;
-                           
-                            r.price = s.totalPriceRange(date);
-                            r.price += r.price * basePriceIncr / 100;
-                        }
-                        else {
-                            r.price = s.totalPriceRange(date);
-                        }
-
-
-
-                        db.ctrl('User', 'get', {
-                            _id: r._diag
-                        }).then(d => {
-                            if (d.ok && d.result) {
-                                r.name = d.result.firstName + ', ' + d.result.lastName.substring(0, 1);
-                                if (d.result.diagPriority) {
-                                    r.name += ' (' + d.result.diagPriority + ')';
-                                }
-                                cbHell.next();
-                            }
-                        });
-                    });
-                });
-            });
+        s.openOrderConfirmationPrepaid = (cb) => {
+            cb = cb || (() => {});
+            s.openConfirm({
+                    data: getOrderPopupData(),
+                    templateUrl: 'views/diags/booking/partials/booking-popup-order-prepaid.html'
+                },
+                cb
+            );
         };
-
-*/
-
-        //----------------------------------------------------------
-        //s.$watch('item.date', function(date) {
-        //s.requestSlots(date);
-        //});
-
-
-
-
+        s.openOrderConfirmationDelegated = (cb) => {
+            cb = cb || (() => {});
+            s.openConfirm({
+                    data: getOrderPopupData(),
+                    templateUrl: 'views/diags/booking/partials/booking-popup-order-delegated.html'
+                },
+                cb
+            );
+        };
 
 
         s.selectedDate = function() {
@@ -1462,7 +1422,13 @@ app.controller('ctrl.booking', ['server',
                             });
                             s.booking.complete = true;
                             //r.route('home');
-                            r.routeRelative('admin#/orders/view/' + s._order._id);
+                            //r.routeRelative('admin#/orders/view/' + s._order._id);
+
+                            s.openOrderConfirmationDelegated(() => {
+                                s._order = {};
+                                r.route('home');
+                            });
+
                         });
                     }
 
@@ -1739,8 +1705,12 @@ app.controller('ctrl.booking', ['server',
 
                                 updateAutoSave(false);
                                 $U.url.clear();
-                                r.routeRelative('admin#/orders/view/' + s._order._id);
-                                s._order = {}
+                                //r.routeRelative('admin#/orders/view/' + s._order._id);
+                                //
+                                s.openOrderConfirmationPrepaid(() => {
+                                    s._order = {};
+                                    r.route('home');
+                                });
                             });
 
                         }

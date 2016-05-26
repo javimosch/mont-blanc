@@ -6,7 +6,8 @@
 var $D = {
     openStripeModalPayOrder: openStripeModalPayOrder,
     rangeCollide: rangeCollide,
-    getInvoiceHTMLContent:getInvoiceHTMLContent,
+    diagNameConvertion:diagNameConvertion,
+    getInvoiceHTMLContent: getInvoiceHTMLContent,
     createOrderDescription: createOrderDescription,
     normalizeOrderStartTime: normalizeOrderStartTime,
     OrderTotalTime: OrderTotalTime,
@@ -183,6 +184,18 @@ function rangeCollide(d1s, d1e, d2s, d2e) {
     return collide;
 }
 
+function diagNameConvertion(key) {
+    if (key == 'electricity') return 'Electricité';
+    if (key == 'parasitaire') return 'Parasitaire';
+    if (key == 'gaz') return 'Gaz';
+    if (key == 'termites') return 'Termites';
+    if (key == 'ernt') return 'État des risques naturels, miniers et technologiques';
+    if (key == 'loiCarrez') return 'Carrez';
+    if (key == 'crep') return 'Plomb';
+    if (key == 'dta') return 'Amiante';
+    if (key == 'dpe') return 'DPE';
+    return key;
+}
 
 function openStripeModalPayOrder(order, cb, opt) {
     opt = opt || {
