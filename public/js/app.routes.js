@@ -128,6 +128,10 @@ srv.config(['$routeProvider',
         when('/tools/termites-check', {
             templateUrl: 'views/diags/backoffice/tools.termites-check.html'
         }).
+        when('/tools/datetime-picker-testing', {
+            templateUrl: 'views/diags/backoffice/tools/tools.datetimepiker-test.html'
+        }).
+
 
         when('/diag/balance', {
             templateUrl: 'views/diags/backoffice/diag/diag-balance.html'
