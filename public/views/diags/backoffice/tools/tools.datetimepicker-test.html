@@ -10,12 +10,17 @@
 <div class="container" ng-controller="diags_ctrl_tools">
     <div class="row margin-top-two">
         <div class="col-sm-12">
-            PICKADAY
+            <input pikaday="datetimepicker.start" theme="diags" ng-attr-min={{dtpMin}}/>
         </div>
     </div>
-    <div class="row">
+    <div class="row margin-top-two">
         <div class="col-sm-12">
-            <button class="btn diags-btn bg-azure-radiance" ng-click="route('Settings')">Back to Settings</button>
+            <label>Date: <span ng-bind="datetime.format('DD-MM-YY HH[h]mm')"></span></label>
+        </div>
+    </div>
+    <div class="row margin-top-two">
+        <div class="col-sm-12">
+            <button class="btn diags-btn bg-azure-radiance" ng-click="route('settings')">Back to Settings</button>
         </div>
     </div>
 </div>

@@ -1079,7 +1079,7 @@ table.dg-dates tr.selected {
     max-width: 240px;
 }
 
-.diags-input {
+.diags-input,.pika-wrapper.diags,.pika-single.diags .pika-select {
     width: 286px;
     height: 48px;
     background-color: #EDF5F9;

@@ -187,7 +187,7 @@
                     paginate: (cb) => update(null, cb),
                     init: () => update(),
                     remove: (item, index) => {
-                        var msg = 'Delete ' + item.description + ' ' + item.startFormat + ' - ' + item.endFormat + ' (' + item.dayFormat + ')';
+                        var msg = 'Delete Indisponibilité  ' + item.description + ' / De ' + r.momentDateTime(item.start) + ' À ' + r.momentDateTime(item.end);
                         s.confirm(msg, () => {
                             db.ctrl('TimeRange', 'remove', {
                                 _id: item._id
@@ -293,8 +293,8 @@
             };
             //DATE-TIME-PICKER-DATA
             s.datepicker = {
-                minDate: moment().toDate(), //.add(1, 'day') //today!
-                maxDate: moment().add(60, 'day').toDate(),
+                minDate: moment().toDate().toString(), //.add(1, 'day') //today!
+                maxDate: moment().add(60, 'day').toDate().toString(),
                 initDate: new Date()
             };
             s.getDiags = function(val) {
@@ -384,11 +384,14 @@
                     _diag: s.item._user
                 }).then((d) => {
                     if (d.ok) {
+                        var yesFlag = false;
                         d.result.forEach(v => {
                             if ($D.rangeCollide(v.start, v.end, s.item.start, s.item.end)) {
+                                yesFlag = true;
                                 return yes(v);
                             }
                         });
+                        if(yesFlag)return;
                         return no();
                     }
                     else {

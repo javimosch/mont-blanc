@@ -129,7 +129,7 @@ srv.config(['$routeProvider',
             templateUrl: 'views/diags/backoffice/tools.termites-check.html'
         }).
         when('/tools/datetime-picker-testing', {
-            templateUrl: 'views/diags/backoffice/tools/tools.datetimepiker-test.html'
+            templateUrl: 'views/diags/backoffice/tools/tools.datetimepicker-test.html'
         }).
 
 

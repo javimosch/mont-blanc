@@ -39,23 +39,27 @@
                 </span>
             </div>
             <div class="row margin-top-half">
-                <label>Start</label>
+                <label>De</label>
             </div>
             <div class="row">
-                <input ng-disabled="state.working()" type="text" class="diags-input max-w-150" datetime-picker="dd-MM-yyyy HH:mm " ng-model="item.start" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.start" ng-init="__start.opened=false" is-open="__start.opened"
-                date-disabled="false" close-text="Close" show-meridian="false" />
-                <button ng-disabled="state.working() " type="button" 
-                class="btn diags-btn bg-azure-radiance" 
-                ng-click="__start.opened = !__start.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+                <input 
+                pikaday="item.start" 
+                theme="diags" 
+                ng-attr-min={{datepicker.minDate}}
+                ng-attr-max={{datepicker.maxDate}}
+                placeholder="De">
             </div>
             <div class="row margin-top-half">
-                <label>End</label>
+                <label>À</label>
             </div>
 
             <div class="row">
-                <input ng-disabled="state.working() " type="text" class="diags-input max-w-150" datetime-picker="dd-MM-yyyy HH:mm " ng-model="item.end" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.end" ng-init="__end.opened=false" is-open="__end.opened"
-                date-disabled="false" close-text="Close" show-meridian="false" />
-                <button ng-disabled="state.working() " type="button" class="btn diags-btn bg-azure-radiance" ng-click="__end.opened = !__end.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+                 <input 
+                pikaday="item.end" 
+                theme="diags" 
+                ng-attr-min={{datepicker.minDate}}
+                ng-attr-max={{datepicker.maxDate}}
+                placeholder="À">
             </div>
 
 
