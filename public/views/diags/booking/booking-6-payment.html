@@ -189,6 +189,7 @@
                         </div>
                         <div class="row margin-top-half">
                             <button class="btn btn-xl bg-madison"
+                            ng-show="!isLandLord()"
                             ng-click="sendPaymentLink()"
                             ng-disabled="state.working() || !orderSaved() || paymentDelegated()"
                             >Déléguer au propriétaire</button>
