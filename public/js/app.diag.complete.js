@@ -386,7 +386,7 @@ app.controller('ctrl-diag-edit', [
         var logged = r.logged();
 
         s.inscriptionLabel = {
-            val: "Suivante",
+            val: "Suivant",
             update: function() {
                 r.dom(function() {
                     if (s.item._id) {
