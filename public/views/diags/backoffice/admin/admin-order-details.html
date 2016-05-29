@@ -1,4 +1,4 @@
-<div class="row margin-top-one" >
+<div class="row margin-top-one">
     <div class="col-xs-12 col-sm-12 col-md-12">
         <div class="row margin-top-one">
             <label class="unselectable">Description</label>
@@ -31,6 +31,34 @@
         <div class="row margin-top-quarter">
             <input ng-disabled="state.working() || item._id" class="diags-input" data-address model="item" field="address" city="city" department="department" region="region" country="country" post-code="postCode" type="text" placeholder="Ex: 102 rue Réaumur 75002 Paris, France">
         </div>
+
+        <div class="row ">
+            <div class="col-md-4 padding-none">
+                <div class="row margin-top-half">
+                    <label class="unselectable">Batiment</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="state.working() || item._id" class="diags-input sm" ng-model="item.info.addressBatiment" placeholder="Batiment">
+                </div>
+            </div>
+            <div class="col-md-4 padding-none">
+                <div class="row margin-top-half">
+                    <label class="unselectable">Code</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="state.working() || item._id" class="diags-input sm" ng-model="item.info.addressCode" placeholder="Code">
+                </div>
+            </div>
+            <div class="col-md-4 padding-none">
+                <div class="row margin-top-half">
+                    <label class="unselectable">Étage</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="state.working() || item._id" class="diags-input sm" ng-model="item.info.addressEtage" placeholder="Étage">
+                </div>
+            </div>
+        </div>
+
 
         <div class="row margin-top-half">
             <label class="unselectable">Questions</label>
@@ -172,7 +200,7 @@
                         <td ng-bind="price"></td>
                         <td></td>
                     </tr>
-                   
+
                 </tbody>
                 <tfoot>
                     <tr>
@@ -185,7 +213,7 @@
                         <td ng-bind="__priceQuote.subTotal"></td>
                         <td></td>
                     </tr>
-                     <tr>
+                    <tr>
                         <td ng-bind="'Extra Building Price '+__priceQuote.extraBuildingSizePorc+'%'"></td>
                         <td ng-bind="__priceQuote.extraBuildingSizePrice"></td>
                         <td></td>
@@ -195,7 +223,7 @@
                         <td ng-bind="__priceQuote.extraDatePrice"></td>
                         <td></td>
                     </tr>
-                   
+
                     <tr>
                         <td ng-bind="'Discount Client '+__priceQuote.discountClientPorc+'%'"></td>
                         <td></td>
@@ -216,7 +244,7 @@
                         <td ng-bind="__priceQuote.totalRoundedHT"></td>
                         <td></td>
                     </tr>
-                     <tr>
+                    <tr>
                         <td ng-bind="'VAT '+__priceQuote.vatRate+'%'"></td>
                         <td ng-bind="__priceQuote.vatPrice"></td>
                         <td></td>
@@ -231,7 +259,7 @@
                         <td ng-bind="__priceQuote.diagRemunerationHT"></td>
                         <td></td>
                     </tr>
-                     <tr>
+                    <tr>
                         <td ng-bind="'RevenueHT '+__priceQuote.revenueRate+'%'"></td>
                         <td ng-bind="__priceQuote.revenueHT"></td>
                         <td></td>
@@ -293,16 +321,14 @@
                 </ul>
             </div>
         </div>
-        <div class="row margin-top-half" >
+        <div class="row margin-top-half">
             <input ng-disabled="item.keysWhere!=='other'" data-address model="item" field="keysAddress" class="diags-input" placeholder="Adresse">
         </div>
         <div class="row margin-top-half">
 
             <!-- KEYS TIME FROM -->
             <div class="dropdown with-caret">
-                <button 
-                ng-disabled="state.working() || item._id"
-                class="btn btn-default diags-input half dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button ng-disabled="state.working() || item._id" class="btn btn-default diags-input half dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span>{{__keysTimeFromSelectLabel}}</span>
                     <span class="caret"></span>
                 </button>
@@ -316,9 +342,7 @@
         <div class="row margin-top-half">
             <!-- KEYS TIME TO -->
             <div class="dropdown with-caret">
-                <button 
-                    ng-disabled="state.working() || item._id"
-                    class="btn btn-default diags-input half dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button ng-disabled="state.working() || item._id" class="btn btn-default diags-input half dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span>{{__keysTimeToSelectLabel}}</span>
                     <span class="caret"></span>
                 </button>
@@ -382,41 +406,36 @@
     </div>
 </div>
 <div class="row margin-top-one" ng-show="item.status=='created'">
-    <div class="alert alert-info" role="alert">Admin note: <br> 
-    An order with the status created means that it was created successfuly using the booking system<br>
-    but it was not paid or delegated.</div>
+    <div class="alert alert-info" role="alert">Admin note:
+        <br> An order with the status created means that it was created successfuly using the booking system
+        <br> but it was not paid or delegated.</div>
 </div>
 <div class="row margin-top-one" ng-show="item.status=='ordered'">
-    <div class="alert alert-info" role="alert">Admin note: <br>
-    An order with the status ordered means that it was created successfuly using the booking system <br>
-    and it was delegated to a landlord.</div>
+    <div class="alert alert-info" role="alert">Admin note:
+        <br> An order with the status ordered means that it was created successfuly using the booking system
+        <br> and it was delegated to a landlord.</div>
 </div>
 <div class="row margin-top-one" ng-show="item.status=='prepaid'">
-    <div class="alert alert-info" role="alert">Admin note: <br>
-    An order with the status prepaid means that it was paid successfuly no metter how and the diag pdf is pending.</div>
+    <div class="alert alert-info" role="alert">Admin note:
+        <br> An order with the status prepaid means that it was paid successfuly no metter how and the diag pdf is pending.</div>
 </div>
 <div class="row margin-top-one" ng-show="item.status=='delivered'">
-    <div class="alert alert-info" role="alert">Admin note: <br>
-    An order with the status delivered means that the diag pdf is uploaded but the payment is pending.</div>
+    <div class="alert alert-info" role="alert">Admin note:
+        <br> An order with the status delivered means that the diag pdf is uploaded but the payment is pending.</div>
 </div>
 <div class="row margin-top-one ">
     <div class="col-sm-12 diags-crud-buttons-col">
         <button ng-click="validate()" ng-disabled="state.working()" class="btn diags-btn bg-madison margin-top-quarter">Enregistrer</button>
-        
-        <button 
-            ng-show="!isPaid() && isOrderClientAgency()"
-            ng-click="delegate()" ng-disabled="state.working()" class="btn diags-btn bg-madison margin-top-quarter">Delegate</button>
-        
-        <button 
-            ng-show="item._id && item.status!=='prepaid' && item.status !=='completed'"
-            ng-click="pay()" ng-disabled="state.working()" 
-            class="btn diags-btn bg-blaze-orange margin-top-quarter">Pay</button>
-        
+
+        <button ng-show="!isPaid() && isOrderClientAgency()" ng-click="delegate()" ng-disabled="state.working()" class="btn diags-btn bg-madison margin-top-quarter">Delegate</button>
+
+        <button ng-show="item._id && item.status!=='prepaid' && item.status !=='completed'" ng-click="pay()" ng-disabled="state.working()" class="btn diags-btn bg-blaze-orange margin-top-quarter">Pay</button>
+
         <button ng-click="viewPDF()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance margin-top-quarter">Invoice PDF</button>
-        
+
         <button ng-click="cancel()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-quarter">Cancel</button>
         <button ng-click="delete()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance margin-top-quarter">Delete</button>
-        
-        
+
+
     </div>
 </div>

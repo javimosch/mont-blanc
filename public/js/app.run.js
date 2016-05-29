@@ -281,6 +281,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
             email: null,
             password: null
         });
+        $U.url.clear();
         r.route('login');
     };
 
