@@ -24,6 +24,33 @@
             <input ng-disabled="true" class="diags-input" ng-value="item.address" placeholder="Adresse">
         </div>
 
+        <div class="row " ng-show="!item.info.house">
+            <div class="col-md-4 padding-none">
+                <div class="row margin-top-half">
+                    <label class="unselectable">Batiment</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="state.working() || item._id" class="diags-input sm" ng-model="item.info.addressBatiment" placeholder="Batiment">
+                </div>
+            </div>
+            <div class="col-md-4 padding-none">
+                <div class="row margin-top-half">
+                    <label class="unselectable">Code</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="state.working() || item._id" class="diags-input sm" ng-model="item.info.addressCode" placeholder="Code">
+                </div>
+            </div>
+            <div class="col-md-4 padding-none">
+                <div class="row margin-top-half">
+                    <label class="unselectable">Étage</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="state.working() || item._id" class="diags-input sm" ng-model="item.info.addressEtage" placeholder="Étage">
+                </div>
+            </div>
+        </div>
+
         <div class="row margin-top-half">
             <label class="unselectable">Liste diags</label>
         </div>
@@ -61,20 +88,26 @@
     <div class="col-xs-12 col-sm-12 col-md-6 ">
 
 
-        <div class="row margin-top-half">
+        <div class="row margin-top-half" ng-show="isOrderClientAgency()">
             <label class="unselectable">Propriétaire</label>
         </div>
-        <div class="row margin-top-quarter">
+        <div class="row margin-top-quarter" ng-show="isOrderClientAgency()">
             <input ng-disabled="true" class="diags-input" ng-value="item.landLordFullName" placeholder="Propriétaire">
         </div>
-        <div class="row margin-top-quarter">
+        <div class="row margin-top-quarter" ng-show="isOrderClientAgency()">
             <input ng-disabled="true" class="diags-input" ng-value="item.landLordEmail" placeholder="Propriétaire Email">
+        </div>
+        <div class="row margin-top-quarter" ng-show="isOrderClientAgency()">
+            <input ng-disabled="state.working()" class="diags-input" ng-model="item.landLordPhone" placeholder="Propriétaire Phone">
+        </div>
+        <div class="row margin-top-quarter" ng-show="isOrderClientAgency()">
+            <input ng-disabled="state.working()" class="diags-input" data-address model="item" field="landLordAddress" placeholder="Propriétaire Adresse">
         </div>
         <div class="row margin-top-half">
             <label class="unselectable">Observations</label>
         </div>
         <div class="row margin-top-quarter">
-            <textarea ng-disabled="state.working()"  class="diags-input fullwidth min-height-100 no-resize" ng-model="item.obs"></textarea>
+            <textarea ng-disabled="state.working()" class="diags-input fullwidth min-height-100 no-resize" ng-model="item.obs"></textarea>
         </div>
         <div class="row margin-top-half">
             <label class="unselectable">Les diagnostics en PDF: {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||"(Non disponible)"}}</label>
@@ -106,9 +139,6 @@
 <div class="row margin-top-one">
     <div class="col-sm-12">
         <button ng-click="validate()" class="btn diags-btn bg-madison">Enregistrer</button>
-        <button 
-        ng-show="item._id && item.status!=='prepaid' && item.status !=='completed'"
-        ng-disabled="state.working()" 
-        class="btn btn-success" ng-click="pay()">Pay now</button>
+        <button ng-show="item._id && item.status!=='prepaid' && item.status !=='completed'" ng-disabled="state.working()" class="btn btn-success" ng-click="pay()">Pay now</button>
     </div>
 </div>

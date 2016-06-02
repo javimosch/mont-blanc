@@ -17,7 +17,7 @@
                 <input ng-disabled="state.working() || item._id" type="text" class="diags-input" ng-model="item._user" placeholder="Diag" uib-typeahead="item as item.email for item in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading diags. . .'" typeahead-no-results="noResults">
             </div>
             <div class="row margin-top-half">
-                <label>Motive</label>
+                <label>Motif (Optionnel)</label>
             </div>
             <div class="row">
                 <input type="text" class="diags-input" ng-disabled="state.working()" ng-model="item.description" placeholder="Motive (optional)">
@@ -71,7 +71,7 @@
                     <input type="checkbox" check-box-group check-box-model='item.repeat' name="repeatMode" value="week" class="check mark-white" />
                     <span class="sky-blue"></span>
                 </label>
-                <label>Repeat weekly</label>
+                <label>Indisponibilité toutes les semaines</label>
             </div>
 
             <div class="row">
@@ -80,7 +80,7 @@
                     <input type="checkbox" check-box-group check-box-model='item.repeat' name="repeatMode" value="day" class="check mark-white" />
                     <span class="sky-blue"></span>
                 </label>
-                <label>Repeat daily</label>
+                <label>Indisponibilité tous les jours</label>
             </div>
 
             <div class="row">
@@ -89,7 +89,7 @@
                     <input type="checkbox" check-box-group check-box-model='item.repeat' name="repeatMode" value="none" class="check mark-white" />
                     <span class="sky-blue"></span>
                 </label>
-                <label>Specific datetime range</label>
+                <label>Indisponibilité spécifique</label>
             </div>
 
 
@@ -97,9 +97,9 @@
     </div>
     <div class="row margin-top-one">
         <div class="col-sm-12 col-md-6">
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Save</button>
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="cancel()">Cancel</button>
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="delete()">Delete</button>
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-one" ng-click="validate()">Ajouter l'indisponibilité</button>
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-one" ng-click="cancel()">Annuler</button>
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-one" ng-click="delete()">Supprimer</button>
         </div>
     </div>
 </div>

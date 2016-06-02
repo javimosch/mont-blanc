@@ -15,12 +15,12 @@
 
                     <!--COMMON VIEW -->
                     <li ng-show="logged()">
-                        <a class="link diag-link" active-route="dashboard" ng-click="route('dashboard')" data-toggle="collapse" data-target=".navbar-collapse.in">Dashboard</a>
+                        <a class="link diag-link" active-route="dashboard" ng-click="route('dashboard')" data-toggle="collapse" data-target=".navbar-collapse.in">Tableau de bord</a>
                     </li>
 
                     <!--DIAG ONLY-->
-                    <li ng-show="logged() && userIs(['diag'])"><a class="link diag-link" active-route="diags" ng-click="route('diags/edit/'+session()._id)" data-toggle="collapse" data-target=".navbar-collapse.in">My profile</a></li>
-                    <li ng-show="logged() && userIs(['diag'])"><a class="link diag-link" active-route="balance" ng-click="route('diag/balance')" data-toggle="collapse" data-target=".navbar-collapse.in">Balance</a></li>
+                    <li ng-show="logged() && userIs(['diag'])"><a class="link diag-link" active-route="diags" ng-click="route('diags/edit/'+session()._id)" data-toggle="collapse" data-target=".navbar-collapse.in">Mon profil</a></li>
+                    <li ng-show="logged() && userIs(['diag'])"><a class="link diag-link" active-route="balance" ng-click="route('diag/balance')" data-toggle="collapse" data-target=".navbar-collapse.in">Portefeuille</a></li>
 
                     <!--ADMIN ONLY-->
                     <li ng-show="logged() && userIs(['admin'])"><a class="link diag-link" active-route="global-calendar" ng-click="route('global-calendar')" data-toggle="collapse" data-target=".navbar-collapse.in">Global Calendar</a></li>

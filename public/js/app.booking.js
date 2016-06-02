@@ -1605,7 +1605,8 @@ app.controller('ctrl.booking', ['server',
                     if (exists || taken) saved = true;
                     //
                     r.dom(function() {
-                        setOrder(data.result);
+                        //setOrder(data.result);
+                        s._order = data.result;
 
                         updateAutoSave();
                         if (saved) {

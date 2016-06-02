@@ -32,7 +32,7 @@
             <input ng-disabled="state.working() || item._id" class="diags-input" data-address model="item" field="address" city="city" department="department" region="region" country="country" post-code="postCode" type="text" placeholder="Ex: 102 rue Réaumur 75002 Paris, France">
         </div>
 
-        <div class="row ">
+        <div class="row " ng-show="!item.info.house">
             <div class="col-md-4 padding-none">
                 <div class="row margin-top-half">
                     <label class="unselectable">Batiment</label>
@@ -286,7 +286,7 @@
             <input ng-disabled="state.working()" class="diags-input" ng-model="item.landLordPhone" placeholder="Propriétaire Phone">
         </div>
         <div class="row margin-top-quarter" ng-show="isOrderClientAgency()">
-            <input ng-disabled="state.working()" class="diags-input" data-address model="item" field="landLordAddress" placeholder="Propriétaire Addrese">
+            <input ng-disabled="state.working()" class="diags-input" data-address model="item" field="landLordAddress" placeholder="Propriétaire Adresse">
         </div>
         <div class="row margin-top-half">
             <label class="unselectable">Observations</label>
@@ -433,8 +433,8 @@
 
         <button ng-click="viewPDF()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance margin-top-quarter">Invoice PDF</button>
 
-        <button ng-click="cancel()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-quarter">Cancel</button>
-        <button ng-click="delete()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance margin-top-quarter">Delete</button>
+        <button ng-click="cancel()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-quarter">Annuler</button>
+        <button ng-click="delete()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance margin-top-quarter">Supprimer</button>
 
 
     </div>

@@ -78,6 +78,12 @@ app.directive('checkBoxModel', function($rootScope, $timeout, $compile) {
                 }
             });
             
+            $rootScope.dom(function(){
+                var elValue = attrs.value.toString();
+                var scopeValue = $U.val(scope,attrs.checkBoxModel);
+                el.removeAttr('checked');
+                if(elValue == scopeValue) el.attr('checked','')
+            },500);
             
 
             function set(_val) {

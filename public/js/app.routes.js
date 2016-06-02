@@ -111,6 +111,8 @@ srv.config(['$routeProvider',
         when('/clients/edit/:id', {
             templateUrl: 'views/diags/backoffice/client/client.edit.html'
         }).
+        
+        
 
         when('/price-modifiers', {
             templateUrl: 'views/diags/backoffice/price-modifiers.html'
