@@ -241,7 +241,7 @@ function getInvoiceHTMLContent(db, item, r, cb) {
             db.ctrl('Text', 'get', {
                 code: 'INVOICE',
             }).then(function(res) {
-                if (res.ok) {
+                if (res.ok && res.result) {
                     var html =
                         window.encodeURIComponent(
                             $D.OrderReplaceHTML(window.decodeURIComponent(res.result.content), _.cloneDeep(item), r));

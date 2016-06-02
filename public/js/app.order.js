@@ -847,7 +847,7 @@
             }
 
             function handleError(er) {
-                s.warningMessage("Problème technique. S'il vous plaît réessayer plus tard");
+                s.warningMessage("Problème technique. S&#39il vous plaît réessayer plus tard");
             }
 
             function reset() {
@@ -1004,6 +1004,7 @@
                         click: () => r.route('orders/edit/-1')
                     }, {
                         label: "Sync payments",
+                        show:false,
                         type: () => "btn diags-btn bg-azure-radiance margin-right-1",
                         click: () => s.syncStripe()
                     }],

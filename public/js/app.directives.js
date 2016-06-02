@@ -2,6 +2,7 @@
 /*global angular*/
 /*global _*/
 /*global $*/
+/*global moment*/
 var app = angular.module('app.directives', []);
 
 
@@ -1020,7 +1021,7 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
                         $scope.cancel = function() {
                             $uibModalInstance.dismiss('cancel');
                         };
-                        expose('modalCustom', $scope);
+                        $U.expose('modalCustom', $scope);
                     },
                 });
             };
@@ -1187,7 +1188,7 @@ app.directive('htmlContent', function(
         },
         link: function(s, elem, attrs) {
             if (!s.html) return;
-            r.dom(() => {
+            $rootScope.dom(() => {
                 elem.html(s.html);
             });
         }

@@ -648,11 +648,9 @@ app.controller('ctrl-diag-edit', [
                     _id: _id
                 }).then((d) => {
                     if (d.ok) {
-                        s.item.diplomes = _.pull(s.item.diplomes, _id);
-                        s.item.diplomesInfo = _.pull(s.item.diplomesInfo, _id);
-                        if (s.diplomesData[_id]) {
-                            delete s.diplomesData[_id];
-                        }
+                        delete s.diplomes[_id];
+                        delete s.diplomesInfo[_id];
+                        delete s.diplomesData[_id];
                         if (Object.keys(s.diplomesData).length === 0) {
                             s.diplomesNew();
                         }

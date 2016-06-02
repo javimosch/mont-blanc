@@ -75,7 +75,7 @@
                 var r = $rootScope;
                 var ws = server;
                 var n = attrs.name;
-                s.title = "Balance details";
+                s.title = "Stripe  transactions";
 
                 function update() {
                     var data = {
@@ -124,13 +124,16 @@
                         ws.ctrl('Payment', 'associatedOrder', {
                             source: item.source
                         }).then((data) => {
+                            if(!data.result){
+                                return r.infoMessage("There is not an Order associated",4000);
+                            }
                             item = Object.assign(data.result);
                             _open();
                         });
 
                         function _open() {
                             s.open({
-                                title: 'Balance Transaction',
+                                title: 'Stripe Transaction',
                                 data: data,
                                 evts: {
                                     'init': []
@@ -142,22 +145,22 @@
                         }
                     },
                     buttons: [{
-                        label: "Refresh",
-                        type: () => "btn btn-success spacing-h-1",
+                        label: "Rafraîchir",
+                        type: () => "btn diags-btn azure-radiance spacing-h-1",
                         click: () => update()
                     }],
                     columns: [{
                         label: "Description",
                         name: 'description'
                     }, {
-                        label: "Amount (eur)",
+                        label: "Quantité (EUR)",
                         labelCls: () => ({
                             'text-right': true
                         }),
                         name: 'amount',
                         align: 'right'
                     }, {
-                        label: "Created",
+                        label: "Création",
                         name: "created"
                     }],
                     items: []
@@ -201,11 +204,11 @@
                         r.route('administrators/edit/' + item._id);
                     },
                     buttons: [{
-                        label: "Refresh",
+                        label: "Rafraîchir",
                         type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => update()
                     }, {
-                        label: "New Admin",
+                        label: "Créer admin",
                         type: () => "btn diags-btn bg-azure-radiance",
                         click: () => r.route('administrators/edit/-1')
                     }],
@@ -213,9 +216,21 @@
                         label: "Email",
                         name: 'email'
                     }, {
-                        label: "Tel",
+                        label: "Téléphones",
                         name: "fixedTel",
-                        format: (v, item) => item.fixedTel || item.cellPhone || ''
+                        format: (v, item) => {
+                            v = '';
+                            if(item.fixedTel){
+                                v = 'TF: ' + item.fixedTel;
+                            }
+                            if(item.cellPhone){
+                                if(!v){
+                                    v = 'M: ' + item.cellPhone;        
+                                }else{
+                                    v+= ' M: ' + item.cellPhone;        
+                                }
+                            }
+                        }
                     }],
                     items: []
                 };

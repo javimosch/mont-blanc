@@ -9,7 +9,7 @@
         </div>
         <div class="form-group">
             <li class="list-group-item list-group-item-info">
-                <a class="link" ng-click="route('orders/edit/'+item._order._id)">
+                <a class="link" ng-click="cancel() || route('orders/edit/'+item._order._id)">
                     <h3>View Order</h3>
                 </a>
             </li>
@@ -17,6 +17,6 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-info" type="button" ng-click="cancel()">Accept</button>
+    <button class="btn diags-btn azure-radiance" type="button" ng-click="cancel()">Accept</button>
 </div>
 <my-alerts add="message"></my-alerts>
