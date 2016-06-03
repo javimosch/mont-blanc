@@ -19,7 +19,7 @@ app.directive("bindHtmlCompile", ["$compile", function(compile) {
 
                 var first = el.find(':first-child');
                 var tag = first && first.get(0) && first.get(0).tagName.toUpperCase() || "NONE";
-                if (tag == "SPAN" ) { //|| tag == "DIV"
+                if (tag == "SPAN") { //|| tag == "DIV"
                     el.html(first.html());
                 }
 
@@ -44,7 +44,7 @@ app.directive('tableFilter', function(
             var filter = s.model.filter.template || '<h5>tableFilter requires filter.template</h5>'
             r.dom(() => {
                 var el = tpl.compile(filter, s);
-              //  console.info('tableFilter', s.model.filter, el);
+                //  console.info('tableFilter', s.model.filter, el);
                 elem.replaceWith(el);
 
 
@@ -63,10 +63,75 @@ app.directive('tableFilter', function(
                 s.model.filter.payload = {
                     __regexp: regexpFields() //s.model.filter.fields
                 };
+
+                //awesome-in filter
+                s.model.filter.payload = assignRuleByType(s.model.filter.payload, 'awesome-in', (data, name, val) => {
+                    val = val.replaceAll(' ', '');
+                    if (val.charAt(val.length - 1) == ',') {
+                        val = val.substring(0, val.length - 1);
+                    }
+                    var arr = val.split(',');
+                    data.__rules = data.__rules || {};
+
+                    data.__rules[name] = {
+                        $in: arr
+                    }
+                    return data;
+                });
+
+                s.model.filter.payload = assignRuleByType(s.model.filter.payload, 'in', (data, name, val) => {
+                    data.__rules[name] = {
+                        $in: [val]
+                    };
+                    return data;
+                });
+
+                //month-range
+                s.model.filter.payload = assignRuleByType(s.model.filter.payload, 'month-range', (data, name, val) => {
+                    var date = moment().month(parseInt(val));
+                    data.__rules[name] = {
+                        $gte: date.startOf('month').toDate().toString(),
+                        $lt: date.endOf('month').toDate().toString()
+                    };
+                    return data;
+                });
+
+                s.model.filter.payload = assignPayloadRules(s.model.filter.payload);
+
                 s.model.filter.payload = Object.assign(s.model.filter.payload,
                     collectionPointersFields());
                 storeSet();
                 if (s.model.filter && s.model.filter.update) s.model.filter.update();
+            }
+
+            function assignPayloadRules(data) {
+                var rules = s.model.filter.payloadRules,
+                    rule, val;
+                if(!rules) return data;
+                for (var x in rules) {
+                    rule = rules[x];
+                    if (rule == undefined) continue;
+                    val = s.model.filter.fields[x];
+                    if (val == undefined) continue;
+                    data.__rules = data.__rules || {};
+                    data = rule(data, val);
+                }
+                return data;
+            }
+
+            function assignRuleByType(payload, type, handler) {
+                var fieldValue = null;
+                for (var fieldName in s.model.filter.fields) {
+                    fieldValue = s.model.filter.fields[fieldName];
+                    if (fieldValue == undefined) continue;
+                    if (s.model.filter.rules[fieldName] !== undefined) {
+                        if (s.model.filter.rules[fieldName].toLowerCase() == type.toLowerCase()) {
+                            payload.__rules = payload.__rules || {};
+                            payload = handler(payload, fieldName, fieldValue);
+                        }
+                    }
+                }
+                return payload;
             }
 
             s.model.filter.clear = function() {
@@ -75,6 +140,7 @@ app.directive('tableFilter', function(
                     s.model.filter.fields[x] = '';
                 }
                 storeSet();
+                s.model.filter.fields = {};
                 s.model.filter.update(); //clear filters and search
             };
 
@@ -99,7 +165,7 @@ app.directive('tableFilter', function(
                 var fields = {};
                 for (var x in s.model.filter.fields) {
                     if (x.charAt(0) == '_') continue; //fields starting with _ are collections pointers.
-                    else {
+                    if (s.model.filter.rules[x] && s.model.filter.rules[x] == 'contains') {
                         fields[x] = s.model.filter.fields[x];
                     }
                 }

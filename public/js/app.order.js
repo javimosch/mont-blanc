@@ -614,7 +614,7 @@
                         }
                     }, _sendPaymentLink);
 
-                   
+
 
                     function _sendPaymentLink() {
                         s.confirm({
@@ -923,6 +923,7 @@
                     db = server,
                     s = $scope,
                     dbPaginate = $mongoosePaginate.get('Order');
+                $U.expose('s', s);
                 s.title = "";
                 r.routeParams({
                     prevRoute: 'orders'
@@ -949,21 +950,9 @@
                     r.dom(_apply);
 
                     function _apply() {
-
-                        var status = s.model.filter.fields.status;
-                        if (status) {
-                            status = status.replaceAll(' ', '');
-                            if (status.charAt(status.length - 1) == ',') {
-                                status = status.substring(0, status.length - 1);
-                            }
-                            var statusArr = status.split(',');
-                            data.__rules = data.__rules || {};
-                            data.__rules.status = {
-                                $in: statusArr
-                            };
-                            //console.log('filter-applied',statusArr);
-                        }
-
+                        //
+                        data = Object.assign(data,s.model.filter.payload||{});
+                        //
                         dbPaginate.ctrl(data, s.model).then(res => {
                             if (cb) {
                                 cb(res.result);
@@ -975,15 +964,22 @@
                     }
                 }
                 s.model = {
-                    init: () => update(),
+                    init: () => s.model.filter.firstTime(),
+                    months: () => {
+                        return moment.monthsShort().map((m, k) => k + 1 + ' - ' + m);
+                    },
                     filter: {
                         template: 'ordersFilter',
+                        update: update,
                         rules: {
-                            status: 'contains'
+                            status: 'awesome-in',
+                            createdAt:'month-range',
+                            start:'month-range',
+                            deliveredAt:'month-range',
                         }
                     },
                     pagination: {
-                        itemsPerPage: 5
+                        itemsPerPage: 10
                     },
                     paginate: (cb) => {
                         update(null, cb)
@@ -995,16 +991,16 @@
                         r.route('orders/edit/' + item._id);
                     },
                     buttons: [{
-                        label: "Refresh",
+                        label: "Rafraîchir",
                         type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => update()
                     }, {
-                        label: "New Order",
+                        label: "Créer",
                         type: () => "btn diags-btn bg-azure-radiance margin-right-1",
                         click: () => r.route('orders/edit/-1')
                     }, {
                         label: "Sync payments",
-                        show:false,
+                        show: false,
                         type: () => "btn diags-btn bg-azure-radiance margin-right-1",
                         click: () => s.syncStripe()
                     }],

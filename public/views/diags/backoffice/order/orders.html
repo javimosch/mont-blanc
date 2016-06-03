@@ -26,7 +26,7 @@
         <li>
             <label>Status</label>
 
-            <input class="awesomplete" awesome-complete target="#myList" model="model" field="filter.fields.status" placeholder="ex: created, ordered, prepaid" />
+            <input class="awesomplete" awesome-complete target="#myList" model="model" field="filter.fields.status" placeholder="ex: created, ordered, prepaid" key-bind="model.filter.filter()" code="13" event-type="keyup" />
             <!-- //ng-model="model.filter.fields.status" -->
 
             <datalist id="myList">
@@ -37,6 +37,13 @@
                 <option>completed</option>
             </datalist>
 
+        </li>
+        
+        <li>
+            <label>CreatedAt</label>
+            <select class="diags-input minimal" ng-model="model.filter.fields.createdAt" ng-options="index as month for (index,month) in model.months()" ng-change="model.filter.filter()">
+                <option value="">Select</option>
+            </select>
         </li>
 
     </ul>

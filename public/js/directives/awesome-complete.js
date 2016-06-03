@@ -1,6 +1,7 @@
 /*global app*/
 /*global Awesomplete*/
 /*global $U*/
+/*global $*/
 app.directive('awesomeComplete', function($rootScope, $timeout, $compile) {
     return {
         restrict: 'A',
@@ -32,6 +33,21 @@ app.directive('awesomeComplete', function($rootScope, $timeout, $compile) {
                       $U.setVal(scope.model,scope.field,el.val());
                    });
                 });
+                
+                $('.awesomplete').attr('id','awesome-ctrl-'+Date.now());
+                var _id = $('.awesomplete').attr('id');
+                var _iv = setInterval(function(){
+                    var _el = $('#'+_id);
+                    if(_el.length>0){
+                        if($U.val(scope.model,scope.field) == undefined){
+                            r.dom(function(){
+                                _el.find('input').val('');
+                            });
+                        }
+                    }else{
+                        clearInterval(_iv);
+                    }
+                },2000);
             });
         }
     };
