@@ -109,6 +109,20 @@
         <div class="row margin-top-quarter">
             <textarea ng-disabled="state.working()" class="diags-input fullwidth min-height-100 no-resize" ng-model="item.obs"></textarea>
         </div>
+        
+         <div class="row margin-top-half">
+            <label class="unselectable">Remise des clés</label>
+        </div>
+        <div class="row margin-top-half">
+            <input ng-disabled="true" data-address model="item" field="keysAddress" class="diags-input" placeholder="Adresse">
+        </div>
+        <div class="row margin-top-half">
+            <input ng-disabled="true" ng-value="momentTime(item.keysTimeFrom)" class="diags-input" placeholder="De">
+        </div>
+        <div class="row margin-top-half">
+            <input ng-disabled="true" ng-value="momentTime(item.keysTimeTo)" class="diags-input" placeholder="A">
+        </div>
+        
         <div class="row margin-top-half">
             <label class="unselectable">Les diagnostics en PDF: {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||"(Non disponible)"}}</label>
         </div>
@@ -125,10 +139,10 @@
 <div class="row margin-top-one">
     <div class="col-sm-12">
         <div class="row margin-top-half">
-            <label class="unselectable">Prix TTC</label>
+            <label class="unselectable">Reversement HT</label>
         </div>
         <div class="row margin-top-quarter">
-            <input ng-disabled="true" type="text" class="diags-input" ng-value="item.price">
+            <input ng-disabled="true" type="text" class="diags-input" ng-value="item.diagRemunerationHT">
         </div>
         <div class="row margin-top-half">
             <label class="unselectable">Statut</label>
