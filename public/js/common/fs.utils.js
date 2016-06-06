@@ -4,6 +4,13 @@
 /*global localStorage*/
 "use strict";
 
+var readJSONSync = (url) => {
+    return $.ajax({
+        url: url,
+        async: false,
+        dataType: 'json'
+    }).responseJSON;
+};
 
 /* global localStorage */
 var store = (() => {
@@ -654,7 +661,7 @@ function toCSV(args) {
         keys.forEach(function(key) {
             if (ctr > 0) result += columnDelimiter;
 
-            result += '"'+item[key]+'"';
+            result += '"' + item[key] + '"';
             ctr++;
         });
         result += lineDelimiter;
@@ -693,9 +700,9 @@ function downloadContent(content, fileName, mimeType) {
     }
 }
 
-function replaceHTML(html,obj){
-    for(var x in obj){
-        html = html.replaceAll("{{"+x.toUpperCase()+"}}",obj[x]);
+function replaceHTML(html, obj) {
+    for (var x in obj) {
+        html = html.replaceAll("{{" + x.toUpperCase() + "}}", obj[x]);
     }
     return html;
 }
@@ -717,8 +724,9 @@ else {
     window.ifThenMessage = ifThenMessage;
 
     window.$U = {
+        readJSONSync:readJSONSync,
         store: store,
-        replaceHTML:replaceHTML,
+        replaceHTML: replaceHTML,
         toCSV: toCSV,
         downloadContent: downloadContent,
         whenProperties: whenProperties,

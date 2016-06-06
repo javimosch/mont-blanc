@@ -156,6 +156,11 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     r.debug = true;
 
     r.config = {};
+    
+    var env = window.env;
+    r.config = $U.readJSONSync(window.env.CONFIG_JSON_PATH);
+    env.$set(r.config);
+    
     db.localData().then((data) => Object.assign(r.config, data.config || {}));
 
 
@@ -196,53 +201,23 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     };
 
 
-    r.db = (function() {
-        var lib = new localStorageDB("inspectors", localStorage);
-        var db = {
-            setUnique: function(tableName, data) {
-                lib.insertOrUpdate(tableName, {
-                    ID: 1
-                }, data);
-                lib.commit();
-            },
-            getUnique: function(tableName) {
-                return lib.queryAll(tableName)[0];
-            },
-            getAll: function(tableName) {
-                return lib.queryAll(tableName);
-            }
-        };
-        // if (lib.tableExists('session')) lib.dropTable('session');//DROP SESSION
-        db.createSession = function(force) {
-            if (force && lib.tableExists('session')) lib.dropTable('session');
-            lib.createTable('session', ['_id', 'email', 'expire', 'userType', 'password', 'rememberPass', 'clientType']);
-            db.setUnique('session', {
-                _id: null,
-                email: null,
-                expire: null,
-                password: null,
-                userType: null,
-                clientType: null,
-                rememberPass: true
-            });
-        };
-        if (!lib.tableExists('session')) {
-            db.createSession();
-        }
-        //console.warn('DB:SESSION:', db.getUnique('session'));
-        return db;
-    })();
+   
 
     r.session = function(data) {
         if (data) {
-            r.db.setUnique('session', data);
+            $U.store.set(r.config.APP_NAME+env.STORE_SESSION_PREFIX,data);
             r._session = data;
         }
-        return Object.assign(r.db.getUnique('session'), r._session || {});
+        r._session = $U.store.get(r.config.APP_NAME+env.STORE_SESSION_PREFIX);
+        if(!r._session){
+            $U.store.set(r.config.APP_NAME+env.STORE_SESSION_PREFIX,{});
+            r._session={};
+        }
+        return r._session;
     };
     r.logged = function() {
         var ss = r.session();
-        return ss.email !== null && ss.password !== null;
+        return ss._id !== null && ss.email !== null && ss.password !== null;
     };
 
 

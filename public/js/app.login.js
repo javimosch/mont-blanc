@@ -12,65 +12,11 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
         r.__hideNavMenu = false;
     });
 
-    /*
-    db.post('custom',{
-        model:"User",action:"find",data:{
-            email:{$eq:"arancibiajav@gmail.com"}
-        }
-    }).then(function(r){
-        console.info('CUSTOM:',r.data);
-    });
-*/
-
-    s.loginFailedTimes = 0;
-
-
-
-    s.create = function() {
-        s.sendingRequest = true;
-
-        db.custom('user', 'find', {
-            email: r._login.email
-        }).then(function(res) {
-            if (res.data.result.length > 0) {
-                r.session(res.data.result[0]);
-                console.log('login:user:found:' + res.data.result[0].email);
-                r.route('dashboard');
-            }
-            else {
-                _create();
-            }
-        });
-
-        function _create() {
-            db.custom('user', 'save', {
-                email: r._login.email,
-                password: r._login.password,
-                userType: 'admin'
-            }).then(function(res) {
-                s.sendingRequest = false;
-                r.session(res.data.result);
-                console.log('adminLogin:admin:creation:success', res.data);
-                r.route('dashboard');
-            }).error(function(err) {
-                s.sendingRequest = false;
-                console.log('adminLogin:admin:creation:fail', err);
-            });
-        }
-    };
 
     s.login = function() {
-
-        /*
-        if (r._login.email && r._login.email.indexOf('admin') !== -1) {
-            return s.create();
-        }
-        */
-
-        //console.info('ADMIN:LOGIN')
         var session = r.session();
         if (session.email && session.expire < new Date().getTime()) {
-            r.db.createSession(true);
+            //creae session new ?
         }
 
         db.ctrl('User', 'login', r._login).then(function(res) {
@@ -123,11 +69,15 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
 
 
 
-    var session = r.session();
-    if (session.email && session.expire > new Date().getTime()) {
-        r.session(r._login);
-        console.log('adminLogin: session found at initial check');
-        _asyncUpdateSession();
+
+    if (r.logged()) {
+        db.ctrl('User', 'get', {
+            _id: r.session()._id
+        }).then((err, data) => {
+            if (!err && data.ok && data.result) {
+                r.session(data.result);
+            }
+        })
         r.route('dashboard');
     }
     else {
@@ -135,16 +85,6 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
     }
 
 
-
-    function _asyncUpdateSession() {
-        db.ctrl('User', 'get', {
-            _id: session()._id
-        }).then((err, data) => {
-            if (!err && data.ok && data.result) {
-                r.session(data.result);
-            }
-        })
-    }
 }]);
 
 
@@ -154,13 +94,12 @@ app.controller('adminLoginExternal', ['server', '$scope', '$rootScope', function
     s.login = function() {
         var session = r.session();
         if (session.email && session.expire < new Date().getTime()) {
-            r.db.createSession(true);
+            //creae session new ?
         }
         db.ctrl('User', 'login', r._login).then(function(res) {
             if (res.ok && res.result != null) {
                 r.session(res.result);
-                var path = 'admin#/login?email=' + r._login.email + '&k=' + window.btoa(r._login.password||'dummy');
-                r.routeRelative(path);
+                s.redirect();
             }
             else {
                 r.warningMessage('Login incorrect');
@@ -170,6 +109,10 @@ app.controller('adminLoginExternal', ['server', '$scope', '$rootScope', function
             r.errorMessage('Server down, try later.');
         });
 
+    };
+    s.redirect = () => {
+        var path = 'admin#/login?email=' + r._login.email + '&k=' + window.btoa(r._login.password || 'dummy');
+        r.routeRelative(path);
     };
     s.resetPassword = () => {
         if (!r._login.email) {
@@ -186,4 +129,14 @@ app.controller('adminLoginExternal', ['server', '$scope', '$rootScope', function
             }
         });
     }
+
+    s.userType = s.userType || 'client';
+    r.dom(function() {
+        if (r.logged() && r.session().userType == s.userType) {
+            r._login.email = r.session().email;
+            r._login.password = r.session().password;
+            s.redirect();
+        }
+    },500);
+    $U.expose('s',s);
 }]);

@@ -19,6 +19,7 @@
         "diags_ctrl_settings",
         'diags_ctrl_contact_form',
         'diags_ctrl_tools',
+        //'diags_ctrl_unit_tests',
 
         'app.admin',
         'app.routes',

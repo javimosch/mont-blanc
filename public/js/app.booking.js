@@ -304,12 +304,12 @@ app.controller('ctrl.booking', ['server',
                             resolve();
                         }
                         else {
-                            return r.route(URL.LOGIN);
+                            return r.moveToLogin();
                         }
                     });
                 }
                 else {
-                    return r.route(URL.LOGIN);
+                    return r.moveToLogin();
                 }
             });
         }
@@ -399,7 +399,7 @@ app.controller('ctrl.booking', ['server',
                         r.route(URL.PAYMENT);
                     }
                     else {
-                        r.route(URL.LOGIN);
+                        s.moveToLogin();
                     }
 
                 });
@@ -407,6 +407,17 @@ app.controller('ctrl.booking', ['server',
             }, 500);
 
         }
+
+        s.moveToLogin = () => {
+            if (true && r.logged() && r.session().userType && r.session().clientType && r.session().userType == 'client') {
+                s.auth.email = r.session().email;
+                s.auth.pass = r.session().password;
+                s.login();
+            }
+            else {
+                r.route(URL.LOGIN);
+            }
+        };
 
         s.dateSlot = {
             proceedToConnect: s.proceedToConnect
@@ -473,7 +484,7 @@ app.controller('ctrl.booking', ['server',
             });
         }
         s.validateBeforePayment = function(cb, validateLoginAlso) {
-            if (validateLoginAlso && (!s._user || !s._user._id)) return r.route(URL.LOGIN);
+            if (validateLoginAlso && (!s._user || !s._user._id)) return r.moveToLogin();
             s.validateQuestions(function() {
                 s.validateDate(cb, () => r.route(URL.RDV));
             }, () => r.route(URL.HOME));
@@ -1399,19 +1410,10 @@ app.controller('ctrl.booking', ['server',
                             _order: s._order,
                             attachmentPDFHTML: html
                         }).then(data => {
-                            _sendPaymentLinkNext(data);
-                        });
-                    });
-
-                    function _sendPaymentLinkNext(data) {
-                        db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
-                            _user: s._user, //the agency
-                            _order: s._order
-                        }).then(data => {
+                            //
                             if (!data.ok) {
                                 return r.warningMessage("Le courriel ne peut être envoyé à ce moment , d'essayer de nouveau de backoffice", 10000);
                             }
-                            //s.infoMsg("Email envoyer avec succès. Suivi de votre commande dans le back office.");
                             s.infoMsg("Commande Créée", 10000);
                             s._order.notifications = s._order.notifications || {};
                             s._order.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED = true;
@@ -1421,18 +1423,13 @@ app.controller('ctrl.booking', ['server',
                                 notifications: s._order.notifications
                             });
                             s.booking.complete = true;
-                            //r.route('home');
-                            //r.routeRelative('admin#/orders/view/' + s._order._id);
-
                             s.openOrderConfirmationDelegated(() => {
                                 s._order = {};
                                 r.route('home');
                             });
-
+                            //
                         });
-                    }
-
-
+                    });
 
                 });
             }
@@ -1504,7 +1501,7 @@ app.controller('ctrl.booking', ['server',
             return $U.MyPromise(function(resolve, err, emit) {
                 var payload = Object.assign(s._order, {
                     __populate: {
-                        _client: '_id email clientType address discount',
+                        _client: '_id email clientType address discount companyName',
                         _diag: '_id email clientType address firstName lastName commission'
                     }
                 });
@@ -1619,7 +1616,7 @@ app.controller('ctrl.booking', ['server',
 
                         db.ctrl('Order', 'getById', Object.assign(s._order, {
                                 __populate: {
-                                    _client: '_id email clientType address discount',
+                                    _client: '_id email clientType address discount companyName',
                                     _diag: '_id email clientType address firstName lastName commission'
                                 }
                             }))

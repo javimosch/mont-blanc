@@ -1,5 +1,6 @@
 {
     "config": {
+        "appName":"Diagnostical",
         "companyName": "Pierre Diags S.A",
         "backendURL":"https://diags-javoche.c9users.io:8081"
     },

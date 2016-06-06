@@ -230,6 +230,7 @@
                                     v+= ' M: ' + item.cellPhone;        
                                 }
                             }
+                            return v;
                         }
                     }],
                     items: []

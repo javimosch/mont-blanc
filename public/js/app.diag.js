@@ -40,16 +40,16 @@
                         r.route('diags/edit/' + item._id);
                     },
                     buttons: [{
-                        label: "Refresh",
+                        label: "Rafraîchir",
                         type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => update()
                     }, {
-                        label: "New Diag",
+                        label: "Créer un nouveau",
                         type: () => "btn diags-btn bg-azure-radiance",
                         click: () => r.route('diags/edit/-1')
                     }],
                     columns: [{
-                        label: 'Priority',
+                        label: 'Priorité',
                         name: 'priority'
                     }, {
                         label: "Description",
@@ -59,11 +59,24 @@
                         label: "Email",
                         name: 'email'
                     }, {
-                        label: "Tel",
+                        label: "Téléphones",
                         name: "fixedTel",
-                        format: (v, item) => item.fixedTel || item.cellPhone || ''
+                        format: (v, item) => {
+                            v = '';
+                            if(item.fixedTel){
+                                v = 'TF: ' + item.fixedTel;
+                            }
+                            if(item.cellPhone){
+                                if(!v){
+                                    v = 'M: ' + item.cellPhone;        
+                                }else{
+                                    v+= ' M: ' + item.cellPhone;        
+                                }
+                            }
+                            return v;
+                        }
                     }, {
-                        label: "Comission",
+                        label: "Reversement",
                         name: "commission"
                     },{
                         label: "Activated",
