@@ -152,28 +152,22 @@
 
 
                 s.viewPDF = () => {
-                    $D.getInvoiceHTMLContent(db, s.item, r, function(res) {
-                        if (res.ok) {
-                            var html =
-                                window.encodeURIComponent(
-                                    $D.OrderReplaceHTML(window.decodeURIComponent(res.result.content), s.item, r));
+                    $D.getInvoiceHTMLContent(db, s.item, r, function(html) {
+                        html =
+                            window.encodeURIComponent(
+                                $D.OrderReplaceHTML(window.decodeURIComponent(html), s.item, r));
 
-                            r.ws.ctrl("Pdf", "view", {
-                                html: html
-                            }).then(res => {
-                                if (res.ok) {
-                                    var win = window.open(res.result, '_blank');
-                                    win.focus();
-                                }
-                                else {
-                                    res.warningMessage('Server Issue, try later.');
-                                }
-                            });
-
-                        }
-                        else {
-                            r.warningMessage('Configure the Invoice template first.');
-                        }
+                        r.ws.ctrl("Pdf", "view", {
+                            html: html
+                        }).then(res => {
+                            if (res.ok) {
+                                var win = window.open(res.result, '_blank');
+                                win.focus();
+                            }
+                            else {
+                                res.warningMessage('Server Issue, try later.');
+                            }
+                        });
                     });
                 };
 
@@ -654,6 +648,9 @@
                             if (data.ok) {
                                 s.item.status = (s.item === 'delivered') ? 'completed' : 'prepaid';
                                 s.successMsg('Commande payée');
+
+
+
                                 r.dom(read, 5000);
                             }
                             else {
@@ -951,7 +948,7 @@
 
                     function _apply() {
                         //
-                        data = Object.assign(data,s.model.filter.payload||{});
+                        data = Object.assign(data, s.model.filter.payload || {});
                         //
                         dbPaginate.ctrl(data, s.model).then(res => {
                             if (cb) {
@@ -973,9 +970,9 @@
                         update: update,
                         rules: {
                             status: 'awesome-in',
-                            createdAt:'month-range',
-                            start:'month-range',
-                            deliveredAt:'month-range',
+                            createdAt: 'month-range',
+                            start: 'month-range',
+                            deliveredAt: 'month-range',
                         }
                     },
                     pagination: {

@@ -1420,7 +1420,8 @@ app.controller('ctrl.booking', ['server',
                             s._order.status = 'ordered';
                             db.ctrl('Order', 'update', {
                                 _id: s._order._id,
-                                notifications: s._order.notifications
+                                notifications: s._order.notifications,
+                                status:s._order.status
                             });
                             s.booking.complete = true;
                             s.openOrderConfirmationDelegated(() => {
