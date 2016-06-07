@@ -56,6 +56,9 @@
                     //                console.info('adminOrders:read:success', r.data.result);
                     r.data.result = _.orderBy(r.data.result, ['created'], ['desc']);
                     s.items = r.data.result;
+
+
+
                     r.successMessage('Loaded', 1000);
                 });
             }
@@ -79,10 +82,19 @@
 
             };
 
+            s.afterRead = [];
+
             function init() {
                 r.toggleNavbar(true);
 
                 if (window.location.href.indexOf('orders/view') !== -1) {
+
+                    s.afterRead.push(() => {
+                        if (!s.isPaid()) {
+                            s.pay(); //ASD
+                        }
+                    });
+
                     //no login needed
                     if (r.params && r.params.prevRoute) {
 
@@ -863,9 +875,7 @@
                 }
             }
 
-            function onItem(item) {
-                //s.keysWhereTime.emit('onItem');
-            }
+
 
             function read(id) {
                 if (r.params && r.params.item && r.params.item._diag) {
@@ -889,7 +899,11 @@
                             end: new Date(data.result.end)
                         });
                         s.item = data.result;
-                        onItem(s.item);
+
+                        if (s.afterRead && s.afterRead.forEach) {
+                            s.afterRead.forEach(cb => cb());
+                        }
+
                         autoPay();
                         _readFile();
                         //                    console.info('READ', s.item);
