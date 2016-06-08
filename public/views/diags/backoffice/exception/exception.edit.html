@@ -99,7 +99,9 @@
         <div class="col-sm-12 col-md-6">
             <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-one" ng-click="validate()">Ajouter l'indisponibilité</button>
             <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-one" ng-click="cancel()">Annuler</button>
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-one" ng-click="delete()">Supprimer</button>
+            <button 
+            ng-show="item._id"
+            ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-one" ng-click="delete()">Supprimer</button>
         </div>
     </div>
 </div>

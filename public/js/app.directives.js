@@ -106,7 +106,7 @@ app.directive('tableFilter', function(
 
             function assignPayloadRules(data) {
                 var rules = s.model.filter.payloadRules,
-                    rule, val;
+                    rule, val,_data;
                 if(!rules) return data;
                 for (var x in rules) {
                     rule = rules[x];
@@ -114,7 +114,12 @@ app.directive('tableFilter', function(
                     val = s.model.filter.fields[x];
                     if (val == undefined) continue;
                     data.__rules = data.__rules || {};
-                    data = rule(data, val);
+                    _data = rule(data, val);
+                    if(!_data){
+                        console.warn('app filter payload rules undefined output for ',x);
+                    }else{
+                        data = _data;
+                    }
                 }
                 return data;
             }

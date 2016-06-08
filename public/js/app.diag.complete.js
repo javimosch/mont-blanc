@@ -145,10 +145,10 @@ app.directive('diagOrdersSucceded', function(
                 };
 
                 if (r.userIs(['diag'])) {
-                   data['_diag'] = r.session()._id;
+                    data['_diag'] = r.session()._id;
                 }
                 if (r.userIs(['client'])) {
-                   data['_client'] = r.session()._id;
+                    data['_client'] = r.session()._id;
                 }
 
                 data.__sort = {
@@ -163,7 +163,7 @@ app.directive('diagOrdersSucceded', function(
                         "$in": ['completed', 'prepaid', 'delivered']
                     }
                 };
-                
+
 
                 dbPaginate.ctrl(data, s.model).then(res => {
                     if (cb) {
@@ -727,6 +727,17 @@ app.controller('ctrl-diag-edit', [
         };
 
         s.diplomesSave = (_id) => {
+            var file = s.diplomesFile[_id];
+            if (!file) {
+                return r.warningMessage("Un fichier requis", 5000);
+            }
+            if (file.type !== 'application/pdf') {
+                return r.warningMessage("Format pdf nécessaire", 5000);
+            }
+            if (file.size / 1000 > 1624) {
+                return r.warningMessage("Limite 1.5mb pour le fichier pdf", 5000);
+            }
+            
             if (!s.diplomesFile[_id]) return;
             var curr = _id;
 
@@ -743,14 +754,6 @@ app.controller('ctrl-diag-edit', [
             function _uploadNew() {
 
 
-
-                if (s.diplomesFile[_id]) {
-                    var _str = s.diplomesFile[_id].name.toString().toLowerCase();
-                    if (_str.substring(_str.length - 3) !== 'pdf') {
-                        s.warningMessage('PDF Format required', 99999);
-                        return;
-                    }
-                }
 
                 r.infoMessage('Patientez, le chargement de vos certifications est en cours', 99999);
 

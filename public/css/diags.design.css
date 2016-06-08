@@ -113,6 +113,10 @@ html {
     background-color: #EDF5F9;
     height: 43px;
 }
+.diags-bg-block-12 {
+    background-color: #EDF5F9;
+    height: 12px;
+}
 
 .diags-bg-block-80 {
     background-color: #EDF5F9;
@@ -1132,6 +1136,11 @@ label.minimal {
     font-family: 'Avenir-Oblique';
     color: #8597AB!important;
     font-size: 14px;
+}
+
+.dash-welcome{
+    font-size:14px;
+    color: #00A9FF;
 }
 
 .diags-form .diags-input .caret {

@@ -668,9 +668,7 @@ table.minimal td {
   padding-left: 1em!important;
 }
 
-.padding-left-two {
-  padding-left: 2em!important;
-}
+
 
 .padding-left-three {
   padding-left: 3em!important;
@@ -706,6 +704,10 @@ table.minimal td {
 
 .padding-four {
   padding: 4em!important;
+}
+
+.padding-left-two {
+  padding-left: 2em!important;
 }
 
 .max-size-medium-1 {

@@ -1,7 +1,9 @@
+/*global angular*/
+/*global moment*/
 (() => {
     var app = angular.module('app.diag.balance', []);
     app.directive('diagBalance', function(
-        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
+        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',
             replace: true,
@@ -10,12 +12,15 @@
             },
             templateUrl: 'views/directives/directive.fast-crud.html',
             link: function(s, elem, attrs) {
-                var r = $rootScope;
-                var ws = server;
-                var n = attrs.name;
-                s.title = "Balance details";
-                window.balance = s;
+                var r = $rootScope,
+                    db = server,
+                    n = attrs.name,
+                    dbPaginate = $mongoosePaginate.get('StripeTransaction');
+                s.title = "Portefeuille";
+                r.setCurrentCtrl(s);
 
+
+                /*
                 function update(recalc) {
                     var data = {
                         _id: r.session()._id,
@@ -27,28 +32,88 @@
                     data.period = s.model.periodSelected || 'year';
                     
                     ws.ctrl('User', 'balance', data).then((res) => {
-                        if (res.ok) {
-                            console.info('balance', res.result);
+                        console.info('balance', res.result);
+                        if (res.ok && res.result) {
+ 
                             s.balance = res.result;
                             s.model.update(res.result.items, s.balance);
                         }
+                    });
+                }*/
+
+                function payload() {
+                    var data = {
+                        _user: r.session()._id,
+                        __populate: {
+                            _order: "_id info diagRemunerationHT"
+                        }
+                    };
+                    data = Object.assign(data, s.model.filter.payload || {});
+                    return data;
+                }
+
+                function update(items, cb) {
+                    db.ctrl('Payment', 'syncTransactions', {
+                        _user: r.session()._id,
+                        _diag: r.session()._id
+                    }).then(res => {
+                        dbPaginate.ctrl(payload(), s.model, {
+                            autoResolve: true,
+                            callback: cb
+                        }).then(r => {
+                            if (r.result) {
+                                s.model.total = 0;
+                                r.result.forEach(i => s.model.total += i._order.diagRemunerationHT);
+                            }
+                        });
                     });
                 }
 
 
                 s.model = {
-                    /*remove: (item, index) => {
-                        var rule = {
-                            //_user: r.session().id
-                            _id:item._id
-                        };
-                        ws.ctrl('BalanceItem', 'removeAll', rule, (d) => {
-                            if (d.ok) {
-                                //ws.ctrl('Balance', 'removeAll', rule, () => update(true));
-                                update(true);
+                    total: 0,
+                    //
+                    init: () => s.model.filter.firstTime(),
+                    filter: {
+                        template: 'diagBalanceFilter',
+                        update: update,
+                        rules: {
+                            created: 'month-range',
+                        },
+                        payloadRules: {
+                            year: (data, val) => {
+                                var date = moment().year(parseInt(val));
+                                if (s.model.filter.fields.created == null) {
+                                    data.__rules.created = {
+                                        $gte: date.startOf('year').toDate().toString(),
+                                        $lt: date.endOf('year').toDate().toString()
+                                    }
+                                }
+                                return data;
                             }
-                        })
-                    },*/
+                        },
+                        yearChange:()=>{
+                            s.model.filter.fields.created=null;
+                            s.model.filter.filter();
+                        }
+                    },
+                    pagination: {
+                        itemsPerPage: 10
+                    },
+                    paginate: (cb) => {
+                        update(null, cb)
+                    },
+                    months: () => {
+                        return moment.monthsShort().map((m, k) => k + 1 + ' - ' + m);
+                    },
+                    years: () => {
+                        var c = {};
+                        for (var x = 2010; x < 2020; x++) {
+                            c[x.toString()] = x;
+                        }
+                        return c;
+                    },
+                    /*
                     periodSelected:'year',
                     periods: createSelect({
                         label: '(Select a period)',
@@ -60,52 +125,49 @@
                         },
                         items: ['month', 'year']
                     }),
-                    buttonsTpl: 'views/diags/backoffice/partials/diag-balance-buttons.html',
+                    */
+                    // buttonsTpl: 'views/diags/backoffice/partials/diag-balance-buttons.html',
                     tfoot: 'views/diags/backoffice/partials/diag-balance-footer.html',
                     click: (item, index) => {
-                        var data = {};
-                        ws.localData().then(function(d) {
-                            Object.assign(data, d);
-                        });
-
-                        ws.ctrl('Payment', 'associatedOrder', {
-                            source: item.source
-                        }).then((data) => {
-                            item = Object.assign(data.result);
-                            _open();
-                        });
-
-                        function _open() {
-                            s.open({
-                                title: 'Balance Transaction',
-                                data: data,
-                                evts: {
-                                    'init': []
-                                },
-                                item: item,
-                                templateUrl: 'views/diags/backoffice/partials/admin-balance-details.html',
-                                callback: (item) => {}
-                            });
+                        if (item._order) {
+                            r.route('orders/edit/' + item._order._id)
+                        }
+                        else {
+                            return r.infoMessage("Il n'y a pas un ordre associé", 4000);
                         }
                     },
                     buttons: [{
-                        label: "Refresh",
-                        type: () => "btn btn-primary spacing-h-1",
-                        click: () => update(true)
-                    }, {
-                        label: "Recalc",
-                        show: false,
-                        type: () => "btn btn-primary spacing-h-1",
-                        click: () => update(true)
+                        label: "Rafraîchir",
+                        type: () => "btn diags-btn azure-radiance spacing-h-1",
+                        click: () => update()
                     }],
                     columns: [{
-                        label: "Description",
-                        name: 'description'
-                    }, {
-                        label: "Amount (eur)",
-                        name: 'amount',
-                        align: 'right'
-                    }],
+                            label: "Description",
+                            name: 'description'
+                        },
+                        /* {
+                                                label: "Quantité (EUR)",
+                                                labelCls: () => ({
+                                                    'text-right': true
+                                                }),
+                                                name: 'amount',
+                                                //format: (v, item) => v / 100,
+                                                align: 'right'
+                                            },*/
+                        {
+                            label: "Revenue (EUR)",
+                            labelCls: () => ({
+                                'text-right': true
+                            }),
+                            name: 'stripeFee',
+                            format: (v, item) => item._order.diagRemunerationHT,
+                            align: 'right'
+                        }, {
+                            label: "Création",
+                            name: "created",
+                            format: (v, item) => r.momentDateTime(item.created)
+                        }
+                    ],
                     items: []
                 };
                 update();

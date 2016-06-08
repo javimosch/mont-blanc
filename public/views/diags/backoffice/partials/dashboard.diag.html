@@ -1,18 +1,25 @@
-
-
 <div class="row" ng-controller="diagDashboard">
-    <div span="col-md-12">
-        <div class="row margin-top-one">
-            <diag-exception-list></diag-exception-list>
-        </div>
-        <div class="row margin-top-one">
+    <div class="row diags-bg-block-12 hidden-xs"></div>
+    <div class="row margin-top-one margin-bottom-one">
+        <div class="col-md-12 ">
             <diag-orders></diag-orders>
         </div>
-        <div class="row margin-top-one">
-            <diag-orders-succeded></diag-orders-succeded>
-        </div>
-        <div class="row margin-top-one">
-            <diag-calendar></diag-calendar>
+    </div>
+    <div class="row diags-bg-block-12 hidden-xs"></div>
+    <div class="row margin-top-one margin-bottom-one">
+        <div class="col-md-12">
+            <diag-exception-list></diag-exception-list>
         </div>
     </div>
+    <div class="row diags-bg-block-12 hidden-xs"></div>
+    <div class="row margin-top-one margin-bottom-one">
+        <div class="col-md-12">
+            <diag-orders-succeded></diag-orders-succeded>
+        </div>
+    </div>
+
+    <div class="row margin-top-one" ng-if="false">
+        <diag-calendar></diag-calendar>
+    </div>
+
 </div>

@@ -151,6 +151,7 @@
                     return null;
                 };
                 var prevRoute = () => {
+                    if (r.userIs('diag')) return 'dashboard';
                     if (params.id) {
                         return 'diags/edit/' + params.id;
                     }

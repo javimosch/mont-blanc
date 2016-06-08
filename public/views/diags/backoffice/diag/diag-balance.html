@@ -1,1 +1,23 @@
-<diag-balance></diag-balance>
+<div class="row margin-top-one margin-bottom-one">
+    <div class="col-md-12">
+        <diag-balance></diag-balance>
+    </div>
+</div>
+
+<script type="text/ng-template" id="diagBalanceFilter.html">
+    <ul class="form-tiny center-block float-right">
+       
+        <li>
+            <label>Year</label>
+            <select class="diags-input minimal" ng-model="model.filter.fields.year" ng-options="index as month for (index,month) in model.years()" ng-change="model.filter.yearChange()">
+                <option value="">Select</option>
+            </select>
+        </li>
+        <li>
+            <label>Month</label>
+            <select class="diags-input minimal" ng-model="model.filter.fields.created" ng-options="index as month for (index,month) in model.months()" ng-change="model.filter.filter()">
+                <option value="">Select</option>
+            </select>
+        </li>
+    </ul>
+</script>

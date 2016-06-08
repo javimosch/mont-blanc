@@ -118,6 +118,7 @@ srv.service('$mongoosePaginate', ['server', function(db) {
                     r.result = r.result.docs;
                     if (opt && opt.autoResolve) {
                         autoResolve(r);
+                        resolve(r);
                     }
                     else {
                         resolve(r);
@@ -182,8 +183,10 @@ srv.directive('fileModel', ['$parse', function($parse) {
                     //modelSetter(scope, element[0].files[0];);
                     try {
                         scope.model = scope.model || {};
-                        scope.overwrite = (scope.overwrite == undefined) ? false : scope.overwrite;
-                        scope.overwrite = (typeof scope.overwrite !== 'boolean') ? false : scope.overwrite;
+                        if (typeof scope.overwrite !== 'undefined') {
+                            scope.overwrite = (scope.overwrite == undefined) ? false : scope.overwrite;
+                            scope.overwrite = (typeof scope.overwrite !== 'boolean') ? false : scope.overwrite;
+                        }
                         //console.info('scope.overwrite',scope.overwrite);
                         if (scope.overwrite) {
                             scope.model = element[0].files[0];

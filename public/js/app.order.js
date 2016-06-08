@@ -778,9 +778,36 @@
                         window.open(db.URL() + '/File/get/' + s.item.pdfId, '_newtab');
                     }
                 };
+
+                s.deletePDF = () => {
+                    if(!s.pdfFileInfo){
+                        return console.warn('s.pdfFileInfo expected.');
+                    }
+                    s.confirm('Delete ' + s.pdfFileInfo.filename + ' ?', () => {
+                        db.ctrl('File', 'remove', {
+                            _id: s.pdfFileInfo._id
+                        }).then((d) => {
+                            if (d.ok) {
+                                s.item.pdfId = null;
+                                db.ctrl('Order','update',{
+                                    _id:s.item._id,
+                                    pdfId:s.item.pdfId
+                                });
+                                r.dom();
+                            }
+                        });
+                    });
+                };
+
                 s.saveFile = () => {
                     if (!s.pdf.file) {
-                        return r.warningMessage("File required", 5000);
+                        return r.warningMessage("Un fichier requis", 5000);
+                    }
+                    if (s.pdf.file.type !== 'application/pdf') {
+                        return r.warningMessage("Format pdf nécessaire", 5000);
+                    }
+                     if (s.pdf.file.size/1000 > 1624) {
+                        return r.warningMessage("Limite 1.5mb pour le fichier pdf", 5000);
                     }
                     var pdfId_prev = s.item.pdfId;
                     _uploadNew(); //starts here
@@ -794,7 +821,7 @@
                     }
 
                     function _uploadNew() {
-                        r.infoMessage('Uploading (Do not touch anything)', 9999);
+                        r.infoMessage('Patientez, le chargement est en cours', 99999);
                         db.form('File/save/', {
                             name: s.pdf.file.name,
                             file: s.pdf.file
@@ -802,10 +829,15 @@
                             //console.info('INFO', data);
                             if (data.ok) {
                                 s.item.pdfId = data.result._id;
+                                
+                                if(s.item.status == 'prepaid'){
+                                    s.item.status = 'completed';
+                                }
+                                
                                 db.ctrl('Order', 'update', {
                                     _id: s.item._id,
                                     pdfId: data.result._id,
-                                    status: (s.item.status === 'prepaid') ? 'completed' : 'delivered'
+                                    status: s.item.status
                                 }).then(data => {
                                     _deletePrev();
                                     //_readFile();
@@ -864,12 +896,15 @@
             }
 
             function _readFile() {
+
                 if (s.item.pdfId) {
+                    console.info('_readFile');
                     db.ctrl('File', 'find', {
                         _id: s.item.pdfId
                     }).then(data => {
+                        console.info(data);
                         if (data.ok) {
-                            s.pdfFileInfo = (data.result.length > 0 && data.result[0]) || null;
+                            s.pdfFileInfo = (data.result.length && data.result.length > 0 && data.result[0]) || data.result;
                         }
                     });
                 }
