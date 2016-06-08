@@ -755,6 +755,9 @@ table.minimal td {
 .min-height-200 {
   min-height: 200px;
 }
+.min-height-300 {
+  min-height: 300px;
+}
 
 .min-height-600 {
   min-height: 600px;

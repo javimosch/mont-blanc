@@ -70,3 +70,22 @@
             <admin-turnover></admin-turnover>
         </div>
     </div>
+
+
+<script type="text/ng-template" id="adminBalanceFilter.html">
+    <ul class="form-tiny center-block float-right">
+        <li>
+            <label>
+                Filtre&nbsp;&nbsp; (
+                <i class="fa fa-question" tooltip-placement="top" uib-tooltip="ENTER will fetch from the server."></i>)
+            </label>
+        </li>
+        <li>
+            <label>CreatedAt</label>
+            <select class="diags-input minimal" ng-model="model.filter.fields.created" ng-options="index as month for (index,month) in model.months()" ng-change="model.filter.filter()">
+                <option value="">Select</option>
+            </select>
+        </li>
+    </ul>
+
+</script>

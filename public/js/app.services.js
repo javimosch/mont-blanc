@@ -72,15 +72,15 @@ srv.service('$mongoosePaginate', ['server', function(db) {
         var self = this;
         self.id = Date.now();
         self.working = false;
-        self.ctrl = function(data, model) {
-            return MyPromise((resolve, err, emit) => {
+        self.ctrl = function(data, model, opt) {
+            var promise = MyPromise((resolve, err, emit) => {
                 if (!model.pagination) {
                     err('model.pagination required.');
                     console.warn('$mongoosePaginate model.pagination required.');
                     return;
                 }
                 if (self.working) return; // console.warn('$mongoosePaginate is working, wait.',self.id);
-               // console.log('$mongoosePaginate:start',self.id);
+                // console.log('$mongoosePaginate:start',self.id);
                 self.working = true;
                 self.workingTS = Date.now();
 
@@ -93,21 +93,21 @@ srv.service('$mongoosePaginate', ['server', function(db) {
                     }, 10000)
                 })(self.workingTS);
 
-
-                db.ctrl(modelName, 'paginate', Object.assign({
+                var action = opt && opt.action || 'paginate';
+                db.ctrl(modelName, action, Object.assign({
                     __limit: model.pagination.itemsPerPage,
                     __lean: true,
                     __page: model.pagination.currentPage
                 }, data)).then(r => {
                     self.working = false;
-                   // console.log('$mongoosePaginate:end',self.id,'items',r.result.docs.length);
+                    // console.log('$mongoosePaginate:end',self.id,'items',r.result.docs.length);
                     if (!r.ok) {
                         self.working = false;
                         return;
                     }
                     var numberOfPages = r.result.pages;
                     //                    console.info(model.pagination.currentPage,model.pagination,numberOfPages);
-                    
+
                     if (model.pagination) {
                         model.pagination.update({
                             itemsLength: r.result.docs.length,
@@ -116,22 +116,37 @@ srv.service('$mongoosePaginate', ['server', function(db) {
                         });
                     }
                     r.result = r.result.docs;
-                    resolve(r);
+                    if (opt && opt.autoResolve) {
+                        autoResolve(r);
+                    }
+                    else {
+                        resolve(r);
+                    }
                 });
 
             });
+            //
+            function autoResolve(res) {
+                if (opt.callback) {
+                    opt.callback(res.result);
+                }
+                else {
+                    model.update(res.result, null);
+                }
+            }
+            return promise;
         }
     }
     var handlers = {};
     return {
         get: function(modelName) {
-           // if (!handlers[modelName]) {
-                // console.info('$mongoosePaginate creating handler for ' + modelName);
-                //handlers[modelName] =
-                return new handler(modelName);
+            // if (!handlers[modelName]) {
+            // console.info('$mongoosePaginate creating handler for ' + modelName);
+            //handlers[modelName] =
+            return new handler(modelName);
             //}
             //console.info('$mongoosePaginate delivering handler for ' + modelName);
-           // return handlers[modelName];
+            // return handlers[modelName];
         }
     };
 }]);
@@ -160,15 +175,15 @@ srv.directive('fileModel', ['$parse', function($parse) {
             var model = $parse(attrs.fileModel);
             var modelSetter = model.assign;
 
-            $U.expose('fileModel',scope);
+            $U.expose('fileModel', scope);
 
             element.bind('change', function() {
                 scope.$apply(function() {
                     //modelSetter(scope, element[0].files[0];);
                     try {
                         scope.model = scope.model || {};
-                        scope.overwrite = (scope.overwrite==undefined)?false:scope.overwrite;
-                        scope.overwrite = (typeof scope.overwrite !== 'boolean')?false:scope.overwrite;
+                        scope.overwrite = (scope.overwrite == undefined) ? false : scope.overwrite;
+                        scope.overwrite = (typeof scope.overwrite !== 'boolean') ? false : scope.overwrite;
                         //console.info('scope.overwrite',scope.overwrite);
                         if (scope.overwrite) {
                             scope.model = element[0].files[0];
@@ -176,7 +191,7 @@ srv.directive('fileModel', ['$parse', function($parse) {
                         else {
                             scope.model[scope.field || 'file'] = element[0].files[0];
                         }
-                        if(attrs.fileModelChange){
+                        if (attrs.fileModelChange) {
                             scope.$parent.$eval(attrs.fileModelChange);
                         }
 

@@ -1,6 +1,8 @@
+/*global angular*/
 (function() {
     var app = angular.module('app.log', []);
     app.controller('logEdit', ['$rootScope', '$scope', 'server', 'crud', '$routeParams', function(r, s, db, crud, params) {
+        r.setCurrentCtrl(s);
         crud.create({
             name: 'Log',
             routeParams: params,
@@ -94,16 +96,16 @@
                     },
                     buttons: [{
                         label: "Refresh",
-                        type: () => "btn btn-default margin-left-0 margin-right-1",
+                        type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => update()
                     }, {
                         label: "New Log",
                         show:false,
-                        type: () => "btn btn-default margin-right-1",
+                        type: () => "btn diags-btn bg-azure-radiance margin-right-1",
                         click: () => r.route('logs/edit/-1')
                     },{
                         label:"Delete all",
-                        type: () => "btn btn-warning",
+                        type: () => "btn diags-btn bg-blaze-orange",
                         click: () => {
                             s.confirm('Sure?',()=>{
                                 db.ctrl('Log','removeAll',{}).then(d=>{

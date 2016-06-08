@@ -17,7 +17,7 @@
     ]);
 
 
-   
+
 
 
 
@@ -63,7 +63,7 @@
 
 
     app.directive('adminTurnover', function(
-        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
+        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',
             replace: true,
@@ -72,66 +72,75 @@
             },
             templateUrl: 'views/directives/directive.fast-crud.html',
             link: function(s, elem, attrs) {
-                var r = $rootScope;
-                var ws = server;
-                var n = attrs.name;
+                var r = $rootScope,
+                    db = server,
+                    n = attrs.name,
+                    dbPaginate = $mongoosePaginate.get('StripeTransaction');
+                r.setCurrentCtrl(s);
                 s.title = "Stripe  transactions";
 
-                function update() {
+                function payload() {
                     var data = {
                         __populate: {
-                            '_client': 'email userType',
-                            '_diag': 'email userType'
+                            _order: "_id info"
                         }
                     };
+                    data = Object.assign(data, s.model.filter.payload || {});
+                    return data;
+                }
 
-                    if (r.userIs(['diag'])) {
-                        data['_diag'] = r.session()._id;
-                    }
-                    if (r.userIs(['client'])) {
-                        data['_client'] = r.session()._id;
-                    }
+                function update(items, cb) {
+                    dbPaginate.ctrl(payload(), s.model, {
+                        //action: 'balanceTransactions', //paginate
+                        autoResolve: true,
+                        callback: cb
+                    });
+                }
 
-                    ws.ctrl('Payment', 'balanceTransactions', data).then((res) => {
-                        if (res.ok) {
-
-                            res.result.data.forEach((v) => {
-                                v.amount = v.amount / 100;
-                                v.created = moment(v.created).format('DD/MM/YY HH:MM');
-
-                                v._order = {
-                                    _id: '!@#!@#!@',
-                                    description: 'Zararara'
-                                };
-                                //v.date = moment(v.start).format('dddd, DD MMMM')
-                                //v.start = moment(v.start).format('HH:mm');
-                                //v.end = moment(v.end).format('HH:mm');
-                            });
-                            //                        console.info('TRANSACTIONS', res.result.data);
-                            s.model.update(res.result.data);
-                        }
+                function sync() {
+                    db.ctrl('Payment', 'syncTransactions', {
+                        _user: r.session()._id
+                    }).then(res => {
+                        console.info('syncTransactions', res);
+                        s.model.filter.update();
                     });
                 }
 
 
                 s.model = {
+                    init: () => s.model.filter.firstTime(),
+                    filter: {
+                        template: 'adminBalanceFilter',
+                        update: update,
+                        rules: {
+                            created: 'month-range',
+                        }
+                    },
+                    pagination: {
+                        itemsPerPage: 10
+                    },
+                    paginate: (cb) => {
+                        update(null, cb)
+                    },
+                    months: () => {
+                        return moment.monthsShort().map((m, k) => k + 1 + ' - ' + m);
+                    },
                     click: (item, index) => {
                         var data = {};
-                        ws.localData().then(function(d) {
+                        db.localData().then(function(d) {
                             Object.assign(data, d);
                         });
 
-                        ws.ctrl('Payment', 'associatedOrder', {
-                            source: item.source
-                        }).then((data) => {
-                            if(!data.result){
-                                return r.infoMessage("There is not an Order associated",4000);
-                            }
-                            item = Object.assign(data.result);
-                            _open();
-                        });
+                        if (item._order) {
+                            ///                            _open();
+                            r.route('orders/edit/' + item._order._id)
+                        }
+                        else {
+                            return r.infoMessage("There is not an Order associated", 4000);
+                        }
 
                         function _open() {
+                            $U.expose('edit', item);
                             s.open({
                                 title: 'Stripe Transaction',
                                 data: data,
@@ -148,6 +157,10 @@
                         label: "Rafraîchir",
                         type: () => "btn diags-btn azure-radiance spacing-h-1",
                         click: () => update()
+                    }, {
+                        label: "Sync avec Stripe",
+                        type: () => "btn diags-btn azure-radiance spacing-h-1",
+                        click: () => sync()
                     }],
                     columns: [{
                         label: "Description",
@@ -158,10 +171,24 @@
                             'text-right': true
                         }),
                         name: 'amount',
+                        //format: (v, item) => v / 100,
+                        align: 'right'
+                    }, {
+                        label: "Stripe Fee (EUR)",
+                        labelCls: () => ({
+                            'text-right': true
+                        }),
+                        name: 'stripeFee',
+                        //format: (v, item) => {
+                        //var fee = 0;
+                        //item.fee_details.forEach(f => fee += f.amount);
+                        //return fee / 100;
+                        //},
                         align: 'right'
                     }, {
                         label: "Création",
-                        name: "created"
+                        name: "created",
+                        format: (v, item) => r.momentDateTime(item.created)
                     }],
                     items: []
                 };
@@ -220,14 +247,15 @@
                         name: "fixedTel",
                         format: (v, item) => {
                             v = '';
-                            if(item.fixedTel){
+                            if (item.fixedTel) {
                                 v = 'TF: ' + item.fixedTel;
                             }
-                            if(item.cellPhone){
-                                if(!v){
-                                    v = 'M: ' + item.cellPhone;        
-                                }else{
-                                    v+= ' M: ' + item.cellPhone;        
+                            if (item.cellPhone) {
+                                if (!v) {
+                                    v = 'M: ' + item.cellPhone;
+                                }
+                                else {
+                                    v += ' M: ' + item.cellPhone;
                                 }
                             }
                             return v;

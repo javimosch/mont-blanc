@@ -17,6 +17,10 @@
                     <textarea ng-disabled="true" type="text" class="fullwidth min-height-100 no-resize" ng-model="item.message"></textarea>
                 </li>
                 <li>
+                    <label>Data</label>
+                    <textarea ng-disabled="true" type="text" class="fullwidth min-height-300" ng-bind="item.data|json"></textarea>
+                </li>
+                <li>
                     <label>Created</label>
                     {{item.created && momentDateTime(item.created) || ''}}
                 </li>
@@ -25,9 +29,9 @@
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <button ng-disabled="state.working()" class="btn btn-default" ng-click="validate()">Enregistrer</button>
-            <button ng-disabled="state.working()" class="btn btn-default" ng-click="cancel()">Annuler</button>
-            <button ng-disabled="state.working()" class="btn btn-default" ng-click="delete()">Supprimer</button>
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Enregistrer</button>
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="cancel()">Annuler</button>
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="delete()">Supprimer</button>
         </div>
     </div>
 </div>
