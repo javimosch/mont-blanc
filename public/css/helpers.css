@@ -560,6 +560,37 @@ table.minimal td {
   margin: 4em!important;
 }
 
+
+
+.padding-none {
+  padding: 0!important;
+}
+
+.padding-quarter {
+  padding: 0.25em!important;
+}
+
+.padding-halve {
+  padding: 0.5em!important;
+}
+
+.padding-one {
+  padding: 1em!important;
+}
+
+.padding-two {
+  padding: 2em!important;
+}
+
+.padding-three {
+  padding: 3em!important;
+}
+
+.padding-four {
+  padding: 4em!important;
+}
+
+
 .padding-top-none {
   padding-top: 0!important;
 }
@@ -676,34 +707,6 @@ table.minimal td {
 
 .padding-left-four {
   padding-left: 4em!important;
-}
-
-.padding-none {
-  padding: 0!important;
-}
-
-.padding-quarter {
-  padding: 0.25em!important;
-}
-
-.padding-halve {
-  padding: 0.5em!important;
-}
-
-.padding-one {
-  padding: 1em!important;
-}
-
-.padding-two {
-  padding: 2em!important;
-}
-
-.padding-three {
-  padding: 3em!important;
-}
-
-.padding-four {
-  padding: 4em!important;
 }
 
 .padding-left-two {

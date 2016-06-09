@@ -52,7 +52,9 @@
             $index:$index,$first:$first
         })||''" ng-click="v.click()">{{v.label}}</button>
             <out ng-if="model.buttonsTpl" ng-include="model.buttonsTpl" include-replace></out>
-            <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Double click on a row to edit"></i>
+            <i 
+            ng-show="model.hideTooltip == undefined || model.hideTooltip != true"
+            class="fa fa-question" tooltip-placement="top" uib-tooltip="Double click on a row to edit"></i>
         </div>
     </div>
 </div>

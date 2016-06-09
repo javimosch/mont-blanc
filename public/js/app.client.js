@@ -22,7 +22,7 @@
                     dbPaginate = $mongoosePaginate.get('Order');
                 var ws = server;
                 var n = attrs.name;
-                s.title = "Your Orders";
+                s.title = "Vos commandes";
 
                 function update(items, cb) {
                     var data = {
@@ -43,32 +43,8 @@
                         data['_client'] = r.session()._id;
                     }
 
-/*
-                    //STATUS FILTER
-                    if ($U.val(s, 'model.filter.fields')) {
-                        var status = s.model.filter.fields.status;
-                        if (status) {
-                            status = status.replaceAll(' ', '');
-                            if (status.charAt(status.length - 1) == ',') {
-                                status = status.substring(0, status.length - 1);
-                            }
-                            var statusArr = status.split(',');
-                            data.__rules = data.__rules || {};
-                            data.__rules.status = {
-                                $in: statusArr
-                            };
-                            //console.log('filter-applied',statusArr);
-                        }
-                    }*/
 
                     dbPaginate.ctrl(data, s.model).then(res => {
-                        if (res.ok) {
-                            res.result.forEach((v) => {
-                                v.date = moment(v.start).format('dddd, DD MMMM')
-                                v.start = moment(v.start).format('HH:mm');
-                                v.end = moment(v.end).format('HH:mm');
-                            });
-                        }
                         if (cb) {
                             cb(res.result);
                         }
@@ -76,17 +52,6 @@
                             s.model.update(res.result, null);
                         }
                     });
-                    /*
-                                        ws.ctrl('Order', 'getAll', data).then((res) => {
-                                            if (res.ok) {
-                                                res.result.forEach((v) => {
-                                                    v.date = moment(v.start).format('dddd, DD MMMM')
-                                                    v.start = moment(v.start).format('HH:mm');
-                                                    v.end = moment(v.end).format('HH:mm');
-                                                });
-                                                s.model.update(res.result);
-                                            }
-                                        });*/
                 }
 
                 function payOrder(order) {
@@ -122,12 +87,6 @@
                     paginate: (cb) => {
                         update(null, cb)
                     },
-                   /* filter: {
-                        template: 'ordersFilterClient',
-                        rules: {
-                            status: 'contains'
-                        }
-                    },*/
                     click: (item, index) => {
                         var data = {};
                         ws.localData().then(function(d) {
@@ -141,34 +100,27 @@
                         r.route('orders/edit/' + item._id);
 
                     },
+                    hideTooltip:true,
                     buttons: [{
                         label: "Refresh",
+                        show:false,
                         type: () => "btn diags-btn bg-madison spacing-h-1",
                         click: () => update()
                     }],
                     columns: [{
+                        label: "Debug",
+                        name: "start",
+                        format:(v,item)=>r.momentDateTimeWords2(item.start)
+                    },{
                         label: "Address",
                         name: 'address'
                     }, {
-                        label: "Status",
+                        label: "Statut",
                         name: 'status'
-                    }, {
-                        label: "Start",
-                        name: "start"
-                    }, {
-                        label: "End",
-                        name: "end"
-                    }, {
-                        label: 'Created',
-                        name: 'createdAt',
-                        format: function(v, item) {
-                            return r.momentDateTime(item.createdAt);
-                        }
                     }],
                     items: []
                 };
                 update();
-                //                console.log('directive.exceptions.linked');
             }
         };
     });

@@ -1,6 +1,11 @@
-<button class=" center-block v-margin-1 btn diags-btn bg-madison" type="button" ng-click="route('clients/edit/' + session()._id)">Mon profil</button>
-<client-orders></client-orders>
-
+<div class="row">
+    <div class="row diags-bg-block-12 hidden-xs"></div>
+    <div class="row margin-top-one margin-bottom-one">
+        <div class="col-md-12 ">
+            <client-orders></client-orders>
+        </div>
+    </div>
+</div>
 
 <script type="text/ng-template" id="ordersFilterClient.html">
     <ul class="form-tiny center-block float-right">

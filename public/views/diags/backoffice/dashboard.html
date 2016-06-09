@@ -7,7 +7,7 @@
         </div>
     </div>
     <div class="row padding-none">
-        <div class="col-sm-12 padding-one padding-left-two">
+        <div class="col-sm-12 col-md-9 padding-one padding-left-two">
 
             <h6 class="dash-welcome">{{session().firstName || session().email}}, Bienvenue dans votre tableau de bord</h6>
             <out ng-if="false">
@@ -15,6 +15,9 @@
                 <h6>Ouvrir la <a href="/" target="_blank" >réservation</a> dans un nouvel onglet.</h6>
             </out>
 
+        </div>
+        <div class="col-sm-12 col-md-3 padding-one padding-right-two" ng-if="userIs('client')">
+            <button class=" center-block v-margin-1 btn diags-btn bg-madison" type="button" ng-click="route('clients/edit/' + session()._id)">Mon profil</button>
         </div>
     </div>
     <div class="row padding-none">
