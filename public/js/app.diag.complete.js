@@ -8,20 +8,22 @@ var app = angular.module('app.diag.complete', []);
 
 function TABLE_COLUMNS(r) {
     return [{
-        label: "Adresse",
-        name: 'address'
-    }, {
-        label: "Statut",
-        name: 'status'
-    }, {
-        label: "Début",
-        name: "start",
-        format: (x, item) => r.momentDateTime(item.start)
-    }, {
-        label: "Fin",
-        name: "end",
-        format: (x, item) => r.momentTime(item.end)
-    }];
+            label: "Début",
+            name: "start",
+            format: (x, item) => r.momentDateTimeWords2(item.start)
+        }, {
+            label: "Fin",
+            name: "end",
+            format: (x, item) => r.momentDateTimeWords2(item.end)
+        }, {
+            label: "Adresse",
+            name: 'address'
+        }
+        /*, {
+                label: "Statut",
+                name: 'status'
+            }*/
+    ];
 }
 
 app.directive('diagOrders', function(
@@ -737,7 +739,7 @@ app.controller('ctrl-diag-edit', [
             if (file.size / 1000 > 1624) {
                 return r.warningMessage("Limite 1.5mb pour le fichier pdf", 5000);
             }
-            
+
             if (!s.diplomesFile[_id]) return;
             var curr = _id;
 

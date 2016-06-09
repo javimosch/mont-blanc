@@ -176,22 +176,24 @@
                     name: 'start',
                     format: (v, item) => {
                         if (item.repeat !== 'none') return r.momentTime(item.start);
-                        return moment(item.start).format('DD-MM-YY HH[h]mm')
+                        //return moment(item.start).format('DD-MM-YY HH[h]mm')
+                        return r.momentDateTimeWords2(item.start);
                     }
                 }, {
                     label: "à",
                     name: 'end',
                     format: (v, item) => {
                         if (item.repeat !== 'none') return r.momentTime(item.end);
-                        return moment(item.end).format('DD-MM-YY HH[h]mm')
+                        //return moment(item.end).format('DD-MM-YY HH[h]mm')
+                        return r.momentDateTimeWords2(item.end);
                     }
                 }, {
                     label: "Règle",
                     name: 'repeat',
                     format: (v, item) => {
-                        if (item.repeat == 'none') return 'Specific date';
-                        if (item.repeat == 'day') return 'Daily';
-                        if (item.repeat == 'week') return 'Weekly';
+                        if (item.repeat == 'none') return 'Indisponibilité spécifique';
+                        if (item.repeat == 'day') return 'Indisponibilité tous les jours';
+                        if (item.repeat == 'week') return 'Indisponibilité toutes les semaines';
                         return 'Error';
                     }
                 });
