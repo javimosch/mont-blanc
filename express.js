@@ -3,7 +3,9 @@ var watch = require('watch');
 var Firebase = require("firebase");
 var path = require("path");
 var app = express();
-
+var https = require('https');
+var http = require('http');
+var fs = require('fs');
 
 var PROD = process.env.PROD && process.env.PROD.toString() == '1' || false;
 
@@ -11,7 +13,7 @@ if (!PROD) {
 	//livereload
 	var ref = new Firebase("https://madev.firebaseio.com/diagsfront");
 	var counter = 0;
-	watch.watchTree(process.cwd()+'/public/', function() {
+	watch.watchTree(process.cwd() + '/public/', function() {
 		counter++;
 		ref.child('signals').update({
 			reload: counter
@@ -43,8 +45,25 @@ app.get('/serverURL', function(req, res) {
 });
 
 var port = process.env.PORT || 3000;
-app.listen(port, function() {
+
+
+if (process.env.SSL_CERT) {
+	//HTTPS
+	var options = {
+		key: fs.readFileSync(process.env.SSL_KEY),
+		cert: fs.readFileSync(process.env.SSL_CERT),
+	};
+	https.createServer(options, app).listen(port, listening);
+}
+else {
+	//HTTP
+	app.listen(port, listening);
+}
+
+
+
+function listening() {
 	console.log('Production? ' + (PROD ? 'Oui!' : 'Non!'));
 	console.log('serverURL', process.env.serverURL || 'http://localhost:5000');
 	console.log('diags-project-frontend app listening on port ' + port + '!');
-});
+}
