@@ -1421,7 +1421,7 @@ app.controller('ctrl.booking', ['server',
                             db.ctrl('Order', 'update', {
                                 _id: s._order._id,
                                 notifications: s._order.notifications,
-                                status:s._order.status
+                                status: s._order.status
                             });
                             s.booking.complete = true;
                             s.openOrderConfirmationDelegated(() => {
@@ -1683,7 +1683,7 @@ app.controller('ctrl.booking', ['server',
                 db.ctrl('User', 'update', s._user); //async
                 //
                 var order = s._order;
-                openStripeModalPayOrder(order, (token) => {
+                $D.openStripeModalPayOrder(order, (token) => {
                     order.stripeToken = token.id;
                     order.stripeTokenEmail = token.email;
                     db.ctrl('Order', 'pay', order).then((data) => {
@@ -1727,14 +1727,22 @@ app.controller('ctrl.booking', ['server',
                         });
                     });
                 }, {
-                    config: r.config
+                    config: r.config,
+                    email: emailOfPersonWhoPaid()
                 });
                 //
             });
             //------
         };
 
-
+        function emailOfPersonWhoPaid(){
+            var session = r.session();
+            if(session && session._id == s._order._client._id){
+                return s._order._client.email;
+            }else{
+                return s._order.landLordEmail || '';
+            }
+        }
 
 
 

@@ -671,9 +671,22 @@
                             }
                         });
                     }, {
-                        config: r.config
+                        config: r.config,
+                        email: emailOfPersonWhoPaid()
                     });
                 };
+
+
+                function emailOfPersonWhoPaid() {
+                    var session = r.session();
+                    if (session && session._id == s.item._client._id) {
+                        return s.item._client.email;
+                    }
+                    else {
+                        return s.item.landLordEmail || '';
+                    }
+                }
+
 
 
                 s.back = () => {
@@ -780,7 +793,7 @@
                 };
 
                 s.deletePDF = () => {
-                    if(!s.pdfFileInfo){
+                    if (!s.pdfFileInfo) {
                         return console.warn('s.pdfFileInfo expected.');
                     }
                     s.confirm('Delete ' + s.pdfFileInfo.filename + ' ?', () => {
@@ -789,9 +802,9 @@
                         }).then((d) => {
                             if (d.ok) {
                                 s.item.pdfId = null;
-                                db.ctrl('Order','update',{
-                                    _id:s.item._id,
-                                    pdfId:s.item.pdfId
+                                db.ctrl('Order', 'update', {
+                                    _id: s.item._id,
+                                    pdfId: s.item.pdfId
                                 });
                                 r.dom();
                             }
@@ -806,7 +819,7 @@
                     if (s.pdf.file.type !== 'application/pdf') {
                         return r.warningMessage("Format pdf nécessaire", 5000);
                     }
-                     if (s.pdf.file.size/1000 > 1624) {
+                    if (s.pdf.file.size / 1000 > 1624) {
                         return r.warningMessage("Limite 1.5mb pour le fichier pdf", 5000);
                     }
                     var pdfId_prev = s.item.pdfId;
@@ -829,11 +842,11 @@
                             //console.info('INFO', data);
                             if (data.ok) {
                                 s.item.pdfId = data.result._id;
-                                
-                                if(s.item.status == 'prepaid'){
+
+                                if (s.item.status == 'prepaid') {
                                     s.item.status = 'completed';
                                 }
-                                
+
                                 db.ctrl('Order', 'update', {
                                     _id: s.item._id,
                                     pdfId: data.result._id,

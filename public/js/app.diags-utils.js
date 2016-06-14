@@ -216,9 +216,7 @@ function openStripeModalPayOrder(order, cb, opt) {
         }
     });
 
-
-    // Open Checkout with further options
-    handler.open({
+    var payload = {
         name: opt.config.companyName || "[r.config.companyName]",
         description: 'Order payment',
         //email: opt.email || order._client.email, //email need to be ingresed.
@@ -227,7 +225,14 @@ function openStripeModalPayOrder(order, cb, opt) {
         //billingAddress:true,
         zipCode: false,
         allowRememberMe: false
-    });
+    };
+    
+    if(opt.email){
+        payload.email = opt.email;
+    }
+
+    // Open Checkout with further options
+    handler.open(payload);
 
 }
 
