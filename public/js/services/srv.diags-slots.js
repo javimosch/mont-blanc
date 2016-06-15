@@ -15,7 +15,7 @@
                 //var s = scope;
                 //s.totalTime
                 
-                
+                var _settings= {};
                 
                 function requestSlots(date) {
                     return $U.MyPromise(function(resolve, error, evt) {
@@ -25,7 +25,7 @@
                             day: date,
                             time: time
                         };
-                        db.getAvailableRanges(order).then(function(data) {
+                        db.getAvailableRanges(order,_settings).then(function(data) {
                             //console.log('slots', data);
                             //data = data.length > 0 && data || null;
                             //if (!data) return;
@@ -118,6 +118,9 @@
                     var _nextTimes = 0;
                     var cursor = moment();
                     var o = {};
+                    o.setDiag = function(_diag){
+                        _settings._diag = _diag;  
+                    };
                     o.get = function() {
                         return _data;
                     };

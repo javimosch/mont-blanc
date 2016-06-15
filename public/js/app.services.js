@@ -558,7 +558,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
 
     var ws = {
         URL: () => URL,
-        getAvailableRanges: (order) => diagsGetAvailableRanges(order, ctrl),
+        getAvailableRanges: (order,opt) => diagsGetAvailableRanges(order, ctrl,opt),
         // login: login,
         // save: save,
         // get: getSingle,

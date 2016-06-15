@@ -128,7 +128,7 @@
                         format: (v, item) => item.message && item.message.substring(0, 100) + ' . . .' || 'Empty'
                     }, {
                         label: "Created",
-                        format: (v, item) => r.momentFormat(item.created, "DD-MM-YY HH[h]mm")
+                        format: (v, item) => r.momentFormat(item.createdAt, "DD-MM-YY HH[h]mm")
                     }],
                     items: [],
                     records:{

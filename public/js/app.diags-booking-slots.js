@@ -7,14 +7,15 @@
     
     var DEBUG = false;
 
-    function diagsGetAvailableRanges(order, ctrl) {
+    function diagsGetAvailableRanges(order, ctrl,opt) {
+        opt = opt|| {};
         if (!isFinite(new Date(order.day))) {
             throw Error('getAvailableRanges Invalid order day');
         }
 
         //helpers
         function diagsPriority(cb) {
-            ctrl('User', 'getAll', {
+            var payload = {
                 userType: 'diag',
                 __rules: {
                     disabled: {
@@ -22,7 +23,12 @@
                     } //exclude disabled diags
                 },
                 __select: 'priority'
-            }).then((data) => {
+            };
+            if(opt._diag){
+                payload._id = opt._diag._id || opt._diag;
+            }
+            //console.log('fs debug diags get all payload',payload);
+            ctrl('User', 'getAll', payload).then((data) => {
                 cb(data.result.map((v) => ({
                     _id: v._id,
                     priority: v.priority

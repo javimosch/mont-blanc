@@ -375,6 +375,13 @@
                 });
 
 
+
+                s.$watch('item._diag', (v) => {
+                    if (s.diagSlots) {
+                        s.diagSlots.setDiag(s.item._diag);
+                    }
+                });
+
                 db.localData().then(function(data) {
                     Object.assign(s, data);
 
@@ -683,7 +690,7 @@
                         return s.item._client.email;
                     }
                     else {
-                        return s.item.landLordEmail || '';
+                        return s.item.landLordEmail || s.item._client.email || '';
                     }
                 }
 
