@@ -1231,7 +1231,8 @@ app.controller('ctrl.booking', ['server',
 
 
         function getOrderPopupData() {
-            var keysInfo = s._order.keysAddress + ' / ' + r.momentDateTimeWords(s._order.keysTimeFrom) + ' - ' + r.momentTime(s._order.keysTimeFrom);
+            var keysInfo = s._order.keysAddress + ' / ' + r.momentDateTimeWords(s._order.keysTimeFrom) 
+            + ' - ' + r.momentTime(s._order.keysTimeTo);
             return {
                 diagNameConvertion: $D.diagNameConvertion,
                 keysInfo: keysInfo,
@@ -1243,6 +1244,7 @@ app.controller('ctrl.booking', ['server',
         s.openOrderConfirmationPrepaid = (cb) => {
             cb = cb || (() => {});
             s.openConfirm({
+                    backdrop: 'static',
                     data: getOrderPopupData(),
                     templateUrl: 'views/diags/booking/partials/booking-popup-order-prepaid.html'
                 },
@@ -1252,6 +1254,7 @@ app.controller('ctrl.booking', ['server',
         s.openOrderConfirmationDelegated = (cb) => {
             cb = cb || (() => {});
             s.openConfirm({
+                    backdrop: 'static',
                     data: getOrderPopupData(),
                     templateUrl: 'views/diags/booking/partials/booking-popup-order-delegated.html'
                 },
@@ -1735,11 +1738,12 @@ app.controller('ctrl.booking', ['server',
             //------
         };
 
-        function emailOfPersonWhoPaid(){
+        function emailOfPersonWhoPaid() {
             var session = r.session();
-            if(session && session._id == s._order._client._id){
+            if (session && session._id == s._order._client._id) {
                 return s._order._client.email;
-            }else{
+            }
+            else {
                 return s._order.landLordEmail || '';
             }
         }

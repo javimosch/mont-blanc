@@ -1123,6 +1123,7 @@ app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal
 
                 //
                 var modalInstance = $uibModal.open({
+                    backdrop: opt.backdrop || true,
                     animation: true,
                     templateUrl: opt.templateUrl || 'views/directives/directive.modal.sure.html',
                     controller: function($scope, $uibModalInstance) {
