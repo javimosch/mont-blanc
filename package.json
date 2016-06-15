@@ -1,9 +1,9 @@
 {
-  "name": "diags-project-frontend",
+  "name": "diagnostical-frontend",
   "version": "1.0.0",
-  "description": "heroku: refuge",
+  "description": "Frontend Application (AngularJS, Bootstrap, Jquery)",
   "main": "index.js",
-  "author": "",
+  "author": "Javier Arancibia (arancibiajav@gmail.com)",
   "scripts": {
     "test": "mocha",
     "test2": "echo \"Error: no test specified\" && exit 1",
