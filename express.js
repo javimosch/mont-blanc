@@ -6,6 +6,7 @@ var app = express();
 var https = require('https');
 var http = require('http');
 var fs = require('fs');
+require('dotenv').config();
 
 var appDetails = {};
 
