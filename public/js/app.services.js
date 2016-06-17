@@ -21,6 +21,65 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
         });
     }
 
+    r.htmlEditCancel = () => {
+        r.htmlEditItem = undefined;
+        r.dom();
+    }
+    r.htmlEditSave = () => {
+        r.htmlEditItem.content = window.encodeURIComponent(window.CKEDITOR.instances.editor.getData());
+        r.__text[r.htmlEditItem.code] = window.decodeURIComponent(r.htmlEditItem.content);
+        db.ctrl('Text', 'save', r.htmlEditItem).then(() => {});
+        r.htmlEditItem = undefined;
+        r.dom();
+    }
+    r.htmlEdit = (code) => {
+        r.routeParams({
+            code: code
+        });
+
+        if (!window.CKEDITOR) {
+            $.getScript("https://cdn.ckeditor.com/4.5.9/full/ckeditor.js");
+        }
+
+        function setData(decodedData) {
+            if (!window.CKEDITOR 
+            && (window.CKEDITOR && !window.CKEDITOR.instances)
+            && (window.CKEDITOR && window.CKEDITOR.instances && !window.CKEDITOR.instances.editor))
+                return setTimeout(() => setData(decodedData), 500);
+            window.CKEDITOR.instances.editor.setData(decodedData);
+        }
+        db.ctrl('Text', 'get', {
+            code: r.params.code
+        }).then(res => {
+            if (res.ok && res.result) {
+                r.htmlEditItem = res.result;
+                setData(window.decodeURIComponent(r.htmlEditItem.content))
+                $U.scrollToTop();
+            }
+        });
+
+        /*
+        r.modalConfirm.first({
+                backdrop: 'static',
+                // data: getOrderPopupData(),
+                templateUrl: 'views/diags/backoffice/text/text-edit.html'
+            },
+
+            () => {
+                //retrieve change and set
+                setTimeout(function(){
+                    if(r.params._text){
+                        if(r.params._text.code==code){
+                            r.__text[code] = window.decodeURIComponent(r.params._text.content);
+                            r.dom();
+                        }
+                    }
+                },1000);
+            }
+        );
+        */
+    };
+
     r.html = function(code) {
         var txt = r.__textSTATIC[code] || '';
         if (r.__text && r.__text[code]) {
@@ -42,7 +101,43 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
             }
 
         }
-        return r.__text && r.__text[code] || txt || ((r.isDevEnv()) ? code : '');
+
+
+
+        function buildBlock() {
+            var html = '';
+
+            //returns an edit icon (if admin)
+            if (r.userIs('admin')) {
+                html += "<i  onclick=\"r.htmlEdit('" + code + "')\" style='opacity:0.4; margin-left:-1em' class='link absolute fa fa-pencil-square-o ' aria-hidden='true'></i>&nbsp;";
+            }
+
+            //returns the content (if exists)
+            if (r.__text && r.__text[code] && r.__text[code].length>1) {
+                html += r.__text[code]
+            }
+            else {
+                //returns an static content
+                if (txt) {
+                    html += txt;
+                }
+                else {
+                    //returns the code of the text (if dev env)
+                    if (r.isDevEnv() || r.userIs('admin')) {
+                        html += code;
+                    }
+                    else {
+                        //returns nothing (if production or user is not admin)
+                    }
+                }
+            }
+
+
+
+
+            return html;
+        }
+        return buildBlock();
     };
 
 }]);
@@ -558,7 +653,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
 
     var ws = {
         URL: () => URL,
-        getAvailableRanges: (order,opt) => diagsGetAvailableRanges(order, ctrl,opt),
+        getAvailableRanges: (order, opt) => diagsGetAvailableRanges(order, ctrl, opt),
         // login: login,
         // save: save,
         // get: getSingle,

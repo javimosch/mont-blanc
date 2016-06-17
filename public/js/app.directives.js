@@ -15,14 +15,22 @@ app.directive("bindHtmlCompile", ["$compile", function(compile) {
             }, function(e) {
                 el.html(e && e.toString());
                 var f = s;
-                attrs.bindHtmlScope && (f = s.$eval(attrs.bindHtmlScope)), compile(el.contents())(f)
+                if(attrs.bindHtmlScope){
+                    f = s.$eval(attrs.bindHtmlScope);
+                }
+                var compiled = compile(el.contents())(f);
+                //console.info(compiled);
+                el.html('').append(compiled);
 
                 var first = el.find(':first-child');
                 var tag = first && first.get(0) && first.get(0).tagName.toUpperCase() || "NONE";
                 if (tag == "SPAN") { //|| tag == "DIV"
+                    var other = $(el).find("*").not(":first");
+                    first.append(other);
                     el.html(first.html());
                 }
-
+                
+                //console.log('FIRST',first.html(),'EL',el.html());
 
             })
         }
@@ -1138,11 +1146,20 @@ app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal
                         $scope.cancel = function() {
                             $uibModalInstance.dismiss('cancel');
                         };
+                        $scope.close = function(good) {
+                            $uibModalInstance.dismiss('cancel');
+                            if(good && okCallback) okCallback();
+                        };
+                        r._modal = $scope;
                     },
                     //size: '',
                     //resolve: {}
                 });
             };
+            var r = $rootScope;
+            r.modalConfirm = r.modalConfirm || {};
+            r.modalConfirm[attrs.open] = s.open;
+            r.modalConfirm.first = s.open;
             //console.log('directive:modalSure:linked');
         }
     };

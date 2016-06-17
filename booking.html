@@ -38,6 +38,21 @@
 
     <!-- GLOBAL LAYOUT -->
     <div id="wrapper">
+
+        <div class="container-fluid" ng-if="userIs('admin')" ng-show="htmlEditItem" class="hidden" remove-hidden>
+            <div class="row">
+                <div class="col-sm-12">
+                    <textarea ck-editor name="editor" class="hidden" remove-hidden></textarea>
+                </div>
+            </div>
+            <div class="row diags-row margin-bottom-two margin-top-one" ng-show="params.code">
+                <div class="col-sm-12">
+                    <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="htmlEditSave()">Enregistrer</button>
+                    <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="htmlEditCancel()">Annuler</button>
+                </div>
+            </div>
+        </div>
+
         <div class="container-fluid">
             <div class="row-fluid">
                 <div ng-show="__header==1" ng-include="'views/diags/booking/partials/booking-header.html'"></div>
@@ -190,7 +205,7 @@
     <script src="js/vendor/vendor.ui-bootstrap.js"></script>
     <script src="js/vendor/vendor.ui-bootstrap-tpls.js"></script>
     <script src="js/vendor/vendor.lodash.js"></script>
-    
+
     <!--COMMON-->
     <script type="text/javascript" src="js/common/fs.env.js"></script>
     <script type="text/javascript" src="js/common/fs.utils.js"></script>
@@ -199,9 +214,12 @@
     <script src="js/app.diags-utils.js"></script>
     <script src="js/app.diags-booking-slots.js"></script>
     <script type="text/javascript" src="js/diags/ctrls/diags_ctrl_contact_form.js"></script>
-
+    
+    
     <!--BOOKING-->
     <script src="js/app.booking.js"></script>
+    <script src="js/directives/remove-hidden.js"></script>
+    <script type="text/javascript" src="js/app.text.js"></script>
     <script src="js/services/srv.diags-prices.js"></script>
     <script src="js/services/srv.diags-slots.js"></script>
     <script src="js/directives/checkbox.js"></script>

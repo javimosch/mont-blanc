@@ -2,13 +2,15 @@
 /*global $D*/
 /*global moment*/
 /*global _*/
+/*global $*/
 /*global app*/
 /*global Quill*/
 /*global tinymce*/
+/*global CKEDITOR*/
 (function() {
 
 
-    function updateCategorySelectData(s, db,cb) {
+    function updateCategorySelectData(s, db, cb) {
         s.categories = [];
         db.ctrl('Category', "get", {
             code: "DIAGS"
@@ -19,12 +21,29 @@
                 }).then(function(r) {
                     if (r && r.ok && r.result) {
                         s.categories = r.result;
-                        if(cb) cb();
+                        if (cb) cb();
                     }
                 });
             }
         });
     }
+
+
+
+    app.directive("ckEditor", ["$compile", function(compile) {
+        return {
+            restrict: "A",
+            link: function(s, el, attrs) {
+                function init() {
+                    if (typeof window.CKEDITOR !== 'undefined') {
+                        CKEDITOR.replace(attrs.name);
+                    }
+                    else setTimeout(init, 1000);
+                }
+                init();
+            }
+        }
+    }]);
 
     app.controller('ctrl-text-edit', ['server', '$scope', '$rootScope', '$routeParams', 'focus',
         function(db, s, r, params) {
@@ -38,8 +57,18 @@
                 updatedByHuman: true
             };
 
+            var isCKEditor = () => r.params.code || r.params.ckeditor;
+            s.isCKEditor = isCKEditor;
+
             updateCategorySelectData(s, db);
-            check(); //checks when the wysing lib is ready and init the components.
+
+            if (isCKEditor()) {
+                init(); //async
+            }
+            else {
+                check(); //checks when the wysing lib is ready and init the components.    
+            }
+
             //
             s.read = function() {
                     db.ctrl('Text', 'get', {
@@ -48,7 +77,8 @@
                         if (res.ok) {
                             s.item = res.result;
                             // s.editor.setHTML(window.decodeURIComponent(s.item.content));
-                            tinymce.activeEditor.setContent(window.decodeURIComponent(s.item.content));
+                            setData(window.decodeURIComponent(s.item.content));
+
                         }
                         else {
                             r.warningMessage('Server issue while reading item. Try later.');
@@ -62,9 +92,20 @@
                 if (!s.item._category) return r.warningMessage('Page Section required');
                 //
                 s.item.updatedByHuman = true;
-                s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
+                if (isCKEditor()) {
+                    s.item.content = window.encodeURIComponent(CKEDITOR.instances.editor.getData());
+                }
+                else {
+                    s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
+                }
+
                 db.ctrl('Text', 'save', s.item).then(function() {
                     r.route('texts');
+                    if (r.params.code) {
+                        r.routeParams({
+                            _text: s.item
+                        });
+                    }
                 });
             };
             s.delete = function() {
@@ -86,27 +127,19 @@
 
             //
 
-            function initQuill() {
-                s.editor = new Quill('#editor', {
-                    styles: {
-                        '.ql-editor': {
-                            'font-family': "'Avenir-Book'"
-                        },
-                        '.ql-editor a': {
-                            'text-decoration': 'none'
-                        }
-                    },
-                    modules: {
-                        toolbar: '#toolbar'
-                    },
-                    theme: 'snow'
-                });
-
-                s.editor.on('text-change', function(delta, source) {
-                    var html = s.editor.getHTML();
-                    s.item.content = window.encodeURIComponent(html);
-                });
+            function setData(decodedData) {
+                if (isCKEditor()) {
+                    if (!CKEDITOR) return setTimeout(() => setData(decodedData), 500);
+                    CKEDITOR.instances.editor.setData(decodedData);
+                }
+                else {
+                    tinymce.activeEditor.setContent(decodedData);
+                }
             }
+
+
+
+
 
             function initTinyMCE() {
 
@@ -135,8 +168,14 @@
             }
 
             function init() {
-                //initQuill();
-                initTinyMCE();
+
+                if (isCKEditor()) {
+                    //uses directive
+                }
+                else {
+                    initTinyMCE();
+                }
+
 
 
                 if (params && params.id && params.id.toString() !== '-1') {
@@ -144,7 +183,16 @@
                     r.dom(s.read, 0);
                 }
                 else {
-
+                    if (r.params.code) {
+                        db.ctrl('Text', 'get', {
+                            code: r.params.code
+                        }).then(res => {
+                            if (res.ok && res.result) {
+                                s.item._id = res.result._id;
+                                r.dom(s.read, 0);
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -180,9 +228,9 @@
                         __populate: {
                             '_category': 'code',
                         },
-                        __rules:{
-                            _category:{
-                                $in: s.model.categories.map(c=>c._id)
+                        __rules: {
+                            _category: {
+                                $in: s.model.categories.map(c => c._id)
                             }
                         },
                         __sort: "-createdAt",
@@ -217,10 +265,10 @@
                 }
                 s.model = {
                     init: function() {
-                        updateCategorySelectData(s.model, db,()=>{
-                            s.model.filter.firstTime();    
+                        updateCategorySelectData(s.model, db, () => {
+                            s.model.filter.firstTime();
                         });
-                        
+
                     },
                     filter: {
                         store: "TEXTS_LIST",

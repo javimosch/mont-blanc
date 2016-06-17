@@ -2,20 +2,22 @@
 
 <script type="text/javascript">
     /*global $*/
-    //if(typeof window.Quill == 'undefined'){
-        //$.getScript( "https://cdn.quilljs.com/latest/quill.js" );
-   // }
-    
-    if(typeof window.tinymce == 'undefined'){
-        $.getScript( "https://cdn.tinymce.com/4/tinymce.min.js" );
+    /*global r*/
+    if (r && r.params && r.params.code) {
+        $.getScript("https://cdn.ckeditor.com/4.5.9/full/ckeditor.js");
     }
-    
-    
+    else {
+
+        if (typeof window.tinymce == 'undefined') {
+            $.getScript("https://cdn.tinymce.com/4/tinymce.min.js");
+        }
+
+    }
 </script>
 
 
 
-<div class="row">
+<div class="row" ng-show="!params.code">
     <div class="col-sm-12 padding-none">
         <ol class="breadcrumb">
             <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
@@ -28,110 +30,50 @@
     <modal-confirm open="confirm"></modal-confirm>
     <div class="row diags-row margin-bottom-two">
         <div class="col-sm-12 col-md-12">
-            <div class="row margin-top-one">
+
+            <div class="row margin-top-one" ng-show="!params.code">
                 <label>Page Section</label>
             </div>
-            <div class="row  margin-top-half">
-                <select ng-model="item._category"
-                class="diags-input"
-                ng-options="item._id as item.code for item in categories"
-                >
+            <div class="row  margin-top-half" ng-show="!params.code">
+                <select ng-model="item._category" class="diags-input" ng-options="item._id as item.code for item in categories">
                     <option value="">Select</option>
                     <!--<option ng-repeat="item in categories" ng-value="item._id" ng-bind="item.code"></option>-->
                 </select>
             </div>
-            <div class="row margin-top-one">
+            <div class="row margin-top-one" ng-show="!params.code">
                 <label>Code</label>
             </div>
-            <div class="row  margin-top-half">
+            <div class="row  margin-top-half" ng-show="!params.code">
                 <input ng-disabled="state.working()" ng-model="item.code" class="diags-input" placeholder="Code">
             </div>
-            <div class="row margin-top-one">
+            <div class="row margin-top-one" ng-show="!params.code">
                 <label>Description</label>
             </div>
-            <div class="row  margin-top-half">
+            <div class="row  margin-top-half" ng-show="!params.code">
                 <input ng-disabled="state.working()" ng-model="item.description" class="diags-input" placeholder="Description">
             </div>
-            
-            <!--
+
             <div class="row margin-top-one">
-                <div id="toolbar">
-                    
-                    <select class="ql-size">
-                        <option value="10px">Small</option>
-                        <option value="13px" selected>Normal</option>
-                        <option value="18px">Large</option>
-                        <option value="32px">Huge</option>
-                    </select>
-
-                    <button ng-disabled="state.working()" class="ql-bold">Bold</button>
-                    <button ng-disabled="state.working()" class="ql-italic">Italic</button>
-                    <button ng-disabled="state.working()" class="ql-strike">Strike</button>
-                    <button ng-disabled="state.working()" class="ql-underline">Underline</button>
-
-                    <span class="ql-format-group"></span>
-                    <select title="Text Color" class="ql-color">
-                        <option value="rgb(0, 0, 0)" label="rgb(0, 0, 0)" selected=""></option>
-                        <option value="rgb(230, 0, 0)" label="rgb(230, 0, 0)"></option>
-                        <option value="rgb(255, 153, 0)" label="rgb(255, 153, 0)"></option>
-                        <option value="rgb(255, 255, 0)" label="rgb(255, 255, 0)"></option>
-                        <option value="rgb(0, 138, 0)" label="rgb(0, 138, 0)"></option>
-                        <option value="rgb(0, 102, 204)" label="rgb(0, 102, 204)"></option>
-                        <option value="rgb(153, 51, 255)" label="rgb(153, 51, 255)"></option>
-                        <option value="rgb(255, 255, 255)" label="rgb(255, 255, 255)"></option>
-                        <option value="rgb(250, 204, 204)" label="rgb(250, 204, 204)"></option>
-                        <option value="rgb(255, 235, 204)" label="rgb(255, 235, 204)"></option>
-                        <option value="rgb(255, 255, 204)" label="rgb(255, 255, 204)"></option>
-                        <option value="rgb(204, 232, 204)" label="rgb(204, 232, 204)"></option>
-                        <option value="rgb(204, 224, 245)" label="rgb(204, 224, 245)"></option>
-                        <option value="rgb(235, 214, 255)" label="rgb(235, 214, 255)"></option>
-                        <option value="rgb(187, 187, 187)" label="rgb(187, 187, 187)"></option>
-                        <option value="rgb(240, 102, 102)" label="rgb(240, 102, 102)"></option>
-                        <option value="rgb(255, 194, 102)" label="rgb(255, 194, 102)"></option>
-                        <option value="rgb(255, 255, 102)" label="rgb(255, 255, 102)"></option>
-                        <option value="rgb(102, 185, 102)" label="rgb(102, 185, 102)"></option>
-                        <option value="rgb(102, 163, 224)" label="rgb(102, 163, 224)"></option>
-                        <option value="rgb(194, 133, 255)" label="rgb(194, 133, 255)"></option>
-                        <option value="rgb(136, 136, 136)" label="rgb(136, 136, 136)"></option>
-                        <option value="rgb(161, 0, 0)" label="rgb(161, 0, 0)"></option>
-                        <option value="rgb(178, 107, 0)" label="rgb(178, 107, 0)"></option>
-                        <option value="rgb(178, 178, 0)" label="rgb(178, 178, 0)"></option>
-                        <option value="rgb(0, 97, 0)" label="rgb(0, 97, 0)"></option>
-                        <option value="rgb(0, 71, 178)" label="rgb(0, 71, 178)"></option>
-                        <option value="rgb(107, 36, 178)" label="rgb(107, 36, 178)"></option>
-                        <option value="rgb(68, 68, 68)" label="rgb(68, 68, 68)"></option>
-                        <option value="rgb(92, 0, 0)" label="rgb(92, 0, 0)"></option>
-                        <option value="rgb(102, 61, 0)" label="rgb(102, 61, 0)"></option>
-                        <option value="rgb(102, 102, 0)" label="rgb(102, 102, 0)"></option>
-                        <option value="rgb(0, 55, 0)" label="rgb(0, 55, 0)"></option>
-                        <option value="rgb(0, 41, 102)" label="rgb(0, 41, 102)"></option>
-                        <option value="rgb(61, 20, 102)" label="rgb(61, 20, 102)"></option>
-                    </select>
-
-                    <span class="ql-format-separator"></span>
-                    <select title="Text Alignment" class="ql-align">
-                        <option value="left" label="Left" selected=""></option>
-                        <option value="center" label="Center"></option>
-                        <option value="right" label="Right"></option>
-                        <option value="justify" label="Justify"></option>
-                    </select>
-
-
-                </div>
-            </div>
-            -->
-            <div class="row margin-top-one">
-                <div id="editor" class="diags-rich-text-editor">
+                <div id="editor" class="diags-rich-text-editor" ng-if="!params.code">
                     <p></p>
                 </div>
+                
+                <textarea ck-editor name="editor" ng-if="params.code"></textarea>
+                
             </div>
         </div>
     </div>
-    <div class="row diags-row margin-bottom-two">
+    <div class="row diags-row margin-bottom-two" ng-show="!params.code">
         <div class="col-sm-12">
             <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="save()">Enregistrer</button>
             <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="route('texts')">Annuler</button>
             <button ng-show="userIs('admin')" ng-disabled="state.working() || !item._id " class="btn diags-btn bg-azure-radiance" ng-click="delete()">Supprimer</button>
+        </div>
+    </div>
+    <div class="row diags-row margin-bottom-two" ng-show="params.code">
+        <div class="col-sm-12">
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="(save()&&false) || _modal.close(true)">Enregistrer</button>
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="_modal.close()">Annuler</button>
         </div>
     </div>
 </div>

@@ -588,7 +588,7 @@ app.controller('ctrl.booking', ['server',
         });
 
 
-
+        
 
         s.htmlReplaceDiagName = function(str) {
             var code = str.replace('$NAME', s.diagSelected.label2).toUpperCase();
@@ -1231,8 +1231,8 @@ app.controller('ctrl.booking', ['server',
 
 
         function getOrderPopupData() {
-            var keysInfo = s._order.keysAddress + ' / ' + r.momentDateTimeWords(s._order.keysTimeFrom) 
-            + ' - ' + r.momentTime(s._order.keysTimeTo);
+            var keysInfo = s._order.keysAddress + ' / ' + r.momentDateTimeWords(s._order.keysTimeFrom) +
+                ' - ' + r.momentTime(s._order.keysTimeTo);
             return {
                 diagNameConvertion: $D.diagNameConvertion,
                 keysInfo: keysInfo,
