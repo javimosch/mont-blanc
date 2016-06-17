@@ -206,13 +206,14 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
    
 
     r.session = function(data) {
+        var id = r.config.APP_NAME+'_'+window.location.hostname+env.STORE_SESSION_PREFIX;
         if (data) {
-            $U.store.set(r.config.APP_NAME+env.STORE_SESSION_PREFIX,data);
+            $U.store.set(id,data);
             r._session = data;
         }
-        r._session = $U.store.get(r.config.APP_NAME+env.STORE_SESSION_PREFIX);
+        r._session = $U.store.get(id);
         if(!r._session){
-            $U.store.set(r.config.APP_NAME+env.STORE_SESSION_PREFIX,{});
+            $U.store.set(id,{});
             r._session={};
         }
         return r._session;
