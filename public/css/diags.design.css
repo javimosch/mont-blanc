@@ -414,12 +414,26 @@ a.diag-btn-info:hover {
 
 .home-brandon-re-38-489,
 .home-brandon-re-38-489 span {
-    font-family: 'BrandonGrotesque-Regular';
+   font-family: 'BrandonGrotesque-Regular';
     max-width: 489px;
     text-align: left;
     color: white;
-    line-height: 47px;
-    margin-top: 10px;
+    line-height: 38px;
+    margin-top: 15px;
+    margin-bottom: 30px;
+}
+
+@media screen and (min-width: 768px) {
+    .home-brandon-re-38-489,
+    .home-brandon-re-38-489 span {
+        font-family: 'BrandonGrotesque-Regular';
+        max-width: 489px;
+        text-align: left;
+        color: white;
+        line-height: 47px;
+        margin-top: 10px;
+          margin-bottom: 10px;
+    }
 }
 
 @media screen and (max-width: 768px) {
