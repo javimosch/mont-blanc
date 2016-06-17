@@ -137,7 +137,7 @@
                         });
                     },
                     buttons: [{
-                        label: "Refresh",
+                        label: "Rafraîchir",
                         type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => s.model.filter.filter()
                     }, {

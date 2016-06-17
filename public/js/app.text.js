@@ -228,47 +228,30 @@
                         __populate: {
                             '_category': 'code',
                         },
-                        __rules: {
-                            _category: {
-                                $in: s.model.categories.map(c => c._id)
-                            }
-                        },
+                       // __rules: {
+                        //    _category: {
+                        //        $in: s.model.categories.map(c => c._id)
+                        //    }
+                        //},
                         __sort: "-createdAt",
 
                     };
+                    data = Object.assign(data, s.model.filter.payload);
+                    dbPaginate.ctrl(data, s.model).then(res => {
+                        if (cb) {
+                            cb(res.result);
+                        }
+                        else {
+                            s.model.update(res.result, null);
+                        }
+                    });
 
-                    r.dom(_apply);
-
-                    function _apply() {
-
-                        /*
-                        var code = s.model.filter.fields.code;
-                        if (code) {
-                            data.__rules = data.__rules || {};
-                            data.__rules.code = {
-                                $in: code
-                            };
-                        }*/
-
-                        data = Object.assign(data, s.model.filter.payload);
-                        //console.info('filter-payload', s.model.filter.payload);
-
-                        dbPaginate.ctrl(data, s.model).then(res => {
-                            if (cb) {
-                                cb(res.result);
-                            }
-                            else {
-                                s.model.update(res.result, null);
-                            }
-                        });
-                    }
                 }
                 s.model = {
                     init: function() {
                         updateCategorySelectData(s.model, db, () => {
                             s.model.filter.firstTime();
                         });
-
                     },
                     filter: {
                         store: "TEXTS_LIST",
@@ -280,7 +263,7 @@
                         }
                     },
                     pagination: {
-                        itemsPerPage: 5
+                        itemsPerPage: 10
                     },
                     paginate: (cb) => {
                         update(null, cb)
@@ -292,7 +275,7 @@
                         r.route('texts/edit/' + item._id);
                     },
                     buttons: [{
-                        label: "Refresh",
+                        label: "Rafraîchir",
                         type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => s.model.filter.filter()
                     }, {
@@ -300,7 +283,7 @@
                         type: () => "btn diags-btn bg-azure-radiance margin-left-0 margin-right-1",
                         click: () => s.model.filter.clear && s.model.filter.clear()
                     }, {
-                        label: "New Item",
+                        label: "Créer",
                         type: () => "btn diags-btn bg-azure-radiance margin-right-1",
                         click: () => r.route('texts/edit/-1')
                     }],

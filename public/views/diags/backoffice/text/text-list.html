@@ -26,13 +26,15 @@
         </li>-->
         <li>
             <label class="diags-label-horizontal">Page Section</label>
-            <select class="diags-input" ng-model="model.filter.fields._category" ng-options="item._id as item.code for item in model.categories">
+            <select class="diags-input" ng-model="model.filter.fields._category"
+            ng-change="model.filter.filter()"
+            ng-options="item._id as item.code for item in model.categories">
                 <option value="">Select</option>
             </select>
         </li>
         <li class="margin-top-quarter">
             <label class="diags-label-horizontal">Code</label>
-            <input class="diags-input" ng-model="model.filter.fields.code" placeholder="Code" />
+            <input class="diags-input" ng-model="model.filter.fields.code" placeholder="Code" key-bind="model.filter.filter()" code="13" event-type="keyup" />
         </li>
 
     </ul>
