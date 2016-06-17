@@ -30,6 +30,17 @@ app.directive("bindHtmlCompile", ["$compile", function(compile) {
                     el.html(first.html());
                 }
                 
+                //the follow fix is for avoid double span in dom tree ex: span > span
+                var text = '';
+                el.children().each(function(){
+                   if($(this).get(0).tagName=='SPAN'){
+                       text+=$(this).text();
+                   } 
+                });
+                if(text.length>0){
+                    el.text(text);
+                }
+                
                 //console.log('FIRST',first.html(),'EL',el.html());
 
             })

@@ -113,6 +113,7 @@ html {
     background-color: #EDF5F9;
     height: 43px;
 }
+
 .diags-bg-block-12 {
     background-color: #EDF5F9;
     height: 12px;
@@ -200,7 +201,9 @@ html {
 }
 
 @media screen and (min-width: 768px) {
-    .diags-navbar-2 div, .diags-navbar-2 ul, .diags-navbar-2 li {
+    .diags-navbar-2 div,
+    .diags-navbar-2 ul,
+    .diags-navbar-2 li {
         height: 45px!important;
         /*line-height: 45px!important;*/
         vertical-align: middle!important;
@@ -290,7 +293,10 @@ ul.menu li a {
 /*GRID FIX*/
 
 @media only screen and (min-width: 992px) {
-    .diag-row .col-md-12, .diag-row .col-sm-12, .diag-row .col-md-6, .diag-row .col-sm-6 {
+    .diag-row .col-md-12,
+    .diag-row .col-sm-12,
+    .diag-row .col-md-6,
+    .diag-row .col-sm-6 {
         padding: 0px;
     }
 }
@@ -406,21 +412,26 @@ a.diag-btn-info:hover {
     margin-top: 55px;
 }
 
-.home-brandon-re-38-489 {
+.home-brandon-re-38-489,
+.home-brandon-re-38-489 span {
     font-family: 'BrandonGrotesque-Regular';
     max-width: 489px;
     text-align: left;
     color: white;
+    line-height: 47px;
+    margin-top: 10px;
 }
 
 @media screen and (max-width: 768px) {
-    .home-brandon-re-38-489 {
+    .home-brandon-re-38-489,
+    .home-brandon-re-38-489 span {
         font-size: 28px;
     }
 }
 
 @media screen and (min-width: 768px) {
-    .home-brandon-re-38-489 {
+    .home-brandon-re-38-489,
+    .home-brandon-re-38-489 span {
         font-size: 38px;
     }
 }
@@ -504,7 +515,7 @@ ul.docs-notification-types h6 {
     font-weight: 700;
 }
 
-.dynamic-table-wrapper .button-group > button {
+.dynamic-table-wrapper .button-group> button {
     margin-bottom: 0.2em;
 }
 
@@ -528,12 +539,12 @@ ul.docs-notification-types h6 {
     text-align: left;
 }
 
-.booking-form input[type="checkbox"] + span {
+.booking-form input[type="checkbox"]+ span {
     line-height: 23px;
 }
 
-input[type="radio"]:disabled + span,
-input[type="checkbox"]:disabled + span {
+input[type="radio"]:disabled+ span,
+input[type="checkbox"]:disabled+ span {
     opacity: 1!important;
 }
 
@@ -542,7 +553,7 @@ input[type="checkbox"]:disabled + span {
     margin: 0px;
 }
 
-.diag-row > div {
+.diag-row> div {
     margin-bottom: 10px;
 }
 
@@ -641,7 +652,8 @@ footer .title-2 {
 }
 
 @media only screen and (min-width: 1200px) {
-    footer .title-1, footer .title-2 {
+    footer .title-1,
+    footer .title-2 {
         line-height: 98px;
     }
 }
@@ -675,14 +687,14 @@ ul.diags li:first-child {
 }
 
 h2.diags,
-h2.diags > div {
+h2.diags> div {
     font-family: 'Avenir-Book';
     font-size: 36px;
     padding-bottom: 33px;
 }
 
 h2.diags.black,
-h2.diags.black > div {
+h2.diags.black> div {
     color: black;
 }
 
@@ -944,11 +956,11 @@ h2.diags.black > div {
     transform: rotate(-45deg);
 }*/
 
-.check.mark-white:checked + span::before {
+.check.mark-white:checked+ span::before {
     color: white;
 }
 
-.check.mark-white + .sky-blue::before {
+.check.mark-white+ .sky-blue::before {
     border: solid 2px #00A9FF;
     background: #00A9FF;
 }
@@ -1042,7 +1054,7 @@ h2.diags.black > div {
 }
 
 .home-title-right,
-.home-title-right > div {
+.home-title-right> div {
     font-family: 'Avenir-Book';
     font-size: 32px;
     color: white;
@@ -1083,7 +1095,9 @@ table.dg-dates tr.selected {
     max-width: 240px;
 }
 
-.diags-input,.pika-wrapper.diags,.pika-single.diags .pika-select {
+.diags-input,
+.pika-wrapper.diags,
+.pika-single.diags .pika-select {
     width: 286px;
     height: 48px;
     background-color: #EDF5F9;
@@ -1132,14 +1146,14 @@ label.minimal {
     padding: 0px 0px 0px 26px;
 }
 
-.diags-form .diags-input > span:first-child {
+.diags-form .diags-input> span:first-child {
     font-family: 'Avenir-Oblique';
     color: #8597AB!important;
     font-size: 14px;
 }
 
-.dash-welcome{
-    font-size:14px;
+.dash-welcome {
+    font-size: 14px;
     color: #00A9FF;
 }
 
@@ -1147,13 +1161,14 @@ label.minimal {
     top: 14px;
 }
 
-.diags-form .diags-btn-group > div {
+.diags-form .diags-btn-group> div {
     padding: 0px;
 }
 
 .diags-input.xs {
     width: 90px;
 }
+
 .diags-input.sm {
     width: 130px;
 }
@@ -1261,14 +1276,14 @@ label.minimal {
     padding: 20px 0px;
 }
 
-.diag-row-form > div {
+.diag-row-form> div {
     margin-top: 2em;
 }
 
 .diag-row-form {}
 
 p.stripe-home-message,
-p.stripe-home-message > span {
+p.stripe-home-message> span {
     font-family: 'Avenir-Medium';
 }
 
@@ -1284,7 +1299,7 @@ p.stripe-home-message {
     font-size: 30px;
 }
 
-p.stripe-home-message > span {
+p.stripe-home-message> span {
     vertical-align: bottom;
     font-size: 16px;
 }

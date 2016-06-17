@@ -38,20 +38,12 @@
 
     <!-- GLOBAL LAYOUT -->
     <div id="wrapper">
-
-        <div class="container-fluid" ng-if="userIs('admin')" ng-show="htmlEditItem" class="hidden" remove-hidden>
-            <div class="row">
-                <div class="col-sm-12">
-                    <textarea ck-editor name="editor" class="hidden" remove-hidden></textarea>
-                </div>
-            </div>
-            <div class="row diags-row margin-bottom-two margin-top-one" ng-show="params.code">
-                <div class="col-sm-12">
-                    <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="htmlEditSave()">Enregistrer</button>
-                    <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="htmlEditCancel()">Annuler</button>
-                </div>
-            </div>
+        
+        <div ng-if="userIs('admin')" ng-show="htmlEditItem" 
+            ng-include="'views/common/partials/html-edit-ck-editor.html'">
         </div>
+
+        
 
         <div class="container-fluid">
             <div class="row-fluid">

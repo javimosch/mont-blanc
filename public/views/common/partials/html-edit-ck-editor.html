@@ -1,0 +1,13 @@
+<div class="container-fluid" class="hidden" remove-hidden>
+    <div class="row">
+        <div class="col-sm-12">
+            <textarea ck-editor name="editor" class="hidden" remove-hidden></textarea>
+        </div>
+    </div>
+    <div class="row diags-row margin-bottom-two margin-top-one" ng-show="params.code">
+        <div class="col-sm-12">
+            <button remove-hidden ng-disabled="state.working()" class="hidden btn diags-btn bg-azure-radiance" ng-click="htmlEditSave()">Enregistrer</button>
+            <button remove-hidden ng-disabled="state.working()" class="hidden btn diags-btn bg-azure-radiance" ng-click="htmlEditCancel()">Annuler</button>
+        </div>
+    </div>
+</div>

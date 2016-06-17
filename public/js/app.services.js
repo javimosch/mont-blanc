@@ -43,8 +43,8 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
 
         function setData(decodedData) {
             if (!window.CKEDITOR 
-            && (window.CKEDITOR && !window.CKEDITOR.instances)
-            && (window.CKEDITOR && window.CKEDITOR.instances && !window.CKEDITOR.instances.editor))
+            || (window.CKEDITOR && !window.CKEDITOR.instances)
+            || (window.CKEDITOR && window.CKEDITOR.instances && !window.CKEDITOR.instances.editor))
                 return setTimeout(() => setData(decodedData), 500);
             window.CKEDITOR.instances.editor.setData(decodedData);
         }
