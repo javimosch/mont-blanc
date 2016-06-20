@@ -84,13 +84,15 @@ else {
 }
 
 if(process.env.INJECT_BACKEND_FROM && process.env.INJECT_BACKEND_FROM_RELATIVE_CWD){
-	try{
+	//try{
 		console.log('fs debug bs injecting ...');
 	require(process.env.INJECT_BACKEND_FROM).configure(app, process.env.INJECT_BACKEND_FROM_RELATIVE_CWD);
-	console.log('fs debug bs injected success');
-	}catch(e){
-		console.log('fs debug bs inject error',e);
-	}
+	//console.log('fs debug bs injected success');
+	//}catch(e){
+	//	console.log('fs debug bs inject error',e);
+	//}
+}else{
+	require('./api').configure(app);
 }
 
 

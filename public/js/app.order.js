@@ -18,7 +18,7 @@
             s.selectedItems = [];
             s.items = [];
             //
-
+            
             //
             if (r.userIs(['diag', 'client'])) {
                 return r.handleSecurityRouteViolation();
@@ -78,6 +78,7 @@
             s.pdf = {
                 file: null
             };
+            s.pdfReset = {};
             s.item = {
 
             };
@@ -817,6 +818,18 @@
                             }
                         });
                     });
+                };
+                
+                
+
+                s.pdfChange = () => {
+                    if (s.item && s.item.end && moment(s.item.end).isAfter(moment())) {
+                        s.pdf = {};
+                        r.dom();
+                        return r.infoMessage("Ajouter après "+moment(s.item.end).format('dddd DD [de] MMMM YY'), 5000);
+                    }else{
+                        s.saveFile();
+                    }
                 };
 
                 s.saveFile = () => {

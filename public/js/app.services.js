@@ -42,9 +42,9 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
         }
 
         function setData(decodedData) {
-            if (!window.CKEDITOR 
-            || (window.CKEDITOR && !window.CKEDITOR.instances)
-            || (window.CKEDITOR && window.CKEDITOR.instances && !window.CKEDITOR.instances.editor))
+            if (!window.CKEDITOR ||
+                (window.CKEDITOR && !window.CKEDITOR.instances) ||
+                (window.CKEDITOR && window.CKEDITOR.instances && !window.CKEDITOR.instances.editor))
                 return setTimeout(() => setData(decodedData), 500);
             window.CKEDITOR.instances.editor.setData(decodedData);
         }
@@ -113,7 +113,7 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
             }
 
             //returns the content (if exists)
-            if (r.__text && r.__text[code] && r.__text[code].length>1) {
+            if (r.__text && r.__text[code] && r.__text[code].length > 1) {
                 html += r.__text[code]
             }
             else {
@@ -258,20 +258,21 @@ srv.service('localdb', ['$http', function(http) {
         });
     };
 }]);
-srv.directive('fileModel', ['$parse', function($parse) {
+srv.directive('fileModel', ['$parse', "$rootScope", function($parse, $rootScope) {
     return {
         restrict: 'A',
         scope: {
             model: "=fileModel",
             overwrite: "=fileModelOverwrite",
-            field: "@field",
-            //change:'fileModelChange'
+            field: "@field"
+                //change:'fileModelChange'
         },
         link: function(scope, element, attrs) {
             var model = $parse(attrs.fileModel);
             var modelSetter = model.assign;
 
             $U.expose('fileModel', scope);
+
 
             element.bind('change', function() {
                 scope.$apply(function() {

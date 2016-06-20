@@ -637,6 +637,7 @@ app.controller('ctrl-diag-edit', [
         s.diplomesFileChange = (id) => {
             console.info(id);
             setTimeout(() => {
+                
                 s.diplomesSave(id);
             }, 1000)
 
