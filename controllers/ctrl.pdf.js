@@ -126,17 +126,20 @@ function view(data, cb, req, res) {
         }
 
         function next() {
+            
+            var protocol = process.env.PROTOCOL || req.protocol;
+            
             var data = btoa(JSON.stringify({
                 fileName: r.fileName
             }));
-            var url = req.protocol + '://' + req.get('host') + '/ctrl/Pdf/stream/' + data;
+            var url = protocol + '://' + req.get('host') + '/ctrl/Pdf/stream/' + data;
 
             ctrl('Log').save({
                 message: 'Order Invoice PDF Generation Url Debug',
                 type: 'info',
                 data: {
                     host: req.get('host'),
-                    url: req.protocol + '://' + req.get('host') + '/ctrl/Pdf/stream/' + data
+                    url: protocol + '://' + req.get('host') + '/ctrl/Pdf/stream/' + data
                 }
             });
 
