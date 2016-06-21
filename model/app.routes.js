@@ -89,5 +89,5 @@ exports.configure = function(app) {
     });
 
 
-    console.log('ROUTING-OK');
+    //console.log('ROUTING-OK');
 };

@@ -14,7 +14,7 @@ var _hook = function(schemaName, n, cb, data, index) {
     //
     if (typeof cb == 'function') {
         _hooks[n].push(cb);
-        console.log(schemaName, 'HOOK', n, 'added at', _hooks[n].length);
+        //console.log(schemaName, 'HOOK', n, 'added at', _hooks[n].length);
     }
     else {
         

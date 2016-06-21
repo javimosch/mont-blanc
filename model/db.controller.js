@@ -2,20 +2,20 @@ var req         = (n) => require(process.cwd()+'/model/'+n);
 var createDbActions = req('db.actions').create;
 var actions = {};
 
-var _cwd = '';
-var cwd = ()=> _cwd || process.cwd();
+
+var cwd = ()=> process.cwd();
 
 function register(name, path) {
     path = path || 'controllers/ctrl.' + name.toLowerCase();
     actions[name] = require(cwd() + '/' + path);
-    console.log('db.controller ' + name + " register " + Object.keys(actions[name]).length + " actions.");
+    //console.log('db.controller ' + name + " register " + Object.keys(actions[name]).length + " actions.");
     //console.log('db.controller '+name+' register the following actions '+JSON.stringify(Object.keys(actions[name])));
     var obj = create(name);
     EXPORT['$' + name] = obj;
 
     if (obj._configure && !obj._configuredFlag) {
         obj._configuredFlag = true
-        console.log(name.toUpperCase() + ": Configure");
+       // console.log(name.toUpperCase() + ": Configure");
         obj._configure(obj._hook);
     }
 }
@@ -28,7 +28,7 @@ function create(name) {
     var path = path || 'controllers/ctrl.' + name.toLowerCase();
     var specialActions = {};
     try{
-        console.log(cwd() + '/' + path);
+        //console.log(cwd() + '/' + path);
         specialActions = require(cwd() + '/' + path);
     }catch(e){
         specialActions = {};
@@ -39,9 +39,6 @@ function create(name) {
 }
 var EXPORT = {
     register: register,
-    create: create,
-    setCWD:function(str){
-        _cwd = str;
-    }
+    create: create
 };
 module.exports = EXPORT;

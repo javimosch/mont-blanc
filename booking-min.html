@@ -38,6 +38,13 @@
 
     <!-- GLOBAL LAYOUT -->
     <div id="wrapper">
+        
+        <div ng-if="userIs('admin')" ng-show="htmlEditItem" 
+            ng-include="'views/common/partials/html-edit-ck-editor.html'">
+        </div>
+
+        
+
         <div class="container-fluid">
             <div class="row-fluid">
                 <div ng-show="__header==1" ng-include="'views/diags/booking/partials/booking-header.html'"></div>

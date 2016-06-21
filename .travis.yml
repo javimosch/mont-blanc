@@ -1,8 +1,0 @@
-language: node_js
-node_js:
-  - "5"
-deploy:
-  provider: heroku
-  api_key:
-    secure: "48584f1e-7f3a-4e66-86cb-14695f519299"
-  app: blooming-refuge-27843

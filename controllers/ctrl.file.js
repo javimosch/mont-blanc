@@ -1,7 +1,4 @@
-var req         = (n) => {
-    console.log(process.cwd()+'/model/'+n);
-    return require(process.cwd()+'/model/'+n)
-};
+var req = (n) => require(process.cwd() + '/model/' + n);
 var atob = require('atob'); //decode
 var btoa = require('btoa'); //encode
 var ctrl = null;
@@ -9,7 +6,8 @@ var Grid = require('gridfs-stream');
 var fs = require('fs');
 var path = require("path");
 var generatePassword = require("password-maker");
-var inspect = require('util').inspect;
+//var inspect = require('util').inspect;
+var utils = require(process.cwd() + '/model/utils');
 var modelName = 'file';
 var conn, gfs, mongoose, actions; //Schema
 var configure = (m) => {
@@ -77,9 +75,9 @@ function stream(data, cb, req, res) {
     data = atob(data);
     data = JSON.parse(data);
     //
-    data.path = process.cwd() + '/www/temp/' + 'tempfile_' + Date.now() + '.pdf';
-    dbToHD(data, (err,rr) => {
-        if(err) return cb(err);
+    data.path = utils.getFileTempPath('tempfile_' + Date.now() + '.pdf');
+    dbToHD(data, (err, rr) => {
+        if (err) return cb(err);
         if (!rr.ok) return cb('The file is corrupted and cannot be streamed');
         data.name = data.name || rr._file.filename;
         //
@@ -195,11 +193,41 @@ function get(data, cb) {
     });
 
     find(data, (err, file) => {
-        var rta = file;
-        actions.log('get:end=' + JSON.stringify(rta));
-        rta.stream = readstream;
-        cb(null, rta);
+        if (err) {
+            ctrl('Log').save({
+                message: 'File get error',
+                type: 'error',
+                data: {
+                    name: 'ctrl.file.get',
+                    err: err,
+                    payload: data
+                }
+            }, () => cb(null, rta));
+        }
+        else {
+            var rta = file;
+            actions.log('get:end=' + JSON.stringify(rta));
+            rta.stream = readstream;
+            cb(null, rta);
+        }
     });
+}
+
+function _streamToDb(data, cb) {
+    actions.log('save:_streamToDb=' + JSON.stringify(Object.keys(data)));
+    data.file.pipe(gfs.createWriteStream({
+        filename: data.name,
+        mode: 'w',
+        chunkSize: 1024,
+        content_type: data.mimetype
+    })).on('close', function(file) {
+        var msg = file.filename + ' written To DB';
+        actions.log(msg);
+        cb(null, {
+            result: file,
+            message: msg
+        });
+    })
 }
 
 //save a file (type=file need to be the last item of the form.)
@@ -208,22 +236,7 @@ function save(data, cb, req, res) {
     if (req.busboy) {
         var requiredFileds = ['name', 'mimetype', 'file'];
 
-        function _streamToDb(data) {
-            actions.log('save:_streamToDb=' + JSON.stringify(Object.keys(data)));
-            data.file.pipe(gfs.createWriteStream({
-                filename: data.name,
-                mode: 'w',
-                chunkSize: 1024,
-                content_type: data.mimetype
-            })).on('close', function(file) {
-                var msg = file.filename + ' written To DB';
-                actions.log(msg);
-                cb(null, {
-                    result: file,
-                    message: msg
-                });
-            })
-        }
+
 
         var interval = setInterval(() => {
             var success = true;
@@ -235,7 +248,7 @@ function save(data, cb, req, res) {
             });
             if (success) {
                 clearInterval(interval);
-                _streamToDb(data);
+                _streamToDb(data, cb);
             }
         }, 1000);
         req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {

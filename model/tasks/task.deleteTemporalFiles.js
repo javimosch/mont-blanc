@@ -1,6 +1,7 @@
 var name = 'task:deleteTemporalFiles';
 var PRESERVE_TIME  = 1000 * 60 * 10;  //10 minutes
 //
+var utils = require('../utils');
 var _ = require('lodash');
 var moment = require('moment');
 var ctrl = require('../db.controller').create;
@@ -36,9 +37,9 @@ var _testDone = true;
 function handler(data, cb) {
     log('start');
 
-    ensureDirectory(process.cwd() + '/www');
-    ensureDirectory(process.cwd() + '/www/temp');
-    var _path = process.cwd() + '/www/temp';
+    //ensureDirectory(process.cwd() + '/www');
+    //ensureDirectory(process.cwd() + '/www/temp');
+    var _path = utils.getFileTempPath();
 
     if (!_testDone) {
         fs.writeFileSync(path.join(_path, "test_" + (new Date().getTime() - (1000 * 60)).toString() + '.pdf'), '');

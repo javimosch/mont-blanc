@@ -13,7 +13,7 @@ module.exports = {
     name: name,
     interval: 1000 * 60 * 10, //each minutes
     handler: handler,
-    startupInterval: true,
+    startupInterval: false,
     startupIntervalDelay: 1000,
 };
 
@@ -24,14 +24,14 @@ function handler(data, cb) {
     Order.getAll({
         status: "created"
     }, (err, orders) => {
-        console.log('bs debug task orders get-all success', !err);
+        //console.log('bs debug task orders get-all success', !err);
         if (err) return LogSave(name + " error", err);
         orders.forEach(_order => {
-            console.log('bs debug task order id', _order._id);
+           // console.log('bs debug task order id', _order._id);
             if (Date.now() - new Date(_order.createdAt) > 1000 * 60 * 30) {
-                console.log('bs debug task order remove');
+                //console.log('bs debug task order remove');
                 Order.remove(_order, (err) => {
-                    console.log('bs debug task order remove success', !err);
+                    //console.log('bs debug task order remove success', !err);
                     if (err) return LogSave(name + " error", err);
 
                     LogSave('Unpaid order removed.', _order, 'info');

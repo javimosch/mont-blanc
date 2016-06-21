@@ -4,12 +4,20 @@ var urlencode = require('urlencode2');
 var urldecode = require('urldecode');
 var moment = require('moment');
 
+var tempFolderPath = process.env.tempFolderPath || '/public/temp/';
 
+function getFileTempPath(n) {
+    var path = process.cwd() + tempFolderPath + (n||'');
+    path = replaceAll(path, '//', '/');
+    console.log('debug ctrl.pdf.getFileTempPath', path);
+    return path;
+}
+exports.getFileTempPath = getFileTempPath;
 
-exports.has = (data,props)=>{
-    for(var x in props){
-        if(typeof data[props[x]]==='undefined') return false;
-        if(data[props[x]]==undefined) return false;
+exports.has = (data, props) => {
+    for (var x in props) {
+        if (typeof data[props[x]] === 'undefined') return false;
+        if (data[props[x]] == undefined) return false;
     }
     return true;
 };
@@ -17,7 +25,7 @@ exports.has = (data,props)=>{
 exports.encodeURIComponent = urlencode;
 exports.decodeURIComponent = urldecode;
 
-exports.formatTime = (d)=>{
+exports.formatTime = (d) => {
     return moment(d).format('HH:mm');
 };
 
@@ -27,12 +35,12 @@ function readFileSync(file, encoding, json) {
         encoding = 'utf8';
     }
     var x = fs.readFileSync(filepath, encoding);
-    return (json)?JSON.parse(x):x;
+    return (json) ? JSON.parse(x) : x;
 }
-exports.getJSON = (file) => readFileSync(file,undefined, true);
-exports.getFile = (file) => readFileSync(file,undefined, false);
+exports.getJSON = (file) => readFileSync(file, undefined, true);
+exports.getFile = (file) => readFileSync(file, undefined, false);
 
-function replaceAll(word,search, replacement) {
+function replaceAll(word, search, replacement) {
     return word.replace(new RegExp(search, 'g'), replacement);
 };
 
@@ -43,24 +51,24 @@ function cbHell(quantity, cb) {
         call: () => cb(),
         next: () => {
             quantity--;
-            console.log('backstuff-utils-cbHell: '+quantity+' threads left.');
+            console.log('backstuff-utils-cbHell: ' + quantity + ' threads left.');
             if (quantity === 0) cb();
         }
     }
 }
-exports.cbHell=cbHell;
+exports.cbHell = cbHell;
 
 //routing
 function adminUrl(join, angularRoute) {
     var angularRoute = angularRoute || true;
-    console.log('Using adminURL VAR: '+ process.env.adminURL);
+    console.log('Using adminURL VAR: ' + process.env.adminURL);
     var path = process.env.adminURL || 'http://localhost:3000/admin#';
-    if(!process.env.adminURL){
-        console.log('process.env.adminURL not found. Using '+path);
+    if (!process.env.adminURL) {
+        console.log('process.env.adminURL not found. Using ' + path);
     }
-    var url = path + (angularRoute?'#/':'') +  join;
-    url = replaceAll(url,'//', '/');
-    url = replaceAll(url,':/','://');
+    var url = path + (angularRoute ? '#/' : '') + join;
+    url = replaceAll(url, '//', '/');
+    url = replaceAll(url, ':/', '://');
     return url;
 }
 exports.adminUrl = adminUrl;
@@ -72,7 +80,7 @@ function MyPromise(cb) {
         errorCb: null,
         errorRes: null,
         res: null,
-        evt:{}
+        evt: {}
     };
     var resolve = function(res) {
         if (_scope.cb) {
@@ -86,14 +94,17 @@ function MyPromise(cb) {
         }
         _scope.errorRes = errorRes || {};
     };
-    var emit = function(n,err,r){
+    var emit = function(n, err, r) {
         _scope.evt[n] = _scope.evt[n] || {};
-        _scope.evt[n].res = {err:err,r:r};
-        if(_scope.evt[n].cb!==undefined){
-            _scope.evt[n].cb(_scope.evt[n].res.err,_scope.evt[n].res.r);
+        _scope.evt[n].res = {
+            err: err,
+            r: r
+        };
+        if (_scope.evt[n].cb !== undefined) {
+            _scope.evt[n].cb(_scope.evt[n].res.err, _scope.evt[n].res.r);
         }
     };
-    cb(resolve, error,emit);
+    cb(resolve, error, emit);
     var rta = {
         then: function(cb) {
             if (_scope.res) cb(_scope.res);
@@ -105,11 +116,11 @@ function MyPromise(cb) {
             else _scope.errorCb = errorCb;
             return rta;
         },
-        on:function(n,cb){
-            _scope.evt[n] = _scope.evt[n]  || {};
+        on: function(n, cb) {
+            _scope.evt[n] = _scope.evt[n] || {};
             _scope.evt[n].cb = cb;
-            if(_scope.evt[n].res !== undefined){
-                _scope.evt[n].cb(_scope.evt[n].res.err,_scope.evt[n].res.r);
+            if (_scope.evt[n].res !== undefined) {
+                _scope.evt[n].cb(_scope.evt[n].res.err, _scope.evt[n].res.r);
             }
             return rta;
         }

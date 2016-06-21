@@ -239,7 +239,8 @@ function generateInvoiceAttachmentIfNecessary(data, t, cb) {
             if (res.ok) {
                 actions.log(t + ':attachment-ok');
                 data.attachment = {
-                    path: process.cwd() + '/www/temp/' + res.fileName,
+                    //path: process.cwd() + '/www/temp/' + res.fileName,
+                    path: _utils.getFileTempPath(res.fileName),
                     fileName: res.fileName
                 };
                 return cb(data);

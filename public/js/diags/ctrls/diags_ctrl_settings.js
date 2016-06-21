@@ -332,6 +332,11 @@
             });
             //
             s.preview = () => {
+                
+                if(!s.randomOrder){
+                    return r.warningMessage('At least one Order saved in DB is required.');
+                }
+                
                 s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
                 var html =
                     window.encodeURIComponent(
@@ -345,7 +350,7 @@
                         win.focus();
                     }
                     else {
-                        res.warningMessage('Server Issue, try later.');
+                        r.warningMessage('Server Issue, try later.');
                     }
                 });
             };

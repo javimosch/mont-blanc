@@ -19,6 +19,7 @@ if (process.env.dbURI) {
 }
 
 // Create the database connection 
+//console.log('using',dbURI);
 mongoose.connect(dbURI);
 
 // CONNECTION EVENTS
