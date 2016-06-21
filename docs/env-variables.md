@@ -9,11 +9,12 @@ diags-frontend
 EX:
 PORT=8085
 PROD=0
+serverRawURL=https://maerp-javochx.c9users.io:8085
 serverURL=https://maerp-javochx.c9users.io:8085
 disableMailing=0
 dbURI=mongodb://root:root@ds011472.mlab.com:11472/diagscloud99
 adminURL=https://diags-javochx.c9users.io#
-
+PROTOCOL=http
 
 
 
