@@ -56,6 +56,11 @@ app.get('/admin', function(req, res) {
 	res.sendFile(path.join(__dirname + '/' + n + '.html'));
 });
 
+app.get('/serverRawURL', function(req, res) {
+	res.json({
+		URL: process.env.serverRawURL || process.env.serverURL || 'http://localhost:5000'
+	});
+});
 
 app.get('/serverURL', function(req, res) {
 	res.json({

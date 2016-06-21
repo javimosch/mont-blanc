@@ -340,6 +340,10 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
         $U.emitPreserve('server-up');
         console.info('server:url(env serverURL):' + URL);
     });
+    
+    $.ajax("/serverRawURL").then(function(r) {
+        window.__raw_origin = r.URL;
+    });
 
     //var URL = 'http://blooming-plateau-64344.herokuapp.com/';
     var globalState = {}; //containts a global state of the service. (db)

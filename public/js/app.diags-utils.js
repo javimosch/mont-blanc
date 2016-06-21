@@ -261,7 +261,7 @@ function getInvoiceHTMLContent(db, item, r, cb) {
 }
 
 function OrderReplaceHTML(html, _order, r) {
-    _order["LOGO"] = "<img src='" + window.location.origin + '/img/logo.jpg' + "'>";
+    _order["LOGO"] = "<img src='" + (window.__raw_origin || window.location.origin) + '/img/logo.jpg' + "'>";
     _order['ORDER_DESCRIPTION'] = _order.info.description;
     _order['CLIENT_FULLNAME'] = _order._client.firstName + ' ' + (_order._client.lastName || '');
     _order['CLIENT_FIRSTNAME'] = _order._client.firstName;
