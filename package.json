@@ -73,9 +73,10 @@
     "through2": "^2.0.1",
     "urldecode": "^1.0.1",
     "urlencode2": "^1.0.1",
-    "watch": "^0.17.1"
+    "watch": "^0.17.1",
+    "xunit-file": "0.0.9"
   },
   "devDependencies": {
-    "xunit-file": "0.0.9"
+
   }
 }
