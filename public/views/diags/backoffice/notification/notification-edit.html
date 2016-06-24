@@ -23,7 +23,7 @@
                 <label>Subject</label>
             </div>
             <div class="row margin-top-half">
-                <input class="diags-input min-md-min-width-400" ng-disabled="state.working()" disabled type="email" ng-value="item.subject" placeholder="Subject">
+                <input class="diags-input min-md-min-width-400" ng-disabled="state.working()" disabled type="text" ng-value="item.subject" placeholder="Subject">
             </div>
 
             <div class="row margin-top-one">
@@ -37,8 +37,8 @@
                 <label>Content</label>
             </div>
             <div class="row margin-top-half">
-                <textarea class="diags-input" html-content html="item.contents">
-                </textarea>
+                <div class="diags-input-div" ng-bind-html="item.contents">
+                </div>
             </div>
 
             <div class="row margin-top-one">

@@ -38,12 +38,11 @@
 
     <!-- GLOBAL LAYOUT -->
     <div id="wrapper">
-        
-        <div ng-if="userIs('admin')" ng-show="htmlEditItem" 
-            ng-include="'views/common/partials/html-edit-ck-editor.html'">
+
+        <div ng-if="userIs('admin')" ng-show="htmlEditItem" ng-include="'views/common/partials/html-edit-ck-editor.html'">
         </div>
 
-        
+
 
         <div class="container-fluid">
             <div class="row-fluid">
@@ -197,6 +196,7 @@
     <script src="js/vendor/vendor.ui-bootstrap.js"></script>
     <script src="js/vendor/vendor.ui-bootstrap-tpls.js"></script>
     <script src="js/vendor/vendor.lodash.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.5.7/angular-sanitize.min.js"></script>
 
     <!--COMMON-->
     <script type="text/javascript" src="js/common/fs.env.js"></script>
@@ -206,8 +206,8 @@
     <script src="js/app.diags-utils.js"></script>
     <script src="js/app.diags-booking-slots.js"></script>
     <script type="text/javascript" src="js/diags/ctrls/diags_ctrl_contact_form.js"></script>
-    
-    
+
+
     <!--BOOKING-->
     <script src="js/app.booking.js"></script>
     <script src="js/directives/remove-hidden.js"></script>

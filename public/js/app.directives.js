@@ -1289,15 +1289,16 @@ app.directive('htmlContent', function(
         },
         link: function(s, elem, attrs) {
             if (!s.html) return;
+            
             $rootScope.dom(() => {
                 elem.html(s.html);
             });
-
+/*
             s.$watch('html', () => {
                 $rootScope.dom(() => {
                     elem.html(s.html);
                 });
-            });
+            });*/
         }
     };
 });

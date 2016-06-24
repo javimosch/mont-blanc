@@ -6,6 +6,7 @@
         'app.run',
 
         'ngRoute',
+        'ngSanitize',
 
         'app.run-calendar',
         'mwl.calendar',
