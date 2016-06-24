@@ -2,8 +2,8 @@
     <div class="col-sm-12 padding-none">
         <ol class="breadcrumb">
             <li><a class="link" ng-click="route('settings')">Settings</a></li>
-            <li><a class="link" ng-click="route('logs')">Server Log</a></li>
-            <li>Log Details</li>
+            <li><a class="link" ng-click="route('logs')">Logs</a></li>
+            <li>Details</li>
         </ol>
     </div>
 </div>
@@ -22,12 +22,12 @@
                 </li>
                 <li>
                     <label>Created</label>
-                    {{item.created && momentDateTime(item.created) || ''}}
+                    <span ng-bind="item.createdAt && momentDateTime(item.createdAt) || ''"></span>
                 </li>
             </ul>
         </div>
     </div>
-    <div class="row">
+    <div class="row margin-top-one">
         <div class="col-sm-12">
             <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Enregistrer</button>
             <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="cancel()">Annuler</button>

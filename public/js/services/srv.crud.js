@@ -1,3 +1,5 @@
+/*global angular*/
+/*global $U*/
 (function() {
     var app = angular.module('srv.crud', []);
     app.service('crud', function($rootScope, server) {
@@ -12,7 +14,7 @@
             });
         }
 
-        function handleError(err) {
+        function handleError(_err) {
             notify('error, try later.', 'warning');
         }
 
@@ -44,17 +46,17 @@
             };
             s.delete = function() {
                 if (opt.modals && opt.modals.confirm) {
-                    s[opt.modals.confirm](val(opt, 'modals.delete.description') || 'Delete item?', function() {
+                    s[opt.modals.confirm]($U.val(opt, 'modals.delete.description') || 'Delete item?', function() {
                         s.deleteSilent();
                     });
                 } else {
-                    if (window.confirm(val(opt, 'modals.delete.description') || 'Delete item?')) {
+                    if (window.confirm($U.val(opt, 'modals.delete.description') || 'Delete item?')) {
                         s.deleteSilent();
                     }
                 }
             };
             s.validate = () => {
-                ifThenMessage(val(opt, 'validate.options',{args:[opt.scope]}) || [], (m) => {
+                $U.ifThenMessage($U.val(opt, 'validate.options',{args:[opt.scope]}) || [], (m) => {
                     if (typeof m[0] !== 'string') {
                         notify(m[0](), 'warning');
                     } else {
@@ -78,7 +80,7 @@
                 if (r.params && r.params.prevRoute) {
                     return r.route(r.params.prevRoute);
                 } else {
-                    r.route(val(opt, 'routes.back') || 'dashboard');
+                    r.route($U.val(opt, 'routes.back') || 'dashboard');
                 }
             };
             s.cancel = function() {

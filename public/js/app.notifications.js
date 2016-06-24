@@ -1,4 +1,5 @@
 /*global angular*/
+/*global $U*/
 (() => {
     //QUICK CRUD
     var vars = {
@@ -10,7 +11,68 @@
     };
     var app = angular.module('app.notifications', []);
 
+    app.controller('notificationEdit', ['$rootScope', '$scope', 'server', 'crud', '$routeParams', function(r, s, db, crud, params) {
+        r.setCurrentCtrl(s);
 
+        s.send = () => {
+            var item = s.item;
+            s.confirm('Confirm sending to ' + item.to + '?', () => {
+                //html from to subject
+                db.ctrl('Email', 'send', {
+                    _user: item._user,
+                    _notification: item._id,
+                    html: item.contents,
+                    to: item.to,
+                    subject: item.subject
+                }).then(d => {
+                    console.info(d);
+                    r.infoMessage('Copy send to ' + item.to);
+                    s.init();
+                });
+            });
+        };
+
+        crud.create({
+            name: 'Notification',
+            routeParams: params,
+            scope: s,
+            defaults: {
+                data: {
+                    message: 'Write your message'
+                }
+            },
+            save: {
+                after: {
+                    goBack: true
+                }
+            },
+            routes: {
+                back: 'notifications'
+            },
+            modals: {
+                confirm: 'confirm',
+                delete: {
+                    description: () => 'Delete item ' + s.item.type + ' ' + r.momentDateTime(s.item.created)
+                }
+            },
+            events: {
+                after: {
+                    save: [
+                        () => {
+                            //console.log('saved!');
+                        }
+                    ]
+                }
+            },
+            validate: {
+                options: (s) => {
+                    return [
+                        [s.item.message, '==', false, 'Message required']
+                    ];
+                }
+            }
+        }).init();
+    }]);
 
 
     app.directive('sectionNotifications', function(
@@ -31,7 +93,7 @@
                     "SENDING_DISABLED_TYPE"
                 ]);
 
-                $U.expose('s',s);
+                $U.expose('s', s);
 
                 function update(items, cb) {
                     if (items) {
@@ -125,6 +187,13 @@
                     tfoot: vars.TPL_CRUD_TFOOT,
                     click: (item, index) => {
                         s.item = item;
+
+                        r.routeParams({
+                            item: item,
+                        });
+                        r.route('notifications/edit/' + item._id);
+
+                        /*
                         s.open({
                             title: 'Notification Details',
                             data: modalData,
@@ -135,6 +204,7 @@
                             templateUrl: vars.TPL_CRUD_EDIT,
                             callback: (item) => {}
                         });
+                        */
                     },
                     buttons: [{
                         label: "Rafraîchir",

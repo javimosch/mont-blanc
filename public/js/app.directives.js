@@ -15,7 +15,7 @@ app.directive("bindHtmlCompile", ["$compile", function(compile) {
             }, function(e) {
                 el.html(e && e.toString());
                 var f = s;
-                if(attrs.bindHtmlScope){
+                if (attrs.bindHtmlScope) {
                     f = s.$eval(attrs.bindHtmlScope);
                 }
                 var compiled = compile(el.contents())(f);
@@ -29,18 +29,18 @@ app.directive("bindHtmlCompile", ["$compile", function(compile) {
                     first.append(other);
                     el.html(first.html());
                 }
-                
+
                 //the follow fix is for avoid double span in dom tree ex: span > span
                 var text = '';
-                el.children().each(function(){
-                   if($(this).get(0).tagName=='SPAN'){
-                       text+=$(this).text();
-                   } 
+                el.children().each(function() {
+                    if ($(this).get(0).tagName == 'SPAN') {
+                        text += $(this).text();
+                    }
                 });
-                if(text.length>0){
+                if (text.length > 0) {
                     el.text(text);
                 }
-                
+
                 //console.log('FIRST',first.html(),'EL',el.html());
 
             })
@@ -125,8 +125,8 @@ app.directive('tableFilter', function(
 
             function assignPayloadRules(data) {
                 var rules = s.model.filter.payloadRules,
-                    rule, val,_data;
-                if(!rules) return data;
+                    rule, val, _data;
+                if (!rules) return data;
                 for (var x in rules) {
                     rule = rules[x];
                     if (rule == undefined) continue;
@@ -134,9 +134,10 @@ app.directive('tableFilter', function(
                     if (val == undefined) continue;
                     data.__rules = data.__rules || {};
                     _data = rule(data, val);
-                    if(!_data){
-                        console.warn('app filter payload rules undefined output for ',x);
-                    }else{
+                    if (!_data) {
+                        console.warn('app filter payload rules undefined output for ', x);
+                    }
+                    else {
                         data = _data;
                     }
                 }
@@ -1159,7 +1160,7 @@ app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal
                         };
                         $scope.close = function(good) {
                             $uibModalInstance.dismiss('cancel');
-                            if(good && okCallback) okCallback();
+                            if (good && okCallback) okCallback();
                         };
                         r._modal = $scope;
                     },
@@ -1290,6 +1291,12 @@ app.directive('htmlContent', function(
             if (!s.html) return;
             $rootScope.dom(() => {
                 elem.html(s.html);
+            });
+
+            s.$watch('html', () => {
+                $rootScope.dom(() => {
+                    elem.html(s.html);
+                });
             });
         }
     };

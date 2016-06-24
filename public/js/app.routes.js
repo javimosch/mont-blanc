@@ -76,6 +76,9 @@ srv.config(['$routeProvider',
         when('/notifications', {
             templateUrl: 'views/diags/backoffice/notification/notification-list.html'
         }).
+        when('/notifications/edit/:id', {
+            templateUrl: 'views/diags/backoffice/notification/notification-edit.html'
+        }).
 
         when('/logs', {
             templateUrl: 'views/diags/backoffice/log/log-list.html'

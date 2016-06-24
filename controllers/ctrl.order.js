@@ -475,9 +475,9 @@ function invoiceHTMLInyectOrderDetails(html, _order) {
     var backofficeURL = process.env.adminURL || ''; //blooming-refuge-27843.herokuapp.com/admin#
     if (backofficeURL) {
         backofficeURL = backofficeURL.substring(0, backofficeURL.lastIndexOf('/'));
-        LogSave('Invoice Logo Injected Log','info',{
-            src: backofficeURL + '/img/logo.jpg'
-        });
+       // LogSave('Invoice Logo Injected Log','info',{
+        //    src: backofficeURL + '/img/logo.jpg'
+       // });
         _order["LOGO"] = "<img src='" + backofficeURL + '/img/logo.jpg' + "'>";
     }
     else {

@@ -1091,7 +1091,8 @@ table.dg-dates td span {
 }
 
 table.dg-dates tr.selected {
-    border-right: 10px solid rgba(0, 0, 0, .08);
+    /*border-right: 10px solid rgba(0, 0, 0, .08);*/
+        outline: 2px solid rgba(0, 0, 0, 0.4);
 }
 
 
