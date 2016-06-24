@@ -489,6 +489,24 @@ a.diag-btn-info:hover {
     font-size: 58px;
 }
 
+@media only screen and (max-width: 320px) {
+    .xxs-flex {
+        display: flex;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .title-big * {
+        font-size: 50px;
+    }
+}
+
+@media only screen and (max-width: 320px) {
+    .title-big * {
+        font-size: 50px;
+    }
+}
+
 .title {
     color: white;
 }
@@ -1110,6 +1128,13 @@ table.dg-dates tr.selected {
     max-width: 240px;
 }
 
+@media only screen and (max-width: 480px) {
+    .booking-form-wrapper {
+        padding: 0px;
+        margin: 0px;
+    }
+}
+
 .diags-input,
 .pika-wrapper.diags,
 .pika-single.diags .pika-select {
@@ -1257,6 +1282,15 @@ label.minimal {
 
 .btn-permis-de-construire {
     width: 215px;
+}
+
+@media only screen and (max-width: 480px) {
+    .btn-permis-de-construire {
+        width: 100%;
+    }
+    .gaz-dropdown button {
+        width: 100%;
+    }
 }
 
 .diags-form .btn-xl {
