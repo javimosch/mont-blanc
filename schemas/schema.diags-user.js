@@ -27,6 +27,9 @@ module.exports = {
         address: String,
         city: String,
         department: String,
+        departments: [{
+            type: String,
+        }],
         region: String,
         country: String,
         postCode: String,

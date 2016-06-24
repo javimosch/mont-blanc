@@ -266,7 +266,7 @@ table.minimal td {
 }
 
 .always-on-top {
-  z-index: 9999;
+      z-index: 99999999;
 }
 
 .overlay {

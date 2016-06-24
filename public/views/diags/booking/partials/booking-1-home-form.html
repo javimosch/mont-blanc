@@ -121,7 +121,9 @@
 
     <div class="row diag-row width90p center">
         <div class="col-sm-12 padding-none margin-bottom-one">
-            <button class="btn diag-btn-main" ng-click="proceedToDiagsSelection()">Choisir vos diagnostics</button>
+            <button class="btn diag-btn-main" 
+            ng-disabled="state.working()"
+            ng-click="proceedToDiagsSelection()">Choisir vos diagnostics</button>
         </div>
     </div>
 

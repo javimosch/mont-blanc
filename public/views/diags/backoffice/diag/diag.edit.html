@@ -68,6 +68,31 @@
                 <input ng-disabled="state.working()" ng-model="item.cellPhone" class="diags-input" placeholder="Mobile">
             </div>
 
+            <div class="row margin-top-one">
+                <label>Départements en charge</label>
+            </div>
+
+            <div class="row  margin-top-half">
+                <table ng-show="item.departments.length>0" class="table table-striped table-condensed unselectable questions" style="width: 286px;">
+                    <tr ng-repeat="(k,o) in item.departments" class="unselectable">
+                        <td>
+                            {{o}}
+                            <i ng-click="removeDeparment(o)" class='float-right fa fa-times link' style="color: rgba(0,0,0,.1);
+    margin-top: 3px;" aria-hidden='true'></i>
+                        </td>
+
+                    </tr>
+                </table>
+
+            </div>
+            <div class="row  margin-top-half" style="width: 285px;">
+                <div class="col-xs-5 padding-none">
+                    <input style="width: 162px;" class="diags-input" ng-model="department" placeholder="EX: 78">
+                </div>
+                <div class="col-xs-7 padding-none">
+                    <button ng-click="addDepartment()" ng-disabled="!department" class="float-right btn diags-btn bg-azure-radiance" style="margin-right: 3.9px;">Ajouter</button>
+                </div>
+            </div>
         </div>
         <div class="col-sm-12 col-md-8">
             <div class="row margin-top-one">
@@ -136,15 +161,27 @@
     </div>
 
     <div class="row diags-row margin-bottom-two" ng-show="item._id">
-        <div class="col-sm-12">
-            <div ng-include="'views/diags/backoffice/exception/exception.list.html'" includeReplace></div>
+        <div class="col-sm-12 padding-none">
+            <div ng-if="false" ng-include="'views/diags/backoffice/exception/exception.list.html'" includeReplace></div>
+
+            <div class="row" ng-if="false">
+                <div class="col-sm-12 padding-none">
+                    <h3 class="v-margin-2 padding-0">Exceptions</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 padding-none">
+                    <diag-exception-list></diag-exception-list>
+                </div>
+            </div>
+
         </div>
     </div>
     <div class="row diags-row margin-bottom-two">
         <div class="col-sm-12">
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Enregistrer</button>
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="cancel()">Annuler</button>
-            <button ng-show="userIs('admin')" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="delete()">Supprimer</button>
+            <button ng-disabled="state.working()" class="margin-bottom-quarter btn diags-btn bg-azure-radiance" ng-click="validate()">Enregistrer</button>
+            <button ng-disabled="state.working()" class="margin-bottom-quarter btn diags-btn bg-azure-radiance" ng-click="cancel()">Annuler</button>
+            <button ng-show="userIs('admin')" ng-disabled="state.working()" class="margin-bottom-quarter btn diags-btn bg-azure-radiance" ng-click="delete()">Supprimer</button>
         </div>
     </div>
 </div>

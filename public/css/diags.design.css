@@ -1152,6 +1152,8 @@ table.dg-dates tr.selected {
 }
 
 .diags-input-div {
+    word-break: break-all;
+    text-align: justify;
     padding: 20px;
     background-color: #EDF5F9;
     box-shadow: none;

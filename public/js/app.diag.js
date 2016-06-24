@@ -221,11 +221,11 @@
                     },
                     buttons: [{
                         label: "Rafraichir",
-                        type: () => "btn diags-btn bg-azure-radiance spacing-h-1",
+                        type: () => "btn diags-btn bg-azure-radiance margin-right-quarter margin-bottom-quarter",
                         click: () => update()
                     }, {
                         label: "Ajouter une indisponibilité",
-                        type: () => "btn diags-btn bg-azure-radiance spacing-h-1",
+                        type: () => "btn diags-btn bg-azure-radiance margin-bottom-quarter",
                         click: () => {
                             r.routeParams({
                                 item: {

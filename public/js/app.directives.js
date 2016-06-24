@@ -5,6 +5,20 @@
 /*global moment*/
 var app = angular.module('app.directives', []);
 
+app.directive('compileHtml', ['$compile', function($compile) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            scope.$watch(function() {
+                return scope.$eval(attrs.compileHtml);
+            }, function(value) {
+                element.html(value);
+                $compile(element.contents())(scope);
+            });
+            console.log('compile-html running');
+        }
+    };
+}]);
 
 app.directive("bindHtmlCompile", ["$compile", function(compile) {
     return {
@@ -666,8 +680,8 @@ app.directive('address', function($rootScope, $timeout) {
                         //setVal(scope.model, scope.country, country);
                     }
                     if (scope.postCode) setVal(scope.model, scope.postCode, postCode);
-                    expose('address', Object.assign(result, scope));
-                    r.dom();
+                    $U.expose('address', Object.assign(result, scope));
+                    $rootScope.dom();
                 }
 
                 function setVal(obj, propertyPath, val) {
@@ -1141,6 +1155,7 @@ app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal
                     message = opt.message || '';
                 }
 
+                var rta = {};
                 //
                 var modalInstance = $uibModal.open({
                     backdrop: opt.backdrop || true,
@@ -1162,11 +1177,16 @@ app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal
                             $uibModalInstance.dismiss('cancel');
                             if (good && okCallback) okCallback();
                         };
+                        rta.scope = $scope;
+                        rta.close = () => {
+                            $uibModalInstance.dismiss('cancel');
+                        };
                         r._modal = $scope;
                     },
                     //size: '',
                     //resolve: {}
                 });
+                return rta;
             };
             var r = $rootScope;
             r.modalConfirm = r.modalConfirm || {};
@@ -1289,16 +1309,16 @@ app.directive('htmlContent', function(
         },
         link: function(s, elem, attrs) {
             if (!s.html) return;
-            
+
             $rootScope.dom(() => {
                 elem.html(s.html);
             });
-/*
-            s.$watch('html', () => {
-                $rootScope.dom(() => {
-                    elem.html(s.html);
-                });
-            });*/
+            /*
+                        s.$watch('html', () => {
+                            $rootScope.dom(() => {
+                                elem.html(s.html);
+                            });
+                        });*/
         }
     };
 });

@@ -1,4 +1,5 @@
 /*global angular*/
+/*global $D*/
 /*global $U*/
 /*global moment*/
 /*global _*/
@@ -438,6 +439,24 @@ app.controller('ctrl-diag-edit', [
         s.original = _.cloneDeep(s.item);
 
 
+        s.department = null;
+        s.removeDeparment = (nro) => {
+            s.item.departments = s.item.departments || [];
+            s.item.departments.splice(s.item.departments.indexOf(nro), 1);
+        };
+        s.addDepartment = () => {
+            if (!s.department) return r.warningMessage('Indiquez le département');
+            s.item.departments = s.item.departments || [];
+            if (!_.includes($D.availableFranceDepartementsNumbers(), s.department.toString())) {
+                return r.warningMessage('Le département est pas valide');
+            }
+            if (_.includes(s.item.departments, s.department)) {
+                return r.warningMessage('Le département est déjà sélectionné');
+            }
+
+            s.item.departments.push(s.department);
+        };
+
 
         s.$watch('item.disabled', (v) => {
             if (v && s.item._id) {
@@ -637,7 +656,7 @@ app.controller('ctrl-diag-edit', [
         s.diplomesFileChange = (id) => {
             console.info(id);
             setTimeout(() => {
-                
+
                 s.diplomesSave(id);
             }, 1000)
 

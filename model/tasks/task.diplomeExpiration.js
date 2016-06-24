@@ -17,16 +17,16 @@ var dblog = (msg, type) => Log.save({
 });
 
 function handler(data, cb) {
-    log('retrieve diags in progress');
+   // log('retrieve diags in progress');
     User.getAll({
         userType: 'diag'
     }, (err, r) => {
         if (err) return dblog(log('Fail to retreive diags.'));
-        log('retrieve diags ok');
+       // log('retrieve diags ok');
         var filename, info;
         r.forEach(diag => {
             if (_.isUndefined(diag.diplomesInfo)) {
-                log(diag.email + ' diplomesInfo undefined.');
+              //  log(diag.email + ' diplomesInfo undefined.');
             }
             else {
                 //expirationDateNotificationEnabled
@@ -39,16 +39,16 @@ function handler(data, cb) {
                     filename = info.filename || 'unkown-file-name (' + id + ' = ' + JSON.stringify(info) + ')';
                     //
                     if (_.isUndefined(info.expirationDateNotificationEnabled)) {
-                        log(diag.email + ' ' + filename + ' expirationDateNotificationEnabled field required.');
+                        //log(diag.email + ' ' + filename + ' expirationDateNotificationEnabled field required.');
                     }
                     else {
                         if (_.isUndefined(info.expirationDate)) {
-                            log(diag.email + ' ' + filename + ' expirationDate field required.');
+                           // log(diag.email + ' ' + filename + ' expirationDate field required.');
                         }
                         else {
                             if (moment().diff(moment(info.expirationDate), 'days') < 31) {
                                 if (!_.isUndefined(info.expirationDateNotificationSended) && info.expirationDateNotificationSended === true) {
-                                    log(diag.email + ' ' + filename + ' has expire and alert was already sended.');
+                                   // log(diag.email + ' ' + filename + ' has expire and alert was already sended.');
                                 }
                                 else {
                                     User.getAll({

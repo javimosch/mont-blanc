@@ -6,7 +6,7 @@
 var $D = {
     openStripeModalPayOrder: openStripeModalPayOrder,
     rangeCollide: rangeCollide,
-    diagNameConvertion:diagNameConvertion,
+    diagNameConvertion: diagNameConvertion,
     getInvoiceHTMLContent: getInvoiceHTMLContent,
     createOrderDescription: createOrderDescription,
     normalizeOrderStartTime: normalizeOrderStartTime,
@@ -16,6 +16,7 @@ var $D = {
     sizePrice: sizePrice,
     totalPrice: totalPrice,
     createSelect: createSelect,
+    availableFranceDepartementsNumbers: availableFranceDepartementsNumbers,
     createDateTimePickerData: createDateTimePickerData,
     ORDER_STATUS: {
         CREATED: 'created', //just created
@@ -27,6 +28,16 @@ var $D = {
     ORDER_STATUS_PAID: ['prepaid', 'completed'],
     createSiteSectionsCategories: createSiteSectionsCategories
 };
+
+function availableFranceDepartementsNumbers() {
+    var rta = [];
+    for (var x = 1; x <= 95; x++) {
+        if (x == 20) continue;
+        rta.push(x.toString());
+    }
+    rta.push('2a', '2b', '69M');
+    return rta;
+}
 
 function createSiteSectionsCategories(db) {
     //check if page cats exists.
@@ -226,8 +237,8 @@ function openStripeModalPayOrder(order, cb, opt) {
         zipCode: false,
         allowRememberMe: false
     };
-    
-    if(opt.email){
+
+    if (opt.email) {
         payload.email = opt.email;
     }
 

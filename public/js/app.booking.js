@@ -13,6 +13,7 @@
 /*global $D*/
 var app = angular.module('app', [
     'app.run',
+    'ngSanitize',
     'app.services',
     'app.directives',
     'app.login',
@@ -121,6 +122,8 @@ app.controller('ctrl.booking', ['server',
 
 
 
+
+
         var MESSAGES = {
             ANSWER_SELL_OR_RENT: 'Répondre Vendez / Louer',
             ANSWER_APPARTAMENT_OR_MAISON: 'Répondre Appartament / Maison',
@@ -168,7 +171,9 @@ app.controller('ctrl.booking', ['server',
                 var wait = setInterval(() => {
                     if (!s.diagSlots) return;
                     clearInterval(wait);
-                    s.diagSlots.init();
+                    s.diagSlots.init(undefined, {
+                        department: s.item && s.item.postCode && s.item.postCode.substring(0, 2)
+                    });
                 }, 100)
             }
 
@@ -374,6 +379,50 @@ app.controller('ctrl.booking', ['server',
                 r.route('choix-diagnostics');
             }, () => {
                 // r.route('home');
+
+                if (!s.addressDepartmentCovered) {
+
+                    var msg = "Votre département est pas couvert par Diagnotical.<br>";
+                    msg += "Entrez votre adresse e-mail pour être informé lorsque votre service sera ouvert."
+                    msg += "<div class='row margin-top-one' >";
+                    msg += "   <div class='col-sm-12'>";
+                    msg += "      <input class='diags-input' ng-model=\"data.email\" placeholder='adresse e-mail'>";
+                    msg += "   </div>";
+                    msg += "</div>";
+
+                    db.ctrl('Notification', 'ADMIN_BOOKING_MISSING_DEPARTMENT', {
+                        department: s.item.postCode.substring(0, 2),
+                    });
+
+                    var modal = s.openConfirm({
+                        message: msg,
+                        data: {
+                            title: "Département sans couverture",
+                            hideYesButton: true,
+                            email: r.session() && r.session().email || '',
+                            customButton: true,
+                            customButtonLabel: "Send",
+                            customButtonClick: () => {
+                                if (!modal.scope.data.email) {
+                                    return r.infoMessage('Email est nécessaire.');
+                                }
+                                else {
+
+                                    db.ctrl('Notification', 'ADMIN_BOOKING_MISSING_DEPARTMENT_REQUEST', {
+                                        department: s.item.postCode.substring(0, 2),
+                                        email: modal.scope.data.email,
+                                        metadata: JSON.stringify(s.item),
+                                    });
+                                    modal.close();
+                                    return r.infoMessage('Nous avons été informés. Merci beaucoup.')
+                                }
+
+                            }
+                        }
+                    });
+
+                }
+
             });
         }
         s.proceedToDateSelection = function() {
@@ -501,6 +550,26 @@ app.controller('ctrl.booking', ['server',
         }
 
 
+        s.addressDepartmentCovered = true;
+        s.validateAddressDepartment = (cb, err) => {
+            var code = s.item.postCode.substring(0, 2);
+            console.info('debug validating address department', code);
+            db.ctrl('User', 'departmentCoveredBy', {
+                department: code.toString()
+            }).then(res => {
+                if (!res.ok) {
+                    return cb && cb(); //ignores validation
+                }
+                s.addressDepartmentCovered = res.result;
+                if (res.result == true) {
+                    cb && cb();
+                }
+                else {
+                    err && err();
+                }
+            })
+        };
+
 
         s.validateQuestions = function(cb, err) {
             ifThenMessage([
@@ -517,7 +586,9 @@ app.controller('ctrl.booking', ['server',
             ], (m) => {
                 s.warningMsg(m[0]);
                 if (err) err();
-            }, cb);
+            }, () => {
+                s.validateAddressDepartment(cb, err);
+            });
         };
 
         //DIAG DATE SELECTION -> Get the slot that the user had selected to the right place.
@@ -588,7 +659,7 @@ app.controller('ctrl.booking', ['server',
         });
 
 
-        
+
 
         s.htmlReplaceDiagName = function(str) {
             var code = str.replace('$NAME', s.diagSelected.label2).toUpperCase();

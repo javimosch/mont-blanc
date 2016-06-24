@@ -4,11 +4,11 @@
 ((global) => {
     global.diagsCalculateAvailableSlots = diagsCalculateAvailableSlots;
     global.diagsGetAvailableRanges = diagsGetAvailableRanges;
-    
+
     var DEBUG = false;
 
-    function diagsGetAvailableRanges(order, ctrl,opt) {
-        opt = opt|| {};
+    function diagsGetAvailableRanges(order, ctrl, opt) {
+        opt = opt || {};
         if (!isFinite(new Date(order.day))) {
             throw Error('getAvailableRanges Invalid order day');
         }
@@ -24,9 +24,18 @@
                 },
                 __select: 'priority'
             };
-            if(opt._diag){
+            if (opt._diag) {
                 payload._id = opt._diag._id || opt._diag;
             }
+
+            if (opt.department) {
+                payload.__rules.departments = {
+                    $eq: opt.department.toString()
+                };
+                console.info('debug filtering diags who cover department ',opt.department);
+            }
+
+
             //console.log('fs debug diags get all payload',payload);
             ctrl('User', 'getAll', payload).then((data) => {
                 cb(data.result.map((v) => ({
@@ -116,7 +125,7 @@
             //
             //if an exception collide with the whole day, skip.
             if (isExceptionCollidingWholeDay(diag, order, exceptions)) {
-                if(DEBUG) console.log(diag._id + ' exception colliding whole day');
+                if (DEBUG) console.log(diag._id + ' exception colliding whole day');
                 return;
             }
 
@@ -147,7 +156,7 @@
             if (slots.afternoon.length < 2) {
                 if (freeAfternoon(order, _collisions)) {
                     //slots.afternoon.push(slot(14, 0, order, diag), slot(15, 0, order, diag));
-                    slots = allocateFixedAfternoon(slots,order,diag);
+                    slots = allocateFixedAfternoon(slots, order, diag);
                 }
                 else {
                     var sumo = allocateAfternoon(diag, order, _collisions, slots);
@@ -174,29 +183,31 @@
             if (moment().isBefore(moment().hour(11).minutes(30))) {
                 if (moment().isBefore(moment().hour(8).minutes(0))) {
                     _slots.morning.push(slot(9, 0, order, diag), slot(10, 0, order, diag));
-                    if(DEBUG) console.log('allocate-fixed-morning-today-at-9h00-and-10h00-current-time-before-08h00: ');
+                    if (DEBUG) console.log('allocate-fixed-morning-today-at-9h00-and-10h00-current-time-before-08h00: ');
                 }
                 else {
                     var fixed = moment().add(1, 'hour');
                     if (fixed.isBefore(moment().hour(11).minutes(30))) {
                         var minutes = parseInt(parseInt(fixed.minutes()) / 10, 10) * 10;
                         _slots.morning.push(slot(fixed.hours(), minutes, order, diag));
-                        if(DEBUG) console.log('allocate-fixed-morning-today-at: ',fixed);
+                        if (DEBUG) console.log('allocate-fixed-morning-today-at: ', fixed);
                         fixed = fixed.add(1, 'hour');
                         if (fixed.isBefore(moment().hour(11).minutes(30))) {
                             _slots.morning.push(slot(fixed.hours(), minutes, order, diag));
-                            if(DEBUG) console.log('allocate-fixed-morning-today-at: ',fixed);
-                        }else{
-                            if(DEBUG) console.log('allocate-fixed-morning-today-skip: fixed beyond limit (11h30)',fixed);
+                            if (DEBUG) console.log('allocate-fixed-morning-today-at: ', fixed);
                         }
-                    }else{
-                        if(DEBUG) console.log('allocate-fixed-morning-today-skip: fixed beyond limit (11h30)',fixed);
+                        else {
+                            if (DEBUG) console.log('allocate-fixed-morning-today-skip: fixed beyond limit (11h30)', fixed);
+                        }
+                    }
+                    else {
+                        if (DEBUG) console.log('allocate-fixed-morning-today-skip: fixed beyond limit (11h30)', fixed);
                     }
                 }
             }
             else {
                 //none
-                if(DEBUG) console.log('allocate-fixed-morning-skip-current-time-after-11h30: ',fixed);
+                if (DEBUG) console.log('allocate-fixed-morning-skip-current-time-after-11h30: ', fixed);
             }
         }
         else {
@@ -217,21 +228,23 @@
                 if (fixed.isBefore(limit)) {
                     var minutes = parseInt(parseInt(fixed.minutes()) / 10, 10) * 10;
                     _slots.afternoon.push(slot(fixed.hours(), minutes, order, diag));
-                    if(DEBUG) console.log('allocate-fixed-afternoon-today-at: ',fixed);
+                    if (DEBUG) console.log('allocate-fixed-afternoon-today-at: ', fixed);
                     fixed = fixed.add(1, 'hour');
                     if (fixed.isBefore(limit)) {
                         _slots.afternoon.push(slot(fixed.hours(), minutes, order, diag));
-                        if(DEBUG) console.log('allocate-fixed-afternoon-today-at: ',fixed);
-                    }else{
-                        if(DEBUG) console.log('allocate-fixed-afternoon-today-skip: fixed beyond limit',limit,fixed);
+                        if (DEBUG) console.log('allocate-fixed-afternoon-today-at: ', fixed);
                     }
-                }else{
-                    if(DEBUG) console.log('allocate-fixed-afternoon-today-skip: fixed beyond limit',limit,fixed);
+                    else {
+                        if (DEBUG) console.log('allocate-fixed-afternoon-today-skip: fixed beyond limit', limit, fixed);
+                    }
+                }
+                else {
+                    if (DEBUG) console.log('allocate-fixed-afternoon-today-skip: fixed beyond limit', limit, fixed);
                 }
             }
             else {
                 _slots.afternoon.push(slot(14, 0, order, diag), slot(15, 0, order, diag)); //normal (is today in the morning, so allocate afternoon as normal)
-                if(DEBUG) console.log('allocate-fixed-afternoon-today-at-14-and-15-current-time-before-13h00: ',fixed);
+                if (DEBUG) console.log('allocate-fixed-afternoon-today-at-14-and-15-current-time-before-13h00: ', fixed);
             }
         }
         else {

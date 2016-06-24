@@ -29,6 +29,28 @@ function everyAdmin(cb) {
     });
 }
 
+function departmentCoveredBy(data, cb) {
+    actions.log('departmentCoveredBy=' + JSON.stringify(data));
+    if (!data.department) return cb("department required");
+    var User = ctrl('User');
+    User.getAll({
+        __select: "departments"
+    }, (err, _users) => {
+        if (err) return cb(err);
+        //actions.log('departmentCoveredBy=_users:len=' + JSON.stringify(_users.length));
+        for (var x in _users) {
+            //actions.log('departmentCoveredBy=looping='+x+'='+JSON.stringify(_users[x].departments||[]));
+            if (_users[x].departments) {
+                if (_.includes(_users[x].departments, data.department)) {
+                  //  actions.log('departmentCoveredBy=check=' + JSON.stringify(_users[x].departments) + ' contra ' + data.department);
+                    return cb(null, true);
+                }
+            }
+        }
+        return cb(null, false);
+    });
+}
+
 
 function balance(data, cb) {
     data.period = data.period || 'year';
@@ -293,7 +315,7 @@ function createClient(data, cb) {
 
 function sendAccountsDetails(_user) {
     Notif.CLIENT_CLIENT_NEW_ACCOUNT({
-        _user:_user
+        _user: _user
     }, (err, r) => {
         //async (write log on error)
         if (r.ok) {
@@ -369,6 +391,7 @@ function passwordReset(data, cb) {
 
 module.exports = {
     //custom
+    departmentCoveredBy: departmentCoveredBy,
     balance: balance,
     save: save,
     createClientIfNew: createClientIfNew,
@@ -429,9 +452,9 @@ function preSave(data) {
     if (data.notifications && data.userType == 'diag' && data.disabled == true && !data.notifications.ADMIN_DIAG_ACCOUNT_CREATED) {
         everyAdmin((err, _admin) => {
             if (err) return LogSave(JSON.stringify(err), 'error', err);
-            
+
             console.log(JSON.stringify(_admin));
-            
+
             Notif.trigger(NOTIFICATION.ADMIN_DIAG_ACCOUNT_CREATED, {
                 _user: _.cloneDeep(data),
                 _admin: _admin

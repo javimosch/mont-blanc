@@ -27,6 +27,7 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
     }
     r.htmlEditSave = () => {
         r.htmlEditItem.content = window.encodeURIComponent(window.CKEDITOR.instances.editor.getData());
+        console.log('save',window.decodeURIComponent(r.htmlEditItem.content).substring(0,10)+' ...');
         r.__text[r.htmlEditItem.code] = window.decodeURIComponent(r.htmlEditItem.content);
         db.ctrl('Text', 'save', r.htmlEditItem).then(() => {});
         r.htmlEditItem = undefined;
@@ -53,6 +54,7 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
         }).then(res => {
             if (res.ok && res.result) {
                 r.htmlEditItem = res.result;
+                //console.log(r.htmlEditItem);
                 setData(window.decodeURIComponent(r.htmlEditItem.content))
                 $U.scrollToTop();
             }

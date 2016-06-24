@@ -23,10 +23,14 @@ var actions = {
 
 
 
-function everyAdmin(cb) {
-    ctrl('User').getAll({
+function everyAdmin(cb, selectFields) {
+    var payload = {
         userType: 'admin'
-    }, (_err, _admins) => {
+    };
+    if (selectFields) {
+        payload.__select = selectFields;
+    }
+    ctrl('User').getAll(payload, (_err, _admins) => {
         _admins.forEach((_admin) => {
             cb(_admin);
         });
@@ -34,6 +38,9 @@ function everyAdmin(cb) {
 }
 
 var EXPORT_ACTIONS = {
+
+    ADMIN_BOOKING_MISSING_DEPARTMENT: ADMIN_BOOKING_MISSING_DEPARTMENT,
+    ADMIN_BOOKING_MISSING_DEPARTMENT_REQUEST: ADMIN_BOOKING_MISSING_DEPARTMENT_REQUEST,
 
     ADMIN_ADMIN_ACCOUNT_CREATED: ADMIN_ADMIN_ACCOUNT_CREATED,
     ADMIN_CLIENT_ACCOUNT_CREATED: ADMIN_CLIENT_ACCOUNT_CREATED,
@@ -298,6 +305,73 @@ function ADMIN_DIAG_ACCOUNT_CREATED(data, cb) {
 
 
 
+
+
+
+function ADMIN_BOOKING_MISSING_DEPARTMENT_REQUEST(data, cb) {
+    cb && cb(); //100% async
+    ALL_ADMINS_ASYNC_CUSTOM('ADMIN_BOOKING_MISSING_DEPARTMENT_REQUEST', {
+        data: data,
+        select: "email password firstName",
+        sendPayload: (data) => {
+            return {
+                to: data.to,
+                subject: "ATTENTION Booking Missing Department notification availability Request",
+                templateReplace: {
+                    '$METADATA': data.metadata,
+                    '$PROSPECT_EMAIL': data.email,
+                    '$DEPARTMENT': data.department,
+                    '$BACKOFFICE_URL': adminUrl('login?email=' + data._user.email + '&k=' + btoa(data._user.password || 'dummy'))
+                }
+            }
+        }
+    });
+}
+
+function ADMIN_BOOKING_MISSING_DEPARTMENT(data, cb) {
+    cb && cb(); //100% async
+    ALL_ADMINS_ASYNC_CUSTOM('ADMIN_BOOKING_MISSING_DEPARTMENT', {
+        data: data,
+        select: "email password firstName",
+        sendPayload: (data) => {
+            return {
+
+                subject: "ATTENTION Booking Missing Department",
+                templateReplace: {
+                    '$DEPARTMENT': data.department,
+                    '$BACKOFFICE_URL': adminUrl('login?email=' + data._user.email + '&k=' + btoa(data._user.password || 'dummy'))
+                }
+            }
+        }
+    });
+}
+
+function ALL_ADMINS_ASYNC_CUSTOM(type, opt) {
+    var data = opt.data;
+    if (!data._user) {
+        return ((_type, _opt) => {
+            //
+            everyAdmin((_admin) => {
+                if (_admin) {
+                    _opt.data._user = _admin;
+                    _opt.to = _admin.email;
+                    return ALL_ADMINS_ASYNC_CUSTOM(_type, _opt);
+                }
+            }, _opt.select);
+            //
+        })(type, opt);
+    }
+    actions.log(type + '=' + JSON.stringify(data));
+    var sendPayload = {
+        to: data.to,
+        __notificationType: type,
+        _user: data._user,
+        templateName: type,
+        cb: () => {}
+    };
+    Object.assign(sendPayload, opt.sendPayload(data));
+    send(sendPayload, () => {});
+}
 
 
 
