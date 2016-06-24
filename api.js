@@ -56,6 +56,9 @@
     if (!fs.existsSync(path))
      fs.mkdirSync(path);
    }
+   
+   ensureDirectory(process.cwd()+'/public/temp');
+   
    //TASKS
   configureProgrammedTasks(app);
  }
