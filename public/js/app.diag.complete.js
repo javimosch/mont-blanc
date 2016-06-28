@@ -526,6 +526,8 @@ app.controller('ctrl-diag-edit', [
                 [!s.item.priority, '==', true, "Priority required"],
                 [isNaN(s.item.priority), '==', true, "Priority allowed values are 0..100"],
                 [(s.item.priority < 0 || s.item.priority > 100), '==', true, "Priority allowed values are 0..100"],
+                
+                [s.item.departments && s.item.departments.length==0, '==', true, "Un Département en charge est requis"],
 
                 [
                     s.item.notifications && s.item.notifications.DIAG_DIAG_ACCOUNT_CREATED == true && s.item._id && (!s.item.diplomes || (s.item.diplomes && s.item.diplomes.length == 0)), '==', true, 'A Diplome est nécessaire'
@@ -881,10 +883,13 @@ app.controller('ctrl-diag-edit', [
 
 
         s.save = function() {
-            db.ctrl('User', 'find', {
+
+            var payload = {
                 email: s.item.email,
                 userType: 'diag'
-            }).then(function(res) {
+            };
+
+            db.ctrl('User', 'find', payload).then(function(res) {
                 if (res.result.length > 0) {
                     var _item = res.result[0];
                     if (s.item._id && s.item._id == _item._id) {
@@ -923,7 +928,7 @@ app.controller('ctrl-diag-edit', [
                                 s.item = res.result;
                                 s.inscriptionLabel.update();
                                 r.dom();
-                                return r.infoMessage("téléverser un diplome s'il vous plaît", 10000);
+                                return r.infoMessage("T&eacute;l&eacute;verser un diplome s&apos;il vous pla&Icirc;t", 10000);
                             }
                         }
                         else {
