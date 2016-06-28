@@ -229,7 +229,7 @@ function dateTime(d) {
 }
 
 function dateTime2(d) {
-    return moment(d).tz(TIME_ZONE).format('[Le] dddd DD [de] MMMM YY [à] HH[h]mm')
+    return moment(d).tz(TIME_ZONE).format('[Le] dddd DD MMMM YY [à] HH[h]mm')
 }
 
 
