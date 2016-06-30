@@ -18,7 +18,7 @@
             s.selectedItems = [];
             s.items = [];
             //
-            
+
             //
             if (r.userIs(['diag', 'client'])) {
                 return r.handleSecurityRouteViolation();
@@ -75,13 +75,164 @@
         function(db, s, r, params, focus, diagPrice, diagSlots) {
             r.setCurrentCtrl(s);
 
+
+            /*PDF LOGIC*/
             s.pdf = {
                 file: null
             };
-            s.pdfReset = {};
-            s.item = {
-
+            s.pdfDownload = (code) => {
+                window.open(db.URL() + '/File/get/' + s.item.files[code]._id, '_newtab');
             };
+            s.pdfExists = (code) => s.item && s.item.files && s.item.files[code] !== undefined;
+            s.pdfDelete = (code) => {
+                if (!s.pdfExists(code)) return;
+                var name = s.item.files[code] && s.item.files[code].filename || "File";
+                s.confirm('Delete ' + name + ' ?', () => {
+                    db.ctrl('File', 'remove', {
+                        _id: s.item.files[code]._id
+                    }).then((d) => {
+                        if (d.ok) {
+                            delete s.item.files[code];
+                            s.pdfCheck();
+                        }
+                    });
+                });
+            };
+            s.pdfChange = (diagCode) => {
+                if (s.item && s.item.end && moment(s.item.end).isAfter(moment())) {
+                    s.pdf = {};
+                    r.dom();
+                    return r.infoMessage("Ajouter après " + moment(s.item.end).format('dddd DD [de] MMMM YY'), 5000);
+                }
+                else {
+                    r.dom(function() {
+                        s.pdfSave(diagCode);
+                    }, 1000);
+                }
+            };
+            s.pdfAllPdfUploaded = () => {
+                for (var x in s.item.diags) {
+                    if (s.item.diags[x] == true) {
+                        if (s.item.files && s.item.files[x] && s.item.files[x]._id) {
+
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            };
+            s.pdfSaveSuccess = () => {
+                if (s.item.status == 'prepaid' && s.pdfAllPdfUploaded()) {
+                    console.warn('every pdf was uploaded. Turning order to completed.');
+                    s.item.status = 'completed';
+                }
+            };
+            s.pdfSave = (code) => {
+                if (!code) {
+                    return console.warn('pdfSave code required');
+                }
+                if (!s.pdf[code]) {
+                    return r.warningMessage("Un fichier requis", 5000);
+                }
+                if (s.pdf[code].type !== 'application/pdf') {
+                    return r.warningMessage("Format pdf nécessaire", 5000);
+                }
+                if (s.pdf[code].size / 1000 > 1624) {
+                    return r.warningMessage("Limite 1.5mb pour le fichier pdf", 5000);
+                }
+
+                s.item.files = s.item.files || {};
+
+                function _deletePrev(prevID) {
+                    if (prevID) {
+                        db.ctrl('File', 'remove', {
+                            _id: prevID
+                        });
+                        console.log('pdf delete prev',prevID);
+                    }
+                }
+                var prevID = s.item.files[code] && s.item.files[code]._id;
+
+                _uploadNew(); //starts here
+
+                function _uploadNew() {
+                    r.infoMessage('Patientez, le chargement est en cours', 99999);
+                    db.form('File/save/', {
+                        name: s.pdf[code].name,
+                        file: s.pdf[code]
+                    }).then((data) => {
+                        //console.info('INFO', data);
+                        if (data.ok) {
+                            s.item.files[code] = data.result;
+
+                            s.pdfSaveSuccess();
+
+                            db.ctrl('Order', 'update', {
+                                _id: s.item._id,
+                                files: s.item.files,
+                                status: s.item.status
+                            }).then(data => {
+                                _deletePrev(prevID);
+                                //_readFile();
+                                read(s.item._id);
+                                r.infoMessage('File upload success.', 5000);
+                            });
+                        }
+                        else {
+                            r.warningMessage('Upload fail, try later.', 9999);
+                        }
+                    });
+                }
+            };
+
+            s.pdfCheck = () => {
+                if (!s.item) return;
+                if (s.item && !s.item.files) return;
+                if (s.item && s.item.files && Object.keys(s.item.files).length == 0) return;
+
+
+                var cbHell = $U.cbHell(Object.keys(s.item.files).length, () => {
+                    db.ctrl('Order', 'update', {
+                        _id: s.item._id,
+                        files: s.item.files
+                    });
+                    console.log('pdf check complete');
+                });
+
+                var file = null;
+                for (var code in s.item.files) {
+                    file = s.item.files[code];
+                    if (!file) {
+                        cbHell.next();
+                    }
+                    else {
+                        if (!file._id) {
+                            console.warn('checking file, _id expected. Code its ', code);
+                            delete s.item.files[code];
+                            cbHell.next();
+                        }
+                        else {
+                            db.ctrl('File', 'find', {
+                                _id: file._id
+                            }).then(res => {
+                                var r = res.ok && res.result;
+                                if (!r) {
+                                    delete s.item.files[code];
+                                }
+                                cbHell.next();
+                            });
+                        }
+                    }
+                }
+            };
+
+
+
+
+            s.pdfReset = {};
+            s.item = {};
 
             s.afterRead = [];
 
@@ -819,71 +970,9 @@
                         });
                     });
                 };
-                
-                
 
-                s.pdfChange = () => {
-                    if (s.item && s.item.end && moment(s.item.end).isAfter(moment())) {
-                        s.pdf = {};
-                        r.dom();
-                        return r.infoMessage("Ajouter après "+moment(s.item.end).format('dddd DD [de] MMMM YY'), 5000);
-                    }else{
-                        s.saveFile();
-                    }
-                };
 
-                s.saveFile = () => {
-                    if (!s.pdf.file) {
-                        return r.warningMessage("Un fichier requis", 5000);
-                    }
-                    if (s.pdf.file.type !== 'application/pdf') {
-                        return r.warningMessage("Format pdf nécessaire", 5000);
-                    }
-                    if (s.pdf.file.size / 1000 > 1624) {
-                        return r.warningMessage("Limite 1.5mb pour le fichier pdf", 5000);
-                    }
-                    var pdfId_prev = s.item.pdfId;
-                    _uploadNew(); //starts here
 
-                    function _deletePrev() {
-                        if (pdfId_prev) {
-                            db.ctrl('File', 'remove', {
-                                _id: pdfId_prev
-                            });
-                        }
-                    }
-
-                    function _uploadNew() {
-                        r.infoMessage('Patientez, le chargement est en cours', 99999);
-                        db.form('File/save/', {
-                            name: s.pdf.file.name,
-                            file: s.pdf.file
-                        }).then((data) => {
-                            //console.info('INFO', data);
-                            if (data.ok) {
-                                s.item.pdfId = data.result._id;
-
-                                if (s.item.status == 'prepaid') {
-                                    s.item.status = 'completed';
-                                }
-
-                                db.ctrl('Order', 'update', {
-                                    _id: s.item._id,
-                                    pdfId: data.result._id,
-                                    status: s.item.status
-                                }).then(data => {
-                                    _deletePrev();
-                                    //_readFile();
-                                    read(s.item._id);
-                                    r.infoMessage('File upload success.', 5000);
-                                });
-                            }
-                            else {
-                                r.warningMessage('Upload fail, try later.', 9999);
-                            }
-                        });
-                    }
-                };
 
 
 
@@ -973,7 +1062,8 @@
                         }
 
                         autoPay();
-                        _readFile();
+                        // _readFile();
+                        s.pdfCheck();
                         //                    console.info('READ', s.item);
                         //s.message('Loaded', 'success', 2000);
                     }

@@ -76,8 +76,10 @@ exports.configure = function(app) {
     app.get('/File/get/:_id', (req, res) => {
         File.get({
             _id: req.params._id
-        }, (_err, data) => {
-           
+        }, (err, data) => {
+           if(err){
+               return res.json(err);
+           }
            // res.setHeader('Content-disposition', 'attachment; filename=' + data.filename);
            // res.setHeader('Content-Type', 'application/pdf');
 

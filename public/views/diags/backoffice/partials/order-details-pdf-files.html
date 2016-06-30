@@ -1,0 +1,27 @@
+<ul class="form-tiny center-block" ng-show="item._id">
+    <li>
+        Les diagnostics en PDF <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
+    </li>
+    <li ng-repeat="(diagCode,diagValue) in item.diags" ng-if="diagValue" class="relative diplome">
+        <!--LABEL-->
+        <label ng-bind="diagNameConvertion(diagCode)"></label>
+        <!--FILE-->
+        <input ng-show="!pdfExists(diagCode)" ng-disabled="state.working()" id="{{'file_'+diagCode}}" class="form-control" type="file" file-model="pdf[diagCode]" file-model-overwrite="true" file-model-change="pdfChange(diagCode)">
+
+        <!--LABEL PDF FILENAME (IF UPLOADED)-->
+        <p ng-show="pdfExists(diagCode)">
+            <span class="order-pdf-label link"
+            ng-click="pdfDownload(diagCode)"
+            ng-bind="item.files[diagCode].filename"></span>
+            &nbsp;
+            <!--DOWNLOAD-->
+            <i ng-show="pdfExists(diagCode)" ng-disabled="!item._id || state.working() || !pdfExists(diagCode)" ng-click="!pdfExists(diagCode) || pdfDownload(diagCode)" class="fa fa-download file-button">&nbsp;</i>
+            <!--DELETE-->
+            <i ng-show="pdfExists(diagCode)" ng-click="pdfDelete(diagCode)" class="fa fa-times file-button"></i>
+        </p>
+
+
+
+    </li>
+
+</ul>

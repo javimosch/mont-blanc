@@ -1151,6 +1151,10 @@ table.dg-dates tr.selected {
     border-radius: 5px;
 }
 
+.order-pdf-label{
+    font-size: x-small;
+}
+
 .diags-input-div {
     word-break: break-all;
     text-align: justify;

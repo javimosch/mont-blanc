@@ -184,13 +184,7 @@ function get(data, cb) {
     if (!data._id) return cb({
         message: '_id required!'
     });
-    var readstream = gfs.createReadStream({
-        _id: mongoose.Types.ObjectId(data._id)
-    });
-    readstream.on('error', function(err) {
-        console.log('An error occurred!', err);
-        throw err;
-    });
+
 
     find(data, (err, file) => {
         if (err) {
@@ -202,13 +196,28 @@ function get(data, cb) {
                     err: err,
                     payload: data
                 }
-            }, () => cb(null, rta));
+            }, () => cb({
+                error: "File not found",
+                details: err
+            }));
         }
         else {
-            var rta = file;
-            actions.log('get:end=' + JSON.stringify(rta));
-            rta.stream = readstream;
-            cb(null, rta);
+            if (!file) {
+                return cb({
+                    error: "File not found"
+                });
+            }
+
+            var readstream = gfs.createReadStream({
+                _id: mongoose.Types.ObjectId(data._id)
+            });
+            readstream.on('error', function(err) {
+                console.log('An error occurred!', err);
+                throw err;
+            });
+            actions.log('get:end=' + JSON.stringify(file));
+            file.stream = readstream;
+            cb(null, file);
         }
     });
 }

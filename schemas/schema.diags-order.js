@@ -75,6 +75,10 @@ module.exports = {
             type: Number,
             default: 0
         }, //
+        files: {
+            type: {},
+            default: {}
+        },
         pdfId: String,
 
         /*client details of an agency*/
@@ -91,9 +95,9 @@ module.exports = {
             type: String
         },
 
-        deliveredAt:{
-            type:Date,
-            default:null
+        deliveredAt: {
+            type: Date,
+            default: null
         },
         paidAt: {
             type: Date,
