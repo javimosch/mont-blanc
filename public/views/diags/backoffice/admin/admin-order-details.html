@@ -16,14 +16,14 @@
         </div>
         <div class="row margin-top-quarter">
             <input ng-disabled="state.working() || item._id" type="text" class="diags-input" ng-model="item._client" placeholder="Client" uib-typeahead="client as client.email for client in getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading clients. . .'"
-            typeahead-no-results="noResults">
+                typeahead-no-results="noResults">
         </div>
         <div class="row margin-top-half">
             <label class="unselectable">Diag Man</label>
         </div>
         <div class="row margin-top-quarter">
             <input ng-disabled="state.working() || item._id" type="text" class="diags-input" ng-model="item._diag" placeholder="Diag" uib-typeahead="diag as diag.email for diag in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingDiags||'Loading diags...'"
-            typeahead-no-results="noResults">
+                typeahead-no-results="noResults">
         </div>
         <div class="row margin-top-half">
             <label class="unselectable">Adresse</label>
@@ -169,7 +169,7 @@
         <div class="row margin-top-quarter relative" ng-if="false">
             <input ng-show="item._id" ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.start)" placeholder="Adresse">
             <input ng-show="!item._id" ng-disabled="isPaid() || state.working() || is(['client','diag'])" type="text" class="max-w-150 diags-input" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.start" min-date="datepicker.minDate" max-date="datepicker.maxDate"
-            init-date="item.start" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
+                init-date="item.start" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
             <button ng-show="!item._id" ng-disabled="state.working() || is(['client','diag'])" type="button" class="btn diags-btn" ng-click="start.opened = !start.opened"><i class="glyphicon glyphicon-calendar"></i></button>
         </div>
         <div class="row margin-top-half">
@@ -295,9 +295,9 @@
             <textarea ng-disabled="state.working()" class="diags-input fullwidth min-height-100 no-resize" ng-model="item.obs"></textarea>
         </div>
         <div class="row margin-top-one">
-                <div ng-include="'views/diags/backoffice/partials/order-details-pdf-files.html'" includeReplace></div>
-            </div>
-        
+            <div ng-include="'views/diags/backoffice/partials/order-details-pdf-files.html'" includeReplace></div>
+        </div>
+
 
         <div class="row margin-top-half">
             <label class="unselectable">Remise des clés</label>

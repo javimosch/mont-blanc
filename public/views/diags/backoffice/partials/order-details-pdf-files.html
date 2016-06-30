@@ -1,4 +1,7 @@
-<ul class="form-tiny center-block" ng-show="item._id">
+
+
+
+<ul class="form-tiny center-block" ng-show="item._id && !userIs('client') && logged()">
     <li>
         Les diagnostics en PDF <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
     </li>
@@ -24,4 +27,29 @@
 
     </li>
 
+</ul>
+
+
+
+
+<ul class="form-tiny center-block" ng-show="item._id && (userIs('client') || !logged())">
+    <li>
+        Les diagnostics en PDF <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
+    </li>
+    <li ng-repeat="(diagCode,diagValue) in item.diags" ng-if="diagValue" 
+    ng-show="pdfExists(diagCode)"
+    class="relative diplome">
+        <!--LABEL-->
+        <label ng-bind="diagNameConvertion(diagCode)"></label>
+
+        <!--LABEL PDF FILENAME (IF UPLOADED)-->
+        <p>
+            <span class="order-pdf-label link"
+            ng-click="pdfDownload(diagCode)"
+            ng-bind="item.files[diagCode].filename"></span>
+            &nbsp;
+            <!--DOWNLOAD-->
+            <i ng-show="pdfExists(diagCode)" ng-disabled="!item._id || state.working() || !pdfExists(diagCode)" ng-click="!pdfExists(diagCode) || pdfDownload(diagCode)" class="fa fa-download file-button">&nbsp;</i>
+        </p>
+    </li>
 </ul>

@@ -124,21 +124,7 @@
         </div>
         
         <div class="row margin-top-one">
-            <label class="unselectable">Les diagnostics en PDF: {{(pdfFileInfo && ""+pdfFileInfo.filename+"")||"(Non disponible)"}} <i ng-show="item.pdfId" ng-click="deletePDF()" class="fa fa-times file-button"
-           
-            ></i></label>
-        </div>
-        <div class="row margin-top-quarter">
-            <input 
-            ng-show="!item.pdfId"
-            type="file" file-model="pdf" ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working()" class="diags-input" placeholder="Diag Pdf"  file-model-change="pdfChange()">
-            
-            <button 
-            ng-if="false"
-            ng-show="!item.pdfId"
-            ng-disabled="!item._id || userIs(['client']) || (userIs(['diag'] && session()._id != item._diag._id) ) || state.working() || !pdf.file" class="margin-top-quarter btn diags-btn bg-azure-radiance" ng-click="saveFile()">Upload</button>
-            <button ng-disabled="!item.pdfId" class="margin-top-quarter btn diags-btn bg-azure-radiance" ng-click="downloadFile()">Télécharger</button>
-            <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
+            <div ng-include="'views/diags/backoffice/partials/order-details-pdf-files.html'" includeReplace></div>
         </div>
 
     </div>

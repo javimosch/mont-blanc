@@ -123,12 +123,8 @@
             <input ng-disabled="true" ng-value="momentTime(item.keysTimeTo)" class="diags-input" placeholder="A">
         </div>
         
-        <div class="row margin-top-half">
-            <label class="unselectable">Les diagnostics en PDF: {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||"(Non disponible)"}}</label>
-        </div>
-        <div class="row margin-top-quarter">
-            <button ng-disabled="!item.pdfId" class="margin-top-quarter btn diags-btn bg-azure-radiance" ng-click="downloadFile()">Télécharger</button>
-            <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
+         <div class="row margin-top-one">
+            <div ng-include="'views/diags/backoffice/partials/order-details-pdf-files.html'" includeReplace></div>
         </div>
 
 

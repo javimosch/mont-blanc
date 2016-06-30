@@ -73,12 +73,10 @@
             <div class="row margin-top-quarter">
                 <textarea ng-disabled="false" type="text" class="diags-input fullwidth min-height-100 no-resize" ng-model="item.obs"></textarea>
             </div>
-            <div class="row margin-top-half">
-                <label class="unselectable">Debriefing pdf file: {{(pdfFileInfo && "("+pdfFileInfo.filename+")")||"(not available yet)"}}</label>
-            </div>
-            <div class="row margin-top-quarter">
-                <button ng-disabled="!item.pdfId" class="margin-top-quarter btn diags-btn bg-azure-radiance" ng-click="downloadFile()">Download</button>
-                <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
+
+
+            <div class="row margin-top-one">
+                <div ng-include="'views/diags/backoffice/partials/order-details-pdf-files.html'" includeReplace></div>
             </div>
 
 
