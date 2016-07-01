@@ -382,8 +382,8 @@ app.controller('ctrl.booking', ['server',
 
                 if (!s.addressDepartmentCovered) {
 
-                    var msg = "Votre département est pas couvert par Diagnotical.<br>";
-                    msg += "Entrez votre adresse e-mail pour être informé lorsque votre service sera ouvert."
+                    var msg = "Votre département n'est pas encore couvert par Diagnostical.<br>";
+                    msg += "Laissez-nous votre adresse e-mail pour être informé de l'ouverture du service dans votre département."
                     msg += "<div class='row margin-top-one' >";
                     msg += "   <div class='col-sm-12'>";
                     msg += "      <input class='diags-input' ng-model=\"data.email\" placeholder='adresse e-mail'>";
@@ -397,11 +397,11 @@ app.controller('ctrl.booking', ['server',
                     var modal = s.openConfirm({
                         message: msg,
                         data: {
-                            title: "Département sans couverture",
+                            title: "Département en cours d'ouverture",
                             hideYesButton: true,
                             email: r.session() && r.session().email || '',
                             customButton: true,
-                            customButtonLabel: "Send",
+                            customButtonLabel: "Envoyer",
                             customButtonClick: () => {
                                 if (!modal.scope.data.email) {
                                     return r.infoMessage('Email est nécessaire.');
