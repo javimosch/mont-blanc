@@ -2,9 +2,12 @@ var req         = (n) => require(process.cwd()+'/model/'+n);
 var mime = require('mime-types')
 var fs = require('fs');
 var mailgun = require('mailgun-js')({
-	apiKey: 'key-4b58a66565bdaeceeaa5c3a0b29f64f8',
+	//apiKey: 'key-4b58a66565bdaeceeaa5c3a0b29f64f8',
 	//domain: 'sandbox6495084a9e554582a14b91bf2b45baa0.mailgun.org'
-	domain: 'misitioba.com'
+	//domain: 'misitioba.com'
+	
+	apiKey: 'key-537daa84b8e3ea8797c895c8b5725ee0',
+	domain:'diagnostical.fr'
 });
 var getFile = req('utils').getFile;
 var mailcomposer = require('mailcomposer');

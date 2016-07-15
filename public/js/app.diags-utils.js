@@ -215,7 +215,8 @@ function openStripeModalPayOrder(order, cb, opt) {
         }
     };
     var handler = StripeCheckout.configure({
-        key: 'pk_test_MDkxtBLcBpHwMCgkqX2dJHjO',
+        //key: 'pk_test_MDkxtBLcBpHwMCgkqX2dJHjO',
+        key: (r && r.isDevEnv()) ? 'pk_test_MDkxtBLcBpHwMCgkqX2dJHjO' : window.atob('cGtfbGl2ZV9ScldVOUlDcFl1cWxpQ05RWDhOQmhEZjE='),
         image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
         locale: 'auto',
         token: function(token) {

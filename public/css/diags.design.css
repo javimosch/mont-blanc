@@ -719,7 +719,7 @@ ul.diags li:first-child {
 }
 
 h2.diags,
-h2.diags> div {
+h2.diags> div, h2.diags p {
     font-family: 'Avenir-Book';
     font-size: 36px;
     padding-bottom: 33px;

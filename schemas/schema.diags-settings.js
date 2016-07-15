@@ -3,6 +3,9 @@ var Schema = mongoose.Schema;
 
 module.exports = {
     def: {
+        metadata: {
+            type: {}
+        },
         pricePercentageIncrease: {},
         createdAt: {
             type: Date,
