@@ -45,17 +45,13 @@
                         <div class="row margin-top-half" ng-show="!_order.info.house">
                             <div class="diags-btn-group row">
                                 <div class="col-xs-4">
-                                    <input 
-                                    
-                                    ng-model="_order.info.addressBatiment" class="diags-input xs" placeholder="Rue">
+                                    <input ng-model="_order.info.addressBatiment" class="diags-input xs" placeholder="Rue">
                                 </div>
                                 <div class="col-xs-4">
                                     <input ng-model="_order.info.addressCode" class="diags-input xs" placeholder="Code">
                                 </div>
                                 <div class="col-xs-4">
-                                    <input 
-                                    style="padding-left: 25px;"
-                                    ng-model="_order.info.addressEtage" class="diags-input xs" placeholder="Étage">
+                                    <input style="padding-left: 25px;" ng-model="_order.info.addressEtage" class="diags-input xs" placeholder="Étage">
                                 </div>
                             </div>
                         </div>
@@ -102,9 +98,7 @@
                             <input ng-model="_order.landLordEmail" class="diags-input" placeholder="Email du Propriétaire">
                         </div>
                         <div class="row margin-top-half">
-                            <input 
-                            data-address model="_order" field="landLordAddress" 
-                             class="diags-input" placeholder="Adresse de la résidence principale">
+                            <input data-address model="_order" field="landLordAddress" class="diags-input" placeholder="Adresse de la résidence principale">
                         </div>
                         <div class="row margin-top-half">
                             <input ng-model="_order.landLordPhone" class="diags-input" placeholder="Téléphone du Propriétaire">
@@ -119,11 +113,10 @@
                         <div class="row">
                             <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Récupérer les clefs </span></i>
                         </div>
-                        <div class="row margin-top-quarter min-height-45px" >
+                        <div class="row margin-top-quarter min-height-45px">
                             <p class="label">
-                                
-                                Où et quand le diagnostiqueur peut<br>
-                                récupérer les clefs du bien à diagnostiquer ?
+
+                                Où et quand le diagnostiqueur peut<br> récupérer les clefs du bien à diagnostiquer ?
                             </p>
                         </div>
                         <div class="row margin-top-one">
@@ -141,9 +134,7 @@
                             </div>
                         </div>
                         <div class="row margin-top-half">
-                            <input ng-disabled="_order.keysWhere!=='other'" 
-                            data-address model="_order" field="keysAddress" 
-                            class="diags-input" placeholder="Adresse">
+                            <input ng-disabled="_order.keysWhere!=='other'" data-address model="_order" field="keysAddress" class="diags-input" placeholder="Adresse">
                         </div>
                         <div class="row margin-top-half">
                             <div class="col-xs-6 padding-none">
@@ -181,18 +172,14 @@
                         <div class="row margin-top-half">
                             <span class="avenir-medium fnt-24 azure-radiance">Prix : {{_order.price}} € TTC</span>
                         </div>
-                        <div class="row margin-top-half">
-                            <button class="btn btn-xl bg-madison"
-                            ng-click="payNOW()"
-                            ng-disabled="state.working() || !orderSaved()"
-                            >Confirmer & Payer</button>
+                        <div class="row margin-top-one">
+                            <p style="font-style: italic;">En cliquant sur Confirmer & Payer vous acceptez nos <a href="https://www.diagnostical.fr/#/conditions-generales-utilisation" target="_blank">Conditions Générales d'Utilisation</a>.</p>
+                        </div>
+                        <div class="row margin-top-quarter">
+                            <button class="btn btn-xl bg-madison" ng-click="payNOW()" ng-disabled="state.working() || !orderSaved()">Confirmer & Payer</button>
                         </div>
                         <div class="row margin-top-half">
-                            <button class="btn btn-xl bg-madison"
-                            ng-show="!isLandLord()"
-                            ng-click="sendPaymentLink()"
-                            ng-disabled="state.working() || !orderSaved() || paymentDelegated()"
-                            >Déléguer au propriétaire</button>
+                            <button class="btn btn-xl bg-madison" ng-show="!isLandLord()" ng-click="sendPaymentLink()" ng-disabled="state.working() || !orderSaved() || paymentDelegated()">Déléguer au propriétaire</button>
                         </div>
                     </div>
                 </div>
@@ -208,7 +195,7 @@
         <div class="row diag-row margin-top-one padding-bottom-two">
             <div class="col-md-12 ">
                 <p class="stripe-message"><span class="fnt-30 text-top">*</span>
-                <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
+                    <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
                 </p>
             </div>
         </div>
