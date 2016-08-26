@@ -509,6 +509,11 @@ function CLIENT_ORDER_PAYMENT_SUCCESS(data, cb) {
 //DIAG//#1 OK ctrl.user app.diag.complete
 function DIAG_DIAG_ACCOUNT_CREATED(data, cb) {
     //requires: _user 
+    var fileName = 'mail-subscription-before-activated.docx';
+    data.attachment = {
+        path: _utils.getFilePath(fileName),
+        fileName: fileName
+    };
     DIAGS_CUSTOM_NOTIFICATION(
         NOTIFICATION.DIAG_DIAG_ACCOUNT_CREATED, data, cb, "Vous êtes Diagnostiqueur sur Diagnostical !", data._user.email, data._user, 'User');
 }

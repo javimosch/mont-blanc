@@ -828,7 +828,7 @@ app.controller('ctrl-diag-edit', [
             return rta;
         };
         s.notifyAboutActivation = (_user) => {
-            s.item = _user;
+            s.item = _user || s.item;
             db.ctrl('Notification', 'DIAG_DIAG_ACCOUNT_CREATED', {
                 _user: s.item
             }).then(res => {

@@ -5,6 +5,7 @@ var urldecode = require('urldecode');
 var moment = require('moment');
 
 var tempFolderPath = process.env.tempFolderPath || '/public/temp/';
+var filesPath = '/public/files/';
 
 function getFileTempPath(n) {
     var path = process.cwd() + tempFolderPath + (n||'');
@@ -13,6 +14,14 @@ function getFileTempPath(n) {
     return path;
 }
 exports.getFileTempPath = getFileTempPath;
+
+function getFilePath(fileName){
+    var path = process.cwd() + filesPath + (fileName||'');
+    path = replaceAll(path, '//', '/');
+    console.log('debug getFilePath', path);
+    return path;
+}
+exports.getFilePath = getFilePath;
 
 exports.has = (data, props) => {
     for (var x in props) {
