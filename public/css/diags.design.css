@@ -1791,8 +1791,14 @@ p.stripe-home-message> span {
     padding: 10px;
     line-height: 14px;
 }
+
+label * {
+    cursor:inerith;
+}
 .know-more .hover-block a{
     color: #1C335E;
+    font-weight: 700;
+    text-decoration: underline;
 }
 .know-more .hover-block, .know-more .hover-block span, .know-more .hover-block red, .know-more .hover-block a{
     font-size: 12px;
