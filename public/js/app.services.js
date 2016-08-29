@@ -120,7 +120,7 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
                 var content = r.__text[code];
                 var tag = document.createElement('tag');
                 tag.innerHTML = r.__text[code];
-                if(tag.childNodes && tag.childNodes[0] && tag.childNodes[0].tagName == 'P'){
+                if(tag.childNodes && tag.childNodes.length==1 && tag.childNodes[0].tagName == 'P'){
                     content = tag.childNodes[0].innerHTML;
                 }
                 
