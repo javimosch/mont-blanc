@@ -290,6 +290,14 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
             $U.url.hash(url);
             window.location.href = window.location.href;
+            
+            if(window.ga){
+                var pageval = ('/'+url+'.html').replaceAll('//','/');
+                ga('set', 'page', pageval);
+                ga('send', 'pageview');
+                //console.log('ga set ',pageval,' send pageview','virtual route',url);
+            }
+            
         }, delay || 0);
         r.__route = url;
         return url;
