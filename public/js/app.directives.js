@@ -619,7 +619,9 @@ app.directive('address', function($rootScope, $timeout) {
             }
             $timeout(function() {
                 try {
-                    elem.geocomplete().bind("geocode:result", onResult);
+                    elem.geocomplete({
+                        country:"FR"
+                    }).bind("geocode:result", onResult);
                 }
                 catch (e) {
                     var msg = 'Google library issue, address autocomplete feature is temporaly disabled.';

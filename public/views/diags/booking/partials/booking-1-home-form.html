@@ -51,7 +51,7 @@
             <input class="diags-range" ng-model="range" type="range" min="0" max="100" step="5" value="0" data-orientation="horizontal" range-values="squareMeters" range-model="item.squareMeters">
             -->
             <div range-values="squareMeters" range-model="item.squareMeters"></div>
-            
+
             <span class="fnt-12 avenir-roman padding-top-quarter">{{item.squareMeters||'&nbsp;'}}</span>
         </div>
     </div>
@@ -60,7 +60,19 @@
     </div>
     <div class="row diag-row width90p center">
         <div class="col-sm-7 diag-col-label margin-bottom-one">
-            <label>Permis de construire</label>
+            <label>Permis de construire <div class="know-more">
+                
+                <div class="hover-block">
+                      <span class="red">Date du permis de construire</span><br>
+                        Haussmannien et Art déco: avant 1949<br>
+                        Moderne et Récent: entre 1949 et Juillet 1997<br>
+                        Récent et Neuf: Aprés Juillet 1997<br>
+                        <br>
+                        Vous avez un doute? Contactez le SPF de votre commune.<br>
+                        Vous trouverez les coordonnées ici: <a target="_blank" href="/files/spf.pdf">SPF.pdf</a>
+                </div>
+                
+                <span>?</span></div></label>
             <div class="dropdown with-caret">
 
                 <button class="btn btn-default btn-permis-de-construire dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -121,9 +133,7 @@
 
     <div class="row diag-row width90p center">
         <div class="col-sm-12 padding-none margin-bottom-one">
-            <button class="btn diag-btn-main" 
-            ng-disabled="state.working()"
-            ng-click="proceedToDiagsSelection()">Choisir vos diagnostics</button>
+            <button class="btn diag-btn-main" ng-disabled="state.working()" ng-click="proceedToDiagsSelection()">Choisir vos diagnostics</button>
         </div>
     </div>
 

@@ -1754,3 +1754,51 @@ p.stripe-home-message> span {
 [disabled] .noUi-handle {
     cursor: not-allowed;
 }
+
+
+.know-more{
+       width: 19px;
+    height: 19px;
+    background: #63C5F6;
+    -moz-border-radius: 70px;
+    -webkit-border-radius: 70px;
+    border-radius: 70px;
+    display: inline-block;
+    padding-left: 5.2px;
+    top: 0px;
+    position: relative;
+    left: 3px;
+}
+.know-more > span{
+    color: #D60D00;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.know-more .hover-block{
+    display:none;
+}
+.know-more:hover .hover-block{
+    display: block;
+    position: absolute;
+    width: 380px;
+    height: 121px;
+    background: white;
+    color: #1C335E;
+    left: -174px;
+    top: -121px;
+    z-index: 99999999;
+    padding: 10px;
+    line-height: 14px;
+}
+.know-more .hover-block a{
+    color: #1C335E;
+}
+.know-more .hover-block, .know-more .hover-block span, .know-more .hover-block red, .know-more .hover-block a{
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+}
+.know-more .hover-block .red{
+    color:#BC3B44;
+    
+}
