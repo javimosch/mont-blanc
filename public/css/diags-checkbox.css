@@ -11,8 +11,8 @@ input[type="checkbox"] + span::before
     vertical-align: middle;
 }
  
-label *,
-label *
+label input,
+label span
 {
     cursor: pointer;
 }
