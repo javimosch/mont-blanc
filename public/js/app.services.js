@@ -116,7 +116,15 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
 
             //returns the content (if exists)
             if (r.__text && r.__text[code] && r.__text[code].length > 1) {
-                html += r.__text[code]
+                
+                var content = r.__text[code];
+                var tag = document.createElement('tag');
+                tag.innerHTML = r.__text[code];
+                if(tag.childNodes && tag.childNodes[0] && tag.childNodes[0].tagName == 'P'){
+                    content = tag.childNodes[0].innerHTML;
+                }
+                
+                html += content;
             }
             else {
                 //returns an static content
