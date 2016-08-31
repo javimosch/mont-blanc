@@ -1264,7 +1264,7 @@ app.controller('ctrl.booking', ['server',
                 constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined, // 'Entre 1949 et le 01/07/1997',
                 address: param('address') || undefined, // "15 rue L'Hopital Sain Louis",
                 gasInstallation: param('gasInstallation', s.gasInstallation) || undefined, // 'Oui, Moins de 15 ans',
-                electricityInstallation: param('electricityInstallation', s.electricityInstallation) || undefined, // 'Plus de 15 ans',
+                electricityInstallation: param('electricityInstallation', s.electricityInstallation) || s.item.electricityInstallation || undefined, // 'Plus de 15 ans',
                 date: paramDate('date'),
                 time: param('time', ['any']),
                 clientType: param('clientType', s.CLIENT_TYPES)
