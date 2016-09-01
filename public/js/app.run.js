@@ -147,7 +147,20 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
 }]);
 
-
+ /*google analytic tracking */
+ app.run(['$rootScope', '$location', '$window',
+    function($rootScope, $location, $window) {
+      $rootScope.$on('$routeChangeSuccess',
+        function(event) {
+          if (!$window.ga) {
+            return;
+          }
+          console.log('ga tracking to '+$location.path());
+          $window.ga('set', 'page', $location.path());
+          $window.ga('send', 'pageview');
+        });
+    }
+  ]);
 
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     //console.info('app.common.root:run');
@@ -293,8 +306,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
             
             if(window.ga){
                 var pageval = ('/'+url+'.html').replaceAll('//','/');
-                ga('set', 'page', pageval);
-                ga('send', 'pageview');
+                //ga('set', 'page', pageval);
+                //ga('send', 'pageview');
                 //console.log('ga set ',pageval,' send pageview','virtual route',url);
             }
             

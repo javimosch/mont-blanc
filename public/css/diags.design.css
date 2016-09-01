@@ -1044,7 +1044,7 @@ h2.diags.black> div {
     color: #0B3967;
     /*normal*/
     font-family: 'Avenir-Medium';
-    font-size: 24px;
+    font-size: 20px; /*before: 25*/
     padding-top: 0.5em;
 }
 

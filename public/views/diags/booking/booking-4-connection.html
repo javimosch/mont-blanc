@@ -28,10 +28,63 @@
             </div>
         </div>
 
+        <div class="row diag-row diag-row-form">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 ">
+                <div class="row-fluid frm-wrapper">
+                    <div class="diags-form">
+                        <div class="row">
+                            <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Votre Rendez-Vous</span></i>
+                        </div>
+                        <div class="row margin-top-quarter min-height-45px">
+                            <p class="label">Récapitulatif de votre commande</p>
+                        </div>
+                        <div class="row margin-top-one">
+                            <input ng-model="item.address" class="diags-input" placeholder="Ex: 23 rue de lyon, 75012 Paris">
+                        </div>
+                        <div class="row margin-top-half" ng-show="!item.info.house">
+                            <div class="diags-btn-group row">
+                                <div class="col-xs-4">
+                                    <input ng-model="item.info.addressBatiment" class="diags-input xs" placeholder="Rue">
+                                </div>
+                                <div class="col-xs-4">
+                                    <input ng-model="item.info.addressCode" class="diags-input xs" placeholder="Code">
+                                </div>
+                                <div class="col-xs-4">
+                                    <input style="padding-left: 25px;" ng-model="item.info.addressEtage" class="diags-input xs" placeholder="Étage">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row margin-top-half diags-botticelli-wrapper ">
+                            <div class="col-xs-2 padding-none margin-none">
+                                <div class="row padding-none margin-none">
+                                    <img class="" src="img/icon-calendar.png">
+                                </div>
+                                <div class="row padding-none margin-none">
+                                    <img class="margin-top-half" src="img/icon-guy.png">
+                                </div>
+                            </div>
+                            <div class="col-xs-10 padding-none margin-none">
+                                <div class="row roman-16">{{orderDateFormatted()}}</div>
+                                <div class="row margin-top-08em roman-16">{{orderDiagFormatted()}}</div>
+                            </div>
+                        </div>
+                        <div class="row margin-top-half">
+                            <div class="row padding-none light-14">
+                                Liste de Diagnostics :
+                            </div>
+                            <div class="row padding-none diags-icons margin-top-half" ng-show="_order && _order.diags">
+                                <img ng-repeat="(k,v) in _order.diags" ng-show="v" ng-src="img/icons/icon_{{k}}.png">
+                            </div>
+                        </div>
 
-        <div class="row diag-row">
-            <div class="col-xs-12 col-sm-12 col-md-6 ">
-                <div class="row-fluid diags-form-wrapper left">
+                    </div>
+                </div>
+            </div>
+        
+
+        
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
+                <div class="row-fluid frm-wrapper">
                     <div class="diags-form">
                         <div class="row">
                             <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Connexion</span></i>
@@ -49,14 +102,14 @@
                             <a class="diags-link text-center">Mot de passe oublié ?</a>
                         </div>
                         <div class="row margin-top-one">
-                            <button  ng-click="login()" class="btn btn-xl bg-madison">Connexion</button>
+                            <button ng-click="login()" class="btn btn-xl bg-madison">Connexion</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="row-fluid diags-form-wrapper right">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
+                <div class="row-fluid frm-wrapper">
                     <div class="diags-form">
                         <div class="row">
                             <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Inscription</span></i>
@@ -95,8 +148,8 @@
         </div>
         <div class="row diag-row margin-top-one padding-bottom-two">
             <div class="col-md-12 ">
-                <p class="stripe-message"><span class="fnt-30 text-top">*</span> 
-                <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
+                <p class="stripe-message"><span class="fnt-30 text-top">*</span>
+                    <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
                 </p>
             </div>
         </div>
