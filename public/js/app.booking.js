@@ -640,6 +640,12 @@ app.controller('ctrl.booking', ['server',
             m += ' à ' + r.momentTime(_date);
             return m.substring(0, 1).toUpperCase() + m.slice(1);
         };
+        
+         s.orderDiagFormattedFromITEM = function() {
+            return 'Avec ' +
+                (((s.item && s.item._diag && s.item._diag.firstName) && s.item._diag.firstName + ' ') || '') +
+                (((s.item && s.item._diag && s.item._diag.lastName) && s.item._diag.lastName.substring(0, 1).toUpperCase() + ' ') || 'G');
+        };
 
         s.orderDateFormatted = function() {
             if (!s._order) console.warn('invalid-order');
