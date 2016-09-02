@@ -640,11 +640,30 @@ app.controller('ctrl.booking', ['server',
             m += ' à ' + r.momentTime(_date);
             return m.substring(0, 1).toUpperCase() + m.slice(1);
         };
-        
-         s.orderDiagFormattedFromITEM = function() {
+
+        var fetch_diag_info_called = false;
+
+        function fetch_diag_info() {
+            if (fetch_diag_info_called) return;
+            fetch_diag_info_called = true;
+
+            db.ctrl('User', 'get', {
+                _id: s.item._diag
+            }).then(res => {
+               s.__diag = res.result;
+            }).error(()=>{
+                fetch_diag_info_called = false;
+            });
+
+        }
+
+        s.orderDiagFormattedFromITEM = function() {
+
+            if (!s.__diag) fetch_diag_info();
+
             return 'Avec ' +
-                (((s.item && s.item._diag && s.item._diag.firstName) && s.item._diag.firstName + ' ') || '') +
-                (((s.item && s.item._diag && s.item._diag.lastName) && s.item._diag.lastName.substring(0, 1).toUpperCase() + ' ') || 'G');
+                (((s.__diag && s.__diag.firstName) && s.__diag.firstName + ' ') || '') +
+                (((s.__diag && s.__diag.lastName) && s.__diag.lastName.substring(0, 1).toUpperCase() + ' ') || '');
         };
 
         s.orderDateFormatted = function() {
