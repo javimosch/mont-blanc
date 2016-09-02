@@ -633,6 +633,14 @@ app.controller('ctrl.booking', ['server',
 
         //DOM HELPERS
 
+        s.orderDateFormattedFromITEM = function() {
+            if (!s.item) console.warn('invalid-order');
+            var _date = s.item && s.item.start;
+            var m = moment(_date).format('dddd D MMMM YYYY');
+            m += ' à ' + r.momentTime(_date);
+            return m.substring(0, 1).toUpperCase() + m.slice(1);
+        };
+
         s.orderDateFormatted = function() {
             if (!s._order) console.warn('invalid-order');
             var _date = s._order && s._order.start;
