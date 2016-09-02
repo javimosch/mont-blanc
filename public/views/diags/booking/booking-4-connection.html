@@ -72,8 +72,8 @@
                             <div class="row padding-none light-14">
                                 Liste de Diagnostics :
                             </div>
-                            <div class="row padding-none diags-icons margin-top-half" ng-show="_order && _order.diags">
-                                <img ng-repeat="(k,v) in _order.diags" ng-show="v" ng-src="img/icons/icon_{{k}}.png">
+                            <div class="row padding-none diags-icons margin-top-half" ng-show="item && item.diags">
+                                <img ng-repeat="(k,v) in item.diags" ng-show="v" ng-src="img/icons/icon_{{k}}.png">
                             </div>
                         </div>
 
