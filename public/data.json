@@ -89,7 +89,7 @@
             "mandatory": true,
             "comments": "Mandatory",
             "time": 15,
-            "price": 30
+            "price": 26
         },
 
         {
@@ -100,7 +100,7 @@
             "comments": "Before 01/07/1997",
             "time": 15,
             "mandatory":false,
-            "price": 30
+            "price": 26
         }, {
             "label": "Plomb",
             "label2": "PLOMB",
@@ -109,7 +109,7 @@
             "comments": "Before 01/01/1949",
             "mandatory":false,
             "time": 30,
-            "price": 50
+            "price": 44
         }, {
             "label": "Carrez",
             "label2": "CARREZ",
@@ -136,7 +136,7 @@
             "mandatory": false,
             "comments": "depends on postcode 2 first figures : http://www.developpement-durable.gouv.fr/IMG/pdf/Dpts_termites_2015.pdf",
             "time": 15,
-            "price": 30
+            "price": 26
         }, {
             "label": "Gaz",
             "label2": "GAZ",
@@ -145,7 +145,7 @@
             "mandatory": false,
             "comments": "IF Oui, plus de 15 ans",
             "time": 15,
-            "price": 30
+            "price": 26
         }, {
             "label": "Electricité",
             "label2": "ELECTRICITE",
@@ -154,7 +154,7 @@
             "mandatory": false,
             "comments": "IF Oui, plus de 15 ans",
             "time": 30,
-            "price": 40
+            "price": 35
         }, {
             "label": "Parasitaire",
             "label2": "PARASITAIRE",
@@ -164,7 +164,7 @@
             "disabled": true,
             "comments": "Always optional",
             "time": 45,
-            "price": 30
+            "price": 26
         }
     ]
 }
