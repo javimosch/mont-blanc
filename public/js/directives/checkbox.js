@@ -66,7 +66,7 @@ app.directive('checkBoxModel', function($rootScope, $timeout, $compile) {
         scope:false,
         link: function(scope, el, attrs) {
 
-            el.on('change', () => {
+            el.on('click', () => {
                 if (el.prop('checked')) {
                     var v, p = attrs.value.toString();
                     if(p=='false'||p=='true'){
