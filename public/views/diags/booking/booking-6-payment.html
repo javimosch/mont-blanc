@@ -42,7 +42,7 @@
                         <div class="row margin-top-one">
                             <input ng-model="_order.address" class="diags-input" placeholder="Ex: 23 rue de lyon, 75012 Paris">
                         </div>
-                        <div class="row margin-top-half" ng-show="!_order.info.house">
+                        <div class="row margin-top-half" ng-if="false" ng-show="!_order.info.house">
                             <div class="diags-btn-group row">
                                 <div class="col-xs-4">
                                     <input ng-model="_order.info.addressBatiment" class="diags-input xs" placeholder="Rue">

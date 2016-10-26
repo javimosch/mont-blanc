@@ -507,8 +507,11 @@ app.controller('ctrl.booking', ['server',
 
         }
         s.validateClientDetails = function(cb) {
+
+            if (!s._user.email) return s.warningMsg('Email c&#39;est obligatoire.');
+
             db.ctrl('User', 'exists', {
-                email: s.auth.email,
+                email: s._user.email,
                 userType: 'client',
             }).then(exists => {
                 exists = exists.ok && exists.result == true;
@@ -650,8 +653,8 @@ app.controller('ctrl.booking', ['server',
             db.ctrl('User', 'get', {
                 _id: s.item._diag
             }).then(res => {
-               s.__diag = res.result;
-            }).error(()=>{
+                s.__diag = res.result;
+            }).error(() => {
                 fetch_diag_info_called = false;
             });
 
@@ -1549,7 +1552,7 @@ app.controller('ctrl.booking', ['server',
             s.createClient(function() {
                 s.infoMsg('Le compte a été créé . Vérifiez votre email .');
                 r.route(URL.HOME);
-            })
+            });
         }
 
         s.subscribeClient = function() {
@@ -1561,7 +1564,7 @@ app.controller('ctrl.booking', ['server',
                     });
                 }, true);
             });
-        }
+        };
 
         s.createClient = function(cb) {
             s.validateClientDetails(function() {
@@ -1573,15 +1576,24 @@ app.controller('ctrl.booking', ['server',
                     else {
                         s.warningMsg(data.err);
                     }
-                })
+                });
             });
-        }
+        };
 
-        s.subscribeModeBooking = (clientType) => s.subscribe(clientType, URL.ACCOUNT_DETAILS_BOOKING);
+        s.subscribeModeBooking = (clientType) => s.subscribe(clientType, URL.ACCOUNT_DETAILS_BOOKING, false);
         s.subscribeMode = (clientType) => s.subscribe(clientType, URL.ACCOUNT_DETAILS);
 
-        s.subscribe = (clientType, nextRoute) => {
-            s.validateAuthInput(() => {
+        s.subscribe = (clientType, nextRoute, useAuthCredentials) => {
+            useAuthCredentials = useAuthCredentials == undefined ? true : useAuthCredentials;
+            if (useAuthCredentials) {
+                s.validateAuthInput(_validateEmail);
+            }
+            else {
+                _setAndGo();
+            }
+
+
+            function _validateEmail() {
                 db.ctrl('User', 'exists', {
                     email: s.auth.email,
                     userType: 'client',
@@ -1591,14 +1603,20 @@ app.controller('ctrl.booking', ['server',
                         s.warningMsg('This email address belongs to an existing member.');
                     }
                     else {
-                        s._user.email = s.auth.email;
-                        s._user.password = s.auth.pass;
-                        s._user.clientType = clientType;
-                        s._user.__subscribeMode = true;
-                        r.route(nextRoute);
+                        _setAndGo();
                     }
                 });
-            });
+            }
+
+            function _setAndGo() {
+                if (useAuthCredentials) {
+                    s._user.email = s.auth.email;
+                    s._user.password = s.auth.pass;
+                }
+                s._user.clientType = clientType;
+                s._user.__subscribeMode = true;
+                r.route(nextRoute);
+            }
         };
 
 
