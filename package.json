@@ -10,7 +10,8 @@
     "test3": "./node_modules/.bin/mocha --recursive -R xunit test/ > test-reports.xml && exit 0",
     "start": "node --max_old_space_size=512 app.js",
     "deploy": "git push origin diags:heroku",
-    "build": "node ./tools/node_bundle.js"
+    "build": "node ./tools/node_bundle.js",
+    "heroku":"npm run build && npm run start"
   },
   "license": "ISC",
   "engines": {
