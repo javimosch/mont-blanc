@@ -34,7 +34,13 @@ function departmentCoveredBy(data, cb) {
     if (!data.department) return cb("department required");
     var User = ctrl('User');
     User.getAll({
-        __select: "departments"
+        __select: "departments",
+        __rules: {
+            disabled: {
+                $ne: true
+            } //exclude disabled diags
+        }
+
     }, (err, _users) => {
         if (err) return cb(err);
         //actions.log('departmentCoveredBy=_users:len=' + JSON.stringify(_users.length));
@@ -42,7 +48,7 @@ function departmentCoveredBy(data, cb) {
             //actions.log('departmentCoveredBy=looping='+x+'='+JSON.stringify(_users[x].departments||[]));
             if (_users[x].departments) {
                 if (_.includes(_users[x].departments, data.department)) {
-                  //  actions.log('departmentCoveredBy=check=' + JSON.stringify(_users[x].departments) + ' contra ' + data.department);
+                    //  actions.log('departmentCoveredBy=check=' + JSON.stringify(_users[x].departments) + ' contra ' + data.department);
                     return cb(null, true);
                 }
             }
