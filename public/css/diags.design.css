@@ -474,8 +474,8 @@ a.diag-btn-info:hover {
 
 .diags-pill-info {
     border-radius: 20px;
-    background-color: #00A8FF;
-    padding: 3px 15px;
+    background-color: #00A8FF!important;
+    padding: 3px 15px!important;
     display: inline-block;
     line-height: 30px;
     color: white;

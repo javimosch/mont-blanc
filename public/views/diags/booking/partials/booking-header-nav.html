@@ -3,7 +3,22 @@
     <li><a ng-click="route(URL.ESPACE_DIAG)" class="link diag-button diag-btn-info">Espace Diagnostiqueur</a></li>
 </ul>
 <ul class="nav navbar-nav navbar-right">
-    <li><a ng-click="route(URL.CONTACT_US)" class="link diag-link">Contactez-nous</a></li>
+
+    <!-- <li><a ng-click="route(URL.CONTACT_US)" class="link diag-link">Contactez-nous</a></li> -->
+
+    <li >
+        
+            <div class="diags-pill-info " style="
+    height: 35px!important;
+    margin-top: 7px;
+">
+                <span class="xxs-flex avenir-black txt-xl white middle" bind-html-compile="html('BOOKING_HOME_BG_TEXT_PHONE',STATIC.BOOKING_HOME_BG_TEXT_PHONE)">
+                06 20 75 45 79
+            </span>
+            </div>
+        
+    </li>
+
     <li><a ng-click="route(URL.ERNT)" class="link diag-link">ERNMT</a></li>
-    <li><a ng-click="route(URL.FAQ)" class="link diag-link">FAQ</a></li>
+    <!-- <li><a ng-click="route(URL.FAQ)" class="link diag-link">FAQ</a></li> -->
 </ul>
