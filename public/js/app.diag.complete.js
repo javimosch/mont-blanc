@@ -446,6 +446,9 @@ app.controller('ctrl-diag-edit', [
         };
         s.addDepartment = () => {
             if (!s.department) return r.warningMessage('Indiquez le département');
+            if(s.department.toString().length===1){
+                s.department = '0'+s.department;
+            }
             s.item.departments = s.item.departments || [];
             if (!_.includes($D.availableFranceDepartementsNumbers(), s.department.toString())) {
                 return r.warningMessage('Le département est pas valide');
