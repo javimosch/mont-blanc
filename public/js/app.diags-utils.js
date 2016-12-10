@@ -33,7 +33,11 @@ function availableFranceDepartementsNumbers() {
     var rta = [];
     for (var x = 1; x <= 95; x++) {
         if (x == 20) continue;
-        rta.push(x.toString());
+        if(x.toString().length===1){
+            rta.push('0'+x.toString());   
+        }else{
+            rta.push(x.toString());   
+        }
     }
     rta.push('2a', '2b', '69M');
     return rta;
