@@ -81,10 +81,8 @@
             };
 
             function validNumber(input) {
-                var rta = !input;
-                if (rta) return false;
-                rta = isNaN(input);
-                if (rta) return false;
+                if (input == undefined) return false;
+                if (isNaN(input)) return false;
                 if (!$U.numberBetween(input, 0, 500)) return false;
                 return true;
             }
