@@ -9,9 +9,10 @@
     "test2": "echo \"Error: no test specified\" && exit 1",
     "test3": "./node_modules/.bin/mocha --recursive -R xunit test/ > test-reports.xml && exit 0",
     "start": "node --max_old_space_size=512 app.js",
-    "deploy": "git push origin diags:heroku",
+    "deploy": "git push origin master:master",
     "build": "node ./tools/node_bundle.js",
-    "heroku":"npm run build && npm run start"
+    "heroku":"npm run build && npm run start",
+    "preview":"git push heroku preview:master"
   },
   "license": "ISC",
   "engines": {
