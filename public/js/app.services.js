@@ -494,7 +494,46 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
             else {
                 $.getJSON('./data.json', function(data) {
                     localData = data;
-                    resolve(localData);
+                    
+                    //patch prices from db if available
+                    ctrl('Settings', 'getAll', {}).then(r => {
+                    if (r.ok && r.result.length > 0) {
+                        var dbSettings = r.result[0];
+                        
+                        if(dbSettings.metadata && dbSettings.metadata.prices){
+                            Object.keys(dbSettings.metadata.prices).forEach(function(diagName){
+                                
+                                for(var i in localData.diags){
+                                    if(localData.diags[i].name == diagName){
+                                        
+                                        if(dbSettings.metadata.prices[diagName] !== undefined){
+                                            try{
+                                                localData.diags[i].price =   parseInt(dbSettings.metadata.prices[diagName]);
+                                            }catch(e){
+                                                
+                                            }
+                                        }
+                                        
+                                        
+                                    }
+                                }
+                                
+                            });
+                            
+                            resolve(localData);
+                            
+                        }else{
+                            resolve(localData);        
+                        }
+                        
+                        
+                    }else{
+                        resolve(localData);    
+                    }
+                        
+                    });
+                    
+                    
                 }).fail(function(jqxhr, textStatus, error) {
                     var err = textStatus + ", " + error;
                     console.log("Request Failed: " + err);

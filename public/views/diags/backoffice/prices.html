@@ -1,0 +1,32 @@
+<div class="row">
+    <div class="col-sm-12 padding-none">
+        <ol class="breadcrumb">
+            <li><a class="link" ng-click="route('settings')">Settings</a></li>
+            <li>Prices</li>
+        </ol>
+    </div>
+</div>
+<div class="container" ng-controller="diags_ctrl_settings">
+    <div class="row margin-top-two">
+        <div class="col-sm-12">
+            <table class="table table-striped table-condensed link questions">
+                <tr ng-repeat="(k,o) in localData.diags">
+                    <td>
+                        <label class="minimal" ng-bind="o.label"></label>
+                    
+                        <input 
+                        ng-show="true"
+                        class="diags-input minimal" 
+                        placeholder="" 
+                        ng-model="item.metadata.prices[o.name]" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row margin-bottom-three">
+        <div class="col-sm-12">
+            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Enregistrer</button>
+        </div>
+    </div>
+</div>

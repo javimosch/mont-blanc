@@ -9,6 +9,31 @@
     app.controller('diags_ctrl_settings', ['server', '$scope', '$rootScope',
         function(db, s, r) {
 
+            db.localData().then(function(data) {
+                s.localData = data;
+            });
+
+            function mergeStaticPrices(){
+                db.localData().then(function(data) {
+                    var diags = data.diags;
+                    
+                    s.item.metadata = s.item.metadata  || {};
+                    s.item.metadata.prices  = s.item.metadata.prices  || {};
+                    
+                    for(var i in diags){
+                        
+                        
+                        if( s.item.metadata.prices[ diags[i].name ] === undefined){
+                            s.item.metadata.prices[ diags[i].name ] = diags[i].price;
+                        }
+                        
+                        
+                    }
+                    
+                });    
+            }
+            
+
             s.deleteAll = (t) => {
                 r.openConfirm({
                     message: "You want to delete all the objects of type " + t + ' ?',
@@ -42,6 +67,7 @@
                 'Notifications': 'notifications',
                 'Logs': 'logs',
                 "Tools": 'tools',
+                "Prices": "prices",
                 "Price Modifiers": "price-modifiers",
                 "Documentation": "documentation",
                 "Database": "settings-database",
@@ -106,7 +132,10 @@
             };
             s.read = () => {
                 db.ctrl('Settings', 'getAll', {}).then(r => {
-                    if (r.ok && r.result.length > 0) s.item = r.result[0];
+                    if (r.ok && r.result.length > 0) {
+                        s.item = r.result[0];
+                        mergeStaticPrices();
+                    }
                     else {
                         s.save();
                     }
@@ -136,7 +165,7 @@
                                 r.openConfirm({
                                     message: "Upload " + arr.length + " items? Data will be replaced."
                                 }, () => {
-                                    
+
                                     db.ctrl('Text', 'importAll', {
                                         items: arr
                                     }).then(res => {
@@ -330,11 +359,11 @@
             });
             //
             s.preview = () => {
-                
-                if(!s.randomOrder){
+
+                if (!s.randomOrder) {
                     return r.warningMessage('At least one Order saved in DB is required.');
                 }
-                
+
                 s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
                 var html =
                     window.encodeURIComponent(
