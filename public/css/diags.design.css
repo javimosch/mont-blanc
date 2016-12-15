@@ -167,6 +167,8 @@ html {
     font-family: 'Avenir-Book';
     font-size: 14px;
     color: #878787;
+    line-height: 37px;
+    padding-top: 7px;
 }
 
 .diags-navbar-2 .dropdown-menu a {
@@ -176,10 +178,10 @@ html {
 }
 
 .diags-navbar-2 .navbar-nav>li>a.diag-button {
-    line-height: 28px;
-    height: 28px;
+    line-height: 37px;
+    height: 37px;
     padding: 0px 20px;
-    margin: 10px 10px 0px 10px;
+    margin: 7px 10px 0px 10px;
     border-radius: 15px;
     color: white;
     max-width: 232px;
