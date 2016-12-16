@@ -581,6 +581,27 @@ function totalPrice(showRounded, model, diags, squareMetersPrice, basePrice, opt
     }
 
     var realTot = parseInt(parseInt(tot) / 10, 10) * 10;
+    
+    //insert department multiplier here
+    if(opt.department !== undefined && opt.s.settings && opt.s.settings.metadata && opt.s.settings.metadata.departmentMultipliers){
+        //    opt.s.settings.metadata.departmentMultipliers
+        
+        if(opt.s.settings.metadata.departmentMultipliers[ opt.department ] !== undefined){
+            
+            var depMultiplier = opt.s.settings.metadata.departmentMultipliers[ opt.department ];
+            
+            var before = realTot;
+            
+            realTot = (realTot * depMultiplier).toFixed(2);
+            tot = (tot * depMultiplier).toFixed(2);
+            
+            
+            console.info('DEBUG using multiplier',depMultiplier,'for department',opt.department,'. Original price',before,'and now is',realTot);
+        }
+        
+        
+    }
+    
 
 
     if (opt.s) {
