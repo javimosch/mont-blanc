@@ -1886,7 +1886,8 @@ app.controller('ctrl.booking', ['server',
         s.sizePrice = () => sizePrice(s._order, s.diags, s.squareMetersPrice, s.basePrice);
         s.totalPrice = (showRounded, opt) => totalPrice(showRounded, s._order, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({
             s: s,
-            r: r
+            r: r,
+            department: s.item.postCode.substring(0,2)
         }, opt || {}));
 
         s.totalPriceRange = (dt) => totalPrice(true, s.item, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({

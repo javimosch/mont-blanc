@@ -67,7 +67,7 @@
                 'Notifications': 'notifications',
                 'Logs': 'logs',
                 "Tools": 'tools',
-                "Prices": "prices",
+                "General prices": "prices",
                 "Price Modifiers": "price-modifiers",
                 "Documentation": "documentation",
                 "Database": "settings-database",
@@ -112,6 +112,59 @@
                 if (!$U.numberBetween(input, 0, 500)) return false;
                 return true;
             }
+            
+            s.departmentMultiplier = {
+                department:'',
+                value:null,
+                examplePrice:350
+            };
+            
+            s.departmentMultiplierHasDepartment = function(){
+                return s.item && s.item.metadata && s.item.metadata.departmentMultipliers &&  s.item.metadata.departmentMultipliers[ s.departmentMultiplier.department ] !== undefined;
+            };
+            
+            s.selectDepartmentMultiplierItem = function(department,value){
+              s.departmentMultiplier.department = department;
+              s.departmentMultiplier.value = value;
+            };
+            
+            s.removeDepartmentMultiplier = function(department){
+                s.item.metadata.departmentMultipliers = s.item.metadata.departmentMultipliers || {};
+                
+                if(s.item.metadata.departmentMultipliers[ department ] !== undefined){
+                    delete s.item.metadata.departmentMultipliers[ department ];
+                }
+            };
+            s.addDepartmentMultiplier = function(){
+                s.item.metadata.departmentMultipliers = s.item.metadata.departmentMultipliers || {};
+                if(s.departmentMultiplier.department && s.departmentMultiplier.value !== undefined){
+                    
+                    if(s.departmentMultiplier.department.toString().length === 1){
+                        s.departmentMultiplier.department = '0' + s.departmentMultiplier.department;
+                    }
+                    
+                    if(!s.departmentMultiplier.value || isNaN(s.departmentMultiplier.value) || s.departmentMultiplier.value === ''){
+                        return console.warn('WARN: not a value');
+                    }else{
+                        
+                        if(parseFloat(s.departmentMultiplier.value) > 10 ){
+                            return console.warn('WARN: value should be less equal 10');
+                        }
+                        
+                        if(parseFloat(s.departmentMultiplier.value) < 0 ){
+                            return console.warn('WARN: value should be greater equal 0');
+                        }
+                        
+                        s.item.metadata.departmentMultipliers[ s.departmentMultiplier.department ] = parseFloat(s.departmentMultiplier.value);
+                        
+                        s.departmentMultiplier.value = null;
+                        s.departmentMultiplier.department = null;
+                        
+                    }
+                    
+                }
+                
+            };
 
             s.validate = () => {
                 var rules = [];
