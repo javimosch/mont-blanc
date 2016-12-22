@@ -43,7 +43,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     //    console.info('app.admin:run');
 
-    r.isDevEnv = () => window.location.hostname.indexOf('diags-javoche.c9users.io') !== -1;
+    r.isDevEnv = () => window.location.hostname.indexOf('c9users.io') !== -1;
     
     r.URL = {
         LOGIN: 'login',
