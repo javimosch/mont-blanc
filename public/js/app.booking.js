@@ -584,9 +584,14 @@ app.controller('ctrl.booking', ['server',
                 [s.item.gasInstallation, '==', undefined, "Répondre Gaz"],
                 [s.item.electricityInstallation, '==', undefined, "Répondre Electricité"],
                 [s.item.address, '==', undefined, "Répondre Address"],
+                
+                /*
+                removed: autocomplete is now limited to france
                 [_.includes(['France', 'Francia', 'Frankrig', 'Frankrijk',
                     'Frankreich', 'Frankrike', 'Francja'
                 ], s.item.country), '==', false, MESSAGES.FRENCH_ADDRESS_REQUIRED]
+                */
+                
             ], (m) => {
                 s.warningMsg(m[0]);
                 if (err) err();
