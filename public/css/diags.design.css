@@ -1,5 +1,9 @@
 .cssfx {}
 
+.modal-backdrop{
+    z-index: 999040!important;
+}
+
 
 /*
 SMOTH
