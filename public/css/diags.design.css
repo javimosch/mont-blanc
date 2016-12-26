@@ -1,5 +1,9 @@
 .cssfx {}
 
+.modal-backdrop{
+    z-index: 999040!important;
+}
+
 
 /*
 SMOTH
@@ -1717,14 +1721,14 @@ p.stripe-home-message> span {
 /*
 .noUi-handle:before,
 .noUi-handle:after {
-	content: "";
-	display: block;
-	position: absolute;
-	height: 14px;
-	width: 1px;
-	background: #E8E7E6;
-	left: 14px;
-	top: 6px;
+    content: "";
+    display: block;
+    position: absolute;
+    height: 14px;
+    width: 1px;
+    background: #E8E7E6;
+    left: 14px;
+    top: 6px;
 }*/
 
 .noUi-handle:after {

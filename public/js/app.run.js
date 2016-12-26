@@ -26,15 +26,13 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
             if (keyword.toLowerCase() == 'debug') {
                 r.__debugDiags = true;
                 console.info('debug-mode-on');
-            }
-            else {
+            } else {
                 r.__debugDiags = false;
                 //console.info('debug-mode-off, try again');
             }
             keyword = '';
             r.dom();
-        }
-        else {
+        } else {
             keyword = keyword + key;
         }
     });
@@ -43,8 +41,9 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     //    console.info('app.admin:run');
 
-    r.isDevEnv = () => window.location.hostname.indexOf('c9users.io') !== -1;
-    
+
+    r.isDevEnv = () => window.location.hostname.indexOf('c9users.io') !== -1 || window.location.hostname.indexOf('localhost') !== -1;
+
     r.URL = {
         LOGIN: 'login',
         DIAG_SIGN_UP: 'diag-inscription',
@@ -68,8 +67,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         if (!r.logged()) {
             console.warn('secureSection:redirecting to login');
             r.route('login');
-        }
-        else {
+        } else {
             _s.show = true;
             //async update of the current user.
             db.ctrl('User', 'getById', r.session()).then(function(d) {
@@ -107,7 +105,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
     r.setCurrentCtrl = (_s) => {
         r.__currentCtrlScope = _s
-        $U.expose('s',_s);
+        $U.expose('s', _s);
     };
 
     function getMessage(msg) {
@@ -147,20 +145,20 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
 }]);
 
- /*google analytic tracking */
- app.run(['$rootScope', '$location', '$window',
+/*google analytic tracking */
+app.run(['$rootScope', '$location', '$window',
     function($rootScope, $location, $window) {
-      $rootScope.$on('$routeChangeSuccess',
-        function(event) {
-          if (!$window.ga) {
-            return;
-          }
-          console.log('ga tracking to '+$location.path());
-          $window.ga('set', 'page', $location.path());
-          $window.ga('send', 'pageview');
-        });
+        $rootScope.$on('$routeChangeSuccess',
+            function(event) {
+                if (!$window.ga) {
+                    return;
+                }
+                console.log('ga tracking to ' + $location.path());
+                $window.ga('set', 'page', $location.path());
+                $window.ga('send', 'pageview');
+            });
     }
-  ]);
+]);
 
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     //console.info('app.common.root:run');
@@ -170,11 +168,11 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     r.debug = true;
 
     r.config = {};
-    
+
     var env = window.env;
     r.config = $U.readJSONSync(window.env.CONFIG_JSON_PATH);
     env.$set(r.config);
-    
+
     db.localData().then((data) => Object.assign(r.config, data.config || {}));
 
 
@@ -182,8 +180,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     r.cache = function(n, o) {
         if (o) {
             return r.__cache[n] = o;
-        }
-        else {
+        } else {
             if (!_.isUndefined(r.__cache[n]) && !_.isNull(r.__cache[n])) {
                 //console.info('CACHE: retrieving ' + n + ' (' + typeof r.__cache[n] + ')');
             }
@@ -216,18 +213,17 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     };
 
 
-   
 
     r.session = function(data) {
-        var id = r.config.APP_NAME+'_'+window.location.hostname+env.STORE_SESSION_PREFIX;
+        var id = r.config.APP_NAME + '_' + window.location.hostname + env.STORE_SESSION_PREFIX;
         if (data) {
-            $U.store.set(id,data);
+            $U.store.set(id, data);
             r._session = data;
         }
         r._session = $U.store.get(id);
-        if(!r._session){
-            $U.store.set(id,{});
-            r._session={};
+        if (!r._session) {
+            $U.store.set(id, {});
+            r._session = {};
         }
         return r._session;
     };
@@ -282,10 +278,10 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         r.dom();
     };
 
-    r.routeRelative = function(url,delay){
+    r.routeRelative = function(url, delay) {
         setTimeout(function() {
             var path = window.location.origin;
-            path +=  (window.location.pathname +'/' + url).replaceAll('//','/');
+            path += (window.location.pathname + '/' + url).replaceAll('//', '/');
             $U.emit('route-exit:' + $U.url.hashName());
             window.location.href = path;
         }, delay || 0);
@@ -303,14 +299,14 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
             $U.url.hash(url);
             window.location.href = window.location.href;
-            
-            if(window.ga){
-                var pageval = ('/'+url+'.html').replaceAll('//','/');
+
+            if (window.ga) {
+                var pageval = ('/' + url + '.html').replaceAll('//', '/');
                 //ga('set', 'page', pageval);
                 //ga('send', 'pageview');
                 //console.log('ga set ',pageval,' send pageview','virtual route',url);
             }
-            
+
         }, delay || 0);
         r.__route = url;
         return url;
@@ -346,8 +342,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         else {
             if (scope.$parent) {
                 return r.lookUp(scope.$parent, property);
-            }
-            else {
+            } else {
                 return undefined;
             }
         }

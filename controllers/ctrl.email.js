@@ -123,7 +123,7 @@ function send(opt, resCb) {
                 _id: opt._notification
             }, (err, _notification) => {
                 if (err) {
-                    return dblog('notification getById fail in function send');
+                    return LogSave('notification getById fail in function send');
                 }
                 validateSending(_notification);
             });
@@ -146,7 +146,7 @@ function send(opt, resCb) {
             actions.log('send:validateSending=' + JSON.stringify(_notification));
             Notification.getById(_notification, (err, _notification) => {
                 if (err) {
-                    return dblog('notification getById fail in function send');
+                    return LogSave('notification getById fail in function send');
                 }
                 if (!_.includes(_notification._config.disabledTypes, _notification.type)) {
 
@@ -155,7 +155,7 @@ function send(opt, resCb) {
                         _notification.sended = true;
                         _notification.sendedDate = Date.now();
                         Notification.update(_notification, (err, _notification) => {
-                            if (err) dblog('notification sended update fail in function send.');
+                            if (err) LogSave('notification sended update fail in function send.');
 
                             if (resCb) resCb(null, {
                                 message: 'Success (Mailing disabled)',
@@ -202,7 +202,7 @@ function send(opt, resCb) {
                 _notification.sended = true;
                 _notification.sendedDate = Date.now();
                 Notification.update(_notification, (err, _notification) => {
-                    if (err) dblog('notification sended update fail in function send.');
+                    if (err) LogSave('notification sended update fail in function send.');
 
                     if (resCb) resCb(null, r);
 
@@ -212,7 +212,7 @@ function send(opt, resCb) {
                 opt.cb(err, r);
             }
             if (err) {
-                dblog('sendEmail fail, the data was ' + JSON.stringify(data));
+                LogSave('sendEmail fail, the data was ' + JSON.stringify(data));
             }
         });
     }
@@ -242,7 +242,13 @@ function generateInvoiceAttachmentIfNecessary(data, t, cb) {
             fileName: 'invoice_' + Date.now(),
             html: data.attachmentPDFHTML
         }, (err, res) => {
-            if (err) return cb();
+            if (err) {
+                LogSave('Unable to generate a PDF',{
+                    type:t,
+                    error:err
+                })
+                return cb(data);
+            }
             if (res.ok) {
                 actions.log(t + ':attachment-ok');
                 data.attachment = {
@@ -406,7 +412,7 @@ function ADMIN_NEW_CONTACT_FORM_MESSAGE(data, cb) {
         userType: 'admin'
     }, function(err, admins) {
         if (err) {
-            return dblog('ADMIN_NEW_CONTACT_FORM_MESSAGE fail when retrieve admins. Details: ' + JSON.stringify(err));
+            return LogSave('ADMIN_NEW_CONTACT_FORM_MESSAGE fail when retrieve admins. Details: ' + JSON.stringify(err));
         }
         admins.forEach(admin => {
             var _data = _.cloneDeep(data);
@@ -497,8 +503,10 @@ function CLIENT_ORDER_DELEGATED(data, cb) {
 
 //CLIENT//#3 OK ctrl.order
 function CLIENT_ORDER_PAYMENT_SUCCESS(data, cb) {
+    console.log('DEBUG CLIENT_ORDER_PAYMENT_SUCCESS data 1',data!==undefined);
     generateInvoiceAttachmentIfNecessary(data, NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, (data) => {
         //requires: _user _order
+        console.log('DEBUG CLIENT_ORDER_PAYMENT_SUCCESS data 2',data!==undefined);
         DIAGS_CUSTOM_NOTIFICATION(
             NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, data, cb, 'Rendez-vous confirmé', data._user.email, data._order, 'Order');
     });
@@ -690,9 +698,10 @@ function htmlOrderSelectedDiagsList(_order) {
 }
 
 
-function dblog(msg, type) {
+function LogSave(msg, type,data) {
     Log.save({
         message: msg,
-        type: type
+        type: type,
+        data:data
     });
 }

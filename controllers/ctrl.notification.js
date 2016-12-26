@@ -17,10 +17,10 @@ var actions = {
 };
 
 var NOTIFICATION = {
-    
-    ADMIN_BOOKING_MISSING_DEPARTMENT:'ADMIN_BOOKING_MISSING_DEPARTMENT',
-    ADMIN_BOOKING_MISSING_DEPARTMENT_REQUEST:'ADMIN_BOOKING_MISSING_DEPARTMENT_REQUEST',
-    
+
+    ADMIN_BOOKING_MISSING_DEPARTMENT: 'ADMIN_BOOKING_MISSING_DEPARTMENT',
+    ADMIN_BOOKING_MISSING_DEPARTMENT_REQUEST: 'ADMIN_BOOKING_MISSING_DEPARTMENT_REQUEST',
+
     ADMIN_ADMIN_ACCOUNT_CREATED: 'ADMIN_ADMIN_ACCOUNT_CREATED',
     ADMIN_CLIENT_ACCOUNT_CREATED: 'ADMIN_CLIENT_ACCOUNT_CREATED',
     ADMIN_DIAG_ACCOUNT_CREATED: 'ADMIN_DIAG_ACCOUNT_CREATED',
@@ -76,9 +76,8 @@ function trigger(name, data, cb) {
         actions.log('trigger:routing-' + name + '=' + JSON.stringify(data));
         data.__notificationType = name;
         return EmailHandler[name](data, cb);
-    }
-    catch (e) {
-        LogSave(e,'error',e);
+    } catch (e) {
+        LogSave(e, 'error', e);
         return cb(e);
     }
 }
@@ -87,7 +86,7 @@ function trigger(name, data, cb) {
 
 function save(data, cb) {
     var _user = data._user;
-    var _userID = _user && _user.id || _user;
+    var _userID = _user && _user._id || _user;
     if (!_userID) {
         LogSave('notification-save user-not-found', 'error', data);
         if (cb) cb("notification-save user-not-found");
@@ -98,7 +97,12 @@ function save(data, cb) {
     UserNotifications.get({
         _user: _userID
     }, (err, _config) => {
-        if (err) return LogSave('UserNotifications getById fail for user ' + _user.email, 'error', err);
+        if (err) {
+            return LogSave('Unable to retreive UserNotifications', {
+                user: _user.email,
+                description: err
+            });
+        }
         if (!_config) {
             //dblog("UserNotifications not found for " + _user.email + '.', 'info');
             UserNotifications.create({
@@ -107,8 +111,7 @@ function save(data, cb) {
                 if (err) return LogSave('UserNotifications create fail for user ' + _user.email);
                 saveNotificationOn(_config);
             })
-        }
-        else {
+        } else {
             saveNotificationOn(_config);
         }
     });

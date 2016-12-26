@@ -53,14 +53,12 @@ function pay(data, cb) {
                     function(err, customer) {
                         if (customer) {
                             _payIfNotPaidYet(data);
-                        }
-                        else {
+                        } else {
                             _createCustomer(_user);
                         }
                     }
                 );
-            }
-            else {
+            } else {
                 _user.stripeToken = data.stripeToken;
                 _createCustomer(_user);
             }
@@ -83,8 +81,7 @@ function pay(data, cb) {
                 if (err) return cb(err, has);
                 if (!has) {
                     return _pay(data);
-                }
-                else {
+                } else {
                     syncStripe();
                     actions.log('_payIfNotPaidYet:rta=' + JSON.stringify({
                         message: "Alredy paid"
@@ -107,8 +104,7 @@ function pay(data, cb) {
                 }, (_err, _order) => {
                     if (_order.status == 'delivered') {
                         _order.status = 'completed';
-                    }
-                    else {
+                    } else {
                         _order.status = 'prepaid';
                     }
                     _order.paidAt = Date.now();
@@ -171,12 +167,10 @@ function syncStripe(data, cb) {
                 _charges.forEach((_charge) => {
                     if (_charge.paid && !_charge.refunded) {
                         _syncOrderStatus(_charge, true);
-                    }
-                    else {
+                    } else {
                         _syncOrderStatus(_charge, false);
                     }
                 });
-
 
 
 
@@ -216,8 +210,7 @@ function _syncOrderStatus(_charge, isPaid) {
         }, {
             status: 'completed'
         }).exec();
-    }
-    else {
+    } else {
         Order.update({
             _id: {
                 $eq: _charge.metadata._order
@@ -268,8 +261,7 @@ function confirm(data, cb) {
                     })
                 });
             });
-        }
-        else {
+        } else {
             cb(null, {
                 ok: true,
                 message: 'Order already confirmed. (ordered)'
@@ -309,12 +301,10 @@ function notifyClientOrderCreation(_order) {
                 });*/
 
             });
-        }
-        else {
+        } else {
             actions.log('async:notifyClientOrderCreation:already-notified');
         }
-    }
-    else {
+    } else {
         actions.log('async:notifyClientOrderCreation:order-info-undefined');
     }
 }
@@ -329,8 +319,7 @@ function save(data, cb) {
             if (!err && _order) prevStatus = _order.status;
             _saveNext();
         });
-    }
-    else {
+    } else {
         _saveNext();
     }
 
@@ -401,6 +390,14 @@ function save(data, cb) {
                         _id: _order._client._id || _order._client
                     }, (_err, _client) => {
 
+                        if (_err) return cb(_err);
+                        if (!_client) {
+                            LogSave('Unable to retrieve client data', 'error', {
+                                _id: _order._client._id || _order._client
+                            });
+                            return;
+                        }
+
                         getInvoiceHTML(_order, (_err, html) => {
                             if (_err) {
                                 LogSave('Unable to retrieve order invoice html', 'warning', _err);
@@ -415,8 +412,7 @@ function save(data, cb) {
                                         attachmentPDFHTML: html
                                     });
                                 }
-                            }
-                            else {
+                            } else {
                                 //CLIENT_ORDER_PAYMENT_SUCCESS //CLIENT//#3
                                 Notif.trigger(NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, {
                                     _user: _client,
@@ -452,8 +448,8 @@ function getInvoiceHTML(_order, cb) {
             code: 'INVOICE',
         }, (err, _text) => {
             if (err) return cb(err);
-            if(!_text){
-                return cb(null,'CONFIGURE ORDER INVOICE TEMPLATE');
+            if (!_text) {
+                return cb(null, 'CONFIGURE ORDER INVOICE TEMPLATE');
             }
             var html =
                 utils.encodeURIComponent(
@@ -475,12 +471,11 @@ function invoiceHTMLInyectOrderDetails(html, _order) {
     var backofficeURL = process.env.adminURL || ''; //blooming-refuge-27843.herokuapp.com/admin#
     if (backofficeURL) {
         backofficeURL = backofficeURL.substring(0, backofficeURL.lastIndexOf('/'));
-       // LogSave('Invoice Logo Injected Log','info',{
+        // LogSave('Invoice Logo Injected Log','info',{
         //    src: backofficeURL + '/img/logo.jpg'
-       // });
+        // });
         _order["LOGO"] = "<img src='" + backofficeURL + '/img/logo.jpg' + "'>";
-    }
-    else {
+    } else {
         LogSave('Unable to inject LOGO in invoice. Enviromental variable adminURL required.', 'warning', _order);
         _order["LOGO"] = "";
     }
@@ -490,7 +485,7 @@ function invoiceHTMLInyectOrderDetails(html, _order) {
 
 function invoiceHTMLReplaceVariable(html, obj) {
     for (var x in obj) {
-        html = utils.replaceAll(html,"{{" + x.toUpperCase() + "}}", obj[x]);
+        html = utils.replaceAll(html, "{{" + x.toUpperCase() + "}}", obj[x]);
     }
     return html;
 }
@@ -559,8 +554,7 @@ function orderExists(data, cb) {
                             clientEmailBooking: data.email
                         }));
                     }
-                }
-                else {
+                } else {
                     if (sameOrder) {
                         rta = r;
                         rtaErr = 'ORDER_TAKEN';
@@ -598,8 +592,7 @@ function saveWithEmail(data, cb) {
             if (data._client) {
                 if (data._client._id) data._client = data._client._id;
                 return save(data, cb);
-            }
-            else {
+            } else {
 
 
                 actions.check(data, ['email', 'clientType'], (err, r) => {
@@ -619,8 +612,7 @@ function saveWithEmail(data, cb) {
                     if (r) {
                         data._client = r._id;
                         return save(data, cb);
-                    }
-                    else {
+                    } else {
                         UserAction.createClientIfNew({
                             email: data.email
                         }, (err, r) => {

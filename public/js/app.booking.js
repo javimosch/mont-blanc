@@ -43,9 +43,15 @@ var URL = {
 app.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
+<<<<<<< HEAD
         
         //when('/', {
          //   templateUrl: 'views/diags/booking/booking-1-home.html'
+=======
+
+        //when('/', {
+        //   templateUrl: 'views/diags/booking/booking-1-home.html'
+>>>>>>> task-208
         //}).
         when('/home', {
             templateUrl: 'views/diags/booking/booking-1-home.html'
@@ -95,6 +101,9 @@ app.config(['$routeProvider',
         when('/payment', {
             templateUrl: 'views/diags/booking/booking-6-payment.html'
         }).
+        when('/order-confirm', {
+            templateUrl: 'views/diags/booking/order-confirmation-screen.html'
+        }).
 
         otherwise({
             redirectTo: '/home'
@@ -123,8 +132,6 @@ app.controller('ctrl.booking', ['server',
 
 
 
-
-
         var MESSAGES = {
             ANSWER_SELL_OR_RENT: 'Répondre Vendez / Louer',
             ANSWER_APPARTAMENT_OR_MAISON: 'Répondre Appartament / Maison',
@@ -140,8 +147,6 @@ app.controller('ctrl.booking', ['server',
 
 
 
-
-
         $U.on('route-change', function(url) {
             //console.info('route-change ', url);
 
@@ -151,20 +156,20 @@ app.controller('ctrl.booking', ['server',
                 if ((s.__manualUrlChange || 0) + 5000 < new Date().getTime()) {
                     resolvePaymentScreenAuth().then(resolvePaymentScreenOrder);
                 }
-            }
-            else {
+            } else {
                 $U.url.clear();
             }
 
             if ($U.indexOf(url, [URL.HOME]) || url == '') {
                 s.__header = 1;
 
+                s._order = {}; //reset
+
                 setTimeout(function() {
                     $U.emit('render-ranges');
                 }, 1000);
 
-            }
-            else {
+            } else {
                 s.__header = 2;
             }
 
@@ -182,8 +187,7 @@ app.controller('ctrl.booking', ['server',
                 if (!s._user || !s._user.__subscribeMode) {
                     console.warn('current _user is not in _subscribeMode');
                     r.route(URL.HOME);
-                }
-                else {
+                } else {
                     delete s._user.__subscribeMode;
                 }
             }
@@ -308,13 +312,11 @@ app.controller('ctrl.booking', ['server',
                             $U.url.set('auth', s._user._id);
                             s.__manualUrlChange = new Date().getTime();
                             resolve();
-                        }
-                        else {
+                        } else {
                             return r.moveToLogin();
                         }
                     });
-                }
-                else {
+                } else {
                     return r.moveToLogin();
                 }
             });
@@ -323,16 +325,14 @@ app.controller('ctrl.booking', ['server',
         function resolvePaymentScreenOrder() {
             if ($U.url.get('order')) {
                 if (!s._order._id) s.fetchOrder($U.url.get('order'));
-            }
-            else {
+            } else {
                 if (!s._order._id) {
                     s.saveAsync().on('success', function() {
                         s.__manualUrlChange = new Date().getTime();
                         if (!s._order._id) throw Error('ORDER-ID-NULL');
                         $U.url.set('order', s._order._id);
                     })
-                }
-                else {
+                } else {
                     if (!s._order._id) throw Error('ORDER-ID-NULL');
                     s.__manualUrlChange = new Date().getTime();
                     $U.url.set('order', s._order._id);
@@ -406,8 +406,7 @@ app.controller('ctrl.booking', ['server',
                             customButtonClick: () => {
                                 if (!modal.scope.data.email) {
                                     return r.infoMessage('Email est nécessaire.');
-                                }
-                                else {
+                                } else {
 
                                     db.ctrl('Notification', 'ADMIN_BOOKING_MISSING_DEPARTMENT_REQUEST', {
                                         department: s.item.postCode.substring(0, 2),
@@ -431,8 +430,7 @@ app.controller('ctrl.booking', ['server',
                 //at least one diag selected
                 if (atLeastOneDiagSelected()) {
                     return r.route('rendez-vous');
-                }
-                else {
+                } else {
                     return r.warningMessage('Sélectionnez au moins un choix');
                 }
             }, () => {
@@ -447,8 +445,7 @@ app.controller('ctrl.booking', ['server',
                 s.validateDate(function() {
                     if (s._user && s._user._id) {
                         r.route(URL.PAYMENT);
-                    }
-                    else {
+                    } else {
                         s.moveToLogin();
                     }
 
@@ -463,8 +460,7 @@ app.controller('ctrl.booking', ['server',
                 s.auth.email = r.session().email;
                 s.auth.pass = r.session().password;
                 s.login();
-            }
-            else {
+            } else {
                 r.route(URL.LOGIN);
             }
         };
@@ -486,8 +482,7 @@ app.controller('ctrl.booking', ['server',
             ], (m) => {
                 if (typeof m[0] !== 'string') {
                     s.warningMsg(m[0]());
-                }
-                else {
+                } else {
                     s.warningMsg(m[0]);
                 }
             }, cb);
@@ -500,8 +495,7 @@ app.controller('ctrl.booking', ['server',
             ], (m) => {
                 if (typeof m[0] !== 'string') {
                     s.warningMsg(m[0]())
-                }
-                else {
+                } else {
                     s.warningMsg(m[0]);
                 }
             }, cb);
@@ -518,8 +512,7 @@ app.controller('ctrl.booking', ['server',
                 exists = exists.ok && exists.result == true;
                 if (exists) {
                     s.warningMsg('This email address belongs to an existing member.');
-                }
-                else {
+                } else {
                     //validate fields
                     ifThenMessage([
                         [!s._user.email, '==', true, "Email c&#39;est obligatoire."],
@@ -528,8 +521,7 @@ app.controller('ctrl.booking', ['server',
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             s.warningMsg(m[0]())
-                        }
-                        else {
+                        } else {
                             s.warningMsg(m[0]);
                         }
                     }, cb);
@@ -567,8 +559,7 @@ app.controller('ctrl.booking', ['server',
                 s.addressDepartmentCovered = res.result;
                 if (res.result == true) {
                     cb && cb();
-                }
-                else {
+                } else {
                     err && err();
                 }
             })
@@ -702,7 +693,6 @@ app.controller('ctrl.booking', ['server',
 
 
 
-
         s.htmlReplaceDiagName = function(str) {
             var code = str.replace('$NAME', s.diagSelected.label2).toUpperCase();
             return r.html(code);
@@ -731,8 +721,7 @@ app.controller('ctrl.booking', ['server',
                     if (!s.booking.order.delegatedTo) {
                         s.booking.order.delegatedTo = s._order.landLordEmail;
                     }
-                }
-                else {
+                } else {
                     return "The payment of this order is pending.";
                 }
             }
@@ -742,12 +731,10 @@ app.controller('ctrl.booking', ['server',
             if (orderPaid()) {
                 if (s._order.landLordPaymentEmailSended == true) {
                     return "This order was delegated to " + s.booking.order.delegatedTo + ' and is already paid.';
-                }
-                else {
+                } else {
                     return "This order is already paid"
                 }
-            }
-            else {
+            } else {
                 return delegated;
             }
         };
@@ -794,8 +781,7 @@ app.controller('ctrl.booking', ['server',
                     'Votre adresse': () => s._user.address, //when landlord
                     'Other': () => 'other'
                 };
-            }
-            else {
+            } else {
                 return {
                     'Ou ?': () => '',
                     'Sur Place': () => s._order.address,
@@ -836,16 +822,14 @@ app.controller('ctrl.booking', ['server',
                 //auto set from
                 if (s.__keysWhereSelectLabel() == "Sur Place") {
                     s.__keysTimeFromSelect(r.momentTime(s._order.start), new Date(moment(s._order.start).toString()));
-                }
-                else {
+                } else {
                     var m = moment(s._order.start).hours(8);
                     s.__keysTimeFromSelect(r.momentTime(m), new Date(m.toString()));
                 }
                 //auto set to
                 if (s.__keysWhereSelectLabel() == "Sur Place") {
                     s.__keysTimeToSelect(r.momentTime(s._order.start), new Date(moment(s._order.start).toString()));
-                }
-                else {
+                } else {
                     var m = moment(s._order.start).subtract(30, 'minutes');
                     s.__keysTimeToSelect(r.momentTime(m), new Date(m.toString()));
                 }
@@ -880,8 +864,7 @@ app.controller('ctrl.booking', ['server',
         s.$watch('_order.keysTimeFrom', function(val) {
             if (!val) {
                 s.__keysTimeFromSelectLabel = 'choisir';
-            }
-            else {
+            } else {
                 s.__keysTimeFromSelectLabel = 'choisir';
                 _.each(s.__keysTimeFromItems, (v, k) => {
                     if (v == val) s.__keysTimeFromSelectLabel = k;
@@ -939,8 +922,7 @@ app.controller('ctrl.booking', ['server',
         s.$watch('_order.keysTimeTo', function(val) {
             if (!val) {
                 s.__keysTimeToSelectLabel = 'choisir';
-            }
-            else {
+            } else {
                 s.__keysTimeToSelectLabel = 'choisir';
                 _.each(s.__keysTimeToItems, (v, k) => {
                     if (v == val) s.__keysTimeToSelectLabel = k;
@@ -958,9 +940,6 @@ app.controller('ctrl.booking', ['server',
             s.__keysTimeToItems = s.__keysTimeToGetItems();
         });
         //-------------------------------------------------------------------------
-
-
-
 
 
 
@@ -991,8 +970,6 @@ app.controller('ctrl.booking', ['server',
             diags: {},
             clientType: 'landlord'
         };
-
-
 
 
 
@@ -1123,8 +1100,7 @@ app.controller('ctrl.booking', ['server',
             if (!val) return undefined;
             if (!validate) {
                 return val;
-            }
-            else {
+            } else {
                 var vals = Object.keys(validate).map((v) => {
                     return validate[v]
                 }); //valid vals
@@ -1135,8 +1111,7 @@ app.controller('ctrl.booking', ['server',
                         duration: 99999
                     })
                     return undefined;
-                }
-                else {
+                } else {
                     return val;
                 }
             }
@@ -1159,8 +1134,7 @@ app.controller('ctrl.booking', ['server',
                     return undefined;
                 }
                 return d;
-            }
-            else {
+            } else {
                 if (getParameterByName(n) !== null) {
                     s.notify('Parameter ' + n + ' needs to be a valid date', 'warning', 0, true, {
                         duration: 99999
@@ -1173,8 +1147,7 @@ app.controller('ctrl.booking', ['server',
             var v = (getParameterByName(n) || '').toString()
             if (_.includes(['1', '0'], v)) {
                 return v === '1';
-            }
-            else {
+            } else {
                 if (getParameterByName(n) !== null) {
                     s.notify('Parameter ' + n + ' needs to be a 1/0', 'warning', 0, true, {
                         duration: 99999
@@ -1232,8 +1205,7 @@ app.controller('ctrl.booking', ['server',
                     toggle('crep', true);
                     s.item.diags.crep = true; //mandatory
                     toggleMandatory('crep', true);
-                }
-                else {
+                } else {
                     s.item.diags.crep = false; //
                     toggle('crep', true);
                     toggleMandatory('crep', false);
@@ -1243,8 +1215,7 @@ app.controller('ctrl.booking', ['server',
                     toggle('termites', true);
                     s.item.diags.termites = true;
                     toggleMandatory('termites', true);
-                }
-                else {
+                } else {
                     toggle('termites', false);
                     s.item.diags.termites = false;
                     toggleMandatory('termites', false);
@@ -1254,8 +1225,7 @@ app.controller('ctrl.booking', ['server',
                     toggle('dta', true);
                     s.item.diags.dta = true; //mandatory
                     toggleMandatory('dta', true);
-                }
-                else {
+                } else {
                     toggle('dta', true);
                     s.item.diags.dta = false;
                     toggleMandatory('dta', false);
@@ -1266,13 +1236,11 @@ app.controller('ctrl.booking', ['server',
                     if (s.item.sell == true && s.item.gasInstallation === 'Oui, Plus de 15 ans') {
                         s.item.diags.gaz = true;
                         toggleMandatory('gaz', true);
-                    }
-                    else {
+                    } else {
                         s.item.diags.gaz = false;
                         toggleMandatory('gaz', false);
                     }
-                }
-                else {
+                } else {
                     toggle('gaz', false);
                     toggleMandatory('gaz', false);
                 }
@@ -1281,13 +1249,11 @@ app.controller('ctrl.booking', ['server',
                     if (s.item.sell == true && s.item.electricityInstallation === 'Plus de 15 ans') {
                         s.item.diags.electricity = true;
                         toggleMandatory('electricity', true);
-                    }
-                    else {
+                    } else {
                         s.item.diags.electricity = false;
                         toggleMandatory('electricity', false);
                     }
-                }
-                else {
+                } else {
                     toggle('electricity', false);
                     toggleMandatory('electricity', false);
                 }
@@ -1320,15 +1286,13 @@ app.controller('ctrl.booking', ['server',
                     for (var pos in s.squareMeters) {
                         if (s.item.squareMeters == s.squareMeters[pos]) {
                             break;
-                        }
-                        else {
+                        } else {
                             x++;
                         }
                     }
                     $("input[type=range]").val(x);
                     // console.log('range-set-at-', x);
-                }
-                catch (e) {}
+                } catch (e) {}
             });
 
             $U.emitPreserve('booking-defaults-change');
@@ -1344,7 +1308,7 @@ app.controller('ctrl.booking', ['server',
 
 
         function getOrderPopupData() {
-            var keysInfo = s._order.keysAddress + ' / ' + r.momentDateTimeWords(s._order.keysTimeFrom) +
+            var keysInfo = (s._order.keysAddress || '(No address)') + ' / ' + r.momentDateTimeWords(s._order.keysTimeFrom) +
                 ' - ' + r.momentTime(s._order.keysTimeTo);
             return {
                 diagNameConvertion: $D.diagNameConvertion,
@@ -1353,6 +1317,45 @@ app.controller('ctrl.booking', ['server',
                 _client: s._user
             }
         }
+
+
+        s.testData = function() {
+            s.item = {
+                address: "33 Rue de Rivoli, 75004 Paris, Francia",
+                city: "Paris",
+                constructionPermissionDate: "Après le 01/07/1997",
+                country: "Francia",
+                department: "Paris",
+                electricityInstallation: "Plus de 15 ans",
+                gasInstallation: "Oui, Moins de 15 ans",
+                house: false,
+                postCode: "75004",
+                region: "Île-de-France",
+                sell: true,
+                squareMeters: "110 - 130m²"
+            };
+        }
+        s.testOrderConfirmationScreen = function() {
+            db.ctrl('Order', 'get', {
+                __populate: {
+                    _client: '_id email clientType address discount companyName firstName',
+                    _diag: '_id email clientType address firstName lastName commission'
+                }
+            }).then(function(res) {
+                if (res.ok && res.result) {
+                    s._order = res.result;
+                    s.gotoOrderConfirmationScreen();
+                }
+            });
+        }
+
+        s.gotoOrderConfirmationScreen = function() {
+            r.routeParams({
+                _order: s._order,
+                _client: s._user
+            });
+            r.route('order-confirm');
+        };
 
         s.openOrderConfirmationPrepaid = (cb) => {
             cb = cb || (() => {});
@@ -1411,7 +1414,6 @@ app.controller('ctrl.booking', ['server',
 
 
 
-
         s.auth = {
             email: undefined,
             pass: undefined
@@ -1446,15 +1448,12 @@ app.controller('ctrl.booking', ['server',
                         //s.subscribeMode = true;
                         //s.right();
 
-                    }
-                    else {
+                    } else {
                         s.warningMsg('Invalid credentials');
                     }
                 });
             });
         }
-
-
 
 
 
@@ -1478,8 +1477,7 @@ app.controller('ctrl.booking', ['server',
             var rta = "";
             if (s.item.house) {
                 rta += "Maison";
-            }
-            else {
+            } else {
                 rta += "Appartement";
             }
             if (s.item.city) {
@@ -1578,8 +1576,7 @@ app.controller('ctrl.booking', ['server',
                     if (data.ok) {
                         s._user = data.result;
                         cb();
-                    }
-                    else {
+                    } else {
                         s.warningMsg(data.err);
                     }
                 });
@@ -1593,8 +1590,7 @@ app.controller('ctrl.booking', ['server',
             useAuthCredentials = useAuthCredentials == undefined ? true : useAuthCredentials;
             if (useAuthCredentials) {
                 s.validateAuthInput(_validateEmail);
-            }
-            else {
+            } else {
                 _setAndGo();
             }
 
@@ -1607,8 +1603,7 @@ app.controller('ctrl.booking', ['server',
                     exists = exists.ok && exists.result == true;
                     if (exists) {
                         s.warningMsg('This email address belongs to an existing member.');
-                    }
-                    else {
+                    } else {
                         _setAndGo();
                     }
                 });
@@ -1624,8 +1619,6 @@ app.controller('ctrl.booking', ['server',
                 r.route(nextRoute);
             }
         };
-
-
 
 
 
@@ -1648,8 +1641,7 @@ app.controller('ctrl.booking', ['server',
                                 setOrder(d.result);
                             });
                             resolve(s._order);
-                        }
-                        else {
+                        } else {
                             err(d);
                         }
                     });
@@ -1798,14 +1790,12 @@ app.controller('ctrl.booking', ['server',
 
 
 
-
-
-
         //require an order to be saved (s._order)
         s.payNOW = (success) => {
 
             if (orderPaid()) {
-                return s.infoMsg('Son ordre de travail a déjà été payée');
+                s.infoMsg('Son ordre de travail a déjà été payée');
+                return s.gotoOrderConfirmationScreen();
             }
 
             s.validateBooking(() => {
@@ -1837,14 +1827,20 @@ app.controller('ctrl.booking', ['server',
                                 $U.url.clear();
                                 //r.routeRelative('admin#/orders/view/' + s._order._id);
                                 //
+
+                                s.gotoOrderConfirmationScreen();
+
+                                /*
                                 s.openOrderConfirmationPrepaid(() => {
                                     s._order = {};
                                     r.route('home');
                                 });
+                                */
+
+
                             });
 
-                        }
-                        else {
+                        } else {
                             console.info('PAY-FAIL', data.err);
                             s.notify('Le paiement ne peut être traitée en ce moment.', {
                                 type: 'warning',
@@ -1870,13 +1866,10 @@ app.controller('ctrl.booking', ['server',
             var session = r.session();
             if (session && session._id == s._order._client._id) {
                 return s._order._client.email;
-            }
-            else {
+            } else {
                 return s._order.landLordEmail || '';
             }
         }
-
-
 
 
 
@@ -1942,8 +1935,7 @@ app.controller('ctrl.booking', ['server',
             minutes = (minutes < 10) ? '0' + minutes : minutes;
             if (hours > 0) {
                 return hours + ':' + minutes + ' hours';
-            }
-            else {
+            } else {
                 return minutes + ' minutes';
             }
         };
