@@ -31,6 +31,7 @@ app.get('/appDetails', function(req, res) {
 });
 
 var PROD = process.env.PROD && process.env.PROD.toString() == '1' || false;
+var port = process.env.PORT || 3000;
 
 if (!PROD) {
 	//livereload
@@ -58,17 +59,17 @@ app.get('/admin', function(req, res) {
 
 app.get('/serverRawURL', function(req, res) {
 	res.json({
-		URL: process.env.serverRawURL || process.env.serverURL || 'http://localhost:5000'
+		URL: process.env.serverRawURL || process.env.serverURL || 'http://localhost:'+port
 	});
 });
 
 app.get('/serverURL', function(req, res) {
 	res.json({
-		URL: process.env.serverURL || 'http://localhost:5000'
+		URL: process.env.serverURL || 'http://localhost:'+ port
 	});
 });
 
-var port = process.env.PORT || 3000;
+
 
 require('./api').configure(app);
 
