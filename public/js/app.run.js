@@ -42,7 +42,10 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     //    console.info('app.admin:run');
 
 
-    r.isDevEnv = () => window.location.hostname.indexOf('c9users.io') !== -1 || window.location.hostname.indexOf('localhost') !== -1;
+    r.isDevEnv = () => {
+    	return window.location.hostname.indexOf('c9users.io') !== -1 || window.location.hostname.indexOf('localhost') !== -1
+    	|| window.location.hostname.indexOf('herokuapp') !== -1
+    };
 
     r.URL = {
         LOGIN: 'login',
