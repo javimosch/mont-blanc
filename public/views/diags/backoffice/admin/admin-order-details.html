@@ -349,7 +349,7 @@
             </div>
         </div>
 
-        <div class="row margin-top-half" ng-show="!item._id">
+        <div class="row margin-top-half" ng-show="!item._id || userIs('admin')"> <!--  -->
             <label class="unselectable">RDV</label>
         </div>
         <div class="row margin-top-quarter">
@@ -357,6 +357,13 @@
                 <div ng-show="!item.info.squareMeters" class="alert alert-info" role="alert">Answer question size.</div>
                 <div ng-show="!item._client" class="alert alert-info" role="alert">Choice a client.</div>
             </out>
+
+
+
+<button ng-show="isRDVSelectButtonActivated()" ng-click="activateSlotSelectionManually()" ng-disabled="state.working()" class="btn diags-btn bg-madison margin-top-quarter">
+Selectionner</button>
+
+
             <out ng-show="rdvConditions()">
                 <div ng-include="'views/diags/backoffice/admin/admin-order-details-slots.html'" includeReplace></div>
             </out>
