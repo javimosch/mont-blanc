@@ -29,6 +29,10 @@
                         
                         
                     }
+
+                    if(s.item.metadata.prices.basePrice==undefined){
+                        s.item.metadata.prices.basePrice = data.basePrice;
+                    }
                     
                 });    
             }
