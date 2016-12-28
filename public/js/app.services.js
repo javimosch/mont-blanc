@@ -501,6 +501,15 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
                         var dbSettings = r.result[0];
                         
                         if(dbSettings.metadata && dbSettings.metadata.prices){
+
+                            if(dbSettings.metadata.prices.basePrice!==undefined){
+                                try{
+                                    localData.basePrice = dbSettings.metadata.prices.basePrice;
+                                }catch(err){
+
+                                }
+                            }
+
                             Object.keys(dbSettings.metadata.prices).forEach(function(diagName){
                                 
                                 for(var i in localData.diags){
