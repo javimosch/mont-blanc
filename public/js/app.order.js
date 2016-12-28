@@ -293,8 +293,28 @@
                 s.diagSlots = diagSlots(s, s.item);
 
                 s.__rdvInit = false;
+
+                s.__isSlotSelectionActivatedManually = false;
+
+                function hasSlotSelectionActivatedManually() {
+                    return s.__isSlotSelectionActivatedManually == true;
+                }
+                s.activateSlotSelectionManually = function() {
+                    r.dom(function() {
+                        s.__isSlotSelectionActivatedManually = true;
+                    });
+                };
+                s.isRDVSelectButtonActivated = function() {
+                    return r.userIs('admin') && !hasSlotSelectionActivatedManually();
+                };
+
+                function hasSlotSelectionActivatedManualyByAdmin() {
+                    return r.userIs('admin') && hasSlotSelectionActivatedManually();
+                }
+
+
                 s.rdvConditions = () => {
-                    if (s.item._id) return false;
+                    if (s.item._id && !hasSlotSelectionActivatedManualyByAdmin()) return false;
                     if (!s.item.info) return false;
                     var rta = s.item.info.squareMeters !== undefined && s.item._client !== undefined;
                     if (rta && !s.__rdvInit) {
@@ -358,6 +378,9 @@
                     return rta;
                 };
 
+
+                s.hasUserSelectedAnRDVSlot = false;
+
                 s.unwrapRange = (range) => {
                     //var data = JSON.parse(window.atob(range));
                     var data = range;
@@ -365,6 +388,7 @@
                     s.item.end = data.end;
                     //
                     s.applyTotalPrice();
+                    s.hasUserSelectedAnRDVSlot = true;
                 };
 
                 s.infoItemShow = function(item) {
@@ -574,30 +598,28 @@
                 s.__keysWhereSelectFirstItem = () => s.__keysWhereItems && Object.keys(s.__keysWhereItems)[0] || "Loading";
                 s.__keysWhereSelectLabel = () => s.__keysWhereSelectLabelVal || s.__keysWhereSelectFirstItem();
                 s.__keysWhereSelect = (key, val) => {
+                    $log.debug(val);
                     s.item.keysWhere = val && val() || undefined;
                 };
 
+                s.afterRead.push(() => {
 
-                s.$watch('item.keysWhere', function(val) {
-                    if (s.item._id) return; //this select do not work after order creation.
-                    //
-                    if (val == undefined) {
-                        r.dom(() => {
-                            s.item.keysAddress = 'non disponible';
-                        });
-                        r.dom(() => {
-                            s.item.keysAddress = undefined;
-                        }, 2000);
-                        //
-                        return s.__keysWhereSelectLabelVal = 'Ou ?';
-                    }
-                    Object.keys(s.__keysWhereItems).forEach(k => {
-                        if (s.__keysWhereItems[k]() == val) {
-                            s.__keysWhereSelectLabelVal = k;
+                    s.$watch('item.keysWhere', function(val) {
+                        if (s.item._id) return;
+                        if (val == undefined) {
+                            return s.__keysWhereSelectLabelVal = 'Ou ?';
                         }
+                        Object.keys(s.__keysWhereItems).forEach(k => {
+                            if (s.__keysWhereItems[k]() == val) {
+                                s.__keysWhereSelectLabelVal = k;
+                            }
+                        });
+                        s.item.keysAddress = (val == 'other') ? '' : val;
                     });
-                    s.item.keysAddress = (val == 'other') ? '' : val;
+
                 });
+
+
 
                 //KEYS TIME FROM ------------------------------------------------------------------------------------------------
                 s.__keysTimeFromItems = {};
@@ -888,20 +910,49 @@
                         }
                     }, s.save);
                 };
-                s.save = function() {
+
+
+
+                function reEnableNotifications() {
+                    s.item.notifications = s.item.notifications || {};
+                    $log.debug('diag change, notifications re-sended.');
+                    s.item.notifications.ADMIN_ORDER_PAYMENT_SUCCESS = false;
+                    s.item.notifications.ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS = false;
+                    s.item.notifications.CLIENT_ORDER_PAYMENT_SUCCESS = false;
+                    s.item.notifications.DIAG_NEW_RDV = false;
+                    if (s.item.notifications.LANDLORD_ORDER_PAYMENT_SUCCESS !== undefined) {
+                        s.item.notifications.LANDLORD_ORDER_PAYMENT_SUCCESS = false;
+                    }
+                }
+
+                s.save = function(opt) {
 
 
                     //on diag change, notifications are re-sended
-                    if (s.prevItem && s.prevItem._diag && s.prevItem._diag.email && s.item._diag && s.item._diag.email && s.prevItem._diag.email != s.item._diag.email) {
-                        s.item.notifications = s.item.notifications || {};
-                        $log.debug('diag change, notifications re-sended.');
-                        s.item.notifications.ADMIN_ORDER_PAYMENT_SUCCESS = false;
-                        s.item.notifications.ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS = false;
-                        s.item.notifications.CLIENT_ORDER_PAYMENT_SUCCESS = false;
-                        s.item.notifications.DIAG_NEW_RDV = false;
-                        if (s.item.notifications.LANDLORD_ORDER_PAYMENT_SUCCESS !== undefined) {
-                            s.item.notifications.LANDLORD_ORDER_PAYMENT_SUCCESS = false;
+                    if (!opt || opt && opt.assignDiagFeature !== true) {
+                        if (s.prevItem && s.prevItem._diag && s.prevItem._diag.email && s.item._diag && s.item._diag.email && s.prevItem._diag.email != s.item._diag.email) {
+                            var msg = "Manually assign of diagnostiqueur " + s.item._diag.firstName + ' ' + s.item._diag.lastName + ' will trigger notifications again. Please confirm. ';
+                            s.confirm(msg, () => {
+                                reEnableNotifications();
+                                s.save(Object.assign(opt || {}, {
+                                    assignDiagFeature: true
+                                }));
+                            });
+                            return;
                         }
+                    }
+
+                    if (!opt || opt.assignNewRDVSlot !== true) {
+                        if (s.item._id && s.hasUserSelectedAnRDVSlot) {
+                            s.confirm('Manually assign of RDV slot may change diagnostiqueur, date and price and will trigger notifications again. Please Confirm. ', () => {
+                                reEnableNotifications();
+                                s.save(Object.assign(opt || {}, {
+                                    assignNewRDVSlot: true
+                                }));
+                            });
+                            return;
+                        }
+
                     }
 
                     db.ctrl('Order', 'save', s.item).then(function(res) {
