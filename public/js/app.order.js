@@ -305,7 +305,7 @@
                     });
                 };
                 s.isRDVSelectButtonActivated = function() {
-                    return r.userIs('admin') && !hasSlotSelectionActivatedManually();
+                    return r.userIs('admin') && !hasSlotSelectionActivatedManually() && !s.rdvConditions();
                 };
 
                 function hasSlotSelectionActivatedManualyByAdmin() {
