@@ -515,8 +515,10 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', fu
                         $log.debug('setting has prices');
                         if(dbSettings.metadata && dbSettings.metadata.prices){
 
-                            $log.debug('setting has basePrie');
-                            if(dbSettings.metadata.prices.basePrice!==undefined){
+                            $log.debug('setting has basePrice');
+                            if(dbSettings.metadata.prices.basePrice!==undefined
+                                && !isNaN(dbSettings.metadata.prices.basePrice)
+                                && dbSettings.metadata.prices.basePrice!==''){
                                 try{
                                     $log.debug('basePrice fetch value is',dbSettings.metadata.prices.basePrice);
                                     localData.basePrice = parseInt(dbSettings.metadata.prices.basePrice);
@@ -525,7 +527,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', fu
                                     $log.debug('basePrice fetch',err);
                                 }
                             }else{
-                                $log.debug('basciPrice fetch is skip');
+                                $log.debug('basePrice fetch is skip');
                             }
 
                             Object.keys(dbSettings.metadata.prices).forEach(function(diagName){

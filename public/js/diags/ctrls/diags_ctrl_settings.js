@@ -30,7 +30,7 @@
                         
                     }
 
-                    if(s.item.metadata.prices.basePrice==undefined){
+                    if(isNaN(s.item.metadata.prices.basePrice) || s.item.metadata.prices.basePrice==undefined || s.item.metadata.prices.basePrice == ''){
                         s.item.metadata.prices.basePrice = data.basePrice;
                     }
                     
