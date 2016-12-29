@@ -1,0 +1,46 @@
+<div class="diags-bg" ng-controller="orderConfirmation">
+    <div class="diags-content container diags-selection padding-none">
+        <div class="row diags-bg-block-40 hidden-xs"></div>
+        <div class="row diag-row padding-top-one">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                <h2>Confirmation de commande</h2>
+            </div>
+        </div>
+        <div class="row diag-row padding-top-one">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                <p>
+                    <span ng-if="false">Bonjour {{data._client.firstName}},
+        <br></span>
+                    <br> Nous vous confirmons votre commande. Votre rendez-vous est confirmé. Le diagnostiqueur a été notifié : {{(data._diag.firstName||data._diag.email) + ' ' + (data._diag.lastName||'')}}
+                    <br>
+                    <br> Vous avez une nouveau rendez-vous :
+                    <br> Date : {{momentDateTimeWords(data.start)}}
+                    <br> Adresse : {{data.address}}
+                    <br> Diagnostics :
+                    <br>
+                </p>
+                <table class="table table-striped table-condensed unselectable">
+                    <tr ng-repeat="(k,o) in data.diags" class="unselectable" ng-show="o">
+                        <td ng-bind="data.diagNameConvertion(k)"></td>
+                    </tr>
+                </table>
+                <p ng-show="data.obs">
+                    Observations complémentaires :
+                    <br>
+                    <br>{{data.obs}}
+                </p>
+                <p>
+                    <br> Remise des clefs : {{data.keysInfo}}
+                    <br>
+                    <br> Votre commande prix TTC : {{data.price}} €
+                </p>
+            </div>
+        </div>
+        <div class="row diag-row padding-top-one hidden" ng-if="false">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                <button class="btn diag-btn-main diag-btn-width306" type="button" ng-click="back()">Retourner</button>
+            </div>
+        </div>
+        <div class="row diags-bg-block-40 hidden-xs"></div>
+    </div>
+</div>
