@@ -43,10 +43,6 @@ var URL = {
 app.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
-
-        //when('/', {
-        //   templateUrl: 'views/diags/booking/booking-1-home.html'
-        //}).
         when('/home', {
             templateUrl: 'views/diags/booking/booking-1-home.html'
         }).

@@ -346,93 +346,112 @@ function save(data, cb) {
                 actions.log('save:prevStatus=' + prevStatus);
                 actions.log('save:currentStatus=' + _order.status);
 
+                //on notification flag change
+                if (_order.notifications && _order.notifications.DIAG_NEW_RDV == false) {
+                    sendDiagRDVNotification(_order);
+                }
+                if (_order.notifications && _order.notifications.ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS == false) {
+                    sendNotificationToEachAdmin(_order);
+                }
+                if (_order.notifications && _order.notifications.CLIENT_ORDER_PAYMENT_SUCCESS == false) {
+                    sendClientNotifications(_order)
+                }
+
+                //on status change
                 if (prevStatus == 'created' && _order.status == 'prepaid') { //PREPAID DURING BOOKING
-                    //ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS //ADMIN//#7
-                    everyAdmin(_admin => {
-                        Notif.trigger(NOTIFICATION.ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS, {
-                            _user: _admin,
-                            _order: _order
-                        });
-                    });
-
-                    //DIAG_NEW_RDV //DIAG//#2 OK ctrl.order
-                    Notif.trigger(NOTIFICATION.DIAG_NEW_RDV, {
-                        _user: _order._diag,
-                        _order: _order
-                    });
-
+                    sendNotificationToEachAdmin(_order);
+                    sendDiagRDVNotification(_order);
                 }
-
                 if (prevStatus == 'ordered' && _order.status == 'prepaid') { //PAID AFTER DELEGATION
-                    //ADMIN_ORDER_PAYMENT_SUCCESS //ADMIN//#8
-                    everyAdmin(_admin => {
-                        Notif.trigger(NOTIFICATION.ADMIN_ORDER_PAYMENT_SUCCESS, {
-                            _user: _admin,
-                            _order: _order
-                        });
-                    });
-                    //DIAG_RDV_CONFIRMED //DIAG//#3
-                    UserAction.get({
-                        _id: _order._diag._id || _order._diag
-                    }, (_err, _diag) => {
-                        Notif.trigger(NOTIFICATION.DIAG_RDV_CONFIRMED, {
-                            _user: _diag,
-                            _order: _order
-                        });
-                    });
+                    sendNotificationToEachAdmin(_order);
+                    sendDiagConfirmedNotification(_order);
                 }
-                //
-
-
                 if (prevStatus !== 'prepaid' && _order.status === 'prepaid') {
-
-                    UserAction.get({
-                        _id: _order._client._id || _order._client
-                    }, (_err, _client) => {
-
-                        if (_err) return cb(_err);
-                        if (!_client) {
-                            LogSave('Unable to retrieve client data', 'error', {
-                                _id: _order._client._id || _order._client
-                            });
-                            return;
-                        }
-
-                        getInvoiceHTML(_order, (_err, html) => {
-                            if (_err) {
-                                LogSave('Unable to retrieve order invoice html', 'warning', _err);
-                            }
-
-                            if (_order.notifications && _order.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED) {
-                                //LANDLORD_ORDER_PAYMENT_SUCCESS //LANDLORD//#2
-                                if (_order.landLordEmail) {
-                                    Notif.trigger(NOTIFICATION.LANDLORD_ORDER_PAYMENT_SUCCESS, {
-                                        _user: _client,
-                                        _order: _order,
-                                        attachmentPDFHTML: html
-                                    });
-                                }
-                            } else {
-                                //CLIENT_ORDER_PAYMENT_SUCCESS //CLIENT//#3
-                                Notif.trigger(NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, {
-                                    _user: _client,
-                                    _order: _order,
-                                    attachmentPDFHTML: html
-                                });
-                            }
-
-                        });
-
-                    });
+                    sendClientNotifications(_order);
                 }
+
+
 
 
             });
 
 
 
+
         }, {}, saveKeys);
     }
+
+    function sendNotificationToEachAdmin(_order) {
+        //ADMIN_ORDER_PAYMENT_SUCCESS //ADMIN//#8
+        everyAdmin(_admin => {
+            Notif.trigger(NOTIFICATION.ADMIN_ORDER_PAYMENT_SUCCESS, {
+                _user: _admin,
+                _order: _order
+            });
+        });
+    }
+
+    function sendDiagRDVNotification(_order) {
+        //DIAG_NEW_RDV //DIAG//#2 OK ctrl.order
+        Notif.trigger(NOTIFICATION.DIAG_NEW_RDV, {
+            _user: _order._diag,
+            _order: _order
+        });
+    }
+
+    function sendDiagConfirmedNotification(_order) {
+        //DIAG_RDV_CONFIRMED //DIAG//#3
+        UserAction.get({
+            _id: _order._diag._id || _order._diag
+        }, (_err, _diag) => {
+            Notif.trigger(NOTIFICATION.DIAG_RDV_CONFIRMED, {
+                _user: _diag,
+                _order: _order
+            });
+        });
+    }
+
+    function sendClientNotifications(_order) {
+        UserAction.get({
+            _id: _order._client._id || _order._client
+        }, (_err, _client) => {
+
+            if (_err) return cb(_err);
+            if (!_client) {
+                LogSave('Unable to retrieve client data', 'error', {
+                    _id: _order._client._id || _order._client
+                });
+                return;
+            }
+
+            getInvoiceHTML(_order, (_err, html) => {
+                if (_err) {
+                    LogSave('Unable to retrieve order invoice html', 'warning', _err);
+                }
+
+                if (_order.notifications && _order.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED) {
+                    //LANDLORD_ORDER_PAYMENT_SUCCESS //LANDLORD//#2
+                    if (_order.landLordEmail) {
+                        Notif.trigger(NOTIFICATION.LANDLORD_ORDER_PAYMENT_SUCCESS, {
+                            _user: _client,
+                            _order: _order,
+                            attachmentPDFHTML: html
+                        });
+                    }
+                } else {
+                    //CLIENT_ORDER_PAYMENT_SUCCESS //CLIENT//#3
+                    Notif.trigger(NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, {
+                        _user: _client,
+                        _order: _order,
+                        attachmentPDFHTML: html
+                    });
+                }
+
+            });
+
+        });
+    }
+
 }
 
 function getInvoiceHTML(_order, cb) {

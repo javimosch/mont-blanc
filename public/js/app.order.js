@@ -71,8 +71,8 @@
 
     app.controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagPrice', 'diagSlots',
-        function(db, s, r, params, focus, diagPrice, diagSlots) {
+        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagPrice', 'diagSlots', '$log',
+        function(db, s, r, params, focus, diagPrice, diagSlots, $log) {
             r.setCurrentCtrl(s);
 
 
@@ -103,8 +103,7 @@
                     s.pdf = {};
                     r.dom();
                     return r.infoMessage("Ajouter après " + moment(s.item.end).format('dddd DD [de] MMMM YY'), 5000);
-                }
-                else {
+                } else {
                     r.dom(function() {
                         s.pdfSave(diagCode);
                     }, 1000);
@@ -115,8 +114,7 @@
                     if (s.item.diags[x] == true) {
                         if (s.item.files && s.item.files[x] && s.item.files[x]._id) {
 
-                        }
-                        else {
+                        } else {
                             return false;
                         }
                     }
@@ -150,7 +148,7 @@
                         db.ctrl('File', 'remove', {
                             _id: prevID
                         });
-                        console.log('pdf delete prev',prevID);
+                        console.log('pdf delete prev', prevID);
                     }
                 }
                 var prevID = s.item.files[code] && s.item.files[code]._id;
@@ -179,8 +177,7 @@
                                 read(s.item._id);
                                 r.infoMessage('File upload success.', 5000);
                             });
-                        }
-                        else {
+                        } else {
                             r.warningMessage('Upload fail, try later.', 9999);
                         }
                     });
@@ -206,14 +203,12 @@
                     file = s.item.files[code];
                     if (!file) {
                         cbHell.next();
-                    }
-                    else {
+                    } else {
                         if (!file._id) {
                             console.warn('checking file, _id expected. Code its ', code);
                             delete s.item.files[code];
                             cbHell.next();
-                        }
-                        else {
+                        } else {
                             db.ctrl('File', 'find', {
                                 _id: file._id
                             }).then(res => {
@@ -227,7 +222,6 @@
                     }
                 }
             };
-
 
 
 
@@ -250,16 +244,14 @@
                     //no login needed
                     if (r.params && r.params.prevRoute) {
 
-                    }
-                    else {
+                    } else {
                         r.toggleNavbar(true);
                         r.__hideNavMenu = true;
                         $U.once('route-exit:' + $U.url.hashName(), function(url) {
                             r.__hideNavMenu = false;
                         });
                     }
-                }
-                else {
+                } else {
                     r.secureSection(s);
                 }
 
@@ -276,8 +268,7 @@
                 //
                 if (params && params.id && params.id.toString() !== '-1') {
                     r.dom(read, 0);
-                }
-                else {
+                } else {
                     reset();
                 }
             }
@@ -302,8 +293,28 @@
                 s.diagSlots = diagSlots(s, s.item);
 
                 s.__rdvInit = false;
+
+                s.__isSlotSelectionActivatedManually = false;
+
+                function hasSlotSelectionActivatedManually() {
+                    return s.__isSlotSelectionActivatedManually == true;
+                }
+                s.activateSlotSelectionManually = function() {
+                    r.dom(function() {
+                        s.__isSlotSelectionActivatedManually = true;
+                    });
+                };
+                s.isRDVSelectButtonActivated = function() {
+                    return r.userIs('admin') && !hasSlotSelectionActivatedManually();
+                };
+
+                function hasSlotSelectionActivatedManualyByAdmin() {
+                    return r.userIs('admin') && hasSlotSelectionActivatedManually();
+                }
+
+
                 s.rdvConditions = () => {
-                    if (s.item._id) return false;
+                    if (s.item._id && !hasSlotSelectionActivatedManualyByAdmin()) return false;
                     if (!s.item.info) return false;
                     var rta = s.item.info.squareMeters !== undefined && s.item._client !== undefined;
                     if (rta && !s.__rdvInit) {
@@ -327,8 +338,7 @@
                             if (res.ok) {
                                 var win = window.open(res.result, '_blank');
                                 win.focus();
-                            }
-                            else {
+                            } else {
                                 res.warningMessage('Server Issue, try later.');
                             }
                         });
@@ -353,8 +363,7 @@
 
 
                         });
-                    }
-                    else {
+                    } else {
                         s.sendPaymentLink();
                     }
                 };
@@ -369,6 +378,9 @@
                     return rta;
                 };
 
+
+                s.hasUserSelectedAnRDVSlot = false;
+
                 s.unwrapRange = (range) => {
                     //var data = JSON.parse(window.atob(range));
                     var data = range;
@@ -376,6 +388,7 @@
                     s.item.end = data.end;
                     //
                     s.applyTotalPrice();
+                    s.hasUserSelectedAnRDVSlot = true;
                 };
 
                 s.infoItemShow = function(item) {
@@ -464,8 +477,7 @@
 
                     if (s.item._diag) {
                         diagPrice.setPrices(s, s.item);
-                    }
-                    else {
+                    } else {
                         console.warn('set-prices-skip _diag undefined ')
                     }
 
@@ -570,8 +582,7 @@
                             'Client Address': () => s.item._client.address, //when landlord
                             'Other': () => 'other'
                         };
-                    }
-                    else {
+                    } else {
                         return {
                             'Ou ?': () => '',
                             'Diag Address': () => s.item.address,
@@ -587,30 +598,28 @@
                 s.__keysWhereSelectFirstItem = () => s.__keysWhereItems && Object.keys(s.__keysWhereItems)[0] || "Loading";
                 s.__keysWhereSelectLabel = () => s.__keysWhereSelectLabelVal || s.__keysWhereSelectFirstItem();
                 s.__keysWhereSelect = (key, val) => {
+                    $log.debug(val);
                     s.item.keysWhere = val && val() || undefined;
                 };
 
+                s.afterRead.push(() => {
 
-                s.$watch('item.keysWhere', function(val) {
-                    if (s.item._id) return; //this select do not work after order creation.
-                    //
-                    if (val == undefined) {
-                        r.dom(() => {
-                            s.item.keysAddress = 'non disponible';
-                        });
-                        r.dom(() => {
-                            s.item.keysAddress = undefined;
-                        }, 2000);
-                        //
-                        return s.__keysWhereSelectLabelVal = 'Ou ?';
-                    }
-                    Object.keys(s.__keysWhereItems).forEach(k => {
-                        if (s.__keysWhereItems[k]() == val) {
-                            s.__keysWhereSelectLabelVal = k;
+                    s.$watch('item.keysWhere', function(val) {
+                        if (s.item._id) return;
+                        if (val == undefined) {
+                            return s.__keysWhereSelectLabelVal = 'Ou ?';
                         }
+                        Object.keys(s.__keysWhereItems).forEach(k => {
+                            if (s.__keysWhereItems[k]() == val) {
+                                s.__keysWhereSelectLabelVal = k;
+                            }
+                        });
+                        s.item.keysAddress = (val == 'other') ? '' : val;
                     });
-                    s.item.keysAddress = (val == 'other') ? '' : val;
+
                 });
+
+
 
                 //KEYS TIME FROM ------------------------------------------------------------------------------------------------
                 s.__keysTimeFromItems = {};
@@ -636,8 +645,7 @@
                 s.$watch('item.keysTimeFrom', function(val) {
                     if (!val) {
                         s.__keysTimeFromSelectLabel = 'choisir';
-                    }
-                    else {
+                    } else {
                         if (s.item._id) {
                             return s.__keysTimeFromSelectLabel = r.momentTime(s.item.keysTimeFrom);
                         }
@@ -681,8 +689,7 @@
                 s.$watch('item.keysTimeTo', function(val) {
                     if (!val) {
                         s.__keysTimeToSelectLabel = 'choisir';
-                    }
-                    else {
+                    } else {
                         if (s.item._id) {
                             return s.__keysTimeToSelectLabel = r.momentTime(s.item.keysTimeTo);
                         }
@@ -773,8 +780,7 @@
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             r.warningMessage(m[0]());
-                        }
-                        else {
+                        } else {
                             r.warningMessage(m[0]);
                         }
                     }, _sendPaymentLink);
@@ -823,8 +829,7 @@
 
 
                                 r.dom(read, 5000);
-                            }
-                            else {
+                            } else {
                                 s.successMsg('There was a server error, try later.', 'warning');
                                 console.info('PAY-FAIL', data.err);
                             }
@@ -840,8 +845,7 @@
                     var session = r.session();
                     if (session && session._id == s.item._client._id) {
                         return s.item._client.email;
-                    }
-                    else {
+                    } else {
                         return s.item.landLordEmail || s.item._client.email || '';
                     }
                 }
@@ -851,12 +855,10 @@
                 s.back = () => {
                     if (s.is(['diag', 'client'])) {
                         r.route('dashboard');
-                    }
-                    else {
+                    } else {
                         if (r.params && r.params.prevRoute) {
                             return r.route(r.params.prevRoute);
-                        }
-                        else {
+                        } else {
                             r.route('orders');
                         }
 
@@ -903,13 +905,55 @@
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             r.warningMessage(m[0]());
-                        }
-                        else {
+                        } else {
                             r.warningMessage(m[0]);
                         }
                     }, s.save);
                 };
-                s.save = function() {
+
+
+
+                function reEnableNotifications() {
+                    s.item.notifications = s.item.notifications || {};
+                    $log.debug('diag change, notifications re-sended.');
+                    s.item.notifications.ADMIN_ORDER_PAYMENT_SUCCESS = false;
+                    s.item.notifications.ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS = false;
+                    s.item.notifications.CLIENT_ORDER_PAYMENT_SUCCESS = false;
+                    s.item.notifications.DIAG_NEW_RDV = false;
+                    if (s.item.notifications.LANDLORD_ORDER_PAYMENT_SUCCESS !== undefined) {
+                        s.item.notifications.LANDLORD_ORDER_PAYMENT_SUCCESS = false;
+                    }
+                }
+
+                s.save = function(opt) {
+
+
+                    //on diag change, notifications are re-sended
+                    if (!opt || opt && opt.assignDiagFeature !== true) {
+                        if (s.prevItem && s.prevItem._diag && s.prevItem._diag.email && s.item._diag && s.item._diag.email && s.prevItem._diag.email != s.item._diag.email) {
+                            var msg = "Manually assign of diagnostiqueur " + s.item._diag.firstName + ' ' + s.item._diag.lastName + ' will trigger notifications again. Please confirm. ';
+                            s.confirm(msg, () => {
+                                reEnableNotifications();
+                                s.save(Object.assign(opt || {}, {
+                                    assignDiagFeature: true
+                                }));
+                            });
+                            return;
+                        }
+                    }
+
+                    if (!opt || opt.assignNewRDVSlot !== true) {
+                        if (s.item._id && s.hasUserSelectedAnRDVSlot) {
+                            s.confirm('Manually assign of RDV slot may change diagnostiqueur, date and price and will trigger notifications again. Please Confirm. ', () => {
+                                reEnableNotifications();
+                                s.save(Object.assign(opt || {}, {
+                                    assignNewRDVSlot: true
+                                }));
+                            });
+                            return;
+                        }
+
+                    }
 
                     db.ctrl('Order', 'save', s.item).then(function(res) {
 
@@ -918,14 +962,12 @@
                             if (s.item.notifications && s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED == true) {
                                 r.infoMessage('Changes saved');
                                 s.back();
-                            }
-                            else {
+                            } else {
                                 s.item._id = res.result._id;
 
                                 if (s.isOrderClientLandLord()) {
                                     s.back();
-                                }
-                                else {
+                                } else {
                                     s.sendPaymentLink(() => {
                                         s.back();
                                     });
@@ -936,8 +978,7 @@
 
 
 
-                        }
-                        else {
+                        } else {
                             handleError(res);
                         }
                     }).error(handleError);
@@ -945,8 +986,7 @@
                 s.downloadFile = () => {
                     if (!s.item.pdfId) {
                         return r.warningMessage("File required", 5000);
-                    }
-                    else {
+                    } else {
                         window.open(db.URL() + '/File/get/' + s.item.pdfId, '_newtab');
                     }
                 };
@@ -970,9 +1010,6 @@
                         });
                     });
                 };
-
-
-
 
 
 
@@ -1000,8 +1037,7 @@
                             if (data.ok) {
                                 //s.message('deleted', 'info');
                                 s.back();
-                            }
-                            else {
+                            } else {
                                 handleError(data);
                             }
                         }).error(handleError);
@@ -1033,7 +1069,6 @@
             }
 
 
-
             function read(id) {
                 if (r.params && r.params.item && r.params.item._diag) {
                     s.item = r.params.item; //partial loading
@@ -1055,7 +1090,12 @@
                             start: new Date(data.result.start),
                             end: new Date(data.result.end)
                         });
+
+                        s.prevItem = s.prevItem || null;
+                        s.prevItem = _.clone(s.item);
                         s.item = data.result;
+
+                        if (!s.prevItem) s.prevItem = s.item;
 
                         if (s.afterRead && s.afterRead.forEach) {
                             s.afterRead.forEach(cb => cb());
@@ -1066,8 +1106,7 @@
                         s.pdfCheck();
                         //                    console.info('READ', s.item);
                         //s.message('Loaded', 'success', 2000);
-                    }
-                    else {
+                    } else {
                         handleError(data);
                     }
                 }).error(handleError);
@@ -1125,8 +1164,7 @@
                         dbPaginate.ctrl(data, s.model).then(res => {
                             if (cb) {
                                 cb(res.result);
-                            }
-                            else {
+                            } else {
                                 s.model.update(res.result, null);
                             }
                         });

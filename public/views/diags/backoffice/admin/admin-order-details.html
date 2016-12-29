@@ -22,7 +22,7 @@
             <label class="unselectable">Diag Man</label>
         </div>
         <div class="row margin-top-quarter">
-            <input ng-disabled="state.working() || item._id" type="text" class="diags-input" ng-model="item._diag" placeholder="Diag" uib-typeahead="diag as diag.email for diag in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingDiags||'Loading diags...'"
+            <input ng-disabled="state.working()" type="text" class="diags-input" ng-model="item._diag" placeholder="Diag" uib-typeahead="diag as diag.email for diag in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingDiags||'Loading diags...'"
                 typeahead-no-results="noResults">
         </div>
         <div class="row margin-top-half">
@@ -349,7 +349,7 @@
             </div>
         </div>
 
-        <div class="row margin-top-half" ng-show="!item._id">
+        <div class="row margin-top-half" ng-show="!item._id || userIs('admin')"> <!--  -->
             <label class="unselectable">RDV</label>
         </div>
         <div class="row margin-top-quarter">
@@ -357,6 +357,13 @@
                 <div ng-show="!item.info.squareMeters" class="alert alert-info" role="alert">Answer question size.</div>
                 <div ng-show="!item._client" class="alert alert-info" role="alert">Choice a client.</div>
             </out>
+
+
+
+<button ng-show="isRDVSelectButtonActivated()" ng-click="activateSlotSelectionManually()" ng-disabled="state.working()" class="btn diags-btn bg-madison margin-top-quarter">
+Modifier</button>
+
+
             <out ng-show="rdvConditions()">
                 <div ng-include="'views/diags/backoffice/admin/admin-order-details-slots.html'" includeReplace></div>
             </out>

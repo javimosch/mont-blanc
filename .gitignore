@@ -5,3 +5,6 @@ bower_components/**
 .env
 public/temp
 yarn.lock
+app.bundle.js
+app.bundle.booking.js
+
