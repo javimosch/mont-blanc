@@ -54,9 +54,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     //    console.info('app.admin:run');
 
-
     r.isDevEnv = __SHARE_FUNCTIONS.isDevEnv;
-
 
     r.URL = {
         LOGIN: 'login',
