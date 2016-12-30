@@ -38,6 +38,34 @@
             return rta;
         }
 
+        function getDayModifierPercentage(percentages, date) {
+            if (isTodaySaturday(date)) {
+                return percentages.todaySaturday;
+            }
+            if (isTodaySunday(date)) {
+                return percentages.todayMondayToFriday;
+            }
+            if (isToday(date)) {
+                return percentages.todayMondayToFriday;
+            }
+            if (isTomorrowSaturday(date)) {
+                return percentages.tomorrowSaturday;
+            }
+            if (isTomorrowSunday(date)) {
+                return percentages.tomorrowSunday;
+            }
+            if (isTomorrow(date)) {
+                return percentages.tomorrowMondayToFriday;
+            }
+            if (isSaturday(date)) {
+                return percentages.saturday;
+            }
+            if (isSunday(date)) {
+                return percentages.sunday;
+            }
+            return percentages.mondayToFriday;
+        }
+
         function getExtraDatePrice(price, date, scope) {
             debug('extraDatePrice', 0);
             debug('extraDatePriceType', '');
@@ -58,6 +86,7 @@
             if (isToday(date)) {
                 debug('extraDatePrice', price * porcentages.todayMondayToFriday / 100);
                 debug('extraDatePriceType', 'todayMondayToFriday');
+                debug('extraDatePricePorc', porcentages.todayMondayToFriday);
                 return price * porcentages.todayMondayToFriday / 100;
             }
             if (isTomorrowSaturday(date)) {
@@ -111,7 +140,18 @@
             r.__priceQuote[prop] = val;
         }
 
+        function getDepartmentModifierPercentage(postCode, percentageTable) {
+            if (postCode && percentageTable) {
+                var department = postCode.substring(0, 2);
+                return percentageTable[department]!==undefined && (percentageTable[department]) || 0;
+            } else {
+                return 0;
+            }
+        }
+
         return {
+            getDepartmentModifierPercentage:getDepartmentModifierPercentage,
+            getDayModifierPercentage: getDayModifierPercentage,
             setPrices: function(scope, _order) {
                 //price represent the priceQuote with VAT (TTC).
                 var diagCommissionRate = _order._diag.commission;
@@ -132,6 +172,16 @@
                 debug('revenueHT', _order.revenueHT);
                 _order.vatRate = vatRate; //vat rate at the moment of the calculation
             },
+            getBasePrice: function(diagsInCart, diagsAvailable) {
+                var diag = null,
+                    rta = 0;
+                Object.keys(diagsInCart).forEach(function(diagName) {
+                    if (!diagsInCart[diagName]) return;
+                    diag = diagsAvailable.filter(d => d.name == diagName)[0];
+                    rta += diag.price;
+                });
+                return rta;
+            },
             getPriceQuote: function(scope, date) {
                 debug(undefined);
                 var _order = scope.item;
@@ -139,7 +189,6 @@
                 _order = _.cloneDeep(_order); //read-only
 
                 if (!_order.info) _order.info = _order; //patch for booking.
-
 
                 debug('_order', _order);
                 if (!_order) return warn('_order required.');
@@ -164,7 +213,7 @@
                 //buildePrice is: the size porc  of subtotal
                 var extraBuildingSizePrice = subTotal * squareMetersPorcentage / 100;
                 debug('extraBuildingSizePrice', extraBuildingSizePrice);
-                debug('extraBuildingSizePorc', squareMetersPorcentage);
+                debug('extraBuildingSizePorc', parseInt(squareMetersPorcentage));
                 //date price is: the date designated porc of subtotal
                 var extraDatePrice = getExtraDatePrice(subTotal, date, scope);
                 debug('extraDatePrice', extraDatePrice);
@@ -203,19 +252,20 @@
                 //
 
                 //department multiplier (if available)
+                debug('extraDepartmentPorc', 0);
                 if (scope.item && scope.item.postCode) {
                     var department = scope.item.postCode.substring(0, 2);
                     if (department !== undefined && scope.settings && scope.settings.metadata && scope.settings.metadata.departmentMultipliers) {
                         if (scope.settings.metadata.departmentMultipliers[department] !== undefined) {
                             var depMultiplier = scope.settings.metadata.departmentMultipliers[department];
+                            debug('extraDepartmentPorc', depMultiplier);
                             var before = rtaRounded;
                             rtaRounded = (rtaRounded * depMultiplier).toFixed(2);
                             rtaRounded = parseInt(parseInt(rtaRounded) / 10, 10) * 10;
                             debug('departmentMultiplier', 'the value ' + depMultiplier + ' belongs to department ' + department + '. Price before is ' + before + ' and now is ' + rtaRounded);
                         }
                     }
-                }
-                else {
+                } else {
                     warn('postCode required for department lookup')
                 }
 
