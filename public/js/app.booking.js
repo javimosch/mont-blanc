@@ -565,9 +565,14 @@ app.controller('ctrl.booking', ['server',
                 [s.item.gasInstallation, '==', undefined, "Répondre Gaz"],
                 [s.item.electricityInstallation, '==', undefined, "Répondre Electricité"],
                 [s.item.address, '==', undefined, "Répondre Address"],
+                
+                /*
+                removed: autocomplete is now limited to france
                 [_.includes(['France', 'Francia', 'Frankrig', 'Frankrijk',
                     'Frankreich', 'Frankrike', 'Francja'
                 ], s.item.country), '==', false, MESSAGES.FRENCH_ADDRESS_REQUIRED]
+                */
+                
             ], (m) => {
                 s.warningMsg(m[0]);
                 if (err) err();
@@ -1870,7 +1875,8 @@ app.controller('ctrl.booking', ['server',
         s.sizePrice = () => sizePrice(s._order, s.diags, s.squareMetersPrice, s.basePrice);
         s.totalPrice = (showRounded, opt) => totalPrice(showRounded, s._order, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({
             s: s,
-            r: r
+            r: r,
+            department: s.item.postCode.substring(0,2)
         }, opt || {}));
 
         s.totalPriceRange = (dt) => totalPrice(true, s.item, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({

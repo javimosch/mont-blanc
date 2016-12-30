@@ -7,7 +7,20 @@
 /*global localStorageDB*/
 /*global localStorage*/
 /*global $hasMouse*/
+
 var app = angular.module('app.run', []);
+
+var __SHARE_FUNCTIONS = {
+    isDevEnv: () => {
+        return window.location.hostname.indexOf('c9users.io') !== -1 || window.location.hostname.indexOf('localhost') !== -1 || window.location.hostname.indexOf('herokuapp') !== -1
+    }
+};
+
+app.config(function($logProvider) {
+    var enabled = __SHARE_FUNCTIONS.isDevEnv();
+    console.info('$log is ',(enabled?'enabled':'disabled'));
+    $logProvider.debugEnabled(enabled);
+});
 
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
@@ -41,7 +54,9 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     //    console.info('app.admin:run');
 
-    r.isDevEnv = () => window.location.hostname.indexOf('c9users.io') !== -1 || window.location.hostname.indexOf('localhost') !== -1;
+
+    r.isDevEnv = __SHARE_FUNCTIONS.isDevEnv;
+
 
     r.URL = {
         LOGIN: 'login',

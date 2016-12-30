@@ -186,7 +186,7 @@ html {
     height: 37px;
     padding: 0px 20px;
     margin: 7px 10px 0px 10px;
-    border-radius: 20px;
+    border-radius: 15px;
     color: white;
     max-width: 232px;
     font-family: 'Avenir-Book';
@@ -1721,14 +1721,14 @@ p.stripe-home-message> span {
 /*
 .noUi-handle:before,
 .noUi-handle:after {
-	content: "";
-	display: block;
-	position: absolute;
-	height: 14px;
-	width: 1px;
-	background: #E8E7E6;
-	left: 14px;
-	top: 6px;
+    content: "";
+    display: block;
+    position: absolute;
+    height: 14px;
+    width: 1px;
+    background: #E8E7E6;
+    left: 14px;
+    top: 6px;
 }*/
 
 .noUi-handle:after {

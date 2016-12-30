@@ -556,6 +556,7 @@
                 });
 
                 db.localData().then(function(data) {
+                    $log.debug('order localData basePrice is',data.basePrice);
                     Object.assign(s, data);
 
                     s.diags.forEach((diag) => {

@@ -54,7 +54,7 @@
                     }, {
                         label: "Description",
                         name: "firstName",
-                        format: (x, o) => o.firstName+((o.lastName)?', '+o.lastName:'')
+                        format: (x, o) => o.firstName + ((o.lastName) ? ', ' + o.lastName : '')
                     }, {
                         label: "Email",
                         name: 'email'
@@ -63,14 +63,14 @@
                         name: "fixedTel",
                         format: (v, item) => {
                             v = '';
-                            if(item.fixedTel){
+                            if (item.fixedTel) {
                                 v = 'TF: ' + item.fixedTel;
                             }
-                            if(item.cellPhone){
-                                if(!v){
-                                    v = 'M: ' + item.cellPhone;        
-                                }else{
-                                    v+= ' M: ' + item.cellPhone;        
+                            if (item.cellPhone) {
+                                if (!v) {
+                                    v = 'M: ' + item.cellPhone;
+                                } else {
+                                    v += ' M: ' + item.cellPhone;
                                 }
                             }
                             return v;
@@ -78,10 +78,10 @@
                     }, {
                         label: "Reversement",
                         name: "commission"
-                    },{
+                    }, {
                         label: "Activated",
                         name: "commission",
-                        format:(v,item)=>!item.disabled
+                        format: (v, item) => !item.disabled
                     }],
                     items: []
                 };
@@ -137,8 +137,7 @@
                         if (res.ok) {
                             if (cb) {
                                 cb(res.result);
-                            }
-                            else {
+                            } else {
                                 s.model.update(res.result, null);
                             }
                         }
@@ -154,8 +153,7 @@
                     if (r.userIs('diag')) return 'dashboard';
                     if (params.id) {
                         return 'diags/edit/' + params.id;
-                    }
-                    else {
+                    } else {
                         return 'exceptions';
                     }
                 };
@@ -242,9 +240,89 @@
             }
         };
     });
-    app.controller('diagExceptionEdit', ['server', '$scope', '$rootScope', '$routeParams', 'focus',
-        function(db, s, r, params, focus) {
+    app.controller('diagExceptionEdit', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$timeout','$log',
+        function(db, s, r, params, focus, $timeout,$log) {
             //
+            $U.expose('s', s);
+
+            $timeout(function() {
+                s.confirm = s.confirm || r.openConfirm || null;
+            }, 2000);
+
+            
+
+            var dateRangePicker = {
+                _watches:[],
+                watch:function(path,handler){
+                    this._watches.push(s.$watch(path,handler));
+                },
+                resetWatches:function(){
+                    for(var index in this._watches){
+                        this._watches[index]();
+                    }
+                },
+                momentDateToToday:function(value){
+                    $log.debug('date hour is',moment(value).hours());
+                    return moment().hours(moment(value).hours()).minutes(moment(value).minutes());
+                },
+                initialize:function(){
+                    var self = this;
+                    self.resetWatches();
+                    var el = $('input[name="daterange"]');
+                        el.daterangepicker({
+                            minDate:s.item.repeat!=='none'?moment().hours(8).minutes(0):s.datepicker.minDate,
+                            maxDate:s.item.repeat!=='none'?moment().hours(20).minutes(0):s.datepicker.maxDate,
+                            startDate:moment()._d,
+                            endDate:moment()._d,
+                            timePicker: true,
+                            timePicker24Hour:true,
+                            timePickerIncrement: 10,
+                            locale: {
+                                format: 'DD/MM/YYYY h[h]mm A'
+                            }
+                        });
+
+                        self.watch('item.start',function(value){
+                            if(moment(value).isValid()){
+                                if(s.item.repeat!=='none'){
+                                    value = self.momentDateToToday(value);
+                                }
+                                el.data('daterangepicker').setStartDate(moment(value)._d);
+                            }
+                        });
+                        self.watch('item.end',function(value){
+                            if(moment(value).isValid()){
+                                if(s.item.repeat!=='none'){
+                                    value = self.momentDateToToday(value);
+                                }
+                                el.data('daterangepicker').setEndDate(moment(value)._d);
+                            }
+                        });
+                        s.getStartDate = ()=>{
+                            return el.data('daterangepicker').startDate;
+                        }
+                        s.getEndDate = ()=>{
+                            return el.data('daterangepicker').endDate;
+                        }
+
+                }
+            };
+
+
+
+            //TIME-PICKER-DATA
+            s.timeRange = {
+                hstep: 1,
+                mstep: 10,
+                minDate: moment().date(1),
+            };
+            //DATE-TIME-PICKER-DATA
+            s.datepicker = {
+                minDate: moment().hours(8).minutes(0).toDate().toString(), //.add(1, 'day') //today!
+                maxDate: moment().add(60, 'day').toDate().toString(),
+                initDate: new Date()
+            };
+
             s.item = {
                 start: null,
                 end: null,
@@ -253,8 +331,16 @@
                 start: new Date(),
                 end: new Date()
             };
+
+            s.$watch('item.repeat',function(){
+                r.dom(dateRangePicker.initialize());
+            });
+
             var isEdit = params.id.toString() !== '-1';
-            $U.expose('edit', s);
+
+
+
+
             //DAYS SELECTOR
             s.days = (() => {
                 var o = {
@@ -284,10 +370,10 @@
                 o.items.push({
                     label: "(Choice a day)",
                     val: ''
-                }, {
+                }/*, {
                     label: "Every day",
                     val: '-1'
-                });
+                }*/);
                 for (var x = 1; x <= 7; x++) {
                     m.day(x);
                     o.items.push({
@@ -301,18 +387,7 @@
                 o.selected = o.items[0].label;
                 return o;
             })();
-            //TIME-PICKER-DATA
-            s.timeRange = {
-                hstep: 1,
-                mstep: 10,
-                minDate: moment().date(1),
-            };
-            //DATE-TIME-PICKER-DATA
-            s.datepicker = {
-                minDate: moment().toDate().toString(), //.add(1, 'day') //today!
-                maxDate: moment().add(60, 'day').toDate().toString(),
-                initDate: new Date()
-            };
+            
             s.getDiags = function(val) {
                 return db.http('User', 'getAll', {
                     userType: 'diag',
@@ -354,8 +429,7 @@
                     s.item = r.params.item;
                     r.params.item = null;
                     s.onLoad();
-                }
-                else {
+                } else {
                     db.ctrl('TimeRange', 'get', {
                         _id: params.id,
                         __populate: {
@@ -365,8 +439,7 @@
                         if (d.ok) {
                             s.item = d.result;
                             s.onLoad();
-                        }
-                        else {
+                        } else {
                             r.notify({
                                 message: 'Loading error, try later',
                                 type: "warning"
@@ -374,8 +447,7 @@
                         }
                     })
                 }
-            }
-            else {
+            } else {
                 s.onLoad(true);
             }
             s.save = () => {
@@ -407,10 +479,9 @@
                                 return yes(v);
                             }
                         });
-                        if(yesFlag)return;
+                        if (yesFlag) return;
                         return no();
-                    }
-                    else {
+                    } else {
                         console.warn('rangeCollide order fetch error');
                         return no();
                     }
@@ -421,6 +492,9 @@
             s.validate = () => {
                 if (!s.item) return console.warn('item missing.');
                 if (!s.item._user) return console.warn('item._user missing.');
+
+                s.item.start = s.getStartDate();
+                s.item.end = s.getEndDate();
 
                 s.rangeCollideWithOrder((order) => {
                     //r.momentDateTime(order.start);
@@ -439,8 +513,7 @@
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             r.notify(m[0](), 'warning');
-                        }
-                        else {
+                        } else {
                             r.notify(m[0], 'warning');
                         }
                     }, s.save);

@@ -7,8 +7,6 @@ public/temp
 yarn.lock
 app.bundle.js
 app.bundle.booking.js
-
-
 npm-debug.log
-.env
-.env
+public/app.bundle.booking.js
+public/app.bundle.js

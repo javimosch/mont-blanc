@@ -22,10 +22,10 @@
             <div class="row">
                 <input type="text" class="diags-input" ng-disabled="state.working()" ng-model="item.description" placeholder="Motive (optional)">
             </div>
-             <div class="row margin-top-half"  ng-show="item.repeat!=='none'">
+             <div class="row margin-top-half"  ng-show="item.repeat=='week'">
                 <label>Day</label>
             </div>
-            <div class="row" ng-show="item.repeat!=='none'">
+            <div class="row" ng-show="item.repeat=='week'">
                 <span uib-dropdown name='day'>
       					<button ng-disabled="repeat=='day'" id="single-button" type="button" 
       					class="btn diags-btn bg-azure-radiance padding-right-one btn-sm" uib-dropdown-toggle ng-disabled="disabled">
@@ -38,6 +38,20 @@
                 </ul>
                 </span>
             </div>
+
+
+
+
+            <div class="row margin-top-half">
+                <label>Plage horaire</label>
+            </div>
+            <div class="row">
+                <input type="text" 
+                class="diags-input" ng-disabled="state.working()"
+                name="daterange" value="01/01/2015 1:30 PM - 01/01/2015 2:00 PM" />
+            </div>
+
+<!--
             <div class="row margin-top-half">
                 <label>De</label>
             </div>
@@ -61,7 +75,7 @@
                 ng-attr-max={{datepicker.maxDate}}
                 placeholder="À">
             </div>
-
+-->
 
         </div>
         <div class="col-sm-12 col-md-6 margin-top-one">

@@ -330,7 +330,7 @@ srv.service('fileUpload', ['$http', function($http) {
             .error(err);
     };
 }]);
-srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(http, localdb, r, fileUpload) {
+srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', function(http, localdb, r, fileUpload,$log) {
     //var URL = 'http://ujkk558c0c9a.javoche.koding.io:3434';
     var URL = 'http://localhost:5000';
 
@@ -487,14 +487,80 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', function(
     });
 
     function getLocalData() {
+        function onResolve(resolve,data){
+            resolve(data);
+            localData = data; //cache
+        }
         return MyPromise(function(resolve, error) {
+
+            $log.debug('localData promise at',Date.now());
+
             if (localData) {
-                resolve(localData);
+                $log.debug('localData returns cache');
+                onResolve(resolve,localData);
             }
             else {
-                $.getJSON('./data.json', function(data) {
-                    localData = data;
-                    resolve(localData);
+
+                $log.debug('localData fetch start');
+                $.getJSON('./data.json', function(localData) {
+                    
+                    
+
+                    $log.debug('settings fetch');
+                    //patch prices from db if available
+                    ctrl('Settings', 'getAll', {}).then(r => {
+                    if (r.ok && r.result.length > 0) {
+                        var dbSettings = r.result[0];
+                        
+                        $log.debug('setting has prices');
+                        if(dbSettings.metadata && dbSettings.metadata.prices){
+
+                            $log.debug('setting has basePrie');
+                            if(dbSettings.metadata.prices.basePrice!==undefined){
+                                try{
+                                    $log.debug('basePrice fetch value is',dbSettings.metadata.prices.basePrice);
+                                    localData.basePrice = parseInt(dbSettings.metadata.prices.basePrice);
+                                    $log.debug('localData basePrice is ',localData.basePrice);
+                                }catch(err){
+                                    $log.debug('basePrice fetch',err);
+                                }
+                            }else{
+                                $log.debug('basciPrice fetch is skip');
+                            }
+
+                            Object.keys(dbSettings.metadata.prices).forEach(function(diagName){
+                                
+                                for(var i in localData.diags){
+                                    if(localData.diags[i].name == diagName){
+                                        
+                                        if(dbSettings.metadata.prices[diagName] !== undefined){
+                                            try{
+                                                localData.diags[i].price =   parseInt(dbSettings.metadata.prices[diagName]);
+                                            }catch(e){
+                                                
+                                            }
+                                        }
+                                        
+                                        
+                                    }
+                                }
+                                
+                            });
+                            
+                            onResolve(resolve,localData);
+                            
+                        }else{
+                            onResolve(resolve,localData);
+                        }
+                        
+                        
+                    }else{
+                        onResolve(resolve,localData);
+                    }
+                        
+                    });
+                    
+                    
                 }).fail(function(jqxhr, textStatus, error) {
                     var err = textStatus + ", " + error;
                     console.log("Request Failed: " + err);
