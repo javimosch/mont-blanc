@@ -8,3 +8,7 @@ yarn.lock
 app.bundle.js
 app.bundle.booking.js
 
+
+npm-debug.log
+.env
+.env
