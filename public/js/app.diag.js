@@ -242,6 +242,11 @@
     });
     app.controller('diagExceptionEdit', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$timeout','$log',
         function(db, s, r, params, focus, $timeout,$log) {
+
+            r.dom(function(){
+                document.body.scrollTop=0;
+            });
+
             //
             $U.expose('s', s);
 
@@ -252,6 +257,7 @@
             
 
             var dateRangePicker = {
+                _initializeCounter:0,
                 _watches:[],
                 watch:function(path,handler){
                     this._watches.push(s.$watch(path,handler));
@@ -267,6 +273,7 @@
                 },
                 initialize:function(){
                     var self = this;
+                    self._initializeCounter++;
                     self.resetWatches();
                     var el = $('input[name="daterange"]');
                         el.daterangepicker({
@@ -303,6 +310,10 @@
                         }
                         s.getEndDate = ()=>{
                             return el.data('daterangepicker').endDate;
+                        }
+
+                        if(self._initializeCounter===1){
+                            el.trigger('click');
                         }
 
                 }
