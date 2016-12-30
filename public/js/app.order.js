@@ -305,7 +305,7 @@
                     });
                 };
                 s.isRDVSelectButtonActivated = function() {
-                    return r.userIs('admin') && !hasSlotSelectionActivatedManually();
+                    return s.item._id && r.userIs('admin') && !hasSlotSelectionActivatedManually() && !s.rdvConditions();
                 };
 
                 function hasSlotSelectionActivatedManualyByAdmin() {
@@ -387,6 +387,15 @@
                     s.item.start = data.start;
                     s.item.end = data.end;
                     //
+
+                    var _newPriceQuote = diagPrice.getPriceQuote(s);
+                    if(s.item._id && _newPriceQuote !== undefined 
+                        && _newPriceQuote > s.item.price){
+                        s.infoMsg("Original price will be keeped. New price "+_newPriceQuote+"EUR is higher and will be ignored.");
+                        $log.debug('Original price was keeped due to higher price in new price quote.');
+                        return;
+                    }
+
                     s.applyTotalPrice();
                     s.hasUserSelectedAnRDVSlot = true;
                 };
@@ -602,8 +611,7 @@
                     s.item.keysWhere = val && val() || undefined;
                 };
 
-                s.afterRead.push(() => {
-
+                function watchKeysWhere(){
                     s.$watch('item.keysWhere', function(val) {
                         if (s.item._id) return;
                         if (val == undefined) {
@@ -616,8 +624,14 @@
                         });
                         s.item.keysAddress = (val == 'other') ? '' : val;
                     });
+                }
 
-                });
+                if(params.id.toString()=='-1'){
+                    watchKeysWhere();
+                }else{
+                    s.afterRead.push(watchKeysWhere);
+                }
+                
 
 
 
