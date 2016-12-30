@@ -144,6 +144,12 @@
                         <input ng-disabled="!localData" type="text" class="diags-input minimal" ng-model="pricetool.scope.item._client" placeholder="Client" uib-typeahead="client as client.email for client in pricetool.getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading clients. . .'" typeahead-no-results="noResults">
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <label class="minimal">Client discount</label>
+                        <input type="text" class="diags-input minimal" placeholder="force discount" ng-model="pricetool.scope.item._client.discount">
+                    </td>
+                </tr>
             </table>
             <table class="table table-striped table-condensed  questions">
                 <tr class="unselectable">

@@ -391,6 +391,10 @@
                             electricity: false,
                             parasitaire: false
                         },
+                        _client:{
+                            email:'',
+                            discount:0
+                        },
                         info: {
                             squareMeters: undefined
                         }
@@ -413,8 +417,8 @@
                             return rta;
                             break;
                         case 'size':
-                            if (this.scope.squareMetersPrice && this.scope.item.info.squareMeters != undefined) {
-                                return this.scope.squareMetersPrice[this.scope.item.info.squareMeters]
+                            if (s.localData && s.localData.squareMetersPrice && this.scope.item.info.squareMeters != undefined) {
+                                return s.localData.squareMetersPrice[this.scope.item.info.squareMeters]
                             } else {
                                 return 0;
                             }
@@ -455,11 +459,11 @@
                     return (this.priceWithDay(k) * (1 + this.getRatioModifierFor('size') / 100)).toFixed(2);
                 },
                 priceWithDiscount:function(k){
-                    return (this.priceWithSize(k) * (1 + this.getRatioModifierFor('client') / 100)).toFixed(2);
+                    return (this.priceWithSize(k) * (1 - this.getRatioModifierFor('client') / 100)).toFixed(2);
                 },
                 priceWithDepartment: function(k) {
                     //100*((0.9*100)/100)
-                    return (this.priceWithDiscount(k) * this.getRatioModifierFor('department')).toFixed(2);
+                    return (this.priceWithDiscount(k) * (this.getRatioModifierFor('department')||1)).toFixed(2);
                 },
                 priceWithVAT: function(k) {
                     return (this.priceWithDepartment(k) * (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
