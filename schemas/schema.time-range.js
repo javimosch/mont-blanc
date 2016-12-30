@@ -17,6 +17,11 @@ module.exports = {
             required: true,
             default: 'work-exception'
         },
+        weekday:{
+            type:Number,
+            required:false,
+            default:null
+        },
         start: {
             type: Date,
             required: true

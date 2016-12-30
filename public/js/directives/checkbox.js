@@ -5,10 +5,10 @@ app.directive('niceCheckBox', function($rootScope, $timeout, $compile) {
         restrict: 'E',
         scope: {
             model: "=model",
-            data:"=data",
+            data: "=data",
             name: "@name",
             template: "@template",
-            click:"=click"
+            click: "=click"
         },
         templateUrl: "views/directives/checkbox.html",
         link: function(scope, el, attrs) {
@@ -48,43 +48,65 @@ app.directive('checkBoxGroup', function($rootScope, $timeout, $compile) {
     return {
         restrict: 'A',
         link: function(scope, el, attrs) {
-            el.on('click', function() {
+            el.on('change', update);
+            function update() {
                 var $box = $(this);
                 var group = "input:checkbox[name='" + $box.attr("name") + "']";
                 $(group).prop("checked", false);
                 $(group).prop("disabled", false);
                 $box.prop("checked", true);
                 $box.prop("disabled", true);
-            });
+            }
         }
     };
 });
 
-app.directive('checkBoxModel', function($rootScope, $timeout, $compile) {
+app.directive('checkBoxModel', function($rootScope, $timeout, $compile, $log) {
     return {
         restrict: 'A',
-        scope:false,
-        link: function(scope, el, attrs) {
+        scope: false,
+        require: 'ngModel',
+        link: function(scope, el, attrs, ngModel) {
+
+            if (ngModel) {
+                scope.$watch(function() {
+                    return ngModel.$modelValue;
+                }, function(newValue) {
+                    if (newValue == attrs.value) {
+                        if(!el.prop('checked')){
+                            $timeout(function(){
+                                //el.trigger('click');
+                                //$log.debug('value change to',newValue);
+                                el.prop('checked',true).change();
+                                //scope.$apply();
+                            });
+                            //$log.debug('model match', newValue);
+                        }
+                    }else{
+
+                    }
+                });
+            }
 
             el.on('click', () => {
                 if (el.prop('checked')) {
                     var v, p = attrs.value.toString();
-                    if(p=='false'||p=='true'){
-                        v = (p=='true');
-                    }else{
+                    if (p == 'false' || p == 'true') {
+                        v = (p == 'true');
+                    } else {
                         v = p;
                     }
                     set(v);
                 }
             });
-            
-            $rootScope.dom(function(){
+
+            $rootScope.dom(function() {
                 var elValue = attrs.value.toString();
-                var scopeValue = $U.val(scope,attrs.checkBoxModel);
+                var scopeValue = $U.val(scope, attrs.checkBoxModel);
                 el.removeAttr('checked');
-                if(elValue == scopeValue) el.attr('checked','')
-            },500);
-            
+                if (elValue == scopeValue) el.attr('checked', '')
+            }, 500);
+
 
             function set(_val) {
                 var ss = scope;
@@ -92,7 +114,7 @@ app.directive('checkBoxModel', function($rootScope, $timeout, $compile) {
                 var last = split[split.length - 1];
                 split.forEach(word => {
                     if (word == last) return;
-                    ss = $rootScope.lookUp(ss,word);
+                    ss = $rootScope.lookUp(ss, word);
                     if (ss == undefined) {
                         console.warn('checkBoxModel ', attrs.checkBoxModel, word + ' is undefined');
                         return 0;

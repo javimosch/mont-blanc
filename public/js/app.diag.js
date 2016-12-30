@@ -191,7 +191,10 @@
                     format: (v, item) => {
                         if (item.repeat == 'none') return 'Indisponibilité spécifique';
                         if (item.repeat == 'day') return 'Indisponibilité tous les jours';
-                        if (item.repeat == 'week') return 'Indisponibilité toutes les semaines';
+                        if (item.repeat == 'week') {
+                            var day = '('+moment().weekday(item.weekday).format('dddd')+')';
+                            return 'Indisponibilité toutes les semaines '+(item.weekday?day:'');
+                        }
                         return 'Error';
                     }
                 });
@@ -240,11 +243,11 @@
             }
         };
     });
-    app.controller('diagExceptionEdit', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$timeout','$log',
-        function(db, s, r, params, focus, $timeout,$log) {
+    app.controller('diagExceptionEdit', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$timeout', '$log',
+        function(db, s, r, params, focus, $timeout, $log) {
 
-            r.dom(function(){
-                document.body.scrollTop=0;
+            r.dom(function() {
+                document.body.scrollTop = 0;
             });
 
             //
@@ -254,67 +257,73 @@
                 s.confirm = s.confirm || r.openConfirm || null;
             }, 2000);
 
-            
+
 
             var dateRangePicker = {
-                _initializeCounter:0,
-                _watches:[],
-                watch:function(path,handler){
-                    this._watches.push(s.$watch(path,handler));
+                _initializeCounter: 0,
+                _watches: [],
+                watch: function(path, handler) {
+                    this._watches.push(s.$watch(path, handler));
                 },
-                resetWatches:function(){
-                    for(var index in this._watches){
+                resetWatches: function() {
+                    for (var index in this._watches) {
                         this._watches[index]();
                     }
                 },
-                momentDateToToday:function(value){
-                    $log.debug('date hour is',moment(value).hours());
+                momentDateToToday: function(value) {
+                    //$log.debug('date hour is',moment(value).hours());
                     return moment().hours(moment(value).hours()).minutes(moment(value).minutes());
                 },
-                initialize:function(){
+                initialize: function() {
                     var self = this;
                     self._initializeCounter++;
                     self.resetWatches();
                     var el = $('input[name="daterange"]');
-                        el.daterangepicker({
-                            minDate:s.item.repeat!=='none'?moment().hours(8).minutes(0):s.datepicker.minDate,
-                            maxDate:s.item.repeat!=='none'?moment().hours(20).minutes(0):s.datepicker.maxDate,
-                            startDate:moment()._d,
-                            endDate:moment()._d,
-                            timePicker: true,
-                            timePicker24Hour:true,
-                            timePickerIncrement: 10,
-                            locale: {
-                                format: 'DD/MM/YYYY h[h]mm A'
-                            }
-                        });
 
-                        self.watch('item.start',function(value){
-                            if(moment(value).isValid()){
-                                if(s.item.repeat!=='none'){
-                                    value = self.momentDateToToday(value);
-                                }
-                                el.data('daterangepicker').setStartDate(moment(value)._d);
-                            }
-                        });
-                        self.watch('item.end',function(value){
-                            if(moment(value).isValid()){
-                                if(s.item.repeat!=='none'){
-                                    value = self.momentDateToToday(value);
-                                }
-                                el.data('daterangepicker').setEndDate(moment(value)._d);
-                            }
-                        });
-                        s.getStartDate = ()=>{
-                            return el.data('daterangepicker').startDate;
-                        }
-                        s.getEndDate = ()=>{
-                            return el.data('daterangepicker').endDate;
-                        }
+                    var format = 'DD/MM/YYYY HH[h]mm';
+                    if(s.item.repeat!=='none'){
+                        format = 'HH[h]mm';
+                    }
 
-                        if(self._initializeCounter===1){
-                            el.trigger('click');
+                    el.daterangepicker({
+                        minDate: moment().hours(8).minutes(0),
+                        maxDate: s.item.repeat === 'none' ? moment().add(60, 'day') : moment().hours(20).minutes(0),
+                        startDate: moment()._d,
+                        endDate: moment()._d,
+                        timePicker: true,
+                        timePicker24Hour: true,
+                        timePickerIncrement: 10,
+                        locale: {
+                            format: format
                         }
+                    });
+
+                    self.watch('item.start', function(value) {
+                        if (moment(value).isValid()) {
+                            if (s.item.repeat !== 'none') {
+                                value = self.momentDateToToday(value);
+                            }
+                            el.data('daterangepicker').setStartDate(moment(value)._d);
+                        }
+                    });
+                    self.watch('item.end', function(value) {
+                        if (moment(value).isValid()) {
+                            if (s.item.repeat !== 'none') {
+                                value = self.momentDateToToday(value);
+                            }
+                            el.data('daterangepicker').setEndDate(moment(value)._d);
+                        }
+                    });
+                    s.getStartDate = () => {
+                        return el.data('daterangepicker').startDate;
+                    }
+                    s.getEndDate = () => {
+                        return el.data('daterangepicker').endDate;
+                    }
+
+                    //if(self._initializeCounter<=5){
+                    el.trigger('click');
+                    //}
 
                 }
             };
@@ -327,12 +336,7 @@
                 mstep: 10,
                 minDate: moment().date(1),
             };
-            //DATE-TIME-PICKER-DATA
-            s.datepicker = {
-                minDate: moment().hours(8).minutes(0).toDate().toString(), //.add(1, 'day') //today!
-                maxDate: moment().add(60, 'day').toDate().toString(),
-                initDate: new Date()
-            };
+
 
             s.item = {
                 start: null,
@@ -343,12 +347,11 @@
                 end: new Date()
             };
 
-            s.$watch('item.repeat',function(){
+            s.$watch('item.repeat', function() {
                 r.dom(dateRangePicker.initialize());
             });
 
             var isEdit = params.id.toString() !== '-1';
-
 
 
 
@@ -369,36 +372,41 @@
                     click: (v) => {
                         o.selected = v.label || v;
                         o.val = v.val;
-                        if (s.item.start) {
-                            s.item.start = moment(s.item.start).day((o.val.toString() === '-1') ? 1 : o.val)._d;
-                        }
-                        if (s.item.end) {
-                            s.item.end = moment(s.item.end).day((o.val.toString() === '-1') ? 1 : o.val)._d;
-                        }
+                        s.item.weekday = o.val;
                     }
                 };
                 var m = moment();
                 o.items.push({
-                    label: "(Choice a day)",
-                    val: ''
-                }/*, {
-                    label: "Every day",
-                    val: '-1'
-                }*/);
-                for (var x = 1; x <= 7; x++) {
-                    m.day(x);
+                        label: "(Choice a day)",
+                        val: ''
+                    }
+                    /*, {
+                                        label: "Every day",
+                                        val: '-1'
+                                    }*/
+                );
+                for (var x = 0; x <= 6; x++) {
+                    m.weekday(x);
                     o.items.push({
                         label: m.format('dddd'),
                         val: x
                     });
                 }
-                s.$watch('repeat', (v) => {
-                    if (v === 'day') s.days.select(-1);
-                })
+
                 o.selected = o.items[0].label;
+                s.$watch('item.repeat', (v) => {
+                    if (v !== 'none') {
+                        if(s.item.weekday){
+                            s.days.select(s.item.weekday);    
+                        }else{
+                            s.days.select(-1);    
+                        }
+                    }
+                });
+                
                 return o;
             })();
-            
+
             s.getDiags = function(val) {
                 return db.http('User', 'getAll', {
                     userType: 'diag',
@@ -415,6 +423,9 @@
                 });
             };
             s.onLoad = (isNew) => {
+                if (s.repeat == 'week') {
+                    s.days.select(moment(s.item.start).day());
+                }
                 if (isNew) {
                     s.item.start = moment().hour(9).minutes(0)._d;
                     if (r.params && r.params.item) {
@@ -424,17 +435,29 @@
                                 _id: r.params.item._user,
                                 __select: 'email'
                             }).then(d => {
-                                if (d.ok) s.item._user = d.result;
+                                if (d.ok) {
+                                    s.item._user = d.result;
+                                    s.refreshFix();
+                                }
                             });
                         }
                         delete r.params.item;
                     }
                     return;
-                }
-                if (s.repeat == 'week') {
-                    s.days.select(moment(s.item.start).day());
+                } else {
+                    s.refreshFix();
                 }
             };
+            s.refreshFix = function() {
+                s._item = s.item;
+                r.dom(function() {
+                    s.item = {};
+                });
+                r.dom(function() {
+                    s.item = s._item;
+                    delete s._item;
+                }, 100);
+            }
             if (isEdit) {
                 if (r.params && r.params.item) {
                     s.item = r.params.item;
@@ -468,7 +491,10 @@
             };
             s.cancel = () => r.route(r.params && r.params.prevRoute || 'dashboard');
             s.delete = () => {
-                var msg = 'Delete ' + s.item.description + ' ' + s.item.startFormat + ' - ' + s.item.endFormat + ' (' + s.item.dayFormat + ')';
+                var msg = 'Delete ' + (s.item.description || '') + ' ' + r.momentDateTime(s.item.start) + ' - ' + r.momentDateTime(s.item.end);
+                if(s.item.repeat=='week'){
+                    msg+' ('+moment().weekday(s.item.weekday).format('dddd')+ ')';
+                }
                 s.confirm(msg, () => {
                     db.ctrl('TimeRange', 'remove', {
                         _id: s.item._id
@@ -480,21 +506,39 @@
             s.rangeCollideWithOrder = (yes, no) => {
                 db.ctrl('Order', 'getAll', {
                     __select: 'start end',
-                    _diag: s.item._user
+                    _diag: s.item._user,
+                    __rules:{
+                        status:{
+                            $ne:'completed'
+                        }
+                    }
                 }).then((d) => {
                     if (d.ok) {
                         var yesFlag = false;
+                        var start = s.item.start;
+                        var end = s.item.end;
                         d.result.forEach(v => {
-                            if ($D.rangeCollide(v.start, v.end, s.item.start, s.item.end)) {
+                            if(s.item.repeat=='day' || 
+                                (s.item.repeat=='week'&&moment(v.start).weekday()==s.item.weekday)){
+                                start = moment(v.start).hour(moment(start).hour()).minute(moment(start).minute())
+                                end = moment(v.end).hour(moment(end).hour()).minute(moment(end).minute())
+                            }
+                            if ($D.rangeCollide(v.start, v.end, start, end)) {
                                 yesFlag = true;
-                                return yes(v);
+                                if (!yes) {
+                                    $log.debug('dates do collide with order',v);
+                                }
+                                return yes && yes(v);
                             }
                         });
                         if (yesFlag) return;
-                        return no();
+                        if (!no) {
+                            $log.debug('dates do not collide with orders');
+                        }
+                        return no && no();
                     } else {
                         console.warn('rangeCollide order fetch error');
-                        return no();
+                        return no && no();
                     }
                 }).error(() => {
                     console.warn('rangeCollide order fetch error');
@@ -507,9 +551,24 @@
                 s.item.start = s.getStartDate();
                 s.item.end = s.getEndDate();
 
+                if(s.item.repeat=='week' && s.item.weekday==undefined){
+                    return r.warningMessage('Jour de semaine requis.');
+                }
+
                 s.rangeCollideWithOrder((order) => {
-                    //r.momentDateTime(order.start);
-                    return r.warningMessage('An order exists for this date.');
+                    switch(s.item.repeat){
+                        case 'none':
+                        return r.warningMessage('Une commande existe à la date choisie.');
+                        break;
+                        case 'day':
+                        return r.warningMessage("Une commande existe à l&#39;heure choisie.");
+                        break;
+                        case 'week':
+                        var day = moment().weekday(s.item.weekday).format('dddd');
+                        return r.warningMessage("Une commande existe un jour "+day+" à l&#39;heure choisie.");
+                        break;
+                    }
+                    
                 }, () => {
 
                     $U.ifThenMessage([

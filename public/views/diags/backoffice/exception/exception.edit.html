@@ -82,7 +82,7 @@
             <div class="row">
 
                 <label class="">
-                    <input type="checkbox" check-box-group check-box-model='item.repeat' name="repeatMode" value="week" class="check mark-white" />
+                    <input type="checkbox" check-box-group check-box-model='item.repeat' name="repeatMode" value="week" ng-model="item.repeat" class="check mark-white" />
                     <span class="sky-blue"></span>
                 </label>
                 <label>Indisponibilité toutes les semaines</label>
@@ -91,7 +91,7 @@
             <div class="row">
 
                 <label class="">
-                    <input type="checkbox" check-box-group check-box-model='item.repeat' name="repeatMode" value="day" class="check mark-white" />
+                    <input type="checkbox" check-box-group check-box-model='item.repeat' ng-model="item.repeat" name="repeatMode" value="day" class="check mark-white" />
                     <span class="sky-blue"></span>
                 </label>
                 <label>Indisponibilité tous les jours</label>
@@ -100,7 +100,7 @@
             <div class="row">
 
                 <label class="">
-                    <input type="checkbox" check-box-group check-box-model='item.repeat' name="repeatMode" value="none" class="check mark-white" />
+                    <input type="checkbox" check-box-group check-box-model='item.repeat' name="repeatMode" ng-model="item.repeat" value="none" class="check mark-white" />
                     <span class="sky-blue"></span>
                 </label>
                 <label>Indisponibilité spécifique</label>
