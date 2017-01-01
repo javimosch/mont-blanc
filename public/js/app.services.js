@@ -493,42 +493,42 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', fu
         }
         return MyPromise(function(resolve, error) {
 
-            $log.debug('localData promise at',Date.now());
+            //$log.debug('localData promise at',Date.now());
 
             if (localData) {
-                $log.debug('localData returns cache');
+                //$log.debug('localData returns cache');
                 onResolve(resolve,localData);
             }
             else {
 
-                $log.debug('localData fetch start');
+                //$log.debug('localData fetch start');
                 $.getJSON('./data.json', function(localData) {
                     
                     
 
-                    $log.debug('settings fetch');
+                    //$log.debug('settings fetch');
                     //patch prices from db if available
                     ctrl('Settings', 'getAll', {}).then(r => {
                     if (r.ok && r.result.length > 0) {
                         var dbSettings = r.result[0];
                         
-                        $log.debug('setting has prices');
+                        //$log.debug('setting has prices');
                         if(dbSettings.metadata && dbSettings.metadata.prices){
 
 
-                            $log.debug('setting has basePrice');
+                            //$log.debug('setting has basePrice');
                             if(dbSettings.metadata.prices.basePrice!==undefined
                                 && !isNaN(dbSettings.metadata.prices.basePrice)
                                 && dbSettings.metadata.prices.basePrice!==''){
                                 try{
-                                    $log.debug('basePrice fetch value is',dbSettings.metadata.prices.basePrice);
+                                    //$log.debug('basePrice fetch value is',dbSettings.metadata.prices.basePrice);
                                     localData.basePrice = parseInt(dbSettings.metadata.prices.basePrice);
-                                    $log.debug('localData basePrice is ',localData.basePrice);
+                                    //$log.debug('localData basePrice is ',localData.basePrice);
                                 }catch(err){
-                                    $log.debug('basePrice fetch',err);
+                                    //$log.debug('basePrice fetch',err);
                                 }
                             }else{
-                                $log.debug('basePrice fetch is skip');
+                                //$log.debug('basePrice fetch is skip');
                             }
 
                             Object.keys(dbSettings.metadata.prices).forEach(function(diagName){
