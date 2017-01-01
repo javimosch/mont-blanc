@@ -389,11 +389,23 @@
                     //
 
                     var _newPriceQuote = diagPrice.getPriceQuote(s);
-                    if(s.item._id && _newPriceQuote !== undefined 
-                        && _newPriceQuote > s.item.price){
-                        s.infoMsg("Original price will be keeped. New price "+_newPriceQuote+"EUR is higher and will be ignored.");
-                        $log.debug('Original price was keeped due to higher price in new price quote.');
-                        return;
+                    if (s.item._id && _newPriceQuote !== undefined) {
+
+
+                        if (_newPriceQuote > s.item.price) {
+                            s.infoMsg("Original price will be keeped. New price " + _newPriceQuote + "EUR is higher and will be ignored.");
+                            $log.debug('Original price was keeped due to higher price in new price quote.');
+                            return;
+                        }
+
+                        if (s.item.status !== 'created') {
+                            if (_newPriceQuote < s.item.price) {
+                                s.infoMsg("Original price will be keeped. New price " + _newPriceQuote + "EUR is lower but will be ignored because the order is already paid.");
+                                $log.debug('Original price was keeped due to lower price / order-paid rule.');
+                                return;
+                            }
+                        }
+
                     }
 
                     s.applyTotalPrice();
@@ -556,7 +568,7 @@
                 });
 
                 db.localData().then(function(data) {
-                    $log.debug('order localData basePrice is',data.basePrice);
+                    $log.debug('order localData basePrice is', data.basePrice);
                     Object.assign(s, data);
 
                     s.diags.forEach((diag) => {
@@ -612,7 +624,7 @@
                     s.item.keysWhere = val && val() || undefined;
                 };
 
-                function watchKeysWhere(){
+                function watchKeysWhere() {
                     s.$watch('item.keysWhere', function(val) {
                         if (s.item._id) return;
                         if (val == undefined) {
@@ -627,12 +639,11 @@
                     });
                 }
 
-                if(params.id.toString()=='-1'){
+                if (params.id.toString() == '-1') {
                     watchKeysWhere();
-                }else{
+                } else {
                     s.afterRead.push(watchKeysWhere);
                 }
-                
 
 
 
