@@ -5,7 +5,7 @@
 /*global _*/
 (function() {
     var app = angular.module('srv.diagSlots', []);
-    app.service('diagSlots', function($rootScope, server, diagPrice) {
+    app.service('diagSlots', function($rootScope, server, diagPrice,$log) {
         var r = $rootScope,
             db = server;
 
@@ -25,6 +25,7 @@
                             day: date,
                             time: time
                         };
+                        $log.debug('order time',r.momentDateTime(order.day),JSON.stringify(order.time));
                         db.getAvailableRanges(order, _settings).then(function(data) {
                             //console.log('slots', data);
                             //data = data.length > 0 && data || null;
@@ -129,6 +130,8 @@
                         cursor = moment(d);  
                         opt = opt || {};
                         _settings.department = opt.department;
+                        _settings.maxSlots = opt.maxSlots;
+                        _settings.allowFixedAllocation = opt.allowFixedAllocation;
                         o.request();
                     };
                     o.backIsDisabled = function() {

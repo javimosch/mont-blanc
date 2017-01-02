@@ -7,11 +7,21 @@
 
     var DEBUG = false;
 
+    var MAX_SLOTS_MORNING = 2,MAX_SLOTS_AFTERNOON = 2;
+    var ALLOW_FIXED_ALLOCATION = true;
+
     function diagsGetAvailableRanges(order, ctrl, opt) {
         opt = opt || {};
         if (!isFinite(new Date(order.day))) {
             throw Error('getAvailableRanges Invalid order day');
         }
+
+        MAX_SLOTS_MORNING = opt.maxSlots || 2;
+        MAX_SLOTS_AFTERNOON = opt.maxSlots || 2;
+        ALLOW_FIXED_ALLOCATION = opt.allowFixedAllocation!==undefined?opt.allowFixedAllocation:true;
+
+        console.debug('slots:','MAX_SLOTS_MORNING',MAX_SLOTS_MORNING);
+        console.debug('slots:','MAX_SLOTS_AFTERNOON',MAX_SLOTS_AFTERNOON);
 
         //helpers
         function diagsPriority(cb) {
@@ -121,6 +131,10 @@
             afternoon: []
         };
         var diags = _.orderBy(diags, (v) => v.priority);
+
+        console.debug('rdv slots available diag guys',diags.length);
+        
+
         diags.forEach((diag) => {
             //
             //if an exception collide with the whole day, skip.
@@ -139,28 +153,31 @@
             _collisions = _.union(_collisions, slots.morning);
             _collisions = _.union(_collisions, slots.afternoon);
             //
-            if (slots.morning.length < 2) {
-                if (freeMorning(order, _collisions)) {
+            if (slots.morning.length < MAX_SLOTS_MORNING) {
+                if (freeMorning(order, _collisions) && ALLOW_FIXED_ALLOCATION) {
                     //slots.morning.push(slot(9, 0, order, diag), slot(10, 0, order, diag));
                     slots = allocateFixedMorning(slots, order, diag);
                 }
                 else {
-                    var sumo = allocateMorning(diag, order, _collisions, slots);
-                    if (sumo && slots.morning.length < 2) {
-                        _collisions.push(slots.morning[slots.morning.length - 1]);
-                        allocateMorning(diag, order, _collisions, slots);
-                    }
+                    var sumo = null;
+                    do{
+                        sumo = allocateMorning(diag, order, _collisions, slots);
+                        if (sumo && slots.morning.length < MAX_SLOTS_MORNING) {
+                            _collisions.push(slots.morning[slots.morning.length - 1]);
+                            allocateMorning(diag, order, _collisions, slots);
+                        }
+                    }while(sumo && slots.morning.length < MAX_SLOTS_MORNING)
                 }
             }
             //
-            if (slots.afternoon.length < 2) {
-                if (freeAfternoon(order, _collisions)) {
+            if (slots.afternoon.length < MAX_SLOTS_AFTERNOON) {
+                if (freeAfternoon(order, _collisions) && ALLOW_FIXED_ALLOCATION) {
                     //slots.afternoon.push(slot(14, 0, order, diag), slot(15, 0, order, diag));
                     slots = allocateFixedAfternoon(slots, order, diag);
                 }
                 else {
                     var sumo = allocateAfternoon(diag, order, _collisions, slots);
-                    if (sumo && slots.afternoon.length < 2) {
+                    if (sumo && slots.afternoon.length < MAX_SLOTS_AFTERNOON) {
                         _collisions.push(slots.afternoon[slots.afternoon.length - 1]);
                         allocateAfternoon(diag, order, _collisions, slots);
                     }
@@ -320,7 +337,8 @@
             _cols = [],
             c = 0;
         //rangeCollisions4(start, order, collisions);
-        //console.log('allocate[' + diag._id + ']:start=' + start.format('HH:mm'));
+        console.debug('allocate for',propName,'day',moment(order.day).format('DD/MM'),'diag',diag._id);
+        console.debug('search start from',start.format('HH:mm'));
         do {
             //------------------
             //rangeCollision4: start, end: order duration.
@@ -330,7 +348,7 @@
                 if (_cols.length == 0) {
                     //available!
                     var _s = slot(start.hours(), start.minutes(), order, diag);
-                    //console.info('allocate:success=' + JSON.stringify(_s));
+                    console.debug('slot found from ',moment(_s.start).format('HH:mm'),'to',moment(_s.end).format('HH:mm'));
                     arr[propName].push(_s);
                     return true;
                 }
@@ -343,17 +361,15 @@
                 start = moment(_cols[_cols.length - 1].end).add(1, 'hours').add(30, 'minutes');
                 start = normalizeStart(start);
             }
-            //console.log('allocate:moving=' + start.format('HH:mm'));
+            console.debug('collision, moving to',start.format('HH:mm'));
             //------------------
             c++;
             if (c > 20) cut = true;
         } while (moment(start).isBefore(moment(startMax)) || cut);
         if (cut) {
-            //console.warn('allocate while warning.');
+            console.debug('while go crazy, forced exit');
         }
-        else {
-            //console.log('allocate:not-posible');
-        }
+        console.debug('allocation was not possible');
         return false;
     }
 
@@ -407,12 +423,12 @@
         var get = (cb) => (collisions.filter(v => cb(v)) || []);
         var rta = get((r) => (
             moment(r.start).isSameOrAfter(start) &&
-            moment(r.start).isSameOrBefore(end)
-        ));
-        _.union(rta, get((r) => (
-            moment(r.end).isSameOrAfter(start) &&
             moment(r.end).isSameOrBefore(end)
-        )));
+        ));
+        //_.union(rta, get((r) => (
+        //    moment(r.end).isSameOrAfter(start) &&
+        //    moment(r.end).isSameOrBefore(end)
+        //)));
         //
         /*
         console.info('rangeCollisions ' + moment(start).format('HH:mm') + ' - ' + moment(end).format('HH:mm') + ' collisions:' + JSON.stringify(collisions.map(v => {

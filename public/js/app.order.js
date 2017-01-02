@@ -319,7 +319,15 @@
                     var rta = s.item.info.squareMeters !== undefined && s.item._client !== undefined;
                     if (rta && !s.__rdvInit) {
                         s.__rdvInit = true;
-                        s.diagSlots.init();
+
+                        var settings = {};
+
+                        if(hasSlotSelectionActivatedManualyByAdmin()){
+                            settings.maxSlots=10;
+                            settings.allowFixedAllocation = false;
+                        }
+
+                        s.diagSlots.init(undefined,settings);
                     }
                     return rta;
                 };
@@ -568,7 +576,7 @@
                 });
 
                 db.localData().then(function(data) {
-                    $log.debug('order localData basePrice is', data.basePrice);
+                    //$log.debug('order localData basePrice is', data.basePrice);
                     Object.assign(s, data);
 
                     s.diags.forEach((diag) => {
