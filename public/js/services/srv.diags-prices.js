@@ -163,12 +163,12 @@
                 //
                 _order.priceHT = priceHT; //price without taxes
 
-                _order.diagRemunerationHT = (_order.priceHT * diagCommissionRate / 100); //revenue for the diag man
+                _order.diagRemunerationHT = (_order.priceHT * diagCommissionRate / 100).toFixed(2); //revenue for the diag man
                 debug('diagRemunerationHT', _order.diagRemunerationHT);
                 debug('diagCommissionRate', diagCommissionRate);
                 debug('revenueRate', 100 - diagCommissionRate);
 
-                _order.revenueHT = _order.priceHT - _order.diagRemunerationHT; //revenue for diagnostical
+                _order.revenueHT = (_order.priceHT - _order.diagRemunerationHT).toFixed(2); //revenue for diagnostical
                 debug('revenueHT', _order.revenueHT);
                 _order.vatRate = vatRate; //vat rate at the moment of the calculation
             },
