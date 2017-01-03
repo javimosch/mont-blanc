@@ -20,7 +20,7 @@
         </div>
         <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one">
             <label class="sm-float-left">
-                <input type="checkbox" check-box-group check-box-model='item.house' name="type" value="false" /><span class=""></span></label>
+                <input type="checkbox" check-box-group check-box-model='item.house' ng-model="item.house" name="type" value="false" /><span class=""></span></label>
             <span class="padding-left-halve sm-float-left padding-top-01em">Appartement</span>
         </div>
         <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one 
@@ -109,12 +109,14 @@
         </div>
         <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one">
             <label class="sm-float-left">
-                <input type="checkbox" check-box-group check-box-model='item.electricityInstallation' name="electricityInstallation" value="Moins de 15 ans" /><span class=""></span></label>
+                <input type="checkbox" check-box-group check-box-model='item.electricityInstallation'
+                ng-model="item.electricityInstallation" name="electricityInstallation" value="Moins de 15 ans" /><span class=""></span></label>
             <span class="padding-left-halve sm-float-left">-&nbsp;de 15 ans</span>
         </div>
         <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one">
             <label class="sm-float-left">
-                <input type="checkbox" check-box-group check-box-model='item.electricityInstallation' name="electricityInstallation" value="Plus de 15 ans" /><span class=""></span></label>
+                <input type="checkbox" check-box-group check-box-model='item.electricityInstallation'
+                ng-model="item.electricityInstallation" name="electricityInstallation" value="Plus de 15 ans" /><span class=""></span></label>
             <span class="padding-left-halve sm-float-left">+&nbsp;de 15 ans</span>
         </div>
 
