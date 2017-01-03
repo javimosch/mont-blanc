@@ -5,7 +5,7 @@
 /*global _*/
 (function() {
     var app = angular.module('srv.diagSlots', []);
-    app.service('diagSlots', function($rootScope, server, diagPrice) {
+    app.service('diagSlots', function($rootScope, server, orderPrice) {
         var r = $rootScope,
             db = server;
 
@@ -39,7 +39,25 @@
 
                                 //IF SUNDAY +100% to base price ???
 
-                                r.price = diagPrice.getPriceQuote(scope, date);
+
+
+                                orderPrice.set({
+                                    date:date,
+                                    modifiersPercentages: scope.settings && scope.settings.pricePercentageIncrease,
+                                    squareMetersPrice: scope.squareMetersPrice,
+                                    squareMeters: scope._order && scope._order.info && scope._order.info.squareMeters ||
+                                    scope.item && scope.item.info && scope.item.info.squareMeters || (scope.item && scope.item.squareMeters) || '',
+                                    clientDiscountPercentage: 
+                                    (scope._order && scope._order._client && scope._order._client.discount) ||
+                                    (scope.item && scope.item._client && scope.item._client.discount),
+                                    departmentMultipliers: scope.settings &&  scope.settings.metadata && scope.settings.metadata.departmentMultipliers,
+                                    postCode: scope.item && scope.item.postCode,
+                                    basePrice: scope.basePrice,
+                                    selectedDiags:  scope._order && scope._order.diags && scope._order.diags ||
+                                    scope.item && scope.item.diags,
+                                    availableDiags: scope.diags
+                                });
+                                r.price = orderPrice.getPriceTTC();
 
 
                                 //
@@ -78,15 +96,13 @@
                                         message: "booking-warning: date slot request retrieve " + d.length + ' slots.',
                                         data: d
                                     });
-                                }
-                                catch (e) {}
+                                } catch (e) {}
 
                                 while (d.length > 4) {
                                     d.pop();
                                 };
                                 //console.warn('slots-more-than-four-resolve',d)
-                            }
-                            else {
+                            } else {
 
                             }
 
@@ -103,8 +119,7 @@
                             label: function() {
                                 if (o.isToday()) {
                                     return 'Aujourd’hui';
-                                }
-                                else {
+                                } else {
                                     return r.momentFormat(o.date, 'dddd DD MMMM');
                                 }
                             },
@@ -126,7 +141,7 @@
                     };
                     o.init = function(d, opt) {
                         //today, tomorrow, tomorrow morrow y tomorrow morrow morrow.
-                        cursor = moment(d);  
+                        cursor = moment(d);
                         opt = opt || {};
                         _settings.department = opt.department;
                         o.request();
@@ -151,8 +166,7 @@
                         cursor = cursor.subtract(4, 'days');
                         if (cursor.isBefore(moment(), 'days')) {
                             cursor = moment();
-                        }
-                        else {
+                        } else {
                             _nextTimes--;
                         }
                         o.request();

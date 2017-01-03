@@ -1,3 +1,5 @@
+/*DEPRECATED*/
+
 /*global angular*/
 /*global _*/
 /*global moment*/
