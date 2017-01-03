@@ -71,9 +71,10 @@
 
     app.controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice',
-        function(db, s, r, params, focus, diagSlots, $log, orderPrice) {
+        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice', 'orderQuestion',
+        function(db, s, r, params, focus, diagSlots, $log, orderPrice, orderQuestion) {
             r.setCurrentCtrl(s);
+
 
 
             /*PDF LOGIC*/
@@ -227,6 +228,8 @@
 
             s.pdfReset = {};
             s.item = {};
+
+            
 
             s.afterRead = [];
 
@@ -572,13 +575,15 @@
                     }
                 });
 
-                db.localData().then(function(data) { //
-                    //$log.debug('order localData basePrice is', data.basePrice); 
+                db.localData().then(function(data) {
+                    //$log.debug('order localData basePrice is', data.basePrice);
                     Object.assign(s, data);
-
                     s.diags.forEach((diag) => {
                         diag.show = true;
                     });
+
+                    orderQuestion.bindAnswersToDefaultDiags(s);
+
                 });
                 //
 
