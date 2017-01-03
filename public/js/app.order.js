@@ -71,8 +71,8 @@
 
     app.controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagPrice', 'diagSlots', '$log',
-        function(db, s, r, params, focus, diagPrice, diagSlots, $log) {
+        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice',
+        function(db, s, r, params, focus, diagSlots, $log, orderPrice) {
             r.setCurrentCtrl(s);
 
 
@@ -322,12 +322,12 @@
 
                         var settings = {};
 
-                        if(hasSlotSelectionActivatedManualyByAdmin()){
-                            settings.maxSlots=10;
+                        if (hasSlotSelectionActivatedManualyByAdmin()) {
+                            settings.maxSlots = 10;
                             settings.allowFixedAllocation = false;
                         }
 
-                        s.diagSlots.init(undefined,settings);
+                        s.diagSlots.init(undefined, settings);
                     }
                     return rta;
                 };
@@ -392,11 +392,11 @@
                 s.unwrapRange = (range) => {
                     //var data = JSON.parse(window.atob(range));
                     var data = range;
+
                     s.item.start = data.start;
                     s.item.end = data.end;
                     //
-
-                    var _newPriceQuote = diagPrice.getPriceQuote(s);
+                    var _newPriceQuote = orderPrice.getPriceTTC(s);
                     if (s.item._id && _newPriceQuote !== undefined) {
 
 
@@ -415,7 +415,6 @@
                         }
 
                     }
-
                     s.applyTotalPrice();
                     s.hasUserSelectedAnRDVSlot = true;
                 };
@@ -437,11 +436,13 @@
                     return r.userIs(['admin']) || r.sesison()._id == s.item._diag._id;
                 };
 
-                s.diagPrice = () => {
-                    if (!s.item.price) return 0;
-                    if (isNaN(s.item.price)) return 0;
-                    return (s.item.price - (s.item.price * 0.12)) * 0.30;
-                };
+                /*
+                                s.diagPrice = () => {
+                                    if (!s.item.price) return 0;
+                                    if (isNaN(s.item.price)) return 0;
+                                    return (s.item.price - (s.item.price * 0.12)) * 0.30;
+                                };
+                                */
 
                 s.isPaid = () => {
                     return _.includes(['prepaid', 'completed'], s.item.status);
@@ -501,15 +502,11 @@
                 };
 
                 s.applyTotalPrice = () => {
-                    //s.item.price = s.totalPrice(true);
-                    s.item.price = diagPrice.getPriceQuote(s);
-
-                    if (s.item._diag) {
-                        diagPrice.setPrices(s, s.item);
-                    } else {
-                        console.warn('set-prices-skip _diag undefined ')
-                    }
-
+                    orderPrice.set({
+                        date: s.item.start,
+                        diagCommissionRate: s.item._diag && s.item._diag.commission
+                    });
+                    orderPrice.assignPrices(s.item);
                     r.dom();
                 };
                 s.applyTotalTime = () => {
@@ -575,8 +572,10 @@
                     }
                 });
 
-                db.localData().then(function(data) {
+                db.localData().then(function(data) { << << << < HEAD
                     //$log.debug('order localData basePrice is', data.basePrice);
+                        === === =
+                        $log.debug('order localData basePrice is', data.basePrice); >>> >>> > task - 205
                     Object.assign(s, data);
 
                     s.diags.forEach((diag) => {

@@ -20,7 +20,7 @@ var app = angular.module('app', [
     'ngRoute',
     'diags_ctrl_contact_form',
     'ui.bootstrap',
-    'srv.diagPrice',
+    //'srv.diagPrice',
     'srv.diagSlots'
 ]);
 var URL = {
@@ -104,8 +104,8 @@ app.config(['$routeProvider',
 
 
 app.controller('ctrl.booking', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagPrice', 'diagSlots',
-    function(db, $timeout, s, r, $uibModal, diagPrice, diagSlots) {
+    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots','orderPrice',
+    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice) {
 
         r.URL = Object.assign(r.URL, URL);
 
@@ -565,14 +565,14 @@ app.controller('ctrl.booking', ['server',
                 [s.item.gasInstallation, '==', undefined, "Répondre Gaz"],
                 [s.item.electricityInstallation, '==', undefined, "Répondre Electricité"],
                 [s.item.address, '==', undefined, "Répondre Address"],
-                
+
                 /*
                 removed: autocomplete is now limited to france
                 [_.includes(['France', 'Francia', 'Frankrig', 'Frankrijk',
                     'Frankreich', 'Frankrike', 'Francja'
                 ], s.item.country), '==', false, MESSAGES.FRENCH_ADDRESS_REQUIRED]
                 */
-                
+
             ], (m) => {
                 s.warningMsg(m[0]);
                 if (err) err();
@@ -1079,11 +1079,7 @@ app.controller('ctrl.booking', ['server',
             return diag(n).label;
         };
 
-        /*
-        s.diagPrice = (n, v) => {
-            if (!v) return;
-            return diag(n).price;
-        };*/
+        
 
         var param = (n, validate) => {
             var val = getParameterByName(n);
@@ -1640,10 +1636,12 @@ app.controller('ctrl.booking', ['server',
         s.fetchOrder = fetchOrder;
 
         function setOrder(_order) {
-            s._order = _order;
-            //s._order.price = s.totalPrice(true);
-            s._order.price = diagPrice.getPriceQuote(s);
-            diagPrice.setPrices(s, s._order);
+            s._order = _order;        
+            orderPrice.set({
+                date: _order.start,
+                diagCommissionRate: _order._diag && _order._diag.commission
+            });
+            orderPrice.assignPrices(_order);
             commitOrderInfo();
             updateAutoSave();
         }
@@ -1876,7 +1874,7 @@ app.controller('ctrl.booking', ['server',
         s.totalPrice = (showRounded, opt) => totalPrice(showRounded, s._order, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({
             s: s,
             r: r,
-            department: s.item.postCode.substring(0,2)
+            department: s.item.postCode.substring(0, 2)
         }, opt || {}));
 
         s.totalPriceRange = (dt) => totalPrice(true, s.item, s.diags, s.squareMetersPrice, s.basePrice, Object.assign({
