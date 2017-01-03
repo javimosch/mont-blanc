@@ -8,22 +8,19 @@
         </div>
     </div>
 </div>
-
 <div class="row margin-top-one">
     <div class="col-xs-12 col-sm-12 col-md-6">
         <div class="row margin-top-half">
             <label class="unselectable">Client</label>
         </div>
         <div class="row margin-top-quarter">
-            <input ng-disabled="state.working() || item._id" type="text" class="diags-input" ng-model="item._client" placeholder="Client" uib-typeahead="client as client.email for client in getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading clients. . .'"
-                typeahead-no-results="noResults">
+            <input ng-disabled="state.working() || item._id" type="text" class="diags-input" ng-model="item._client" placeholder="Client" uib-typeahead="client as client.email for client in getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading clients. . .'" typeahead-no-results="noResults">
         </div>
         <div class="row margin-top-half">
             <label class="unselectable">Diag Man</label>
         </div>
         <div class="row margin-top-quarter">
-            <input ng-disabled="state.working()" type="text" class="diags-input" ng-model="item._diag" placeholder="Diag" uib-typeahead="diag as diag.email for diag in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingDiags||'Loading diags...'"
-                typeahead-no-results="noResults">
+            <input ng-disabled="state.working()" type="text" class="diags-input" ng-model="item._diag" placeholder="Diag" uib-typeahead="diag as diag.email for diag in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingDiags||'Loading diags...'" typeahead-no-results="noResults">
         </div>
         <div class="row margin-top-half">
             <label class="unselectable">Adresse</label>
@@ -31,7 +28,6 @@
         <div class="row margin-top-quarter">
             <input ng-disabled="state.working() || item._id" class="diags-input" data-address model="item" field="address" city="city" department="department" region="region" country="country" post-code="postCode" type="text" placeholder="Ex: 102 rue Réaumur 75002 Paris, France">
         </div>
-
         <div class="row " ng-show="!item.info.house">
             <div class="col-md-4 padding-none">
                 <div class="row margin-top-half">
@@ -58,15 +54,55 @@
                 </div>
             </div>
         </div>
-
-
         <div class="row margin-top-half">
             <label class="unselectable">Questions</label>
         </div>
         <div class="row margin-top-quarter" ng-show="item._id">
             <table class="table table-striped table-condensed unselectable questions">
-                <tr ng-repeat="(k,o) in item.info" ng-class="{'diag-no-selected':!o,link:true}" class="unselectable" ng-show="infoItemShow(o)">
+                <!--
+                <tr ng-if="false" ng-repeat="(k,o) in item.info" ng-class="{'diag-no-selected':!o,link:true}" class="unselectable" ng-show="infoItemShow(o)">
                     <td ng-bind="k"></td>
+                </tr>
+                -->
+               <tr>
+                    <td>
+                        <div class="row">
+                            <div class="col-xs-6 padding-none">
+                                <label class="minimal">Louer</label>
+                                <label class="">
+                                    <input type="checkbox" check-box-group check-box-model='item.info.sell' name="sell" value="false" ng-model="item.info.sell" class="check mark-white" />
+                                    <span class="sky-blue"></span>
+                                </label>
+                            </div>
+                            <div class="col-xs-6 padding-none">
+                                <label class="minimal">Vendre</label>
+                                <label class="">
+                                    <input type="checkbox" check-box-group check-box-model='item.info.sell' name="sell" value="true" ng-model="item.info.sell" class="check mark-white" />
+                                    <span class="sky-blue"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="row">
+                            <div class="col-xs-6 padding-none">
+                                <label class="minimal">Appartement</label>
+                                <label class="">
+                                    <input type="checkbox" check-box-group check-box-model='item.info.sell' name="sell" value="false" ng-model="item.info.house" class="check mark-white" />
+                                    <span class="sky-blue"></span>
+                                </label>
+                            </div>
+                            <div class="col-xs-6 padding-none">
+                                <label class="minimal">Maison</label>
+                                <label class="">
+                                    <input type="checkbox" check-box-group check-box-model='item.info.sell' name="sell" value="true" ng-model="item.info.house" class="check mark-white" />
+                                    <span class="sky-blue"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -96,8 +132,50 @@
         </div>
         <div class="row margin-top-quarter" ng-show="!item._id">
             <table class="table table-striped table-condensed unselectable questions">
+                <!--
                 <tr ng-repeat="(k,o) in item.info" class="unselectable" ng-show="infoItemShow(o)">
                     <td ng-bind="k" ng-class="{'diag-no-selected':!o,link:true}" ng-click=item.info[k]=!item.info[k]></td>
+                </tr>
+                -->
+                <tr>
+                    <td>
+                        <div class="row">
+                            <div class="col-xs-6 padding-none">
+                                <label class="minimal">Louer</label>
+                                <label class="">
+                                    <input type="checkbox" check-box-group check-box-model='item.info.sell' name="sell" value="false" ng-model="item.info.sell" class="check mark-white" />
+                                    <span class="sky-blue"></span>
+                                </label>
+                            </div>
+                            <div class="col-xs-6 padding-none">
+                                <label class="minimal">Vendre</label>
+                                <label class="">
+                                    <input type="checkbox" check-box-group check-box-model='item.info.sell' name="sell" value="true" ng-model="item.info.sell" class="check mark-white" />
+                                    <span class="sky-blue"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="row">
+                            <div class="col-xs-6 padding-none">
+                                <label class="minimal">Appartement</label>
+                                <label class="">
+                                    <input type="checkbox" check-box-group check-box-model='item.info.sell' name="sell" value="false" ng-model="item.info.house" class="check mark-white" />
+                                    <span class="sky-blue"></span>
+                                </label>
+                            </div>
+                            <div class="col-xs-6 padding-none">
+                                <label class="minimal">Maison</label>
+                                <label class="">
+                                    <input type="checkbox" check-box-group check-box-model='item.info.sell' name="sell" value="true" ng-model="item.info.house" class="check mark-white" />
+                                    <span class="sky-blue"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
                 <tr class="unselectable">
                     <td>
@@ -133,7 +211,6 @@
                 </tr>
             </table>
         </div>
-
         <div class="row margin-top-half">
             <label class="unselectable">Liste diags</label>
         </div>
@@ -168,8 +245,7 @@
         </div>
         <div class="row margin-top-quarter relative" ng-if="false">
             <input ng-show="item._id" ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.start)" placeholder="Adresse">
-            <input ng-show="!item._id" ng-disabled="isPaid() || state.working() || is(['client','diag'])" type="text" class="max-w-150 diags-input" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.start" min-date="datepicker.minDate" max-date="datepicker.maxDate"
-                init-date="item.start" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
+            <input ng-show="!item._id" ng-disabled="isPaid() || state.working() || is(['client','diag'])" type="text" class="max-w-150 diags-input" datetime-picker="dd/MM/yyyy HH:mm " ng-model="item.start" min-date="datepicker.minDate" max-date="datepicker.maxDate" init-date="item.start" ng-init="start.opened=false" is-open="start.opened" date-disabled="false" close-text="Close" />
             <button ng-show="!item._id" ng-disabled="state.working() || is(['client','diag'])" type="button" class="btn diags-btn" ng-click="start.opened = !start.opened"><i class="glyphicon glyphicon-calendar"></i></button>
         </div>
         <div class="row margin-top-half">
@@ -178,7 +254,6 @@
         <div class="row margin-top-quarter">
             <input ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.end)" placeholder="End">
         </div>
-
         <div class="row margin-top-one" ng-if="false" ng-show="!item._id">
             <label>Price Rules</label>
             <table class="table minimal">
@@ -200,7 +275,6 @@
                         <td ng-bind="price"></td>
                         <td></td>
                     </tr>
-
                 </tbody>
                 <tfoot>
                     <tr>
@@ -223,7 +297,6 @@
                         <td ng-bind="__priceQuote.extraDatePrice"></td>
                         <td></td>
                     </tr>
-
                     <tr>
                         <td ng-bind="'Discount Client '+__priceQuote.discountClientPorc+'%'"></td>
                         <td></td>
@@ -270,7 +343,6 @@
             <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalPrice()">Calculate</button>
             -->
         </div>
-
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6 ">
         <div class="row margin-top-half" ng-show="isOrderClientAgency()">
@@ -297,8 +369,6 @@
         <div class="row margin-top-one">
             <div ng-include="'views/diags/backoffice/partials/order-details-pdf-files.html'" includeReplace></div>
         </div>
-
-
         <div class="row margin-top-half">
             <label class="unselectable">Remise des clés</label>
         </div>
@@ -320,7 +390,6 @@
             <input ng-disabled="item.keysWhere!=='other'" data-address model="item" field="keysAddress" class="diags-input" placeholder="Adresse">
         </div>
         <div class="row margin-top-half">
-
             <!-- KEYS TIME FROM -->
             <div class="dropdown with-caret">
                 <button ng-disabled="state.working() || item._id" class="btn btn-default diags-input half dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -348,8 +417,8 @@
                 </ul>
             </div>
         </div>
-
-        <div class="row margin-top-half" ng-show="!item._id || userIs('admin')"> <!--  -->
+        <div class="row margin-top-half" ng-show="!item._id || userIs('admin')">
+            <!--  -->
             <label class="unselectable">RDV</label>
         </div>
         <div class="row margin-top-quarter">
@@ -357,24 +426,16 @@
                 <div ng-show="!item.info.squareMeters" class="alert alert-info" role="alert">Answer question size.</div>
                 <div ng-show="!item._client" class="alert alert-info" role="alert">Choice a client.</div>
             </out>
-
-
-
-<button ng-show="isRDVSelectButtonActivated()" ng-click="activateSlotSelectionManually()" ng-disabled="state.working()" class="btn diags-btn bg-madison margin-top-quarter">
-Modifier</button>
-
-
+            <button ng-show="isRDVSelectButtonActivated()" ng-click="activateSlotSelectionManually()" ng-disabled="state.working()" class="btn diags-btn bg-madison margin-top-quarter">
+                Modifier</button>
             <out ng-show="rdvConditions()">
                 <div ng-include="'views/diags/backoffice/admin/admin-order-details-slots.html'" includeReplace></div>
             </out>
         </div>
-
-
     </div>
 </div>
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-6 ">
-
         <div class="row margin-top-one">
             <label class="unselectable">Prix TTC</label>
         </div>
@@ -427,16 +488,10 @@ Modifier</button>
 <div class="row margin-top-one ">
     <div class="col-sm-12 diags-crud-buttons-col">
         <button ng-click="validate()" ng-disabled="state.working()" class="btn diags-btn bg-madison margin-top-quarter">Enregistrer</button>
-
         <button ng-show="!isPaid() && isOrderClientAgency()" ng-click="delegate()" ng-disabled="state.working()" class="btn diags-btn bg-madison margin-top-quarter">Delegate</button>
-
         <button ng-show="item._id && item.status!=='prepaid' && item.status !=='completed'" ng-click="pay()" ng-disabled="state.working()" class="btn diags-btn bg-blaze-orange margin-top-quarter">Pay</button>
-
         <button ng-click="viewPDF()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance margin-top-quarter">Invoice PDF</button>
-
         <button ng-click="cancel()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-quarter">Annuler</button>
         <button ng-click="delete()" ng-disabled="state.working() || !item._id" class="btn diags-btn bg-azure-radiance margin-top-quarter">Supprimer</button>
-
-
     </div>
 </div>
