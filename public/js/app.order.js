@@ -323,8 +323,8 @@
                         var settings = {};
 
                         if (hasSlotSelectionActivatedManualyByAdmin()) {
-                            settings.maxSlots = 10;
-                            settings.allowFixedAllocation = false;
+                            //settings.maxSlots = 10;
+                            //settings.allowFixedAllocation = false;
                         }
 
                         s.diagSlots.init(undefined, settings);
@@ -572,10 +572,8 @@
                     }
                 });
 
-                db.localData().then(function(data) { << << << < HEAD
-                    //$log.debug('order localData basePrice is', data.basePrice);
-                        === === =
-                        $log.debug('order localData basePrice is', data.basePrice); >>> >>> > task - 205
+                db.localData().then(function(data) { //
+                    //$log.debug('order localData basePrice is', data.basePrice); 
                     Object.assign(s, data);
 
                     s.diags.forEach((diag) => {
