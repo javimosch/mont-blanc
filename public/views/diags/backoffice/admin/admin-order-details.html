@@ -228,6 +228,8 @@
                 </tr>
             </table>
         </div>
+        
+<!--
         <div class="row margin-top-half" ng-show="!item._id">
             <label class="unselectable">Date rules</label>
         </div>
@@ -237,6 +239,7 @@
         <div class="" ng-show="!item._id">
             <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalTime()">Apply</button>
         </div>
+        -->
         <div class="row margin-top-half">
             <label class="unselectable">Date du diagnostic</label>
         </div>
@@ -254,6 +257,39 @@
         <div class="row margin-top-quarter">
             <input ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.end)" placeholder="End">
         </div>
+
+        <div class="row margin-top-one">
+            <label class="unselectable">Prix TTC</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="true" type="text" class="diags-input" ng-model="item.price">
+        </div>
+        <div class="row margin-top-one">
+            <label class="unselectable">PriceHT</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="true" type="text" class="diags-input" ng-model="item.priceHT">
+        </div>
+        <div class="row margin-top-one">
+            <label class="unselectable">RumunerationHT</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="true" type="text" class="diags-input" ng-model="item.diagRemunerationHT">
+        </div>
+        <div class="row margin-top-one">
+            <label class="unselectable">RevenueHT</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="true" type="text" class="diags-input" ng-model="item.revenueHT">
+        </div>
+        <div class="row margin-top-half">
+            <label class="unselectable">Statut</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="true" type="text" class="diags-input" ng-value="item.status">
+        </div>
+        
+<!--
         <div class="row margin-top-one" ng-if="false" ng-show="!item._id">
             <label>Price Rules</label>
             <table class="table minimal">
@@ -339,11 +375,11 @@
                     </tr>
                 </tfoot>
             </table>
-            <!--
-            <button class="btn btn-default" ng-disabled="isPaid()" ng-click="applyTotalPrice()">Calculate</button>
-            -->
+            
         </div>
+        -->
     </div>
+    
     <div class="col-xs-12 col-sm-12 col-md-6 ">
         <div class="row margin-top-half" ng-show="isOrderClientAgency()">
             <label class="unselectable">Propriétaire</label>
@@ -428,44 +464,15 @@
             </out>
             <button ng-show="isRDVSelectButtonActivated()" ng-click="activateSlotSelectionManually()" ng-disabled="state.working()" class="btn diags-btn bg-madison margin-top-quarter">
                 Modifier</button>
-            <out ng-show="rdvConditions()">
+            <div ng-show="rdvConditions()" style="max-height: 600px;overflow: auto;">
                 <div ng-include="'views/diags/backoffice/admin/admin-order-details-slots.html'" includeReplace></div>
-            </out>
+            </div>
         </div>
     </div>
 </div>
-<div class="row">
+<div class="row" ng-if="false">
     <div class="col-xs-12 col-sm-12 col-md-6 ">
-        <div class="row margin-top-one">
-            <label class="unselectable">Prix TTC</label>
-        </div>
-        <div class="row margin-top-quarter">
-            <input ng-disabled="true" type="text" class="diags-input" ng-model="item.price">
-        </div>
-        <div class="row margin-top-one">
-            <label class="unselectable">PriceHT</label>
-        </div>
-        <div class="row margin-top-quarter">
-            <input ng-disabled="true" type="text" class="diags-input" ng-model="item.priceHT">
-        </div>
-        <div class="row margin-top-one">
-            <label class="unselectable">RumunerationHT</label>
-        </div>
-        <div class="row margin-top-quarter">
-            <input ng-disabled="true" type="text" class="diags-input" ng-model="item.diagRemunerationHT">
-        </div>
-        <div class="row margin-top-one">
-            <label class="unselectable">RevenueHT</label>
-        </div>
-        <div class="row margin-top-quarter">
-            <input ng-disabled="true" type="text" class="diags-input" ng-model="item.revenueHT">
-        </div>
-        <div class="row margin-top-half">
-            <label class="unselectable">Statut</label>
-        </div>
-        <div class="row margin-top-quarter">
-            <input ng-disabled="true" type="text" class="diags-input" ng-value="item.status">
-        </div>
+        
     </div>
 </div>
 <div class="row margin-top-one" ng-show="item.status=='created'">

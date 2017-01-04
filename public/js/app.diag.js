@@ -282,7 +282,7 @@
 
                     var format = 'DD/MM/YYYY HH[h]mm';
                     if(s.item.repeat!=='none'){
-                        format = 'HH[h]mm';
+                        //format = 'HH[h]mm';
                     }
 
                     el.daterangepicker({
@@ -518,12 +518,14 @@
                         var start = s.item.start;
                         var end = s.item.end;
                         d.result.forEach(v => {
-                            if(s.item.repeat=='day' || 
-                                (s.item.repeat=='week'&&moment(v.start).weekday()==s.item.weekday)){
+                            if(s.item.repeat=='week'&&moment(v.start).weekday()!=s.item.weekday){
+                                return;
+                            }
+                            if(s.item.repeat=='day' || s.item.repeat=='week'){
                                 start = moment(v.start).hour(moment(start).hour()).minute(moment(start).minute())
                                 end = moment(v.end).hour(moment(end).hour()).minute(moment(end).minute())
                             }
-                            if ($D.rangeCollide(v.start, v.end, start, end)) {
+                            if (moment.range(v.start, v.end).overlaps(moment.range(start, end))) {
                                 yesFlag = true;
                                 if (!yes) {
                                     $log.debug('dates do collide with order',v);
