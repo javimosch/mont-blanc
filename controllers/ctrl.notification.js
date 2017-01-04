@@ -77,8 +77,8 @@ function trigger(name, data, cb) {
         data.__notificationType = name;
         return EmailHandler[name](data, cb);
     } catch (e) {
-        LogSave(e, 'error', e);
-        return cb(e);
+        LogSave("Notification triggering", 'error', e);
+        return cb && cb(e);
     }
 }
 

@@ -326,8 +326,10 @@
                         var settings = {};
 
                         if (hasSlotSelectionActivatedManualyByAdmin()) {
-                            //settings.maxSlots = 10;
+                            settings.maxSlots = 40;
                             //settings.allowFixedAllocation = false;
+                        }else{
+                            settings.maxSlots = 40;
                         }
 
                         s.diagSlots.init(undefined, settings);
@@ -399,7 +401,7 @@
                     s.item.start = data.start;
                     s.item.end = data.end;
                     //
-                    var _newPriceQuote = orderPrice.getPriceTTC(s);
+                    var _newPriceQuote = orderPrice.getPriceTTC();
                     if (s.item._id && _newPriceQuote !== undefined) {
 
 
@@ -630,7 +632,7 @@
                 s.__keysWhereSelectFirstItem = () => s.__keysWhereItems && Object.keys(s.__keysWhereItems)[0] || "Loading";
                 s.__keysWhereSelectLabel = () => s.__keysWhereSelectLabelVal || s.__keysWhereSelectFirstItem();
                 s.__keysWhereSelect = (key, val) => {
-                    $log.debug(val);
+                    //$log.debug(val);
                     s.item.keysWhere = val && val() || undefined;
                 };
 

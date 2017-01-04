@@ -60,6 +60,7 @@
                                     }
                                 }, 2000);*/
 
+                if(!s.item || !s.item.info) return;
 
                 if (s.item.info.constructionPermissionDate === 'Avant le 01/01/1949') {
                     toggle('crep', true);

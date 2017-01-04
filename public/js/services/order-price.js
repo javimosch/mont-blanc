@@ -157,7 +157,12 @@
                 return tenthDown10(this.getPriceWithDepartment(k));
             },
             getPriceTTC: function(k) {
-                return tenthDown10(this.getPriceWithVAT(k));
+                var rta = tenthDown10(this.getPriceWithVAT(k));
+                if(isNaN(rta)){
+                    //$log.warn('priceTTC NaN !');
+                    return 0;
+                }
+                return rta;
             },
             getPriceRemunerationHT: function() {
                 //Diag man remuneration

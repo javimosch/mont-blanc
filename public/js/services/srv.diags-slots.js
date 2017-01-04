@@ -5,7 +5,7 @@
 /*global _*/
 (function() {
     var app = angular.module('srv.diagSlots', []);
-    app.service('diagSlots', function($rootScope, server, orderPrice,$log) {
+    app.service('diagSlots', function($rootScope, server, orderPrice, $log, orderRdv) {
         var r = $rootScope,
             db = server;
 
@@ -16,6 +16,7 @@
                 //s.totalTime
 
                 var _settings = {};
+                $rootScope._diagSlotsSettings = _settings;
 
                 function requestSlots(date) {
                     return $U.MyPromise(function(resolve, error, evt) {
@@ -26,7 +27,23 @@
                             time: time
                         };
                         //$log.debug('order time',r.momentDateTime(order.day),JSON.stringify(order.time));
-                        db.getAvailableRanges(order, _settings).then(function(data) {
+
+                        if (_settings.maxSlots && _settings.maxSlots > 4) {
+                            //NEW
+                            orderRdv.getAll({
+                                date: date,
+                                time: time,
+                                diagId: _settings.diagId
+                            }).then(_resolve);
+                        }else{
+                            //db.getAvailableRanges(order, _settings).then(_resolve);    
+                        }
+
+
+                        //OLD
+                        
+
+                        function _resolve(data) {
                             //console.log('slots', data);
                             //data = data.length > 0 && data || null;
                             //if (!data) return;
@@ -43,19 +60,19 @@
 
 
                                 orderPrice.set({
-                                    date:date,
+                                    date: date,
                                     modifiersPercentages: scope.settings && scope.settings.pricePercentageIncrease,
                                     squareMetersPrice: scope.squareMetersPrice,
                                     squareMeters: scope._order && scope._order.info && scope._order.info.squareMeters ||
-                                    scope.item && scope.item.info && scope.item.info.squareMeters || (scope.item && scope.item.squareMeters) || '',
-                                    clientDiscountPercentage: 
-                                    (scope._order && scope._order._client && scope._order._client.discount) ||
-                                    (scope.item && scope.item._client && scope.item._client.discount),
-                                    departmentMultipliers: scope.settings &&  scope.settings.metadata && scope.settings.metadata.departmentMultipliers,
+                                        scope.item && scope.item.info && scope.item.info.squareMeters || (scope.item && scope.item.squareMeters) || '',
+                                    clientDiscountPercentage:
+                                        (scope._order && scope._order._client && scope._order._client.discount) ||
+                                        (scope.item && scope.item._client && scope.item._client.discount),
+                                    departmentMultipliers: scope.settings && scope.settings.metadata && scope.settings.metadata.departmentMultipliers,
                                     postCode: scope.item && scope.item.postCode,
                                     basePrice: scope.basePrice,
-                                    selectedDiags:  scope._order && scope._order.diags && scope._order.diags ||
-                                    scope.item && scope.item.diags,
+                                    selectedDiags: scope._order && scope._order.diags && scope._order.diags ||
+                                        scope.item && scope.item.diags,
                                     availableDiags: scope.diags
                                 });
                                 r.price = orderPrice.getPriceTTC();
@@ -77,7 +94,8 @@
 
                             if (data.length == 0) cbHell.call();
 
-                        });
+                        }
+
                     });
                 };
 
@@ -90,16 +108,19 @@
                                 return item.start._d;
                             });
 
-                            if (d.length > 4) {
-                                //console.warn('slots-more-than-four-warning',d)
+
+                            var maxSlots = (_settings.maxSlots != undefined && _settings.maxSlots || 4);
+                            if (d && d.length > maxSlots) {
+                                $log.warn('RDV slots exceed maximum', maxSlots || 4);
+                                /*
                                 try {
                                     db.ctrl('Log', "create", {
                                         message: "booking-warning: date slot request retrieve " + d.length + ' slots.',
                                         data: d
                                     });
                                 } catch (e) {}
-
-                                while (d.length > 4) {
+*/
+                                while (d.length > maxSlots) {
                                     d.pop();
                                 };
                                 //console.warn('slots-more-than-four-resolve',d)
@@ -135,7 +156,10 @@
                     var cursor = moment();
                     var o = {};
                     o.setDiag = function(_diag) {
-                        _settings._diag = _diag;
+                        if(_diag && _diag._id && _diag._id != _settings._diag){
+                            _settings.diagId = _diag && _diag._id || _diag || undefined;    
+                            o.request();
+                        }
                     };
                     o.get = function() {
                         return _data;
@@ -143,9 +167,14 @@
                     o.init = function(d, opt) {
                         //today, tomorrow, tomorrow morrow y tomorrow morrow morrow.
                         cursor = moment(d);
+
+                        if(cursor.isSame(moment(),'day')&&moment().isAfter(moment().hour(19).minutes(0))){
+                            return o.init(moment().add(1, 'days').toDate(), opt);
+                        }
+
                         opt = opt || {};
                         _settings.department = opt.department;
-                        _settings.maxSlots = opt.maxSlots;
+                        _settings.maxSlots = opt.maxSlots || _settings.maxSlots;
                         _settings.allowFixedAllocation = opt.allowFixedAllocation;
                         o.request();
                     };
@@ -158,7 +187,7 @@
                     o.next = function() {
                         if (_nextTimes > 15) {
                             _nextTimes = 0;
-                            return o.init();
+                            return o.init(null, _settings);
                         }
                         _nextTimes++;
                         cursor = cursor.add(4, 'days');
@@ -181,7 +210,7 @@
 
                             //if the first day is today and there is 0 slots, we move one day ahead.
                             if (o.get()[0].date.isSame(moment(), 'day') && o.get()[0].slots.length == 0) {
-                                o.init(moment().add(1, 'days').toDate());
+                                o.init(moment().add(1, 'days').toDate(), _settings);
                             }
 
                         });
