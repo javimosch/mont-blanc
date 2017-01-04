@@ -59,7 +59,7 @@
         var self = {
             set: function(_settings) {
                 Object.assign(settings, _settings);
-                $log.debug('orderPrice setting is now ', settings);
+                //$log.debug('orderPrice setting is now ', settings);
             },
             getDayModifierPercentage: function(percentages, date) {
                 if (isTodaySaturday(date)) {
@@ -126,7 +126,11 @@
                 return settings.basePrice + getBasePrice(settings.selectedDiags, settings.availableDiags);
             },
             getDayRatio: function(k) {
-                return s.item.pricePercentageIncrease[k];
+                if(!settings.modifiersPercentages){
+                    $log.error('orderPrice modifiersPercentages required.');
+                    return;
+                }
+                return settings.modifiersPercentages[k];
             },
             getPriceWithDay: function(k) {
                 if (k) {
@@ -158,7 +162,7 @@
             getPriceRemunerationHT: function() {
                 //Diag man remuneration
                 if (!settings.diagCommissionRate) {
-                    console.error('orderPrice settings.diagCommissionRate is required');
+                    $log.error('orderPrice settings.diagCommissionRate is required');
                     return 0;
                 }
                 return (this.getPriceHT() * (settings.diagCommissionRate || 1) / 100)

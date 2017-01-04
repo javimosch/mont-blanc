@@ -326,8 +326,8 @@
                         var settings = {};
 
                         if (hasSlotSelectionActivatedManualyByAdmin()) {
-                            settings.maxSlots = 10;
-                            settings.allowFixedAllocation = false;
+                            //settings.maxSlots = 10;
+                            //settings.allowFixedAllocation = false;
                         }
 
                         s.diagSlots.init(undefined, settings);

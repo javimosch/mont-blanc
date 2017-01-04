@@ -158,14 +158,14 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 }]);
 
 /*google analytic tracking */
-app.run(['$rootScope', '$location', '$window',
-    function($rootScope, $location, $window) {
+app.run(['$rootScope', '$location', '$window','$log',
+    function($rootScope, $location, $window,$log) {
         $rootScope.$on('$routeChangeSuccess',
             function(event) {
                 if (!$window.ga) {
                     return;
                 }
-                console.log('ga tracking to ' + $location.path());
+                $log.debug('ga tracking to ' + $location.path());
                 $window.ga('set', 'page', $location.path());
                 $window.ga('send', 'pageview');
             });

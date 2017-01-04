@@ -13,7 +13,7 @@
  //
  function configure(app) {
   var config = JSON.parse(fs.readFileSync(process.cwd() + '/package.json'));
-  apiMessage = 'Backstuff runing version ' + config.version + '!';
+  apiMessage = 'Diagnostical App Stack running version ' + config.version + '!';
   require('./model/db');
   var configureRoutes = require('./model/app.routes').configure;
   var configureProgrammedTasks = require('./model/tasks').configure;

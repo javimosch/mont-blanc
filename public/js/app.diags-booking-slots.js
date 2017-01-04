@@ -20,8 +20,8 @@
         MAX_SLOTS_AFTERNOON = opt.maxSlots || 2;
         ALLOW_FIXED_ALLOCATION = opt.allowFixedAllocation!==undefined?opt.allowFixedAllocation:true;
 
-        console.debug('slots:','MAX_SLOTS_MORNING',MAX_SLOTS_MORNING);
-        console.debug('slots:','MAX_SLOTS_AFTERNOON',MAX_SLOTS_AFTERNOON);
+        //console.debug('slots:','MAX_SLOTS_MORNING',MAX_SLOTS_MORNING);
+        ///console.debug('slots:','MAX_SLOTS_AFTERNOON',MAX_SLOTS_AFTERNOON);
 
         //helpers
         function diagsPriority(cb) {
@@ -132,7 +132,7 @@
         };
         var diags = _.orderBy(diags, (v) => v.priority);
 
-        console.debug('rdv slots available diag guys',diags.length);
+        //console.debug('rdv slots available diag guys',diags.length);
         
 
         diags.forEach((diag) => {
@@ -337,8 +337,8 @@
             _cols = [],
             c = 0;
         //rangeCollisions4(start, order, collisions);
-        console.debug('allocate for',propName,'day',moment(order.day).format('DD/MM'),'diag',diag._id);
-        console.debug('search start from',start.format('HH:mm'));
+        //console.debug('allocate for',propName,'day',moment(order.day).format('DD/MM'),'diag',diag._id);
+        //console.debug('search start from',start.format('HH:mm'));
         do {
             //------------------
             //rangeCollision4: start, end: order duration.
@@ -348,7 +348,7 @@
                 if (_cols.length == 0) {
                     //available!
                     var _s = slot(start.hours(), start.minutes(), order, diag);
-                    console.debug('slot found from ',moment(_s.start).format('HH:mm'),'to',moment(_s.end).format('HH:mm'));
+                    //console.debug('slot found from ',moment(_s.start).format('HH:mm'),'to',moment(_s.end).format('HH:mm'));
                     arr[propName].push(_s);
                     return true;
                 }
@@ -361,15 +361,15 @@
                 start = moment(_cols[_cols.length - 1].end).add(1, 'hours').add(30, 'minutes');
                 start = normalizeStart(start);
             }
-            console.debug('collision, moving to',start.format('HH:mm'));
+            //console.debug('collision, moving to',start.format('HH:mm'));
             //------------------
             c++;
             if (c > 20) cut = true;
         } while (moment(start).isBefore(moment(startMax)) || cut);
         if (cut) {
-            console.debug('while go crazy, forced exit');
+            //console.debug('while go crazy, forced exit');
         }
-        console.debug('allocation was not possible');
+        //console.debug('allocation was not possible');
         return false;
     }
 
