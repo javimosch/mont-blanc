@@ -71,11 +71,11 @@
 
     app.controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice', 'orderQuestion',
-        function(db, s, r, params, focus, diagSlots, $log, orderPrice, orderQuestion) {
+        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice', 'orderQuestion','orderRdv',
+        function(db, s, r, params, focus, diagSlots, $log, orderPrice, orderQuestion,orderRdv) {
             r.setCurrentCtrl(s);
 
-
+            s.orderRdv = orderRdv;
 
             /*PDF LOGIC*/
             s.pdf = {
