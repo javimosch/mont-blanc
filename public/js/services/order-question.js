@@ -61,7 +61,7 @@
                                 }, 2000);*/
 
 
-                if (s.item.constructionPermissionDate === 'Avant le 01/01/1949') {
+                if (s.item.info.constructionPermissionDate === 'Avant le 01/01/1949') {
                     toggle('crep', true);
                     s.item.diags.crep = true; //mandatory
                     toggleMandatory('crep', true);

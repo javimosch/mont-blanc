@@ -209,6 +209,7 @@ function diagNameConvertion(key) {
     if (key == 'crep') return 'Plomb';
     if (key == 'dta') return 'Amiante';
     if (key == 'dpe') return 'DPE';
+    console.warn('diagNameConvertion not-found',key);
     return key;
 }
 
