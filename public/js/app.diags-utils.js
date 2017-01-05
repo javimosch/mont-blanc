@@ -300,6 +300,54 @@ function OrderReplaceHTML(html, _order, r) {
     _order.landLordEmail = _order.landLordEmail || undefined;
     _order.landLordPhone = _order.landLordPhone || undefined;
     _order.landLordAddress = _order.landLordAddress || undefined;
+
+    function _removeConditionalBlock(key,removeContent){
+        if(!_hasBlock(key)) return;
+
+        var openBlock = _blockName(key,true);
+        var closeBlock = _blockName(key,false);
+        var openBlockStart = html.indexOf(openBlock);
+        //text -> {{IF... (text left side of block)
+        var leftHtml = html.substring(0,openBlockStart);
+        
+        var openBlockEnd = html.indexOf(openBlock)+openBlock.length;
+        var closeBlockStart = html.indexOf(closeBlock);
+        //(text inside block)
+        var contentHtml = html.substring(openBlockEnd,closeBlockStart);
+
+        var closeBlockEnd = html.indexOf(closeBlock)+closeBlock.length;
+        //END IF..}} --> text (text right side of block)
+        var rightHtml = html.substring(closeBlockEnd);
+
+        html = leftHtml + (removeContent?'':contentHtml) + rightHtml;
+
+        console.log('remove block',key,removeContent);
+    }
+    function _blockName(key,open){
+        if(open) return "{{IF "+key+"}}";
+        return "{{END IF "+key+"}}";
+    }
+    function _hasBlock(key){
+        return html.indexOf(_blockName(key,true))!=-1 && html.indexOf(_blockName(key,false))!=-1;
+    }
+    function _parseBlock(key){
+        if(!_hasBlock(key)) return;
+        if(_order[key]!=undefined && _order[key]!=null && _order[key]!=''){
+            _removeConditionalBlock(key,false);//IF TRUE
+        }else{
+            _removeConditionalBlock(key,true);//IF FALSE
+        }
+
+    }
+    function _parseConditionalBlocks(){
+        //first pass
+        Object.keys(_order).forEach(function(k){
+            _parseBlock(k);
+        });
+    }
+
+    //Shows the block only if the variable exists.
+    _parseConditionalBlocks(); //ex: {{IF DIAG_EMAIL}} Diag email: {{DIAG_EMAIL}} {{END IF}}
     
 
     return $U.replaceHTML(html, _order);
