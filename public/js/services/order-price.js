@@ -18,6 +18,8 @@
             diagCommissionRate: undefined
         };
 
+        $rootScope._orderPriceSettings = settings;
+
 
         function getBasePrice(diagsInCart, diagsAvailable) {
             var diag = null,
