@@ -285,6 +285,15 @@ function OrderReplaceHTML(html, _order, r) {
     _order['CLIENT_LASTNAME'] = _order._client.lastName || '';
     _order['CLIENT_EMAIL'] = _order._client.email;
     _order['CLIENT_ADDRESS'] = _order._client.address;
+
+    _order['DIAG_FULLNAME'] = _order._diag.firstName + ' ' + (_order._diag.lastName || '');
+    _order['DIAG_FIRSTNAME'] = _order._diag.firstName;
+    _order['DIAG_LASTNAME'] = _order._diag.lastName || '';
+    _order['DIAG_EMAIL'] = _order._diag.email;
+    _order['DIAG_ADDRESS'] = _order._diag.address;
+    _order['DIAG_COMPANY_NAME'] = _order._diag.companyName;
+    _order['DIAG_SIRET'] = _order._diag.siret;
+
     _order.createdAt = r.momentDateTime(_order.createdAt);
 
     _order.landLordFullName = _order.landLordFullName || undefined;
