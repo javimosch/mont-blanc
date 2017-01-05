@@ -55,7 +55,7 @@
                                 diagId: _settings.diagId
                             }).then(_resolve);
                         } else {
-                            //db.getAvailableRanges(order, _settings).then(_resolve);    
+                            db.getAvailableRanges(order, _settings).then(_resolve);    
                         }
 
 

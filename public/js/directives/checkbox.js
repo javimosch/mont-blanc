@@ -72,6 +72,7 @@ app.directive('checkBoxModel', function($rootScope, $timeout, $compile, $log) {
                 scope.$watch(function() {
                     return ngModel.$modelValue;
                 }, function(newValue) {
+                    if(!attrs.value) return;
                     if (newValue == attrs.value) {
                         if(!el.prop('checked')){
                             $timeout(function(){
