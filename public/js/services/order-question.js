@@ -73,9 +73,9 @@
                 }
 
                 if (departmentHasTermites()) {
-                    toggle('termites', true);
-                    s.item.diags.termites = true;
-                    toggleMandatory('termites', true);
+                    //toggle('termites', true);
+                    //s.item.diags.termites = true;
+                    //toggleMandatory('termites', true);
                 } else {
                     toggle('termites', false);
                     s.item.diags.termites = false;
