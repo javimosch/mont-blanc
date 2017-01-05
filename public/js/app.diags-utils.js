@@ -286,6 +286,13 @@ function OrderReplaceHTML(html, _order, r) {
     _order['CLIENT_EMAIL'] = _order._client.email;
     _order['CLIENT_ADDRESS'] = _order._client.address;
     _order.createdAt = r.momentDateTime(_order.createdAt);
+
+    _order.landLordFullName = _order.landLordFullName || undefined;
+    _order.landLordEmail = _order.landLordEmail || undefined;
+    _order.landLordPhone = _order.landLordPhone || undefined;
+    _order.landLordAddress = _order.landLordAddress || undefined;
+    
+
     return $U.replaceHTML(html, _order);
 }
 

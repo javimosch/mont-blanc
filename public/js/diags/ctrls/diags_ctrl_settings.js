@@ -6,8 +6,8 @@
 /*global tinymce*/
 (function() {
     var app = angular.module('diags_ctrl_settings', []);
-    app.controller('diags_ctrl_settings', ['server', '$scope', '$rootScope', 'diagPrice','$log',
-        function(db, s, r, diagPrice,$log) {
+    app.controller('diags_ctrl_settings', ['server', '$scope', '$rootScope', 'diagPrice', '$log',
+        function(db, s, r, diagPrice, $log) {
 
             db.localData().then(function(data) {
                 s.localData = data;
@@ -391,9 +391,9 @@
                             electricity: false,
                             parasitaire: false
                         },
-                        _client:{
-                            email:'',
-                            discount:0
+                        _client: {
+                            email: '',
+                            discount: 0
                         },
                         info: {
                             squareMeters: undefined
@@ -401,7 +401,7 @@
                     },
                 },
                 prepareScope: function() {
-                    if(!s.localData) return;
+                    if (!s.localData) return;
                     s.localData.settings = s.item;
                     Object.assign(this.scope, s.localData);
                 },
@@ -413,7 +413,7 @@
                     switch (type) {
                         case 'day':
                             var rta = diagPrice.getDayModifierPercentage(s.item.pricePercentageIncrease, this.scope.item.start)
-                            //$log.debug('getRatioModifierFor day',this.scope.item.start,s.item.pricePercentageIncrease);
+                                //$log.debug('getRatioModifierFor day',this.scope.item.start,s.item.pricePercentageIncrease);
                             return rta;
                             break;
                         case 'size':
@@ -458,12 +458,12 @@
                 priceWithSize: function(k) {
                     return (this.priceWithDay(k) * (1 + this.getRatioModifierFor('size') / 100)).toFixed(2);
                 },
-                priceWithDiscount:function(k){
+                priceWithDiscount: function(k) {
                     return (this.priceWithSize(k) * (1 - this.getRatioModifierFor('client') / 100)).toFixed(2);
                 },
                 priceWithDepartment: function(k) {
                     //100*((0.9*100)/100)
-                    return (this.priceWithDiscount(k) * (this.getRatioModifierFor('department')||1)).toFixed(2);
+                    return (this.priceWithDiscount(k) * (this.getRatioModifierFor('department') || 1)).toFixed(2);
                 },
                 priceWithVAT: function(k) {
                     return (this.priceWithDepartment(k) * (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
@@ -482,8 +482,8 @@
                 }
             };
 
-            s.$on("localData",function(){
-                r.dom(function(){
+            s.$on("localData", function() {
+                r.dom(function() {
                     s.pricetool.prepareScope();
                 });
             });
@@ -494,8 +494,8 @@
     ]);
 
 
-    app.controller('ctrl-settings-invoice', ['server', '$scope', '$rootScope', '$routeParams', 'focus',
-        function(db, s, r, params) {
+    app.controller('ctrl-settings-invoice', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$log',
+        function(db, s, r, params, focus, $log) {
             //
             $U.expose('s', s);
             //
@@ -552,9 +552,14 @@
                 }
 
                 s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
-                var html =
-                    window.encodeURIComponent(
-                        $D.OrderReplaceHTML(window.decodeURIComponent(s.item.content), s.randomOrder, r));
+                var html = $D.OrderReplaceHTML(window.decodeURIComponent(s.item.content), s.randomOrder, r);
+                
+                return $log.debug(html);
+
+                html = window.encodeURIComponent(html);
+
+                
+
                 r.ws.ctrl("Pdf", "view", {
                     html: html
                 }).then(res => {

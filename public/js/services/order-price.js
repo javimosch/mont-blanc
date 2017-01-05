@@ -185,6 +185,7 @@
                 object.revenueHT = this.getPriceRevenueHT();
                 object.diagRemunerationHT = this.getPriceRemunerationHT();
                 object.vatRate = settings.modifiersPercentages && settings.modifiersPercentages.VATRate || 20;
+                object.vatPrice = object.price - object.priceHT;
             }
         };
         return self;
