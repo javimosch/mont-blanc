@@ -14,6 +14,7 @@ dbController.register('Stats');
 dbController.register('File');
 dbController.register('Email');
 dbController.register('Pdf');
+dbController.register('Lemonway');
 var NOTIFICATION = dbController.create("Notification").NOTIFICATION;
 var Log = dbController.create("Log");
 var File = dbController.create('File')
