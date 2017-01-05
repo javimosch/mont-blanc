@@ -7,67 +7,6 @@
 (function() {
     var app = angular.module('app.order', []);
 
-    app.controller('adminOrders', [
-
-        'server', '$scope', '$rootScope', 'focus',
-        function(db, s, r, focus) {
-            window.s = s;
-            s.focus = focus;
-            r.toggleNavbar(true);
-            r.secureSection(s);
-            s.selectedItems = [];
-            s.items = [];
-            //
-
-            //
-            if (r.userIs(['diag', 'client'])) {
-                return r.handleSecurityRouteViolation();
-            }
-            //
-            s.click = function(item) {
-                r.routeParams({
-                    prevRoute: 'orders'
-                });
-                r.route('orders/edit/' + item._id);
-            };
-            s.create = function() {
-                r.route('orders/edit/-1');
-            };
-            s.select = function() {
-                if (window.event) {
-                    window.event.stopPropagation();
-                }
-            };
-            s.syncStripe = () => {
-                db.ctrl('Order', 'syncStripe'); //async 
-                setTimeout(read, 5000);
-                setTimeout(read, 20000);
-            };
-
-            function read() {
-                //r.infoMessage('Loading . . .');
-                db.custom('order', 'getAll', {
-                    __populate: {
-                        '_client': 'email',
-                        '_diag': 'email commission ',
-                        __select: "address start end status created"
-                    }
-                }).then(function(r) {
-                    //                console.info('adminOrders:read:success', r.data.result);
-                    r.data.result = _.orderBy(r.data.result, ['created'], ['desc']);
-                    s.items = r.data.result;
-
-
-
-                    r.successMessage('Loaded', 1000);
-                });
-            }
-            s.refresh = read;
-
-            r.dom(read, 0);
-
-        }
-    ]);
 
     app.controller('adminOrdersEdit', [
 
@@ -302,9 +241,9 @@
                 function hasSlotSelectionActivatedManually() {
                     return s.__isSlotSelectionActivatedManually == true;
                 }
-                s.activateSlotSelectionManually = function() {
+                s.activateSlotSelectionManually = function(val) {
                     r.dom(function() {
-                        s.__isSlotSelectionActivatedManually = true;
+                        s.__isSlotSelectionActivatedManually = val!=undefined && val || true;
                     });
                 };
                 s.isRDVSelectButtonActivated = function() {
@@ -401,20 +340,25 @@
                     s.item.start = data.start;
                     s.item.end = data.end;
                     //
+
+                    orderPrice.set({
+                        date: s.item.start,
+                        diagCommissionRate: s.item._diag && s.item._diag.commission
+                    });
                     var _newPriceQuote = orderPrice.getPriceTTC();
                     if (s.item._id && _newPriceQuote !== undefined) {
-
-
                         if (_newPriceQuote > s.item.price) {
                             s.infoMsg("Original price will be keeped. New price " + _newPriceQuote + "EUR is higher and will be ignored.");
-                            $log.debug('Original price was keeped due to higher price in new price quote.');
+                            //$log.debug('Original price was keeped due to higher price in new price quote.');
+                            s.item.price = s.original.price;
                             return;
                         }
 
                         if (s.item.status !== 'created') {
                             if (_newPriceQuote < s.item.price) {
                                 s.infoMsg("Original price will be keeped. New price " + _newPriceQuote + "EUR is lower but will be ignored because the order is already paid.");
-                                $log.debug('Original price was keeped due to lower price / order-paid rule.');
+                                //$log.debug('Original price was keeped due to lower price / order-paid rule.');
+                                s.item.price = s.original.price;
                                 return;
                             }
                         }
@@ -506,7 +450,12 @@
                     return d;
                 };
 
+
+
                 s.applyTotalPrice = () => {
+
+                    s.diagSlots.updatePrices();
+
                     orderPrice.set({
                         date: s.item.start,
                         diagCommissionRate: s.item._diag && s.item._diag.commission
@@ -514,6 +463,8 @@
                     orderPrice.assignPrices(s.item);
                     r.dom();
                 };
+
+                /*
                 s.applyTotalTime = () => {
                     var t = $D.OrderTotalTime(s.item.diags, s.diags);
                     if (s.item && s.item.start) {
@@ -522,6 +473,7 @@
                         r.dom();
                     }
                 };
+                */
 
                 s.type = r.session().userType;
                 s.is = (arr) => _.includes(arr, s.type);
@@ -626,6 +578,13 @@
                         };
                     }
                 };
+
+                s.$watch('item.diags', function(newV,oldV) {
+                    if(!_.isEqual(newV,oldV) && !s.item._id){
+                        s.applyTotalPrice();
+                    }
+                }, true);
+
                 s.$watch('item', function(val) {
                     s.__keysWhereItems = s.__keysWhereGetItems();
                 }, true);
@@ -1012,6 +971,9 @@
                                 }
 
                                 r.infoMessage('Changes saved');
+
+                                s.activateSlotSelectionManually(false);
+
                             }
 
 
@@ -1133,7 +1095,9 @@
                         s.prevItem = _.clone(s.item);
                         s.item = data.result;
 
-                        if (!s.prevItem) s.prevItem = s.item;
+                        if (!s.prevItem || Object.keys(s.prevItem).length==0) s.prevItem = s.item;
+
+                        s.original = _.clone(s.item);
 
                         if (s.afterRead && s.afterRead.forEach) {
                             s.afterRead.forEach(cb => cb());

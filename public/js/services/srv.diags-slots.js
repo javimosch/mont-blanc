@@ -18,6 +18,25 @@
                 var _settings = {};
                 $rootScope._diagSlotsSettings = _settings;
 
+                function setOrderDetails(date) {
+                    orderPrice.set({
+                        date: date,
+                        modifiersPercentages: scope.settings && scope.settings.pricePercentageIncrease,
+                        squareMetersPrice: scope.squareMetersPrice,
+                        squareMeters: scope._order && scope._order.info && scope._order.info.squareMeters ||
+                            scope.item && scope.item.info && scope.item.info.squareMeters || (scope.item && scope.item.squareMeters) || '',
+                        clientDiscountPercentage:
+                            (scope._order && scope._order._client && scope._order._client.discount) ||
+                            (scope.item && scope.item._client && scope.item._client.discount),
+                        departmentMultipliers: scope.settings && scope.settings.metadata && scope.settings.metadata.departmentMultipliers,
+                        postCode: scope.item && scope.item.postCode,
+                        basePrice: scope.basePrice,
+                        selectedDiags: scope._order && scope._order.diags && scope._order.diags ||
+                            scope.item && scope.item.diags,
+                        availableDiags: scope.diags
+                    });
+                }
+
                 function requestSlots(date) {
                     return $U.MyPromise(function(resolve, error, evt) {
                         if (!isFinite(new Date(date))) return; //invalid
@@ -35,13 +54,13 @@
                                 time: time,
                                 diagId: _settings.diagId
                             }).then(_resolve);
-                        }else{
+                        } else {
                             //db.getAvailableRanges(order, _settings).then(_resolve);    
                         }
 
 
                         //OLD
-                        
+
 
                         function _resolve(data) {
                             //console.log('slots', data);
@@ -59,22 +78,7 @@
 
 
 
-                                orderPrice.set({
-                                    date: date,
-                                    modifiersPercentages: scope.settings && scope.settings.pricePercentageIncrease,
-                                    squareMetersPrice: scope.squareMetersPrice,
-                                    squareMeters: scope._order && scope._order.info && scope._order.info.squareMeters ||
-                                        scope.item && scope.item.info && scope.item.info.squareMeters || (scope.item && scope.item.squareMeters) || '',
-                                    clientDiscountPercentage:
-                                        (scope._order && scope._order._client && scope._order._client.discount) ||
-                                        (scope.item && scope.item._client && scope.item._client.discount),
-                                    departmentMultipliers: scope.settings && scope.settings.metadata && scope.settings.metadata.departmentMultipliers,
-                                    postCode: scope.item && scope.item.postCode,
-                                    basePrice: scope.basePrice,
-                                    selectedDiags: scope._order && scope._order.diags && scope._order.diags ||
-                                        scope.item && scope.item.diags,
-                                    availableDiags: scope.diags
-                                });
+                                setOrderDetails(date);
                                 r.price = orderPrice.getPriceTTC();
 
 
@@ -156,9 +160,24 @@
                     var cursor = moment();
                     var o = {};
                     o.setDiag = function(_diag) {
-                        if(_diag && _diag._id && _diag._id != _settings._diag){
-                            _settings.diagId = _diag && _diag._id || _diag || undefined;    
+                        if (_diag && _diag._id && _diag._id != _settings._diag) {
+                            _settings.diagId = _diag && _diag._id || _diag || undefined;
                             o.request();
+                        }
+                    };
+                    o.updatePrices = function() {
+                        var daySlot = null;
+
+
+                        for(var x in _data){
+                            daySlot = _data[x];
+
+                            setOrderDetails(daySlot.date);
+
+                            daySlot.slots.forEach(function(slot){
+                                slot.price = orderPrice.getPriceTTC();
+                            });
+
                         }
                     };
                     o.get = function() {
@@ -168,7 +187,7 @@
                         //today, tomorrow, tomorrow morrow y tomorrow morrow morrow.
                         cursor = moment(d);
 
-                        if(cursor.isSame(moment(),'day')&&moment().isAfter(moment().hour(19).minutes(0))){
+                        if (cursor.isSame(moment(), 'day') && moment().isAfter(moment().hour(19).minutes(0))) {
                             return o.init(moment().add(1, 'days').toDate(), opt);
                         }
 
