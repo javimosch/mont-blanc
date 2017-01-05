@@ -128,6 +128,9 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
     r.errorMessage = (msg, duration) => {
         msg = getMessage(msg);
+        if(!msg){
+            msg = 'Erreur de serveur, plus d&#x27;informations dans la console de développement.';
+        }
         r.notify(msg, {
             type: 'danger',
             duration: duration || 3000

@@ -66,6 +66,7 @@
     "password-maker": "^1.1.2",
     "path": "^0.12.7",
     "public-ip": "^2.0.1",
+    "rand-token": "^0.3.0",
     "request": "^2.69.0",
     "serve": "^1.4.0",
     "shift-codegen": "^4.0.3",
