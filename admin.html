@@ -77,6 +77,7 @@
     <modal-confirm open="openConfirm"></modal-confirm>
 
 
+    <!--
     <div class="hidden" remove-hidden>
         <div ng-class="{hidden:!__debugDiags,bounceInLeft:true,animated:true,'debug-wrapper':true}">
             <ul ng-cloak>
@@ -177,13 +178,14 @@
             </ul>
         </div>
     </div>
+    -->
 
     <!--GLOBAL DIRECTIVES -->
     <!-- <my-alerts add="message" directive="notify"></my-alerts> -->
     <!--<my-alerts add="notify" directive="notify" stacked="true" settings="{clickDismissable:false}"></my-alerts>-->
     <modal-custom open="okModal" template-url="views/common/partials/popup.message.ok.html"></modal-custom>
     <span data-spinner show="state.working"></span>
-    <span data-debug show="showDebug"></span>
+    <span data-debug show="isDevEnv"></span>
     <!--TEMPLATES-->
     <div ng-include="'views/templates/templates.user.html'"></div>
     <!--VENDOR-->

@@ -381,7 +381,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', fu
                 _logs[self.id] = item;
                 setTimeout(() => {
                     if (_logs[self.id] !== undefined) {
-                        item.err = "Logger: request timeout.";
+                        item.err = "TIMEOUT";
                         delete _logs[self.id];
                     }
                 }, 1000 * 30);
@@ -395,7 +395,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', fu
                     //data for $http, result for others
                     //add more validations for detect a fail here.
                     if (!res.data && !res.result) {
-                        item.err = 'Server down, try later.';
+                        item.err = 'SERVER ERROR';
                         if (_.includes(_controlledErrorsStrings, item.err)) {
                             _controlledErrors[self.id] = item;
                         }
@@ -472,7 +472,10 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', fu
         }
         r.state = {
             working: () => fn.hasPending(),
-            data: _logs
+            _logs: _logs,
+            _errors:_errors,
+            showErrors:()=>fn.errors(),
+            getControlledErrors:()=> _controlledErrors
         };
         r.logger = fn;
         return fn;
@@ -625,7 +628,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', fu
             }).then(function(res) {
                 _log(res);
                 if (res.data && res.data.ok == false) {
-                    console.warn('SERVER:REQUEST:WARNING = ', res.data.err || "Unkown error detected", relativeUrl);
+                    $log.warn("ENDPOINT "+relativeUrl,res.data.err || "INVALID RESPONSE FORMAT");
                 }
                 return callback(res);
             }, (err) => {

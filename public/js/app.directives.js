@@ -725,9 +725,11 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
         },
         restrict: 'AE',
         replace: true,
-        template: '<div><i ng-show="show" ng-click="click()" class="link fa fa-bug fa-lg fixed left-1 bottom-1 always-on-top"><input disabled type="checkbox" ng-click="stop()" ng-model="check"></i><span data-output></span></div>',
+        template: '<div><i ng-show="show" class="link fa fa-bug fa-lg fixed left-1 bottom-1 always-on-top"><input disabled type="checkbox" ng-click="stop()" ng-model="check"></i><span data-output></span></div>',
         link: function(s, elem, attrs) {
             var r = $rootScope;
+            
+            /*
             s.check = true;
             s.opt = {
                 onClose: () => {
@@ -798,6 +800,7 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
                     r.dom();
                 }
             }, 5000);
+            */
             //console.log('directive.debug.linked');
         }
     };
