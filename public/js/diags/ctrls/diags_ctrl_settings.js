@@ -517,6 +517,13 @@
                     "{{CLIENT_LASTNAME}}": "Particular Client / Agency / Other last name",
                     "{{CLIENT_EMAIL}}": "Particular Client / Agency / Other email",
                     "{{CLIENT_ADDRESS}}": "Particular Client / Agency / Other address",
+                    "{{DIAG_FULLNAME}}": "Diag full name (first name + last name)",
+                    "{{DIAG_FIRSTNAME}}": "Diag first name",
+                    "{{DIAG_LASTNAME}}": "Diag last name",
+                    "{{DIAG_EMAIL}}": "Diag email",
+                    "{{DIAG_ADDRESS}}": "Diag address",
+                    "{{DIAG_SIRET}}": "Diag siret",
+                    "{{DIAG_COMPANY_NAME}}": "Diag company name",
                     '{{LANDLORDFULLNAME}}': "Landlord Fullname (Agency / Other only)",
                     '{{LANDLORDEMAIL}}': "Landlord Email (Agency / Other only)",
                     '{{LANDLORDPHONE}}': "Landlord Phone (Agency / Other only)",
@@ -536,7 +543,8 @@
 
             db.ctrl('Order', 'get', {
                 __populate: {
-                    _client: "email firstName lastName landlordFullName landlordEmail address"
+                    _client: "email firstName lastName address",
+                    _diag: "email firstName lastName address siret companyName"
                 }
             }).then(res => {
                 if (res.ok) {

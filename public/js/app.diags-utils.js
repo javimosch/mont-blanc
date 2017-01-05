@@ -285,12 +285,69 @@ function OrderReplaceHTML(html, _order, r) {
     _order['CLIENT_LASTNAME'] = _order._client.lastName || '';
     _order['CLIENT_EMAIL'] = _order._client.email;
     _order['CLIENT_ADDRESS'] = _order._client.address;
+
+    _order['DIAG_FULLNAME'] = _order._diag.firstName + ' ' + (_order._diag.lastName || '');
+    _order['DIAG_FIRSTNAME'] = _order._diag.firstName;
+    _order['DIAG_LASTNAME'] = _order._diag.lastName || '';
+    _order['DIAG_EMAIL'] = _order._diag.email;
+    _order['DIAG_ADDRESS'] = _order._diag.address;
+    _order['DIAG_COMPANY_NAME'] = _order._diag.companyName;
+    _order['DIAG_SIRET'] = _order._diag.siret;
+
     _order.createdAt = r.momentDateTime(_order.createdAt);
 
     _order.landLordFullName = _order.landLordFullName || undefined;
     _order.landLordEmail = _order.landLordEmail || undefined;
     _order.landLordPhone = _order.landLordPhone || undefined;
     _order.landLordAddress = _order.landLordAddress || undefined;
+
+    function _removeConditionalBlock(key,removeContent){
+        if(!_hasBlock(key)) return;
+
+        var openBlock = _blockName(key,true);
+        var closeBlock = _blockName(key,false);
+        var openBlockStart = html.indexOf(openBlock);
+        //text -> {{IF... (text left side of block)
+        var leftHtml = html.substring(0,openBlockStart);
+        
+        var openBlockEnd = html.indexOf(openBlock)+openBlock.length;
+        var closeBlockStart = html.indexOf(closeBlock);
+        //(text inside block)
+        var contentHtml = html.substring(openBlockEnd,closeBlockStart);
+
+        var closeBlockEnd = html.indexOf(closeBlock)+closeBlock.length;
+        //END IF..}} --> text (text right side of block)
+        var rightHtml = html.substring(closeBlockEnd);
+
+        html = leftHtml + (removeContent?'':contentHtml) + rightHtml;
+
+        console.log('remove block',key,removeContent);
+    }
+    function _blockName(key,open){
+        if(open) return "{{IF "+key+"}}";
+        return "{{END IF "+key+"}}";
+    }
+    function _hasBlock(key){
+        return html.indexOf(_blockName(key,true))!=-1 && html.indexOf(_blockName(key,false))!=-1;
+    }
+    function _parseBlock(key){
+        if(!_hasBlock(key)) return;
+        if(_order[key]!=undefined && _order[key]!=null && _order[key]!=''){
+            _removeConditionalBlock(key,false);//IF TRUE
+        }else{
+            _removeConditionalBlock(key,true);//IF FALSE
+        }
+
+    }
+    function _parseConditionalBlocks(){
+        //first pass
+        Object.keys(_order).forEach(function(k){
+            _parseBlock(k);
+        });
+    }
+
+    //Shows the block only if the variable exists.
+    _parseConditionalBlocks(); //ex: {{IF DIAG_EMAIL}} Diag email: {{DIAG_EMAIL}} {{END IF}}
     
 
     return $U.replaceHTML(html, _order);

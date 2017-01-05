@@ -1,10 +1,9 @@
 <script type="text/javascript">
-    /*global $*/
-    if (typeof window.tinymce == 'undefined') {
-        $.getScript("https://cdn.tinymce.com/4/tinymce.min.js");
-    }
+/*global $*/
+if (typeof window.tinymce == 'undefined') {
+    $.getScript("https://cdn.tinymce.com/4/tinymce.min.js");
+}
 </script>
-
 <div class="row">
     <div class="col-sm-12 padding-none">
         <ol class="breadcrumb">
@@ -18,7 +17,6 @@
     <modal-confirm open="confirm"></modal-confirm>
     <div class="row diags-row margin-bottom-two">
         <div class="col-sm-12 col-md-12">
-
             <div class="row margin-top-one">
                 <div id="editor" class="diags-rich-text-editor">
                     <p></p>
@@ -34,28 +32,32 @@
                         <span ng-bind="v" class="fnt-9"></span>
                     </li>
                 </ul>
-
             </div>
-
+            <div class="row margin-top-one">
+                <label>Conditionals</label>
+                <p>Example:
+                    <br>(NOTE: you must <b>use double arrows</b> and not double anchors)</p>
+                <textarea style="overflow:hidden;height:100px;min-width:300px;font-size:10px" disabled no-resize no-scroll>
+                    [[IF DIAG_SIRET]] 
+                    The content inside the conditional block will appear only if the variable has a value. SIRET: [[DIAG_SIRET]] 
+                    [[END IF DIAG_SIRET]]
+                </textarea>
+            </div>
             <div class="row margin-top-one">
                 <label>INFO: French invoice requirements</label>
                 <p>
-                    Invoices must contain at least the following basic information: 
-                    <br>
-                    Date of issuance<br>
-                    A unique, sequential number<br>
-                    VAT number of the supplier<br>
-                    Full address of the supplier and customer<br>
-                    Full description of the goods or services provided<br>
-                    Details of quantities of goods, if applicable Unit prices, if applicable A date of the supply if different from the invoice date<br>
-                    
-                    The net, taxable value of the supply<br>
-                    The VAT rate(s) applied, and the amount of VAT broken out by rate<br>
-                    The gross, total amountof the invoice
+                    Invoices must contain at least the following basic information:
+                    <br> Date of issuance
+                    <br> A unique, sequential number
+                    <br> VAT number of the supplier
+                    <br> Full address of the supplier and customer
+                    <br> Full description of the goods or services provided
+                    <br> Details of quantities of goods, if applicable Unit prices, if applicable A date of the supply if different from the invoice date
+                    <br> The net, taxable value of the supply
+                    <br> The VAT rate(s) applied, and the amount of VAT broken out by rate
+                    <br> The gross, total amountof the invoice
                 </p>
             </div>
-
-
         </div>
     </div>
     <div class="row diags-row margin-bottom-two">
