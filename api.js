@@ -1,3 +1,4 @@
+var logger = require('./model/logger')('API.js');
  var express = require('express');
  var bodyParser = require('body-parser')
  var bb = require('express-busboy');
@@ -11,6 +12,9 @@
  var https = require('https');
  var http = require('http');
  //
+
+logger.info('Initializing');
+
  function configure(app) {
   var config = JSON.parse(fs.readFileSync(process.cwd() + '/package.json'));
   apiMessage = 'Diagnostical App Stack running version ' + config.version + '!';

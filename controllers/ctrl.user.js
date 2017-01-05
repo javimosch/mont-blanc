@@ -17,6 +17,10 @@ var Notif = require('./ctrl.notification');
 var NOTIFICATION = Notif.NOTIFICATION;
 //User.methods.name = ()=>{return };
 
+const MODULE = 'USER';
+var logger = require('../model/logger')(MODULE);
+
+
 
 function everyAdmin(cb) {
     ctrl('User').getAll({
@@ -65,8 +69,7 @@ function balance(data, cb) {
     if (!data._id) return cb("_id required");
     if (data._calculate) {
         _calculate(null, null, true);
-    }
-    else {
+    } else {
         _retrieve();
     }
 
@@ -117,8 +120,7 @@ function balance(data, cb) {
                     _balance.save((_err, r) => {
                         _retrieve();
                     });
-                }
-                else {
+                } else {
                     var balanceAmount = 0;
                     var _stackSaving = [];
                     var exit = false;
@@ -213,15 +215,49 @@ function balance(data, cb) {
     }
 }
 
+
+function _preCreateWallet(data, cb,next) {
+    if (!data.wallet && (data.userType == 'client' || data.userType == 'diag')) {
+        return ctrl('Lemonway').registerWallet({
+            clientMail: data.email,
+            clientFirstName: data.firstName,
+            clientLastName: data.lastName,
+            postCode: data.postCode,
+            mobileNumber: data.cellPhone
+        }, (err, res) => {
+            if (!err && res && res.WALLET) {
+                data.wallet = res.WALLET.ID;
+                logger.info('LEMONWAY WALLET (automatic registration before saving user)', data.wallet);
+            }
+            if (err) {
+                logger.error('LEMONWAY WALLET (automatic registration before saving user)', err);
+                LogSave('LEMONWAY WALLET (automatic registration before saving user)', 'error', err);
+            }
+            return next(data, cb);
+        });
+    }
+    return next(data, cb);
+}
+
 function save(data, cb) {
     if (!_.includes(['diag', 'client', 'admin'], data.userType)) {
         return cb("invalid userType " + data.userType);
     }
 
-    actions.createUpdate(data, cb, {
-        email: data.email,
-        userType: data.userType
-    }, ['userType', 'email']).on('created', (err, _user) => {
+    _preCreateWallet(data, cb,__save);
+
+
+
+    function __save(data, cb) {
+        actions.createUpdate(data, cb, {
+            email: data.email,
+            userType: data.userType
+        }, ['userType', 'email']).on('created', postCreate_notifications);
+    }
+
+
+
+    function postCreate_notifications(err, _user) {
         switch (_user.userType) {
             case 'admin':
                 {
@@ -247,7 +283,7 @@ function save(data, cb) {
                 }
                 break;
         }
-    });
+    }
 }
 
 function LogSave(msg, type, data) {
@@ -264,15 +300,18 @@ function handleNewAccount(_user, err, r) {
         actions.log(_user.email + ':passwordSended');
         _user.passwordSended = true;
         _user.save();
-    }
-    else {
+    } else {
         actions.log(_user.email + ' passwordSended email fail ' + JSON.stringify(r));
         LogSave(r.message, 'warning', r);
     }
 }
 
 function create(data, cb) {
-    actions.create(data, cb, ['email', 'userType', 'password']);
+    _preCreateWallet(data,cb, __create);
+
+    function __create(data, cb) {
+        actions.create(data, cb, ['email', 'userType', 'password']);
+    }
 }
 
 function createUser(data, cb) {
@@ -298,8 +337,7 @@ function createDiag(data, cb) {
                 _user.save((err, r) => {
                     if (!err) actions.log(_user.email + ' passwordSended=true');
                 });
-            }
-            else {
+            } else {
                 actions.log(_user.email + ' new account email sended failed');
                 actions.log(JSON.stringify(err));
             }
@@ -330,8 +368,7 @@ function sendAccountsDetails(_user) {
             _user.save((err, r) => {
                 if (!err) actions.log(_user.email + ' passwordSended=true');
             });
-        }
-        else {
+        } else {
             actions.log(_user.email + ' new account email sended failed');
             actions.log(JSON.stringify(err));
         }
@@ -348,8 +385,7 @@ function createClientIfNew(data, cb) {
             if (err) return cb(err, null);
             if (!r) {
                 createClient(data, cb);
-            }
-            else {
+            } else {
 
                 //in 10 seconds, try send account details if passwordSended==false
                 setTimeout(function() {

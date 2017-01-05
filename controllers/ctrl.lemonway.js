@@ -8,6 +8,7 @@ const uid = require('rand-token').uid;
 let login = process.env.LEMON_LOGIN,
     pass = process.env.LEMON_PASS;
 let MODULE = 'LEMONWAY';
+var logger = require('../model/logger')(MODULE);
 var commonParams = {
     "wlLogin": login,
     "wlPass": pass,
@@ -28,20 +29,24 @@ module.exports = {
 
 //API EXPOSED METHODS
 
-function registerWallet(data, cb) {
+function registerWallet(data, callback) {
+    callback = callback || (()=>{});
     data.wallet = uid(5).toString().toUpperCase();
-    lemonway.registerWallet(data).then((r) => callback(null, r), (err) => {
+    lemonway.registerWallet(data).then((r) => {
+        logger.info('LEMONWAY WALLET manual registration',data.clientMail);
+        callback(null, r);
+    }, (err) => {
 
         if (err.Code && err.Code.toString() == '204') {
             return lemonway.getWalletDetails({
-                email: data.email
+                email: data.clientMail
             }).then(function(res) {
+                logger.info('LEMONWAY WALLET manual registration (existing) ',data.clientMail);
                 callback(null, res);
             }, function(err) {
                 callback(err);
             });
         }
-
         callback(err);
 
     });

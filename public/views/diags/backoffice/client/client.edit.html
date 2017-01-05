@@ -57,6 +57,16 @@
                 <input ng-disabled="state.working()" ng-model="item.cellPhone" class="diags-input" placeholder="Mobile">
             </div>
 
+            <div class="row margin-top-one">
+                <label>Wallet ID</label>
+            </div>
+            <div class="row  margin-top-half">
+                <input ng-disabled="true" ng-value="item.wallet" class="diags-input" placeholder="(Sans wallet)">
+            </div>
+            <div class="row margin-top-quarter" ng-show="userIs('admin')&&!item.wallet">
+                <button ng-click="createWallet()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance">Create wallet</button>
+            </div>
+
         </div>
         <div class="col-sm-12 col-md-8">
             <div class="row margin-top-one">

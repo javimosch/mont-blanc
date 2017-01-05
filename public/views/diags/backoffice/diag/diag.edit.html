@@ -3,19 +3,15 @@
     <div class="col-sm-12 padding-none">
         <ol class="breadcrumb">
             <li><a class="link" ng-click="route('dashboard')">Tableau de bord</a></li>
-
-
-            <li ng-if="userIs('admin')"><a class="link" ng-click="route('administrators')">Diags</a></li>
+            <li ng-if="userIs('admin')"><a class="link" ng-click="route('diags')">Diags</a></li>
             <li ng-if="userIs('admin')">Diag Details</li>
             <li ng-if="userIs('diag')">Mon profil</li>
-
-
         </ol>
     </div>
 </div>
 <div class="container" ng-controller="ctrl-diag-edit" ng-init="item.userType='diag'">
     <div class="row diags-row margin-bottom-two">
-        <div class="col-sm-12 col-md-4">
+        <div class="col-sm-6 col-md-4">
             <div class="row margin-top-one">
                 <label>Adresse email</label>
             </div>
@@ -32,11 +28,7 @@
                     <i ng-disabled="state.working()" ng-show="!passVisible" class="fa fa-eye link" ng-click="passVisible=true"></i>
                     <i ng-disabled="state.working()" ng-show="passVisible" class="fa fa-eye-slash link" ng-click="passVisible=false"></i>
                 </out>
-
             </div>
-
-
-
             <div class="row margin-top-one">
                 <label>Prénom</label>
             </div>
@@ -67,11 +59,18 @@
             <div class="row  margin-top-half">
                 <input ng-disabled="state.working()" ng-model="item.cellPhone" class="diags-input" placeholder="Mobile">
             </div>
-
+            <div class="row margin-top-one">
+                <label>Wallet ID</label>
+            </div>
+            <div class="row  margin-top-half">
+                <input ng-disabled="true" ng-value="item.wallet" class="diags-input" placeholder="(Sans wallet)">
+            </div>
+            <div class="row margin-top-quarter" ng-show="userIs('admin')&&!item.wallet">
+                <button ng-click="createWallet()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance">Create wallet</button>
+            </div>
             <div class="row margin-top-one">
                 <label>Départements en charge</label>
             </div>
-
             <div class="row  margin-top-half">
                 <table ng-show="item.departments.length>0" class="table table-striped table-condensed unselectable questions" style="width: 286px;">
                     <tr ng-repeat="(k,o) in item.departments" class="unselectable">
@@ -80,10 +79,8 @@
                             <i ng-click="removeDeparment(o)" class='float-right fa fa-times link' style="color: rgba(0,0,0,.1);
     margin-top: 3px;" aria-hidden='true'></i>
                         </td>
-
                     </tr>
                 </table>
-
             </div>
             <div class="row  margin-top-half" style="width: 285px;">
                 <div class="col-xs-5 padding-none">
@@ -94,7 +91,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-12 col-md-8">
+        <div class="col-sm-6 col-md-8">
             <div class="row margin-top-one">
                 <label>Adresse</label>
             </div>
@@ -125,24 +122,18 @@
             <div class="row  margin-top-half">
                 <input ng-disabled="state.working()" ng-model="item.country" class="diags-input" placeholder="Pays">
             </div>
-
-
             <div class="row margin-top-one" ng-show="userIs('admin')">
                 <label>Reversement</label>
-
             </div>
             <div class="row  margin-top-half" ng-show="userIs('admin')">
                 <input class="diags-input" ng-disabled="state.working()" ng-model="item.commission">
             </div>
-
             <div class="row margin-top-one" ng-show="userIs('admin')">
                 <label>Priorité</label>
-
             </div>
             <div class="row  margin-top-half" ng-show="userIs('admin')">
                 <input class="diags-input" ng-disabled="state.working()" ng-model="item.priority">
             </div>
-
             <div class="row margin-top-one" ng-show="userIs('admin')">
                 <label>Activated</label>
             </div>
@@ -152,18 +143,14 @@
                     <span class="sky-blue"></span>
                 </label>
             </div>
-
             <div class="row margin-top-half" ng-show="item._id">
                 <div ng-include="'views/diags/backoffice/diag/diags-diplomes-partial.html'" includeReplace></div>
             </div>
-
         </div>
     </div>
-
     <div class="row diags-row margin-bottom-two" ng-show="item._id">
         <div class="col-sm-12 padding-none">
             <div ng-if="false" ng-include="'views/diags/backoffice/exception/exception.list.html'" includeReplace></div>
-
             <div class="row" ng-if="false">
                 <div class="col-sm-12 padding-none">
                     <h3 class="v-margin-2 padding-0">Exceptions</h3>
@@ -174,7 +161,6 @@
                     <diag-exception-list></diag-exception-list>
                 </div>
             </div>
-
         </div>
     </div>
     <div class="row diags-row margin-bottom-two">

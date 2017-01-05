@@ -8,17 +8,17 @@
 			registerDiagWallet: function(diag) {
 				return MyPromise(function(resolve, err, emit) {
 
-					if(diag._wallet){
-						return err('Diag already has a wallet');
+					if (diag._wallet) {
+						return emit('validate', 'Diag already has a wallet');
 					}
-					if(!diag.email){
-						return err('Diag email required');
+					if (!diag.email) {
+						return emit('validate', 'Diag email required');
 					}
-					if(!diag.firstName){
-						return err('Diag firstName required');	
+					if (!diag.firstName) {
+						return emit('validate', ' firstName required');
 					}
-					if(!diag.lastName){
-						return err('Diag lastName required');	
+					if (!diag.lastName) {
+						return emit('validate', 'Diag lastName required');
 					}
 
 					var data = {
@@ -29,14 +29,14 @@
 						mobileNumber: diag.cellPhone
 					};
 
-					return lemonwayApi.registerWallet(data).then(function(res){
-						if(res&&res.WALLET){
-							diag.wallet = res.WALLET.ID;
+					return lemonwayApi.registerWallet(data).then(function(res) {
+						if (res.result && res.result.WALLET) {
+							diag.wallet = res.result.WALLET.ID;
 							resolve();
-						}else{
+						} else {
 							err(res);
 						}
-					}).error(err);
+					}).error(err).on('lemonway-error', (msg) => emit('validate', msg));
 				});
 			}
 		};

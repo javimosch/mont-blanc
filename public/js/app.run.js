@@ -120,7 +120,9 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         $U.expose('s', _s);
     };
 
+
     function getMessage(msg) {
+        if(!msg) return '';
         if (typeof msg === 'function') return msg();
         if (typeof msg !== 'string' && msg.length) return getMessage(msg[0]);
         return msg;

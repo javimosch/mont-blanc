@@ -374,13 +374,24 @@ app.controller('diagDashboard', [
 
 app.controller('ctrl-diag-edit', [
 
-    'server', '$scope', '$rootScope', '$routeParams',
-    function(db, s, r, params) {
+    'server', '$scope', '$rootScope', '$routeParams','paymentApi','$log',
+    function(db, s, r, params,paymentApi,$log) {
         //        console.info('app.admin.diag:adminDiagsEdit');
         //
         s.pdf = {
             file: null
         };
+
+
+        s.createWallet=function(){
+            paymentApi.registerDiagWallet(s.item).then(function(){
+                r.dom();
+            }).error(function(res){
+                r.errorMessage(); 
+            }).on('validate',function(msg){
+                r.warningMessage(msg);
+            });
+        }
 
         //
         var isAdmin = r.userIs(['admin']);
