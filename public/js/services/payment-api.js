@@ -30,13 +30,14 @@
 					};
 
 					return lemonwayApi.registerWallet(data).then(function(res) {
-						if (res.result && res.result.WALLET) {
-							diag.wallet = res.result.WALLET.ID;
-							resolve();
-						} else {
-							err(res);
-						}
-					}).error(err).on('lemonway-error', (msg) => emit('validate', msg));
+							if (res.result && res.result.WALLET) {
+								diag.wallet = res.result.WALLET.ID;
+								resolve();
+							} else {
+								err(res);
+							}
+						}).error(err).on('lemonway-error', (msg) => emit('validate', msg))
+						.on('validate', (msg) => emit('validate', msg));
 				});
 			}
 		};

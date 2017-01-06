@@ -24,6 +24,9 @@
 					if (res.err && res.err.Code) {
 						return emit('lemonway-error', getControlledErrorMsg(res));
 					}
+					if (res.err && res.err.msg){
+						return emit('validate',res.err.msg); //+' (BACKEND)'
+					}
 					err(res);
 				});
 			});

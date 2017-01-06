@@ -18,6 +18,9 @@ dbController.register('Lemonway');
 var NOTIFICATION = dbController.create("Notification").NOTIFICATION;
 var Log = dbController.create("Log");
 var File = dbController.create('File')
+//
+const MODULE = 'ROUTING';
+var logger = require('../model/logger')(MODULE);
     //
 exports.configure = function(app) {
     //
@@ -59,7 +62,8 @@ exports.configure = function(app) {
         }
         //
         if (actions[action]) {
-            console.log('routes:ctrl:calling', action);
+            //console.log('routes:ctrl:calling', action);
+            logger.info(MODULE,' to ',action);
             actions[action](data, actions.result(res), req, res);
         }
         else {
