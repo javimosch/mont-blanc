@@ -11,6 +11,5 @@ npm-debug.log
 public/app.bundle.booking.js
 public/app.bundle.js
 backend.log
-backend.log
-backend.log
-backend.log
+.fuse*
+**/.fuse*
