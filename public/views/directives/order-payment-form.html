@@ -1,0 +1,56 @@
+<div class="modal-header">
+    <h3 class="modal-title">Payment</h3>
+</div>
+<div class="modal-body">
+    <div class="row margin-top-one">
+        <div class="col-xs-12 col-sm-12 col-md-6">
+            <div class="row margin-top-half">
+                <label class="unselectable">Card Type</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <div class="col-xs-4">
+                    <label class="sm-float-left">
+                        <input type="checkbox" check-box-group check-box-model='response.cardType' ng-model="response.cardType" name="type" value="0" /><span class=""></span></label>
+                    <span class="padding-left-halve sm-float-left padding-top-01em">CB</span>
+                </div>
+                <div class="col-xs-4">
+                    <label class="sm-float-left">
+                        <input type="checkbox" check-box-group check-box-model='response.cardType' ng-model="response.cardType" name="type" value="1" /><span class=""></span></label>
+                    <span class="padding-left-halve sm-float-left padding-top-01em">VISA</span>
+                </div>
+                <div class="col-xs-4">
+                    <label class="sm-float-left">
+                        <input type="checkbox" check-box-group check-box-model='response.cardType' ng-model="response.cardType" name="type" value="2" /><span class=""></span></label>
+                    <span class="padding-left-halve sm-float-left padding-top-01em">MasterCard</span>
+                </div>
+            </div>
+            <div class="row margin-top-half">
+                <label class="unselectable">Card Number</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input placeholder="Card Number" type="text" ng-model="response.cardNumber">
+            </div>
+            <div class="row margin-top-half">
+                <label class="unselectable">Card Code (Secret)</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input placeholder="Card Code (Ex: 003)" type="text" ng-model='response.cardCode'>
+            </div>
+            <div class="row margin-top-half">
+                <label class="unselectable">Card Expiration date</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input placeholder="Expiration date (03/2019)" type="text" ng-model="response.cardDate">
+            </div>
+            <div class="row margin-top-half">
+                <label class="unselectable">Total amount</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input type="text" ng-value="data.amount">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn diags-btn bg-azure-radiance" type="button" ng-click="yes()">Validate</button>
+</div>

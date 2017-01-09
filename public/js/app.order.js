@@ -10,9 +10,11 @@
 
     app.controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice', 'orderQuestion','orderRdv',
-        function(db, s, r, params, focus, diagSlots, $log, orderPrice, orderQuestion,orderRdv) {
+        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm',
+        function(db, s, r, params, focus, diagSlots, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm) {
             r.setCurrentCtrl(s);
+
+
 
             s.orderRdv = orderRdv;
 
@@ -168,7 +170,7 @@
             s.pdfReset = {};
             s.item = {};
 
-            
+
 
             s.afterRead = [];
 
@@ -243,7 +245,7 @@
                 }
                 s.activateSlotSelectionManually = function(val) {
                     r.dom(function() {
-                        s.__isSlotSelectionActivatedManually = val!=undefined && val || true;
+                        s.__isSlotSelectionActivatedManually = val != undefined && val || true;
                     });
                 };
                 s.isRDVSelectButtonActivated = function() {
@@ -267,7 +269,7 @@
                         if (hasSlotSelectionActivatedManualyByAdmin()) {
                             settings.maxSlots = 40;
                             //settings.allowFixedAllocation = false;
-                        }else{
+                        } else {
                             settings.maxSlots = 40;
                         }
 
@@ -579,8 +581,8 @@
                     }
                 };
 
-                s.$watch('item.diags', function(newV,oldV) {
-                    if(!_.isEqual(newV,oldV) && !s.item._id){
+                s.$watch('item.diags', function(newV, oldV) {
+                    if (!_.isEqual(newV, oldV) && !s.item._id) {
                         s.applyTotalPrice();
                     }
                 }, true);
@@ -815,6 +817,48 @@
                 };
 
                 s.pay = () => {
+                    var order = s.item;
+
+                    if (!order._client.wallet) {
+                        return r.warningMessage('Configure Client Wallet ID first');
+                    }
+
+                    orderPaymentForm.open({
+                        amount: order.price.toFixed(2).toString()
+                    }, function(formResponse) {
+                        var payload = {
+                            wallet: order._client.wallet,
+                            cardType: formResponse.cardType,
+                            cardNumber: formResponse.cardNumber,
+                            cardCode: formResponse.cardCode,
+                            cardDate: formResponse.cardDate,
+                            amountTot: order.price,
+                            amountCom: order.revenueHT,
+                            comment: 'House Diagnostic by autoentrepreneur ' + order._diag.firstName + ' ' + order._diag.lastName + ' SIRET ' + order._diag.siret + ' through www.diagnostical.fr, Order ' + order._id.toUpperCase()
+                                //comment: "House Inspection by www.houseinspectors.fr, ORDER 24577 for client prop@fake.com (TEST)",
+                        };
+                        paymentApi.payOrder(payload).then(function(isPaid, rawResponse) {
+                            if (!isPaid) {
+                                $log.error(rawResponse.result.E || rawResponse.result || rawResponse);
+                                return r.warningMessage('Paid was not possible. Try later.'); //this should not happen
+                            }
+                            s.item.status = (s.item === 'delivered') ? 'completed' : 'prepaid';
+                            s.successMsg('Commande payée');
+                            db.ctrl('Order', 'update', {
+                                _id: s.item._id,
+                                status: s.item.status
+                            }).then(function(res) {
+                                return r.dom();
+                            });
+                        }).error(function(res) {
+                            return r.errorMessage();
+                        }).on('validate', function(msg) {
+                            return r.warningMessage(msg);
+                        });
+                    });
+
+                    return;
+
                     var order = s.item;
                     $D.openStripeModalPayOrder(order, (token) => {
                         order.stripeToken = token.id;
@@ -1080,8 +1124,8 @@
                 db.ctrl('Order', 'get', {
                     _id: id || params.id || s.item._id,
                     __populate: {
-                        '_client': 'email clientType address discount firstName lastName',
-                        '_diag': 'email address commission firstName lastName'
+                        '_client': 'email clientType address discount firstName lastName siret wallet',
+                        '_diag': 'email address commission firstName lastName siret wallet'
                     }
                 }).then(function(data) {
 
@@ -1095,7 +1139,7 @@
                         s.prevItem = _.clone(s.item);
                         s.item = data.result;
 
-                        if (!s.prevItem || Object.keys(s.prevItem).length==0) s.prevItem = s.item;
+                        if (!s.prevItem || Object.keys(s.prevItem).length == 0) s.prevItem = s.item;
 
                         s.original = _.clone(s.item);
 

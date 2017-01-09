@@ -1102,7 +1102,7 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
         },
         template: '<output></output>',
         link: function(s, elem, attrs) {
-            if (!attrs.templateUrl) throw Error('modalCustom attr templateUrl required.');
+            //if (!attrs.templateUrl) throw Error('modalCustom attr templateUrl required.');
             s.open = function(opt, confirmCallback) {
                 opt = opt || {};
                 var message = '';
@@ -1117,6 +1117,7 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
                     templateUrl: opt.templateUrl || attrs.templateUrl,
                     controller: function($scope, $uibModalInstance) {
                         $scope.data = opt.data;
+                        $scope.response = {}; //response payload
                         $scope.message = message;
 
                         $scope.messageEl = opt.messageEl || null;
@@ -1125,7 +1126,7 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
                         $scope.yes = function() {
                             $uibModalInstance.close();
                             if (confirmCallback) {
-                                confirmCallback();
+                                confirmCallback($scope.response);
                             }
                         };
                         $scope.cancel = function() {

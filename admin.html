@@ -44,6 +44,9 @@
 </head>
 
 <body class="ma ma-black diags-style modal-scrollfix">
+
+    <modal-custom open="openModal"></modal-custom>
+
     <!-- GLOBAL LAYOUT -->
     <div id="wrapper">
         <div class="container-fluid">
@@ -240,6 +243,7 @@
     <script src="js/services/order-rdv.js"></script>
     <script src="js/services/lemonway-api.js"></script>
     <script src="js/services/payment-api.js"></script>
+    <script src="js/services/order-payment-form.js"></script>
     <script src="js/app.diags-booking-slots.js"></script>
     <script src="js/app.directives.js"></script>
     <script src="js/directives/remove-hidden.js"></script>
@@ -270,7 +274,7 @@
     <!-- BACKOFFICE THIRD PARTY (We load in the end because is not important to rendering.) -->
     <script src="js/vendor/vendor.geocomplete.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places&amp;key=AIzaSyBtbB33HScRiC7Khq5TH7Y1tNllZB9Emx8"></script>
-    <script src="https://checkout.stripe.com/checkout.js"></script>
+    
     <!--
     <script type="text/javascript" src="js/vendor/vendor.canvas-to-blob.min.js"></script>
     <script type="text/javascript" src="js/vendor/vendor.jspdf.js"></script>
