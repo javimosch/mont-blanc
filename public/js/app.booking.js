@@ -1371,7 +1371,7 @@ app.controller('ctrl.booking', ['server',
         s.drawRange = function(rng) {
             var rta = moment(rng.start).format("HH[h]mm");
             //rta += ' - ' + s.totalPrice(true) + ' €';
-            rta += ' - ' + rng.price + ' €';
+            rta += ' - ' + Math.floor(rng.price) + ' €';
             // + ' - ' + moment(rng.end).format("HH[h]mm");
             return rta;
         };
