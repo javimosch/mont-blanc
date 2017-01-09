@@ -34,6 +34,8 @@ var PROD = process.env.PROD && process.env.PROD.toString() == '1' || false;
 var port = process.env.PORT || 3000;
 
 if (!PROD) {
+	
+	/*
 	//livereload
 	var ref = new Firebase("https://madev.firebaseio.com/diagsfront");
 	var counter = 0;
@@ -43,6 +45,7 @@ if (!PROD) {
 			reload: counter
 		});
 	});
+	*/
 }
 
 app.use('/', express.static('./public'));

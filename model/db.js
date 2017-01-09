@@ -20,6 +20,7 @@ if (process.env.dbURI) {
 
 // Create the database connection 
 //console.log('using',dbURI);
+mongoose.Promise = global.Promise;
 mongoose.connect(dbURI);
 
 // CONNECTION EVENTS
