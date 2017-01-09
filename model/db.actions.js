@@ -425,6 +425,9 @@ exports.create = function(modelName, m) {
                 }
             }
             else {
+                if(x=='_d'){
+                    data[x] = mongoose.Types.ObjectId(data[x]);
+                }
                 rules[x] = {
                     $eq: data[x]
                 };
