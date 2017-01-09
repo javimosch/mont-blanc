@@ -60,7 +60,7 @@
     "mime-types": "^2.1.11",
     "moment": "^2.11.2",
     "moment-timezone": "^0.5.4",
-    "mongoose": "^4.4.2",
+    "mongoose": "^4.4.3",
     "mongoose-paginate": "^5.0.0",
     "path": "^0.12.7",
     "password-maker": "^1.1.2",
