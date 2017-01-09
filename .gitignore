@@ -10,3 +10,5 @@ app.bundle.booking.js
 npm-debug.log
 public/app.bundle.booking.js
 public/app.bundle.js
+
+backend.log
