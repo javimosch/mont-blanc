@@ -42,8 +42,10 @@
             </div>
         </div>
         <div class="row diag-row margin-top-one padding-bottom-two">
-            <div class="col-md-12 ">
-                <p class="stripe-message"><span class="fnt-30 text-top">*</span> Paiement simplifié et sécurisé (PCI 1, le niveau le plus élevé) avec Stripe</p>
+           <div class="col-md-12 ">
+                <p class="stripe-message"><span class="fnt-30 text-top">*</span>  <span class="">
+                                <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
+                            </span></p>
             </div>
         </div>
         <div class="row diags-bg-block-40 hidden-xs"></div>

@@ -3,15 +3,21 @@
         <div class="row diags-bg-block-40 hidden-xs"></div>
         <div class="row diag-row padding-top-three">
             <div class="col-sm-12 ">
-                <h4 bind-html-compile="html('PAGE_FAQ_BLOCK_TITLE')"></h4>
+                <h4
+                    bind-html-compile="html('PAGE_CGU_LEMONWAY_BLOCK_TITLE','CGU Lemonway')"
+                    >
+                    
+                </h4>
             </div>
         </div>
 
 
         <div class="row diag-row margin-top-one">
             <div class="col-xs-12 col-sm-12 col-md-12 ">
-                <p bind-html-compile="html('PAGE_FAQ_BLOCK_CONTENT')">
-                   
+                <p
+                bind-html-compile="html('PAGE_CGU_LEMONWAY_CONTENT')"
+                >
+                    
                 </p>
             </div>
 
@@ -21,7 +27,7 @@
 
         <div class="row diag-row margin-top-three padding-bottom-two">
             <div class="col-md-12 ">
-                <div ng-include="'views/booking/partials/booking-diags-icons.html'" includeReplace></div>
+                <div ng-include="'views/diags/booking/partials/booking-diags-icons.html'" includeReplace></div>
             </div>
         </div>
         <div class="row diag-row margin-top-one padding-bottom-two">

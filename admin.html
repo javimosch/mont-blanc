@@ -13,7 +13,7 @@
     <meta property="og:description" content="Les diagnostics immobiliers, en haute disponibilité, au bon prix, réalisés par des professionnels certifiés dans votre département">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://www.diagnostical.fr/img/home_bg.jpg">
-    
+
     <link rel="shortcut icon" href="img/favicon.ico" />
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="css/fullpage.css">
@@ -81,112 +81,7 @@
     <modal-confirm open="openConfirm"></modal-confirm>
 
 
-    <!--
-    <div class="hidden" remove-hidden>
-        <div ng-class="{hidden:!__debugDiags,bounceInLeft:true,animated:true,'debug-wrapper':true}">
-            <ul ng-cloak>
-                <li ng-cloak>order-info-house: <span ng-cloak ng-bind="_order.info.house"></span></li>
-                <li ng-cloak ng-show="__debugPriceModifiers">Price Modifiers (+%) :</li>
-                <li ng-cloak ng-repeat="(k,i) in __debugPriceModifiers">
-                    <span ng-cloak ng-bind="k"></span>:<span ng-cloak ng-bind="i"></span>
-                </li>
-                <li>
-                    <label ng-cloak>Price Rules</label>
-                    <table class="table minimal" ng-cloak>
-                        <thead ng-cloak>
-                            <tr>
-                                <th></th>
-                                <th>+</th>
-                                <th>-</th>
-                            </tr>
-                        </thead>
-                        <tbody ng-cloak>
-                            <tr ng-cloak>
-                                <td ng-bind="'Base price'"></td>
-                                <td ng-bind="__priceQuote.basePrice"></td>
-                                <td></td>
-                            </tr>
-                            <tr ng-cloak ng-repeat="(name,price) in __priceQuote.diags">
-                                <td ng-bind="name"></td>
-                                <td ng-bind="price"></td>
-                                <td></td>
-                            </tr>
-                            <tr ng-cloak>
-                                <td ng-bind="'Extra Building Price '+__priceQuote.extraBuildingSizePorc+'%'"></td>
-                                <td ng-bind="__priceQuote.extraBuildingSizePrice"></td>
-                                <td></td>
-                            </tr>
-                            <tr ng-cloak>
-                                <td ng-bind="'Extra Date Price '+__priceQuote.extraDatePriceType+' '+__priceQuote.extraDatePricePorc+'%'"></td>
-                                <td ng-bind="__priceQuote.extraDatePrice"></td>
-                                <td></td>
-                            </tr>
-                            <tr ng-cloak>
-                                <td ng-bind="'Discount Client '+__priceQuote.discountClientPorc+'%'"></td>
-                                <td></td>
-                                <td ng-bind="__priceQuote.discountClientPrice"></td>
-                            </tr>
-                        </tbody>
-                        <tfoot ng-cloak>
-                            <tr ng-cloak>
-                                <td ng-bind="'Diags price '"></td>
-                                <td ng-bind="__priceQuote.selectedDiagsTotalPrice"></td>
-                                <td></td>
-                            </tr>
-                            <tr ng-cloak>
-                                <td ng-bind="'Subtotal'"></td>
-                                <td ng-bind="__priceQuote.subTotal"></td>
-                                <td></td>
-                            </tr>
-                            <tr ng-cloak>
-                                <td ng-bind="'Total raw'"></td>
-                                <td ng-bind="__priceQuote.total"></td>
-                                <td></td>
-                            </tr>
-                            <tr ng-cloak <td ng-bind="'Difference (tenth  10)'">
-                                </td>
-                                <td></td>
-                                <td ng-bind="__priceQuote.totalRoundedValue"></td>
-                            </tr>
-                            <tr ng-cloak>
-                                <td ng-bind="'TotalHT'"></td>
-                                <td ng-bind="__priceQuote.totalRoundedHT"></td>
-                                <td></td>
-                            </tr>
-                            <tr ng-cloak>
-                                <td ng-bind="'VAT '+__priceQuote.vatRate+'%'"></td>
-                                <td ng-bind="__priceQuote.vatPrice"></td>
-                                <td></td>
-                            </tr>
-                            <tr ng-cloak>
-                                <td ng-bind="'TotalTTC (For Client)'"></td>
-                                <td ng-bind="__priceQuote.totalRoundedTTC"></td>
-                                <td></td>
-                            </tr>
-                            <tr ng-cloak>
-                                <td ng-bind="'RemunerationHT '+__priceQuote.diagCommissionRate+'%'"></td>
-                                <td ng-bind="__priceQuote.diagRemunerationHT"></td>
-                                <td></td>
-                            </tr>
-                            <tr ng-cloak>
-                                <td ng-bind="'RevenueHT '+__priceQuote.revenueRate+'%'"></td>
-                                <td ng-bind="__priceQuote.revenueHT"></td>
-                                <td></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </li>
-                <li ng-show="__textsNotFound">Texts codes requested:</li>
-                <li ng-cloak ng-repeat="item in __textsNotFound" ng-bind="item">
-                </li>
-            </ul>
-        </div>
-    </div>
-    -->
-
     <!--GLOBAL DIRECTIVES -->
-    <!-- <my-alerts add="message" directive="notify"></my-alerts> -->
-    <!--<my-alerts add="notify" directive="notify" stacked="true" settings="{clickDismissable:false}"></my-alerts>-->
     <modal-custom open="okModal" template-url="views/common/partials/popup.message.ok.html"></modal-custom>
     <span data-spinner show="state.working"></span>
     <span data-debug show="isDevEnv"></span>
@@ -215,7 +110,7 @@
     <script src="js/vendor/vendor.angular.bcalendar.js"></script>
     <script src="js/vendor/vendor.angular.bcalendar.tpls.js"></script>
     <script src="js/vendor/vendor.lodash.js"></script>
-    
+
     <script type="text/javascript" src="js/vendor/vendor.pikaday.js"></script>
     <script src="js/vendor/vendor.awesomplete.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.5.7/angular-sanitize.min.js"></script>
@@ -225,7 +120,7 @@
     <!--COMMON-->
     <script type="text/javascript" src="js/common/fs.env.js"></script>
     <script type="text/javascript" src="js/common/fs.utils.js"></script>
-    
+
     <!--COMMON-DIAGS-->
     <script src="js/app.diags-utils.js"></script>
 
@@ -250,7 +145,7 @@
     <script src="js/app.diags-booking-slots.js"></script>
     <script src="js/app.directives.js"></script>
     <script src="js/directives/remove-hidden.js"></script>
-    
+
     <!-- BACKOFFICE MODULES -->
     <script type="text/javascript" src="js/diags/ctrls/diags_ctrl_settings.js"></script>
     <script type="text/javascript" src="js/diags/ctrls/diags_ctrl_contact_form.js"></script>
@@ -277,13 +172,8 @@
     <!-- BACKOFFICE THIRD PARTY (We load in the end because is not important to rendering.) -->
     <script src="js/vendor/vendor.geocomplete.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places&amp;key=AIzaSyBtbB33HScRiC7Khq5TH7Y1tNllZB9Emx8"></script>
-    
-    <!--
-    <script type="text/javascript" src="js/vendor/vendor.canvas-to-blob.min.js"></script>
-    <script type="text/javascript" src="js/vendor/vendor.jspdf.js"></script>
-    <script type="text/javascript" src="js/vendor/vendor.html2canvas.js"></script>
-    <script type="text/javascript" src="js/vendor/vendor.filesaver.js"></script>
-    -->
+
+
     <script type="text/javascript" src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
     <div ng-include="'views/common/live-reload.html'"></div>
 </body>
