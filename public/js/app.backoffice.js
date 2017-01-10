@@ -4,7 +4,9 @@
 (function() {
     var app = angular.module('app', [
         'app.run',
-
+        
+        'credit-cards',
+        
         'ngRoute',
         'ngSanitize',
 

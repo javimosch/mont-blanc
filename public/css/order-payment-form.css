@@ -1,0 +1,28 @@
+.order-payment-form-modal {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.payment-form__error-text {
+    color: tomato;
+}
+
+.payment-form__amount-label {
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.payment-form__amount {
+    color: #00A9FF!important;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 2.5em;
+}
+
+.payment-form__lw-icon {
+    width: 150px;
+    margin: 0 auto;
+    display: block;
+}
