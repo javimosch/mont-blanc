@@ -1,3 +1,5 @@
+ 'use strict';
+
 const urlDirectkit = "https://sandbox-api.lemonway.fr/mb/demo/dev/directkitjson2/Service.asmx/"
 const request = require('request');
 const Promise = require('promise');
