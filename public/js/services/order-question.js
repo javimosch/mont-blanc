@@ -52,13 +52,6 @@
             s.$watch('item.info.electricityInstallation', updateChecks);
 
             function updateChecks() {
-                //$log.debug('orderQuestion updating diags');
-                /*alredt done in questions validations
-                                setTimeout(function() {
-                                    if (s.item.country !== 'France') {
-                                        s.warningMsg(MESSAGES.FRENCH_ADDRESS_REQUIRED);
-                                    }
-                                }, 2000);*/
 
                 if(!s.item || !s.item.info) return;
 
@@ -72,10 +65,10 @@
                     toggleMandatory('crep', false);
                 }
 
-                if (departmentHasTermites()) {
+                if (departmentHasTermites() && s.item.info.sell) {
                     //toggle('termites', true);
-                    //s.item.diags.termites = true;
-                    //toggleMandatory('termites', true);
+                    s.item.diags.termites = true;
+                    toggleMandatory('termites', true);
                 } else {
                     toggle('termites', false);
                     s.item.diags.termites = false;

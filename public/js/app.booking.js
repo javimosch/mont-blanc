@@ -1197,10 +1197,10 @@ app.controller('ctrl.booking', ['server',
                     toggleMandatory('crep', false);
                 }
 
-                if (s.departmentHasTermites()) {
+                if (s.departmentHasTermites() && s.item.sell) {
                     //toggle('termites', true);
-                    //s.item.diags.termites = true;
-                    //toggleMandatory('termites', true);
+                    s.item.diags.termites = true;
+                    toggleMandatory('termites', true);
                 } else {
                     toggle('termites', false);
                     s.item.diags.termites = false;
