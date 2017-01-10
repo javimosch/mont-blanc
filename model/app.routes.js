@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 var req = (n) => require(process.cwd() + '/model/' + n);
+=======
+var req         = (n) => require(process.cwd()+'/model/'+n);
+>>>>>>> master
 var mime = require('mime-types')
 var mongoose = req('db').mongoose;
 var _ = require('lodash');
@@ -14,7 +18,10 @@ dbController.register('Stats');
 dbController.register('File');
 dbController.register('Email');
 dbController.register('Pdf');
+<<<<<<< HEAD
 dbController.register('Lemonway');
+=======
+>>>>>>> master
 var NOTIFICATION = dbController.create("Notification").NOTIFICATION;
 var Log = dbController.create("Log");
 var File = dbController.create('File')

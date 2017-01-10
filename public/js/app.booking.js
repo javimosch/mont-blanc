@@ -584,7 +584,7 @@ app.controller('ctrl.booking', ['server',
         //DIAG DATE SELECTION -> Get the slot that the user had selected to the right place.
         s.$watch('item.range', function(id) {
             if (!id) return;
-            $log.info('ITEM.RANGE',id);
+
             var data = JSON.parse(window.atob(id));
             s.item._diag = data._diag;
             s.item.start = data.start;
@@ -1372,7 +1372,7 @@ app.controller('ctrl.booking', ['server',
         s.drawRange = function(rng) {
             var rta = moment(rng.start).format("HH[h]mm");
             //rta += ' - ' + s.totalPrice(true) + ' €';
-            rta += ' - ' + rng.price + ' €';
+            rta += ' - ' + Math.floor(rng.price) + ' €';
             // + ' - ' + moment(rng.end).format("HH[h]mm");
             return rta;
         };

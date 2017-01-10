@@ -425,6 +425,13 @@ exports.create = function(modelName, m) {
                 }
             }
             else {
+                if(x.toString().toLowerCase()=='_id'){
+                    
+                    var isValid = mongoose.Types.ObjectId.isValid(data[x]);
+                    console.log('_ID ',data[x],'isValid:',isValid);
+                    
+                    data[x] = mongoose.Types.ObjectId(data[x]);
+                }
                 rules[x] = {
                     $eq: data[x]
                 };
