@@ -1,4 +1,4 @@
-var req         = (n) => require(process.cwd()+'/model/'+n);
+var req = (n) => require(process.cwd() + '/model/' + n);
 var mime = require('mime-types')
 var mongoose = req('db').mongoose;
 var _ = require('lodash');
@@ -14,10 +14,14 @@ dbController.register('Stats');
 dbController.register('File');
 dbController.register('Email');
 dbController.register('Pdf');
+dbController.register('Lemonway');
 var NOTIFICATION = dbController.create("Notification").NOTIFICATION;
 var Log = dbController.create("Log");
 var File = dbController.create('File')
     //
+const MODULE = 'ROUTING';
+var logger = require('../model/logger')(MODULE);
+//
 exports.configure = function(app) {
     //
     app.get('/ctrl/:controller/:action/:data', function(req, res) {
@@ -28,11 +32,10 @@ exports.configure = function(app) {
         if (!actions[action]) {
             var msg = '<p>Invalid controller ' + controller + " action " + action + '</p>';
             console.log(msg);
-            console.log('Available for',controller,JSON.stringify(Object.keys(actions)));
+            console.log('Available for', controller, JSON.stringify(Object.keys(actions)));
             res.set('Content-Type', 'text/html');
             res.send(new Buffer(msg));
-        }
-        else {
+        } else {
             return actions[action](data, actions.result(res), req, res);
         }
     });
@@ -58,10 +61,13 @@ exports.configure = function(app) {
         }
         //
         if (actions[action]) {
-            console.log('routes:ctrl:calling', action);
+            if (action == 'get' || action == 'getAll') {
+                console.log(MODULE, ' to ', action);
+            } else {
+                logger.info(MODULE, ' to ', action);
+            }
             actions[action](data, actions.result(res), req, res);
-        }
-        else {
+        } else {
             console.log('routes:ctrl:model-calling', action);
             actions.model[action](actions.toRules(data), actions.result(res), req, res);
         }
@@ -77,11 +83,11 @@ exports.configure = function(app) {
         File.get({
             _id: req.params._id
         }, (err, data) => {
-           if(err){
-               return res.json(err);
-           }
-           // res.setHeader('Content-disposition', 'attachment; filename=' + data.filename);
-           // res.setHeader('Content-Type', 'application/pdf');
+            if (err) {
+                return res.json(err);
+            }
+            // res.setHeader('Content-disposition', 'attachment; filename=' + data.filename);
+            // res.setHeader('Content-Type', 'application/pdf');
 
             res.setHeader("content-type", "application/pdf");
             res.setHeader('Content-disposition', ' filename=' + (data.filename || 'file') + '.pdf');

@@ -1,0 +1,44 @@
+<p>&nbsp;</p>
+<p style="text-align: center;"><strong>INVOICE</strong></p>
+<p style="text-align: left;"><strong><img src='http://localhost:8080/img/logo.jpg'></strong></p>
+<p style="text-align: left;"><strong>15 rue de Bla Bla, 76011, Paris.</strong></p>
+<p style="text-align: left;"><strong>+33 455728123</strong></p>
+<table style="height: 50px; width: 640px;">
+<tbody>
+<tr>
+<td style="width: 356px;">&nbsp;</td>
+<td style="width: 270px;">Customer</td>
+</tr>
+<tr>
+<td style="width: 356px;">&nbsp;</td>
+<td style="width: 270px;">
+<p>Alan Lopez</p>
+<p>221 Rue Saint Honoré, 75001 Paris, Francia</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align: left;">&nbsp;</p>
+<hr />
+<p style="text-align: left;">&nbsp;Date Invalid date</p>
+<table style="height: 113px; width: 649px;">
+<tbody>
+<tr>
+<td style="width: 625px;">ORDER</td>
+<td style="width: 169px;">PRICE</td>
+</tr>
+<tr>
+<td style="width: 625px;">Pack Location: Maison à Paris, 30 - 50m².</td>
+<td style="width: 169px;">170</td>
+</tr>
+<tr>
+<td style="width: 625px;">VAT 20%</td>
+<td style="width: 169px;">0</td>
+</tr>
+<tr>
+<td style="width: 625px;">TOTAL TTC</td>
+<td style="width: 169px;">210</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>

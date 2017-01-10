@@ -120,7 +120,9 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         $U.expose('s', _s);
     };
 
+
     function getMessage(msg) {
+        if(!msg) return '';
         if (typeof msg === 'function') return msg();
         if (typeof msg !== 'string' && msg.length) return getMessage(msg[0]);
         return msg;
@@ -128,6 +130,9 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
     r.errorMessage = (msg, duration) => {
         msg = getMessage(msg);
+        if(!msg){
+            msg = 'Erreur de serveur, plus d&#x27;informations dans la console de développement.';
+        }
         r.notify(msg, {
             type: 'danger',
             duration: duration || 3000

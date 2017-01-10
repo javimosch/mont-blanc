@@ -104,8 +104,8 @@ app.config(['$routeProvider',
 
 
 app.controller('ctrl.booking', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots','orderPrice',
-    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice) {
+    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots','orderPrice','$log',
+    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice,$log) {
 
         r.URL = Object.assign(r.URL, URL);
 
@@ -584,6 +584,7 @@ app.controller('ctrl.booking', ['server',
         //DIAG DATE SELECTION -> Get the slot that the user had selected to the right place.
         s.$watch('item.range', function(id) {
             if (!id) return;
+
             var data = JSON.parse(window.atob(id));
             s.item._diag = data._diag;
             s.item.start = data.start;

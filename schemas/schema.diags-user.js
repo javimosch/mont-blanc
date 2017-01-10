@@ -75,6 +75,12 @@ module.exports = {
             default: 0
         },
 
+        //wallet ID
+        wallet:{
+            type:String,
+            default:null
+        },
+
         createdAt: {
             type: Date,
             default: Date.now

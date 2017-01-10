@@ -68,10 +68,22 @@ app.controller('adminUsers', [
 
 app.controller('adminUsersEdit', [
 
-    'server', '$scope', '$rootScope', '$routeParams', 'tpl',
-    function(db, s, r, params, tpl) {
+    'server', '$scope', '$rootScope', '$routeParams', 'tpl','paymentApi',
+    function(db, s, r, params, tpl,paymentApi) {
         //        console.info('app.admin.user:adminUsersEdit');
         //
+
+        s.createWallet = function() {
+            paymentApi.registerDiagWallet(s.item).then(function() {
+                r.dom();
+            }).error(function(res) {
+                r.errorMessage();
+            }).on('validate', function(msg) {
+                r.warningMessage(msg);
+            });
+        }
+
+
         r.toggleNavbar(true);
         r.secureSection(s);
         r.dom();
@@ -108,8 +120,7 @@ app.controller('adminUsersEdit', [
                         }
                     }
                     return;
-                }
-                else {
+                } else {
                     s.item.userType = choice.label.toString().toLowerCase();
                     s.types.selected = choice.label;
                 }
@@ -119,8 +130,7 @@ app.controller('adminUsersEdit', [
         if (params && params.id && params.id.toString() !== '-1') {
             //            console.info('adminUsersEdit:params', params);
             r.dom(read, 1000);
-        }
-        else {
+        } else {
 
             if (r.userIs(['diag', 'client'])) {
                 //can't create an user
@@ -132,14 +142,12 @@ app.controller('adminUsersEdit', [
         s.back = () => {
             if (r.userIs(['diag', 'client'])) {
                 r.route('dashboard');
-            }
-            else {
+            } else {
                 if (r.params && r.params.prevRoute) {
                     var _r = r.params.prevRoute;
                     delete r.params.prevRoute;
                     return r.route(_r);
-                }
-                else {
+                } else {
                     //r.route('users');
                     console.warn('r.params.prevRoute required');
                     r.route('dashboard');
@@ -155,7 +163,7 @@ app.controller('adminUsersEdit', [
             });
         };
 
-        
+
 
         s.cancel = function() {
             s.back();
@@ -186,8 +194,7 @@ app.controller('adminUsersEdit', [
             }, s.save);
         };
 
-        
-        
+
 
         s.save = function() {
             db.ctrl('User', 'getAll', {
@@ -201,12 +208,10 @@ app.controller('adminUsersEdit', [
                     var _item = data.result[0];
                     if (s.item._id && s.item._id == _item._id) {
                         _save(); //same user
-                    }
-                    else {
+                    } else {
                         s.message('Email address in use.');
                     }
-                }
-                else {
+                } else {
                     _save(); //do not exist.
                 }
             });
@@ -224,17 +229,9 @@ app.controller('adminUsersEdit', [
 
 
 
-                        
-
-
-
-
-
-
                         s.message('saved', 'success');
                         s.back();
-                    }
-                    else {
+                    } else {
                         s.message('error, try later', 'danger');
                     }
                 }).error(function(_err) {
@@ -296,8 +293,7 @@ app.controller('adminUsersEdit', [
                 s.item = res.result;
                 if (!res.ok) {
                     s.message('not found, maybe it was deleted!', 'warning', 5000);
-                }
-                else {
+                } else {
                     s.types.click(s.item.userType);
                     //s.message('Loaded', 'success', 2000);
                 }
@@ -330,8 +326,7 @@ app.controller('adminUsersEdit', [
                         emit('yes', null, {
                             relatedOrders: relatedOrders
                         });
-                    }
-                    else {
+                    } else {
                         emit('no');
                     }
                 });

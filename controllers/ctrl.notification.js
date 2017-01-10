@@ -87,6 +87,15 @@ function trigger(name, data, cb) {
 function save(data, cb) {
     var _user = data._user;
     var _userID = _user && _user._id || _user;
+
+    if(typeof _user === 'object' && !_user._id){
+        return console.log(MODULE,"save",'data._user needs to have an _id property.',{
+            type: data.type,
+            subject:data.subject,
+            to:data.to
+        });
+    }
+
     if (!_userID) {
         LogSave('notification-save user-not-found', 'error', data);
         if (cb) cb("notification-save user-not-found");

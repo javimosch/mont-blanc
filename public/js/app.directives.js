@@ -620,7 +620,7 @@ app.directive('address', function($rootScope, $timeout) {
             $timeout(function() {
                 try {
                     elem.geocomplete({
-                        country:"FR"
+                        country: "FR"
                     }).bind("geocode:result", onResult);
                 }
                 catch (e) {
@@ -728,7 +728,7 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
         template: '<div><i ng-show="show" class="link fa fa-bug fa-lg fixed left-1 bottom-1 always-on-top"><input disabled type="checkbox" ng-click="stop()" ng-model="check"></i><span data-output></span></div>',
         link: function(s, elem, attrs) {
             var r = $rootScope;
-            
+
             /*
             s.check = true;
             s.opt = {
@@ -1102,7 +1102,7 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
         },
         template: '<output></output>',
         link: function(s, elem, attrs) {
-            if (!attrs.templateUrl) throw Error('modalCustom attr templateUrl required.');
+            //if (!attrs.templateUrl) throw Error('modalCustom attr templateUrl required.');
             s.open = function(opt, confirmCallback) {
                 opt = opt || {};
                 var message = '';
@@ -1112,11 +1112,17 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
                 else {
                     message = opt.message || '';
                 }
-                var modalInstance = $uibModal.open({
+                var uibModalOptions = {
                     animation: true,
                     templateUrl: opt.templateUrl || attrs.templateUrl,
                     controller: function($scope, $uibModalInstance) {
                         $scope.data = opt.data;
+                        if(opt.helpers){
+                            for(var x in opt.helpers){
+                                $scope[x] = opt.helpers[x];
+                            }
+                        }
+                        $scope.response = {}; //response payload
                         $scope.message = message;
 
                         $scope.messageEl = opt.messageEl || null;
@@ -1125,7 +1131,7 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
                         $scope.yes = function() {
                             $uibModalInstance.close();
                             if (confirmCallback) {
-                                confirmCallback();
+                                confirmCallback($scope.response);
                             }
                         };
                         $scope.cancel = function() {
@@ -1133,7 +1139,11 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
                         };
                         $U.expose('modalCustom', $scope);
                     },
-                });
+                };
+                if (opt.backdrop) uibModalOptions.backdrop = opt.backdrop;
+                if (opt.windowTopClass) uibModalOptions.windowTopClass = opt.windowTopClass;
+                
+                var modalInstance = $uibModal.open(uibModalOptions);
             };
         }
     };

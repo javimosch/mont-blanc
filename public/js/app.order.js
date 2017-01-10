@@ -10,9 +10,11 @@
 
     app.controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice', 'orderQuestion','orderRdv',
-        function(db, s, r, params, focus, diagSlots, $log, orderPrice, orderQuestion,orderRdv) {
+        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm',
+        function(db, s, r, params, focus, diagSlots, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm) {
             r.setCurrentCtrl(s);
+
+
 
             s.orderRdv = orderRdv;
 
@@ -43,7 +45,8 @@
                     s.pdf = {};
                     r.dom();
                     return r.infoMessage("Ajouter après " + moment(s.item.end).format('dddd DD [de] MMMM YY'), 5000);
-                } else {
+                }
+                else {
                     r.dom(function() {
                         s.pdfSave(diagCode);
                     }, 1000);
@@ -54,7 +57,8 @@
                     if (s.item.diags[x] == true) {
                         if (s.item.files && s.item.files[x] && s.item.files[x]._id) {
 
-                        } else {
+                        }
+                        else {
                             return false;
                         }
                     }
@@ -117,7 +121,8 @@
                                 read(s.item._id);
                                 r.infoMessage('File upload success.', 5000);
                             });
-                        } else {
+                        }
+                        else {
                             r.warningMessage('Upload fail, try later.', 9999);
                         }
                     });
@@ -143,12 +148,14 @@
                     file = s.item.files[code];
                     if (!file) {
                         cbHell.next();
-                    } else {
+                    }
+                    else {
                         if (!file._id) {
                             console.warn('checking file, _id expected. Code its ', code);
                             delete s.item.files[code];
                             cbHell.next();
-                        } else {
+                        }
+                        else {
                             db.ctrl('File', 'find', {
                                 _id: file._id
                             }).then(res => {
@@ -168,7 +175,7 @@
             s.pdfReset = {};
             s.item = {};
 
-            
+
 
             s.afterRead = [];
 
@@ -186,14 +193,16 @@
                     //no login needed
                     if (r.params && r.params.prevRoute) {
 
-                    } else {
+                    }
+                    else {
                         r.toggleNavbar(true);
                         r.__hideNavMenu = true;
                         $U.once('route-exit:' + $U.url.hashName(), function(url) {
                             r.__hideNavMenu = false;
                         });
                     }
-                } else {
+                }
+                else {
                     r.secureSection(s);
                 }
 
@@ -210,7 +219,8 @@
                 //
                 if (params && params.id && params.id.toString() !== '-1') {
                     r.dom(read, 0);
-                } else {
+                }
+                else {
                     reset();
                 }
             }
@@ -243,7 +253,7 @@
                 }
                 s.activateSlotSelectionManually = function(val) {
                     r.dom(function() {
-                        s.__isSlotSelectionActivatedManually = val!=undefined && val || true;
+                        s.__isSlotSelectionActivatedManually = val != undefined && val || true;
                     });
                 };
                 s.isRDVSelectButtonActivated = function() {
@@ -267,7 +277,8 @@
                         if (hasSlotSelectionActivatedManualyByAdmin()) {
                             settings.maxSlots = 40;
                             //settings.allowFixedAllocation = false;
-                        }else{
+                        }
+                        else {
                             settings.maxSlots = 40;
                         }
 
@@ -290,7 +301,8 @@
                             if (res.ok) {
                                 var win = window.open(res.result, '_blank');
                                 win.focus();
-                            } else {
+                            }
+                            else {
                                 res.warningMessage('Server Issue, try later.');
                             }
                         });
@@ -315,7 +327,8 @@
 
 
                         });
-                    } else {
+                    }
+                    else {
                         s.sendPaymentLink();
                     }
                 };
@@ -568,7 +581,8 @@
                             'Client Address': () => s.item._client.address, //when landlord
                             'Other': () => 'other'
                         };
-                    } else {
+                    }
+                    else {
                         return {
                             'Ou ?': () => '',
                             'Diag Address': () => s.item.address,
@@ -579,8 +593,8 @@
                     }
                 };
 
-                s.$watch('item.diags', function(newV,oldV) {
-                    if(!_.isEqual(newV,oldV) && !s.item._id){
+                s.$watch('item.diags', function(newV, oldV) {
+                    if (!_.isEqual(newV, oldV) && !s.item._id) {
                         s.applyTotalPrice();
                     }
                 }, true);
@@ -612,7 +626,8 @@
 
                 if (params.id.toString() == '-1') {
                     watchKeysWhere();
-                } else {
+                }
+                else {
                     s.afterRead.push(watchKeysWhere);
                 }
 
@@ -642,7 +657,8 @@
                 s.$watch('item.keysTimeFrom', function(val) {
                     if (!val) {
                         s.__keysTimeFromSelectLabel = 'choisir';
-                    } else {
+                    }
+                    else {
                         if (s.item._id) {
                             return s.__keysTimeFromSelectLabel = r.momentTime(s.item.keysTimeFrom);
                         }
@@ -686,7 +702,8 @@
                 s.$watch('item.keysTimeTo', function(val) {
                     if (!val) {
                         s.__keysTimeToSelectLabel = 'choisir';
-                    } else {
+                    }
+                    else {
                         if (s.item._id) {
                             return s.__keysTimeToSelectLabel = r.momentTime(s.item.keysTimeTo);
                         }
@@ -777,7 +794,8 @@
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             r.warningMessage(m[0]());
-                        } else {
+                        }
+                        else {
                             r.warningMessage(m[0]);
                         }
                     }, _sendPaymentLink);
@@ -814,7 +832,58 @@
                     }
                 };
 
+                s.isPayButtonShown = function() {
+                    if(s.item.revenueHT===undefined)return;
+                    if(s.item.price===undefined)return;
+                    return s.item._id && s.item.status !== 'prepaid' && s.item.status !== 'completed';
+                };
+
                 s.pay = () => {
+                    var order = s.item;
+
+                    if (!order._client.wallet) {
+                        return r.warningMessage('Configure Client Wallet ID first');
+                    }
+
+                    orderPaymentForm.open({
+                        amount: order.price.toFixed(2).toString()
+                    }, function(formResponse) {
+
+                        return $log.debug(formResponse);
+
+                        var payload = {
+                            wallet: order._client.wallet,
+                            cardType: formResponse.cardType,
+                            cardNumber: formResponse.cardNumber,
+                            cardCode: formResponse.cardCode,
+                            cardDate: formResponse.cardDate,
+                            amountTot: order.price,
+                            amountCom: order.revenueHT,
+                            comment: 'House Diagnostic by autoentrepreneur ' + order._diag.firstName + ' ' + order._diag.lastName + ' SIRET ' + order._diag.siret + ' through www.diagnostical.fr, Order ' + order._id.toUpperCase()
+                                //comment: "House Inspection by www.houseinspectors.fr, ORDER 24577 for client prop@fake.com (TEST)",
+                        };
+                        paymentApi.payOrder(payload).then(function(isPaid, rawResponse) {
+                            if (!isPaid) {
+                                $log.error(rawResponse.result.E || rawResponse.result || rawResponse);
+                                return r.warningMessage('Paid was not possible. Try later.'); //this should not happen
+                            }
+                            s.item.status = (s.item === 'delivered') ? 'completed' : 'prepaid';
+                            s.successMsg('Commande payée');
+                            db.ctrl('Order', 'update', {
+                                _id: s.item._id,
+                                status: s.item.status
+                            }).then(function(res) {
+                                return r.dom();
+                            });
+                        }).error(function(res) {
+                            return r.errorMessage();
+                        }).on('validate', function(msg) {
+                            return r.warningMessage(msg);
+                        });
+                    });
+
+                    return;
+
                     var order = s.item;
                     $D.openStripeModalPayOrder(order, (token) => {
                         order.stripeToken = token.id;
@@ -826,7 +895,8 @@
 
 
                                 r.dom(read, 5000);
-                            } else {
+                            }
+                            else {
                                 s.successMsg('There was a server error, try later.', 'warning');
                                 console.info('PAY-FAIL', data.err);
                             }
@@ -842,7 +912,8 @@
                     var session = r.session();
                     if (session && session._id == s.item._client._id) {
                         return s.item._client.email;
-                    } else {
+                    }
+                    else {
                         return s.item.landLordEmail || s.item._client.email || '';
                     }
                 }
@@ -852,10 +923,12 @@
                 s.back = () => {
                     if (s.is(['diag', 'client'])) {
                         r.route('dashboard');
-                    } else {
+                    }
+                    else {
                         if (r.params && r.params.prevRoute) {
                             return r.route(r.params.prevRoute);
-                        } else {
+                        }
+                        else {
                             r.route('orders');
                         }
 
@@ -902,7 +975,8 @@
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             r.warningMessage(m[0]());
-                        } else {
+                        }
+                        else {
                             r.warningMessage(m[0]);
                         }
                     }, s.save);
@@ -959,12 +1033,14 @@
                             if (s.item.notifications && s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED == true) {
                                 r.infoMessage('Changes saved');
                                 s.back();
-                            } else {
+                            }
+                            else {
                                 s.item._id = res.result._id;
 
                                 if (s.isOrderClientLandLord()) {
                                     s.back();
-                                } else {
+                                }
+                                else {
                                     s.sendPaymentLink(() => {
                                         s.back();
                                     });
@@ -978,7 +1054,8 @@
 
 
 
-                        } else {
+                        }
+                        else {
                             handleError(res);
                         }
                     }).error(handleError);
@@ -986,7 +1063,8 @@
                 s.downloadFile = () => {
                     if (!s.item.pdfId) {
                         return r.warningMessage("File required", 5000);
-                    } else {
+                    }
+                    else {
                         window.open(db.URL() + '/File/get/' + s.item.pdfId, '_newtab');
                     }
                 };
@@ -1037,7 +1115,8 @@
                             if (data.ok) {
                                 //s.message('deleted', 'info');
                                 s.back();
-                            } else {
+                            }
+                            else {
                                 handleError(data);
                             }
                         }).error(handleError);
@@ -1080,8 +1159,8 @@
                 db.ctrl('Order', 'get', {
                     _id: id || params.id || s.item._id,
                     __populate: {
-                        '_client': 'email clientType address discount firstName lastName',
-                        '_diag': 'email address commission firstName lastName'
+                        '_client': 'email clientType address discount firstName lastName siret wallet',
+                        '_diag': 'email address commission firstName lastName siret wallet'
                     }
                 }).then(function(data) {
 
@@ -1095,7 +1174,7 @@
                         s.prevItem = _.clone(s.item);
                         s.item = data.result;
 
-                        if (!s.prevItem || Object.keys(s.prevItem).length==0) s.prevItem = s.item;
+                        if (!s.prevItem || Object.keys(s.prevItem).length == 0) s.prevItem = s.item;
 
                         s.original = _.clone(s.item);
 
@@ -1108,7 +1187,8 @@
                         s.pdfCheck();
                         //                    console.info('READ', s.item);
                         //s.message('Loaded', 'success', 2000);
-                    } else {
+                    }
+                    else {
                         handleError(data);
                     }
                 }).error(handleError);
@@ -1166,7 +1246,8 @@
                         dbPaginate.ctrl(data, s.model).then(res => {
                             if (cb) {
                                 cb(res.result);
-                            } else {
+                            }
+                            else {
                                 s.model.update(res.result, null);
                             }
                         });

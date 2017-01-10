@@ -10,7 +10,7 @@
 </div>
 <div class="container" ng-controller="adminUsersEdit">
     <div class="row diags-row margin-bottom-two">
-        <div class="col-sm-12 col-md-4">
+        <div class="col-sm-6 col-md-4">
             <div class="row margin-top-one">
                 <label>Adresse email</label>
             </div>
@@ -55,13 +55,25 @@
             </div>
 
         </div>
-        <div class="col-sm-12 col-md-8">
+        <div class="col-sm-6 col-md-8">
             <div class="row margin-top-one">
                 <label>Adresse</label>
             </div>
             <div class="row  margin-top-half">
                 <input ng-disabled="state.working()" type="text" data-address model="item" field="address" placeholder="Street Address" city="city" department="department" region="region" country="country" post-code="postCode" class="diags-input fullwidth max-w-500">
             </div>
+
+            <div class="row margin-top-one">
+                <label>Wallet ID</label>
+            </div>
+            <div class="row  margin-top-half">
+                <input ng-disabled="true" ng-value="item.wallet" class="diags-input" placeholder="(Sans wallet)">
+            </div>
+            <div class="row margin-top-quarter" ng-show="userIs('admin')&&!item.wallet">
+                <button ng-click="createWallet()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance">Create wallet</button>
+            </div>
+
+            <!--
             <div class="row margin-top-one">
                 <label>Ville</label>
             </div>
@@ -98,7 +110,7 @@
                 ng-disabled="true" value="admin" ng-value="admin" ng-model="item.userType">
             </div>
 
-
+            -->
 
         </div>
     </div>
