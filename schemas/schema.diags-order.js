@@ -122,6 +122,10 @@ module.exports = {
         keysTimeTo: {
             type: Date
         },
+        
+        walletTransId:{
+            type:String
+        },
 
         _charge: {
             type: String

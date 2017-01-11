@@ -61,7 +61,7 @@ exports.configure = function(app) {
         }
         //
         if (actions[action]) {
-            if (action == 'get' || action == 'getAll') {
+            if (strIn(action,['get','getAll','getById','paginate','find'])) {
                 console.log(MODULE, ' to ', action);
             } else {
                 logger.info(MODULE, ' to ', action);
@@ -74,6 +74,13 @@ exports.configure = function(app) {
 
         //console.log('routes:ctrl:end');
     });
+    
+    function strIn(str,arr){
+        for(var x in arr){
+            if(str==arr[x]) return true;
+        }
+        return false;
+    }
 
     app.post('/File/save/', (req, res) => {
         File.save({}, File.result(res), req, res);

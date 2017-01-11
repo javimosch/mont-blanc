@@ -1,4 +1,6 @@
 var mongoose = require('../model/db').mongoose;
+var atob = require('atob'); //decode
+var btoa = require('btoa'); //encode
 var moment = require('moment');
 var promise = require('../model/utils').promise;
 var _ = require('lodash');
@@ -20,6 +22,9 @@ var email = require('./ctrl.email');
 var Notif = require('./ctrl.notification');
 var NOTIFICATION = Notif.NOTIFICATION;
 
+const MODULE = 'ORDER';
+var logger = require('../model/logger')(MODULE);
+
 var saveKeys = ['_client', '_diag', 'start', 'end', 'diags'
 
     , 'address', 'price' //, 'time'
@@ -34,6 +39,52 @@ function LogSave(msg, type, data) {
     });
 }
 
+function decodePayload(secret) {
+    //encoding / decoding of data.secret:
+    //var a = btoa(JSON.stringify({a:1})) + btoa('secret')   <--- encoding
+    //var b = JSON.parse(atob(a.substring(0,a.indexOf(btoa('secret'))))) <--- decoding
+    return JSON.parse(atob(secret.substring(0, secret.indexOf(btoa('secret')))));
+}
+
+function payUsingLW(data, cb) {
+    var decodedPayload = decodePayload(data.secret);
+    ctrl('Lemonway').moneyInWithCardId(decodedPayload, function(err, LWRES) {
+        if (err) {
+            cb(err);
+        }
+        else {
+            if (LWRES && LWRES.TRANS && LWRES.TRANS.HPAY && LWRES.TRANS.HPAY.STATUS == '3') {
+
+                //Update order status.
+                save({
+                    _id: data.orderId,
+                    status: 'prepaid',
+                    walletTransId: LWRES.TRANS.HPAY.ID,
+                    paidAt: Date.now()
+                }, function(err, order) {
+
+                    if (err) {
+                        LogSave('Order failed to update status after payment success', 'warning', err);
+                    }
+
+                    return cb(null, true);
+                }, ['_id', 'status','walletTransId','paidAt']);
+
+
+            }
+            else {
+                logger.error(MODULE, ' PAY-WITH-LW INVALID-RESPONSE ', LWRES);
+                LogSave('Invalid response from Lemonway (moneyInWithCardId)', 'error', LWRES);
+                return cb({
+                    message: "Invalid response from Lemonway. Check the logs."
+                });
+            }
+        }
+    });
+}
+
+
+/*
 function pay(data, cb) {
     actions.log('pay=' + JSON.stringify(data));
     actions.check(data, ['stripeToken'], (err, r) => {
@@ -53,12 +104,14 @@ function pay(data, cb) {
                     function(err, customer) {
                         if (customer) {
                             _payIfNotPaidYet(data);
-                        } else {
+                        }
+                        else {
                             _createCustomer(_user);
                         }
                     }
                 );
-            } else {
+            }
+            else {
                 _user.stripeToken = data.stripeToken;
                 _createCustomer(_user);
             }
@@ -81,7 +134,8 @@ function pay(data, cb) {
                 if (err) return cb(err, has);
                 if (!has) {
                     return _pay(data);
-                } else {
+                }
+                else {
                     syncStripe();
                     actions.log('_payIfNotPaidYet:rta=' + JSON.stringify({
                         message: "Alredy paid"
@@ -104,7 +158,8 @@ function pay(data, cb) {
                 }, (_err, _order) => {
                     if (_order.status == 'delivered') {
                         _order.status = 'completed';
-                    } else {
+                    }
+                    else {
                         _order.status = 'prepaid';
                     }
                     _order.paidAt = Date.now();
@@ -124,7 +179,9 @@ function pay(data, cb) {
         //
     });
 }
+*/
 
+/*
 function orderHasPayment(data, cb) {
     actions.log('orderHasPayment=' + JSON.stringify(data));
     if (!data.stripeCustomer) return cb("orderHasPayment: stripeCustomer required.", null);
@@ -145,8 +202,9 @@ function orderHasPayment(data, cb) {
         return cb(null, rta);
     });
 }
+*/
 
-
+/*
 function syncStripe(data, cb) {
     actions.log('syncStripe:start=' + JSON.stringify(data || {}));
     UserAction.getAll({
@@ -167,7 +225,8 @@ function syncStripe(data, cb) {
                 _charges.forEach((_charge) => {
                     if (_charge.paid && !_charge.refunded) {
                         _syncOrderStatus(_charge, true);
-                    } else {
+                    }
+                    else {
                         _syncOrderStatus(_charge, false);
                     }
                 });
@@ -210,7 +269,8 @@ function _syncOrderStatus(_charge, isPaid) {
         }, {
             status: 'completed'
         }).exec();
-    } else {
+    }
+    else {
         Order.update({
             _id: {
                 $eq: _charge.metadata._order
@@ -234,6 +294,7 @@ function _syncOrderStatus(_charge, isPaid) {
     }
     actions.log('_syncOrderStatus=' + JSON.stringify(_charge.metadata._order));
 }
+*/
 
 function confirm(data, cb) {
     actions.log('confirm=' + JSON.stringify(data));
@@ -261,7 +322,8 @@ function confirm(data, cb) {
                     })
                 });
             });
-        } else {
+        }
+        else {
             cb(null, {
                 ok: true,
                 message: 'Order already confirmed. (ordered)'
@@ -301,15 +363,17 @@ function notifyClientOrderCreation(_order) {
                 });*/
 
             });
-        } else {
+        }
+        else {
             actions.log('async:notifyClientOrderCreation:already-notified');
         }
-    } else {
+    }
+    else {
         actions.log('async:notifyClientOrderCreation:order-info-undefined');
     }
 }
 
-function save(data, cb) {
+function save(data, cb, customRequiredKeys) {
     //actions.log('save=' + JSON.stringify(data))
     actions.log('save:start');
 
@@ -319,7 +383,8 @@ function save(data, cb) {
             if (!err && _order) prevStatus = _order.status;
             _saveNext();
         });
-    } else {
+    }
+    else {
         _saveNext();
     }
 
@@ -376,7 +441,7 @@ function save(data, cb) {
 
 
 
-        }, {}, saveKeys);
+        }, {}, customRequiredKeys && customRequiredKeys.length && customRequiredKeys || saveKeys);
     }
 
     function sendNotificationToEachAdmin(_order) {
@@ -436,7 +501,8 @@ function save(data, cb) {
                             attachmentPDFHTML: html
                         });
                     }
-                } else {
+                }
+                else {
                     //CLIENT_ORDER_PAYMENT_SUCCESS //CLIENT//#3
                     Notif.trigger(NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, {
                         _user: _client,
@@ -492,7 +558,8 @@ function invoiceHTMLInyectOrderDetails(html, _order) {
         //    src: backofficeURL + '/img/logo.jpg'
         // });
         _order["LOGO"] = "<img src='" + backofficeURL + '/img/logo.jpg' + "'>";
-    } else {
+    }
+    else {
         LogSave('Unable to inject LOGO in invoice. Enviromental variable adminURL required.', 'warning', _order);
         _order["LOGO"] = "";
     }
@@ -571,7 +638,8 @@ function orderExists(data, cb) {
                             clientEmailBooking: data.email
                         }));
                     }
-                } else {
+                }
+                else {
                     if (sameOrder) {
                         rta = r;
                         rtaErr = 'ORDER_TAKEN';
@@ -609,7 +677,8 @@ function saveWithEmail(data, cb) {
             if (data._client) {
                 if (data._client._id) data._client = data._client._id;
                 return save(data, cb);
-            } else {
+            }
+            else {
 
 
                 actions.check(data, ['email', 'clientType'], (err, r) => {
@@ -629,7 +698,8 @@ function saveWithEmail(data, cb) {
                     if (r) {
                         data._client = r._id;
                         return save(data, cb);
-                    } else {
+                    }
+                    else {
                         UserAction.createClientIfNew({
                             email: data.email
                         }, (err, r) => {
@@ -659,10 +729,11 @@ function preSave(data) {
 
 module.exports = {
     //custom
+    payUsingLW: payUsingLW,
     save: save,
     saveWithEmail: saveWithEmail,
-    pay: pay,
-    syncStripe: syncStripe,
+   // pay: pay,
+   // syncStripe: syncStripe,
     confirm: confirm,
     populate: orderPopulate,
     //heredado

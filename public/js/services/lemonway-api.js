@@ -33,6 +33,9 @@
 		}
 
 		var self = {
+			getWalletTransHistory: function(data) {
+				return handle('lemonway', 'registerWallet', data);
+			},
 			registerWallet: function(data) {
 				return handle('lemonway', 'registerWallet', data);
 			},

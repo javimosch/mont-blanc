@@ -59,6 +59,7 @@
             <div class="row  margin-top-half">
                 <input ng-disabled="state.working()" ng-model="item.cellPhone" class="diags-input" placeholder="Mobile">
             </div>
+            
             <div class="row margin-top-one">
                 <label>Wallet ID</label>
             </div>
@@ -121,6 +122,12 @@
             </div>
             <div class="row  margin-top-half">
                 <input ng-disabled="state.working()" ng-model="item.country" class="diags-input" placeholder="Pays">
+            </div>
+            <div class="row margin-top-one">
+                <label>Siret</label>
+            </div>
+            <div class="row  margin-top-half">
+                <input ng-disabled="state.working()" ng-model="item.siret" class="diags-input" placeholder="Siret">
             </div>
             <div class="row margin-top-one" ng-show="userIs('admin')">
                 <label>Reversement</label>

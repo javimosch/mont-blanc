@@ -72,7 +72,9 @@
                 });
 
                 function update(cb) {
-                    dbPaginate.ctrl({},s.model).then(res=>{
+                    dbPaginate.ctrl({
+                        __sort:"-createdAt"
+                    },s.model).then(res=>{
                         if(cb) return cb(res.result);
                         s.model.update(res.result);
                     });

@@ -8,9 +8,9 @@
                 <label class="unselectable">Carte de paiement</label>
             </div>
             <div class="row margin-top-quarter">
-                <div class="padding-none col-xs-12 col-sm-4" ng-if="false">
+                <div class="padding-none col-xs-12 col-sm-4" >
                     <label class="sm-float-left">
-                        <input type="checkbox" check-box-group check-box-model='response.cardType' ng-model="response.cardType" class="check mark-white" name="type" value="0" />
+                        <input ng-change="onCardTypeChange()" type="checkbox" check-box-group check-box-model='response.cardType' ng-model="response.cardType" class="check mark-white" name="type" value="0" />
                         <span class="sky-blue"></span>
                     </label>
                     <span class="padding-left-halve sm-float-left padding-top-01em">CB</span>
@@ -33,21 +33,23 @@
                 <!--
                 <select ng-disabled="true" ng-model="response.cardTypeString" ng-options="type for type in ['Visa', 'MasterCard']"></select>
                 -->
-                <input class="form-control" name="cardNumber" placeholder="Card Number" type="text" ng-model="response.cardNumber" cc-number cc-type="response.cardTypeString">
-                <p class="payment-form__error-text" ng-show="paymentForm.cardNumber.$error.ccNumberType">{{response.cardTypeString}} non valide.</p>
+                <input class="form-control" ng-required="true" name="cardNumber" placeholder="Card Number" type="text" ng-model="response.cardNumber" cc-number cc-type="response.cardTypeString">
+                <p class="payment-form__error-text" 
+                ng-show="response.cardTypeString!='' && paymentForm.cardNumber.$error.ccNumberType">{{response.cardTypeString}} non valide.</p>
 
             </div>
             <div class="row margin-top-half">
                 <label class="unselectable">Date d'expiration</label>
             </div>
             <div class="row margin-top-quarter">
-                <input class="form-control" placeholder="Expiration date (03/2019)" type="text" ng-model="response.cardDate">
+                <input cc-exp-month ng-change="onCardDateChange()" class="form-control payment-form__card-expiration-month" placeholder="MM" type="text" ng-model="data.cardDateMonth" ng-required="true">
+                <input cc-exp-year ng-change="onCardDateChange()" class="form-control payment-form__card-expiration-year" placeholder="YYYY" type="text" ng-model="data.cardDateYear" ng-required="true">
             </div>
             <div class="row margin-top-half">
                 <label class="unselectable">Code de vérification à 3 chiffres</label>
             </div>
             <div class="row margin-top-quarter">
-                <input class="form-control" placeholder="Card Code (Ex: 003)" type="text" ng-model='response.cardCode'>
+                <input class="form-control" cc-cvc placeholder="Card Code (Ex: 003)" type="text" ng-model='response.cardCode' ng-required="true">
             </div>
             <div class="row margin-top-half">
                 <p class="unselectable payment-form__amount-label">Total amount</p>
@@ -72,7 +74,9 @@
         <div class="col-xs-12 col-sm-12">
             <div class="row  margin-bottom-one">
                 <div class="padding-none col-xs-12 col-sm-12 margin-top-half">
-                    <button class="center-block btn diags-btn bg-azure-radiance" type="button" ng-click="yes()">Acceptez et payez</button>
+                    <button 
+                    ng-disabled="paymentForm.$invalid || isProcessing()"
+                    class="center-block btn diags-btn bg-azure-radiance" type="button" ng-click="yes()">Acceptez et payez</button>
                 </div>
                 <div class="padding-none  col-xs-12 col-sm-12 margin-top-half">
                     <img class="payment-form__lw-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAdEAAABsCAMAAAACPni2AAAAaVBMVEX///9UWXRMUW5QVXFPVHCgorGjpbNKT21KUG1ZXnhtcYjy8vTExs6ChZeqrLiTlaa6u8VESmmytL/q6+75+fp7f5OHipvb3OHi4+dhZn5CSGjLzNO9v8h2eY7R0thna4OWmag3PWCTlqTs3a8hAAAOc0lEQVR4nO1da4OyKhBOsPCSbaaldrHe/f8/8nhhkMtQtutme5bnyzmvawg8MMwMM7BYPIOsqLeb2+Gjw2Z3Ksr8qd87vBGyYre/hh5hxOcgjNGw2i9PmaP116HcJRULKPVMUMK8/apwpP4ixLsoZT7G5sBqGq6KuevpMA71npB7bAIIu57juSvr8Aj56eL7I+jsZ2pwXWVz19jhLk4XNmZ6SpyGO7egvi+KffoUnx2nLNzOXW8HHPHHeHmrIIjKuevugOB0Db7EZwM/3MxdewcDt7vWygNQdnEa0nuhvLKv89lNU7qeuw0OEk7h11ZQeZr6y7lb4SCwQ719z4IdnB3zJtgdJ+CzQbB3LqS3wEc6DaGeR66O0jfAB5mK0GYxdZTOj9WEhDYqb+TW0pkx1RoKIImjdFacv2mGmgg+5m7Tn0YRTk1oY8Ts5m7VH0ZeTWGH6kjrudv1d3GYVCsC0Mr5eGfCdvJFtAc5zN2yP4oy/AmZ28I/z922v4lEkblTskt952iYAarhQqPrt7dfBhBnwrweuToraVJGE1LKXCzvy7FRY1BosognXFf9vXMdvRg6ff7nYpFdp7NmiDNKX4ylFibWMrrI95PZMzSau4V/DFmlz6lV+zi/TUapf5q7jX8LO505wuMzV6NSXsYwup+3hX8NhoceGF2svxPlKePowrJfiJOhAglGF+X34wL7El1s4AvxYZA2MLrILtOovJVzHL0MuUmZxGijH00SS5Y63ehlWJsaLVEyV+rqyzkwA3y3BfMyHMyVkqm5SPnG+77o/Q2BgXFZlr//nJD4avY+0bPLyoP3XQ3Jf+A3Krcc9h7dLnGo23U1PK7xx5aUnLy4HaJG66/2h51t8K36Elby36FS8qqyg29JL/ZnBh0kF/eGv7RBWrzir5s7kfCrpRzvE6/gaWNTFIgbwWC0ee2QBt+yZHqvhR3rI2sRUPtcvgYEA0vUJqf8saKM5ZT/OEV3gvJdlZLeVKM+SxN8+Hl9Gemn9MMLfyZ32QevQjqMnt2xOzIoHXT+/B9/Sa1+h/jITxjyjN7YHaHZ0uBY8g8GYY6H6CKMNl/ZROk3PA70inaSACznoZ3RCP+6tkRvoEFKIOInPPUxRs9EVRX8FM1rBvd3OozOfE/NLstS41tgUDDxBIJGAkRo3KC2zEyZ3/OSJNdqBlG5rB2Je6SbLPOpEUwRwY81GgF6f4GanlFZ0BdCYUcYzQ/mSPVDJPRCbGgwUTLKaH7hL/rwJIZyh0i6G3Bs9ksmgvjoxfhrCevfIAFAFSK39uPIMtp76lHExSaqPP8rc5Xc3yX9AUaHUZwP49ZkNE8wXZ6mJqWCURpCPBzKqBB8KbT5BGubf4OexGvfQYr5QratYF9FZKHUovD2QYkF6YrP4ihPq+gYPKsqsfvxRj/AqJeCzNoNNrXBqHWPKTUk3rDp6MPcwRkFMShcZYnoLVjdQWoESLdch4ZiHnHRo/03c+iXXkTXmF3iI4u13g/ng/ecqvRANXqGUV+BrhlJLfL7qZRJ+78Go9IOE21KGxYV6ulSRSomuPF+QBld8JgQEJqDGBViFxZWYgpdhRNqLujgtuWSAjZa/Ev31zMqcUYFHWS7yzPS98EweYLR6pAoUDtTZpSHlu4leaIzWosOoP6lMRiSwZ9ibOvKgQGkn1sWRqESrOfjNIwaLlFgYlFkDiay+MO0VHiha94QUdQPQDQbbWyeYH66jJ+n9H6m2nhGH7ifZEY90pqJtezH1BkVE59EfY9kQtE0Fgol1KMny8Jozfs86K1GWf2sum4oQC8yNd1YzSfzjReGpbJdp4FBkBqIx0he+B+iHn+OVTgDo56Xa+kfGqOCbckiqWHU04tatMIovbbtsTC6qOQSFNc563wRXFRiKQdLtQGIASMEbTPDy1SuToMLygd9IrVhPTYg6TgHo41uslQ0H41RWM6UQoWQ1LZ11XAs0i4jNkaBlrAtQYmd7b/EGUeWohgGYMS5MA0YSRlaQwPEVgiuP6bPxGNi5hyG411RPp5RmuSxDO0tbY6Ss6rNq4wKlSVVxrBQW9RtXS3ArmXRxmgBC+l6oe9Xpu13qfRnFUB/WPL3seDYWt8QG3RiPMMweC5JcDsq1OH+MHlG1w1l6Bqpxqi+yaAyCjJLm/eWx3rEa9MiG6Mwi9pJmKvd34rdLahfZmu51AxWC6kIA3re2aAS452PGqTZebO2BJdkkf4B31SZpmNU+ZI+hIFRbaxW/N8qo2uLK0542pTaAKOiHixbWBgVjrzUSBJrPTtcW0VcOcLPXg7CH+l1LSBXmoJIH3m4Tt0Ws91Xtxrr8lwJdWA0up2MFfpnGDWEEmeUJooRkG4PfMQrjG7AltM25HnlNcUlBCtTGMaX2MYoTPPgJLTPHVQoz/lnEaELXCfDthhqySvDRF5rsT5qcLVoMXl9SauPk/nX+ALV9el1VcaL8kVz1M6oHLTamJbQVQqjoPrrjAoTQJkenFGyW4HQJB+JhVFwr5JN1ksHegV1KK1h9qVGGzNZ0YF5zozXFMem2rUWRkN77xf7f8dqYyjD3C/jH/e9U+RmaMAvZnS/OKfySyijtjma3JujjYgTaUHCmjUcATBYrtyJ0whbvnr6N/43RGuH2nfdAM5EzFO4KAezVckVs5y9gIiDAcUhZWmi81Mc20UNHudmdNJ0jCpOwKOV0cH50qgZOKOgoejrKPCFrqMNo0ZakMkoOG4p72JSLgr+clVZe5koxcHAQgwYac5QX/5zhDPa7cvYcYoC4h20rvwkNFxD2VvTuziV9eJVBwWa3iAxGoOC0/YIyqiwz1XFAdw2uK7bqiEnvcNMZ53KeedZ1bYuTUcOrI7+bdciAdsKmwzCc+IrPghse9R7vD8db4jvs6XS+5l3FZ2bI+W+1sPQcbTt/78TzCijGcgo1ZcA/gHcHu0Uy42mwJqMqg7WTr1RtV7dJSV3mx+0EP9CAy/4Dqu2NKBewIfd36C8pDRQT6XfDmRkiDR/rRewn3WdvsY6XlBGRfuV3gX3gMVn1JsKqkWIMFqrfoW22zPlETMiXgtbJC3qluViV2NUt8cB6GKsYudTjx1wApCqvdhT3zOaNaoLrbrnOKNrqKh0AkgJ4szi1+XGn5IHj22RyJocF+uf0m8Q77ltfnWKgAGcUSRaF2s4irryPXJF9R2k2Ml2055hdLFNPdor3zijg2roR/1dYfFWePYtey+c0ULZXEMYlV3u3N8ue3jNdqDhB31rMAGHM1pbRgVahI7WVUQ9XWHLczyse9yOt5fIWk8ii3Xw615FLGOPm1KQyujiAsF/FkaHPqbsslytbpW45IZP7gEqo7J1hDJaSp3A+l6XTQAzqGNnD3Un9vgyjVHrsBiV1pAfmhoeNSdwWeKMjotK6QIJBFJZNQEpRrXwzqNSkMZoCQaIhdHFYejGtuBhhFMjfEBjdLGS4oEQRvPBbSY2zyUz3QwZAwuTHAVgrxJLqsYZzfVsYMDItIa2UZpfvyiQvYHRkWPaj+SJbYkz0lwqGqMCNkZjW64WscUZDe0dgiPQgNhB2xVK0HqIVDTWtTUYx7tGzgHuGDA4o2DEmgjHpXy2i4WvUHouBjtPgj8uulPr1Z9ntFk70JUHOaTSYFTsZeKMil6gQ2eKxdfQPYXpQmRVAlYFxENgYdSm7HrByIt4Vqkcv9ogQRl9dBbDfIwuYuS6Ih8LXTQYHdQQlFGhdklaoThl3PDpQp9p3InVyNCMLYxiWRL9i2N0o66OTQnpMKHjdjyaUpc9GCAzMtr8hqqb9jTdYwagyehiC3GcaPMgekQ6wRT629zeAtOFqSG6MOVMA8bCKJbJxCs59lK7xoynFyEptm1EqukEfJTJxPNeNBxlzejK0LwXXTPqc0CYHs+4Z3fyXuJGxfUhJJP5e1wt5Hkviip4S828F4Ei8GkDXzLJ8oi0j6iheZY8M4eFehk8p8VIquafDnS71kzxBujKuw3tajLI6PCAFvoovFDkpqmQ9YFtY1ygUAqq+7eW+njkv7blpmX1oXOgh1W0s2kQ/HNLuVI5f4aPgcO+g0z39tI9SnQhUPLWLfWhv4HP6tU68V/oyW02H8MTsSldyDBv5u7fGpv4YzwW86PNH527Dt8HkrXPMT7Ic8NA8ylI+9+zuTnqjh17HazOxPGnbrZxUt3CkEXtf3LTbfEbUrz/NzBPvxlk5dg7Chu5225C5p3PLTcPSH+UD+wwKWxuo9YtNnZqNSSmRUPorb2N1hwix//B8vSLcOeI+tEHqZYhpZcLqT4OIRK8OyLZzWFC2E3SRt8de1jYZyN3aRsChLkBHhmjDhNDP41VxiNfD6C0T3R3GuvLEd+7jWmsf9euMut+LYefh3Eeq0LpKD01t27iNKvorz/16ffh7g1b7PMxI/mHfVA82Bl1+AmYTh6F0uih8XHnKlp3O8gsuH9rGj1iR50NiJN7etGr2uAgwzirXp9o0drOaaEnG8oY7XdymBaPrpOl6d7Cab66dyuXuwlvNjy8rZKm1ao2SM024b2x4K5nnxEj7kojhEbLdVFkcRumlpX15vLgRDmn586Icbc+UxLQsIpaVCF5dJzR6MgWh5/AevSJ9NTrYmUevsduc7fpj+N8fMjRU2BOK5obmwnuGBgQOO/f/ECPCfwifCPh1WEGrCa53aVFsHd2y1tgN/rkxvtI3Rr6LjhPci87W7o19G1Qf//2O0pHbpM7vARZ9M2rZInnghbeDN+7SpY5q+X9UEdftkxJ+NxRrg6vQb6kX1pNaZC464DfFGVyfJ7T9OruGX1jFAl5ilPKKhev8OY4JeNlLyWR9ZpHh/dBcSBj7tOihEXIOcoO74j8nDB2j1RKg/S6cfrQb0J8/riywEe2uKlPWJg4On8h4nJ7aO+pZAHh19cSRrzwmmwKlxr6exGX9Wm7+ejOYNzsTrUj8/3wHzlmy4WNtxCsAAAAAElFTkSuQmCC">

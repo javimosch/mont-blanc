@@ -127,7 +127,7 @@ exports.create = function(modelName, m) {
             //
             //log('createUpdate=' + JSON.stringify(data));
             log('createUpdate:start');
-            log('createUpdate:requiredKeys=' + JSON.stringify(requiredKeys));
+            log('createUpdate:requiredKeys=' + JSON.stringify(requiredKeys||[]));
             check(data, requiredKeys || [], (err, r) => {
                 if (err) return rta(err, null);
                 if (data._id) {

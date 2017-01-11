@@ -13,6 +13,15 @@
     color: tomato;
 }
 
+.payment-form__card-expiration-month {
+    max-width: 50px;
+    display: inline;
+}
+.payment-form__card-expiration-year {
+    max-width: 65px;
+    display: inline;
+}
+
 .payment-form__amount-label {
     text-align: center;
     font-family: 'Roboto', sans-serif;

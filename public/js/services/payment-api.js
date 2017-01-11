@@ -3,18 +3,27 @@
 /*global moment*/
 /*global $U*/
 (function() {
-	var app = angular.module('app').service('paymentApi', function($rootScope, server, $log, lemonwayApi) {
+	var app = angular.module('app').service('paymentApi', function($rootScope, server, backendApi, $log, lemonwayApi) {
 		var self = {
 			payOrder: function(data) {
+				return MyPromise(function(resolve, err, emit) {
+					return backendApi.payOrder(data).then(function(res) {
+						resolve(res.ok, res);
+					}).error(err).on('validate', (msg) => emit('validate', msg));
+				});
+			},
+			moneyInWithCardId: function(data) {
 				return MyPromise(function(resolve, err, emit) {
 					lemonwayApi.moneyInWithCardId(data).then(function(res) {
 							if (res.ok && res.result) {
 								if (res.result.TRANS.HPAY.STATUS == '3') {
-									resolve(true,res);
-								} else {
-									resolve(false,res);
+									resolve(true, res);
 								}
-							} else {
+								else {
+									resolve(false, res);
+								}
+							}
+							else {
 								err(res);
 							}
 						})
@@ -51,7 +60,8 @@
 							if (res.result && res.result.WALLET) {
 								diag.wallet = res.result.WALLET.ID;
 								resolve();
-							} else {
+							}
+							else {
 								err(res);
 							}
 						}).error(err).on('lemonway-error', (msg) => emit('validate', msg))

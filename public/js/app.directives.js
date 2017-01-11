@@ -1116,9 +1116,10 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
                     animation: true,
                     templateUrl: opt.templateUrl || attrs.templateUrl,
                     controller: function($scope, $uibModalInstance) {
+                        $rootScope._modalScope = $scope;
                         $scope.data = opt.data;
-                        if(opt.helpers){
-                            for(var x in opt.helpers){
+                        if (opt.helpers) {
+                            for (var x in opt.helpers) {
                                 $scope[x] = opt.helpers[x];
                             }
                         }
@@ -1129,9 +1130,23 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
 
 
                         $scope.yes = function() {
-                            $uibModalInstance.close();
+
+                            if (!opt.remainOpen) {
+                                $uibModalInstance.close();
+                            }
+
                             if (confirmCallback) {
-                                confirmCallback($scope.response);
+                                if (opt.remainOpen == true) {
+                                    
+                                    var closeFn = ()=>{
+                                        $uibModalInstance.close();
+                                    };
+                                    
+                                    confirmCallback($scope.response,closeFn);
+                                }
+                                else {
+                                    confirmCallback($scope.response);
+                                }
                             }
                         };
                         $scope.cancel = function() {
@@ -1142,7 +1157,7 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
                 };
                 if (opt.backdrop) uibModalOptions.backdrop = opt.backdrop;
                 if (opt.windowTopClass) uibModalOptions.windowTopClass = opt.windowTopClass;
-                
+
                 var modalInstance = $uibModal.open(uibModalOptions);
             };
         }

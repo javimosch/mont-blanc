@@ -10,8 +10,8 @@
 
     app.controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm',
-        function(db, s, r, params, focus, diagSlots, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm) {
+        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi',
+        function(db, s, r, params, focus, diagSlots, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi) {
             r.setCurrentCtrl(s);
 
 
@@ -177,7 +177,18 @@
 
 
 
-            s.afterRead = [];
+            s.afterRead = [fetchTransaction];
+
+            function fetchTransaction() {
+                if (s.item && s.item.walletTransId) {}
+                else {
+                    return;
+                }
+                if (!s.item._client.wallet) return;
+                
+                //lemonwayApi.getWalletTransHistory({})
+
+            }
 
             function init() {
                 r.toggleNavbar(true);
@@ -832,11 +843,19 @@
                     }
                 };
 
+
+
                 s.isPayButtonShown = function() {
-                    if(s.item.revenueHT===undefined)return;
-                    if(s.item.price===undefined)return;
+                    if (orderPaymentForm.isProcessing()) return false;
+                    if (s.item.revenueHT === undefined) return false;
+                    if (s.item.price === undefined) return false;
                     return s.item._id && s.item.status !== 'prepaid' && s.item.status !== 'completed';
                 };
+
+                s.test = function() {
+                    s.item.status = 'created';
+                    s.pay();
+                }
 
                 s.pay = () => {
                     var order = s.item;
@@ -845,66 +864,45 @@
                         return r.warningMessage('Configure Client Wallet ID first');
                     }
 
-                    orderPaymentForm.open({
-                        amount: order.price.toFixed(2).toString()
-                    }, function(formResponse) {
 
-                        return $log.debug(formResponse);
 
-                        var payload = {
-                            wallet: order._client.wallet,
-                            cardType: formResponse.cardType,
-                            cardNumber: formResponse.cardNumber,
-                            cardCode: formResponse.cardCode,
-                            cardDate: formResponse.cardDate,
-                            amountTot: order.price,
-                            amountCom: order.revenueHT,
-                            comment: 'House Diagnostic by autoentrepreneur ' + order._diag.firstName + ' ' + order._diag.lastName + ' SIRET ' + order._diag.siret + ' through www.diagnostical.fr, Order ' + order._id.toUpperCase()
-                                //comment: "House Inspection by www.houseinspectors.fr, ORDER 24577 for client prop@fake.com (TEST)",
-                        };
-                        paymentApi.payOrder(payload).then(function(isPaid, rawResponse) {
-                            if (!isPaid) {
-                                $log.error(rawResponse.result.E || rawResponse.result || rawResponse);
-                                return r.warningMessage('Paid was not possible. Try later.'); //this should not happen
-                            }
-                            s.item.status = (s.item === 'delivered') ? 'completed' : 'prepaid';
-                            s.successMsg('Commande payée');
-                            db.ctrl('Order', 'update', {
-                                _id: s.item._id,
-                                status: s.item.status
-                            }).then(function(res) {
-                                return r.dom();
-                            });
-                        }).error(function(res) {
-                            return r.errorMessage();
-                        }).on('validate', function(msg) {
-                            return r.warningMessage(msg);
-                        });
+                    orderPaymentForm.pay(s.item).then(function() {
+                        s.successMsg('Commande payée');
+                        s.item.status = 'prepaid';
+                        r.dom(read, 5000);
+                    }).error(function(res) {
+                        return r.errorMessage('', 10000);
+                    }).on('validate', function(msg) {
+                        return r.warningMessage(msg, 10000);
                     });
+
 
                     return;
 
-                    var order = s.item;
-                    $D.openStripeModalPayOrder(order, (token) => {
-                        order.stripeToken = token.id;
-                        db.ctrl('Order', 'pay', order).then((data) => {
-                            if (data.ok) {
-                                s.item.status = (s.item === 'delivered') ? 'completed' : 'prepaid';
-                                s.successMsg('Commande payée');
+                    /*
+                                        var order = s.item;
+                                        $D.openStripeModalPayOrder(order, (token) => {
+                                            order.stripeToken = token.id;
+                                            db.ctrl('Order', 'pay', order).then((data) => {
+                                                if (data.ok) {
+                                                    s.item.status = (s.item === 'delivered') ? 'completed' : 'prepaid';
+                                                    s.successMsg('Commande payée');
 
 
 
-                                r.dom(read, 5000);
-                            }
-                            else {
-                                s.successMsg('There was a server error, try later.', 'warning');
-                                console.info('PAY-FAIL', data.err);
-                            }
-                        });
-                    }, {
-                        config: r.config,
-                        email: emailOfPersonWhoPaid()
-                    });
+                                                    r.dom(read, 5000);
+                                                }
+                                                else {
+                                                    s.successMsg('There was a server error, try later.', 'warning');
+                                                    console.info('PAY-FAIL', data.err);
+                                                }
+                                            });
+                                        }, {
+                                            config: r.config,
+                                            email: emailOfPersonWhoPaid()
+                                        });
+                                        */
+
                 };
 
 
