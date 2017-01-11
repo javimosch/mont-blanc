@@ -67,18 +67,19 @@ function LogSave(msg, type, data) {
 
 function trigger(name, data, cb) {
     try {
-        actions.log('trigger=' + JSON.stringify(data));
+        //actions.log('trigger=' + JSON.stringify(data));
+        actions.log('trigger ',name, data, cb);
         if (!name) return cb && cb("name required");
         if (!NOTIFICATION[name]) {
             LogSave('Notification trigger name not found: ' + name, 'error', data);
             return cb && cb("trigger notification not found: " + name);
         }
-        actions.log('trigger:routing-' + name + '=' + JSON.stringify(data));
+        //actions.log('trigger:routing-' + name + '=' + JSON.stringify(data));
         data.__notificationType = name;
         return EmailHandler[name](data, cb);
-    } catch (e) {
-        LogSave("Notification triggering", 'error', e);
-        return cb && cb(e);
+    } catch (err) {
+        LogSave("Notification triggering error", 'error', err);
+        return cb && cb(err);
     }
 }
 

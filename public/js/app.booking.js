@@ -108,8 +108,12 @@ app.config(['$routeProvider',
 
 
 app.controller('ctrl.booking', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots','orderPrice','$log',
-    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice,$log) {
+    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots','orderPrice','$log','orderPaymentForm',
+    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice,$log,orderPaymentForm) {
+
+        $timeout(function(){
+            r.openModal = s.openModal;
+        },2000);
 
         r.URL = Object.assign(r.URL, URL);
 
@@ -588,8 +592,10 @@ app.controller('ctrl.booking', ['server',
         //DIAG DATE SELECTION -> Get the slot that the user had selected to the right place.
         s.$watch('item.range', function(id) {
             if (!id) return;
-
+            if(typeof id !== 'string') return;
+            console.log('item.range',id);
             var data = JSON.parse(window.atob(id));
+            console.log('item.range data',data);
             s.item._diag = data._diag;
             s.item.start = data.start;
             s.item.end = data.end;
@@ -1329,8 +1335,8 @@ app.controller('ctrl.booking', ['server',
         s.testOrderConfirmationScreen = function() {
             db.ctrl('Order', 'get', {
                 __populate: {
-                    _client: '_id email clientType address discount companyName firstName',
-                    _diag: '_id email clientType address firstName lastName commission'
+                    _client: '_id email clientType address discount companyName firstName siret wallet',
+                    _diag: '_id email clientType address firstName lastName commission siret wallet'
                 }
             }).then(function(res) {
                 if (res.ok && res.result) {
@@ -1617,8 +1623,8 @@ app.controller('ctrl.booking', ['server',
             return $U.MyPromise(function(resolve, err, emit) {
                 var payload = Object.assign(s._order, {
                     __populate: {
-                        _client: '_id email clientType address discount companyName',
-                        _diag: '_id email clientType address firstName lastName commission'
+                        _client: '_id email clientType address discount companyName siret wallet',
+                        _diag: '_id email clientType address firstName lastName commission siret wallet'
                     }
                 });
                 if (_order_id) {
@@ -1733,8 +1739,8 @@ app.controller('ctrl.booking', ['server',
 
                         db.ctrl('Order', 'getById', Object.assign(s._order, {
                                 __populate: {
-                                    _client: '_id email clientType address discount companyName',
-                                    _diag: '_id email clientType address firstName lastName commission'
+                                    _client: '_id email clientType address discount companyName siret wallet',
+                                    _diag: '_id email clientType address firstName lastName commission siret wallet'
                                 }
                             }))
                             .then(d => {
@@ -1797,6 +1803,23 @@ app.controller('ctrl.booking', ['server',
                 db.ctrl('User', 'update', s._user); //async
                 //
                 var order = s._order;
+                
+                 orderPaymentForm.pay(order).then(function() {
+                     s.infoMsg("Commande Créée", 10000);
+                     s.booking.complete = true;
+                     s.booking.payment.complete = true;
+                     r.dom(() => {
+                         updateAutoSave(false);
+                         $U.url.clear();
+                         s.gotoOrderConfirmationScreen();
+                     });
+                 }).error(function(res) {
+                     return r.errorMessage('', 10000);
+                 }).on('validate', function(msg) {
+                     return r.warningMessage(msg, 10000);
+                 });
+                
+                /*
                 $D.openStripeModalPayOrder(order, (token) => {
                     order.stripeToken = token.id;
                     order.stripeTokenEmail = token.email;
@@ -1823,12 +1846,12 @@ app.controller('ctrl.booking', ['server',
 
                                 s.gotoOrderConfirmationScreen();
 
-                                /*
-                                s.openOrderConfirmationPrepaid(() => {
-                                    s._order = {};
-                                    r.route('home');
-                                });
-                                */
+                               //
+                                //s.openOrderConfirmationPrepaid(() => {
+                                //    s._order = {};
+                                 //   r.route('home');
+                               // });
+                                ///
 
 
                             });
@@ -1850,6 +1873,10 @@ app.controller('ctrl.booking', ['server',
                     config: r.config,
                     email: emailOfPersonWhoPaid()
                 });
+                */
+                
+                
+                
                 //
             });
             //------

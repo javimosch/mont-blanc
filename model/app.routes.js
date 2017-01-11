@@ -45,9 +45,9 @@ exports.configure = function(app) {
         var action = req.params.action;
         var data = req.body;
         //
-        console.log('routes:ctrl:start');
-        console.log('routes:ctrl:controller', controller);
-        console.log('routes:ctrl:action', action);
+        //console.log('routes:ctrl:start');
+        //console.log('routes:ctrl:controller', controller);
+        //console.log('routes:ctrl:action', action);
         //
         var actions = dbController.create(controller);
         if (!actions[action] && !actions.model[action]) {

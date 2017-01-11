@@ -75,7 +75,7 @@
             <div class="row  margin-bottom-one">
                 <div class="padding-none col-xs-12 col-sm-12 margin-top-half">
                     <button 
-                    ng-disabled="paymentForm.$invalid || isProcessing()"
+                    ng-disabled="paymentForm.$invalid || !response.cardType || isProcessing()"
                     class="center-block btn diags-btn bg-azure-radiance" type="button" ng-click="yes()">Acceptez et payez</button>
                 </div>
                 <div class="padding-none  col-xs-12 col-sm-12 margin-top-half">

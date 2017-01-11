@@ -17,6 +17,7 @@
 
 
             s.orderRdv = orderRdv;
+            s.orderPrice = orderPrice;
 
             /*PDF LOGIC*/
             s.pdf = {

@@ -5,6 +5,7 @@ var simpleLogger = require('simple-node-logger');
 module.exports = function(moduleName) {
 	opts = {
 		domain:moduleName,
+		category:moduleName,
 		logFilePath:'backend.log',
 		timestampFormat:'YYYY-MM-DD HH:mm:ss.SSS'
 		// dateFormat:'YYYY.MM.DD'

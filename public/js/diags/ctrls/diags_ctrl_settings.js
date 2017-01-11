@@ -150,7 +150,8 @@
 
                     if (!s.departmentMultiplier.value || isNaN(s.departmentMultiplier.value) || s.departmentMultiplier.value === '') {
                         return console.warn('WARN: not a value');
-                    } else {
+                    }
+                    else {
 
                         if (parseFloat(s.departmentMultiplier.value) > 10) {
                             return console.warn('WARN: value should be less equal 10');
@@ -193,7 +194,8 @@
                     if (r.ok && r.result.length > 0) {
                         s.item = r.result[0];
                         mergeStaticPrices();
-                    } else {
+                    }
+                    else {
                         s.save();
                     }
                 });
@@ -234,7 +236,8 @@
                                     });
                                 });
 
-                            } catch (ex) {
+                            }
+                            catch (ex) {
                                 r.warningMessage('Import issue, try later.');
                                 console.warn(ex);
                             }
@@ -351,7 +354,8 @@
                         $U.downloadContent($U.toCSV({
                             data: data
                         }), s.reports.orders.monthReportFilename);
-                    } else {
+                    }
+                    else {
                         $U.downloadContent(window.encodeURIComponent(JSON.stringify(data)), s.reports.input.fileName);
                     }
                 })
@@ -419,7 +423,8 @@
                         case 'size':
                             if (s.localData && s.localData.squareMetersPrice && this.scope.item.info.squareMeters != undefined) {
                                 return s.localData.squareMetersPrice[this.scope.item.info.squareMeters]
-                            } else {
+                            }
+                            else {
                                 return 0;
                             }
 
@@ -559,14 +564,16 @@
                     return r.warningMessage('At least one Order saved in DB is required.');
                 }
 
-                s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
+                s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent({
+                    format: 'raw'
+                }));
                 var html = $D.OrderReplaceHTML(window.decodeURIComponent(s.item.content), s.randomOrder, r);
-                
-                return $log.debug(html);
+
+                //return $log.debug(html);
 
                 html = window.encodeURIComponent(html);
 
-                
+
 
                 r.ws.ctrl("Pdf", "view", {
                     html: html
@@ -575,7 +582,8 @@
                         s.save();
                         var win = window.open(res.result, '_blank');
                         win.focus();
-                    } else {
+                    }
+                    else {
                         r.warningMessage('Server Issue, try later.');
                     }
                 });
@@ -598,8 +606,11 @@
                             if (res.ok) {
                                 if (res.result) {
                                     s.item = res.result;
-                                    tinymce.activeEditor.setContent(window.decodeURIComponent(s.item.content));
-                                } else {
+                                    tinymce.activeEditor.setContent(window.decodeURIComponent(s.item.content), {
+                                        format: 'raw'
+                                    });
+                                }
+                                else {
                                     db.ctrl('Text', 'createUpdate', {
                                         _category: _category,
                                         code: 'INVOICE',
@@ -609,11 +620,14 @@
                                     }).then(function(res) {
                                         if (res.ok && res.result) {
                                             s.item = res.result;
-                                            tinymce.activeEditor.setContent(window.decodeURIComponent(s.item.content));
+                                            tinymce.activeEditor.setContent(window.decodeURIComponent(s.item.content), {
+                                                format: 'raw'
+                                            });
                                         }
                                     });
                                 }
-                            } else {
+                            }
+                            else {
                                 r.warningMessage('Server issue while reading item. Try later.');
                             }
                         });
@@ -630,7 +644,9 @@
                 if (!s.item._category) return r.warningMessage('Page Section required');
                 //
                 s.item.updatedByHuman = true;
-                s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
+                s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent({
+                    format: 'raw'
+                }));
                 db.ctrl('Text', 'save', s.item).then(function() {
                     //r.route('texts');
                     r.infoMessage("Changes saved", 5000);
@@ -640,7 +656,8 @@
             function check() {
                 if (typeof window.tinymce !== 'undefined') {
                     r.dom(init);
-                } else setTimeout(check, 100);
+                }
+                else setTimeout(check, 100);
             }
 
             function initTinyMCE() {

@@ -1,13 +1,17 @@
-var req         = (n) => require(process.cwd()+'/model/'+n);
-var mongoose    = req('db').mongoose;
-var getModel    = req('db').getModel;
-var getSchema   = req('db').getSchema;
-var validate    = req('validator').validate;
-var promise     = req('utils').promise;
+var req = (n) => require(process.cwd() + '/model/' + n);
+var mongoose = req('db').mongoose;
+var getModel = req('db').getModel;
+var getSchema = req('db').getSchema;
+var validate = req('validator').validate;
+var promise = req('utils').promise;
+
 
 
 var __hookData = {};
 var _hook = function(schemaName, n, cb, data, index) {
+
+
+
     __hookData[schemaName] = __hookData[schemaName] || {}
     var _hooks = __hookData[schemaName];
     _hooks[n] = _hooks[n] || [];
@@ -17,12 +21,12 @@ var _hook = function(schemaName, n, cb, data, index) {
         //console.log(schemaName, 'HOOK', n, 'added at', _hooks[n].length);
     }
     else {
-        
+
         if (data && index) {
-            
+
             var _cb = _hooks[n][index] || undefined;
             if (!_cb) {
-                console.log(schemaName, 'HOOK:RTA', JSON.stringify(data));
+                //console.log(schemaName, 'HOOK:RTA', JSON.stringify(data));
                 return data;
             }
             else {
@@ -32,7 +36,7 @@ var _hook = function(schemaName, n, cb, data, index) {
             }
         }
         else {
-            
+
             var _data = cb;
             if (_hooks[n][0]) {
                 console.log(schemaName, 'HOOK', n, 'fire:index:', 0, '  total:', _hooks[n].length);
@@ -56,6 +60,9 @@ exports.create = function(modelName, m) {
     var Model = getModel(modelName);
 
     var schema = getSchema(modelName);
+
+
+    var logger = require('./logger')(modelName.toUpperCase());
 
     var hook = (a, b, c, d) => {
         return _hook(modelName, a, b, c, d);
@@ -89,12 +96,6 @@ exports.create = function(modelName, m) {
     }
     //
     function exists(data, cb) {
-        try {
-            log('exists=' + JSON.stringify(data));
-        }
-        catch (e) {
-            log('exists=', 'circular-json-error');
-        }
         Model.count(toRules(data), (err, r) => {
             log('exists=' + (r && (r > 0) || false));
             cb(err, r && (r > 0) || false);
@@ -102,7 +103,7 @@ exports.create = function(modelName, m) {
     }
     //
     function existsByField(name, val, cb) {
-        log('existsByField=' + name + ':' + val);
+        //log('existsByField=' + name + ':' + val);
         var data = {};
         data[name] = val;
         Model.count(toRules(data), (err, r) => {
@@ -126,8 +127,8 @@ exports.create = function(modelName, m) {
         return promise((then, error, emit) => {
             //
             //log('createUpdate=' + JSON.stringify(data));
-            log('createUpdate:start');
-            log('createUpdate:requiredKeys=' + JSON.stringify(requiredKeys||[]));
+            //log('createUpdate:start');
+            //log('createUpdate:requiredKeys=' + JSON.stringify(requiredKeys || []));
             check(data, requiredKeys || [], (err, r) => {
                 if (err) return rta(err, null);
                 if (data._id) {
@@ -225,7 +226,7 @@ exports.create = function(modelName, m) {
     }
 
     function getAll(data, cb) {
-        log('getAll=' + JSON.stringify(data));
+        //log('getAll=' + JSON.stringify(data));
         var query = Model.find(toRules(data))
         if (data.__select) {
             query = query.select(data.__select);
@@ -248,7 +249,7 @@ exports.create = function(modelName, m) {
     }
 
     function paginate(data, cb) {
-        log('paginate=' + JSON.stringify(data));
+        //log('paginate=' + JSON.stringify(data));
         var options = {};
         options = fillObject(options, data, '__select', 'select');
         options = fillObject(options, data, '__sort', 'sort');
@@ -272,7 +273,7 @@ exports.create = function(modelName, m) {
         options = fillObject(options, data, '__page', 'page');
         options = fillObject(options, data, '__limit', 'limit');
         //log('paginate:options:typeof:' + (typeof options));
-        log('paginate:options=' + JSON.stringify(options));
+        //log('paginate:options=' + JSON.stringify(options));
         Model.paginate(toRules(data), options, function(err, result) {
             if (err) return cb(err, result);
             //log('paginate:result=' + JSON.stringify(result));
@@ -290,7 +291,7 @@ exports.create = function(modelName, m) {
 
     function remove(data, cb) {
         data = {
-            _id:data._id
+            _id: data._id
         };
         log('remove=' + JSON.stringify(data));
         check(data, ['_id'], (err, r) => {
@@ -303,12 +304,25 @@ exports.create = function(modelName, m) {
 
     function result(res, options) {
         return function(err, r) {
+
+            if (typeof err == 'string' ||
+                (Object.keys(err||{}).length == 0 && err != undefined)) {
+                err = {
+                    message: err.toString()
+                };
+            }
+
             var rta = {
                 ok: !err,
                 message: (err) ? 'Error' : 'Success',
                 err: err || null,
                 result: (r !== null) ? r : ((r === false) ? false : null)
             };
+
+            //log error
+            if (!rta.ok) {
+                logger.error(modelName, ' ', err);
+            }
 
             //when result contains something like {ok,message,result}
             if (rta.result && rta.result.result) {
@@ -319,7 +333,7 @@ exports.create = function(modelName, m) {
             }
 
             //log('result=', JSON.stringify(rta));
-            log('result= ' + (rta.ok == true) + (err ? ' Error: ' + JSON.stringify(err) : ''));
+            //log('result= ' + (rta.ok == true) + (err ? ' Error: ' + JSON.stringify(err) : ''));
             //
             if (options && options.__res) {
                 options.__res(res, rta);
@@ -331,7 +345,7 @@ exports.create = function(modelName, m) {
     }
 
     function getById(data, cb) {
-        log('getById=' + JSON.stringify(data._id));
+        //log('getById=' + JSON.stringify(data._id));
         check(data, ['_id'], (err, r) => {
             if (err) return cb(err, r);
             var query = Model.findById(data._id)
@@ -425,11 +439,11 @@ exports.create = function(modelName, m) {
                 }
             }
             else {
-                if(x.toString().toLowerCase()=='_id'){
-                    
+                if (x.toString().toLowerCase() == '_id') {
+
                     var isValid = mongoose.Types.ObjectId.isValid(data[x]);
-                    console.log('_ID ',data[x],'isValid:',isValid);
-                    
+                    console.log('_ID ', data[x], 'isValid:', isValid);
+
                     data[x] = mongoose.Types.ObjectId(data[x]);
                 }
                 rules[x] = {
@@ -452,7 +466,8 @@ exports.create = function(modelName, m) {
 
 
     function _create(data, cb, requiredKeys) {
-        log('create=' + JSON.stringify(data));
+        //log('create=' + JSON.stringify(data));
+        log('create');
         check(data, requiredKeys || [], (err, r) => {
             if (err) return cb(err, null);
             return Model.create(data, cb);
@@ -461,7 +476,7 @@ exports.create = function(modelName, m) {
 
     function update(data, cb) {
         //log('update=' + JSON.stringify(data));
-        log('update:start');
+        //log('update:start');
         check(data, ['_id'], (err, r) => {
             if (err) return cb && cb(err, null);
             var _id = data._id;
@@ -506,4 +521,4 @@ exports.create = function(modelName, m) {
     };
 };
 
-console.log('db.actions end',JSON.stringify(Object.keys(module.exports)));
+console.log('db.actions end', JSON.stringify(Object.keys(module.exports)));

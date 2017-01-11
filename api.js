@@ -23,7 +23,7 @@ logger.info('Initializing');
   var configureProgrammedTasks = require('./model/tasks').configure;
   //CORS
   app.all('*', function(req, res, next) {
-   console.log(req.method);
+   //console.log(req.method);
    res.header("Access-Control-Allow-Origin", "*");
    res.header('Access-Control-Allow-Methods', 'OPTIONS,GET,POST,PUT,DELETE');
    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

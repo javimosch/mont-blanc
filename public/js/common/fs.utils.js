@@ -702,7 +702,7 @@ function downloadContent(content, fileName, mimeType) {
 
 function replaceHTML(html, obj) {
     for (var x in obj) {
-        html = html.replaceAll("{{" + x.toUpperCase() + "}}", obj[x]||'');
+        html = html.replaceAll("{{" + x.toUpperCase() + "}}", obj[x] && obj[x].toString()||'');
     }
     return html;
 }

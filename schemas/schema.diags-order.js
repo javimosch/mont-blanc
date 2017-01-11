@@ -126,6 +126,11 @@ module.exports = {
         walletTransId:{
             type:String
         },
+        
+        number:{
+            type:String //Invoice number https://trello.com/c/XrlAbDJQ Spec#3 
+            //YYMM(THREE digits counter) for EACH diag
+        },
 
         _charge: {
             type: String

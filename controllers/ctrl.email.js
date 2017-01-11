@@ -101,7 +101,7 @@ function dummySuccessResponse(cb) {
 }
 
 function send(opt, resCb) {
-    actions.log('send:start=' + JSON.stringify(opt));
+    //actions.log('send:start=' + JSON.stringify(opt));
     var html = opt.html || template(opt.templateName, opt.templateReplace);
     if (opt.subject) {
         if (process.env.companyName) {
@@ -118,7 +118,10 @@ function send(opt, resCb) {
     };
     if (opt._user) {
         if (opt._notification) {
-            actions.log('send:using-_notification=' + JSON.stringify(opt._notification));
+            actions.log('send:using-_notification=' + JSON.stringify({
+                to:opt._notification.to,
+                subject:opt._notification.subject
+            }));
             Notification.getById({
                 _id: opt._notification
             }, (err, _notification) => {
@@ -143,7 +146,7 @@ function send(opt, resCb) {
         }
 
         function validateSending(_notification) {
-            actions.log('send:validateSending=' + JSON.stringify(_notification));
+            //actions.log('send:validateSending=' + JSON.stringify(_notification));
             Notification.getById(_notification, (err, _notification) => {
                 if (err) {
                     return LogSave('notification getById fail in function send');

@@ -4,6 +4,11 @@
     overflow: hidden!important;
 }
 
+.order-payment-form-modal .row{
+    padding-left:0px!important;
+    padding-right:0px!important;
+}
+
 .payment-form__title {
     text-align: center;
     font-size: 1.5em;

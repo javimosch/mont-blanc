@@ -65,6 +65,10 @@
                 return MyPromise(function(resolve, err, emit) {
 
                     if (!order) return emit('validate', 'order required');
+                    
+                    if (!order.price) return emit('validate', 'order price required');
+                    if (!order.diagRemunerationHT) return emit('validate', 'order diagRemunerationHT required');
+                    
                     if (!order._diag) return emit('validate', 'order _diag required');
                     if (!order._diag.firstName) return emit('validate', 'order _diag firstName required');
                     if (!order._diag.lastName) return emit('validate', 'order _diag lastName required');
@@ -74,7 +78,7 @@
                     if (!order._client.wallet) return emit('validate', 'order _client wallet required');
 
                     open({
-                        amount: order.price.toFixed(2).toString()
+                        amount: parseFloat(order.price).toFixed(2).toString()
                     }, function(formResponse, closeModal) {
 
                         //return $log.debug(formResponse);
@@ -85,14 +89,21 @@
                             cardNumber: formResponse.cardNumber,
                             cardCode: formResponse.cardCode,
                             cardDate: formResponse.cardDate,
-                            amountTot: order.price.toFixed(2).toString(),
-                            amountCom: order.revenueHT.toFixed(2).toString(),
-                            comment: 'House Diagnostic by autoentrepreneur ' + order._diag.firstName + ' ' + order._diag.lastName + ' SIRET ' + order._diag.siret + ' through www.diagnostical.fr, Order ' + order._id.toUpperCase()
+                            amountTot: parseFloat(order.price).toFixed(2).toString(),
+                            amountCom:(parseFloat(order.price) - parseFloat(order.diagRemunerationHT)).toFixed(2).toString(),
+                            comment: 'House Diagnostic by autoentrepreneur ' + order._diag.firstName + ' ' + order._diag.lastName + ' SIRET ' + order._diag.siret + ' through www.diagnostical.fr, Order #_INVOICE_NUMBER_'
                                 //comment: "House Inspection by www.houseinspectors.fr, ORDER 24577 for client prop@fake.com (TEST)",
                         };
                         payload = {
                             orderId: order._id,
-                            secret: btoa(JSON.stringify(payload)) + btoa('secret')
+                            secret: btoa(JSON.stringify(payload)) + btoa('secret'),
+                            p2pDiag:{
+                                debitWallet :order._client.wallet,
+                                creditWallet:order._diag.wallet,
+                                amount: order.diagRemunerationHT.toString(),
+                                message: '',
+                                privateData: JSON.stringify({orderId:order._id})
+                            },
                         };
                         isProcessing = true;
                         paymentApi.payOrder(payload).then(function() {

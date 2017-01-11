@@ -32,11 +32,15 @@ var saveKeys = ['_client', '_diag', 'start', 'end', 'diags'
 
 
 function LogSave(msg, type, data) {
+    try{
     Log.save({
         message: msg,
         type: type || 'error',
         data: data || {}
     });
+    }catch(err){
+        logger.error(MODULE," LOG-SAVE ",err);
+    }
 }
 
 function decodePayload(secret) {
@@ -46,32 +50,124 @@ function decodePayload(secret) {
     return JSON.parse(atob(secret.substring(0, secret.indexOf(btoa('secret')))));
 }
 
-function payUsingLW(data, cb) {
-    var decodedPayload = decodePayload(data.secret);
-    ctrl('Lemonway').moneyInWithCardId(decodedPayload, function(err, LWRES) {
+function getNextInvoiceNumber(data, cb) {
+    function zeroFill(number, width) {
+        width -= number.toString().length;
+        if (width > 0) {
+            return new Array(width + (/\./.test(number) ? 2 : 1)).join('0') + number;
+        }
+        return number + ""; // always return a string
+    }
+    //data._id //order id
+    if (!data._id) return cb('_id required');
+    ctrl('Order').get({
+        _id: data._id,
+        __select: 'start _diag'
+    }, function(err, _order) {
+        if (err) return cb(err);
+        if (!_order) {
+            return cb('Order not found.');
+        }
+        ctrl('Order').model.count({
+            status: {
+                $eq: 'prepaid'
+            },
+            _diag: {
+                $eq: _order._diag
+            },
+            start: {
+                $gte: moment(_order.start).startOf('month')._d,
+                $lte: moment(_order.start).endOf('month')._d
+            }
+        }, function(err, count) {
+            if (err) return cb(err);
+            var numberAsString = moment(_order.start).format('YYMM').toString() + zeroFill(count + 1, 3).toString();
+            cb(null, numberAsString);
+        });
+
+    });
+}
+
+function moveToPrepaid(data, cb) {
+    //Update order status.
+    var payload = {
+        _id: data._id,
+        status: 'prepaid',
+        walletTransId: data.walletTransId,
+        paidAt: Date.now(),
+        number: data.number
+    };
+    save(payload, function(err, order) {
+
         if (err) {
-            cb(err);
+            logger.error(MODULE, ' MOVE-TO-PREPAID ERROR ', err);
+            LogSave('Order moving to prepaid error', 'error', err);
+            return cb(err);
         }
         else {
-            if (LWRES && LWRES.TRANS && LWRES.TRANS.HPAY && LWRES.TRANS.HPAY.STATUS == '3') {
-
-                //Update order status.
-                save({
-                    _id: data.orderId,
-                    status: 'prepaid',
-                    walletTransId: LWRES.TRANS.HPAY.ID,
-                    paidAt: Date.now()
-                }, function(err, order) {
-
-                    if (err) {
-                        LogSave('Order failed to update status after payment success', 'warning', err);
-                    }
-
-                    return cb(null, true);
-                }, ['_id', 'status','walletTransId','paidAt']);
+            LogSave('Order moved to prepaid', 'info', payload);
+            logger.info(MODULE, ' MOVE-TO-PREPAID SUCESS ', payload);
+            return cb(null, payload);
+        }
 
 
+    }, ['_id', 'status', 'walletTransId', 'paidAt', 'number']);
+
+
+}
+
+var processing_order_payment = {};
+
+function payUsingLW(data, callback) {
+    if (!data.orderId) return callback('orderId field required');
+    
+    if (!data.__allowPayment && processing_order_payment[data.orderId]) return callback('Order payment is already being processed.');
+    processing_order_payment[data.orderId] = true;
+    var cb = function(err, res) {
+        processing_order_payment[data.orderId] = false;
+        return callback(err, res);
+    };
+
+    if (!data.__allowPayment) {
+        ctrl('Order').get({
+            _id: data.orderId,
+            __select: "status"
+        }, function(err, _order) {
+            if (err) return cb(err);
+            if (_order.status === 'created') {
+                data.__allowPayment = true;
+                return payUsingLW(data, cb);
             }
+            else {
+                return cb('Order already paid.');
+            }
+        });
+        return;
+    }
+
+    
+
+
+    if (!data.secret) return cb('secret field required');
+    if (!data.p2pDiag) return cb('p2pDiag field required');
+    var decodedPayload = decodePayload(data.secret);
+
+
+    getNextInvoiceNumber({
+        _id: data.orderId
+    }, function(err, invoiceNumber) {
+        if (err) return cb(err);
+        decodedPayload.comment = decodedPayload.comment.replace('_INVOICE_NUMBER_', invoiceNumber);
+
+        logger.info(MODULE, ' PAY-WITH-LW INVOICE-NMBER ', invoiceNumber);
+
+        //step 1 payment with card
+        ctrl('Lemonway').moneyInWithCardId(decodedPayload, function(err, LWRES) {
+            if (err) return cb(err);
+
+            logger.info(MODULE, ' PAY-WITH-LW MONEY-IN-RESULT ', LWRES);
+
+            if (LWRES && LWRES.TRANS && LWRES.TRANS.HPAY && LWRES.TRANS.HPAY.STATUS == '3') {}
             else {
                 logger.error(MODULE, ' PAY-WITH-LW INVALID-RESPONSE ', LWRES);
                 LogSave('Invalid response from Lemonway (moneyInWithCardId)', 'error', LWRES);
@@ -79,7 +175,45 @@ function payUsingLW(data, cb) {
                     message: "Invalid response from Lemonway. Check the logs."
                 });
             }
-        }
+
+            logger.info(MODULE, ' MOVE-TO-PREPAID #', invoiceNumber);
+
+
+            //step 2, moving the order to prepaid
+
+            moveToPrepaid({
+                _id: data.orderId,
+                walletTransId: LWRES.TRANS.HPAY.ID,
+                number: invoiceNumber
+            }, function(err, res) {
+                console.log('MOVE-TO-PREPAID RESULT', err, res);
+
+                logger.info(MODULE, ' P2P LOOK-UP');
+                //step 3  p2p to diag wallet 
+                var p2pPayload = data.p2pDiag;
+                p2pPayload.message = "Order #" + invoiceNumber;
+                ctrl('Lemonway').sendPayment(p2pPayload, function(err, res) {
+                    logger.info(MODULE, ' P2P-RESULT', err, res);
+                    if (err) {
+                        logger.error(MODULE, ' P2P after card transaction ', err);
+                        LogSave('P2P after card transaction error', 'error', err);
+                    }
+                    else {
+                        logger.info(MODULE, ' P2P after card transaction ', res);
+                        LogSave('P2P after card transaction success', 'info', res);
+                    }
+
+                    logger.info(MODULE, ' PAY-USING-LW SUCCESS ');
+                    return cb(err, true);
+                });
+
+            });
+
+
+
+
+
+        });
     });
 }
 
@@ -730,10 +864,11 @@ function preSave(data) {
 module.exports = {
     //custom
     payUsingLW: payUsingLW,
+    getNextInvoiceNumber: getNextInvoiceNumber,
     save: save,
     saveWithEmail: saveWithEmail,
-   // pay: pay,
-   // syncStripe: syncStripe,
+    // pay: pay,
+    // syncStripe: syncStripe,
     confirm: confirm,
     populate: orderPopulate,
     //heredado

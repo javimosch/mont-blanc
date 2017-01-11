@@ -15,7 +15,8 @@
             basePrice: undefined,
             selectedDiags: {},
             availableDiags: {},
-            diagCommissionRate: undefined
+            diagCommissionRate: undefined,
+            VATRate:20
         };
 
         $rootScope._orderPriceSettings = settings;
@@ -114,7 +115,7 @@
                         break;
                     case 'vat':
                         if (!settings.modifiersPercentages || !settings.modifiersPercentages.VATRate) {
-                            return 0;
+                            return 20;
                         }
                         return settings.modifiersPercentages.VATRate || 20
                         break;
@@ -152,11 +153,11 @@
                 //100*((0.9*100)/100)
                 return (this.getPriceWithDiscount(k) * (this.getRatioModifierFor('department') || 1)).toFixed(2);
             },
+            getPriceHT: function(k) {
+                return this.getPriceWithDepartment(k);
+            },
             getPriceWithVAT: function(k) {
                 return (this.getPriceWithDepartment(k) * (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
-            },
-            getPriceHT: function(k) {
-                return tenthDown10(this.getPriceWithDepartment(k));
             },
             getPriceTTC: function(k) {
                 var rta = tenthDown10(this.getPriceWithVAT(k));
@@ -169,14 +170,14 @@
             getPriceRemunerationHT: function() {
                 //Diag man remuneration
                 if (!settings.diagCommissionRate) {
-                    $log.error('orderPrice settings.diagCommissionRate is required');
+                    //$log.error('orderPrice settings.diagCommissionRate is required');
                     return 0;
                 }
-                return (this.getPriceHT() * (settings.diagCommissionRate || 1) / 100)
+                return (this.getPriceHT() * (settings.diagCommissionRate || 1) / 100).toFixed(2)
             },
             getPriceRevenueHT: function() {
                 //Diagnostical revenue
-                return (this.getPriceHT() - this.getPriceRemunerationHT());
+                return (this.getPriceHT() - this.getPriceRemunerationHT()).toFixed(2);
             },
             //Helper function to assign prices in an existing order.
             assignPrices: function(object) {

@@ -29,6 +29,7 @@
      getWalletDetails: getWalletDetails,
      moneyInWithCardId: moneyInWithCardId,
      getWalletTransHistory: getWalletTransHistory,
+     sendPayment:sendPayment,
 
      registerWalletTest: registerWalletTest,
      registerCardTest: registerCardTest,
@@ -47,6 +48,29 @@
 
 
  //CORE
+ 
+ function sendPayment(data, callback) {
+     if (!data.debitWallet) return callback({
+         msg: 'debitWallet champ requis'
+     });
+     if (!data.creditWallet) return callback({
+         msg: 'creditWallet champ requis'
+     });
+     if (!data.amount) return callback({
+         msg: 'amount champ requis'
+     });
+     if (!data.message) return callback({
+         msg: 'message champ requis'
+     });
+     if (!data.privateData) return callback({
+         msg: 'privateData champ requis'
+     });
+     lemonway.sendPayment(data).then((r) => {
+         callback(null, r);
+     }, (err) => {
+         callback(err);
+     });
+ }
 
  function getWalletTransHistory(data, callback) {
      if (!data.wallet) return callback({
@@ -213,6 +237,7 @@
              amountCom: data.amountCom,
              comment: data.comment
          }).then(function(res) {
+             logger.info(MODULE, ' PAYMENT CALLBACK? ',(callback!=undefined),' RES? ',(res!=undefined));
              callback(null, res);
          }, function(err) {
              callback(err);
@@ -500,7 +525,7 @@
                  }
                  else {
                      logger.info(MODULE, ' RESPONSE ', methodName, '  SUCCESS ', body.d);
-                     resolve(body.d);
+                     return resolve(body.d);
                  }
              }
          });
