@@ -16,13 +16,9 @@
         }
 
         function open(data, callback) {
-
-            var common = {
+            var opt = {
                 backdrop: 'static', //disables close on click
                 templateUrl: 'views/directives/order-payment-form.html',
-            };
-
-            var opt = {
                 remainOpen: true,
                 windowTopClass: 'order-payment-form-modal',
                 data: data,
@@ -52,7 +48,6 @@
                     }
                 }
             };
-            Object.assign(opt, common);
 
             r.openModal(opt, callback);
         }
