@@ -5,6 +5,13 @@
 (function() {
     var app = angular.module('app').service('orderQuestion', function($rootScope, $log) {
 
+        
+        //task-220 (new building type)
+        const BUILDING_TYPE = {
+            HOUSE:0, //Maison
+            APPARTEMENT:1, 
+            OFFICE:2, //Commercial / Bureaux
+        };
 
         function bindAnswersToDefaultDiags(s) {
             //s mean scope

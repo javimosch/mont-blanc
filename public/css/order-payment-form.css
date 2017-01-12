@@ -19,12 +19,15 @@
 }
 
 .payment-form__card-expiration-month {
-    max-width: 50px;
+    max-width: 70px;
     display: inline;
+    text-align: center;
 }
+
 .payment-form__card-expiration-year {
-    max-width: 65px;
+    max-width: 70px;
     display: inline;
+    text-align: center;
 }
 
 .payment-form__amount-label {
