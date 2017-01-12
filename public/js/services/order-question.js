@@ -5,6 +5,11 @@
 (function() {
     var app = angular.module('app').service('orderQuestion', function($rootScope, $log) {
 
+        const BUILDING_TYPE = {
+            HOUSE:0,
+            APPARTEMENT:1,
+            COMMERCIAL:2
+        };
 
         function bindAnswersToDefaultDiags(s) {
             //s mean scope
@@ -78,20 +83,25 @@
             }
             
             s.$watch('item.info.buildingType', onBuildingTypeChange);
-            function onBuildingTypeChange(buildingType){
+            s.$watch('item.info.sell', onBuildingTypeChange);
+            
+            function onBuildingTypeChange(){
                 if(!questionHasAValue('buildingType')) return;
-                if(buildingType==BUILDING_TYPE.OFFICE){
+                var buildingType = s.item.info.buildingType;
+                if(buildingType==BUILDING_TYPE.COMMERCIAL){
                     if(isSelling()){
                         //Amiante / Termites / Carrez / DPE / ERNMT
                         setMandatory('dpe',true);
                         setMandatory('ernt',true);
-                        setMandatory('carrez',true);
+                        setMandatory('loiCarrez',true);
                     }else{
                         //Amiante / DPE / ERNMT
                         setMandatory('dpe',true);
                         setMandatory('ernt',true);
-                        setMandatory('carrez',false);
+                        setMandatory('loiCarrez',false);
                     }
+                }else{
+                    setMandatory('loiCarrez',true); 
                 }
             }
 
@@ -162,6 +172,16 @@
         }
 
         var self = {
+            isDiagTypeMandatory:function(diagName, diagsArray){
+                var diag = null;
+                for(var x in diagsArray){
+                    diag = diagsArray[x];
+                    if (diagName && diag.name == diagName) {
+                        return diag.mandatory;
+                    }
+                }
+                return false;
+            },
             bindAnswersToDefaultDiags: bindAnswersToDefaultDiags
         };
         return self;

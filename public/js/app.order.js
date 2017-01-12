@@ -15,7 +15,7 @@
             r.setCurrentCtrl(s);
 
 
-
+            s.orderQuestion = orderQuestion;
             s.orderRdv = orderRdv;
             s.orderPrice = orderPrice;
 
