@@ -130,13 +130,12 @@
                 </tr>
             </table>
         </div>
+        
+        
+        
+        <!-- CREATION -->
         <div class="row margin-top-quarter" ng-show="!item._id">
             <table class="table table-striped table-condensed unselectable questions">
-                <!--
-                <tr ng-repeat="(k,o) in item.info" class="unselectable" ng-show="infoItemShow(o)">
-                    <td ng-bind="k" ng-class="{'diag-no-selected':!o,link:true}" ng-click=item.info[k]=!item.info[k]></td>
-                </tr>
-                -->
                 <tr>
                     <td>
                         <div class="row">
@@ -160,17 +159,24 @@
                 <tr>
                     <td>
                         <div class="row">
-                            <div class="col-xs-6 padding-none">
-                                <label class="minimal">Appartement</label>
+                            <div class="col-xs-12 col-md-4 padding-none">
+                                <label class="minimal">Maison</label>
                                 <label class="">
-                                    <input type="checkbox" check-box-group check-box-model='item.info.house' name="chk-house" value="false" ng-model="item.info.house" class="check mark-white" />
+                                    <input type="checkbox" check-box-group check-box-model='item.info.buildingType' name="chk-house" value="0" ng-model="item.info.buildingType" class="check mark-white" />
                                     <span class="sky-blue"></span>
                                 </label>
                             </div>
-                            <div class="col-xs-6 padding-none">
-                                <label class="minimal">Maison</label>
+                            <div class="col-xs-12 col-md-4 padding-none">
+                                <label class="minimal">Appartement</label>
                                 <label class="">
-                                    <input type="checkbox" check-box-group check-box-model='item.info.house' name="chk-house" value="true" ng-model="item.info.house" class="check mark-white" />
+                                    <input type="checkbox" check-box-group check-box-model='item.info.buildingType' name="chk-house" value="1" ng-model="item.info.buildingType" class="check mark-white" />
+                                    <span class="sky-blue"></span>
+                                </label>
+                            </div>
+                            <div class="col-xs-12 col-md-4 padding-none">
+                                <label class="minimal">Commercial / Bureaux</label>
+                                <label class="">
+                                    <input type="checkbox" check-box-group check-box-model='item.info.buildingType' name="chk-house" value="2" ng-model="item.info.buildingType" class="check mark-white" />
                                     <span class="sky-blue"></span>
                                 </label>
                             </div>
