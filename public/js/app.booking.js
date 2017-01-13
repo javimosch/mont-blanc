@@ -1280,7 +1280,7 @@ app.controller('ctrl.booking', ['server',
 
         function loadDefaults() {
             //console.log('loadDefaults');
-            s.item.info = s.item.info  || {};
+            s.item.info = s.item.info || {};
             s.item = Object.assign(s.item, {
                 info: {
                     buildingState: paramBool('buildingState') || '1',
@@ -1300,7 +1300,7 @@ app.controller('ctrl.booking', ['server',
             creatediagSlots();
 
             r.dom(function() {
-                
+
                 //Building size slider !?
                 try {
                     var x = 0;
@@ -1494,16 +1494,21 @@ app.controller('ctrl.booking', ['server',
 
 
         s.bookingDescriptionTitle = function() {
-            if (s.item.info.buildingState=='1') return "Pack Vente: ";
+            if (s.item.info.buildingState == '1') return "Pack Vente: ";
             else return "Pack Location: ";
         };
         s.bookingDescriptionBody = function() {
             var rta = "";
-            if (s.item.info.buildingType=='0') {
+            if (s.item.info.buildingType == '0') {
                 rta += "Maison";
             }
             else {
-                rta += "Appartement";
+                if (s.item.info.buildingType == '2') {
+                    rta += "Local commercial";
+                }
+                else {
+                    rta += "Appartement";
+                }
             }
             if (s.item.city) {
                 rta += " à " + s.item.city;
@@ -1697,11 +1702,11 @@ app.controller('ctrl.booking', ['server',
             }
 
             //if (s._order.info.house === undefined && s.item.house !== undefined) {
-              //  s._order.info.house = s.item.house;
+            //  s._order.info.house = s.item.house;
             //}
 
             //if (s._order.info.sell === undefined && s.item.sell !== undefined) {
-              //  s._order.info.sell = s.item.sell;
+            //  s._order.info.sell = s.item.sell;
             //}
 
             if (s._order.info.electricityInstallation === undefined && s.item.electricityInstallation !== undefined) {
@@ -1714,7 +1719,7 @@ app.controller('ctrl.booking', ['server',
 
 
             //if (s._order.info.house == undefined) {
-              //  console.warn('The order info.house is undefined.');
+            //  console.warn('The order info.house is undefined.');
             //}
         }
 
