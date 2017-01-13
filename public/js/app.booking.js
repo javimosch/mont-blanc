@@ -1558,7 +1558,7 @@ app.controller('ctrl.booking', ['server',
                             if (!data.ok) {
                                 return r.warningMessage("Le courriel ne peut être envoyé à ce moment , d'essayer de nouveau de backoffice", 10000);
                             }
-                            s.infoMsg("Commande Créée", 10000);
+                            s.infoMsg("Commande confirmée", 10000);
                             s._order.notifications = s._order.notifications || {};
                             s._order.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED = true;
                             s._order.status = 'ordered';
