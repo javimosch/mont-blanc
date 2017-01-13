@@ -4,24 +4,45 @@
 /*global $U*/
 (function() {
     var app = angular.module('app').service('orderQuestion', function($rootScope, $log) {
+        
+        /*
+        info scheme
+        
+        
+        buildingState
+        buildingType
+        squareMeters
+        constructionPermissionDate
+        gasInstallation
+        electricityInstallation
+        addressBatiment
+        description
+        
+        */
+
+        const BUILDING_STATE = {
+            RENTING: 0,
+            SELLING: 1
+        };
 
         const BUILDING_TYPE = {
-            HOUSE:0,
-            APPARTEMENT:1,
-            COMMERCIAL:2
+            HOUSE: 0,
+            APPARTEMENT: 1,
+            COMMERCIAL: 2
         };
 
         function bindAnswersToDefaultDiags(s) {
             //s mean scope
             //an scope has an item key (order)
             //scope has local data loaded (s.diags has available diags)
-            //an item should store questions in .info key (ex item.info.sell)
+            //an item should store questions answers in .info key (ex item.info.buildingType)
 
             function departmentHasTermites() {
                 if (s.termitesDepartments && s.item.department && s.item.postCode != undefined) {
                     var code = s.item.postCode.substring(0, 2);
                     return _.includes(s.termitesDepartments.map(v => (v.toString())), code);
-                } else {
+                }
+                else {
                     return false;
                 }
             };
@@ -49,82 +70,95 @@
             });
 
             s.$watch('item.info.constructionPermissionDate', updateChecks);
-            s.$watch('item.info.sell', updateChecks);
+            s.$watch('item.info.buildingState', updateChecks);
             s.$watch('item.info.gasInstallation', updateChecks);
             s.$watch('item.address', updateChecks);
             s.$watch('item.info.electricityInstallation', updateChecks);
-            
-            function dataRootExists(){
+
+            function dataRootExists() {
                 return s.item && s.item.info;
             }
-            
-            function questionHasAValue(propertyName){
+
+            function getAnswer(key) {
+                return s.item.info[key];
+            }
+
+            function questionHasAValue(propertyName) {
                 return dataRootExists() && s.item.info[propertyName];
             }
-            
-            function isTruth(propertyName){
-                return questionHasAValue(propertyName) && s.item.info[propertyName]==true;
+
+            function isTruth(propertyName) {
+                return questionHasAValue(propertyName) && s.item.info[propertyName] == true;
             }
-            
-            function isSelling(){
-                return isTruth('sell');
-            }
-            
-            function selectDiagType(diagName,bool){
-                if(!s.item) return;
-                s.item.diags[diagName] = bool;
-            }
-            
-            function setMandatoryTruthAndSelect(diagName){
-                setMandatory(diagName,true);
-                if(dataRootExists()){
-                    selectDiagType(diagName,true);
+
+            function isSelling() {
+                if (questionHasAValue('buildingState')) {
+                    return getAnswer('buildingState') == BUILDING_STATE.SELLING;
+                }
+                if(questionHasAValue('sell')){
+                    return getAnswer('sell')==true;//retro-compatible
                 }
             }
-            
+
+            function selectDiagType(diagName, bool) {
+                if (!s.item) return;
+                s.item.diags[diagName] = bool;
+            }
+
+            function setMandatoryTruthAndSelect(diagName) {
+                setMandatory(diagName, true);
+                if (dataRootExists()) {
+                    selectDiagType(diagName, true);
+                }
+            }
+
             s.$watch('item.info.buildingType', onBuildingTypeChange);
-            s.$watch('item.info.sell', onBuildingTypeChange);
-            
-            function onBuildingTypeChange(){
-                if(!questionHasAValue('buildingType')) return;
+            s.$watch('item.info.buildingState', onBuildingTypeChange);
+
+            function onBuildingTypeChange() {
+                if (!questionHasAValue('buildingType')) return;
                 var buildingType = s.item.info.buildingType;
-                if(buildingType==BUILDING_TYPE.COMMERCIAL){
-                    if(isSelling()){
+                if (buildingType == BUILDING_TYPE.COMMERCIAL) {
+                    if (isSelling()) {
                         //Amiante / Termites / Carrez / DPE / ERNMT
-                        setMandatory('dpe',true);
-                        setMandatory('ernt',true);
-                        setMandatory('loiCarrez',true);
-                    }else{
-                        //Amiante / DPE / ERNMT
-                        setMandatory('dpe',true);
-                        setMandatory('ernt',true);
-                        setMandatory('loiCarrez',false);
+                        setMandatory('dpe', true);
+                        setMandatory('ernt', true);
+                        setMandatory('loiCarrez', true);
                     }
-                }else{
-                    setMandatory('loiCarrez',true); 
+                    else {
+                        //Amiante / DPE / ERNMT
+                        setMandatory('dpe', true);
+                        setMandatory('ernt', true);
+                        setMandatory('loiCarrez', false);
+                    }
+                }
+                else {
+                    setMandatory('loiCarrez', true);
                 }
             }
 
             function updateChecks() {
 
 
-                if(!s.item || !s.item.info) return;
+                if (!s.item || !s.item.info) return;
 
                 if (s.item.info.constructionPermissionDate === 'Avant le 01/01/1949') {
                     toggle('crep', true);
                     s.item.diags.crep = true; //mandatory
                     setMandatory('crep', true);
-                } else {
+                }
+                else {
                     s.item.diags.crep = false; //
                     toggle('crep', true);
                     setMandatory('crep', false);
                 }
 
-                if (departmentHasTermites() && s.item.info.sell) {
+                if (departmentHasTermites() && isSelling()) {
                     //toggle('termites', true);
                     s.item.diags.termites = true;
                     setMandatory('termites', true);
-                } else {
+                }
+                else {
                     toggle('termites', false);
                     s.item.diags.termites = false;
                     setMandatory('termites', false);
@@ -134,7 +168,8 @@
                     toggle('dta', true);
                     s.item.diags.dta = true; //mandatory
                     setMandatory('dta', true);
-                } else {
+                }
+                else {
                     toggle('dta', true);
                     s.item.diags.dta = false;
                     setMandatory('dta', false);
@@ -142,27 +177,31 @@
 
                 if (_.includes(['Oui, Plus de 15 ans', 'Oui, Moins de 15 ans'], s.item.info.gasInstallation)) {
                     toggle('gaz', true);
-                    if (s.item.info.sell == true && s.item.info.gasInstallation === 'Oui, Plus de 15 ans') {
+                    if (isSelling() && s.item.info.gasInstallation === 'Oui, Plus de 15 ans') {
                         s.item.diags.gaz = true;
                         setMandatory('gaz', true);
-                    } else {
+                    }
+                    else {
                         s.item.diags.gaz = false;
                         setMandatory('gaz', false);
                     }
-                } else {
+                }
+                else {
                     toggle('gaz', false);
                     setMandatory('gaz', false);
                 }
                 if (_.includes(['Plus de 15 ans', 'Moins de 15 ans'], s.item.info.electricityInstallation)) {
                     toggle('electricity', true);
-                    if (s.item.info.sell == true && s.item.info.electricityInstallation === 'Plus de 15 ans') {
+                    if (isSelling() && s.item.info.electricityInstallation === 'Plus de 15 ans') {
                         s.item.diags.electricity = true;
                         setMandatory('electricity', true);
-                    } else {
+                    }
+                    else {
                         s.item.diags.electricity = false;
                         setMandatory('electricity', false);
                     }
-                } else {
+                }
+                else {
                     toggle('electricity', false);
                     setMandatory('electricity', false);
                 }
@@ -172,9 +211,9 @@
         }
 
         var self = {
-            isDiagTypeMandatory:function(diagName, diagsArray){
+            isDiagTypeMandatory: function(diagName, diagsArray) {
                 var diag = null;
-                for(var x in diagsArray){
+                for (var x in diagsArray) {
                     diag = diagsArray[x];
                     if (diagName && diag.name == diagName) {
                         return diag.mandatory;

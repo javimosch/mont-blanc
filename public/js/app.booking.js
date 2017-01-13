@@ -53,7 +53,7 @@ app.config(['$routeProvider',
         when('/conditions-generales-utilisation', {
             templateUrl: 'views/diags/general-conditions.html'
         }).
-         when('/cgu-lemonway', {
+        when('/cgu-lemonway', {
             templateUrl: 'views/diags/cgu-lemonway.html'
         }).
         when('/ernmt', {
@@ -108,12 +108,12 @@ app.config(['$routeProvider',
 
 
 app.controller('ctrl.booking', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots','orderPrice','$log','orderPaymentForm',
-    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice,$log,orderPaymentForm) {
+    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion',
+    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion) {
 
-        $timeout(function(){
+        $timeout(function() {
             r.openModal = s.openModal;
-        },2000);
+        }, 2000);
 
         r.URL = Object.assign(r.URL, URL);
 
@@ -154,7 +154,8 @@ app.controller('ctrl.booking', ['server',
                 if ((s.__manualUrlChange || 0) + 5000 < new Date().getTime()) {
                     resolvePaymentScreenAuth().then(resolvePaymentScreenOrder);
                 }
-            } else {
+            }
+            else {
                 $U.url.clear();
             }
 
@@ -167,7 +168,8 @@ app.controller('ctrl.booking', ['server',
                     $U.emit('render-ranges');
                 }, 1000);
 
-            } else {
+            }
+            else {
                 s.__header = 2;
             }
 
@@ -185,7 +187,8 @@ app.controller('ctrl.booking', ['server',
                 if (!s._user || !s._user.__subscribeMode) {
                     console.warn('current _user is not in _subscribeMode');
                     r.route(URL.HOME);
-                } else {
+                }
+                else {
                     delete s._user.__subscribeMode;
                 }
             }
@@ -310,11 +313,13 @@ app.controller('ctrl.booking', ['server',
                             $U.url.set('auth', s._user._id);
                             s.__manualUrlChange = new Date().getTime();
                             resolve();
-                        } else {
+                        }
+                        else {
                             return r.moveToLogin();
                         }
                     });
-                } else {
+                }
+                else {
                     return r.moveToLogin();
                 }
             });
@@ -323,14 +328,16 @@ app.controller('ctrl.booking', ['server',
         function resolvePaymentScreenOrder() {
             if ($U.url.get('order')) {
                 if (!s._order._id) s.fetchOrder($U.url.get('order'));
-            } else {
+            }
+            else {
                 if (!s._order._id) {
                     s.saveAsync().on('success', function() {
                         s.__manualUrlChange = new Date().getTime();
                         if (!s._order._id) throw Error('ORDER-ID-NULL');
                         $U.url.set('order', s._order._id);
                     })
-                } else {
+                }
+                else {
                     if (!s._order._id) throw Error('ORDER-ID-NULL');
                     s.__manualUrlChange = new Date().getTime();
                     $U.url.set('order', s._order._id);
@@ -404,7 +411,8 @@ app.controller('ctrl.booking', ['server',
                             customButtonClick: () => {
                                 if (!modal.scope.data.email) {
                                     return r.infoMessage('Email est nécessaire.');
-                                } else {
+                                }
+                                else {
 
                                     db.ctrl('Notification', 'ADMIN_BOOKING_MISSING_DEPARTMENT_REQUEST', {
                                         department: s.item.postCode.substring(0, 2),
@@ -428,7 +436,8 @@ app.controller('ctrl.booking', ['server',
                 //at least one diag selected
                 if (atLeastOneDiagSelected()) {
                     return r.route('rendez-vous');
-                } else {
+                }
+                else {
                     return r.warningMessage('Sélectionnez au moins un choix');
                 }
             }, () => {
@@ -443,7 +452,8 @@ app.controller('ctrl.booking', ['server',
                 s.validateDate(function() {
                     if (s._user && s._user._id) {
                         r.route(URL.PAYMENT);
-                    } else {
+                    }
+                    else {
                         s.moveToLogin();
                     }
 
@@ -458,7 +468,8 @@ app.controller('ctrl.booking', ['server',
                 s.auth.email = r.session().email;
                 s.auth.pass = r.session().password;
                 s.login();
-            } else {
+            }
+            else {
                 r.route(URL.LOGIN);
             }
         };
@@ -480,7 +491,8 @@ app.controller('ctrl.booking', ['server',
             ], (m) => {
                 if (typeof m[0] !== 'string') {
                     s.warningMsg(m[0]());
-                } else {
+                }
+                else {
                     s.warningMsg(m[0]);
                 }
             }, cb);
@@ -493,7 +505,8 @@ app.controller('ctrl.booking', ['server',
             ], (m) => {
                 if (typeof m[0] !== 'string') {
                     s.warningMsg(m[0]())
-                } else {
+                }
+                else {
                     s.warningMsg(m[0]);
                 }
             }, cb);
@@ -510,7 +523,8 @@ app.controller('ctrl.booking', ['server',
                 exists = exists.ok && exists.result == true;
                 if (exists) {
                     s.warningMsg('This email address belongs to an existing member.');
-                } else {
+                }
+                else {
                     //validate fields
                     ifThenMessage([
                         [!s._user.email, '==', true, "Email c&#39;est obligatoire."],
@@ -519,7 +533,8 @@ app.controller('ctrl.booking', ['server',
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             s.warningMsg(m[0]())
-                        } else {
+                        }
+                        else {
                             s.warningMsg(m[0]);
                         }
                     }, cb);
@@ -557,7 +572,8 @@ app.controller('ctrl.booking', ['server',
                 s.addressDepartmentCovered = res.result;
                 if (res.result == true) {
                     cb && cb();
-                } else {
+                }
+                else {
                     err && err();
                 }
             })
@@ -566,12 +582,12 @@ app.controller('ctrl.booking', ['server',
 
         s.validateQuestions = function(cb, err) {
             ifThenMessage([
-                [s.item.sell, '==', undefined, MESSAGES.ANSWER_SELL_OR_RENT],
-                [s.item.house, '==', undefined, MESSAGES.ANSWER_APPARTAMENT_OR_MAISON],
-                [s.item.squareMeters, '==', undefined, "Répondre Superficie"],
-                [s.item.constructionPermissionDate, '==', undefined, "Répondre Permis de construire"],
-                [s.item.gasInstallation, '==', undefined, "Répondre Gaz"],
-                [s.item.electricityInstallation, '==', undefined, "Répondre Electricité"],
+                [s.item.info.buildingState, '==', undefined, MESSAGES.ANSWER_SELL_OR_RENT],
+                [s.item.info.buildingType, '==', undefined, MESSAGES.ANSWER_APPARTAMENT_OR_MAISON],
+                [s.item.info.squareMeters, '==', undefined, "Répondre Superficie"],
+                [s.item.info.constructionPermissionDate, '==', undefined, "Répondre Permis de construire"],
+                [s.item.info.gasInstallation, '==', undefined, "Répondre Gaz"],
+                [s.item.info.electricityInstallation, '==', undefined, "Répondre Electricité"],
                 [s.item.address, '==', undefined, "Répondre Address"],
 
                 /*
@@ -592,10 +608,10 @@ app.controller('ctrl.booking', ['server',
         //DIAG DATE SELECTION -> Get the slot that the user had selected to the right place.
         s.$watch('item.range', function(id) {
             if (!id) return;
-            if(typeof id !== 'string') return;
-            console.log('item.range',id);
+            if (typeof id !== 'string') return;
+            console.log('item.range', id);
             var data = JSON.parse(window.atob(id));
-            console.log('item.range data',data);
+            console.log('item.range data', data);
             s.item._diag = data._diag;
             s.item.start = data.start;
             s.item.end = data.end;
@@ -722,7 +738,8 @@ app.controller('ctrl.booking', ['server',
                     if (!s.booking.order.delegatedTo) {
                         s.booking.order.delegatedTo = s._order.landLordEmail;
                     }
-                } else {
+                }
+                else {
                     return "The payment of this order is pending.";
                 }
             }
@@ -732,10 +749,12 @@ app.controller('ctrl.booking', ['server',
             if (orderPaid()) {
                 if (s._order.landLordPaymentEmailSended == true) {
                     return "This order was delegated to " + s.booking.order.delegatedTo + ' and is already paid.';
-                } else {
+                }
+                else {
                     return "This order is already paid"
                 }
-            } else {
+            }
+            else {
                 return delegated;
             }
         };
@@ -782,7 +801,8 @@ app.controller('ctrl.booking', ['server',
                     'Votre adresse': () => s._user.address, //when landlord
                     'Other': () => 'other'
                 };
-            } else {
+            }
+            else {
                 return {
                     'Ou ?': () => '',
                     'Sur Place': () => s._order.address,
@@ -823,14 +843,16 @@ app.controller('ctrl.booking', ['server',
                 //auto set from
                 if (s.__keysWhereSelectLabel() == "Sur Place") {
                     s.__keysTimeFromSelect(r.momentTime(s._order.start), new Date(moment(s._order.start).toString()));
-                } else {
+                }
+                else {
                     var m = moment(s._order.start).hours(8);
                     s.__keysTimeFromSelect(r.momentTime(m), new Date(m.toString()));
                 }
                 //auto set to
                 if (s.__keysWhereSelectLabel() == "Sur Place") {
                     s.__keysTimeToSelect(r.momentTime(s._order.start), new Date(moment(s._order.start).toString()));
-                } else {
+                }
+                else {
                     var m = moment(s._order.start).subtract(30, 'minutes');
                     s.__keysTimeToSelect(r.momentTime(m), new Date(m.toString()));
                 }
@@ -865,7 +887,8 @@ app.controller('ctrl.booking', ['server',
         s.$watch('_order.keysTimeFrom', function(val) {
             if (!val) {
                 s.__keysTimeFromSelectLabel = 'choisir';
-            } else {
+            }
+            else {
                 s.__keysTimeFromSelectLabel = 'choisir';
                 _.each(s.__keysTimeFromItems, (v, k) => {
                     if (v == val) s.__keysTimeFromSelectLabel = k;
@@ -923,7 +946,8 @@ app.controller('ctrl.booking', ['server',
         s.$watch('_order.keysTimeTo', function(val) {
             if (!val) {
                 s.__keysTimeToSelectLabel = 'choisir';
-            } else {
+            }
+            else {
                 s.__keysTimeToSelectLabel = 'choisir';
                 _.each(s.__keysTimeToItems, (v, k) => {
                     if (v == val) s.__keysTimeToSelectLabel = k;
@@ -993,19 +1017,19 @@ app.controller('ctrl.booking', ['server',
 
         s.__constructionPermissionDateSelectLabel = 'choisir';
         s.__constructionPermissionDateSelect = (key, val) => {
-            s.item.constructionPermissionDate = val;
+            s.item.info.constructionPermissionDate = val;
 
         };
-        s.$watch('item.constructionPermissionDate', function(val) {
+        s.$watch('item.info.constructionPermissionDate', function(val) {
             s.__constructionPermissionDateSelectLabel = val ? val : 'choisir';
             r.dom();
         });
 
         s.__gazSelectLabel = 'choisir';
         s.__gazSelect = (key, val) => {
-            s.item.gasInstallation = val;
+            s.item.info.gasInstallation = val;
         };
-        s.$watch('item.gasInstallation', function(val) {
+        s.$watch('item.info.gasInstallation', function(val) {
             s.__gazSelectLabel = val ? val : 'choisir';
             r.dom();
         });
@@ -1045,24 +1069,12 @@ app.controller('ctrl.booking', ['server',
             s.diagSelected = s.diag.dpe;
 
 
-
-            updateChecksVisibilityOnDemand();
+            orderQuestion.bindAnswersToDefaultDiags(s);
+            //updateChecksVisibilityOnDemand();
             waitForProperties([loadDefaults, r.dom], ['notify']);
         });
 
 
-        /*
-                function scrollToAnchor() {
-                    try {
-                        if ($.hrefAnchor()) {
-                            $.fn.fullpage.moveTo($.hrefAnchor());
-                        }
-                    }
-                    catch (e) {
-
-                    }
-                }
-                */
 
 
 
@@ -1090,14 +1102,15 @@ app.controller('ctrl.booking', ['server',
             return diag(n).label;
         };
 
-        
+
 
         var param = (n, validate) => {
             var val = getParameterByName(n);
             if (!val) return undefined;
             if (!validate) {
                 return val;
-            } else {
+            }
+            else {
                 var vals = Object.keys(validate).map((v) => {
                     return validate[v]
                 }); //valid vals
@@ -1108,7 +1121,8 @@ app.controller('ctrl.booking', ['server',
                         duration: 99999
                     })
                     return undefined;
-                } else {
+                }
+                else {
                     return val;
                 }
             }
@@ -1131,7 +1145,8 @@ app.controller('ctrl.booking', ['server',
                     return undefined;
                 }
                 return d;
-            } else {
+            }
+            else {
                 if (getParameterByName(n) !== null) {
                     s.notify('Parameter ' + n + ' needs to be a valid date', 'warning', 0, true, {
                         duration: 99999
@@ -1144,7 +1159,8 @@ app.controller('ctrl.booking', ['server',
             var v = (getParameterByName(n) || '').toString()
             if (_.includes(['1', '0'], v)) {
                 return v === '1';
-            } else {
+            }
+            else {
                 if (getParameterByName(n) !== null) {
                     s.notify('Parameter ' + n + ' needs to be a 1/0', 'warning', 0, true, {
                         duration: 99999
@@ -1154,122 +1170,128 @@ app.controller('ctrl.booking', ['server',
             }
         }
 
-        function toggleMandatory(n, val) {
-            s.diags.forEach((diag) => {
-                if ((n && diag.name == n) || !n) {
-                    diag.mandatory = val;
-                    //console.log('toggle-mandatory ',n,val);
-                    r.dom();
-                }
-            });
-        }
-        s.toggleMandatory = toggleMandatory;
+
 
         s.lineThrough = (item) => (item.show == false);
 
-        function updateChecksVisibilityOnDemand() {
-            var toggle = (n, val) => {
-                s.diags.forEach((diag) => {
-                    if ((n && diag.name == n) || !n) {
-                        diag.show = val;
-                        if (diag.show == false) {
-                            s.item.diags[diag.name] = false;
+        /*
+                function updateChecksVisibilityOnDemand() {
+
+                    function toggleMandatory(n, val) {
+                        s.diags.forEach((diag) => {
+                            if ((n && diag.name == n) || !n) {
+                                diag.mandatory = val;
+                                //console.log('toggle-mandatory ',n,val);
+                                r.dom();
+                            }
+                        });
+                    }
+                    s.toggleMandatory = toggleMandatory;
+
+                    var toggle = (n, val) => {
+                        s.diags.forEach((diag) => {
+                            if ((n && diag.name == n) || !n) {
+                                diag.show = val;
+                                if (diag.show == false) {
+                                    s.item.diags[diag.name] = false;
+                                }
+                            }
+                        });
+                    };
+                    s.diags.forEach(function(val, key) {
+                        s.item.diags[val.name] = (val.mandatory) ? true : false;
+                    });
+
+                    s.$watch('item.info.constructionPermissionDate', updateChecks);
+                    s.$watch('item.info.buildingState', updateChecks);
+                    s.$watch('item.info.gasInstallation', updateChecks);
+                    s.$watch('item.info.address', updateChecks);
+                    s.$watch('item.info.electricityInstallation', updateChecks);
+
+                    function updateChecks() {
+                        if (s.item.info.constructionPermissionDate === 'Avant le 01/01/1949') {
+                            toggle('crep', true);
+                            s.item.diags.crep = true; //mandatory
+                            toggleMandatory('crep', true);
                         }
+                        else {
+                            s.item.diags.crep = false; //
+                            toggle('crep', true);
+                            toggleMandatory('crep', false);
+                        }
+
+                        if (s.departmentHasTermites() && s.item.sell) {
+                            //toggle('termites', true);
+                            s.item.diags.termites = true;
+                            toggleMandatory('termites', true);
+                        }
+                        else {
+                            toggle('termites', false);
+                            s.item.diags.termites = false;
+                            toggleMandatory('termites', false);
+                        }
+
+                        if (_.includes(['Avant le 01/01/1949', 'Entre 1949 et le 01/07/1997'], s.item.constructionPermissionDate)) {
+                            toggle('dta', true);
+                            s.item.diags.dta = true; //mandatory
+                            toggleMandatory('dta', true);
+                        }
+                        else {
+                            toggle('dta', true);
+                            s.item.diags.dta = false;
+                            toggleMandatory('dta', false);
+                        }
+
+                        if (_.includes(['Oui, Plus de 15 ans', 'Oui, Moins de 15 ans'], s.item.gasInstallation)) {
+                            toggle('gaz', true);
+                            if (s.item.sell == true && s.item.gasInstallation === 'Oui, Plus de 15 ans') {
+                                s.item.diags.gaz = true;
+                                toggleMandatory('gaz', true);
+                            }
+                            else {
+                                s.item.diags.gaz = false;
+                                toggleMandatory('gaz', false);
+                            }
+                        }
+                        else {
+                            toggle('gaz', false);
+                            toggleMandatory('gaz', false);
+                        }
+                        if (_.includes(['Plus de 15 ans', 'Moins de 15 ans'], s.item.electricityInstallation)) {
+                            toggle('electricity', true);
+                            if (s.item.sell == true && s.item.electricityInstallation === 'Plus de 15 ans') {
+                                s.item.diags.electricity = true;
+                                toggleMandatory('electricity', true);
+                            }
+                            else {
+                                s.item.diags.electricity = false;
+                                toggleMandatory('electricity', false);
+                            }
+                        }
+                        else {
+                            toggle('electricity', false);
+                            toggleMandatory('electricity', false);
+                        }
+
                     }
-                });
-            };
-            s.diags.forEach(function(val, key) {
-                s.item.diags[val.name] = (val.mandatory) ? true : false;
-            });
-
-            s.$watch('item.constructionPermissionDate', updateChecks);
-            s.$watch('item.sell', updateChecks);
-            s.$watch('item.gasInstallation', updateChecks);
-            s.$watch('item.address', updateChecks);
-            s.$watch('item.electricityInstallation', updateChecks);
-
-            function updateChecks() {
-
-                /*alredt done in questions validations
-                                setTimeout(function() {
-                                    if (s.item.country !== 'France') {
-                                        s.warningMsg(MESSAGES.FRENCH_ADDRESS_REQUIRED);
-                                    }
-                                }, 2000);*/
-
-
-                if (s.item.constructionPermissionDate === 'Avant le 01/01/1949') {
-                    toggle('crep', true);
-                    s.item.diags.crep = true; //mandatory
-                    toggleMandatory('crep', true);
-                } else {
-                    s.item.diags.crep = false; //
-                    toggle('crep', true);
-                    toggleMandatory('crep', false);
+                    toggle(undefined, true); //all checks visibles.
                 }
-
-                if (s.departmentHasTermites() && s.item.sell) {
-                    //toggle('termites', true);
-                    s.item.diags.termites = true;
-                    toggleMandatory('termites', true);
-                } else {
-                    toggle('termites', false);
-                    s.item.diags.termites = false;
-                    toggleMandatory('termites', false);
-                }
-
-                if (_.includes(['Avant le 01/01/1949', 'Entre 1949 et le 01/07/1997'], s.item.constructionPermissionDate)) {
-                    toggle('dta', true);
-                    s.item.diags.dta = true; //mandatory
-                    toggleMandatory('dta', true);
-                } else {
-                    toggle('dta', true);
-                    s.item.diags.dta = false;
-                    toggleMandatory('dta', false);
-                }
-
-                if (_.includes(['Oui, Plus de 15 ans', 'Oui, Moins de 15 ans'], s.item.gasInstallation)) {
-                    toggle('gaz', true);
-                    if (s.item.sell == true && s.item.gasInstallation === 'Oui, Plus de 15 ans') {
-                        s.item.diags.gaz = true;
-                        toggleMandatory('gaz', true);
-                    } else {
-                        s.item.diags.gaz = false;
-                        toggleMandatory('gaz', false);
-                    }
-                } else {
-                    toggle('gaz', false);
-                    toggleMandatory('gaz', false);
-                }
-                if (_.includes(['Plus de 15 ans', 'Moins de 15 ans'], s.item.electricityInstallation)) {
-                    toggle('electricity', true);
-                    if (s.item.sell == true && s.item.electricityInstallation === 'Plus de 15 ans') {
-                        s.item.diags.electricity = true;
-                        toggleMandatory('electricity', true);
-                    } else {
-                        s.item.diags.electricity = false;
-                        toggleMandatory('electricity', false);
-                    }
-                } else {
-                    toggle('electricity', false);
-                    toggleMandatory('electricity', false);
-                }
-
-            }
-            toggle(undefined, true); //all checks visibles.
-        }
+                */
 
         function loadDefaults() {
             //console.log('loadDefaults');
+            s.item.info = s.item.info  || {};
             s.item = Object.assign(s.item, {
-                sell: paramBool('sell') || true,
-                house: paramBool('house') || undefined,
-                squareMeters: param('squareMeters', s.squareMeters) || '90 - 110m²', // '- de 20m²',
-                // apartamentType: param('apartamentType', s.apartamentType) || undefined,
-                constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined, // 'Entre 1949 et le 01/07/1997',
+                info: {
+                    buildingState: paramBool('buildingState') || '1',
+                    buildingType: paramBool('buildingType') || undefined,
+                    squareMeters: param('squareMeters', s.squareMeters) || '90 - 110m²', // '- de 20m²',
+                    // apartamentType: param('apartamentType', s.apartamentType) || undefined,
+                    constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined, // 'Entre 1949 et le 01/07/1997',
+                    gasInstallation: param('gasInstallation', s.gasInstallation) || undefined, // 'Oui, Moins de 15 ans',
+                    electricityInstallation: param('electricityInstallation', s.electricityInstallation) || s.item.info.electricityInstallation || undefined // 'Plus de 15 ans',
+                },
                 address: param('address') || undefined, // "15 rue L'Hopital Sain Louis",
-                gasInstallation: param('gasInstallation', s.gasInstallation) || undefined, // 'Oui, Moins de 15 ans',
-                electricityInstallation: param('electricityInstallation', s.electricityInstallation) || s.item.electricityInstallation || undefined, // 'Plus de 15 ans',
                 date: paramDate('date'),
                 time: param('time', ['any']),
                 clientType: param('clientType', s.CLIENT_TYPES)
@@ -1278,18 +1300,22 @@ app.controller('ctrl.booking', ['server',
             creatediagSlots();
 
             r.dom(function() {
+                
+                //Building size slider !?
                 try {
                     var x = 0;
                     for (var pos in s.squareMeters) {
-                        if (s.item.squareMeters == s.squareMeters[pos]) {
+                        if (s.item.info.squareMeters == s.squareMeters[pos]) {
                             break;
-                        } else {
+                        }
+                        else {
                             x++;
                         }
                     }
                     $("input[type=range]").val(x);
                     // console.log('range-set-at-', x);
-                } catch (e) {}
+                }
+                catch (e) {}
             });
 
             $U.emitPreserve('booking-defaults-change');
@@ -1445,7 +1471,8 @@ app.controller('ctrl.booking', ['server',
                         //s.subscribeMode = true;
                         //s.right();
 
-                    } else {
+                    }
+                    else {
                         s.warningMsg('Invalid credentials');
                     }
                 });
@@ -1467,27 +1494,28 @@ app.controller('ctrl.booking', ['server',
 
 
         s.bookingDescriptionTitle = function() {
-            if (s.item.sell) return "Pack Vente: ";
+            if (s.item.info.buildingState=='1') return "Pack Vente: ";
             else return "Pack Location: ";
         };
         s.bookingDescriptionBody = function() {
             var rta = "";
-            if (s.item.house) {
+            if (s.item.info.buildingType=='0') {
                 rta += "Maison";
-            } else {
+            }
+            else {
                 rta += "Appartement";
             }
             if (s.item.city) {
                 rta += " à " + s.item.city;
             }
-            if (s.item.constructionPermissionDate) {
-                rta += " " + s.item.constructionPermissionDate;
+            if (s.item.info.constructionPermissionDate) {
+                rta += " " + s.item.info.constructionPermissionDate;
             }
-            rta += ', ' + s.item.squareMeters;
-            if (!_.includes(['Non', 'Oui, Moins de 15 ans'], s.item.gasInstallation)) {
+            rta += ', ' + s.item.info.squareMeters;
+            if (!_.includes(['Non', 'Oui, Moins de 15 ans'], s.item.info.gasInstallation)) {
                 rta += ', Gaz';
             }
-            if (s.item.electricityInstallation != 'Moins de 15 ans') {
+            if (s.item.info.electricityInstallation != 'Moins de 15 ans') {
                 rta += ", Électricité";
             }
             rta += '.';
@@ -1573,7 +1601,8 @@ app.controller('ctrl.booking', ['server',
                     if (data.ok) {
                         s._user = data.result;
                         cb();
-                    } else {
+                    }
+                    else {
                         s.warningMsg(data.err);
                     }
                 });
@@ -1587,7 +1616,8 @@ app.controller('ctrl.booking', ['server',
             useAuthCredentials = useAuthCredentials == undefined ? true : useAuthCredentials;
             if (useAuthCredentials) {
                 s.validateAuthInput(_validateEmail);
-            } else {
+            }
+            else {
                 _setAndGo();
             }
 
@@ -1600,7 +1630,8 @@ app.controller('ctrl.booking', ['server',
                     exists = exists.ok && exists.result == true;
                     if (exists) {
                         s.warningMsg('This email address belongs to an existing member.');
-                    } else {
+                    }
+                    else {
                         _setAndGo();
                     }
                 });
@@ -1638,7 +1669,8 @@ app.controller('ctrl.booking', ['server',
                                 setOrder(d.result);
                             });
                             resolve(s._order);
-                        } else {
+                        }
+                        else {
                             err(d);
                         }
                     });
@@ -1647,7 +1679,7 @@ app.controller('ctrl.booking', ['server',
         s.fetchOrder = fetchOrder;
 
         function setOrder(_order) {
-            s._order = _order;        
+            s._order = _order;
             orderPrice.set({
                 date: _order.start,
                 diagCommissionRate: _order._diag && _order._diag.commission
@@ -1664,13 +1696,13 @@ app.controller('ctrl.booking', ['server',
                 s._order.info.addressBatiment = 'Sur rue';
             }
 
-            if (s._order.info.house === undefined && s.item.house !== undefined) {
-                s._order.info.house = s.item.house;
-            }
+            //if (s._order.info.house === undefined && s.item.house !== undefined) {
+              //  s._order.info.house = s.item.house;
+            //}
 
-            if (s._order.info.sell === undefined && s.item.sell !== undefined) {
-                s._order.info.sell = s.item.sell;
-            }
+            //if (s._order.info.sell === undefined && s.item.sell !== undefined) {
+              //  s._order.info.sell = s.item.sell;
+            //}
 
             if (s._order.info.electricityInstallation === undefined && s.item.electricityInstallation !== undefined) {
                 s._order.info.electricityInstallation = s.item.electricityInstallation;
@@ -1681,9 +1713,9 @@ app.controller('ctrl.booking', ['server',
             }
 
 
-            if (s._order.info.house == undefined) {
-                console.warn('The order info.house is undefined.');
-            }
+            //if (s._order.info.house == undefined) {
+              //  console.warn('The order info.house is undefined.');
+            //}
         }
 
         //SAVEASYNC
@@ -1803,22 +1835,22 @@ app.controller('ctrl.booking', ['server',
                 db.ctrl('User', 'update', s._user); //async
                 //
                 var order = s._order;
-                
-                 orderPaymentForm.pay(order).then(function() {
-                     s.infoMsg("Commande Créée", 10000);
-                     s.booking.complete = true;
-                     s.booking.payment.complete = true;
-                     r.dom(() => {
-                         updateAutoSave(false);
-                         $U.url.clear();
-                         s.gotoOrderConfirmationScreen();
-                     });
-                 }).error(function(res) {
-                     return r.errorMessage('', 10000);
-                 }).on('validate', function(msg) {
-                     return r.warningMessage(msg, 10000);
-                 });
-                
+
+                orderPaymentForm.pay(order).then(function() {
+                    s.infoMsg("Commande Créée", 10000);
+                    s.booking.complete = true;
+                    s.booking.payment.complete = true;
+                    r.dom(() => {
+                        updateAutoSave(false);
+                        $U.url.clear();
+                        s.gotoOrderConfirmationScreen();
+                    });
+                }).error(function(res) {
+                    return r.errorMessage('', 10000);
+                }).on('validate', function(msg) {
+                    return r.warningMessage(msg, 10000);
+                });
+
                 /*
                 $D.openStripeModalPayOrder(order, (token) => {
                     order.stripeToken = token.id;
@@ -1874,9 +1906,9 @@ app.controller('ctrl.booking', ['server',
                     email: emailOfPersonWhoPaid()
                 });
                 */
-                
-                
-                
+
+
+
                 //
             });
             //------
@@ -1886,7 +1918,8 @@ app.controller('ctrl.booking', ['server',
             var session = r.session();
             if (session && session._id == s._order._client._id) {
                 return s._order._client.email;
-            } else {
+            }
+            else {
                 return s._order.landLordEmail || '';
             }
         }
@@ -1955,7 +1988,8 @@ app.controller('ctrl.booking', ['server',
             minutes = (minutes < 10) ? '0' + minutes : minutes;
             if (hours > 0) {
                 return hours + ':' + minutes + ' hours';
-            } else {
+            }
+            else {
                 return minutes + ' minutes';
             }
         };
