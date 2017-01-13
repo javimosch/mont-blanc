@@ -582,6 +582,14 @@ function USER_PASSWORD_RESET(data, cb) {
         NOTIFICATION.LANDLORD_ORDER_PAYMENT_DELEGATED, data, cb, "Password reset", data._user.email, data._user, 'User');
 }
 
+function tryParseFloatToFixed(v,n){
+    try{
+        return parseFloat(v).toFixed(n||2);
+    }catch(err){
+        return v;
+    }
+}
+
 function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type) {
     actions.log(_type + '=START');
     moment.locale('fr')
@@ -652,11 +660,11 @@ function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type) {
             '$ORDER_OBSERVATION': _order.obs,
             '$OBS_DISPLAY': (_order.obs) ? 'block' : 'none',
 
-            '$ORDER_PRICE_TTC': _order.price.toFixed(2),
-            '$ORDER_PRICE_HT': _order.priceHT.toFixed(2),
-            '$ORDER_DIAG_REMUNERATION_HT': _order.diagRemunerationHT.toFixed(2),
-            '$ORDER_REVENUE_HT': _order.revenueHT.toFixed(2),
-            '$ORDER_MONTH_REVENUE_HT': _order.currentMonthTotalRevenueHT.toFixed(2),
+            '$ORDER_PRICE_TTC': tryParseFloatToFixed(_order.price),
+            '$ORDER_PRICE_HT': tryParseFloatToFixed(_order.priceHT),
+            '$ORDER_DIAG_REMUNERATION_HT': tryParseFloatToFixed(_order.diagRemunerationHT),
+            '$ORDER_REVENUE_HT': tryParseFloatToFixed(_order.revenueHT),
+            '$ORDER_MONTH_REVENUE_HT': tryParseFloatToFixed(_order.currentMonthTotalRevenueHT),
 
             '$ORDER_DATE_HOUR': dateTime2(_order.start),
             '$ORDER_DESCRIPTION': _order.info.description,
