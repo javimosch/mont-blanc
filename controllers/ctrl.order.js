@@ -522,17 +522,20 @@ function save(data, cb, customRequiredKeys) {
         _saveNext();
     }
 
+    
 
     function _saveNext() {
+        /*
         data.info = data.info || {};
         data.info = Object.assign(data.info || {}, {
-            sell: data.info.sell || data.sell || undefined,
+            sell: data.info.sell!=undefined || data.sell || undefined,
             house: data.info.house || data.house || undefined,
             squareMeters: data.info.squareMeters || data.squareMeters || undefined,
             apartamentType: data.info.apartamentType || data.apartamentType || undefined,
             constructionPermissionDate: data.info.constructionPermissionDate || data.constructionPermissionDate || undefined,
             gasInstallation: data.info.gasInstallation || data.gasInstallation || undefined,
         });
+        */
         actions.createUpdate(data, (err, r) => {
             if (err) return cb(err, r);
             cb(err, r);

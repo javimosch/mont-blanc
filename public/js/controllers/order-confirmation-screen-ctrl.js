@@ -1,6 +1,6 @@
 angular.module('app').controller('orderConfirmation', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagPrice', 'diagSlots', '$log',
-    function(db, $timeout, s, r, $uibModal, diagPrice, diagSlots, $log) {
+    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', '$log',
+    function(db, $timeout, s, r, $uibModal, diagSlots, $log) {
 
         createProperties();
         if (hasValidProperties()) {

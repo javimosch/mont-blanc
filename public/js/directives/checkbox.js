@@ -44,12 +44,15 @@ app.directive('niceCheckBox', function($rootScope, $timeout, $compile) {
     };
 });
 
-app.directive('checkBoxGroup', function($rootScope, $timeout, $compile) {
+app.directive('checkBoxGroup', function($rootScope, $timeout, $compile, $parse) {
     return {
         restrict: 'A',
         link: function(scope, el, attrs) {
             el.on('change', update);
+
             function update() {
+                var ngDisabled = $parse(attrs.ngDisabled)(scope);
+                if (ngDisabled) return false;
                 var $box = $(this);
                 var group = "input:checkbox[name='" + $box.attr("name") + "']";
                 $(group).prop("checked", false);
@@ -57,6 +60,7 @@ app.directive('checkBoxGroup', function($rootScope, $timeout, $compile) {
                 $box.prop("checked", true);
                 $box.prop("disabled", true);
             }
+
         }
     };
 });
@@ -72,18 +76,23 @@ app.directive('checkBoxModel', function($rootScope, $timeout, $compile, $log) {
                 scope.$watch(function() {
                     return ngModel.$modelValue;
                 }, function(newValue) {
-                    if(!attrs.value) return;
-                    if (newValue == attrs.value) {
-                        if(!el.prop('checked')){
-                            $timeout(function(){
+                    if (attrs.value == undefined) return;
+                    newValue = newValue || '';
+                    if (newValue.toString() == attrs.value.toString()) {
+                        if (!el.prop('checked')) {
+                            $timeout(function() {
                                 //el.trigger('click');
                                 //$log.debug('value change to',newValue);
-                                el.prop('checked',true).change();
+                                //if (el.css('display') != 'none') {
+                                    el.prop('checked', true).change();
+                                //}
+                                
                                 //scope.$apply();
                             });
                             //$log.debug('model match', newValue);
                         }
-                    }else{
+                    }
+                    else {
 
                     }
                 });
@@ -94,7 +103,8 @@ app.directive('checkBoxModel', function($rootScope, $timeout, $compile, $log) {
                     var v, p = attrs.value.toString();
                     if (p == 'false' || p == 'true') {
                         v = (p == 'true');
-                    } else {
+                    }
+                    else {
                         v = p;
                     }
                     set(v);

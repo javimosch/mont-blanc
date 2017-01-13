@@ -15,9 +15,14 @@
             r.setCurrentCtrl(s);
 
 
-
+            s.orderQuestion = orderQuestion;
             s.orderRdv = orderRdv;
             s.orderPrice = orderPrice;
+            
+            s.toggleDiagType = function(key){
+                if(s.item._id) return; //edition disabled
+                s.item.diags[key]=!s.item.diags[key];
+            };
 
             /*PDF LOGIC*/
             s.pdf = {
@@ -519,8 +524,8 @@
                     price: 0,
                     diags: {},
                     info: {
-                        sell: false,
-                        house: false,
+                        //sell: false,
+                        //house: false,
                         squareMeters: undefined,
                         constructionPermissionDate: undefined
                     }

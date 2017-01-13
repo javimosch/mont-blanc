@@ -21,7 +21,8 @@ module.exports = {
         },
         info: {
             type: {},
-            required: false
+            required: false,
+            default:{}
         },
         obs: String,
         notifications: {
