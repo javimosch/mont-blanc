@@ -615,6 +615,10 @@
                         s.applyTotalPrice();
                     }
                 }, true);
+                
+                s.$watch('item.info.buildingType', function(newV, oldV) {
+                        s.applyTotalPrice();
+                }, true);
 
                 s.$watch('item', function(val) {
                     s.__keysWhereItems = s.__keysWhereGetItems();

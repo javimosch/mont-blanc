@@ -5,6 +5,7 @@
 (function() {
     var app = angular.module('app').service('orderPrice', function($rootScope, $log) {
         var settings = {
+            buildingType: undefined,
             date: undefined, //date to get day ratio
             modifiersPercentages: {}, //pricePercentageIncrease
             squareMetersPrice: {},
@@ -16,7 +17,7 @@
             selectedDiags: {},
             availableDiags: {},
             diagCommissionRate: undefined,
-            VATRate:20
+            VATRate: 20
         };
 
         $rootScope._orderPriceSettings = settings;
@@ -37,7 +38,8 @@
             if (postCode && percentageTable) {
                 var department = postCode.substring(0, 2);
                 return percentageTable[department] !== undefined && (percentageTable[department]) || 0;
-            } else {
+            }
+            else {
                 return 0;
             }
         }
@@ -99,7 +101,8 @@
                     case 'size':
                         if (settings.squareMetersPrice && settings.squareMeters != undefined) {
                             return settings.squareMetersPrice[settings.squareMeters]
-                        } else {
+                        }
+                        else {
                             return 0;
                         }
 
@@ -119,6 +122,12 @@
                         }
                         return settings.modifiersPercentages.VATRate || 20
                         break;
+                    case 'commercial':
+                        if (!settings.modifiersPercentages || !settings.modifiersPercentages.commercialBuilding) {
+                            return 70;
+                        }
+                        return settings.modifiersPercentages.commercialBuilding || 70
+                        break;
                     default:
                         $log.warn('no type', type);
                         return 0;
@@ -129,7 +138,7 @@
                 return settings.basePrice + getBasePrice(settings.selectedDiags, settings.availableDiags);
             },
             getDayRatio: function(k) {
-                if(!settings.modifiersPercentages){
+                if (!settings.modifiersPercentages) {
                     $log.error('orderPrice modifiersPercentages required.');
                     return;
                 }
@@ -139,7 +148,8 @@
                 if (k) {
                     return (this.getPriceBase() * (1 + this.getDayRatio(k) / 100)).toFixed(2);
 
-                } else {
+                }
+                else {
                     return this.getPriceBase() * (1 + this.getRatioModifierFor('day') / 100);
                 }
             },
@@ -153,15 +163,23 @@
                 //100*((0.9*100)/100)
                 return (this.getPriceWithDiscount(k) * (this.getRatioModifierFor('department') || 1)).toFixed(2);
             },
+            getPriceWithCommercial: function(k) {
+                if (settings.buildingType != undefined && settings.buildingType == '2') {
+                    return (this.getPriceWithDepartment(k) * (1+this.getRatioModifierFor('commercial') / 100)).toFixed(2);
+                }
+                else {
+                    return this.getPriceWithDepartment(k);
+                }
+            },
             getPriceHT: function(k) {
-                return this.getPriceWithDepartment(k);
+                return this.getPriceWithCommercial(k);
             },
             getPriceWithVAT: function(k) {
-                return (this.getPriceWithDepartment(k) * (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
+                return (this.getPriceWithCommercial(k) * (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
             },
             getPriceTTC: function(k) {
                 var rta = tenthDown10(this.getPriceWithVAT(k));
-                if(isNaN(rta)){
+                if (isNaN(rta)) {
                     //$log.warn('priceTTC NaN !');
                     return 0;
                 }
