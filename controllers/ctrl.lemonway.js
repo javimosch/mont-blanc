@@ -1,10 +1,14 @@
  'use strict';
 
  //shared
- const urlDirectkit = "https://sandbox-api.lemonway.fr/mb/demo/dev/directkitjson2/Service.asmx/"
+ var urlDirectkit = "https://sandbox-api.lemonway.fr/mb/demo/dev/directkitjson2/Service.asmx/"
 
  // diagnostical
  //const urlDirectkit = "https://sandbox-api.lemonway.fr/mb/diagnostical/dev/directkitjson2/service.asmx/"
+
+if(process.env.LEMON_DIRECTKIT_URL){
+ urlDirectkit = process.env.LEMON_DIRECTKIT_URL;
+}
 
  const request = require('request');
  const Promise = require('promise');
