@@ -756,6 +756,11 @@ app.controller('ctrl.booking', ['server',
                 if (hasChanged) {
                     saving = true;
                     cloneOrder();
+                    
+                    if(s.booking.payment.complete){
+                        s._order.status = 'prepaid';
+                    }
+                    
                     db.ctrl('Order', 'update', s._order).then(function() {
                         saving = false;
                         console.info('auto-save: saved');
@@ -1803,22 +1808,23 @@ app.controller('ctrl.booking', ['server',
                 db.ctrl('User', 'update', s._user); //async
                 //
                 var order = s._order;
-                
-                 orderPaymentForm.pay(order).then(function() {
-                     s.infoMsg("Commande Créée", 10000);
-                     s.booking.complete = true;
-                     s.booking.payment.complete = true;
-                     r.dom(() => {
-                         updateAutoSave(false);
-                         $U.url.clear();
-                         s.gotoOrderConfirmationScreen();
-                     });
-                 }).error(function(res) {
-                     return r.errorMessage('', 10000);
-                 }).on('validate', function(msg) {
-                     return r.warningMessage(msg, 10000);
-                 });
-                
+
+                orderPaymentForm.pay(order).then(function() {
+                    s.infoMsg("Commande confirmée", 10000);
+                    s._order.status = 'prepaid';
+                    s.booking.complete = true;
+                    s.booking.payment.complete = true;
+                    r.dom(() => {
+                        updateAutoSave(false);
+                        $U.url.clear();
+                        s.gotoOrderConfirmationScreen();
+                    });
+                }).error(function(res) {
+                    return r.errorMessage('', 10000);
+                }).on('validate', function(msg) {
+                    return r.warningMessage(msg, 10000);
+                });
+
                 /*
                 $D.openStripeModalPayOrder(order, (token) => {
                     order.stripeToken = token.id;
