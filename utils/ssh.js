@@ -62,17 +62,17 @@ function deployTag(tagName, callback) {
 }
 
 function deployMaster(callback) {
-    console.log('[SSH]', 'deploy-master', tagName, '[START]');
+    console.log('[SSH]', 'deploy-master', '[START]');
     ssh.exec(DEPLOY_MASTER_COMMAND, {
-        args: [tagName],
+        args: [],
         out: function(stdout) {
-            console.log('[SSH]', 'deploy-master', tagName, '[STDOUT]', stdout);
+            console.log('[SSH]', 'deploy-master', '[STDOUT]', stdout);
         },
         err: function(stderr) {
-            console.log('[SSH]', 'deploy-master', tagName, '[STDERR]', stderr);
+            console.log('[SSH]', 'deploy-master', '[STDERR]', stderr);
         },
         exit: function(code, stdout, stderr) {
-            console.log('[SSH]', 'deploy-master', tagName, '[EXIT-CODE]', code);
+            console.log('[SSH]', 'deploy-master', '[EXIT-CODE]', code);
             callback && callback(stdout);
         }
     }).start();
