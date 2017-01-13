@@ -775,6 +775,11 @@ app.controller('ctrl.booking', ['server',
                 if (hasChanged) {
                     saving = true;
                     cloneOrder();
+                    
+                    if(s.booking.payment.complete){
+                        s._order.status = 'prepaid';
+                    }
+                    
                     db.ctrl('Order', 'update', s._order).then(function() {
                         saving = false;
                         console.info('auto-save: saved');
@@ -1842,7 +1847,8 @@ app.controller('ctrl.booking', ['server',
                 var order = s._order;
 
                 orderPaymentForm.pay(order).then(function() {
-                    s.infoMsg("Commande Créée", 10000);
+                    s.infoMsg("Commande confirmée", 10000);
+                    s._order.status = 'prepaid';
                     s.booking.complete = true;
                     s.booking.payment.complete = true;
                     r.dom(() => {
