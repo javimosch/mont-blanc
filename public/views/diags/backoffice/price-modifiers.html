@@ -31,7 +31,7 @@
         </div>
         <div class="col-lg-6">
             <div class="col-sm-12">
-                <h2>Days modifiers (+%)</h2>
+                <h2>Extra modifiers (+%)</h2>
             </div>
             <div class="col-sm-12">
                 <table class="table table-striped table-condensed link questions">
@@ -141,7 +141,8 @@
                 <tr>
                     <td>
                         <label class="minimal">Client</label>
-                        <input ng-disabled="!localData" type="text" class="diags-input minimal" ng-model="pricetool.scope.item._client" placeholder="Client" uib-typeahead="client as client.email for client in pricetool.getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading clients. . .'" typeahead-no-results="noResults">
+                        <input ng-disabled="!localData" type="text" class="diags-input minimal" ng-model="pricetool.scope.item._client" placeholder="Client" uib-typeahead="client as client.email for client in pricetool.getClients($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading clients. . .'"
+                            typeahead-no-results="noResults">
                     </td>
                 </tr>
                 <tr>
@@ -158,6 +159,23 @@
                         <input type="text" class="diags-input minimal" ng-model="pricetool.scope.item.postCode">
                     </td>
                 </tr>
+
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Building type</label>
+                        <select name="singleSelect" 
+                         class="diags-input minimal"
+                        ng-model="pricetool.scope.item.info.buildingType" 
+                        ng-change="pricetool.onBuildingTypeChange(pricetool.scope.item.info.buildingType)">
+                          <option value="0">House</option>
+                          <option value="1">Departement</option>
+                          <option value="2">Commercial</option>
+                        </select><br>
+                    </td>
+                </tr>
+
+
+
                 <tr class="unselectable">
                     <td>
                         <label class="minimal">Date</label>
@@ -173,7 +191,7 @@
                 <tr class="unselectable">
                     <td>
                         <label class="minimal">Base price + selected diags</label>
-                        <input type="text" disabled class="diags-input minimal" ng-value="pricetool.priceBase()">
+                        <input type="text" disabled class="diags-input minimal" ng-value="pricetool.getPriceBase()">
                     </td>
                 </tr>
                 <!--
@@ -219,22 +237,24 @@
                                     <th>Type</th>
                                     <th class="text-right">%</th>
                                     <th class="text-right">Day ratio</th>
-                                    <th class="text-right">Size ratio {{pricetool.getRatioModifierFor('size')}}%</th>
-                                    <th class="text-right">Client ratio {{pricetool.getRatioModifierFor('client')}}%</th>
-                                    <th class="text-right">Department ratio {{pricetool.getRatioModifierFor('department')}}%</th>
-                                    <th class="text-right">VAT ({{pricetool.getRatioModifierFor('vat')}}%</th>
+                                    <th class="text-right">Size ratio {{orderPrice.getRatioModifierFor('size')}}%</th>
+                                    <th class="text-right">Client ratio {{orderPrice.getRatioModifierFor('client')}}%</th>
+                                    <th class="text-right">Department ratio {{orderPrice.getRatioModifierFor('department')}}%</th>
+                                    <th class="text-right">Commercial ratio {{orderPrice.getRatioModifierFor('commercial')}}%</th>
+                                    <th class="text-right">VAT ({{orderPrice.getRatioModifierFor('vat')}}%</th>
                                     <th class="text-right">Final (tenth 10)</th>
                                 </tr>
                             </thead>
-                            <tr ng-repeat="(k,o) in priceModifiers">
+                            <tr ng-repeat="(k,o) in pricetool.dayPriceModifiers(priceModifiers)">
                                 <td ng-bind="k"></td>
                                 <td ng-bind="item.pricePercentageIncrease[o]" class="text-right"></td>
-                                <td ng-bind="pricetool.priceWithDay(o)" class="text-right"></td>
-                                <td ng-bind="pricetool.priceWithSize(o)" class="text-right"></td>
-                                <td ng-bind="pricetool.priceWithDiscount(o)" class="text-right"></td>
-                                <td ng-bind="pricetool.priceWithDepartment(o)" class="text-right"></td>
-                                <td ng-bind="pricetool.priceWithVAT(o)" class="text-right"></td>
-                                <td ng-bind="pricetool.priceRounded(o)" class="text-right"></td>
+                                <td ng-bind="orderPrice.getPriceWithDay(o)" class="text-right"></td>
+                                <td ng-bind="orderPrice.getPriceWithSize(o)" class="text-right"></td>
+                                <td ng-bind="orderPrice.getPriceWithDiscount(o)" class="text-right"></td>
+                                <td ng-bind="orderPrice.getPriceWithDepartment(o)" class="text-right"></td>
+                                <td ng-bind="orderPrice.getPriceWithCommercial(o)" class="text-right"></td>
+                                <td ng-bind="orderPrice.getPriceWithVAT(o)" class="text-right"></td>
+                                <td ng-bind="orderPrice.getPriceTTC(o)" class="text-right"></td>
                             </tr>
                         </table>
                     </td>

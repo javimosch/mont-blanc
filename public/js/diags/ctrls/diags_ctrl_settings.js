@@ -6,8 +6,10 @@
 /*global tinymce*/
 (function() {
     var app = angular.module('diags_ctrl_settings', []);
-    app.controller('diags_ctrl_settings', ['server', '$scope', '$rootScope', 'diagPrice', '$log',
-        function(db, s, r, diagPrice, $log) {
+    app.controller('diags_ctrl_settings', ['server', '$scope', '$rootScope', 'diagPrice', '$log', 'orderPrice',
+        function(db, s, r, diagPrice, $log, orderPrice) {
+
+            s.orderPrice = orderPrice;
 
             db.localData().then(function(data) {
                 s.localData = data;
@@ -89,7 +91,9 @@
                 "Tomorrow Sunday (+%)": "tomorrowSunday",
                 "Monday to Friday (+%)": "mondayToFriday",
                 "Saturday (+%)": "saturday",
-                "Sunday (+%)": "sunday"
+                "Sunday (+%)": "sunday",
+                "VAT (+%)": 'VATRate',
+                "Commercial Building (+%)": 'commercialBuilding'
             };
 
             s.item = {
@@ -107,7 +111,8 @@
                     mondayToFriday: 0,
                     saturday: 30,
                     sunday: 100,
-                    VATRate: 20
+                    VATRate: 20,
+                    commercialBuilding: 70
                 }
             };
 
@@ -193,6 +198,16 @@
                 db.ctrl('Settings', 'getAll', {}).then(r => {
                     if (r.ok && r.result.length > 0) {
                         s.item = r.result[0];
+
+
+                        s.item.pricePercentageIncrease = s.item.pricePercentageIncrease || {};
+                        s.item.pricePercentageIncrease
+                            .commercialBuilding = s.item.pricePercentageIncrease
+                            .commercialBuilding || 70;
+                        s.item.pricePercentageIncrease
+                            .VATRate = s.item.pricePercentageIncrease
+                            .VATRate || 20;
+
                         mergeStaticPrices();
                     }
                     else {
@@ -376,6 +391,18 @@
                 diagName: function(k) {
                     return $D.diagNameConvertion(k);
                 },
+                dayPriceModifiers: function(obj) {
+                    function isDayModifier(x) {
+                        return x !== 'VATRate' && x !== 'commercialBuilding';
+                    }
+                    var result = {};
+                    angular.forEach(obj, function(value, key) {
+                        if (isDayModifier(value)) {
+                            result[key] = value;
+                        }
+                    });
+                    return result;
+                },
                 scope: {
                     //this should be the scope for getPriceQuote
                     //localData needs to be injected here 
@@ -408,73 +435,24 @@
                     if (!s.localData) return;
                     s.localData.settings = s.item;
                     Object.assign(this.scope, s.localData);
-                },
-                getPriceQuote: function() {
-                    this.prepareScope();
-                    this.scope.price = diagPrice.getPriceQuote(s.pricetool.scope);
-                },
-                getRatioModifierFor: function(type) {
-                    switch (type) {
-                        case 'day':
-                            var rta = diagPrice.getDayModifierPercentage(s.item.pricePercentageIncrease, this.scope.item.start)
-                                //$log.debug('getRatioModifierFor day',this.scope.item.start,s.item.pricePercentageIncrease);
-                            return rta;
-                            break;
-                        case 'size':
-                            if (s.localData && s.localData.squareMetersPrice && this.scope.item.info.squareMeters != undefined) {
-                                return s.localData.squareMetersPrice[this.scope.item.info.squareMeters]
-                            }
-                            else {
-                                return 0;
-                            }
-
-                            break;
-                        case 'client':
-                            return this.scope.item._client && this.scope.item._client.discount || 0;
-                            break;
-                        case 'department':
-                            if (!s.item.metadata || !s.item.metadata.departmentMultipliers) {
-                                return 0;
-                            }
-                            return diagPrice.getDepartmentModifierPercentage(this.scope.item.postCode, s.item.metadata.departmentMultipliers);
-                            break;
-                        case 'vat':
-                            if (!s.item) {
-                                return 0;
-                            }
-                            return s.item.pricePercentageIncrease.VATRate || 20
-                            break;
-                        default:
-                            $log.warn('no type', type);
-                            return 0;
-                    }
-                },
-                priceBase: function() {
-                    if (!s.localData) return 0;
-                    return s.localData.basePrice + diagPrice.getBasePrice(this.scope.item.diags, s.localData.diags);
-                },
-                getDayRatio: function(k) {
-                    return s.item.pricePercentageIncrease[k];
-                },
-                priceWithDay: function(k) {
-                    //return this.priceBase()*(1+this.getRatioModifierFor('day')/100);
-                    return (this.priceBase() * (1 + this.getDayRatio(k) / 100)).toFixed(2);
-                },
-                priceWithSize: function(k) {
-                    return (this.priceWithDay(k) * (1 + this.getRatioModifierFor('size') / 100)).toFixed(2);
-                },
-                priceWithDiscount: function(k) {
-                    return (this.priceWithSize(k) * (1 - this.getRatioModifierFor('client') / 100)).toFixed(2);
-                },
-                priceWithDepartment: function(k) {
-                    //100*((0.9*100)/100)
-                    return (this.priceWithDiscount(k) * (this.getRatioModifierFor('department') || 1)).toFixed(2);
-                },
-                priceWithVAT: function(k) {
-                    return (this.priceWithDepartment(k) * (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
-                },
-                priceRounded: function(k) {
-                    return (parseInt(parseInt(this.priceWithVAT(k)) / 10, 10) * 10).toFixed(2);
+                    var scope = this.scope;
+                    scope.settings = s.item;
+                    orderPrice.set({
+                        date: scope.item.start,
+                        modifiersPercentages: scope.settings && scope.settings.pricePercentageIncrease,
+                        squareMetersPrice: scope.squareMetersPrice,
+                        squareMeters: scope._order && scope._order.info && scope._order.info.squareMeters ||
+                            scope.item && scope.item.info && scope.item.info.squareMeters || (scope.item && scope.item.squareMeters) || '',
+                        clientDiscountPercentage:
+                            (scope._order && scope._order._client && scope._order._client.discount) ||
+                            (scope.item && scope.item._client && scope.item._client.discount),
+                        departmentMultipliers: scope.settings && scope.settings.metadata && scope.settings.metadata.departmentMultipliers,
+                        postCode: scope.item && scope.item.postCode,
+                        basePrice: scope.basePrice,
+                        selectedDiags: scope._order && scope._order.diags && scope._order.diags ||
+                            scope.item && scope.item.diags,
+                        availableDiags: scope.diags
+                    });
                 },
                 setDefaults: function() {
                     this.prepareScope();
@@ -483,6 +461,11 @@
                         if (list.length > 0) {
                             s.pricetool.scope.item._client = list[0];
                         }
+                    });
+                },
+                onBuildingTypeChange: function(v) {
+                    orderPrice.set({
+                        buildingType: v
                     });
                 }
             };
@@ -493,7 +476,11 @@
                 });
             });
 
-
+            s.$watch('pricetool.scope.item.info.squareMeters', function(squareMeters) {
+                orderPrice.set({
+                    squareMeters: squareMeters
+                });
+            });
 
         }
     ]);

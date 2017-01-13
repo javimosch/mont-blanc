@@ -21,6 +21,7 @@
                 function setOrderDetails(date) {
                     orderPrice.set({
                         date: date,
+                        buildingType:scope._order && scope._order.info && scope._order.info.buildingType || scope.item && scope.item.info && scope.item.info.buildingType,
                         modifiersPercentages: scope.settings && scope.settings.pricePercentageIncrease,
                         squareMetersPrice: scope.squareMetersPrice,
                         squareMeters: scope._order && scope._order.info && scope._order.info.squareMeters ||
