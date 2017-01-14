@@ -47,8 +47,21 @@
             <span class="label">Superficie</span>
         </div>
         <div class="col-sm-8 diag-col-sm-8-input-1 padding-none margin-bottom-one">
-            <div range-values="squareMeters" range-model="item.info.squareMeters"></div>
-            <span class="fnt-12 avenir-roman padding-top-quarter">{{item.info.squareMeters||'&nbsp;'}}</span>
+            <!--
+            <input class="diags-range" ng-model="range" type="range" min="0" max="100" step="5" value="0" data-orientation="horizontal" range-values="squareMeters" range-model="item.squareMeters">
+            -->
+             <input 
+             id="range" 
+             type="range" 
+             range-values="squareMeters" 
+             range-model="item.squareMeters" />
+             <!--
+            <div range-values="squareMeters" range-model="item.squareMeters"></div>
+                -->
+    
+            <div class="margin-top-half">
+                <span class="fnt-12 avenir-roman padding-top-quarter">{{item.squareMeters||'&nbsp;'}}</span>
+            </div>
         </div>
     </div>
     <div class="row  margin-bottom-one  diag-row width90p center">

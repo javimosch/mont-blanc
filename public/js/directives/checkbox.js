@@ -138,3 +138,4 @@ app.directive('checkBoxModel', function($rootScope, $timeout, $compile, $log) {
         }
     };
 });
+
