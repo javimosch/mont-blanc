@@ -19,19 +19,13 @@
     <div class="row padding-top-one diag-row width90p center">
         <ul class="booking-form__building-type-list">
             <li class="booking-form__building-type-list-item">
-                <label class="">
-                <input type="checkbox" check-box-group check-box-model='item.info.buildingType' ng-model="item.info.buildingType" name="type" value="0" /><span class=""></span></label>
-                <span class="padding-left-halve">Appartement&nbsp;&nbsp;</span>
+                <pretty-radio color="white" value="'1'" ng-model="item.info.buildingType" label="'Appartement'"></pretty-radio>
             </li>
             <li class="booking-form__building-type-list-item">
-                <label>
-                <input type="checkbox" check-box-group check-box-model='item.info.buildingType' name="type" value="1" ng-model="item.info.buildingType" /><span class=""></span></label>
-                <span class="padding-left-halve ">Maison&nbsp;&nbsp;</span>
+                 <pretty-radio color="white" value="'0'" ng-model="item.info.buildingType" label="'Maison&nbsp;&nbsp;'"></pretty-radio>
             </li>
             <li class="booking-form__building-type-list-item">
-                <label class="">
-                <input type="checkbox" check-box-group check-box-model='item.info.buildingType' name="type" value="2" ng-model="item.info.buildingType" /><span class=""></span></label>
-                <span class="padding-left-halve">Commercial</span>
+                <pretty-radio color="white" value="'2'" ng-model="item.info.buildingType" label="'Commercial'"></pretty-radio>
             </li>
         </ul>
     </div>
@@ -123,16 +117,10 @@
             <span class="label">Electricité</span>
         </div>
         <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one">
-            <label class="sm-float-left">
-                <input type="checkbox" check-box-group check-box-model='item.info.electricityInstallation'
-                ng-model="item.info.electricityInstallation" name="electricityInstallation" value="Moins de 15 ans" /><span class=""></span></label>
-            <span class="padding-left-halve sm-float-left">-&nbsp;de 15 ans</span>
+            <pretty-radio color="white" value="'Moins de 15 ans'" ng-model="item.electricityInstallation" label="'-&nbsp;de 15 ans'"></pretty-radio>
         </div>
         <div class="col-sm-4 diag-col-sm-4-input-1 padding-none margin-bottom-one">
-            <label class="sm-float-left">
-                <input type="checkbox" check-box-group check-box-model='item.info.electricityInstallation'
-                ng-model="item.info.electricityInstallation" name="electricityInstallation" value="Plus de 15 ans" /><span class=""></span></label>
-            <span class="padding-left-halve sm-float-left">+&nbsp;de 15 ans</span>
+            <pretty-radio color="white" value="'Plus de 15 ans'" ng-model="item.electricityInstallation" label="'+&nbsp;de 15 ans'"></pretty-radio>
         </div>
 
     </div>

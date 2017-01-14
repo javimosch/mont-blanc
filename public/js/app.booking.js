@@ -21,6 +21,7 @@ var app = angular.module('app', [
     'diags_ctrl_contact_form',
     'ui.bootstrap',
     //'srv.diagPrice',
+    'pretty-checkable',
     'srv.diagSlots'
 ]);
 var URL = {

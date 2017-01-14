@@ -1,24 +1,5 @@
 
 
-
-@media screen and (-webkit-min-device-pixel-ratio:0) { 
-    /* Safari and Chrome */
-    .SAFARI__booking-form__building-type-list {
-     display:none;
-    }
-    
-    .SAFARI__booking-form__building-type-list-item {
-     display:inline;
-    }
-
-    /* Safari only override */
-    ::i-block-chrome,.SAFARI__booking-form__building-type-list {
-     display:block;
-  
-    }
-}
-
-
 .cssfx {}
 
 .modal-backdrop{
