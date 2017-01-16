@@ -55,43 +55,28 @@
                 if (!questionHasAValue('buildingType')) return;
                 var buildingType = s.item.info.buildingType;
                 if (buildingType == BUILDING_TYPE.COMMERCIAL) {
-                    //checkConstructionDateAnswer()
-                    //checkTermitesUsingPostode();
-                    //checkElectricityAnswer();
-
                     if (isSelling()) {
-                        //Amiante / Termites / Carrez / DPE / ERNMT
-                        setMandatory('dta', true);
+                        moveToMandatory(['dta', 'loiCarrez', 'dpe', 'ernt', 'termites']);
+                        moveToOptional(['gaz', 'electricity', 'crep']);
+                        //
                         checkTermitesUsingPostode();
-                        setMandatory('loiCarrez', true);
-                        setMandatory('dpe', true);
-                        setMandatory('ernt', true);
-
-                        //Pab: Gaz", "Electricité" and "Plomb" should not be selected
-                        selectDiagType('gaz', false);
-                        selectDiagType('electricity', false);
-                        selectDiagType('crep', false);
+                        checkConstructionDateAnswerForAmiante();
                     }
                     else {
-                        //Amiante / DPE / ERNMT
-                        setMandatory('dta', true);
-                        setMandatory('dpe', true);
-                        setMandatory('ernt', true);
-                        //Pab:  "Plomb" should not be selected
-                        selectDiagType('crep', false);
-                        setMandatory('loiCarrez', false);
+                        moveToMandatory(['dta', 'loiCarrez', 'dpe', 'ernt']);
+                        moveToOptional(['gaz', 'electricity', 'crep', 'termites']);
+                        //
+                        checkConstructionDateAnswerForAmiante();
                     }
-                    
-                    checkConstructionDateAnswer();
+                    checkConstructionDateAnswerForAmiante();
                     checkConstructionDateAnswerForPlomp();
                     checkTermitesUsingPostode();
                     checkGazInstallationAnswer();
                     checkElectricityAnswer();
-
                 }
                 else {
                     setMandatory('loiCarrez', true);
-                    checkConstructionDateAnswer();
+                    checkConstructionDateAnswerForAmiante();
                     checkConstructionDateAnswerForPlomp();
                     checkTermitesUsingPostode();
                     checkGazInstallationAnswer();
@@ -109,6 +94,26 @@
                 }
             };
 
+            function moveToMandatory(stringArr) {
+                stringArr.forEach(function(n) {
+                    toggleVisibility(n, true);
+                    setMandatory(n, true);
+                    if (dataRootExists()) {
+                        selectDiagType(n, true);
+                    }
+                })
+            }
+
+            function moveToOptional(stringArr) {
+                stringArr.forEach(function(n) {
+                    toggleVisibility(n, true);
+                    setMandatory(n, false);
+                    if (dataRootExists()) {
+                        selectDiagType(n, false);
+                    }
+                })
+            }
+
             function setMandatory(n, val) {
                 s.diags.forEach((diag) => {
                     if ((n && diag.name == n) || !n) {
@@ -117,7 +122,7 @@
                 });
             }
 
-            function toggle(n, val) {
+            function toggleVisibility(n, val) {
                 s.diags.forEach((diag) => {
                     if ((n && diag.name == n) || !n) {
                         diag.show = val;
@@ -167,30 +172,28 @@
 
             function checkConstructionDateAnswerForPlomp() {
                 if (s.item.info.constructionPermissionDate === 'Avant le 01/01/1949') {
-
                     var buildingType = s.item.info.buildingType;
                     if (buildingType != BUILDING_TYPE.COMMERCIAL) {
-                        toggle('crep', true);
                         s.item.diags.crep = true;
+                        setMandatory('crep', true);
                     }
-                    setMandatory('crep', true);
+                    toggleVisibility('crep', true);
                 }
                 else {
                     s.item.diags.crep = false; //
-                    toggle('crep', true);
+                    toggleVisibility('crep', true);
                     setMandatory('crep', false);
                 }
             }
 
-            function checkConstructionDateAnswer() {
-
+            function checkConstructionDateAnswerForAmiante() {
                 if (_.includes(['Avant le 01/01/1949', 'Entre 1949 et le 01/07/1997'], s.item.info.constructionPermissionDate)) {
-                    toggle('dta', true);
+                    toggleVisibility('dta', true);
                     s.item.diags.dta = true; //mandatory
                     setMandatory('dta', true);
                 }
                 else {
-                    toggle('dta', true);
+                    toggleVisibility('dta', true);
                     s.item.diags.dta = false;
                     setMandatory('dta', false);
                 }
@@ -198,12 +201,12 @@
 
             function checkTermitesUsingPostode() {
                 if (departmentHasTermites() && isSelling()) {
-                    //toggle('termites', true);
+                    //toggleVisibility('termites', true);
                     s.item.diags.termites = true;
                     setMandatory('termites', true);
                 }
                 else {
-                    toggle('termites', false);
+                    toggleVisibility('termites', false);
                     s.item.diags.termites = false;
                     setMandatory('termites', false);
                 }
@@ -212,13 +215,13 @@
 
             function checkGazInstallationAnswer() {
                 if (_.includes(['Oui, Plus de 15 ans', 'Oui, Moins de 15 ans'], s.item.info.gasInstallation)) {
-                    toggle('gaz', true);
+                    toggleVisibility('gaz', true);
                     if (isSelling() && s.item.info.gasInstallation === 'Oui, Plus de 15 ans') {
                         var buildingType = s.item.info.buildingType;
                         if (buildingType != BUILDING_TYPE.COMMERCIAL) {
                             s.item.diags.gaz = true;
+                            setMandatory('gaz', true);
                         }
-                        setMandatory('gaz', true);
                     }
                     else {
                         s.item.diags.gaz = false;
@@ -226,7 +229,7 @@
                     }
                 }
                 else {
-                    toggle('gaz', false);
+                    toggleVisibility('gaz', false);
                     setMandatory('gaz', false);
                 }
             }
@@ -234,13 +237,14 @@
 
             function checkElectricityAnswer() {
                 if (_.includes(['Plus de 15 ans', 'Moins de 15 ans'], s.item.info.electricityInstallation)) {
-                    toggle('electricity', true);
+                    toggleVisibility('electricity', true);
                     if (isSelling() && s.item.info.electricityInstallation === 'Plus de 15 ans') {
                         var buildingType = s.item.info.buildingType;
                         if (buildingType != BUILDING_TYPE.COMMERCIAL) {
                             s.item.diags.electricity = true;
+                            setMandatory('electricity', true);
                         }
-                        setMandatory('electricity', true);
+                        
                     }
                     else {
                         s.item.diags.electricity = false;
@@ -248,13 +252,13 @@
                     }
                 }
                 else {
-                    toggle('electricity', false);
+                    toggleVisibility('electricity', false);
                     setMandatory('electricity', false);
                 }
             }
 
 
-            toggle(undefined, true); //all checks visibles.
+            toggleVisibility(undefined, true); //all checks visibles.
         }
 
         var self = {
