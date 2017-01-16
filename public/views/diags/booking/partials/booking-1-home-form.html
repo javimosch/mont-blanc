@@ -45,9 +45,9 @@
              id="range" 
              type="range" 
              range-values="squareMeters" 
-             range-model="item.squareMeters" />
+             range-model="item.info.squareMeters" />
             <div class="margin-top-half">
-                <span class="fnt-12 avenir-roman padding-top-quarter">{{item.squareMeters||'&nbsp;'}}</span>
+                <span class="fnt-12 avenir-roman padding-top-quarter">{{item.info.squareMeters||'&nbsp;'}}</span>
             </div>
         </div>
     </div>
@@ -110,10 +110,10 @@
             <span class="label">Electricité</span>
         </div>
         <div class="col-sm-4 col-xs-12 padding-none margin-bottom-one">
-            <pretty-radio color="white" value="'Moins de 15 ans'" ng-model="item.electricityInstallation" label="'-&nbsp;de 15 ans'"></pretty-radio>
+            <pretty-radio color="white" value="'Moins de 15 ans'" ng-model="item.info.electricityInstallation" label="'-&nbsp;de 15 ans'"></pretty-radio>
         </div>
         <div class="col-sm-4 col-xs-12 padding-none margin-bottom-one" style="min-width: 140px;">
-            <pretty-radio color="white" value="'Plus de 15 ans'" ng-model="item.electricityInstallation" label="'+&nbsp;de 15 ans'"></pretty-radio>
+            <pretty-radio color="white" value="'Plus de 15 ans'" ng-model="item.info.electricityInstallation" label="'+&nbsp;de 15 ans'"></pretty-radio>
         </div>
 
     </div>
