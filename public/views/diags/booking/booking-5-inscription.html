@@ -69,7 +69,7 @@
                         <div class="row margin-top-quarter min-md-padding-top-one-and-half">
                             <p class="label">Vos coordonnées</p>
                         </div>
-                        <div class="row margin-top-one">
+                        <div class="row margin-top-one" ng-show="isAgency()">
                             <input ng-model="_user.companyName" class="diags-input" placeholder="Entreprise">
                         </div>
                         <div class="row margin-top-half">
