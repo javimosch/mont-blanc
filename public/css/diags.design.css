@@ -475,6 +475,11 @@ a.diag-btn-info:hover {
     min-height: 620px;
     background-size: cover;
 }
+@media screen and (max-width: 480px) {
+    .diags-home-bg {
+        background: url(../img/mobile-portrait-background.jpg);
+    }
+}
 
 .diags-pill-success {
     background-color: #01DF8A;
