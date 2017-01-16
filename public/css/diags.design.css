@@ -423,7 +423,13 @@ a.diag-btn-info:hover {
     padding: 0px;
     margin-top: 55px;
 }
-
+@media screen and (max-width: 480px) {
+    .home-bg-dialog {
+        margin: 0px;
+        padding: 0px;
+        margin-top: 25px;
+    }
+}
 .home-brandon-re-38-489,
 .home-brandon-re-38-489 span {
     font-family: 'BrandonGrotesque-Regular';
@@ -451,7 +457,8 @@ a.diag-btn-info:hover {
 @media screen and (max-width: 768px) {
     .home-brandon-re-38-489,
     .home-brandon-re-38-489 span {
-        font-size: 28px;
+        font-size: 22px;
+        margin-bottom: 15px;
     }
 }
 
@@ -477,7 +484,9 @@ a.diag-btn-info:hover {
 }
 @media screen and (max-width: 480px) {
     .diags-home-bg {
-        background: url(../img/mobile-portrait-background.jpg);
+        background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ),url(../img/mobile-portrait-background.jpg) no-repeat;
+        background-position: center top;
+
     }
 }
 
@@ -515,6 +524,7 @@ a.diag-btn-info:hover {
 @media only screen and (max-width: 480px) {
     .title-big * {
         font-size: 50px;
+        margin-top: 10px;
     }
 }
 
@@ -554,6 +564,11 @@ a.diag-btn-info:hover {
     font-family: 'Avenir-Medium';
 }
 
+@media screen and (max-width: 480px) {
+    .booking-form {
+        margin-top: 20px;
+    }
+}
 .modal-open {
     overflow: hidden;
     margin-right: 15px!important;
@@ -1824,4 +1839,11 @@ label * {
 .know-more .hover-block .red{
     color:#BC3B44;
     
+}
+
+/* add height for checkbox on mobile */
+@media screen and (max-width: 480px) {
+    .mobile-h37 {
+        height: 37px;
+    }
 }

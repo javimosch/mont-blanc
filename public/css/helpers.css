@@ -561,6 +561,12 @@ table.minimal td {
 }
 
 
+@media screen and (max-width: 480px) {
+  .margin-bottom-none-mobile {
+    margin-bottom : 0!important;
+  }
+}
+
 
 .padding-none {
   padding: 0!important;
