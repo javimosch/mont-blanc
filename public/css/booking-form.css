@@ -5,7 +5,7 @@
 }
 
 .booking-form__building-type-list-item {
-    display: block;
+    display: table;
     margin-bottom: 10px;
 }
 
