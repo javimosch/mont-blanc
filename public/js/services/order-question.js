@@ -63,8 +63,8 @@
                         checkConstructionDateAnswerForAmiante();
                     }
                     else {
-                        moveToMandatory(['dta', 'loiCarrez', 'dpe', 'ernt']);
-                        moveToOptional(['gaz', 'electricity', 'crep', 'termites']);
+                        moveToMandatory(['dta', 'dpe', 'ernt']);
+                        moveToOptional(['gaz', 'electricity', 'crep', 'termites', 'loiCarrez']);
                         //
                         checkConstructionDateAnswerForAmiante();
                     }
@@ -244,7 +244,7 @@
                             s.item.diags.electricity = true;
                             setMandatory('electricity', true);
                         }
-                        
+
                     }
                     else {
                         s.item.diags.electricity = false;
