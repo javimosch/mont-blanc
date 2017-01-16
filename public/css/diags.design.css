@@ -98,6 +98,10 @@ html {
     margin-top: -100px;
 }
 
+.footer__lemonway-icons{
+    height:35px;
+}
+
 .booking-descr-title {
     font-family: 'Open Sans', sans-serif;
     color: #5EE5AB;
@@ -672,12 +676,12 @@ input[type="checkbox"]:disabled+ span {
 }
 
 footer {
-    height: 135px;
+    /*height: 135px;*/
     width: 100%;
     background-color: #09519D;
 }
 
-@media screen and (min-width: 480px) {
+@media screen and (min-width: 1200px) { /*@media screen and (min-width: 480px) {*/
     footer {
         height: 110px;
     }
