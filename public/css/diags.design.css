@@ -695,6 +695,48 @@ input[type="checkbox"]:disabled+ span {
     }
 }
 
+.bar3 {
+    background: #f2f3f7;
+}
+
+.right-bar{
+    background: url(../img/sep-bar.png) repeat-y top right;
+    margin: 10px 0px;
+}
+.right-bar:last-child {
+    background: none;
+}
+.right-bar .headtitle, .right-bar .subtitle{
+    text-transform: uppercase;
+    color: #0A3967;
+}
+.right-bar .headtitle{
+    text-align: 16px;
+    font-family: 'Avenir-Black';
+    font-weight: 500;
+}
+.right-bar .subtitle {
+    font-size: 14px;
+    // color: #6a798c;
+    font-family: 'Avenir-Medium';
+}
+@media screen and (max-width: 767px) {
+    .right-bar .headtitle {
+        font-size: 0.9em;
+    }
+    .right-bar .subtitle {
+        font-size: 0.8em;
+    }
+}
+@media screen and (max-width: 479px) {
+    .right-bar .headtitle {
+        font-size: 0.8em;
+    }
+    .right-bar .subtitle {
+        font-size: 0.7em;
+    }
+}
+
 footer {
     /*height: 135px;*/
     width: 100%;
@@ -754,7 +796,6 @@ h2.diags,
 h2.diags> div, h2.diags p {
     font-family: 'Avenir-Book';
     font-size: 36px;
-    padding-bottom: 33px;
 }
 
 h2.diags.black,
@@ -1842,7 +1883,7 @@ label * {
 }
 
 /* add height for checkbox on mobile */
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 767px) {
     .mobile-h37 {
         height: 37px;
     }
