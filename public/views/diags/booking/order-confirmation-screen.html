@@ -11,7 +11,16 @@
                 <p>
                     <span ng-if="false">Bonjour {{data._client.firstName}},
         <br></span>
-                    <br> Nous vous confirmons votre commande. Votre rendez-vous est confirmé. Le diagnostiqueur a été notifié : {{(data._diag.firstName||data._diag.email) + ' ' + (data._diag.lastName||'')}}
+                    <br> 
+                    
+                    <out ng-show="data.status=='prepaid'">
+                    Nous vous confirmons votre commande. Votre rendez-vous est confirmé. Le diagnostiqueur a été notifié : {{(data._diag.firstName||data._diag.email) + ' ' + (data._diag.lastName||'')}}
+                    </out>
+                    
+                    <out ng-show="data.status=='ordered'">
+                    Cette commande est passée mais elle n'est pas encore payée. L'équipe Diagnostical vous notifiera rapidement de sa confirmation ou de son annulation.
+                    </out>
+                    
                     <br>
                     <br> Vous avez une nouveau rendez-vous :
                     <br> Date : {{momentDateTimeWords(data.start)}}

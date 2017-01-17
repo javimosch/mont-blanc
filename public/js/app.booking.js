@@ -196,104 +196,6 @@ app.controller('ctrl.booking', ['server',
 
         });
 
-
-
-        /*
-        //this component is a high-level wrapper to retrive diags available slots.
-        var diagSlots = function() {
-            function asyncRequest(_localCursor, cbHell, dataPosition) {
-                _localCursor = new Date(_localCursor);
-                s.requestSlots(_localCursor).then((d) => {
-                    var d = _.orderBy(d, function(item) {
-                        return item.start._d;
-                    });
-
-                    if (d.length > 4) {
-                        //console.warn('slots-more-than-four-warning',d)
-                        try {
-                            db.ctrl('Log', "create", {
-                                message: "booking-warning: date slot request retrieve " + d.length + ' slots.',
-                                data: d
-                            });
-                        }
-                        catch (e) {}
-
-                        while (d.length > 4) {
-                            d.pop();
-                        };
-                        //console.warn('slots-more-than-four-resolve',d)
-                    }
-                    else {
-
-                    }
-
-                    _data[dataPosition] = new DaySlot(_localCursor, d);
-                    //                    console.log('slots-days-request-end-for', _localCursor, 'at', dataPosition);
-                    cbHell.next();
-                });
-            }
-
-            var DaySlot = function(_date, _slots) {
-                var o = {
-                    date: moment(_date),
-                    slots: _slots,
-                    label: function() {
-                        if (o.isToday()) {
-                            return 'Aujourd’hui';
-                        }
-                        else {
-                            return r.momentFormat(o.date, 'dddd DD MMMM');
-                        }
-                    },
-                    isToday: function() {
-                        return o.date.isSame(moment(), 'day');
-                    }
-                };
-                return o;
-            };
-            var _data = [];
-            var _nextTimes = 0;
-            var cursor = moment();
-            var o = {};
-            o.get = function() {
-                return _data;
-            };
-            o.init = function() {
-                cursor = moment(); //today, tomorrow, tomorrow morrow y tomorrow morrow morrow. 
-                o.request();
-            };
-            o.nextIsDisabled = function() {
-                return false; //_nextTimes > 1;
-            }
-            o.next = function() {
-                if (_nextTimes > 15) {
-                    _nextTimes = 0;
-                    return o.init();
-                }
-                _nextTimes++;
-                cursor = cursor.add(4, 'days');
-                o.request();
-            };
-            o.request = function() {
-                var _localCursor = moment(cursor);
-                var cbHell = $U.cbHell(4, function() {
-                    // console.info('slots-days-request-end');
-                    setSelectedRangeDateUsingOrder();
-                });
-                // console.info('slots-days-request-begin for', r.momentFormat(_localCursor, 'DD-MM-YY'));
-                asyncRequest(_localCursor._d, cbHell, 0); //
-                _localCursor = _localCursor.add(1, 'days');
-                asyncRequest(_localCursor._d, cbHell, 1); //
-                _localCursor = _localCursor.add(1, 'days');
-                asyncRequest(_localCursor._d, cbHell, 2); //
-                _localCursor = _localCursor.add(1, 'days');
-                asyncRequest(_localCursor._d, cbHell, 3); //
-            };
-            return o;
-        }();
-        s.diagSlots = diagSlots;
-        */
-
         function resolvePaymentScreenAuth() {
             return $U.MyPromise(function(resolve, err, emit) {
                 if (s._user && s._user._id) {
@@ -1348,35 +1250,6 @@ app.controller('ctrl.booking', ['server',
         }
 
 
-        s.testData = function() {
-            s.item = {
-                address: "33 Rue de Rivoli, 75004 Paris, Francia",
-                city: "Paris",
-                constructionPermissionDate: "Après le 01/07/1997",
-                country: "Francia",
-                department: "Paris",
-                electricityInstallation: "Plus de 15 ans",
-                gasInstallation: "Oui, Moins de 15 ans",
-                house: false,
-                postCode: "75004",
-                region: "Île-de-France",
-                sell: true,
-                squareMeters: "110 - 130m²"
-            };
-        }
-        s.testOrderConfirmationScreen = function() {
-            db.ctrl('Order', 'get', {
-                __populate: {
-                    _client: '_id email clientType address discount companyName firstName siret wallet',
-                    _diag: '_id email clientType address firstName lastName commission siret wallet'
-                }
-            }).then(function(res) {
-                if (res.ok && res.result) {
-                    s._order = res.result;
-                    s.gotoOrderConfirmationScreen();
-                }
-            });
-        }
 
         s.gotoOrderConfirmationScreen = function() {
             r.routeParams({
@@ -1385,28 +1258,6 @@ app.controller('ctrl.booking', ['server',
             });
             r.route('order-confirm');
         };
-
-        s.openOrderConfirmationPrepaid = (cb) => {
-            cb = cb || (() => {});
-            s.openConfirm({
-                    backdrop: 'static',
-                    data: getOrderPopupData(),
-                    templateUrl: 'views/diags/booking/partials/booking-popup-order-prepaid.html'
-                },
-                cb
-            );
-        };
-        s.openOrderConfirmationDelegated = (cb) => {
-            cb = cb || (() => {});
-            s.openConfirm({
-                    backdrop: 'static',
-                    data: getOrderPopupData(),
-                    templateUrl: 'views/diags/booking/partials/booking-popup-order-delegated.html'
-                },
-                cb
-            );
-        };
-
 
         s.selectedDate = function() {
             return moment(s.item.date).format('DD MMMM YYYY');
@@ -1574,11 +1425,7 @@ app.controller('ctrl.booking', ['server',
                                 status: s._order.status
                             });
                             s.booking.complete = true;
-                            s.openOrderConfirmationDelegated(() => {
-                                s._order = {};
-                                r.route('home');
-                            });
-                            //
+                            s.gotoOrderConfirmationScreen();
                         });
                     });
 
@@ -1836,17 +1683,14 @@ app.controller('ctrl.booking', ['server',
         s.payNOW = (success) => {
 
             if (orderPaid()) {
-                s.infoMsg('Son ordre de travail a déjà été payée');
+                //s.infoMsg('Son ordre de travail a déjà été payée');
                 return s.gotoOrderConfirmationScreen();
             }
 
             s.validateBooking(() => {
-                //
                 db.ctrl('Order', 'update', s._order); //async
                 db.ctrl('User', 'update', s._user); //async
-                //
                 var order = s._order;
-
                 orderPaymentForm.pay(order).then(function() {
                     s.infoMsg("Commande confirmée", 10000);
                     s._order.status = 'prepaid';
@@ -1862,66 +1706,6 @@ app.controller('ctrl.booking', ['server',
                 }).on('validate', function(msg) {
                     return r.warningMessage(msg, 10000);
                 });
-
-                /*
-                $D.openStripeModalPayOrder(order, (token) => {
-                    order.stripeToken = token.id;
-                    order.stripeTokenEmail = token.email;
-                    db.ctrl('Order', 'pay', order).then((data) => {
-                        if (data.ok) {
-
-                            s._order.status = 'prepaid';
-
-                            s.booking.complete = true;
-                            s.booking.payment.complete = true;
-                            db.ctrl('Order', 'update', s._order); //async
-                            console.info('PAY-OK', data.result);
-
-                            s.infoMsg("Commande Créée", 10000);
-
-
-
-                            r.dom(() => {
-
-                                updateAutoSave(false);
-                                $U.url.clear();
-                                //r.routeRelative('admin#/orders/view/' + s._order._id);
-                                //
-
-                                s.gotoOrderConfirmationScreen();
-
-                               //
-                                //s.openOrderConfirmationPrepaid(() => {
-                                //    s._order = {};
-                                 //   r.route('home');
-                               // });
-                                ///
-
-
-                            });
-
-                        } else {
-                            console.info('PAY-FAIL', data.err);
-                            s.notify('Le paiement ne peut être traitée en ce moment.', {
-                                type: 'warning',
-                                duration: 100000
-                            });
-                        }
-                    }).error(() => {
-                        s.notify('Le paiement ne peut être traitée en ce moment.', {
-                            type: 'warning',
-                            duration: 100000
-                        });
-                    });
-                }, {
-                    config: r.config,
-                    email: emailOfPersonWhoPaid()
-                });
-                */
-
-
-
-                //
             });
             //------
         };
