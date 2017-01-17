@@ -711,14 +711,15 @@ input[type="checkbox"]:disabled+ span {
     color: #0A3967;
 }
 .right-bar .headtitle{
-    text-align: 16px;
-    font-family: 'Avenir-Black';
+    font-size: 14px;
+    font-family: 'Avenir-Medium';
     font-weight: 500;
 }
 .right-bar .subtitle {
-    font-size: 14px;
+    font-size: 16px;
     // color: #6a798c;
-    font-family: 'Avenir-Medium';
+    font-family: 'Avenir-Black';
+    font-weight: 500;
 }
 @media screen and (max-width: 767px) {
     .right-bar .headtitle {
@@ -735,6 +736,11 @@ input[type="checkbox"]:disabled+ span {
     .right-bar .subtitle {
         font-size: 0.7em;
     }
+}
+
+.fa-id-card-o, .fa-phone, .fa-lock{
+    font-size: 26px;
+    color: #0A3967;
 }
 
 footer {
