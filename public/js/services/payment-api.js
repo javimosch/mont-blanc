@@ -4,6 +4,9 @@
 /*global $U*/
 (function() {
 	var app = angular.module('app').service('paymentApi', function($rootScope, server, backendApi, $log, lemonwayApi) {
+		function isCompany(d) {
+			return d.siret;
+		}
 		var self = {
 			payOrder: function(data) {
 				return MyPromise(function(resolve, err, emit) {
@@ -47,28 +50,26 @@
 					if (!user.lastName) {
 						return emit('validate', 'User lastName required');
 					}
-					if (!user.siret) {
-						return emit('validate', 'User siret required');
-					}
 					if (!user.userType) {
 						return emit('validate', 'User userType required');
 					}
-					if (user.userType=='client' && !user.clientType) {
+					if (user.userType == 'client' && !user.clientType) {
 						return emit('validate', 'User clientType required');
 					}
+					if (user.userType == 'diag' && !user.siret) {
+						return emit('validate', 'User siret required');
+					}
+
 
 					var data = {
 						clientMail: user.email,
 						clientFirstName: user.firstName,
 						clientLastName: user.lastName,
 						postCode: user.postCode,
-						mobileNumber: user.cellPhone,
-						isCompany: '1',
-						companyName: user.companyName || (user.firstName + ' ' + user.lastName),
-						companyIdentificationNumber: user.siret
+						mobileNumber: user.cellPhone
 					};
 
-					if (_.includes(['diag', 'admin'], user.userType) || (user.userType == 'client' && user.clientType !== 'landlord')) {
+					if (isCompany(user)) {
 						data.isCompany = '1';
 						data.companyName = user.companyName || (user.firstName + ' ' + user.lastName);
 						data.companyIdentificationNumber = user.siret;

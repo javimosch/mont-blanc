@@ -69,7 +69,8 @@ function balance(data, cb) {
     if (!data._id) return cb("_id required");
     if (data._calculate) {
         _calculate(null, null, true);
-    } else {
+    }
+    else {
         _retrieve();
     }
 
@@ -120,7 +121,8 @@ function balance(data, cb) {
                     _balance.save((_err, r) => {
                         _retrieve();
                     });
-                } else {
+                }
+                else {
                     var balanceAmount = 0;
                     var _stackSaving = [];
                     var exit = false;
@@ -216,9 +218,66 @@ function balance(data, cb) {
 }
 
 
-function _preCreateWallet(data, cb,next) {
+function isCompany(d) {
+    return d.siret != undefined && d.siret.length > 0;
+}
+
+function hasWallet(d) {
+    return d.wallet;
+}
+
+function _preUpdateWallet(data, cb, next) {
+    if (!hasWallet(data)) return next(data, cb);
+
+    function shouldUpdateWallet(incoming, user) {
+        if (incoming.email != user.email) return true;
+        if (incoming.firstName != user.firstName) return true;
+        if (incoming.lastName != user.lastName) return true;
+        if (incoming.siret != user.siret) return true;
+        if (incoming.companyName != user.companyName) return true;
+    }
+    //step 1 : get registry and verify that email, firstName, lastName, siret or company name are different.
+    ctrl('User').get({
+        _id: data._id,
+        __select: "email firstName lastName siret companyName"
+    }, function(err, _user) {
+        if (err) return next(err);
+
+        if (!shouldUpdateWallet(data, _user)) {
+            return next(data, cb);
+        }
+        else {
+            //step 2 : make a lemonway wallet detail update
+            var payload = {
+                wallet: data.wallet,
+                newEmail: data.email,
+                newFirstName: data.firstName,
+                newLastName: data.lastName
+            };
+            if(isCompany(data)){
+                payload.newCompanyIdentificationNumber= data.siret;
+                payload.companyName = data.companyName || (data.firstName + ' ' + data.lastName);
+                payload.newIsCompany = '1';
+            }else{
+                payload.newIsCompany = '0';
+            }
+            ctrl('Lemonway').updateWalletDetails(payload, (err, res) => {
+                if (err) {
+                    logger.error('LEMONWAY WALLET (automatic update before saving user)', err);
+                    LogSave('LEMONWAY WALLET (automatic update before saving user)', 'error', {
+                        err:err,
+                        payload:payload
+                    });
+                }
+                return next(data, cb);
+            });
+        }
+    });
+}
+
+function _preCreateWallet(data, cb, next) {
     if (!data.wallet && (data.userType == 'client' || data.userType == 'diag')) {
-        
+
         var payload = {
             clientMail: data.email,
             clientFirstName: data.firstName,
@@ -226,13 +285,13 @@ function _preCreateWallet(data, cb,next) {
             postCode: data.postCode,
             mobileNumber: data.cellPhone
         };
-        
-        if(data.userType == 'diag' || (data.userType =='client' && data.clientType!=='landlord')){
+
+        if (isCompany(data)) {
             payload.isCompany = '1';
-            payload.companyName = data.companyName;
+            payload.companyName = data.companyName || (data.firstName + ' ' + data.lastName);
             payload.companyIdentificationNumber = data.siret;
         }
-        
+
         return ctrl('Lemonway').registerWallet(payload, (err, res) => {
             if (!err && res && res.WALLET) {
                 data.wallet = res.WALLET.ID;
@@ -253,7 +312,9 @@ function save(data, cb) {
         return cb("invalid userType " + data.userType);
     }
 
-    _preCreateWallet(data, cb,__save);
+    _preCreateWallet(data, cb, (data, cb) => {
+        _preUpdateWallet(data, cb, __save);
+    });
 
 
 
@@ -309,14 +370,15 @@ function handleNewAccount(_user, err, r) {
         actions.log(_user.email + ':passwordSended');
         _user.passwordSended = true;
         _user.save();
-    } else {
+    }
+    else {
         actions.log(_user.email + ' passwordSended email fail ' + JSON.stringify(r));
         LogSave(r.message, 'warning', r);
     }
 }
 
 function create(data, cb) {
-    _preCreateWallet(data,cb, __create);
+    _preCreateWallet(data, cb, __create);
 
     function __create(data, cb) {
         actions.create(data, cb, ['email', 'userType', 'password']);
@@ -346,7 +408,8 @@ function createDiag(data, cb) {
                 _user.save((err, r) => {
                     if (!err) actions.log(_user.email + ' passwordSended=true');
                 });
-            } else {
+            }
+            else {
                 actions.log(_user.email + ' new account email sended failed');
                 actions.log(JSON.stringify(err));
             }
@@ -377,7 +440,8 @@ function sendAccountsDetails(_user) {
             _user.save((err, r) => {
                 if (!err) actions.log(_user.email + ' passwordSended=true');
             });
-        } else {
+        }
+        else {
             actions.log(_user.email + ' new account email sended failed');
             actions.log(JSON.stringify(err));
         }
@@ -394,7 +458,8 @@ function createClientIfNew(data, cb) {
             if (err) return cb(err, null);
             if (!r) {
                 createClient(data, cb);
-            } else {
+            }
+            else {
 
                 //in 10 seconds, try send account details if passwordSended==false
                 setTimeout(function() {

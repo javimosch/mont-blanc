@@ -6,9 +6,9 @@
  // diagnostical
  //const urlDirectkit = "https://sandbox-api.lemonway.fr/mb/diagnostical/dev/directkitjson2/service.asmx/"
 
-if(process.env.LEMON_DIRECTKIT_URL){
- urlDirectkit = process.env.LEMON_DIRECTKIT_URL;
-}
+ if (process.env.LEMON_DIRECTKIT_URL) {
+  urlDirectkit = process.env.LEMON_DIRECTKIT_URL;
+ }
 
  const request = require('request');
  const Promise = require('promise');
@@ -39,6 +39,7 @@ if(process.env.LEMON_DIRECTKIT_URL){
   moneyInWithCardId: moneyInWithCardId,
   getWalletTransHistory: getWalletTransHistory,
   sendPayment: sendPayment,
+  updateWalletDetails: updateWalletDetails,
 
   registerWalletTest: registerWalletTest,
   registerCardTest: registerCardTest,
@@ -57,6 +58,35 @@ if(process.env.LEMON_DIRECTKIT_URL){
 
 
  //CORE
+
+
+
+ function updateWalletDetails(data, callback) {
+  if (!data.wallet) return callback({
+   msg: 'wallet champ requis'
+  });
+  if (!data.newEmail) return callback({
+   msg: 'newEmail champ requis'
+  });
+  if (!data.newLastName) return callback({
+   msg: 'newLastName champ requis'
+  });
+  if (!data.newFirstName) return callback({
+   msg: 'newFirstName champ requis'
+  });
+  /*
+  if (!data.newCompanyIdentificationNumber) return callback({
+   msg: 'newCompanyIdentificationNumber champ requis'
+  });
+  if (!data.newIsCompany) return callback({
+   msg: 'newIsCompany champ requis'
+  });*/
+  lemonway.updateWalletDetails(data).then((r) => {
+   callback(null, r);
+  }, (err) => {
+   callback(err);
+  });
+ }
 
  function sendPayment(data, callback) {
   if (!data.debitWallet) return callback({
@@ -434,7 +464,7 @@ if(process.env.LEMON_DIRECTKIT_URL){
    mobileNumber: "339582234",
    isCompany: 0,
    //companyName:'()'
-   
+
    /*
    "isCompany":"string",
     "companyName":"string",
@@ -442,7 +472,7 @@ if(process.env.LEMON_DIRECTKIT_URL){
     "companyDescription":"string",
     "companyIdentificationNumber":"string",
     */
-   
+
   }).then(function(res) {
    callback(null, res);
   }, function(err) {
