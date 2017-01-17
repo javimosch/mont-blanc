@@ -6,13 +6,13 @@
     if (typeof window.ace == 'undefined') {
         //$.getScript("https://cdn.tinymce.com/4/tinymce.min.js");
         $.getScript("https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js", function() {
-            $.getScript("https://cdn.jsdelivr.net/ace/1.2.6/noconflict/theme-monokai.js", function() {
+            //$.getScript("https://cdn.jsdelivr.net/ace/1.2.6/noconflict/theme-monokai.js", function() {
                 $.getScript('https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.8/beautify-html.js');
                 $.getScript('js/vendor/vendor.pdfobject.min.js');
 
 
 
-            });
+            //});
 
         });
 
@@ -61,10 +61,10 @@
                 </div>
             </div>
              <div class="row margin-top-one">
-                 <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="previewHTML()">Preview HTML</button>
-                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="preview()">Preview PDF</button>
-                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="formatCode()">Format code</button>
-                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="toggleFullscreen()">Toggle Fullscreen</button>
+                 <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="previewHTML()">Preview HTML</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="preview()">Preview PDF</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="formatCode()">Format code</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="toggleFullscreen()">Toggle Fullscreen</button>
             </div>
             <div class="row margin-top-one">
                 <label>Variables</label>

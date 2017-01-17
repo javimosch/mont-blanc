@@ -23,11 +23,13 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
                 "{{LOGO}}": "Diagnostical Logo",
                 "{{ORDER_DESCRIPTION}}": "Ex: Pack Vent: ...",
                 "{{ADDRESS}}": "Diag Address",
-                "{{CLIENT_FULLNAME}}": "Particular Client / Agency / Other first & last name",
-                "{{CLIENT_FIRSTNAME}}": "Particular Client / Agency / Other first name",
-                "{{CLIENT_LASTNAME}}": "Particular Client / Agency / Other last name",
-                "{{CLIENT_EMAIL}}": "Particular Client / Agency / Other email",
-                "{{CLIENT_ADDRESS}}": "Particular Client / Agency / Other address",
+                "{{CLIENT_FULLNAME}}": "Client first & last name",
+                "{{CLIENT_FIRSTNAME}}": "Client first name",
+                "{{CLIENT_LASTNAME}}": "Client last name",
+                "{{CLIENT_EMAIL}}": "Client email",
+                "{{CLIENT_ADDRESS}}": "Client address",
+                "{{CLIENT_SIRET}}": "Client siret",
+                "{{CLIENT_COMPANY_NAME}}": "Client company name",
                 "{{DIAG_FULLNAME}}": "Diag full name (first name + last name)",
                 "{{DIAG_FIRSTNAME}}": "Diag first name",
                 "{{DIAG_LASTNAME}}": "Diag last name",
@@ -35,11 +37,12 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
                 "{{DIAG_ADDRESS}}": "Diag address",
                 "{{DIAG_SIRET}}": "Diag siret",
                 "{{DIAG_COMPANY_NAME}}": "Diag company name",
-                '{{LANDLORDFULLNAME}}': "Landlord Fullname (Agency / Other only)",
-                '{{LANDLORDEMAIL}}': "Landlord Email (Agency / Other only)",
-                '{{LANDLORDPHONE}}': "Landlord Phone (Agency / Other only)",
-                '{{LANDLORDADDRESS}}': "Landlord Address (Agency / Other only)",
+                '{{LANDLORDFULLNAME}}': "Landlord Fullname (For Agency / Other only)",
+                '{{LANDLORDEMAIL}}': "Associated Landlord Email (For Agency / Other only)",
+                '{{LANDLORDPHONE}}': "Associated Landlord Phone (For Agency / Other only)",
+                '{{LANDLORDADDRESS}}': "Associated Landlord Address (For Agency / Other only)",
                 '{{CREATEDAT}}': "Order creation date Ex: 16/06/2016 10h29",
+                '{{PAIDAT}}': "Order paid date Ex: 16/06/2016 10h29",
                 '{{START}}': "Order diag start date Ex: 16/06/2016 10h29",
                 '{{END}}': "Order diag start date Ex: 16/06/2016 10h29",
                 "{{PRICE}}": "Order TTC Price",
@@ -48,19 +51,27 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
                 "{{VATPRICE}}": "Order VAT Price Applied",
                 "{{REVENUEHT}}": "Diagnostical Revenue HT Price",
                 "{{DIAGREMUNERATIONHT}}": "Diag Remuneration HT",
+                "{{NUMBER}}": "Order invoice number."
             }
             //['PRICE', 'PRICEHT', 'REVENUEHT', 'DIAGREMUNERATIONHT', 'ADDRESS', 'START', 'END'];
 
 
         db.ctrl('Order', 'get', {
+            status: 'prepaid',
             __populate: {
-                _client: "email firstName lastName address",
+                _client: "email firstName lastName address siret companyName",
                 _diag: "email firstName lastName address siret companyName"
             }
         }).then(res => {
             if (res.ok) {
+                if (!res.result) {
+                    $log.warn('Random prepaid order not found.');
+                }
+                $log.debug('random prepaid order is Order #' + res.result.number);
                 s.randomOrder = res.result;
-
+            }
+            else {
+                r.warningMessage('Problem fetching random order.');
             }
         });
 
@@ -207,19 +218,38 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
             s.editor.session.setValue(html_beautify(s.editor.session.getValue()));
         };
         s.previewHTML = function() {
+
+            if (!s.randomOrder) {
+                return r.warningMessage('At least one Order saved in DB is required.');
+            }
+
             r.dom(function() {
-                var html = $D.OrderReplaceHTML(window.decodeURIComponent(getContent()), s.randomOrder, r);
-                $('#previewHTML').append($.parseHTML(html));
+                var html = '';
+                try {
+                    html = window.decodeURIComponent(getContent())
+                }
+                catch (err) {
+                    html = getContent();
+                }
+                html = $D.OrderReplaceHTML(html, s.randomOrder, r);
+                $('#previewHTML').empty().append($.parseHTML(html));
             });
         }
 
 
         s.initAce = function() {
             s.editor = ace.edit("editor");
-            s.editor.setTheme("ace/theme/monokai");
+        //-s.editor.setTheme("ace/theme/monokai");
             s.editor.getSession().setMode("ace/mode/html");
-            s.editor.getSession().setUseWrapMode(true)
-            s.editor.setOption("enableEmmet", true);
+
+            s.editor.setTheme("ace/theme/merbivore");
+            s.editor.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true
+            });
+
+            //s.editor.getSession().setUseWrapMode(true)
+            //s.editor.setOption("enableEmmet", true);
             waitBeautify(function() {
                 s.editor.commands.addCommand({
                     name: "beautify",
@@ -276,31 +306,35 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
             }
         }
 
-        s.initTinyMCE = function() {
 
-            if (typeof(window.tinyMCE) !== 'undefined') {
-                var length = window.tinyMCE.editors.length;
-                for (var i = length; i > 0; i--) {
-                    window.tinyMCE.editors[i - 1].remove();
+        /*
+                s.initTinyMCE = function() {
+
+                    if (typeof(window.tinyMCE) !== 'undefined') {
+                        var length = window.tinyMCE.editors.length;
+                        for (var i = length; i > 0; i--) {
+                            window.tinyMCE.editors[i - 1].remove();
+                        };
+                    }
+
+                    tinymce.init({
+                        selector: '#editor',
+                        theme: 'modern',
+                        //width: 600,
+                        height: 300,
+                        plugins: [
+                            //'autoresize',
+                            'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+                            'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+                            'save table contextmenu directionality emoticons template paste textcolor'
+                        ],
+                        content_css: 'css/diags.design.css',
+                        toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
+                    });
+
                 };
-            }
+        */
 
-            tinymce.init({
-                selector: '#editor',
-                theme: 'modern',
-                //width: 600,
-                height: 300,
-                plugins: [
-                    //'autoresize',
-                    'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
-                    'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-                    'save table contextmenu directionality emoticons template paste textcolor'
-                ],
-                content_css: 'css/diags.design.css',
-                toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
-            });
-
-        };
 
         function init() {
             s[EDITOR_INIT_FN[EDITOR_NAME]]();

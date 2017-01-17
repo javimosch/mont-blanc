@@ -286,6 +286,8 @@ function OrderReplaceHTML(html, _order, r) {
     _order['CLIENT_LASTNAME'] = _order._client.lastName || '';
     _order['CLIENT_EMAIL'] = _order._client.email;
     _order['CLIENT_ADDRESS'] = _order._client.address;
+    _order['CLIENT_COMPANY_NAME'] = _order._client.companyName;
+    _order['CLIENT_SIRET'] = _order._client.siret;
 
     _order['DIAG_FULLNAME'] = _order._diag.firstName + ' ' + (_order._diag.lastName || '');
     _order['DIAG_FIRSTNAME'] = _order._diag.firstName;
@@ -296,6 +298,7 @@ function OrderReplaceHTML(html, _order, r) {
     _order['DIAG_SIRET'] = _order._diag.siret;
 
     _order.createdAt = r.momentDateTime(_order.createdAt);
+    _order.paidAt = r.momentDateTime(_order.paidAt);
 
     _order.landLordFullName = _order.landLordFullName || undefined;
     _order.landLordEmail = _order.landLordEmail || undefined;
@@ -326,6 +329,7 @@ function OrderReplaceHTML(html, _order, r) {
     }
 
     function _blockName(key, open) {
+        key = key.toString().toUpperCase();
         if (open) return "{{IF " + key + "}}";
         return "{{END IF " + key + "}}";
     }
