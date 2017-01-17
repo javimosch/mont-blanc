@@ -1,0 +1,8 @@
+#editor{
+    display:block;
+    width:100%;
+    min-height: 400px;
+}
+
+.pdfobject-container { height: 500px;}
+.pdfobject { border: 1px solid #666; }

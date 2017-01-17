@@ -1,8 +1,22 @@
 <script type="text/javascript">
-/*global $*/
-if (typeof window.tinymce == 'undefined') {
-    $.getScript("https://cdn.tinymce.com/4/tinymce.min.js");
-}
+    /*global $*/
+    if (typeof window.tinymce == 'undefined') {
+        //$.getScript("https://cdn.tinymce.com/4/tinymce.min.js");
+    }
+    if (typeof window.ace == 'undefined') {
+        //$.getScript("https://cdn.tinymce.com/4/tinymce.min.js");
+        $.getScript("https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js", function() {
+            $.getScript("https://cdn.jsdelivr.net/ace/1.2.6/noconflict/theme-monokai.js", function() {
+                $.getScript('https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.8/beautify-html.js');
+                $.getScript('js/vendor/vendor.pdfobject.min.js');
+
+
+
+            });
+
+        });
+
+    }
 </script>
 <div class="row">
     <div class="col-sm-12 padding-none">
@@ -13,14 +27,44 @@ if (typeof window.tinymce == 'undefined') {
         </ol>
     </div>
 </div>
-<div class="container" ng-controller="ctrl-settings-invoice">
+<div class="container" ng-controller="settings-invoice">
     <modal-confirm open="confirm"></modal-confirm>
+    
+    <div class="row diags-row margin-bottom-two">
+        <div class="col-sm-12 col-md-12">
+            <div class="row margin-top-one">
+                <label>Preview PDF</label>
+            </div>
+            <div class="row margin-top-one">
+                <div id="preview">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+     <div class="row diags-row margin-bottom-two">
+        <div class="col-sm-12 col-md-12">
+            <div class="row margin-top-one">
+                <label>Preview HTML</label>
+            </div>
+            <div class="row margin-top-one">
+                <div id="previewHTML">
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="row diags-row margin-bottom-two">
         <div class="col-sm-12 col-md-12">
             <div class="row margin-top-one">
                 <div id="editor" class="diags-rich-text-editor">
-                    <p></p>
                 </div>
+            </div>
+             <div class="row margin-top-one">
+                 <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="previewHTML()">Preview HTML</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="preview()">Preview PDF</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="formatCode()">Format code</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="toggleFullscreen()">Toggle Fullscreen</button>
             </div>
             <div class="row margin-top-one">
                 <label>Variables</label>
@@ -60,10 +104,14 @@ if (typeof window.tinymce == 'undefined') {
             </div>
         </div>
     </div>
+
+
+    
+
     <div class="row diags-row margin-bottom-two">
         <div class="col-sm-12">
             <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="save()">Enregistrer</button>
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="preview()">Preview</button>
+            
         </div>
     </div>
 </div>
