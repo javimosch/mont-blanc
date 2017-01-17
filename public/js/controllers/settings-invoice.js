@@ -3,11 +3,6 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
         //
         $U.expose('s', s);
 
-        const EDITOR_NAME = 'ace';
-        const EDITOR_INIT_FN = {
-            ace: 'initAce',
-            tinymce: 'initTinyMCE'
-        }
 
         //
         s.item = {
@@ -41,8 +36,8 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
                 '{{LANDLORDEMAIL}}': "Associated Landlord Email (For Agency / Other only)",
                 '{{LANDLORDPHONE}}': "Associated Landlord Phone (For Agency / Other only)",
                 '{{LANDLORDADDRESS}}': "Associated Landlord Address (For Agency / Other only)",
-                '{{CREATEDAT}}': "Order creation date Ex: 16/06/2016 10h29",
-                '{{PAIDAT}}': "Order paid date Ex: 16/06/2016 10h29",
+                '{{CREATEDAT_FORMATTED}}': "Order creation date Ex: 16/06/2016 10h29",
+                '{{PAIDAT_FORMATTED}}': "Order paid date Ex: 16/06/2016 10h29",
                 '{{START}}': "Order diag start date Ex: 16/06/2016 10h29",
                 '{{END}}': "Order diag start date Ex: 16/06/2016 10h29",
                 "{{PRICE}}": "Order TTC Price",
@@ -102,9 +97,27 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
             var editor = ace.edit("editor"); // get reference to editor
             beautify.beautify(s.editor.session);
         }
+        
+        var _is_preview_pdf = false, _is_preview_html = false;
+        s.isPreviewPDF = ()=> _is_preview_pdf;
+        s.isPreviewHTML = ()=> _is_preview_html;
+        s.closePreviewHTML = ()=>{
+          _is_preview_html=false;
+          r.dom(function(){
+             $('#previewHTML').empty();
+          });
+        };
+        s.closePreviewPDF = ()=>{
+            _is_preview_pdf=false;
+            r.dom(function(){
+             $('#previewPDF').empty();
+          });
+        };
+        
 
         //
-        s.preview = () => {
+        s.previewPDF = () => {
+            _is_preview_pdf=true;
 
             if (!s.randomOrder) {
                 return r.warningMessage('At least one Order saved in DB is required.');
@@ -114,6 +127,8 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
             var html = $D.OrderReplaceHTML(window.decodeURIComponent(s.item.content), s.randomOrder, r);
 
             //return $log.debug(html);
+            
+            s.previewHTML(html);
 
             html = window.encodeURIComponent(html);
 
@@ -126,7 +141,14 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
                     s.save();
 
                     if (PDFObject) {
-                        PDFObject.embed(res.result, "#preview");
+
+                        //if client is https and url is http, convert url to https
+                        if (window.location.origin.indexOf('https') !== -1) {
+                            var hasHttp = !(res.result.indexOf('https') !== -1) && (window.location.origin.indexOf('http'));
+                            res.result = res.result.replace('http', 'https');
+                        }
+
+                        PDFObject.embed(res.result, "#previewPDF");
                     }
                     else {
                         var win = window.open(res.result, '_blank');
@@ -204,7 +226,7 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
         };
 
         function check() {
-            if (typeof window[EDITOR_NAME] !== 'undefined') {
+            if (typeof window.ace !== 'undefined') {
                 r.dom(init);
             }
             else setTimeout(check, 100);
@@ -217,29 +239,32 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
         s.formatCode = function() {
             s.editor.session.setValue(html_beautify(s.editor.session.getValue()));
         };
-        s.previewHTML = function() {
+        s.previewHTML = function(html) {
+            _is_preview_html = true;
 
-            if (!s.randomOrder) {
+            if (!html && !s.randomOrder) {
                 return r.warningMessage('At least one Order saved in DB is required.');
             }
 
             r.dom(function() {
-                var html = '';
-                try {
-                    html = window.decodeURIComponent(getContent())
+                if (!html) {
+                    html = '';
+                    try {
+                        html = window.decodeURIComponent(getContent())
+                    }
+                    catch (err) {
+                        html = getContent();
+                    }
+                    html = $D.OrderReplaceHTML(html, s.randomOrder, r);
                 }
-                catch (err) {
-                    html = getContent();
-                }
-                html = $D.OrderReplaceHTML(html, s.randomOrder, r);
                 $('#previewHTML').empty().append($.parseHTML(html));
             });
         }
 
 
-        s.initAce = function() {
+        function initAce() {
             s.editor = ace.edit("editor");
-        //-s.editor.setTheme("ace/theme/monokai");
+            //-s.editor.setTheme("ace/theme/monokai");
             s.editor.getSession().setMode("ace/mode/html");
 
             s.editor.setTheme("ace/theme/merbivore");
@@ -248,8 +273,27 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
                 enableSnippets: true
             });
 
-            //s.editor.getSession().setUseWrapMode(true)
-            //s.editor.setOption("enableEmmet", true);
+            s.editor.getSession().setUseWrapMode(true)
+            s.editor.commands.addCommand({
+                name: "fullscreen",
+                bindKey: "ctrl-shift-f",
+                exec: function(env, args, request) {
+                    s.toggleFullscreen();
+                }
+            });
+            s.editor.commands.addCommand({
+                name: "showKeyboardShortcuts",
+                bindKey: {
+                    win: "Ctrl-Alt-h",
+                    mac: "Command-Alt-h"
+                },
+                exec: function(editor) {
+                    ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
+                        module.init(editor);
+                        editor.showKeyboardShortcuts()
+                    })
+                }
+            })
             waitBeautify(function() {
                 s.editor.commands.addCommand({
                     name: "beautify",
@@ -258,31 +302,6 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
                         s.formatCode();
                     }
                 });
-                s.editor.commands.addCommand({
-                    name: "fullscreen",
-                    bindKey: "ctrl-shift-f",
-                    exec: function(env, args, request) {
-                        s.toggleFullscreen();
-                    }
-                });
-
-
-
-                s.editor.commands.addCommand({
-                    name: "showKeyboardShortcuts",
-                    bindKey: {
-                        win: "Ctrl-Alt-h",
-                        mac: "Command-Alt-h"
-                    },
-                    exec: function(editor) {
-                        ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
-                            module.init(editor);
-                            editor.showKeyboardShortcuts()
-                        })
-                    }
-                })
-
-
                 $log.debug('Beautify added (CTRL + K)');
             });
 
@@ -293,51 +312,16 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
 
         function waitBeautify(cb) {
             if (!ace) return setTimeout(() => waitBeautify(cb), 500);
-            try {
-                if (window.html_beautify) {
-                    cb && cb();
-                }
-                else {
-                    return setTimeout(() => waitBeautify(cb), 500);
-                }
+            if (window.html_beautify) {
+                cb && cb();
             }
-            catch (err) {
+            else {
                 return setTimeout(() => waitBeautify(cb), 500);
             }
         }
 
-
-        /*
-                s.initTinyMCE = function() {
-
-                    if (typeof(window.tinyMCE) !== 'undefined') {
-                        var length = window.tinyMCE.editors.length;
-                        for (var i = length; i > 0; i--) {
-                            window.tinyMCE.editors[i - 1].remove();
-                        };
-                    }
-
-                    tinymce.init({
-                        selector: '#editor',
-                        theme: 'modern',
-                        //width: 600,
-                        height: 300,
-                        plugins: [
-                            //'autoresize',
-                            'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
-                            'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-                            'save table contextmenu directionality emoticons template paste textcolor'
-                        ],
-                        content_css: 'css/diags.design.css',
-                        toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
-                    });
-
-                };
-        */
-
-
         function init() {
-            s[EDITOR_INIT_FN[EDITOR_NAME]]();
+            initAce();
             r.dom(s.read, 0);
         }
     }
