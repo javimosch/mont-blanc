@@ -226,6 +226,10 @@ function hasWallet(d) {
     return d.wallet;
 }
 
+function isClient(d){
+    return d.userType =='client';
+}
+
 function _preUpdateWallet(data, cb, next) {
     if (!hasWallet(data)) return next(data, cb);
 
@@ -261,6 +265,11 @@ function _preUpdateWallet(data, cb, next) {
             }else{
                 payload.newIsCompany = '0';
             }
+            
+            if(isClient(data)){
+                payload.isTechWallet = '1';
+            }
+            
             ctrl('Lemonway').updateWalletDetails(payload, (err, res) => {
                 if (err) {
                     logger.error('LEMONWAY WALLET (automatic update before saving user)', err);

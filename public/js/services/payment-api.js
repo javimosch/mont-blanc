@@ -75,6 +75,10 @@
 						data.companyIdentificationNumber = user.siret;
 					}
 
+					if (user.userType == 'client') {
+						data.isTechWallet = '1';
+					}
+
 					return lemonwayApi.registerWallet(data).then(function(res) {
 							if (res.result && res.result.WALLET) {
 								user.wallet = res.result.WALLET.ID;
