@@ -78,7 +78,7 @@ function model(n, def) {
     var schema = new mongoose.Schema(def);
     schema.plugin(mongoosePaginate);
     schema.pre('save', function(next) {
-        var now = new Date();
+        var now = Date.now();
         this.updatedAt = now;
         if (!this.createdAt) {
             this.createdAt = now;

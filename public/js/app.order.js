@@ -483,6 +483,10 @@
 
 
                 s.applyTotalPrice = () => {
+                    
+                    if(_.includes(['prepaid','delivered','completed'],s.item.status)){
+                        return;
+                    }
 
                     s.diagSlots.updatePrices();
 
