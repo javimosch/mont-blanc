@@ -1,5 +1,5 @@
 var name = 'task:deleteTemporalFiles';
-var PRESERVE_TIME  = 1000 * 60 * 10;  //10 minutes
+var PRESERVE_TIME  = 1000 * 60 * 60 * 48;  //48 horas
 //
 var utils = require('../utils');
 var _ = require('lodash');
