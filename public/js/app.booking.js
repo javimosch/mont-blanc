@@ -418,6 +418,8 @@ app.controller('ctrl.booking', ['server',
         s.validateClientDetails = function(cb) {
 
             if (!s._user.email) return s.warningMsg('Email c&#39;est obligatoire.');
+            
+            if (s._user.clientType !== 'landlord' && !s._user.siret) return s.warningMsg('Siret c&#39;est obligatoire.');
 
             db.ctrl('User', 'exists', {
                 email: s._user.email,
