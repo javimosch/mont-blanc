@@ -30,24 +30,26 @@
 <div class="container" ng-controller="settings-invoice">
     <modal-confirm open="confirm"></modal-confirm>
     
-    <div class="row diags-row margin-bottom-two">
+    <div class="row diags-row margin-bottom-two" ng-show="isPreviewPDF()">
         <div class="col-sm-12 col-md-12">
             <div class="row margin-top-one">
                 <label>Preview PDF</label>
+                <i class="fa fa-times link" ng-click="closePreviewPDF()" aria-hidden="true"></i>
             </div>
-            <div class="row margin-top-one">
-                <div id="preview">
+            <div class="row">
+                <div id="previewPDF">
                 </div>
             </div>
         </div>
     </div>
     
-     <div class="row diags-row margin-bottom-two">
+     <div class="row diags-row" ng-show="isPreviewHTML()">
         <div class="col-sm-12 col-md-12">
             <div class="row margin-top-one">
                 <label>Preview HTML</label>
+                <i class="fa fa-times link" ng-click="closePreviewHTML()" aria-hidden="true"></i>
             </div>
-            <div class="row margin-top-one">
+            <div class="row">
                 <div id="previewHTML">
                 </div>
             </div>
@@ -62,7 +64,7 @@
             </div>
              <div class="row margin-top-one">
                  <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="previewHTML()">Preview HTML</button>
-                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="preview()">Preview PDF</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="previewPDF()">Preview PDF</button>
                 <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="formatCode()">Format code</button>
                 <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="toggleFullscreen()">Toggle Fullscreen</button>
             </div>
