@@ -66,8 +66,8 @@
             <div class="row  margin-top-half">
                 <input ng-disabled="true" ng-value="item.wallet" class="diags-input" placeholder="(Sans wallet)">
             </div>
-            <div class="row margin-top-quarter" ng-show="userIs('admin')&&!item.wallet">
-                <button ng-click="createWallet()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance">Create wallet</button>
+            <div class="row margin-top-quarter" ng-show="userIs('admin')">
+                <button ng-click="createWallet()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance">Link wallet</button>
             </div>
             <div class="row margin-top-one">
                 <label>Départements en charge</label>

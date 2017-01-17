@@ -218,13 +218,22 @@ function balance(data, cb) {
 
 function _preCreateWallet(data, cb,next) {
     if (!data.wallet && (data.userType == 'client' || data.userType == 'diag')) {
-        return ctrl('Lemonway').registerWallet({
+        
+        var payload = {
             clientMail: data.email,
             clientFirstName: data.firstName,
             clientLastName: data.lastName,
             postCode: data.postCode,
             mobileNumber: data.cellPhone
-        }, (err, res) => {
+        };
+        
+        if(data.userType == 'diag' || (data.userType =='client' && data.clientType!=='landlord')){
+            payload.isCompany = '1';
+            payload.companyName = data.companyName;
+            payload.companyIdentificationNumber = data.siret;
+        }
+        
+        return ctrl('Lemonway').registerWallet(payload, (err, res) => {
             if (!err && res && res.WALLET) {
                 data.wallet = res.WALLET.ID;
                 logger.info('LEMONWAY WALLET (automatic registration before saving user)', data.wallet);

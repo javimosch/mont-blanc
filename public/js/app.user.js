@@ -74,8 +74,9 @@ app.controller('adminUsersEdit', [
         //
 
         s.createWallet = function() {
-            paymentApi.registerDiagWallet(s.item).then(function() {
+            paymentApi.registerUserWallet(s.item).then(function() {
                 r.dom();
+                r.infoMessage('Linked to '+s.item.wallet+'.');
             }).error(function(res) {
                 r.errorMessage();
             }).on('validate', function(msg) {

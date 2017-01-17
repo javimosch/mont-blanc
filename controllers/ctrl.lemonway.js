@@ -434,6 +434,15 @@ if(process.env.LEMON_DIRECTKIT_URL){
    mobileNumber: "339582234",
    isCompany: 0,
    //companyName:'()'
+   
+   /*
+   "isCompany":"string",
+    "companyName":"string",
+    "companyWebsite":"string",
+    "companyDescription":"string",
+    "companyIdentificationNumber":"string",
+    */
+   
   }).then(function(res) {
    callback(null, res);
   }, function(err) {

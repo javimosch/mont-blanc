@@ -32,33 +32,51 @@
 						.on('validate', (msg) => emit('validate', msg));
 				});
 			},
-			registerDiagWallet: function(diag) {
+			registerUserWallet: function(user) {
 				return MyPromise(function(resolve, err, emit) {
 
-					if (diag._wallet) {
-						return emit('validate', 'Diag already has a wallet');
+					if (user._wallet) {
+						return emit('validate', 'User already has a wallet');
 					}
-					if (!diag.email) {
-						return emit('validate', 'Diag email required');
+					if (!user.email) {
+						return emit('validate', 'User email required');
 					}
-					if (!diag.firstName) {
-						return emit('validate', ' firstName required');
+					if (!user.firstName) {
+						return emit('validate', 'User firstName required');
 					}
-					if (!diag.lastName) {
-						return emit('validate', 'Diag lastName required');
+					if (!user.lastName) {
+						return emit('validate', 'User lastName required');
+					}
+					if (!user.siret) {
+						return emit('validate', 'User siret required');
+					}
+					if (!user.userType) {
+						return emit('validate', 'User userType required');
+					}
+					if (user.userType=='client' && !user.clientType) {
+						return emit('validate', 'User clientType required');
 					}
 
 					var data = {
-						clientMail: diag.email,
-						clientFirstName: diag.firstName,
-						clientLastName: diag.lastName,
-						postCode: diag.postCode,
-						mobileNumber: diag.cellPhone
+						clientMail: user.email,
+						clientFirstName: user.firstName,
+						clientLastName: user.lastName,
+						postCode: user.postCode,
+						mobileNumber: user.cellPhone,
+						isCompany: '1',
+						companyName: user.companyName || (user.firstName + ' ' + user.lastName),
+						companyIdentificationNumber: user.siret
 					};
+
+					if (_.includes(['diag', 'admin'], user.userType) || (user.userType == 'client' && user.clientType !== 'landlord')) {
+						data.isCompany = '1';
+						data.companyName = user.companyName || (user.firstName + ' ' + user.lastName);
+						data.companyIdentificationNumber = user.siret;
+					}
 
 					return lemonwayApi.registerWallet(data).then(function(res) {
 							if (res.result && res.result.WALLET) {
-								diag.wallet = res.result.WALLET.ID;
+								user.wallet = res.result.WALLET.ID;
 								resolve();
 							}
 							else {
