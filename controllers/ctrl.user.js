@@ -234,6 +234,7 @@ function _preUpdateWallet(data, cb, next) {
     if (!hasWallet(data)) return next(data, cb);
 
     function shouldUpdateWallet(incoming, user) {
+        if(!user) return false;
         if (incoming.email != user.email) return true;
         if (incoming.firstName != user.firstName) return true;
         if (incoming.lastName != user.lastName) return true;
