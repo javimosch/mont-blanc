@@ -18,10 +18,10 @@
             s.orderQuestion = orderQuestion;
             s.orderRdv = orderRdv;
             s.orderPrice = orderPrice;
-            
-            s.toggleDiagType = function(key){
-                if(s.item._id) return; //edition disabled
-                s.item.diags[key]=!s.item.diags[key];
+
+            s.toggleDiagType = function(key) {
+                if (s.item._id) return; //edition disabled
+                s.item.diags[key] = !s.item.diags[key];
             };
 
             /*PDF LOGIC*/
@@ -123,7 +123,6 @@
                                 status: s.item.status
                             }).then(data => {
                                 _deletePrev(prevID);
-                                //_readFile();
                                 read(s.item._id);
                                 r.infoMessage('File upload success.', 5000);
                             });
@@ -191,7 +190,7 @@
                     return;
                 }
                 if (!s.item._client.wallet) return;
-                
+
                 //lemonwayApi.getWalletTransHistory({})
 
             }
@@ -239,7 +238,14 @@
                 }
                 else {
                     reset();
+
+                    bindAnswersToDefaultDiags();
                 }
+            }
+
+            function bindAnswersToDefaultDiags() {
+                if (!s.diags) return setTimeout(bindAnswersToDefaultDiags, 500);
+                orderQuestion.bindAnswersToDefaultDiags(s);
             }
 
             function autoPay() {
@@ -483,8 +489,8 @@
 
 
                 s.applyTotalPrice = () => {
-                    
-                    if(_.includes(['prepaid','delivered','completed'],s.item.status)){
+
+                    if (_.includes(['prepaid', 'delivered', 'completed'], s.item.status)) {
                         return;
                     }
 
@@ -564,14 +570,10 @@
                 });
 
                 db.localData().then(function(data) {
-                    //$log.debug('order localData basePrice is', data.basePrice);
                     Object.assign(s, data);
                     s.diags.forEach((diag) => {
                         diag.show = true;
                     });
-
-                    orderQuestion.bindAnswersToDefaultDiags(s);
-
                 });
                 //
 
@@ -614,14 +616,20 @@
                     }
                 };
 
+                function isEdition() {
+                    return s.item && s.item._id;
+                }
+
                 s.$watch('item.diags', function(newV, oldV) {
                     if (!_.isEqual(newV, oldV) && !s.item._id) {
                         s.applyTotalPrice();
                     }
                 }, true);
-                
+
                 s.$watch('item.info.buildingType', function(newV, oldV) {
+                    if (!isEdition()) {
                         s.applyTotalPrice();
+                    }
                 }, true);
 
                 s.$watch('item', function(val) {
@@ -1195,10 +1203,7 @@
                         }
 
                         autoPay();
-                        // _readFile();
                         s.pdfCheck();
-                        //                    console.info('READ', s.item);
-                        //s.message('Loaded', 'success', 2000);
                     }
                     else {
                         handleError(data);
