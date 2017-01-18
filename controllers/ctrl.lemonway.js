@@ -559,11 +559,13 @@
    request(options, function(error, response, body) {
     if (error) {
      // Handle request error
+     LogSaveLemonway(methodName+' (REQUEST-ERROR)',postData,error);
      logger.info(MODULE, ' RESPONSE ', methodName, '  REQUEST-ERROR ', error);
      reject(error);
     }
     else if (response.statusCode != 200) {
      // Handle HTTP error
+     LogSaveLemonway(methodName+' (HTTP-ERROR)',postData,error);
      logger.info(MODULE, ' RESPONSE ', methodName, '  HTTP-ERROR ', error);
      reject({
       code: response.statusCode,
@@ -572,6 +574,7 @@
     }
     else {
      if (body.d.E) {
+      LogSaveLemonway(methodName+' (API-ERROR)',postData,body.d.E);
       logger.info(MODULE, ' RESPONSE ', methodName, '  API-ERROR ', body.d.E);
       reject(body.d.E);
      }
@@ -584,5 +587,27 @@
   });
 
   return promise;
+ }
+
+ function LogSaveLemonway(methodName, payload, error) {
+  LogSave('Lemonway '+methodName+'', 'error', {
+   methodName: methodName,
+   payload: payload,
+   error: error
+  });
+ }
+
+
+ function LogSave(msg, type, data) {
+  try {
+   ctrl('Log').save({
+    message: msg,
+    type: type || 'error',
+    data: data || {}
+   });
+  }
+  catch (err) {
+   logger.error(MODULE, " LOG-SAVE ", err);
+  }
  }
  

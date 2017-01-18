@@ -32,14 +32,15 @@ var saveKeys = ['_client', '_diag', 'start', 'end', 'diags'
 
 
 function LogSave(msg, type, data) {
-    try{
-    Log.save({
-        message: msg,
-        type: type || 'error',
-        data: data || {}
-    });
-    }catch(err){
-        logger.error(MODULE," LOG-SAVE ",err);
+    try {
+        Log.save({
+            message: msg,
+            type: type || 'error',
+            data: data || {}
+        });
+    }
+    catch (err) {
+        logger.error(MODULE, " LOG-SAVE ", err);
     }
 }
 
@@ -120,7 +121,7 @@ var processing_order_payment = {};
 
 function payUsingLW(data, callback) {
     if (!data.orderId) return callback('orderId field required');
-    
+
     if (!data.__allowPayment && processing_order_payment[data.orderId]) return callback('Order payment is already being processed.');
     processing_order_payment[data.orderId] = true;
     var cb = function(err, res) {
@@ -145,7 +146,7 @@ function payUsingLW(data, callback) {
         return;
     }
 
-    
+
 
 
     if (!data.secret) return cb('secret field required');
@@ -163,7 +164,9 @@ function payUsingLW(data, callback) {
 
         //step 1 payment with card
         ctrl('Lemonway').moneyInWithCardId(decodedPayload, function(err, LWRES) {
-            if (err) return cb(err);
+            if (err) {
+                return cb(err);
+            }
 
             logger.info(MODULE, ' PAY-WITH-LW MONEY-IN-RESULT ', LWRES);
 
@@ -522,7 +525,7 @@ function save(data, cb, customRequiredKeys) {
         _saveNext();
     }
 
-    
+
 
     function _saveNext() {
         /*
