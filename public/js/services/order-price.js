@@ -172,7 +172,9 @@
                 }
             },
             getPriceHT: function(k) {
-                return this.getPriceWithCommercial(k);
+                //100*(1-20/100)
+                return (this.getPriceTTC(k) * (1 - this.getRatioModifierFor('vat') / 100)).toFixed(2);
+                //return this.getPriceWithCommercial(k);
             },
             getPriceWithVAT: function(k) {
                 return (this.getPriceWithCommercial(k) * (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
