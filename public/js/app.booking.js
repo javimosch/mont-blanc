@@ -467,7 +467,7 @@ app.controller('ctrl.booking', ['server',
         s.addressDepartmentCovered = true;
         s.validateAddressDepartment = (cb, err) => {
             var code = s.item.postCode.substring(0, 2);
-            console.info('debug validating address department', code);
+            //console.info('debug validating address department', code);
             db.ctrl('User', 'departmentCoveredBy', {
                 department: code.toString()
             }).then(res => {
@@ -514,9 +514,9 @@ app.controller('ctrl.booking', ['server',
         s.$watch('item.range', function(id) {
             if (!id) return;
             if (typeof id !== 'string') return;
-            console.log('item.range', id);
+            //console.log('item.range', id);
             var data = JSON.parse(window.atob(id));
-            console.log('item.range data', data);
+            //console.log('item.range data', data);
             s.item._diag = data._diag;
             s.item.start = data.start;
             s.item.end = data.end;
@@ -682,12 +682,23 @@ app.controller('ctrl.booking', ['server',
                     cloneOrder();
                     
                     if(s.booking.payment.complete){
-                        s._order.status = 'prepaid';
+                        //s._order.status = 'prepaid'; //this is done in backend
                     }
                     
-                    db.ctrl('Order', 'update', s._order).then(function() {
+                    var o = s._order;
+                    db.ctrl('Order', 'update', {
+                        _id:o._id,
+                        obs:o.obs,
+                        landLordFullName:o.landLordFullName,
+                        landLordEmail:o.landLordEmail,
+                        landLordPhone:o.landLordPhone,
+                        landLordAddress:o.landLordAddress,
+                        keysAddress:o.keysAddress,
+                        keysTimeFrom:o.keysTimeFrom,
+                        keysTimeTo:o.keysTimeTo
+                    }).then(function() {
                         saving = false;
-                        console.info('auto-save: saved');
+                        //console.info('auto-save: saved');
                     })
                 }
             }, 5000);
@@ -1537,33 +1548,28 @@ app.controller('ctrl.booking', ['server',
             });
         }
         s.fetchOrder = fetchOrder;
-
-        function setOrder(_order) {
-            s._order = _order;
+        
+        function updateOrderPrices(_order){
+            _order = _order || s._order;
             orderPrice.set({
                 date: _order.start,
                 diagCommissionRate: _order._diag && _order._diag.commission
             });
             orderPrice.assignPrices(_order);
+        }
+
+        function setOrder(_order) {
+            s._order = _order;
+            updateOrderPrices(s._order);
             commitOrderInfo();
             updateAutoSave();
         }
 
         function commitOrderInfo() {
             if (!s._order) return;
-
             if (s._order.info.addressBatiment === undefined) {
                 s._order.info.addressBatiment = 'Sur rue';
             }
-
-            //if (s._order.info.house === undefined && s.item.house !== undefined) {
-            //  s._order.info.house = s.item.house;
-            //}
-
-            //if (s._order.info.sell === undefined && s.item.sell !== undefined) {
-            //  s._order.info.sell = s.item.sell;
-            //}
-
             if (s._order.info.electricityInstallation === undefined && s.item.electricityInstallation !== undefined) {
                 s._order.info.electricityInstallation = s.item.electricityInstallation;
             }
@@ -1571,11 +1577,6 @@ app.controller('ctrl.booking', ['server',
             if (!s._order.info.description && s.item) {
                 s._order.info.description = s.bookingDescriptionTitle() + s.bookingDescriptionBody();
             }
-
-
-            //if (s._order.info.house == undefined) {
-            //  console.warn('The order info.house is undefined.');
-            //}
         }
 
         //SAVEASYNC
@@ -1589,6 +1590,21 @@ app.controller('ctrl.booking', ['server',
                     s.item.email = s._user.email;
                     s.item.clientType = s._user.clientType;
                 }
+                
+                if(s._diag){
+                   s.item._diag = s._diag; 
+                }else{
+                    return db.ctrl('User','get',{
+                        _id:s.item._diag
+                    }).then(function(res){
+                        if(res.ok && res.result){
+                            s._diag = res.result;
+                            return s.saveAsync().then(resolve).on('success',()=>evt('success'));
+                        }else{
+                            $log.error("Can't fetch the diag guy.");
+                        }
+                    });
+                }
 
                 //defaults for keysTime
                 if (!s.item.keysTimeFrom && s.item.start) {
@@ -1600,12 +1616,14 @@ app.controller('ctrl.booking', ['server',
 
                 //update price
                 //s.item.price = s.totalPrice(true);
-                s.item.price = 0;
+                updateOrderPrices(s.item);
 
                 if ($U.hasUndefinedProps(s.item, ['_diag', 'start', 'end'])) {
                     s.warningMsg('Select one available date');
                     return r.route(URL.RDV);
                 }
+                
+                $log.debug('first-time-saving',_.clone(s.item));
 
                 db.ctrl('Order', 'saveWithEmail', s.item).then(data => {
                     var saved = data.ok;
@@ -1618,6 +1636,7 @@ app.controller('ctrl.booking', ['server',
                     //
                     r.dom(function() {
                         //setOrder(data.result);
+                        
                         s._order = data.result;
 
                         updateAutoSave();

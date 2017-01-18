@@ -42,7 +42,7 @@
                 payload.__rules.departments = {
                     $eq: opt.department.toString()
                 };
-                console.info('debug filtering diags who cover department ',opt.department);
+                //console.info('debug filtering diags who cover department ',opt.department);
             }
 
 
