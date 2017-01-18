@@ -165,7 +165,7 @@
             },
             getPriceWithCommercial: function(k) {
                 if (settings.buildingType != undefined && settings.buildingType == '2') {
-                    return (this.getPriceWithDepartment(k) * (1+this.getRatioModifierFor('commercial') / 100)).toFixed(2);
+                    return (this.getPriceWithDepartment(k) * (1 + this.getRatioModifierFor('commercial') / 100)).toFixed(2);
                 }
                 else {
                     return this.getPriceWithDepartment(k);
@@ -173,8 +173,19 @@
             },
             getPriceHT: function(k) {
                 //100*(1-20/100)
-                return (this.getPriceTTC(k) * (1 - this.getRatioModifierFor('vat') / 100)).toFixed(2);
+                //return (this.getPriceTTC(k) * (1 - this.getRatioModifierFor('vat') / 100)).toFixed(2);
                 //return this.getPriceWithCommercial(k);
+
+                /*
+                FORMULA HT
+                    HT = TTC / (1+VAT RATE)
+                    
+                    EXAMPLE:
+                    100 / (1+0.20)
+                    83.33333333333334
+                    */
+                return (this.getPriceTTC(k) / (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
+
             },
             getPriceWithVAT: function(k) {
                 return (this.getPriceWithCommercial(k) * (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
