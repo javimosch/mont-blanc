@@ -184,6 +184,18 @@
                 </tr>
                 <tr class="unselectable">
                     <td>
+                        <label class="minimal">Diag commission</label>
+                        <input type="text" class="diags-input minimal" ng-model="pricetool.scope.diagCommissionRate">
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">day modifier %</label>
+                        <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getRatioModifierFor('day')">
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
                         <label class="minimal">Base price</label>
                         <input type="text" disabled class="diags-input minimal" ng-value="localData.basePrice">
                     </td>
@@ -191,7 +203,31 @@
                 <tr class="unselectable">
                     <td>
                         <label class="minimal">Base price + selected diags</label>
-                        <input type="text" disabled class="diags-input minimal" ng-value="pricetool.getPriceBase()">
+                        <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceBase()">
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Price HT</label>
+                        <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceHT()">
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Price VAT</label>
+                        <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceWithVAT()">
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Price TTC (Final, with tenth)</label>
+                        <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceTTC()">
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Diag remuneration HT</label>
+                        <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceRemunerationHT()">
                     </td>
                 </tr>
                 <!--

@@ -409,6 +409,7 @@
                     //  keys used:(basePrice squareMetersPrice diags settings)
                     //localData.settings needs to be the db settings object.
                     //item: start info.squareMeters postCode diags (ex:{dpe:true})
+                    diagCommissionRate:75,
                     item: {
                         start: moment(),
                         postCode: '75010',
@@ -481,6 +482,20 @@
                     squareMeters: squareMeters
                 });
             });
+            
+             s.$watch('pricetool.scope.diagCommissionRate', function(diagCommissionRate) {
+                orderPrice.set({
+                    diagCommissionRate: diagCommissionRate
+                });
+            });
+            
+            s.$watch('pricetool.scope.item._client.discount', function(discount) {
+                orderPrice.set({
+                    clientDiscountPercentage: discount
+                });
+            });
+            
+            
 
         }
     ]);
