@@ -43,7 +43,7 @@
             </div>
             <div class="row margin-top-quarter">
                 <input cc-exp-month ng-change="onCardDateChange()" class="diags-input payment-form__card-expiration-month" placeholder="MM" type="text" ng-model="data.cardDateMonth" ng-required="true">
-                <input cc-exp-year ng-change="onCardDateChange()" class="diags-input payment-form__card-expiration-year" placeholder="AA" type="text" ng-model="data.cardDateYear" ng-required="true">
+                <input cc-exp-year full-year ng-change="onCardDateChange()" class="diags-input payment-form__card-expiration-year" placeholder="AA" type="text" ng-model="data.cardDateYear" ng-required="true">
             </div>
             <div class="row margin-top-half">
                 <label class="unselectable">Code de vérification à 3 chiffres</label>
