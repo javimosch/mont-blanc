@@ -60,10 +60,10 @@
                 return MyPromise(function(resolve, err, emit) {
 
                     if (!order) return emit('validate', 'order required');
-                    
+
                     if (!order.price) return emit('validate', 'order price required');
                     if (!order.diagRemunerationHT) return emit('validate', 'order diagRemunerationHT required');
-                    
+
                     if (!order._diag) return emit('validate', 'order _diag required');
                     if (!order._diag.firstName) return emit('validate', 'order _diag firstName required');
                     if (!order._diag.lastName) return emit('validate', 'order _diag lastName required');
@@ -78,6 +78,25 @@
 
                         //return $log.debug(formResponse);
 
+                        function fixCardDateYear(formResponse) {
+                            try {
+                                var split = formResponse.cardDate.split('/');
+                                var year = split[1];
+                                if (year.length <= 2) {
+                                    var yearPart = moment().format('YYYY').substring(0, 2);
+                                    formResponse.cardDate = split[0]+'/'+yearPart+year;
+                                }
+                                return formResponse;
+                            }
+                            catch (err) {
+                                return formResponse;
+                            }
+                        }
+
+                        formResponse = fixCardDateYear(formResponse);
+
+                        
+
                         var payload = {
                             wallet: order._client.wallet,
                             cardType: formResponse.cardType,
@@ -85,19 +104,21 @@
                             cardCode: formResponse.cardCode,
                             cardDate: formResponse.cardDate,
                             amountTot: parseFloat(order.price).toFixed(2).toString(),
-                            amountCom:(parseFloat(order.price) - parseFloat(order.diagRemunerationHT)).toFixed(2).toString(),
+                            amountCom: (parseFloat(order.price) - parseFloat(order.diagRemunerationHT)).toFixed(2).toString(),
                             comment: 'House Diagnostic by autoentrepreneur ' + order._diag.firstName + ' ' + order._diag.lastName + ' SIRET ' + order._diag.siret + ' through www.diagnostical.fr, Order #_INVOICE_NUMBER_'
                                 //comment: "House Inspection by www.houseinspectors.fr, ORDER 24577 for client prop@fake.com (TEST)",
                         };
                         payload = {
                             orderId: order._id,
                             secret: btoa(JSON.stringify(payload)) + btoa('secret'),
-                            p2pDiag:{
-                                debitWallet :order._client.wallet,
-                                creditWallet:order._diag.wallet,
+                            p2pDiag: {
+                                debitWallet: order._client.wallet,
+                                creditWallet: order._diag.wallet,
                                 amount: order.diagRemunerationHT.toString(),
                                 message: '',
-                                privateData: JSON.stringify({orderId:order._id})
+                                privateData: JSON.stringify({
+                                    orderId: order._id
+                                })
                             },
                         };
                         isProcessing = true;
