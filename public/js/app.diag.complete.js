@@ -535,6 +535,7 @@ app.controller('ctrl-diag-edit', [
             $U.ifThenMessage([
                 [s.item.email, '==', '', "email est nécessaire"],
                 [s.item.password, '==', '', "Password est nécessaire"],
+                [s.item.siret, '==', '', "siret est nécessaire"],
                 [s.item.commission == undefined, '==', true, "Commission est nécessaire"],
                 [isNaN(s.item.commission), '==', true, "Commission allowed values are 0..100"],
                 [(s.item.commission < 0 || s.item.commission > 100), '==', true, "Commission allowed values are 0..100"],
