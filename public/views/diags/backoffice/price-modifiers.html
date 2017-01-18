@@ -208,20 +208,32 @@
                 </tr>
                 <tr class="unselectable">
                     <td>
-                        <label class="minimal">Price HT</label>
-                        <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceHT()">
+                        <label class="minimal">Raw Price HT</label>
+                        <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceWithCommercial()">
                     </td>
                 </tr>
                 <tr class="unselectable">
                     <td>
-                        <label class="minimal">Price VAT</label>
+                        <label class="minimal">Raw Price TTC</label>
                         <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceWithVAT()">
                     </td>
                 </tr>
                 <tr class="unselectable">
                     <td>
-                        <label class="minimal">Price TTC (Final, with tenth)</label>
+                        <label class="minimal">Real Price TTC (Final, with tenth)</label>
                         <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceTTC()">
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Real Price HT</label>
+                        <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceHT()">
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Real VAT Price</label>
+                        <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getVATPrice()">
                     </td>
                 </tr>
                 <tr class="unselectable">

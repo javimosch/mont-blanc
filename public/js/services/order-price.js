@@ -187,6 +187,9 @@
                 return (this.getPriceTTC(k) / (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
 
             },
+            getVATPrice:function(k){
+                return this.getPriceTTC(k) - this.getPriceHT(k);
+            },
             getPriceWithVAT: function(k) {
                 return (this.getPriceWithCommercial(k) * (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
             },
