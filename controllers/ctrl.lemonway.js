@@ -10,9 +10,10 @@
   urlDirectkit = process.env.LEMON_DIRECTKIT_URL;
  }
 
+ var ctrl = require('../model/db.controller').create;
  const request = require('request');
  const Promise = require('promise');
- var ctrl = require('../model/db.controller');
+
  var moment = require('moment');
  const publicIp = require('public-ip');
  const uid = require('rand-token').uid;
@@ -559,13 +560,13 @@
    request(options, function(error, response, body) {
     if (error) {
      // Handle request error
-     LogSaveLemonway(methodName+' (REQUEST-ERROR)',postData,error);
+     LogSaveLemonway(methodName + ' (REQUEST-ERROR)', 'error', postData, error);
      logger.info(MODULE, ' RESPONSE ', methodName, '  REQUEST-ERROR ', error);
      reject(error);
     }
     else if (response.statusCode != 200) {
      // Handle HTTP error
-     LogSaveLemonway(methodName+' (HTTP-ERROR)',postData,error);
+     LogSaveLemonway(methodName + ' (HTTP-ERROR)', 'error', postData, error);
      logger.info(MODULE, ' RESPONSE ', methodName, '  HTTP-ERROR ', error);
      reject({
       code: response.statusCode,
@@ -574,11 +575,12 @@
     }
     else {
      if (body.d.E) {
-      LogSaveLemonway(methodName+' (API-ERROR)',postData,body.d.E);
+      LogSaveLemonway(methodName + ' (API-ERROR)', 'warning', postData, body.d.E);
       logger.info(MODULE, ' RESPONSE ', methodName, '  API-ERROR ', body.d.E);
       reject(body.d.E);
      }
      else {
+      LogSaveLemonway(methodName + ' (SUCCESS)', 'info', postData, body.d.E);
       logger.info(MODULE, ' RESPONSE ', methodName, '  SUCCESS ', body.d);
       return resolve(body.d);
      }
@@ -589,8 +591,8 @@
   return promise;
  }
 
- function LogSaveLemonway(methodName, payload, error) {
-  LogSave('Lemonway '+methodName+'', 'error', {
+ function LogSaveLemonway(methodName, level, payload, error) {
+  LogSave('Lemonway ' + methodName + '', level, {
    methodName: methodName,
    payload: payload,
    error: error
@@ -598,16 +600,13 @@
  }
 
 
- function LogSave(msg, type, data) {
-  try {
-   ctrl('Log').save({
-    message: msg,
-    type: type || 'error',
-    data: data || {}
-   });
-  }
-  catch (err) {
-   logger.error(MODULE, " LOG-SAVE ", err);
-  }
+ function LogSave(msg, level, data) {
+  ctrl('Log').save({
+   message: msg,
+   category: 'lemonway',
+   type: level,
+   level: level,
+   data: data || {}
+  });
  }
  

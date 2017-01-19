@@ -122,12 +122,15 @@
                         }
                     }],
                     columns: [{
-                        label: "Type",
-                        name: 'type'
+                        label: "Category",
+                        name: 'category'
                     }, {
                         label: "Message",
                         name: "message",
                         format: (v, item) => item.message && item.message.substring(0, 100) + ' . . .' || 'Empty'
+                    },{
+                        label: "Level",
+                        name: 'type'
                     }, {
                         label: "Created",
                         format: (v, item) => r.momentFormat(item.createdAt, "DD-MM-YY HH[h]mm")

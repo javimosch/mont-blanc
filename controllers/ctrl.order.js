@@ -198,12 +198,12 @@ function payUsingLW(data, callback) {
                 ctrl('Lemonway').sendPayment(p2pPayload, function(err, res) {
                     logger.info(MODULE, ' P2P-RESULT', err, res);
                     if (err) {
-                        logger.error(MODULE, ' P2P after card transaction ', err);
-                        LogSave('P2P after card transaction error', 'error', err);
+                       // logger.error(MODULE, ' P2P after card transaction ', err);
+                        //LogSave('P2P after card transaction error', 'error', err);
                     }
                     else {
-                        logger.info(MODULE, ' P2P after card transaction ', res);
-                        LogSave('P2P after card transaction success', 'info', res);
+                        //logger.info(MODULE, ' P2P after card transaction ', res);
+                        //LogSave('P2P after card transaction success', 'info', res);
                     }
 
                     logger.info(MODULE, ' PAY-USING-LW SUCCESS ');
