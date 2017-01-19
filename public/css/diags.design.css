@@ -737,6 +737,14 @@ input[type="checkbox"]:disabled+ span {
         font-size: 0.7em;
     }
 }
+@media screen and (max-width: 360px) {
+    .right-bar .headtitle {
+        font-size: 0.6em;
+    }
+    .right-bar .subtitle {
+        font-size: 0.6em;
+    }
+}
 
 @media screen and (max-width: 320px) {
     .right-bar .headtitle {
@@ -1909,11 +1917,11 @@ label * {
     list-style: none;
     padding: 0px;
     margin: 40px auto 40px auto;
-    width: 287px;
+    width: 293px;
 }
 .home__mobile-icons-list li{
     display: inline-block;
-    margin-right: 2px;
-    margin-left: 2px;
+    margin-right: 3px;
+    margin-left: 3px;
     margin-bottom: 10px;
 }
