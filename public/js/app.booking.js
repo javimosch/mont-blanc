@@ -1363,41 +1363,44 @@ app.controller('ctrl.booking', ['server',
         };
 
 
-        s.bookingDescriptionTitle = function() {
-            if (s.item.info.buildingState == '1') return "Pack Vente: ";
+        s.bookingDescriptionTitle = function(item) {
+            item = item || s.item;
+            if (item.info.buildingState == '1') return "Pack Vente: ";
             else return "Pack Location: ";
         };
-        s.bookingDescriptionBody = function() {
+        s.bookingDescriptionBody = function(item) {
+            item = item || s.item;
             var rta = "";
-            if (s.item.info.buildingType == '0') {
+            if (item.info.buildingType == '0') {
                 rta += "Maison";
             }
             else {
-                if (s.item.info.buildingType == '2') {
+                if (item.info.buildingType == '2') {
                     rta += "Local commercial";
                 }
                 else {
                     rta += "Appartement";
                 }
             }
-            if (s.item.city) {
+            if (item.city) {
                 rta += " à " + s.item.city;
             }
-            if (s.item.info.constructionPermissionDate) {
-                rta += " " + s.item.info.constructionPermissionDate;
+            if (item.info.constructionPermissionDate) {
+                rta += " " + item.info.constructionPermissionDate;
             }
-            rta += ', ' + s.item.info.squareMeters;
-            if (!_.includes(['Non', 'Oui, Moins de 15 ans'], s.item.info.gasInstallation)) {
+            rta += ', ' + item.info.squareMeters;
+            if (!_.includes(['Non', 'Oui, Moins de 15 ans'], item.info.gasInstallation)) {
                 rta += ', Gaz';
             }
-            if (s.item.info.electricityInstallation != 'Moins de 15 ans') {
+            if (item.info.electricityInstallation != 'Moins de 15 ans') {
                 rta += ", Électricité";
             }
             rta += '.';
             return rta;
         };
-        s.bookingDescription = function() {
-            return s.bookingDescriptionTitle() + s.bookingDescriptionBody();
+        s.bookingDescription = function(item) {
+            item = item || s.item;
+            return s.bookingDescriptionTitle(item) + s.bookingDescriptionBody(item);
         };
 
 
@@ -1578,6 +1581,14 @@ app.controller('ctrl.booking', ['server',
                 s._order.info.description = s.bookingDescriptionTitle() + s.bookingDescriptionBody();
             }
         }
+        
+        function hasDescription(item){
+            return item.info.description;
+        }
+        function insertDescription(item){
+             item.info.description = s.bookingDescription(item);
+             return item;
+        }
 
         //SAVEASYNC
         s.saveAsync = () => {
@@ -1604,6 +1615,10 @@ app.controller('ctrl.booking', ['server',
                             $log.error("Can't fetch the diag guy.");
                         }
                     });
+                }
+                
+                if(!hasDescription(s.item)){
+                    s.item = insertDescription(s.item);
                 }
 
                 //defaults for keysTime
