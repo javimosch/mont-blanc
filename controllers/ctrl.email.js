@@ -8,6 +8,7 @@ var sendEmail = require('../model/utils.mailing').sendEmail;
 var _utils = require('../model/utils');
 
 
+
 var moment = require('moment-timezone');
 
 
@@ -116,6 +117,17 @@ function send(opt, resCb) {
         to: opt.to || process.env.emailTo || 'arancibiajav@gmail.com',
         subject: opt.subject
     };
+    
+    var logData = _.clone(data);
+    delete logData.html;
+    LogSave('Notification '+data.type,'info',logData);
+    
+    data.metadata = {}
+    
+    if(data.attachment){
+        data.metadata.attachment = data.attachment;
+    }
+    
     if (opt._user) {
         if (opt._notification) {
             actions.log('send:using-_notification=' + JSON.stringify({
@@ -550,7 +562,7 @@ function DIAG_RDV_CONFIRMED(data, cb) {
 
 ////LANDLORD//#1 OK app.booking app.order
 function LANDLORD_ORDER_PAYMENT_DELEGATED(data, cb) {
-    generateInvoiceAttachmentIfNecessary(data, NOTIFICATION.LANDLORD_ORDER_PAYMENT_DELEGATED, (data) => {
+    //generateInvoiceAttachmentIfNecessary(data, NOTIFICATION.LANDLORD_ORDER_PAYMENT_DELEGATED, (data) => {
         delete data.attachmentPDFHTML;
         CLIENT_ORDER_DELEGATED(data, null);
         everyAdmin((_admin) => {
@@ -563,7 +575,7 @@ function LANDLORD_ORDER_PAYMENT_DELEGATED(data, cb) {
         var subject = 'Diagnostic Réservé en attente de paiement';
         DIAGS_CUSTOM_NOTIFICATION(
             NOTIFICATION.LANDLORD_ORDER_PAYMENT_DELEGATED, data, cb, subject, data._order.landLordEmail, data._order, 'Order');
-    });
+    //});
 }
 
 

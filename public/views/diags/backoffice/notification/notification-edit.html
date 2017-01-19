@@ -40,6 +40,12 @@
                 <div class="diags-input-div" ng-bind-html="item.contents">
                 </div>
             </div>
+            
+            <div class="row margin-top-half">
+                <div class="diags-input-div">
+                    {{item.metadata | json}}
+                </div>
+            </div>
 
             <div class="row margin-top-one">
                 <label>Sended</label>

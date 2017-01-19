@@ -36,6 +36,10 @@ module.exports = {
         sendedDate: {
             type: Date
         },
+        metadata: {
+            type: {},
+            default: {}
+        },
         createdAt: {
             type: Date,
             default: Date.now

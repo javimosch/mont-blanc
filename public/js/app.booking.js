@@ -1409,7 +1409,7 @@ app.controller('ctrl.booking', ['server',
                 s.openConfirm({
                     templateUrl: "views/diags/booking/partials/booking-delegate-popup.html",
                     data: {
-                        email: s._order.landLordEmail,
+                        email: s._order.landLordFullName,
                         title: "Confirmer la délégation",
 
                     }
