@@ -738,6 +738,15 @@ input[type="checkbox"]:disabled+ span {
     }
 }
 
+@media screen and (max-width: 320px) {
+    .right-bar .headtitle {
+        font-size: 0.5em;
+    }
+    .right-bar .subtitle {
+        font-size: 0.5em;
+    }
+}
+
 .fa-id-card-o, .fa-phone, .fa-lock{
     font-size: 26px;
     color: #0A3967;
@@ -1900,9 +1909,11 @@ label * {
     list-style: none;
     padding: 0px;
     margin: 40px auto 40px auto;
+    width: 275px;
 }
 .home__mobile-icons-list li{
     display: inline-block;
-    margin-right: 5px;
+    /* margin-right: 2px; */
+    /* margin-left: 2px; */
     margin-bottom: 10px;
 }
