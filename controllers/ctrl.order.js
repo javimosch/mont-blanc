@@ -135,7 +135,7 @@ function payUsingLW(data, callback) {
             __select: "status"
         }, function(err, _order) {
             if (err) return cb(err);
-            if (_order.status === 'created') {
+            if (_.includes(['created','ordered'],_order.status)) {
                 data.__allowPayment = true;
                 return payUsingLW(data, cb);
             }
