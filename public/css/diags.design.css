@@ -1894,3 +1894,15 @@ label * {
         height: 37px;
     }
 }
+
+
+.home__mobile-icons-list{
+    list-style: none;
+    padding: 0px;
+    margin: 40px auto 40px auto;
+}
+.home__mobile-icons-list li{
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 10px;
+}

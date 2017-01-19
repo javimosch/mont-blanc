@@ -12,26 +12,21 @@
                     </li>
                     <li>
                         <div class="diags-pill-info ">
-                            <span class="avenir-book txt-md white"
-                            bind-html-compile="html('BOOKING_HOME_BG_TEXT_2',STATIC.BOOKING_HOME_BG_TEXT_2)"
-                            >
+                            <span class="avenir-book txt-md white" bind-html-compile="html('BOOKING_HOME_BG_TEXT_2',STATIC.BOOKING_HOME_BG_TEXT_2)">
                                 <!--"-->
                                 Nous joindre au
                             </span>
-                            <span class="xxs-flex avenir-black txt-xl white middle"
-                            bind-html-compile="html('BOOKING_HOME_BG_TEXT_PHONE',STATIC.BOOKING_HOME_BG_TEXT_PHONE)"
-                            >
+                            <span class="xxs-flex avenir-black txt-xl white middle" bind-html-compile="html('BOOKING_HOME_BG_TEXT_PHONE',STATIC.BOOKING_HOME_BG_TEXT_PHONE)">
                                 <!-- bind-html-compile="html('BOOKING_HOME_BG_TEXT_PHONE',STATIC.BOOKING_HOME_BG_TEXT_PHONE)" -->
                                 06 20 75 45 79
                                 </span>
                         </div>
                     </li>
                     <li>
-                        <p class="home-brandon-re-38-489" 
-                        bind-html-compile="html('BOOKING_HOME_BG_TEXT_1')">
+                        <p class="home-brandon-re-38-489" bind-html-compile="html('BOOKING_HOME_BG_TEXT_1')">
                             <!-- 'Accédez aux calendriers en live des diagnostiqueurs immobiliers certifiés, disponibles, au bon prix*'
                             -->
-                            
+
                         </p>
                     </li>
                 </ul>
@@ -75,7 +70,38 @@
 </div>
 <div class="container home">
     <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-7 only-mobile">
+            <ul class="home__mobile-icons-list">
+                <li>
+                    <img class="link" ng-click="selectDiag('dpe')" src="img/dpe.jpg" />
+                </li>
+                <li>
+                    <img class="link" ng-click="selectDiag('dta')" src="img/amiante.jpg" />
+                </li>
+                <li>
+                    <img class="link" ng-click="selectDiag('loiCarrez')" src="img/carrez.jpg" />
+                </li>
+                <li>
+                    <img class="link" ng-click="selectDiag('crep')" src="img/plomb.jpg" />
+                </li>
+                <li>
+                    <img class="link" ng-click="selectDiag('gaz')" src="img/gaz.jpg" />
+                </li>
+                <li>
+                    <img class="link" ng-click="selectDiag('electricity')" src="img/electricite.jpg" />
+                </li>
+                <li>
+                    <img class="link" ng-click="selectDiag('termites')" src="img/termites.jpg" />
+                </li>
+                <li>
+                    <img class="link" ng-click="selectDiag('ernt')" src="img/ernt.jpg" />
+                </li>
+                <li class="hidden">
+                    <img class="link" ng-click="selectDiag('parasitaire')" src="img/parasite.jpg" />
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-7 hidden-mobile">
             <div class="inline-table margin-top-three">
                 <ul class=" diags">
                     <li>
@@ -108,18 +134,14 @@
                 </ul>
             </div>
             <div class="table-row">
-                <h2 class="diags black"
-                bind-html-compile="htmlReplaceDiagName('PAGE_HOME_$NAME_BLOCK_LEFT_TITLE')"
-                >
-                    
+                <h2 class="diags black" bind-html-compile="htmlReplaceDiagName('PAGE_HOME_$NAME_BLOCK_LEFT_TITLE')">
+
                 </h2>
             </div>
             <div class="diags-pill-success"></div>
             <div class="padding-top-three padding-bottom-four">
-                <p class="avenir-book fnt-18" 
-                bind-html-compile="htmlReplaceDiagName('PAGE_HOME_$NAME_BLOCK_LEFT_CONTENT')"
-                >
-                   
+                <p class="avenir-book fnt-18" bind-html-compile="htmlReplaceDiagName('PAGE_HOME_$NAME_BLOCK_LEFT_CONTENT')">
+
                 </p>
             </div>
         </div>
@@ -133,18 +155,14 @@
 
                 </div>
                  -->
-                <p class="avenir-book fnt-18 white"
-                bind-html-compile="htmlReplaceDiagName('PAGE_HOME_$NAME_BLOCK_RIGHT_CONTENT')"
-                >
-                  
+                <p class="avenir-book fnt-18 white" bind-html-compile="htmlReplaceDiagName('PAGE_HOME_$NAME_BLOCK_RIGHT_CONTENT')">
+
 
                 </p>
             </div>
             <div class="diag-dialog-right-transparent margin-top-three">
-                <p class="avenir-book fnt-18 black"
-                bind-html-compile="htmlReplaceDiagName('PAGE_HOME_$NAME_BLOCK_BOTTOM')"
-                >
-                    
+                <p class="avenir-book fnt-18 black" bind-html-compile="htmlReplaceDiagName('PAGE_HOME_$NAME_BLOCK_BOTTOM')">
+
                 </p>
             </div>
         </div>

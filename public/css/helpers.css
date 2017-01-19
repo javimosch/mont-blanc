@@ -88,15 +88,15 @@
   color: #00A9FF;
 }
 
-.inline-childs-divs > div{
-  display:inline;
+.inline-childs-divs>div {
+  display: inline;
 }
 
 .bg-violet {
   background-color: #0B3967!important;
 }
 
-.bg-botticelli{
+.bg-botticelli {
   background-color: #C6DEE8!important;
 }
 
@@ -132,7 +132,8 @@
 .vertical-middle {
   vertical-align: middle;
 }
-.vertical-sub{
+
+.vertical-sub {
   vertical-align: sub;
 }
 
@@ -195,7 +196,7 @@
   float: right;
 }
 
-.disable-childs > * {
+.disable-childs>* {
   pointer-events: none;
   tab-index: -1;
 }
@@ -222,7 +223,7 @@
   }
 }
 
-.childs-margin-1 > * {
+.childs-margin-1>* {
   margin: 5px;
 }
 
@@ -266,7 +267,7 @@ table.minimal td {
 }
 
 .always-on-top {
-      z-index: 99999999;
+  z-index: 99999999;
 }
 
 .overlay {
@@ -323,7 +324,7 @@ table.minimal td {
   margin: 0 auto!important;
 }
 
-.min-height-45px{
+.min-height-45px {
   min-height: 45px!important;
 }
 
@@ -342,6 +343,23 @@ table.minimal td {
 
 .inline-block {
   display: inline-block;
+}
+
+.only-mobile {
+  display: block;
+}
+
+.hidden-mobile {
+  display: none;
+}
+
+@media (min-width: 480px) {
+  .only-mobile {
+    display: none;
+  }
+  .hidden-mobile {
+    display: block;
+  }
 }
 
 @media (max-width: 568px) {
@@ -560,13 +578,11 @@ table.minimal td {
   margin: 4em!important;
 }
 
-
 @media screen and (max-width: 480px) {
   .margin-bottom-none-mobile {
-    margin-bottom : 0!important;
+    margin-bottom: 0!important;
   }
 }
-
 
 .padding-none {
   padding: 0!important;
@@ -595,7 +611,6 @@ table.minimal td {
 .padding-four {
   padding: 4em!important;
 }
-
 
 .padding-top-none {
   padding-top: 0!important;
@@ -705,8 +720,6 @@ table.minimal td {
   padding-left: 1em!important;
 }
 
-
-
 .padding-left-three {
   padding-left: 3em!important;
 }
@@ -766,6 +779,7 @@ table.minimal td {
 .min-height-200 {
   min-height: 200px;
 }
+
 .min-height-300 {
   min-height: 300px;
 }
@@ -811,11 +825,15 @@ table.minimal td {
 }
 
 .flex {
-  display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
-  display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
-  display: -ms-flexbox;      /* TWEENER - IE 10 */
-  display: -webkit-flex;     /* NEW - Chrome */
-  display: flex;  
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
 }
 
 .text-left {
@@ -867,11 +885,15 @@ table.minimal td {
 }
 
 .box {
-  display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
-  display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
-  display: -ms-flexbox;      /* TWEENER - IE 10 */
-  display: -webkit-flex;     /* NEW - Chrome */
-  display: flex;  
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
 }
 
 .box-1-2 {
