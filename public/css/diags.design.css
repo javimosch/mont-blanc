@@ -1909,11 +1909,11 @@ label * {
     list-style: none;
     padding: 0px;
     margin: 40px auto 40px auto;
-    width: 275px;
+    width: 287px;
 }
 .home__mobile-icons-list li{
     display: inline-block;
-    /* margin-right: 2px; */
-    /* margin-left: 2px; */
+    margin-right: 2px;
+    margin-left: 2px;
     margin-bottom: 10px;
 }
