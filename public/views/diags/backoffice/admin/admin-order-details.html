@@ -293,6 +293,15 @@
                 <div ng-include="'views/diags/backoffice/admin/admin-order-details-slots.html'" includeReplace></div>
             </div>
         </div>
+        
+        <div class="row margin-top-one">
+            <label class="unselectable">Prix TVA</label>
+        </div>
+        <div class="row margin-top-quarter">
+            <input ng-disabled="true" type="text" class="diags-input" ng-value="item.vatPrice">
+        </div>
+        
+        
     </div>
 </div>
 <div class="row" ng-if="false">

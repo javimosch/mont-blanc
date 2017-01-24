@@ -172,23 +172,15 @@
                 }
             },
             getPriceHT: function(k) {
-                //100*(1-20/100)
-                //return (this.getPriceTTC(k) * (1 - this.getRatioModifierFor('vat') / 100)).toFixed(2);
-                //return this.getPriceWithCommercial(k);
-
                 /*
                 FORMULA HT
                     HT = TTC / (1+VAT RATE)
-                    
-                    EXAMPLE:
-                    100 / (1+0.20)
-                    83.33333333333334
                     */
                 return (this.getPriceTTC(k) / (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
 
             },
             getVATPrice:function(k){
-                return this.getPriceTTC(k) - this.getPriceHT(k);
+                return (this.getPriceTTC(k) - this.getPriceHT(k)).toFixed(2);
             },
             getPriceWithVAT: function(k) {
                 return (this.getPriceWithCommercial(k) * (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
@@ -219,8 +211,8 @@
                 object.priceHT = this.getPriceHT();
                 object.revenueHT = this.getPriceRevenueHT();
                 object.diagRemunerationHT = this.getPriceRemunerationHT();
-                object.vatRate = settings.modifiersPercentages && settings.modifiersPercentages.VATRate || 20;
-                object.vatPrice = object.price - object.priceHT;
+                object.vatRate = this.getRatioModifierFor('vat');
+                object.vatPrice = this.getVATPrice();
             }
         };
         return self;
