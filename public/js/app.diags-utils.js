@@ -305,6 +305,25 @@ function OrderReplaceHTML(html, _order, r) {
     _order.landLordPhone = _order.landLordPhone || undefined;
     _order.landLordAddress = _order.landLordAddress || undefined;
 
+    function isNumber(key) {
+        return key.toUpperCase().indexOf('PRICE') != -1 || key.toUpperCase().indexOf('HT') != -1;
+    }
+
+    for (var key in _order) {
+
+        //add a [KEY]_FORMAT version to each key with has PRICE keyword.
+        //EX: VATPRICE (23.33333) now can be used like VATPRICE_FORMAT (23,33)
+        if (isNumber(key) && key.toUpperCase().indexOf('_FORMAT') == -1) {
+            _order[key + '_FORMAT'] = parseFloat(_order[key]).toFixed(2).replace('.', ',');
+        }
+
+        //remove country from address
+        if (_order[key] && key.toUpperCase().indexOf('ADDRESS') != -1) {
+            _order[key] = _order[key].replace(', France', '');
+            _order[key] = _order[key].replace(', Francia', '');
+        }
+    }
+
     function _removeConditionalBlock(key, removeContent) {
         if (!_hasBlock(key)) return;
 

@@ -50,6 +50,17 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
             }
             //['PRICE', 'PRICEHT', 'REVENUEHT', 'DIAGREMUNERATIONHT', 'ADDRESS', 'START', 'END'];
 
+        function isNumber(key){
+            return key.toUpperCase().indexOf('PRICE')!=-1 || key.toUpperCase().indexOf('HT')!=-1;
+        }
+
+        Object.keys(s.variables).forEach(function(key){
+           if(isNumber(key)) {
+               s.variables[key.toUpperCase().replace('}}','_FORMAT}}')] = s.variables[key] + "(two decimals, separated with comma)";
+               delete s.variables[key];
+           }
+        });
+
 
         db.ctrl('Order', 'get', {
             status: 'prepaid',
