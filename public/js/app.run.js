@@ -18,7 +18,7 @@ var __SHARE_FUNCTIONS = {
 
 app.config(function($logProvider) {
     var enabled = __SHARE_FUNCTIONS.isDevEnv();
-    console.info('$log is ',(enabled?'enabled':'disabled'));
+    console.info('$log is ', (enabled ? 'enabled' : 'disabled'));
     $logProvider.debugEnabled(enabled);
 });
 
@@ -26,6 +26,15 @@ app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
 }]);
+
+app.run(['$rootScope', '$uibModalStack', '$log', setupUibModal]);
+function setupUibModal($rootScope, $uibModalStack, $log) {
+    $rootScope.$on('routeChangeStart', handleLocationChange)
+    function handleLocationChange() {
+        $log.log('modal dismiss all');
+        $uibModalStack.dismissAll();
+    }
+}
 
 app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     //    console.info('app.admin:run');
@@ -39,13 +48,15 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
             if (keyword.toLowerCase() == 'debug') {
                 r.__debugDiags = true;
                 console.info('debug-mode-on');
-            } else {
+            }
+            else {
                 r.__debugDiags = false;
                 //console.info('debug-mode-off, try again');
             }
             keyword = '';
             r.dom();
-        } else {
+        }
+        else {
             keyword = keyword + key;
         }
     });
@@ -79,7 +90,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         if (!r.logged()) {
             console.warn('secureSection:redirecting to login');
             r.route('login');
-        } else {
+        }
+        else {
             _s.show = true;
             //async update of the current user.
             db.ctrl('User', 'getById', r.session()).then(function(d) {
@@ -122,7 +134,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
 
     function getMessage(msg) {
-        if(!msg) return '';
+        if (!msg) return '';
         if (typeof msg === 'function') return msg();
         if (typeof msg !== 'string' && msg.length) return getMessage(msg[0]);
         return msg;
@@ -130,7 +142,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
     r.errorMessage = (msg, duration) => {
         msg = getMessage(msg);
-        if(!msg){
+        if (!msg) {
             msg = 'Erreur de serveur, plus d&#x27;informations dans la console de développement.';
         }
         r.notify(msg, {
@@ -163,8 +175,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 }]);
 
 /*google analytic tracking */
-app.run(['$rootScope', '$location', '$window','$log',
-    function($rootScope, $location, $window,$log) {
+app.run(['$rootScope', '$location', '$window', '$log',
+    function($rootScope, $location, $window, $log) {
         $rootScope.$on('$routeChangeSuccess',
             function(event) {
                 if (!$window.ga) {
@@ -197,7 +209,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     r.cache = function(n, o) {
         if (o) {
             return r.__cache[n] = o;
-        } else {
+        }
+        else {
             if (!_.isUndefined(r.__cache[n]) && !_.isNull(r.__cache[n])) {
                 //console.info('CACHE: retrieving ' + n + ' (' + typeof r.__cache[n] + ')');
             }
@@ -359,7 +372,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         else {
             if (scope.$parent) {
                 return r.lookUp(scope.$parent, property);
-            } else {
+            }
+            else {
                 return undefined;
             }
         }

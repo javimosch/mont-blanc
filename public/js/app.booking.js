@@ -418,7 +418,7 @@ app.controller('ctrl.booking', ['server',
         s.validateClientDetails = function(cb) {
 
             if (!s._user.email) return s.warningMsg('Email c&#39;est obligatoire.');
-            
+
             if (s._user.clientType !== 'landlord' && !s._user.siret) return s.warningMsg('Siret c&#39;est obligatoire.');
 
             db.ctrl('User', 'exists', {
@@ -680,22 +680,22 @@ app.controller('ctrl.booking', ['server',
                 if (hasChanged) {
                     saving = true;
                     cloneOrder();
-                    
-                    if(s.booking.payment.complete){
+
+                    if (s.booking.payment.complete) {
                         //s._order.status = 'prepaid'; //this is done in backend
                     }
-                    
+
                     var o = s._order;
                     db.ctrl('Order', 'update', {
-                        _id:o._id,
-                        obs:o.obs,
-                        landLordFullName:o.landLordFullName,
-                        landLordEmail:o.landLordEmail,
-                        landLordPhone:o.landLordPhone,
-                        landLordAddress:o.landLordAddress,
-                        keysAddress:o.keysAddress,
-                        keysTimeFrom:o.keysTimeFrom,
-                        keysTimeTo:o.keysTimeTo
+                        _id: o._id,
+                        obs: o.obs,
+                        landLordFullName: o.landLordFullName,
+                        landLordEmail: o.landLordEmail,
+                        landLordPhone: o.landLordPhone,
+                        landLordAddress: o.landLordAddress,
+                        keysAddress: o.keysAddress,
+                        keysTimeFrom: o.keysTimeFrom,
+                        keysTimeTo: o.keysTimeTo
                     }).then(function() {
                         saving = false;
                         //console.info('auto-save: saved');
@@ -1551,8 +1551,8 @@ app.controller('ctrl.booking', ['server',
             });
         }
         s.fetchOrder = fetchOrder;
-        
-        function updateOrderPrices(_order){
+
+        function updateOrderPrices(_order) {
             _order = _order || s._order;
             orderPrice.set({
                 date: _order.start,
@@ -1581,13 +1581,14 @@ app.controller('ctrl.booking', ['server',
                 s._order.info.description = s.bookingDescriptionTitle() + s.bookingDescriptionBody();
             }
         }
-        
-        function hasDescription(item){
+
+        function hasDescription(item) {
             return item.info.description;
         }
-        function insertDescription(item){
-             item.info.description = s.bookingDescription(item);
-             return item;
+
+        function insertDescription(item) {
+            item.info.description = s.bookingDescription(item);
+            return item;
         }
 
         //SAVEASYNC
@@ -1601,23 +1602,25 @@ app.controller('ctrl.booking', ['server',
                     s.item.email = s._user.email;
                     s.item.clientType = s._user.clientType;
                 }
-                
-                if(s._diag){
-                   s.item._diag = s._diag; 
-                }else{
-                    return db.ctrl('User','get',{
-                        _id:s.item._diag
-                    }).then(function(res){
-                        if(res.ok && res.result){
+
+                if (s._diag) {
+                    s.item._diag = s._diag;
+                }
+                else {
+                    return db.ctrl('User', 'get', {
+                        _id: s.item._diag
+                    }).then(function(res) {
+                        if (res.ok && res.result) {
                             s._diag = res.result;
-                            return s.saveAsync().then(resolve).on('success',()=>evt('success'));
-                        }else{
+                            return s.saveAsync().then(resolve).on('success', () => evt('success'));
+                        }
+                        else {
                             $log.error("Can't fetch the diag guy.");
                         }
                     });
                 }
-                
-                if(!hasDescription(s.item)){
+
+                if (!hasDescription(s.item)) {
                     s.item = insertDescription(s.item);
                 }
 
@@ -1637,8 +1640,8 @@ app.controller('ctrl.booking', ['server',
                     s.warningMsg('Select one available date');
                     return r.route(URL.RDV);
                 }
-                
-                $log.debug('first-time-saving',_.clone(s.item));
+
+                $log.debug('first-time-saving', _.clone(s.item));
 
                 db.ctrl('Order', 'saveWithEmail', s.item).then(data => {
                     var saved = data.ok;
@@ -1651,7 +1654,7 @@ app.controller('ctrl.booking', ['server',
                     //
                     r.dom(function() {
                         //setOrder(data.result);
-                        
+
                         s._order = data.result;
 
                         updateAutoSave();
@@ -1713,7 +1716,18 @@ app.controller('ctrl.booking', ['server',
             });
         };
 
-
+        s.testPayForm = () => {
+            db.ctrl('Order', 'get', {
+                status: 'ordered',
+                __populate: {
+                    _client: '_id email clientType address discount companyName siret wallet',
+                    _diag: '_id email clientType address firstName lastName commission siret wallet'
+                }
+            }).then(function(res) {
+                s._order = res.result;
+                s.payNOW();
+            });
+        }
 
         //require an order to be saved (s._order)
         s.payNOW = (success) => {
