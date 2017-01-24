@@ -117,22 +117,22 @@ function send(opt, resCb) {
         to: opt.to || process.env.emailTo || 'arancibiajav@gmail.com',
         subject: opt.subject
     };
-    
+
     var logData = _.clone(data);
     delete logData.html;
-    LogSave('Notification '+data.type,'info',logData);
-    
+    LogSave('Notification ' + data.type, 'info', logData);
+
     data.metadata = {}
-    
-    if(data.attachment){
+
+    if (data.attachment) {
         data.metadata.attachment = data.attachment;
     }
-    
+
     if (opt._user) {
         if (opt._notification) {
             actions.log('send:using-_notification=' + JSON.stringify({
-                to:opt._notification.to,
-                subject:opt._notification.subject
+                to: opt._notification.to,
+                subject: opt._notification.subject
             }));
             Notification.getById({
                 _id: opt._notification
@@ -240,7 +240,8 @@ function time(d) {
 }
 
 function dateTime(d) {
-    return moment(d).tz(TIME_ZONE).format('DD-MM-YY HH[h]mm');
+    //return moment(d).tz(TIME_ZONE).format('DD-MM-YY HH[h]mm');
+    return moment(d).tz(TIME_ZONE).format('DD/MM/YY [à] HH[h]mm');
 }
 
 function dateTime2(d) {
@@ -258,9 +259,9 @@ function generateInvoiceAttachmentIfNecessary(data, t, cb) {
             html: data.attachmentPDFHTML
         }, (err, res) => {
             if (err) {
-                LogSave('Unable to generate a PDF',{
-                    type:t,
-                    error:err
+                LogSave('Unable to generate a PDF', {
+                    type: t,
+                    error: err
                 })
                 return cb(data);
             }
@@ -508,22 +509,22 @@ function CLIENT_CLIENT_NEW_ACCOUNT(data, cb) {
 function CLIENT_ORDER_DELEGATED(data, cb) {
 
     //generateInvoiceAttachmentIfNecessary(data, NOTIFICATION.CLIENT_ORDER_DELEGATED, (data) => {
-        //requires: _user _order
-        var subject = 'RDV en attente de paiement: ' + data._order.address + '/' + dateTime(data._order.start);
-        DIAGS_CUSTOM_NOTIFICATION(
-            NOTIFICATION.CLIENT_ORDER_DELEGATED, data, cb, subject, data._user.email, data._order, 'Order');
+    //requires: _user _order
+    var subject = 'RDV en attente de paiement: ' + data._order.address + '/' + dateTime(data._order.start);
+    DIAGS_CUSTOM_NOTIFICATION(
+        NOTIFICATION.CLIENT_ORDER_DELEGATED, data, cb, subject, data._user.email, data._order, 'Order');
     //});
 }
 
 
 //CLIENT//#3 OK ctrl.order
 function CLIENT_ORDER_PAYMENT_SUCCESS(data, cb) {
-    console.log('DEBUG CLIENT_ORDER_PAYMENT_SUCCESS data 1',data!==undefined);
+    console.log('DEBUG CLIENT_ORDER_PAYMENT_SUCCESS data 1', data !== undefined);
     //generateInvoiceAttachmentIfNecessary(data, NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, (data) => {
-        //requires: _user _order
-        console.log('DEBUG CLIENT_ORDER_PAYMENT_SUCCESS data 2',data!==undefined);
-        DIAGS_CUSTOM_NOTIFICATION(
-            NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, data, cb, 'Rendez-vous confirmé', data._user.email, data._order, 'Order');
+    //requires: _user _order
+    console.log('DEBUG CLIENT_ORDER_PAYMENT_SUCCESS data 2', data !== undefined);
+    DIAGS_CUSTOM_NOTIFICATION(
+        NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, data, cb, 'Rendez-vous confirmé', data._user.email, data._order, 'Order');
     //});
 }
 
@@ -544,7 +545,8 @@ function DIAG_DIAG_ACCOUNT_CREATED(data, cb) {
 //DIAG//#2 OK ctrl.order
 function DIAG_NEW_RDV(data, cb) {
     //requires: _user _order
-    var subject = 'Nouveau RDV : ' + data._order.address + '/' + dateTime(data._order.start);
+    data._order.address = removeCountryFromString(data._order.address);
+    var subject = 'Nouveau RDV : ' + data._order.address + ' - ' + dateTime(data._order.start);
     DIAGS_CUSTOM_NOTIFICATION(
         NOTIFICATION.DIAG_NEW_RDV, data, cb, subject, data._user.email, data._order, 'Order');
 }
@@ -553,7 +555,8 @@ function DIAG_NEW_RDV(data, cb) {
 //DIAG//#3 OK ctrl.order
 function DIAG_RDV_CONFIRMED(data, cb) {
     //requires: _user _order
-    var subject = 'RDV confirmé: ' + data._order.address + '/' + dateTime(data._order.start);
+    data._order.address = removeCountryFromString(data._order.address);
+    var subject = 'RDV confirmé: ' + data._order.address + ' - ' + dateTime(data._order.start);
     DIAGS_CUSTOM_NOTIFICATION(
         NOTIFICATION.DIAG_RDV_CONFIRMED, data, cb, subject, data._user.email, data._order, 'Order');
 }
@@ -563,18 +566,18 @@ function DIAG_RDV_CONFIRMED(data, cb) {
 ////LANDLORD//#1 OK app.booking app.order
 function LANDLORD_ORDER_PAYMENT_DELEGATED(data, cb) {
     //generateInvoiceAttachmentIfNecessary(data, NOTIFICATION.LANDLORD_ORDER_PAYMENT_DELEGATED, (data) => {
-        delete data.attachmentPDFHTML;
-        CLIENT_ORDER_DELEGATED(data, null);
-        everyAdmin((_admin) => {
-            ADMIN_ORDER_PAYMENT_DELEGATED({
-                _user: _admin,
-                _order: data._order
-            }, null);
-        });
-        //requires: _user _order
-        var subject = 'Diagnostic Réservé en attente de paiement';
-        DIAGS_CUSTOM_NOTIFICATION(
-            NOTIFICATION.LANDLORD_ORDER_PAYMENT_DELEGATED, data, cb, subject, data._order.landLordEmail, data._order, 'Order');
+    delete data.attachmentPDFHTML;
+    CLIENT_ORDER_DELEGATED(data, null);
+    everyAdmin((_admin) => {
+        ADMIN_ORDER_PAYMENT_DELEGATED({
+            _user: _admin,
+            _order: data._order
+        }, null);
+    });
+    //requires: _user _order
+    var subject = 'Diagnostic Réservé en attente de paiement';
+    DIAGS_CUSTOM_NOTIFICATION(
+        NOTIFICATION.LANDLORD_ORDER_PAYMENT_DELEGATED, data, cb, subject, data._order.landLordEmail, data._order, 'Order');
     //});
 }
 
@@ -594,12 +597,19 @@ function USER_PASSWORD_RESET(data, cb) {
         NOTIFICATION.LANDLORD_ORDER_PAYMENT_DELEGATED, data, cb, "Password reset", data._user.email, data._user, 'User');
 }
 
-function tryParseFloatToFixed(v,n){
-    try{
-        return parseFloat(v).toFixed(n||2);
-    }catch(err){
+function tryParseFloatToFixed(v, n) {
+    try {
+        return parseFloat(v).toFixed(n || 2);
+    }
+    catch (err) {
         return v;
     }
+}
+
+function removeCountryFromString(string) {
+    string = string.replace(', France', '');
+    string = string.replace(', Francia', '');
+    return string;
 }
 
 function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type) {
@@ -647,6 +657,15 @@ function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type) {
         });
     }
     if (_order) {
+
+        //229 //remove country from address
+        for (var key in _order) {
+            if (_order[key] && key.toUpperCase().indexOf('ADDRESS') != -1) {
+                _order[key] = removeCountryFromString(_order[key]);
+            }
+        }
+
+
         Object.assign(replaceData, {
             '$CLIENT_LANDLORD_DISPLAY': (_order._client.clientType == 'landlord') ? 'block' : 'none',
             '$CLIENT_COMPANY_DISPLAY': (_order._client.clientType !== 'landlord') ? 'block' : 'none',
@@ -721,10 +740,10 @@ function htmlOrderSelectedDiagsList(_order) {
 }
 
 
-function LogSave(msg, type,data) {
+function LogSave(msg, type, data) {
     Log.save({
         message: msg,
         type: type,
-        data:data
+        data: data
     });
 }
