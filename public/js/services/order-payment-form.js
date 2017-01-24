@@ -114,7 +114,7 @@
                             p2pDiag: {
                                 debitWallet: order._client.wallet,
                                 creditWallet: order._diag.wallet,
-                                amount: order.diagRemunerationHT.toFixed(2),
+                                amount: parseFloat(order.diagRemunerationHT).toFixed(2),
                                 message: '',
                                 privateData: JSON.stringify({
                                     orderId: order._id
