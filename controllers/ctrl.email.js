@@ -507,24 +507,24 @@ function CLIENT_CLIENT_NEW_ACCOUNT(data, cb) {
 //CLIENT//#2 OK ctrl.email
 function CLIENT_ORDER_DELEGATED(data, cb) {
 
-    generateInvoiceAttachmentIfNecessary(data, NOTIFICATION.CLIENT_ORDER_DELEGATED, (data) => {
+    //generateInvoiceAttachmentIfNecessary(data, NOTIFICATION.CLIENT_ORDER_DELEGATED, (data) => {
         //requires: _user _order
         var subject = 'RDV en attente de paiement: ' + data._order.address + '/' + dateTime(data._order.start);
         DIAGS_CUSTOM_NOTIFICATION(
             NOTIFICATION.CLIENT_ORDER_DELEGATED, data, cb, subject, data._user.email, data._order, 'Order');
-    });
+    //});
 }
 
 
 //CLIENT//#3 OK ctrl.order
 function CLIENT_ORDER_PAYMENT_SUCCESS(data, cb) {
     console.log('DEBUG CLIENT_ORDER_PAYMENT_SUCCESS data 1',data!==undefined);
-    generateInvoiceAttachmentIfNecessary(data, NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, (data) => {
+    //generateInvoiceAttachmentIfNecessary(data, NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, (data) => {
         //requires: _user _order
         console.log('DEBUG CLIENT_ORDER_PAYMENT_SUCCESS data 2',data!==undefined);
         DIAGS_CUSTOM_NOTIFICATION(
             NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, data, cb, 'Rendez-vous confirmé', data._user.email, data._order, 'Order');
-    });
+    //});
 }
 
 
