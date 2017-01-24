@@ -115,8 +115,10 @@ function view(data, cb, req, res) {
 
         if (err) {
             ctrl('Log').save({
-                message: 'Order Invoice PDF Generation Error',
+                message: 'Attached file generation error',
                 type: 'error',
+                level:'error',
+                category:'invoicing',
                 data: {
                     name: 'ctrl.pdf.generate',
                     err: err,
@@ -133,10 +135,12 @@ function view(data, cb, req, res) {
                 fileName: r.fileName
             }));
             var url = protocol + '://' + req.get('host') + '/ctrl/Pdf/stream/' + data;
-
+            
             ctrl('Log').save({
-                message: 'Order Invoice PDF Generation Url Debug',
+                message: 'Attached file generation success',
                 type: 'info',
+                level:'info',
+                category:'invoicing',
                 data: {
                     host: req.get('host'),
                     url: protocol + '://' + req.get('host') + '/ctrl/Pdf/stream/' + data

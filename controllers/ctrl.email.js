@@ -113,7 +113,7 @@ function send(opt, resCb) {
         attachment: opt.attachment || null,
         type: opt.__notificationType,
         html: html,
-        from: process.env.emailFrom || 'commande@diagnostical.fr',
+        from: opt.from || process.env.emailFrom || 'commande@diagnostical.fr',
         to: opt.to || process.env.emailTo || 'arancibiajav@gmail.com',
         subject: opt.subject
     };
@@ -288,14 +288,16 @@ function generateInvoiceAttachmentIfNecessary(data, t, cb) {
 
 
 
-function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notifItemType) {
+function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notifItemType,moreOptions) {
     notifItem.notifications = notifItem.notifications || {};
-    if (notifItem.notifications[type] !== true) {
+    if (notifItem.notifications[type] !== true || (data.forceSend!=undefined&&data.forceSend==true)) {
         return DIAGS_CUSTOM_EMAIL(data, (err, r) => {
             notifItem.notifications[type] = true;
             ctrl(notifItemType).update(notifItem);
             if (cb) cb(err, r);
-        }, subject, type, to, NOTIFICATION[type]);
+        }, subject, type, to, NOTIFICATION[type],moreOptions);
+    }else{
+        cb('Already sended');
     }
 }
 
@@ -539,7 +541,9 @@ function DIAG_DIAG_ACCOUNT_CREATED(data, cb) {
         fileName: fileName
     };
     DIAGS_CUSTOM_NOTIFICATION(
-        NOTIFICATION.DIAG_DIAG_ACCOUNT_CREATED, data, cb, "Vous êtes Diagnostiqueur sur Diagnostical !", data._user.email, data._user, 'User');
+        NOTIFICATION.DIAG_DIAG_ACCOUNT_CREATED, data, cb, "Plus qu’une étape pour démarrer sur Diagnostical", data._user.email, data._user, 'User',{
+         from: 'noemie@diagnostical.fr (Noémie Diagnostical)'  
+        });
 }
 
 //DIAG//#2 OK ctrl.order
@@ -612,7 +616,7 @@ function removeCountryFromString(string) {
     return string;
 }
 
-function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type) {
+function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type,moreOptions) {
     actions.log(_type + '=START');
     moment.locale('fr')
     var _user = data._user;
@@ -708,6 +712,7 @@ function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type) {
         attachment: data.attachment || null,
         __notificationType: _type,
         _user: _user,
+        from:moreOptions&&moreOptions.from || undefined,
         to: _to,
         subject: _subject,
         templateName: templateName,
