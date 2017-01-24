@@ -805,6 +805,14 @@ ul.diags {
     padding: 0px;
 }
 
+.editable-text{
+    
+}
+.editable-text:hover{
+    cursor:pointer;
+    background-color:rgba(0,0,255,.2);
+}
+
 ul.diags li {
     width: 89;
     float: left;

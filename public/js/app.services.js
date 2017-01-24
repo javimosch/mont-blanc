@@ -27,7 +27,7 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
     }
     r.htmlEditSave = () => {
         r.htmlEditItem.content = window.encodeURIComponent(window.CKEDITOR.instances.editor.getData());
-        console.log('save',window.decodeURIComponent(r.htmlEditItem.content).substring(0,10)+' ...');
+        console.log('save', window.decodeURIComponent(r.htmlEditItem.content).substring(0, 10) + ' ...');
         r.__text[r.htmlEditItem.code] = window.decodeURIComponent(r.htmlEditItem.content);
         db.ctrl('Text', 'save', r.htmlEditItem).then(() => {});
         r.htmlEditItem = undefined;
@@ -46,40 +46,33 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
             if (!window.CKEDITOR ||
                 (window.CKEDITOR && !window.CKEDITOR.instances) ||
                 (window.CKEDITOR && window.CKEDITOR.instances && !window.CKEDITOR.instances.editor))
-                return setTimeout(() => setData(decodedData), 500);
+                return setTimeout(() => setData(decodedData), 50);
             window.CKEDITOR.instances.editor.setData(decodedData);
+            setTimeout(function(){
+                r.htmlEditItem.show = true;
+                $U.scrollToTop();
+            },500);
         }
         db.ctrl('Text', 'get', {
             code: r.params.code
         }).then(res => {
             if (res.ok && res.result) {
                 r.htmlEditItem = res.result;
+                r.htmlEditItem.show = true;
                 //console.log(r.htmlEditItem);
+                if(!r.htmlEditItem.content){
+                    if(r.__textSTATIC && r.__textSTATIC[r.htmlEditItem.code]){
+                        r.htmlEditItem.content = window.encodeURIComponent(r.__textSTATIC[r.htmlEditItem.code]);
+                        console.log('FROM LOCAL',r.htmlEditItem.content);
+                    }else{
+                        r.htmlEditItem.content = window.encodeURIComponent(r.htmlEditItem.code);
+                    }
+                }
                 setData(window.decodeURIComponent(r.htmlEditItem.content))
-                $U.scrollToTop();
             }
         });
 
-        /*
-        r.modalConfirm.first({
-                backdrop: 'static',
-                // data: getOrderPopupData(),
-                templateUrl: 'views/diags/backoffice/text/text-edit.html'
-            },
-
-            () => {
-                //retrieve change and set
-                setTimeout(function(){
-                    if(r.params._text){
-                        if(r.params._text.code==code){
-                            r.__text[code] = window.decodeURIComponent(r.params._text.content);
-                            r.dom();
-                        }
-                    }
-                },1000);
-            }
-        );
-        */
+        
     };
 
     r.html = function(code) {
@@ -111,19 +104,19 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
 
             //returns an edit icon (if admin)
             if (r.userIs('admin')) {
-                html += "<i  onclick=\"r.htmlEdit('" + code + "')\" style='opacity:0.4; margin-left:-1em' class='link absolute fa fa-pencil-square-o ' aria-hidden='true'></i>&nbsp;";
+                //html += "<i  onclick=\"r.htmlEdit('" + code + "')\" style='opacity: 0.2;margin-left: 0em;margin-top: -0.5em;' class='link absolute fa fa-pencil-square-o ' aria-hidden='true'></i>";
             }
 
             //returns the content (if exists)
             if (r.__text && r.__text[code] && r.__text[code].length > 1) {
-                
+
                 var content = r.__text[code];
                 var tag = document.createElement('tag');
                 tag.innerHTML = r.__text[code];
-                if(tag.childNodes && tag.childNodes.length==1 && tag.childNodes[0].tagName == 'P'){
+                if (tag.childNodes && tag.childNodes.length == 1 && tag.childNodes[0].tagName == 'P') {
                     content = tag.childNodes[0].innerHTML;
                 }
-                
+
                 html += content;
             }
             else {
@@ -142,8 +135,25 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
                 }
             }
 
+            var inheritCss = {
+                margin: '0px',
+                padding: '0px',
+                color: 'inherit',
+                "font-family": 'inherit',
+                "line-height": 'inherit',
+                "font-size": 'inherit',
+                display: 'inherit'
+            };
+            var wrapper = $('<editable-text>').css(inheritCss);
+            wrapper.append($.parseHTML(html));
+            wrapper.find('*').css(inheritCss);
+            
 
+            if (r.userIs('admin')) {
+                wrapper.attr('onclick', "r.htmlEdit('" + code + "')").addClass('editable-text');
+            }
 
+            html = $('<div>').append(wrapper).html();
 
             return html;
         }
@@ -330,7 +340,7 @@ srv.service('fileUpload', ['$http', function($http) {
             .error(err);
     };
 }]);
-srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', function(http, localdb, r, fileUpload,$log) {
+srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', function(http, localdb, r, fileUpload, $log) {
     //var URL = 'http://ujkk558c0c9a.javoche.koding.io:3434';
     var URL = 'http://localhost:5000';
 
@@ -348,9 +358,9 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', fu
     $.ajax("/serverURL").then(function(r) {
         URL = r.URL; //updates serverURL from express (node env serverURL);
         $U.emitPreserve('server-up');
-        $log.info('serverURL',URL);
+        $log.info('serverURL', URL);
     });
-    
+
     $.ajax("/serverRawURL").then(function(r) {
         window.__raw_origin = r.URL;
     });
@@ -473,9 +483,9 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', fu
         r.state = {
             working: () => fn.hasPending(),
             _logs: _logs,
-            _errors:_errors,
-            showErrors:()=>fn.errors(),
-            getControlledErrors:()=> _controlledErrors
+            _errors: _errors,
+            showErrors: () => fn.errors(),
+            getControlledErrors: () => _controlledErrors
         };
         r.logger = fn;
         return fn;
@@ -490,7 +500,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', fu
     });
 
     function getLocalData() {
-        function onResolve(resolve,data){
+        function onResolve(resolve, data) {
             resolve(data);
             localData = data; //cache
         }
@@ -500,73 +510,78 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', fu
 
             if (localData) {
                 //$log.debug('localData returns cache');
-                onResolve(resolve,localData);
+                onResolve(resolve, localData);
             }
             else {
 
                 //$log.debug('localData fetch start');
                 $.getJSON('./data.json', function(localData) {
-                    
-                    
+
+
 
                     //$log.debug('settings fetch');
                     //patch prices from db if available
                     ctrl('Settings', 'getAll', {}).then(r => {
-                    if (r.ok && r.result.length > 0) {
-                        var dbSettings = r.result[0];
-                        
-                        //$log.debug('setting has prices');
-                        if(dbSettings.metadata && dbSettings.metadata.prices){
+                        if (r.ok && r.result.length > 0) {
+                            var dbSettings = r.result[0];
+
+                            //$log.debug('setting has prices');
+                            if (dbSettings.metadata && dbSettings.metadata.prices) {
 
 
-                            //$log.debug('setting has basePrice');
-                            if(dbSettings.metadata.prices.basePrice!==undefined
-                                && !isNaN(dbSettings.metadata.prices.basePrice)
-                                && dbSettings.metadata.prices.basePrice!==''){
-                                try{
-                                    //$log.debug('basePrice fetch value is',dbSettings.metadata.prices.basePrice);
-                                    localData.basePrice = parseInt(dbSettings.metadata.prices.basePrice);
-                                    //$log.debug('localData basePrice is ',localData.basePrice);
-                                }catch(err){
-                                    //$log.debug('basePrice fetch',err);
-                                }
-                            }else{
-                                //$log.debug('basePrice fetch is skip');
-                            }
-
-                            Object.keys(dbSettings.metadata.prices).forEach(function(diagName){
-                                
-                                for(var i in localData.diags){
-                                    if(localData.diags[i].name == diagName){
-                                        
-                                        if(dbSettings.metadata.prices[diagName] !== undefined){
-                                            try{
-                                                localData.diags[i].price =   parseInt(dbSettings.metadata.prices[diagName]);
-                                            }catch(e){
-                                                
-                                            }
-                                        }
-                                        
-                                        
+                                //$log.debug('setting has basePrice');
+                                if (dbSettings.metadata.prices.basePrice !== undefined &&
+                                    !isNaN(dbSettings.metadata.prices.basePrice) &&
+                                    dbSettings.metadata.prices.basePrice !== '') {
+                                    try {
+                                        //$log.debug('basePrice fetch value is',dbSettings.metadata.prices.basePrice);
+                                        localData.basePrice = parseInt(dbSettings.metadata.prices.basePrice);
+                                        //$log.debug('localData basePrice is ',localData.basePrice);
+                                    }
+                                    catch (err) {
+                                        //$log.debug('basePrice fetch',err);
                                     }
                                 }
-                                
-                            });
-                            
-                            onResolve(resolve,localData);
-                            
-                        }else{
-                            onResolve(resolve,localData);
+                                else {
+                                    //$log.debug('basePrice fetch is skip');
+                                }
+
+                                Object.keys(dbSettings.metadata.prices).forEach(function(diagName) {
+
+                                    for (var i in localData.diags) {
+                                        if (localData.diags[i].name == diagName) {
+
+                                            if (dbSettings.metadata.prices[diagName] !== undefined) {
+                                                try {
+                                                    localData.diags[i].price = parseInt(dbSettings.metadata.prices[diagName]);
+                                                }
+                                                catch (e) {
+
+                                                }
+                                            }
+
+
+                                        }
+                                    }
+
+                                });
+
+                                onResolve(resolve, localData);
+
+                            }
+                            else {
+                                onResolve(resolve, localData);
+                            }
+
+
                         }
-                        
-                        
-                    }else{
-                        onResolve(resolve,localData);
-                    }
-                        
+                        else {
+                            onResolve(resolve, localData);
+                        }
+
                     });
-                    
-                    
+
+
                 }).fail(function(jqxhr, textStatus, error) {
                     var err = textStatus + ", " + error;
                     console.log("Request Failed: " + err);
@@ -628,7 +643,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload','$log', fu
             }).then(function(res) {
                 _log(res);
                 if (res.data && res.data.ok == false) {
-                    $log.warn("ENDPOINT "+relativeUrl,res.data.err || "INVALID RESPONSE FORMAT");
+                    $log.warn("ENDPOINT " + relativeUrl, res.data.err || "INVALID RESPONSE FORMAT");
                 }
                 return callback(res);
             }, (err) => {
