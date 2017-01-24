@@ -297,8 +297,10 @@ function OrderReplaceHTML(html, _order, r) {
     _order['DIAG_COMPANY_NAME'] = _order._diag.companyName;
     _order['DIAG_SIRET'] = _order._diag.siret;
 
-    if (_order.createdAt) _order.createdAt_formatted = r.momentDateTime(_order.createdAt);
-    if (_order.paidAt) _order.paidAt_formatted = r.momentDateTime(_order.paidAt);
+    if (_order.createdAt) _order.createdAt_format = r.momentDateTime(_order.createdAt);
+    if (_order.paidAt) _order.paidAt_format = r.momentDateTime(_order.paidAt);
+    if (_order.start) _order.start_format = r.momentDateTime(_order.start);
+    if (_order.end) _order.end_format = r.momentDateTime(_order.end);
 
     _order.landLordFullName = _order.landLordFullName || undefined;
     _order.landLordEmail = _order.landLordEmail || undefined;
