@@ -17,7 +17,7 @@
 
         function open(data, callback) {
             var opt = {
-                backdrop: 'true', //disables close on click
+                backdrop: true, //disables close on click
                 templateUrl: 'views/directives/order-payment-form.html',
                 remainOpen: true,
                 windowTopClass: 'order-payment-form-modal',

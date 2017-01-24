@@ -1137,12 +1137,12 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
 
                             if (confirmCallback) {
                                 if (opt.remainOpen == true) {
-                                    
-                                    var closeFn = ()=>{
+
+                                    var closeFn = () => {
                                         $uibModalInstance.close();
                                     };
-                                    
-                                    confirmCallback($scope.response,closeFn);
+
+                                    confirmCallback($scope.response, closeFn);
                                 }
                                 else {
                                     confirmCallback($scope.response);
@@ -1152,13 +1152,24 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
                         $scope.cancel = function() {
                             $uibModalInstance.dismiss('cancel');
                         };
+
+                        if (opt.backdrop != undefined && opt.backdrop != 'static') {
+                            r.dom(function() {
+                                $('.modal-backdrop').on('click', function() {
+                                    $uibModalInstance.dismiss('cancel');
+                                });
+                            }, 1000);
+                        }
+
                         $U.expose('modalCustom', $scope);
                     },
                 };
-                if (opt.backdrop) uibModalOptions.backdrop = opt.backdrop;
+                if (opt.backdrop != undefined) uibModalOptions.backdrop = opt.backdrop;
                 if (opt.windowTopClass) uibModalOptions.windowTopClass = opt.windowTopClass;
 
                 var modalInstance = $uibModal.open(uibModalOptions);
+
+
             };
         }
     };
