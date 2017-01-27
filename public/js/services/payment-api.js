@@ -5,7 +5,7 @@
 (function() {
 	var app = angular.module('app').service('paymentApi', function($rootScope, server, backendApi, $log, lemonwayApi) {
 		function isCompany(d) {
-			return d.siret;
+			return d.siret && (d.isAutoentrepreneur==undefined||d.isAutoentrepreneur==false);
 		}
 		var self = {
 			payOrder: function(data) {

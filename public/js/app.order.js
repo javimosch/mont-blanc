@@ -1180,7 +1180,7 @@
                     _id: id || params.id || s.item._id,
                     __populate: {
                         '_client': 'email clientType address discount firstName lastName siret wallet',
-                        '_diag': 'email address commission firstName lastName siret wallet'
+                        '_diag': 'email address commission firstName lastName siret wallet tva_intra_comm'
                     }
                 }).then(function(data) {
 

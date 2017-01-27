@@ -31,6 +31,7 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
                 "{{DIAG_EMAIL}}": "Diag email",
                 "{{DIAG_ADDRESS}}": "Diag address",
                 "{{DIAG_SIRET}}": "Diag siret",
+                "{{DIAG_TVA_INTRA_COMM}}": "Diag TVA Intra Comm", //tva_intra_comm
                 "{{DIAG_COMPANY_NAME}}": "Diag company name",
                 '{{LANDLORDFULLNAME}}': "Landlord Fullname (For Agency / Other only)",
                 '{{LANDLORDEMAIL}}': "Associated Landlord Email (For Agency / Other only)",
@@ -50,36 +51,43 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
             }
             //['PRICE', 'PRICEHT', 'REVENUEHT', 'DIAGREMUNERATIONHT', 'ADDRESS', 'START', 'END'];
 
-        function isNumber(key){
-            return key.toUpperCase().indexOf('PRICE')!=-1 || key.toUpperCase().indexOf('HT')!=-1;
+        function isNumber(key) {
+            return key.toUpperCase().indexOf('PRICE') != -1 || key.toUpperCase().indexOf('HT') != -1;
         }
 
-        Object.keys(s.variables).forEach(function(key){
-           if(isNumber(key)) {
-               s.variables[key.toUpperCase().replace('}}','_FORMAT}}')] = s.variables[key] + "(two decimals, separated with comma)";
-               delete s.variables[key];
-           }
+        Object.keys(s.variables).forEach(function(key) {
+            if (isNumber(key)) {
+                s.variables[key.toUpperCase().replace('}}', '_FORMAT}}')] = s.variables[key] + "(two decimals, separated with comma)";
+                delete s.variables[key];
+            }
         });
 
-
-        db.ctrl('Order', 'get', {
-            status: 'prepaid',
-            __populate: {
-                _client: "email firstName lastName address siret companyName",
-                _diag: "email firstName lastName address siret companyName"
-            }
-        }).then(res => {
-            if (res.ok) {
-                if (!res.result) {
-                    $log.warn('Random prepaid order not found.');
+        s.orderId = '';
+        s.fetchOrder = function() {
+            var payload = {
+                status: 'prepaid',
+                __populate: {
+                    _client: "email firstName lastName address siret companyName",
+                    _diag: "email firstName lastName address siret companyName tva_intra_comm isAutoentrepreneur"
                 }
-                $log.debug('random prepaid order is Order #' + res.result.number);
-                s.randomOrder = res.result;
+            };
+            if (s.orderId) {
+                payload._id = s.orderId;
             }
-            else {
-                r.warningMessage('Problem fetching random order.');
-            }
-        });
+            db.ctrl('Order', 'get', payload).then(res => {
+                if (res.ok) {
+                    if (!res.result) {
+                        $log.warn('Random prepaid order not found.');
+                    }
+                    $log.debug('random prepaid order is Order #' + res.result.number);
+                    s.randomOrder = res.result;
+                }
+                else {
+                    r.warningMessage('Problem fetching random order.');
+                }
+            });
+        }
+        s.fetchOrder();
 
         function getContent() {
 
@@ -108,27 +116,28 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
             var editor = ace.edit("editor"); // get reference to editor
             beautify.beautify(s.editor.session);
         }
-        
-        var _is_preview_pdf = false, _is_preview_html = false;
-        s.isPreviewPDF = ()=> _is_preview_pdf;
-        s.isPreviewHTML = ()=> _is_preview_html;
-        s.closePreviewHTML = ()=>{
-          _is_preview_html=false;
-          r.dom(function(){
-             $('#previewHTML').empty();
-          });
+
+        var _is_preview_pdf = false,
+            _is_preview_html = false;
+        s.isPreviewPDF = () => _is_preview_pdf;
+        s.isPreviewHTML = () => _is_preview_html;
+        s.closePreviewHTML = () => {
+            _is_preview_html = false;
+            r.dom(function() {
+                $('#previewHTML').empty();
+            });
         };
-        s.closePreviewPDF = ()=>{
-            _is_preview_pdf=false;
-            r.dom(function(){
-             $('#previewPDF').empty();
-          });
+        s.closePreviewPDF = () => {
+            _is_preview_pdf = false;
+            r.dom(function() {
+                $('#previewPDF').empty();
+            });
         };
-        
+
 
         //
         s.previewPDF = () => {
-            _is_preview_pdf=true;
+            _is_preview_pdf = true;
 
             if (!s.randomOrder) {
                 return r.warningMessage('At least one Order saved in DB is required.');
@@ -138,7 +147,7 @@ angular.module('app').controller('settings-invoice', ['server', '$scope', '$root
             var html = $D.OrderReplaceHTML(window.decodeURIComponent(s.item.content), s.randomOrder, r);
 
             //return $log.debug(html);
-            
+
             s.previewHTML(html);
 
             html = window.encodeURIComponent(html);

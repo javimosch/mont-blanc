@@ -6,6 +6,7 @@
         'app.run',
         
         'credit-cards',
+        'pretty-checkable',
         
         'ngRoute',
         'ngSanitize',

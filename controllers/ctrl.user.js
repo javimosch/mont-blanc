@@ -219,7 +219,7 @@ function balance(data, cb) {
 
 
 function isCompany(d) {
-    return d.siret != undefined && d.siret.length > 0;
+    return (d.siret != undefined && d.siret.length > 0) && (d.isAutoentrepreneur == undefined || d.isAutoentrepreneur == false);
 }
 
 function hasWallet(d) {

@@ -66,19 +66,26 @@ module.exports = {
         clientType: {
             type: String
         }, //(landlord / agency / Foncière)
-        companyName: {
-            type: String
-        },
-        siret: String,
         discount: {
             type: Number,
             default: 0
         },
 
+        //CLIENT  DIAG
+        companyName: {
+            type: String
+        },
+        siret: String,
+        tva_intra_comm: String,
+        isAutoentrepreneur: {
+            type: Boolean,
+            default: false
+        },
+
         //wallet ID
-        wallet:{
-            type:String,
-            default:null
+        wallet: {
+            type: String,
+            default: null
         },
 
         createdAt: {

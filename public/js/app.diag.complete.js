@@ -374,8 +374,8 @@ app.controller('diagDashboard', [
 
 app.controller('ctrl-diag-edit', [
 
-    'server', '$scope', '$rootScope', '$routeParams','paymentApi','$log',
-    function(db, s, r, params,paymentApi,$log) {
+    'server', '$scope', '$rootScope', '$routeParams', 'paymentApi', '$log',
+    function(db, s, r, params, paymentApi, $log) {
         //        console.info('app.admin.diag:adminDiagsEdit');
         //
         s.pdf = {
@@ -383,13 +383,28 @@ app.controller('ctrl-diag-edit', [
         };
 
 
-        s.createWallet=function(){
-            paymentApi.registerUserWallet(s.item).then(function(){
+        s.$on('item.read', function(item) {
+            s.activated = !item.disabled;
+            r.dom();
+            s.$watch('activated', function(v) {
+                if (typeof v === 'boolean' && s.item && s.item.disabled != undefined) {
+                    //s.item.disabled = !v;
+                }
+            });
+        });
+
+
+
+
+
+
+        s.createWallet = function() {
+            paymentApi.registerUserWallet(s.item).then(function() {
                 r.dom();
-                r.infoMessage('Linked to '+s.item.wallet+'.');
-            }).error(function(res){
-                r.errorMessage(); 
-            }).on('validate',function(msg){
+                r.infoMessage('Linked to ' + s.item.wallet + '.');
+            }).error(function(res) {
+                r.errorMessage();
+            }).on('validate', function(msg) {
                 r.warningMessage(msg);
             });
         }
@@ -458,8 +473,8 @@ app.controller('ctrl-diag-edit', [
         };
         s.addDepartment = () => {
             if (!s.department) return r.warningMessage('Indiquez le département');
-            if(s.department.toString().length===1){
-                s.department = '0'+s.department;
+            if (s.department.toString().length === 1) {
+                s.department = '0' + s.department;
             }
             s.item.departments = s.item.departments || [];
             if (!_.includes($D.availableFranceDepartementsNumbers(), s.department.toString())) {
@@ -542,8 +557,8 @@ app.controller('ctrl-diag-edit', [
                 [!s.item.priority, '==', true, "Priority required"],
                 [isNaN(s.item.priority), '==', true, "Priority allowed values are 0..100"],
                 [(s.item.priority < 0 || s.item.priority > 100), '==', true, "Priority allowed values are 0..100"],
-                
-                [s.item.departments && s.item.departments.length==0, '==', true, "Un Département en charge est requis"],
+
+                [s.item.departments && s.item.departments.length == 0, '==', true, "Un Département en charge est requis"],
 
                 [
                     s.item.notifications && s.item.notifications.DIAG_DIAG_ACCOUNT_CREATED == true && s.item._id && (!s.item.diplomes || (s.item.diplomes && s.item.diplomes.length == 0)), '==', true, 'A Diplome est nécessaire'
@@ -996,6 +1011,7 @@ app.controller('ctrl-diag-edit', [
             }).then(function(res) {
                 s.original = _.clone(res.result);
                 s.item = res.result;
+                s.$emit('item.read',s.item);
                 s.diplomesUpdate();
                 if (!res.ok) {
                     r.infoMessage('Registry not found, maybe it was deleted.', 'warning', 5000);

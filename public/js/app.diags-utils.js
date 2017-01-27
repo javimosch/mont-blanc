@@ -296,6 +296,9 @@ function OrderReplaceHTML(html, _order, r) {
     _order['DIAG_ADDRESS'] = _order._diag.address;
     _order['DIAG_COMPANY_NAME'] = _order._diag.companyName;
     _order['DIAG_SIRET'] = _order._diag.siret;
+    _order['DIAG_TVA_INTRA_COMM'] = _order._diag.tva_intra_comm || '';
+    _order['DIAG_IS_AUTOENTREPRENEUR'] = _order._diag.isAutoentrepreneur || '';
+    ///isAutoentrepreneur
 
     if (_order.createdAt) _order.createdAt_format = r.momentDateTime(_order.createdAt);
     if (_order.paidAt) _order.paidAt_format = r.momentDateTime(_order.paidAt);
