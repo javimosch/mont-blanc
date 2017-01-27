@@ -45,8 +45,8 @@
 .prettyradio label {
     display: block;
     float: left;
-    margin: 0px 5px 6px 5px;
-    cursor: pointer
+    margin: 3px 5px 0px 5px;
+    cursor: pointer;
 }
 
 .prettycheckbox a.disabled,
