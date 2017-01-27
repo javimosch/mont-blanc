@@ -226,15 +226,15 @@ function hasWallet(d) {
     return d.wallet;
 }
 
-function isClient(d){
-    return d.userType =='client';
+function isClient(d) {
+    return d.userType == 'client';
 }
 
 function _preUpdateWallet(data, cb, next) {
     if (!hasWallet(data)) return next(data, cb);
 
     function shouldUpdateWallet(incoming, user) {
-        if(!user) return false;
+        if (!user) return false;
         if (incoming.email != user.email) return true;
         if (incoming.firstName != user.firstName) return true;
         if (incoming.lastName != user.lastName) return true;
@@ -259,24 +259,25 @@ function _preUpdateWallet(data, cb, next) {
                 newFirstName: data.firstName,
                 newLastName: data.lastName
             };
-            if(isCompany(data)){
-                payload.newCompanyIdentificationNumber= data.siret;
+            if (isCompany(data)) {
+                payload.newCompanyIdentificationNumber = data.siret;
                 payload.companyName = data.companyName || (data.firstName + ' ' + data.lastName);
                 payload.newIsCompany = '1';
-            }else{
+            }
+            else {
                 payload.newIsCompany = '0';
             }
-            
-            if(isClient(data)){
+
+            if (isClient(data)) {
                 payload.isTechWallet = '1';
             }
-            
+
             ctrl('Lemonway').updateWalletDetails(payload, (err, res) => {
                 if (err) {
                     logger.error('LEMONWAY WALLET (automatic update before saving user)', err);
                     LogSave('LEMONWAY WALLET (automatic update before saving user)', 'error', {
-                        err:err,
-                        payload:payload
+                        err: err,
+                        payload: payload
                     });
                 }
                 return next(data, cb);
@@ -366,10 +367,12 @@ function save(data, cb) {
     }
 }
 
-function LogSave(msg, type, data) {
+function LogSave(msg, type, data, category) {
     Log.save({
         message: msg,
         type: type,
+        level: type,
+        category: category,
         data: data
     });
 }
@@ -494,6 +497,7 @@ function login(data, cb) {
 
 
 function passwordReset(data, cb) {
+    LogSave("Password reset request", 'info', data, 'password-reset');
     actions.check(data, ['email'], (err, r) => {
         if (err) return cb(err, r);
         actions.get({
@@ -504,8 +508,19 @@ function passwordReset(data, cb) {
 
                 _user.password = generatePassword(8);
                 _user.save();
+                LogSave("Password reset generated", 'info', {
+                    email: _user.email,
+                    password: "[Sended via email]"
+                }, 'password-reset');
 
-                Notif.trigger('USER_PASSWORD_RESET', _user, (err, r) => {
+                Notif.trigger('USER_PASSWORD_RESET', {
+                    _user: _user
+                }, (err, r) => {
+                    LogSave("Password reset notification", err ? "warning" : 'info', {
+                        email: _user.email,
+                        err: err,
+                        response: r
+                    }, "password-reset");
                     return cb(err, r);
                 })
 

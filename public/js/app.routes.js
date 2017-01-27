@@ -49,6 +49,10 @@ srv.config(['$routeProvider',
         when('/settings-invoice', {
             templateUrl: 'views/diags/backoffice/settings/diags-settings-invoice.html'
         }).
+        
+        when('/settings-password-reset', {
+            templateUrl: 'views/settings-password-reset.html'
+        }).
 
         when('/settings-database', {
             templateUrl: 'views/diags/backoffice/settings/diags-settings-database.html'

@@ -601,7 +601,7 @@ function LANDLORD_ORDER_PAYMENT_SUCCESS(data, cb) {
 function USER_PASSWORD_RESET(data, cb) {
     //requires: _user
     DIAGS_CUSTOM_NOTIFICATION(
-        NOTIFICATION.LANDLORD_ORDER_PAYMENT_DELEGATED, data, cb, "Password reset", data._user.email, data._user, 'User');
+        NOTIFICATION.USER_PASSWORD_RESET, data, cb, "Password reset", data._user.email, data._user, 'User');
 }
 
 function tryParseFloatToFixed(v, n) {

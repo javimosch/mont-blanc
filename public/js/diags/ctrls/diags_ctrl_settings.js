@@ -79,7 +79,8 @@
                 "Documentation": "documentation",
                 "Database": "settings-database",
                 "Extract Data": "settings-exportation",
-                "Invoice Template": "settings-invoice"
+                "Invoice Template": "settings-invoice",
+                "Password reset":"settings-password-reset"
             };
 
             s.priceModifiers = {
