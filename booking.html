@@ -2,6 +2,7 @@
 <html class="no-js" ng-app="app">
 
 <head>
+    <script src="/js/vendor/vendor-check-preprod-session.js"></script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Diagnostical : Diagnostics immobiliers</title>
@@ -43,7 +44,7 @@
     <link rel="stylesheet" href="css/booking-form.css" type="text/css" />
     <link rel="stylesheet" href="css/order-payment-form.css" type="text/css" />
     <link rel="stylesheet" href="css/range-slider.css" type="text/css" />
-    
+
     <script src="js/vendor/vendor.selectivizr-min.js"></script>
 
 
@@ -146,7 +147,7 @@
 </head>
 
 <body data-main class="hiddenn" ng-controller="ctrl.booking">
-    
+
     <modal-custom open="openModal"></modal-custom>
 
     <!-- GLOBAL LAYOUT -->
@@ -180,7 +181,7 @@
         <div ng-include="'views/diags/booking/partials/booking-footer.html'"></div>
     </div>
 
-    
+
 
     <modal-confirm open="openConfirm"></modal-confirm>
     <span data-spinner show="state.working"></span>
