@@ -3,23 +3,15 @@
         <div class="diags-date-day-wrapper">
             <div class="diags-date-day-header">{{d.label()}}</div>
             <div ng-repeat="(key,range) in d.slots track by $index" ng-class="{'diags-date-day-item':true,'selected':dateSlotSelected(range)}">
+                <!--
                 <div class="diags-date-day-item-check-wrapper">
-                    
-                    <!--
-                    <nice-check-box 
-                    class="diag46" 
-                    template='diags-date-slot' 
-                    model="item" 
-                    data="range"
-                    click="proceedToConnect"
-                    ></nice-check-box>
-                    -->
                     <pretty-checkbox
                     ng-click="proceedToConnect()"
                     color="blue" value="range.id" ng-model="item.range" label="false"></pretty-checkbox>
                     
                 </div>
-                <div class="diags-date-day-item-description-wrapper">
+                -->
+                <div class="center-block diags-date-day-item-description-wrapper link" ng-click="proceedToConnect(range)">
                     <div class="time-price" ng-bind="drawRange(range)||'1h - 224 €'">
                     </div>
                     <div class="diag-guy" ng-bind="range.name||'Pepe, G'">

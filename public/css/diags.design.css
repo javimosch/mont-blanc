@@ -1,8 +1,6 @@
-
-
 .cssfx {}
 
-.modal-backdrop{
+.modal-backdrop {
     z-index: 999040!important;
 }
 
@@ -98,8 +96,12 @@ html {
     margin-top: -100px;
 }
 
-.footer__lemonway-icons{
-    height:35px;
+.footer__lemonway-icons {
+    height: 35px;
+}
+
+.booking-date-row {
+    background-color: #EDF9FF
 }
 
 .booking-descr-title {
@@ -423,6 +425,7 @@ a.diag-btn-info:hover {
     padding: 0px;
     margin-top: 55px;
 }
+
 @media screen and (max-width: 480px) {
     .home-bg-dialog {
         margin: 0px;
@@ -430,6 +433,7 @@ a.diag-btn-info:hover {
         margin-top: 25px;
     }
 }
+
 .home-brandon-re-38-489,
 .home-brandon-re-38-489 span {
     font-family: 'BrandonGrotesque-Regular';
@@ -482,11 +486,11 @@ a.diag-btn-info:hover {
     min-height: 620px;
     background-size: cover;
 }
+
 @media screen and (max-width: 480px) {
     .diags-home-bg {
-        background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ),url(../img/mobile-portrait-background.jpg) no-repeat;
+        background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/mobile-portrait-background.jpg) no-repeat;
         background-position: center top;
-
     }
 }
 
@@ -569,6 +573,7 @@ a.diag-btn-info:hover {
         margin-top: 20px;
     }
 }
+
 .modal-open {
     overflow: hidden;
     margin-right: 15px!important;
@@ -579,7 +584,7 @@ ul.docs-notification-types h6 {
     font-weight: 700;
 }
 
-.dynamic-table-wrapper .button-group> button {
+.dynamic-table-wrapper .button-group>button {
     margin-bottom: 0.2em;
 }
 
@@ -603,12 +608,12 @@ ul.docs-notification-types h6 {
     text-align: left;
 }
 
-.booking-form input[type="checkbox"]+ span {
+.booking-form input[type="checkbox"]+span {
     line-height: 23px;
 }
 
-input[type="radio"]:disabled+ span,
-input[type="checkbox"]:disabled+ span {
+input[type="radio"]:disabled+span,
+input[type="checkbox"]:disabled+span {
     opacity: 1!important;
 }
 
@@ -617,7 +622,7 @@ input[type="checkbox"]:disabled+ span {
     margin: 0px;
 }
 
-.diag-row> div {
+.diag-row>div {
     margin-bottom: 10px;
 }
 
@@ -699,28 +704,34 @@ input[type="checkbox"]:disabled+ span {
     background: #f2f3f7;
 }
 
-.right-bar{
+.right-bar {
     background: url(../img/sep-bar.png) repeat-y top right;
     margin: 10px 0px;
 }
+
 .right-bar:last-child {
     background: none;
 }
-.right-bar .headtitle, .right-bar .subtitle{
+
+.right-bar .headtitle,
+.right-bar .subtitle {
     text-transform: uppercase;
     color: #0A3967;
 }
-.right-bar .headtitle{
+
+.right-bar .headtitle {
     font-size: 14px;
     font-family: 'Avenir-Medium';
     font-weight: 500;
 }
+
 .right-bar .subtitle {
     font-size: 16px;
     // color: #6a798c;
     font-family: 'Avenir-Black';
     font-weight: 500;
 }
+
 @media screen and (max-width: 767px) {
     .right-bar .headtitle {
         font-size: 0.9em;
@@ -729,6 +740,7 @@ input[type="checkbox"]:disabled+ span {
         font-size: 0.8em;
     }
 }
+
 @media screen and (max-width: 479px) {
     .right-bar .headtitle {
         font-size: 0.8em;
@@ -737,6 +749,7 @@ input[type="checkbox"]:disabled+ span {
         font-size: 0.7em;
     }
 }
+
 @media screen and (max-width: 360px) {
     .right-bar .headtitle {
         font-size: 0.6em;
@@ -755,7 +768,9 @@ input[type="checkbox"]:disabled+ span {
     }
 }
 
-.fa-id-card-o, .fa-phone, .fa-lock{
+.fa-id-card-o,
+.fa-phone,
+.fa-lock {
     font-size: 26px;
     color: #0A3967;
 }
@@ -766,7 +781,8 @@ footer {
     background-color: #09519D;
 }
 
-@media screen and (min-width: 1200px) { /*@media screen and (min-width: 480px) {*/
+@media screen and (min-width: 1200px) {
+    /*@media screen and (min-width: 480px) {*/
     footer {
         height: 110px;
     }
@@ -805,12 +821,11 @@ ul.diags {
     padding: 0px;
 }
 
-.editable-text{
-    
-}
-.editable-text:hover{
-    cursor:pointer;
-    background-color:rgba(0,0,255,.2);
+.editable-text {}
+
+.editable-text:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 255, .2);
 }
 
 ul.diags li {
@@ -824,13 +839,14 @@ ul.diags li:first-child {
 }
 
 h2.diags,
-h2.diags> div, h2.diags p {
+h2.diags>div,
+h2.diags p {
     font-family: 'Avenir-Book';
     font-size: 36px;
 }
 
 h2.diags.black,
-h2.diags.black> div {
+h2.diags.black>div {
     color: black;
 }
 
@@ -1092,17 +1108,17 @@ h2.diags.black> div {
     transform: rotate(-45deg);
 }*/
 
-.check.mark-white:checked+ span::before {
+.check.mark-white:checked+span::before {
     color: white;
 }
 
-.check.mark-white+ .sky-blue::before {
+.check.mark-white+.sky-blue::before {
     border: solid 2px #00A9FF;
     background: #00A9FF;
 }
 
 .diags-date-day-wrapper {
-    height: 348px;
+    /* height: 348px; */
     /*width: 298px;*/
     padding: 0px;
     margin: 0px;
@@ -1121,7 +1137,7 @@ h2.diags.black> div {
 }
 
 .diags-date-day-item {
-    height: 74px;
+    height: 50px;
     display: -webkit-box;
     /* OLD - iOS 6-, Safari 3.1-6 */
     display: -moz-box;
@@ -1131,8 +1147,14 @@ h2.diags.black> div {
     display: -webkit-flex;
     /* NEW - Chrome */
     display: flex;
-    background-color: transparent;
-    width: 100%;
+    background-color: #D5EFFD;
+    width: 179px;
+    margin: 36px auto;
+    border-radius: 5px;
+}
+
+.diags-date-day-item:hover{
+    background-color:white;
 }
 
 .diags-date-day-item.selected {
@@ -1148,8 +1170,9 @@ h2.diags.black> div {
     color: #0B3967;
     /*normal*/
     font-family: 'Avenir-Medium';
-    font-size: 20px; /*before: 25*/
-    padding-top: 0.5em;
+    font-size: 18px;
+    /*before: 25*/
+    padding-top: 6px;
 }
 
 .diags-date-day-item.selected .diags-date-day-item-description-wrapper .time-price {
@@ -1160,6 +1183,9 @@ h2.diags.black> div {
     color: #0B3967;
     font-family: 'Avenir-Medium';
     font-size: 14px;
+    text-align: center;
+    position: relative;
+    top: -4px;
 }
 
 @media only screen and (min-width: 992px) {
@@ -1190,7 +1216,7 @@ h2.diags.black> div {
 }
 
 .home-title-right,
-.home-title-right> div {
+.home-title-right>div {
     font-family: 'Avenir-Book';
     font-size: 32px;
     color: white;
@@ -1255,7 +1281,7 @@ table.dg-dates tr.selected {
     border-radius: 5px;
 }
 
-.order-pdf-label{
+.order-pdf-label {
     font-size: x-small;
 }
 
@@ -1308,7 +1334,7 @@ label.minimal {
     padding: 0px 0px 0px 26px;
 }
 
-.diags-form .diags-input> span:first-child {
+.diags-form .diags-input>span:first-child {
     font-family: 'Avenir-Oblique';
     color: #8597AB!important;
     font-size: 14px;
@@ -1323,7 +1349,7 @@ label.minimal {
     top: 14px;
 }
 
-.diags-form .diags-btn-group> div {
+.diags-form .diags-btn-group>div {
     padding: 0px;
 }
 
@@ -1447,14 +1473,14 @@ label.minimal {
     padding: 20px 0px;
 }
 
-.diag-row-form> div {
+.diag-row-form>div {
     margin-top: 2em;
 }
 
 .diag-row-form {}
 
 p.stripe-home-message,
-p.stripe-home-message> span {
+p.stripe-home-message>span {
     font-family: 'Avenir-Medium';
 }
 
@@ -1470,7 +1496,7 @@ p.stripe-home-message {
     font-size: 30px;
 }
 
-p.stripe-home-message> span {
+p.stripe-home-message>span {
     vertical-align: bottom;
     font-size: 16px;
 }
@@ -1859,9 +1885,8 @@ p.stripe-home-message> span {
     cursor: not-allowed;
 }
 
-
-.know-more{
-       width: 19px;
+.know-more {
+    width: 19px;
     height: 19px;
     background: #63C5F6;
     -moz-border-radius: 70px;
@@ -1873,16 +1898,18 @@ p.stripe-home-message> span {
     position: relative;
     left: 3px;
 }
-.know-more > span{
+
+.know-more>span {
     color: #D60D00;
     font-weight: bold;
     font-size: 16px;
 }
 
-.know-more .hover-block{
-    display:none;
+.know-more .hover-block {
+    display: none;
 }
-.know-more:hover .hover-block{
+
+.know-more:hover .hover-block {
     display: block;
     position: absolute;
     width: 380px;
@@ -1897,37 +1924,44 @@ p.stripe-home-message> span {
 }
 
 label * {
-    cursor:inerith;
+    cursor: inerith;
 }
-.know-more .hover-block a{
+
+.know-more .hover-block a {
     color: #1C335E;
     font-weight: 700;
     text-decoration: underline;
 }
-.know-more .hover-block, .know-more .hover-block span, .know-more .hover-block red, .know-more .hover-block a{
+
+.know-more .hover-block,
+.know-more .hover-block span,
+.know-more .hover-block red,
+.know-more .hover-block a {
     font-size: 12px;
     font-family: 'Roboto', sans-serif;
 }
-.know-more .hover-block .red{
-    color:#BC3B44;
-    
+
+.know-more .hover-block .red {
+    color: #BC3B44;
 }
 
+
 /* add height for checkbox on mobile */
+
 @media screen and (max-width: 767px) {
     .mobile-h37 {
         height: 37px;
     }
 }
 
-
-.home__mobile-icons-list{
+.home__mobile-icons-list {
     list-style: none;
     padding: 0px;
     margin: 40px auto 40px auto;
     width: 293px;
 }
-.home__mobile-icons-list li{
+
+.home__mobile-icons-list li {
     display: inline-block;
     margin-right: 3px;
     margin-left: 3px;

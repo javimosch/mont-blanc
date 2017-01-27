@@ -347,7 +347,15 @@ app.controller('ctrl.booking', ['server',
                 r.route('home');
             });
         }
-        s.proceedToConnect = function() {
+        s.proceedToConnect = function(range) {
+
+
+            s.item.range = range.id;
+            //var data = JSON.parse(window.atob(range));
+            s.item._diag = range._diag;
+            s.item.start = range.start;
+            s.item.end = range.end;
+
             //this is fire from the date checkbox and they need a time to change the state.
             //lets execute this with a delay.
             setTimeout(function() {
@@ -510,42 +518,44 @@ app.controller('ctrl.booking', ['server',
             });
         };
 
-        //DIAG DATE SELECTION -> Get the slot that the user had selected to the right place.
-        s.$watch('item.range', function(id) {
-            if (!id) return;
-            if (typeof id !== 'string') return;
-            //console.log('item.range', id);
-            var data = JSON.parse(window.atob(id));
-            //console.log('item.range data', data);
-            s.item._diag = data._diag;
-            s.item.start = data.start;
-            s.item.end = data.end;
-        });
+        /*
+                //DIAG DATE SELECTION -> Get the slot that the user had selected to the right place.
+                s.$watch('item.range', function(id) {
+                    if (!id) return;
+                    if (typeof id !== 'string') return;
+                    //console.log('item.range', id);
+                    var data = JSON.parse(window.atob(id));
+                    //console.log('item.range data', data);
+                    s.item._diag = data._diag;
+                    s.item.start = data.start;
+                    s.item.end = data.end;
+                });
+                */
 
-        function setSelectedRangeIDUsingOrder(slots, rngId) {
-            if (!$U.val(s._order, '_diag._id')) return;
-            if (rngId) return null;
-            slots.forEach(v => {
-                var data = JSON.parse(window.atob(v.id));
-                if (data._diag == s._order._diag || data._diag == s._order._diag._id) {
-                    if (data.start == s._order.start && data.end == s._order.end) {
-                        r.dom(function() {
-                            s.item.range = v.id;
-                            return v.id;
-                        });
-                    }
+        /*
+                function setSelectedRangeIDUsingOrder(slots, rngId) {
+                    if (!$U.val(s._order, '_diag._id')) return;
+                    if (rngId) return null;
+                    slots.forEach(v => {
+                        var data = JSON.parse(window.atob(v.id));
+                        if (data._diag == s._order._diag || data._diag == s._order._diag._id) {
+                            if (data.start == s._order.start && data.end == s._order.end) {
+                                r.dom(function() {
+                                    s.item.range = v.id;
+                                    return v.id;
+                                });
+                            }
+                        }
+                    })
                 }
-            })
-        }
 
-        function setSelectedRangeDateUsingOrder() {
-            if (!$U.indexOf(r.__route, [URL.RDV])) return;
-            var id = setSelectedRangeIDUsingOrder(s.slots1, null);
-            id = setSelectedRangeIDUsingOrder(s.slots2, id);
-            id = setSelectedRangeIDUsingOrder(s.slots3, id);
-            id = setSelectedRangeIDUsingOrder(s.slots4, id);
-        }
-
+                function setSelectedRangeDateUsingOrder() {
+                    if (!$U.indexOf(r.__route, [URL.RDV])) return;
+                    var id = setSelectedRangeIDUsingOrder(s.slots1, null);
+                    id = setSelectedRangeIDUsingOrder(s.slots2, id);
+                    id = setSelectedRangeIDUsingOrder(s.slots3, id);
+                    id = setSelectedRangeIDUsingOrder(s.slots4, id);
+                }*/
 
         //DOM CLASS
         s.dateSlotSelected = function(rng) {
