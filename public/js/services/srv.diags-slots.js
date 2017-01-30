@@ -22,7 +22,7 @@
                     orderPrice.set({
                         date: date,
                         diagIsAutoentrepreneur: scope._order && scope._order._diag && scope._order._diag.isAutoentrepreneur ||
-                            scope.item && scope.item.info && scope.item._diag.isAutoentrepreneur || false,
+                            scope.item && scope.item._diag && scope.item._diag.isAutoentrepreneur || false,
                         buildingType: scope._order && scope._order.info && scope._order.info.buildingType || scope.item && scope.item.info && scope.item.info.buildingType,
                         modifiersPercentages: scope.settings && scope.settings.pricePercentageIncrease,
                         squareMetersPrice: scope.squareMetersPrice,
