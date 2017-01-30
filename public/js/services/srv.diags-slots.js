@@ -21,7 +21,9 @@
                 function setOrderDetails(date) {
                     orderPrice.set({
                         date: date,
-                        buildingType:scope._order && scope._order.info && scope._order.info.buildingType || scope.item && scope.item.info && scope.item.info.buildingType,
+                        diagIsAutoentrepreneur: scope._order && scope._order._diag && scope._order._diag.isAutoentrepreneur ||
+                            scope.item && scope.item.info && scope.item._diag.isAutoentrepreneur || false,
+                        buildingType: scope._order && scope._order.info && scope._order.info.buildingType || scope.item && scope.item.info && scope.item.info.buildingType,
                         modifiersPercentages: scope.settings && scope.settings.pricePercentageIncrease,
                         squareMetersPrice: scope.squareMetersPrice,
                         squareMeters: scope._order && scope._order.info && scope._order.info.squareMeters ||
@@ -55,8 +57,9 @@
                                 time: time,
                                 diagId: _settings.diagId
                             }).then(_resolve);
-                        } else {
-                            db.getAvailableRanges(order, _settings).then(_resolve);    
+                        }
+                        else {
+                            db.getAvailableRanges(order, _settings).then(_resolve);
                         }
 
 
@@ -129,7 +132,8 @@
                                     d.pop();
                                 };
                                 //console.warn('slots-more-than-four-resolve',d)
-                            } else {
+                            }
+                            else {
 
                             }
 
@@ -146,7 +150,8 @@
                             label: function() {
                                 if (o.isToday()) {
                                     return 'Aujourd’hui';
-                                } else {
+                                }
+                                else {
                                     return r.momentFormat(o.date, 'dddd DD MMMM');
                                 }
                             },
@@ -170,12 +175,12 @@
                         var daySlot = null;
 
 
-                        for(var x in _data){
+                        for (var x in _data) {
                             daySlot = _data[x];
 
                             setOrderDetails(daySlot.date);
 
-                            daySlot.slots.forEach(function(slot){
+                            daySlot.slots.forEach(function(slot) {
                                 slot.price = orderPrice.getPriceTTC();
                             });
 
@@ -218,7 +223,8 @@
                         cursor = cursor.subtract(4, 'days');
                         if (cursor.isBefore(moment(), 'days')) {
                             cursor = moment();
-                        } else {
+                        }
+                        else {
                             _nextTimes--;
                         }
                         o.request();

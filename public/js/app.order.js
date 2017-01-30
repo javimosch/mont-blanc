@@ -379,7 +379,8 @@
 
                     orderPrice.set({
                         date: s.item.start,
-                        diagCommissionRate: s.item._diag && s.item._diag.commission
+                        diagCommissionRate: s.item._diag && s.item._diag.commission,
+                        diagIsAutoentrepreneur: s.item._diag && s.item._diag.isAutoentrepreneur
                     });
                     var _newPriceQuote = orderPrice.getPriceTTC();
                     if (s.item._id && _newPriceQuote !== undefined) {
@@ -1180,7 +1181,7 @@
                     _id: id || params.id || s.item._id,
                     __populate: {
                         '_client': 'email clientType address discount firstName lastName siret wallet',
-                        '_diag': 'email address commission firstName lastName siret wallet tva_intra_comm'
+                        '_diag': 'email address commission firstName lastName siret wallet tva_intra_comm isAutoentrepreneur'
                     }
                 }).then(function(data) {
 

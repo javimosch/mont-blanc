@@ -1566,7 +1566,8 @@ app.controller('ctrl.booking', ['server',
             _order = _order || s._order;
             orderPrice.set({
                 date: _order.start,
-                diagCommissionRate: _order._diag && _order._diag.commission
+                diagCommissionRate: _order._diag && _order._diag.commission,
+                diagIsAutoentrepreneur: s._order._diag && s._order._diag.isAutoentrepreneur
             });
             orderPrice.assignPrices(_order);
         }
