@@ -80,7 +80,7 @@
                 "Database": "settings-database",
                 "Extract Data": "settings-exportation",
                 "Invoice Template": "settings-invoice",
-                "Password reset":"settings-password-reset"
+                "Password reset": "settings-password-reset"
             };
 
             s.priceModifiers = {
@@ -410,7 +410,8 @@
                     //  keys used:(basePrice squareMetersPrice diags settings)
                     //localData.settings needs to be the db settings object.
                     //item: start info.squareMeters postCode diags (ex:{dpe:true})
-                    diagCommissionRate:75,
+                    diagCommissionRate: 75,
+                    diagIsAutoentrepreneur:false,
                     item: {
                         start: moment(),
                         postCode: '75010',
@@ -441,6 +442,7 @@
                     scope.settings = s.item;
                     orderPrice.set({
                         date: scope.item.start,
+                        diagIsAutoentrepreneur: scope.diagIsAutoentrepreneur,
                         modifiersPercentages: scope.settings && scope.settings.pricePercentageIncrease,
                         squareMetersPrice: scope.squareMetersPrice,
                         squareMeters: scope._order && scope._order.info && scope._order.info.squareMeters ||
@@ -478,31 +480,39 @@
                 });
             });
 
+
+
+            s.$watch('pricetool.scope.diagIsAutoentrepreneur', function(newValue) {
+                orderPrice.set({
+                    diagIsAutoentrepreneur: newValue
+                });
+            });
+
             s.$watch('pricetool.scope.item.info.squareMeters', function(squareMeters) {
                 orderPrice.set({
                     squareMeters: squareMeters
                 });
             });
-            
-             s.$watch('pricetool.scope.diagCommissionRate', function(diagCommissionRate) {
+
+            s.$watch('pricetool.scope.diagCommissionRate', function(diagCommissionRate) {
                 orderPrice.set({
                     diagCommissionRate: diagCommissionRate
                 });
             });
-            
+
             s.$watch('pricetool.scope.item._client.discount', function(discount) {
                 orderPrice.set({
                     clientDiscountPercentage: discount
                 });
             });
-            
-            
+
+
 
         }
     ]);
 
 
-    
+
 
 
 

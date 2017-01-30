@@ -160,13 +160,12 @@
                     </td>
                 </tr>
 
+
+
                 <tr class="unselectable">
                     <td>
                         <label class="minimal">Building type</label>
-                        <select name="singleSelect" 
-                         class="diags-input minimal"
-                        ng-model="pricetool.scope.item.info.buildingType" 
-                        ng-change="pricetool.onBuildingTypeChange(pricetool.scope.item.info.buildingType)">
+                        <select name="singleSelect" class="diags-input minimal" ng-model="pricetool.scope.item.info.buildingType" ng-change="pricetool.onBuildingTypeChange(pricetool.scope.item.info.buildingType)">
                           <option value="0">House</option>
                           <option value="1">Departement</option>
                           <option value="2">Commercial</option>
@@ -186,6 +185,12 @@
                     <td>
                         <label class="minimal">Diag commission</label>
                         <input type="text" class="diags-input minimal" ng-model="pricetool.scope.diagCommissionRate">
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Diag is Autoentrepreneur ?</label>
+                        <pretty-checkbox color="white" value="true" ng-model="pricetool.scope.diagIsAutoentrepreneur" label="false"></pretty-checkbox>
                     </td>
                 </tr>
                 <tr class="unselectable">
@@ -214,13 +219,13 @@
                 </tr>
                 <tr class="unselectable">
                     <td>
-                        <label class="minimal">Raw Price TTC</label>
+                        <label class="minimal">Raw Price TTC (ignore if autoentrepreneur)</label>
                         <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceWithVAT()">
                     </td>
                 </tr>
                 <tr class="unselectable">
                     <td>
-                        <label class="minimal">Real Price TTC (Final, with tenth)</label>
+                        <label class="minimal">Real Price TTC (Final, with tenth) (HT if autoentrepreneur)</label>
                         <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceTTC()">
                     </td>
                 </tr>
@@ -240,6 +245,18 @@
                     <td>
                         <label class="minimal">Diag remuneration HT</label>
                         <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceRemunerationHT()">
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Our Revenue HT</label>
+                        <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceRevenueHT()">
+                    </td>
+                </tr>
+                <tr class="unselectable">
+                    <td>
+                        <label class="minimal">Our Revenue TTC</label>
+                        <input type="text" disabled class="diags-input minimal" ng-value="orderPrice.getPriceRevenueTTC()">
                     </td>
                 </tr>
                 <!--

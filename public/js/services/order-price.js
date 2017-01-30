@@ -17,6 +17,7 @@
             selectedDiags: {},
             availableDiags: {},
             diagCommissionRate: undefined,
+            diagIsAutoentrepreneur: false,
             VATRate: 20
         };
 
@@ -62,6 +63,7 @@
 
 
         var self = {
+            _settings: settings,
             set: function(_settings) {
                 Object.assign(settings, _settings);
                 //$log.debug('orderPrice setting is now ', settings);
@@ -117,10 +119,10 @@
                         return getDepartmentModifierPercentage(settings.postCode, settings.departmentMultipliers);
                         break;
                     case 'vat':
-                        if (!settings.modifiersPercentages || !settings.modifiersPercentages.VATRate) {
+                        if (!settings.modifiersPercentages || settings.modifiersPercentages.VATRate == undefined) {
                             return 20;
                         }
-                        return settings.modifiersPercentages.VATRate || 20
+                        return settings.modifiersPercentages.VATRate
                         break;
                     case 'commercial':
                         if (!settings.modifiersPercentages || !settings.modifiersPercentages.commercialBuilding) {
@@ -172,21 +174,27 @@
                 }
             },
             getPriceHT: function(k) {
-                /*
-                FORMULA HT
-                    HT = TTC / (1+VAT RATE)
-                    */
+                if(settings.diagIsAutoentrepreneur){
+                    return this.getPriceTTC(k);
+                }
                 return (this.getPriceTTC(k) / (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
 
             },
-            getVATPrice:function(k){
+            getVATPrice: function(k) {
                 return (this.getPriceTTC(k) - this.getPriceHT(k)).toFixed(2);
             },
             getPriceWithVAT: function(k) {
-                return (this.getPriceWithCommercial(k) * (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
+                var vatRate = this.getRatioModifierFor('vat');
+                return (this.getPriceWithCommercial(k) * (1 + vatRate / 100)).toFixed(2);
             },
             getPriceTTC: function(k) {
-                var rta = tenthDown10(this.getPriceWithVAT(k));
+                var rta = 0;
+                if (settings.diagIsAutoentrepreneur) {
+                    rta = tenthDown10(this.getPriceWithCommercial(k));
+                }
+                else {
+                    rta = tenthDown10(this.getPriceWithVAT(k));
+                }
                 if (isNaN(rta)) {
                     //$log.warn('priceTTC NaN !');
                     return 0;
@@ -199,11 +207,16 @@
                     //$log.error('orderPrice settings.diagCommissionRate is required');
                     return 0;
                 }
-                return (this.getPriceHT() * (settings.diagCommissionRate || 1) / 100).toFixed(2)
+                //return (this.getPriceHT() * (settings.diagCommissionRate || 1) / 100).toFixed(2)
+                return this.getPriceTTC() - this.getPriceRevenueTTC();
             },
             getPriceRevenueHT: function() {
                 //Diagnostical revenue
-                return (this.getPriceHT() - this.getPriceRemunerationHT()).toFixed(2);
+                //return (this.getPriceHT() - this.getPriceRemunerationHT()).toFixed(2);
+                return (this.getPriceHT() * (settings.diagCommissionRate && (100 - settings.diagCommissionRate) || 1) / 100).toFixed(2)
+            },
+            getPriceRevenueTTC: function() {
+                return (parseFloat(this.getPriceRevenueHT()) * (1 + (this.getRatioModifierFor('vat') / 100))).toFixed(2);
             },
             //Helper function to assign prices in an existing order.
             assignPrices: function(object) {
