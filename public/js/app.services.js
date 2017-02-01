@@ -48,10 +48,10 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
                 (window.CKEDITOR && window.CKEDITOR.instances && !window.CKEDITOR.instances.editor))
                 return setTimeout(() => setData(decodedData), 50);
             window.CKEDITOR.instances.editor.setData(decodedData);
-            setTimeout(function(){
+            setTimeout(function() {
                 r.htmlEditItem.show = true;
                 $U.scrollToTop();
-            },500);
+            }, 500);
         }
         db.ctrl('Text', 'get', {
             code: r.params.code
@@ -60,11 +60,12 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
                 r.htmlEditItem = res.result;
                 r.htmlEditItem.show = true;
                 //console.log(r.htmlEditItem);
-                if(!r.htmlEditItem.content){
-                    if(r.__textSTATIC && r.__textSTATIC[r.htmlEditItem.code]){
+                if (!r.htmlEditItem.content) {
+                    if (r.__textSTATIC && r.__textSTATIC[r.htmlEditItem.code]) {
                         r.htmlEditItem.content = window.encodeURIComponent(r.__textSTATIC[r.htmlEditItem.code]);
-                        console.log('FROM LOCAL',r.htmlEditItem.content);
-                    }else{
+                        console.log('FROM LOCAL', r.htmlEditItem.content);
+                    }
+                    else {
                         r.htmlEditItem.content = window.encodeURIComponent(r.htmlEditItem.code);
                     }
                 }
@@ -72,7 +73,7 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
             }
         });
 
-        
+
     };
 
     r.html = function(code) {
@@ -100,8 +101,8 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
 
 
         function buildBlock() {
+            var isReady = false;
             var html = '';
-
             //returns an edit icon (if admin)
             if (r.userIs('admin')) {
                 //html += "<i  onclick=\"r.htmlEdit('" + code + "')\" style='opacity: 0.2;margin-left: 0em;margin-top: -0.5em;' class='link absolute fa fa-pencil-square-o ' aria-hidden='true'></i>";
@@ -118,6 +119,8 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
                 }
 
                 html += content;
+
+                isReady = true;
             }
             else {
                 //returns an static content
@@ -133,6 +136,8 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
                         //returns nothing (if production or user is not admin)
                     }
                 }
+
+
             }
 
             var inheritCss = {
@@ -147,7 +152,7 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
             var wrapper = $('<editable-text>').css(inheritCss);
             wrapper.append($.parseHTML(html));
             wrapper.find('*').css(inheritCss);
-            
+
 
             if (r.userIs('admin')) {
                 wrapper.attr('onclick', "r.htmlEdit('" + code + "')").addClass('editable-text');
@@ -155,7 +160,18 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
 
             html = $('<div>').append(wrapper).html();
 
+            //
+            if (!isReady) {
+                $U.emit('bind-html-compile-hide-' + window.btoa(window.encodeURIComponent(html.toString())));
+            }
+            else {
+                $U.emit('bind-html-compile-show-' + window.btoa(window.encodeURIComponent(html.toString())));
+            }
+
             return html;
+
+
+
         }
         return buildBlock();
     };

@@ -1,3 +1,12 @@
+
+
+/**/
+div [bind-html-compile],p [bind-html-compile],span [bind-html-compile]{
+    display: none;
+}
+
+
+
 .cssfx {}
 
 .modal-backdrop {
