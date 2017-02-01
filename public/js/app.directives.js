@@ -35,6 +35,18 @@ app.directive("bindHtmlCompile", ["$compile", function(compile) {
                 var compiled = compile(el.contents())(f);
                 //console.info(compiled);
                 el.html('').append(compiled);
+                
+                //default
+                el.css('display',"inherit");
+                
+                var key = window.btoa(window.encodeURIComponent(e.toString()));
+                $U.on('bind-html-compile-show-'+key,function(){
+                    el.css('display',"inherit");
+                });
+                $U.on('bind-html-compile-hide-'+key,function(){
+                    el.css('display',"none");
+                });
+                
 
                 var first = el.find(':first-child');
                 var tag = first && first.get(0) && first.get(0).tagName.toUpperCase() || "NONE";
