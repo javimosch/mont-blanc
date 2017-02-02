@@ -530,7 +530,8 @@ function passwordReset(data, cb) {
                 }, 'password-reset');
 
                 Notif.trigger('USER_PASSWORD_RESET', {
-                    _user: _user
+                    _user: _user,
+                    forceSend:true
                 }, (err, r) => {
                     LogSave("Password reset notification", err ? "warning" : 'info', {
                         email: _user.email,
