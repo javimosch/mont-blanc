@@ -853,30 +853,30 @@ app.controller('ctrl-diag-edit', [
 
 
 
-        s.needToBeNotifiedAboutActivation = (_user) => {
-            var rta = (_user.userType === 'diag') && _user.disabled === false && (_user.notifications == undefined || _user.notifications.DIAGS_DIAG_ACCOUNT_ACTIVATED === undefined || _user.notifications.DIAGS_DIAG_ACCOUNT_ACTIVATED == false);
-            console.info('needToBeNotifiedAboutActivation', rta);
+        s.shouldSendAccountCreatedNotificationToDiag = (_user) => {
+            var rta = (_user.userType === 'diag') && _user.disabled === true && (_user.notifications == undefined || _user.notifications.DIAG_DIAG_ACCOUNT_CREATED === undefined || _user.notifications.DIAG_DIAG_ACCOUNT_CREATED == false);
+            console.info('shouldSendAccountCreatedNotificationToDiag', rta);
             return rta;
         };
-        s.notifyAboutActivation = (_user) => {
+        s.sendAccountCreatedNotificationToDiag = (_user) => {
             s.item = _user || s.item;
             db.ctrl('Notification', 'DIAG_DIAG_ACCOUNT_CREATED', {
                 _user: s.item
             }).then(res => {
                 if (res.ok) {
                     s.item.notifications = s.item.notifications || {};
-                    s.item.notifications.DIAGS_DIAG_ACCOUNT_ACTIVATED = true;
+                    s.item.notifications.DIAG_DIAG_ACCOUNT_CREATED = true;
                     db.ctrl('User', 'save', s.item);
-                    console.info('notifyAboutActivation:success', res.message);
+                    console.info('sendAccountCreatedNotificationToDiag:success', res.message);
                 }
                 else {
-                    console.info('notifyAboutActivation:failed', res.err);
+                    console.info('sendAccountCreatedNotificationToDiag:failed', res.err);
                 }
             });
         };
 
         s.adminsNeedToBeNotifiedAboutDiagAccountCreation = (_user) => {
-            var rta = (_user.userType === 'diag') && _user.disabled == true && (!_user.notifications || _user.notifications.DIAGS_DIAG_ACCOUNT_CREATED == undefined || _user.notifications.DIAGS_DIAG_ACCOUNT_CREATED == false);
+            var rta = (_user.userType === 'diag') && _user.disabled == true && (!_user.notifications || _user.notifications.ADMIN_DIAG_ACCOUNT_CREATED == undefined || _user.notifications.ADMIN_DIAG_ACCOUNT_CREATED == false);
             console.info('adminsNeedToBeNotifiedAboutDiagAccountCreation', rta);
             return rta;
         };
@@ -890,7 +890,7 @@ app.controller('ctrl-diag-edit', [
                     var cbHell = $U.cbHell(res.result.length, () => {
                         Object.assign(s.item, _diag);
                         s.item.notifications = s.item.notifications || {};
-                        s.item.notifications.DIAGS_DIAG_ACCOUNT_CREATED = 1;
+                        s.item.notifications.ADMIN_DIAG_ACCOUNT_CREATED = 1;
                         db.ctrl('User', 'save', s.item);
                         console.info('notifyAdminsAboutDiagAccountCreation:success');
                     });
@@ -941,14 +941,13 @@ app.controller('ctrl-diag-edit', [
                     var _r = res;
                     if (_r.ok) {
                         s.item._id = res.result._id;
+                        /*
                         if (s.adminsNeedToBeNotifiedAboutDiagAccountCreation(s.item)) {
                             s.notifyAdminsAboutDiagAccountCreation(s.item);
                         }
-                        else {
-                            if (s.needToBeNotifiedAboutActivation(s.item)) {
-                                s.notifyAboutActivation(s.item);
-                            }
-                        }
+                        if (s.shouldSendAccountCreatedNotificationToDiag(s.item)) {
+                            s.sendAccountCreatedNotificationToDiag(s.item);
+                        }*/
 
                         if (!logged) {
                             if (s.item && s.item.diplomes && s.item.diplomes.length > 0) {

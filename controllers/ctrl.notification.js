@@ -16,6 +16,9 @@ var actions = {
     }
 };
 
+const MODULE = "NOTIFICATION";
+var logger = require('../model/logger')(MODULE);
+
 var NOTIFICATION = {
 
     ADMIN_BOOKING_MISSING_DEPARTMENT: 'ADMIN_BOOKING_MISSING_DEPARTMENT',
@@ -66,21 +69,29 @@ function LogSave(msg, type, data) {
 }
 
 function trigger(name, data, cb) {
-    try {
+    //try {
         //actions.log('trigger=' + JSON.stringify(data));
         actions.log('trigger ',name, data, cb);
+        
+        logger.info('Triggering ',name);
+        
         if (!name) return cb && cb("name required");
         if (!NOTIFICATION[name]) {
+            logger.info('Not found ',name);
             LogSave('Notification trigger name not found: ' + name, 'error', data);
             return cb && cb("trigger notification not found: " + name);
         }
         //actions.log('trigger:routing-' + name + '=' + JSON.stringify(data));
         data.__notificationType = name;
         return EmailHandler[name](data, cb);
+    
+      /*  
     } catch (err) {
+        logger.error(name,data);
+        logger.error(err);
         LogSave("Notification triggering error", 'error', err);
         return cb && cb(err);
-    }
+    }*/
 }
 
 
