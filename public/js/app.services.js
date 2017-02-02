@@ -147,7 +147,7 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
                 "font-family": 'inherit',
                 "line-height": 'inherit',
                 "font-size": 'inherit',
-                display: 'inherit'
+                "display": 'initial'
             };
             var wrapper = $('<editable-text>').css(inheritCss);
             wrapper.append($.parseHTML(html));
