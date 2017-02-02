@@ -318,6 +318,8 @@ function _preCreateWallet(data, cb, next) {
     return next(data, cb);
 }
 
+
+
 function save(data, cb) {
     if (!_.includes(['diag', 'client', 'admin'], data.userType)) {
         return cb("invalid userType " + data.userType);
@@ -361,6 +363,20 @@ function save(data, cb) {
                         }, (_err, r) => handleNewAccount(_user, err, r));
                     })
 
+                }
+            case 'diag':
+                {
+                    Notif.trigger(NOTIFICATION.DIAG_DIAG_ACCOUNT_CREATED, {
+                        _user: _user
+                    }, (_err, r) => handleNewAccount(_user, err, r));
+
+                    everyAdmin((err, _admin) => {
+                        if (err) return cb && cb(err) || LogSave(JSON.stringify(err), 'error', err);
+                        Notif.trigger(NOTIFICATION.ADMIN_DIAG_ACCOUNT_CREATED, {
+                            _user: _user,
+                            _admin: _admin
+                        }, (_err, r) => handleNewAccount(_user, err, r));
+                    })
                 }
                 break;
         }

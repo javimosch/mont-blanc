@@ -7,7 +7,8 @@ var template = require('../utils/template');
 var sendEmail = require('../model/utils.mailing').sendEmail;
 var _utils = require('../model/utils');
 
-
+const MODULE = 'EMAIL';
+var logger = require('../model/logger')(MODULE);
 
 var moment = require('moment-timezone');
 
@@ -297,7 +298,8 @@ function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notif
             if (cb) cb(err, r);
         }, subject, type, to, NOTIFICATION[type],moreOptions);
     }else{
-        cb('Already sended');
+        logger.warn('Notification alredy sended',type);
+        cb && cb('Already sended');
     }
 }
 

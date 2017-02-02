@@ -64,7 +64,8 @@ exports.configure = function(app) {
             if (strIn(action,['get','getAll','getById','paginate','find'])) {
                 console.log(MODULE, ' to ', action);
             } else {
-                logger.info(MODULE, ' to ', action);
+                //logger.info(MODULE, ' to ', action);
+                console.log(MODULE, ' to ', action);
             }
             actions[action](data, actions.result(res), req, res);
         } else {
