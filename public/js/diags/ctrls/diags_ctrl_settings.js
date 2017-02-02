@@ -13,7 +13,7 @@
 
             db.localData().then(function(data) {
                 s.localData = data;
-                s.$emit('localData');
+                //s.$emit('localData');
             });
 
             function mergeStaticPrices() {
@@ -434,7 +434,7 @@
                         }
                     },
                 },
-                prepareScope: function() {
+                prepareScope: function(localData) {
                     if (!s.localData) return;
                     s.localData.settings = s.item;
                     Object.assign(this.scope, s.localData);
@@ -459,7 +459,7 @@
                     });
                 },
                 setDefaults: function() {
-                    this.prepareScope();
+                    this.prepareScope(s.localData);
                     this.scope.item.info.squareMeters = Object.keys(this.scope.squareMetersPrice)[0];
                     this.getClients().then(function(list) {
                         if (list.length > 0) {
@@ -474,9 +474,9 @@
                 }
             };
 
-            s.$on("localData", function() {
+            s.$watch("localData", function(val) {
                 r.dom(function() {
-                    s.pricetool.prepareScope();
+                    s.pricetool.prepareScope(val);
                 });
             });
 
