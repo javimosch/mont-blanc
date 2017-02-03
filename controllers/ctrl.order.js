@@ -151,7 +151,30 @@ function payUsingLW(data, callback) {
 
     if (!data.secret) return cb('secret field required');
     if (!data.p2pDiag) return cb('p2pDiag field required');
+    
+ 
     var decodedPayload = decodePayload(data.secret);
+    
+    
+    //263 master-wallet-for-payments (IMMOCAL, technical wallet)
+    if(!data.masterWallet){
+        return ctrl('Lemonway').getWalletDetails({
+            wallet:"IMMOCAL"
+        },function(err,res){
+            if(err) return cb(err);
+            if(res.WALLET){
+                data.masterWallet = res.WALLET.ID;
+                return payUsingLW(data,cb);
+            }else{
+                //If there is not an IMMOCAL wallet (rare), we pay with client wallet as normal.
+                data.masterWallet = decodedPayload.wallet;
+                return payUsingLW(data,cb);
+            }
+        })
+    }else{
+        decodedPayload.wallet = data.masterWallet; //we use this wallet for the client payment move.
+        data.p2pDiag.debitWallet = data.masterWallet; //we use this wallet for the diag p2p movement.
+    }
 
 
     getNextInvoiceNumber({
