@@ -2,7 +2,97 @@
 /*global $U*/
 var app = angular.module('app.login', []);
 
-app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, r) {
+app.service('LoginService', ['server', '$rootScope', function(db, r) {
+    var self = {};
+
+    const MSG_VALIDATE_EMAIL = 'Email est requis';
+    const MSG_VALIDATE_LOGIN = 'Login incorrect';
+    const MSG_ERROR_SERVER = "Erreur de serveur, contacter l&#39;assistance";
+    const MSG_PASSWORD_RESET_SUCCESS = 'Un nouveau mot de passe a été envoyé par e-mail';
+
+    self.login = function(email, password, rememberPass) {
+        rememberPass = (rememberPass == undefined) ? false : rememberPass;
+        r.sessionMetadata({
+            rememberPass: rememberPass
+        });
+        return $U.MyPromise(function(resolve, err, emit) {
+            db.ctrl('User', 'login', {
+                email: email,
+                password: password
+            }).then(function(res) {
+                if (res.ok && res.result != null) {
+                    r.session(res.result);
+                    resolve();
+                }
+                else {
+                    emit('validate', MSG_VALIDATE_LOGIN)
+                }
+            }).error((res) => {
+                err(MSG_ERROR_SERVER);
+            });
+        });
+    };
+    self.resetPassword = function(email) {
+        return $U.MyPromise(function(resolve, err, emit) {
+            if (!email) {
+                return emit('validate', MSG_VALIDATE_EMAIL);
+            }
+            db.ctrl('User', 'passwordReset', {
+                email: email
+            }).then((res) => {
+                if (res.ok) {
+                    resolve(MSG_PASSWORD_RESET_SUCCESS);
+                }
+                else {
+                    emit('validate', MSG_ERROR_SERVER);
+                }
+            }).error((res) => {
+                err(MSG_ERROR_SERVER);
+            });
+        });
+    };
+    self.isLogged = function() {
+        return r.logged();
+    };
+    self.updateSession = function() {
+        return $U.MyPromise(function(resolve, err, emit) {
+            if (!r.session()._id) {
+                return emit('session-lost');
+            }
+            db.ctrl('User', 'get', {
+                _id: r.session()._id
+            }).then(res => {
+                if (res.ok && res.result) {
+                    r.session(res.result);
+                    resolve();
+                }
+                else {
+                    return emit('session-lost');
+                }
+            }).error((res) => {
+                err(MSG_ERROR_SERVER);
+            });
+        });
+    };
+
+    function autoFillLoginFields() {
+        var session = r.session();
+        if (session.email) {
+            r._login.email = session.email;
+        }
+        if (session.password && r.sessionMetadata().rememberPass) {
+            r._login.password = session.password;
+        }
+        if (r.sessionMetadata().rememberPass) {
+            r._login.rememberPass = true;
+        }
+    }
+    autoFillLoginFields();
+    if (r.isDevEnv()) r._LoginService = self;
+    return self;
+}]);
+
+app.controller('adminLogin', ['server', '$scope', '$rootScope', 'LoginService', function(db, s, r, LoginService) {
     //console.info('app.admin.login:adminLogin');
     r.__hideNavMenu = true;
     r.navShow = true;
@@ -14,129 +104,106 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', function(db, s, 
 
 
     s.login = function() {
-        var session = r.session();
-        if (session.email && session.expire < new Date().getTime()) {
-            //creae session new ?
-        }
-
-        db.ctrl('User', 'login', r._login).then(function(res) {
-            if (res.ok && res.result != null) {
-                r.session(res.result);
-                //                console.log('adminLogin: server says user is logged', res.data);
-                r.route('dashboard');
-            }
-            else {
-                s.loginFailedTimes++;
-                r.warningMessage('Incorrect login');
-            }
-            //            console.log(res.data);
-        }).error(function(res) {
-            s.sendingRequest = false;
-            r.errorMessage('Server down, try later.');
+        LoginService.login(r._login.email, r._login.password, r._login.rememberPass).then(() => {
+            r.route('dashboard');
+        }).on('validate', msg => {
+            r.warningMessage(msg);
+        }).error(msg => {
+            r.errorMessage(msg);
         });
-
     };
 
-    s.resetPassword = () => {
-        if (!r._login.email) {
-            return r.warningMessage("Email required");
-        }
-        db.ctrl('User', 'passwordReset', {
-            email: r._login.email
-        }).then((res) => {
-            if (res.ok) {
-                r.message('Un nouveau mot de passe a été envoyé par e-mail', 'info', undefined, undefined, {
-                    duration: 10000
-                })
-                s.loginFailedTimes = 0;
-                r.dom();
-            }
+    s.resetPassword = function() {
+        LoginService.resetPassword(r._login.email).then((msg) => {
+            r.infoMessage(msg, 10000);
+        }).on('validate', msg => {
+            r.warningMessage(msg);
+        }).error(msg => {
+            r.errorMessage(msg);
         });
+    };
+
+
+    function loginFieldsWereFillWithQueryStringParameters() {
+        var params = {
+            email: $U.getParameterByName('email'),
+            password: ($U.getParameterByName('k')) ? window.atob($U.getParameterByName('k')) : ''
+        };
+        if (params.email) r._login.email = params.email;
+        if (params.password) r._login.password = params.password;
+        if (params.email && params.password) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    if (loginFieldsWereFillWithQueryStringParameters()) {
+        return s.login();
     }
 
 
-    //fill _login with query string parameters
-    var params = {
-        email: $U.getParameterByName('email'),
-        password: ($U.getParameterByName('k')) ? window.atob($U.getParameterByName('k')) : ''
-    };
-    if (params.email) r._login.email = params.email;
-    if (params.password) r._login.password = params.password;
-    if (params.email && params.password) {
-        console.log('adminLogin: lets try to sign-in from queryparameters');
-        s.login();
-    }
-
-
-
-
-    if (r.logged()) {
-        db.ctrl('User', 'get', {
-            _id: r.session()._id
-        }).then((err, data) => {
-            if (!err && data.ok && data.result) {
-                r.session(data.result);
-            }
-        })
-        r.route('dashboard');
+    if (LoginService.isLogged()) {
+        LoginService.updateSession().then(() => {
+            r.route('dashboard');
+        }).on('validate', msg => {
+            r.warningMessage(msg);
+        }).error(msg => {
+            r.errorMessage(msg);
+        }).on('session-lost', () => {
+            s.show = true;
+        });
     }
     else {
         s.show = true;
     }
-
-
 }]);
 
 
 
 
-app.controller('adminLoginExternal', ['server', '$scope', '$rootScope', function(db, s, r) {
-    s.login = function() {
-        var session = r.session();
-        if (session.email && session.expire < new Date().getTime()) {
-            //creae session new ?
-        }
-        db.ctrl('User', 'login', r._login).then(function(res) {
-            if (res.ok && res.result != null) {
-                r.session(res.result);
-                s.redirect();
-            }
-            else {
-                r.warningMessage('Login incorrect');
-            }
-        }).error(function(res) {
-            s.sendingRequest = false;
-            r.errorMessage('Server down, try later.');
-        });
+app.controller('adminLoginExternal', ['server', '$scope', '$rootScope', 'LoginService', function(db, s, r, LoginService) {
 
+    s.login = function() {
+        LoginService.login(r._login.email, r._login.password, r._login.rememberPass).then(() => {
+            s.redirect();
+        }).on('validate', msg => {
+            r.warningMessage(msg);
+        }).error(msg => {
+            r.errorMessage(msg);
+        });
     };
-    s.redirect = () => {
+
+    s.resetPassword = function() {
+        LoginService.resetPassword(r._login.email).then((msg) => {
+            r.infoMessage(msg, 10000);
+        }).on('validate', msg => {
+            r.warningMessage(msg);
+        }).error(msg => {
+            r.errorMessage(msg);
+        });
+    };
+
+
+    s.redirect = function() {
         var path = 'admin#/login?email=' + r._login.email + '&k=' + window.btoa(r._login.password || 'dummy');
         r.routeRelative(path);
     };
-    s.resetPassword = () => {
-        if (!r._login.email) {
-            return r.warningMessage("Email est requis");
-        }
-        db.ctrl('User', 'passwordReset', {
-            email: r._login.email
-        }).then((res) => {
-            if (res.ok) {
-                r.message('Un nouveau mot de passe a été envoyé par e-mail', 'info', undefined, undefined, {
-                    duration: 10000
-                })
-                r.dom();
-            }
+
+
+    if (LoginService.isLogged()) {
+        LoginService.updateSession().then(() => {
+            s.redirect();
+        }).on('validate', msg => {
+            r.warningMessage(msg);
+        }).error(msg => {
+            r.errorMessage(msg);
+        }).on('session-lost', () => {
+            s.show = true;
         });
     }
-
-    s.userType = s.userType || 'client';
-    r.dom(function() {
-        if (r.logged() && r.session().userType == s.userType) {
-            r._login.email = r.session().email;
-            r._login.password = r.session().password;
-            s.redirect();
-        }
-    },500);
-    $U.expose('s',s);
+    else {
+        s.show = true;
+    }
 }]);

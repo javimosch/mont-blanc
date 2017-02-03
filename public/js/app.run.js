@@ -28,8 +28,10 @@ app.config(['$httpProvider', function($httpProvider) {
 }]);
 
 app.run(['$rootScope', '$uibModalStack', '$log', setupUibModal]);
+
 function setupUibModal($rootScope, $uibModalStack, $log) {
     $rootScope.$on('routeChangeStart', handleLocationChange)
+
     function handleLocationChange() {
         $log.log('modal dismiss all');
         $uibModalStack.dismissAll();
@@ -221,7 +223,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     r.momentFormat = (d, f) => (moment(d).format(f));
     r.momentTime = (d) => moment(d).format('HH[h]mm');
     r.momentFrenchDateTime = (d) => moment(d).format('DD/MM/YYYY [à] HH[h]mm');
-    r.momentDateTime = (d) => r.momentFrenchDateTime(d);// moment(d).format('DD-MM-YY HH[h]mm');
+    r.momentDateTime = (d) => r.momentFrenchDateTime(d); // moment(d).format('DD-MM-YY HH[h]mm');
     r.momentDateTimeWords = (d) => moment(d).format('[Le] dddd DD MMMM YY [à] HH[h]mm');
     r.momentDateTimeWords2 = (d) => moment(d).format('dddd DD MMMM YY [à] HH[h]mm');
 
@@ -257,6 +259,25 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
             r._session = {};
         }
         return r._session;
+    };
+    r.sessionMetadata = function(data, reset) {
+        var id = r.config.APP_NAME + '_' + window.location.hostname + env.STORE_SESSION_PREFIX + "_METADATA";
+        reset = (reset != undefined) ? reset : false;
+        if (data) {
+            if (reset) {
+                $U.store.set(id, data);
+                return data;
+            }
+            else {
+                var combinedData = $U.store.get(id) || {};
+                Object.assign(combinedData, data);
+                $U.store.set(id, combinedData);
+                return combinedData;
+            }
+        }
+        else {
+            return $U.store.get(id) || {};
+        }
     };
     r.logged = function() {
         var ss = r.session();
