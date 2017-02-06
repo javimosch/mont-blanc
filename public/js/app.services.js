@@ -749,7 +749,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', f
                     var d = stack.promises.shift();
                     ctrl(d.arg1, d.arg2, d.arg3).then(function(res) {
                         stack.flag = false;
-                        console.log('stackCtrlPromise-watcher-resolve ' + id + '. left:' + stack.promises.length);
+//                        console.log('stackCtrlPromise-watcher-resolve ' + id + '. left:' + stack.promises.length);
                         $U.emit(id + '-stack-pop');
                     });
                 }
