@@ -33,7 +33,7 @@
                 <!--
                 <select ng-disabled="true" ng-model="response.cardTypeString" ng-options="type for type in ['Visa', 'MasterCard']"></select>
                 -->
-                <input class="diags-input" ng-required="true" name="cardNumber" placeholder="Numéro" type="text" ng-model="response.cardNumber" cc-number cc-type="response.cardTypeString">
+                <input class="diags-input btn-stack" ng-required="true" name="cardNumber" placeholder="Numéro" type="text" ng-model="response.cardNumber" cc-number cc-type="response.cardTypeString">
                 <p class="payment-form__error-text" 
                 ng-show="response.cardTypeString!='' && paymentForm.cardNumber.$error.ccNumberType">{{response.cardTypeString}} non valide.</p>
 
@@ -49,7 +49,7 @@
                 <label class="unselectable">Code de vérification à 3 chiffres</label>
             </div>
             <div class="row margin-top-quarter">
-                <input class="diags-input" cc-cvc placeholder="Card Code (Ex: 003)" type="text" ng-model='response.cardCode' ng-required="true">
+                <input class="diags-input btn-stack" cc-cvc placeholder="Card Code (Ex: 003)" type="text" ng-model='response.cardCode' ng-required="true">
             </div>
             <div class="row margin-top-half">
                 <p class="unselectable payment-form__amount-label">Total</p>

@@ -198,6 +198,12 @@ html {
     line-height: 45px;
 }
 
+
+.btn-stack{
+    width:100%;
+    max-width: none!important;
+}
+
 .diags-navbar-2 .navbar-nav>li>a.diag-button {
     line-height: 37px;
     height: 37px;
