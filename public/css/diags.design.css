@@ -1267,6 +1267,7 @@ table.dg-dates tr.selected {
 
 .questions td label {
     width: 30%;
+    vertical-align: top;
 }
 
 .questions td input {

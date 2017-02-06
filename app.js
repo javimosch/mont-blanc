@@ -59,7 +59,7 @@ app.get('/prod', function(req, res) {
 	res.sendFile(path.join(__dirname + '/' + 'booking-min' + '.html'));
 });
 
-app.get('/admin/prod', function(req, res) {
+app.get('/admin-prod', function(req, res) {
 	res.sendFile(path.join(__dirname + '/' + 'admin-min' + '.html'));
 });
 
