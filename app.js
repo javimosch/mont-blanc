@@ -55,6 +55,10 @@ app.get('/', function(req, res) {
 	res.sendFile(path.join(__dirname + '/' + n + '.html'));
 });
 
+app.get('/prod', function(req, res) {
+	res.sendFile(path.join(__dirname + '/' + 'booking-min' + '.html'));
+});
+
 app.get('/admin', function(req, res) {
 	var n = (PROD ? 'admin-min' : 'admin');
 	res.sendFile(path.join(__dirname + '/' + n + '.html'));

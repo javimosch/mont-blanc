@@ -10,6 +10,7 @@ var concat = require('./gulp-concat');
 var strip = require('./gulp-strip-comments');
 var babel = require('gulp-babel');
 var path = require('path');
+var sourcemaps = require('gulp-sourcemaps');
 //const traceur = require('gulp-traceur');
 //var iife = require("gulp-iife");
 //var plumber = require('gulp-plumber');
@@ -46,12 +47,14 @@ var path = require('path');
                 src: tags,
                 ignoreFiles: ['vendor', 'http']
             }))
+            .pipe(sourcemaps.init())
             .pipe(babel({
                 presets: ['es2015']
             }))
             .pipe(uglify({mangle:false})) //output: { beautify: true }
            .pipe(strip())
             .pipe(minify({ ext: '.js' }))
+            .pipe(sourcemaps.write())
             .pipe(gulp.dest(outPath || 'dist'));
         console.log('scripts-bundler ',htmlPath,JSON.stringify(opt));
     }

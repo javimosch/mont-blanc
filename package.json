@@ -14,9 +14,9 @@
     "build": "node ./tools/node_bundle.js",
     "heroku": "npm run build && npm run start",
     "preview": "git push heroku preview:master",
-    "remote_logs":"./tools/scripts/ssh_logs.sh",
-    "remote_deploy_tag":"./tools/scripts/ssh_deploy_tag.sh",
-    "remote_deploy_master":"./tools/scripts/ssh_deploy_master.sh"
+    "remote_logs": "./tools/scripts/ssh_logs.sh",
+    "remote_deploy_tag": "./tools/scripts/ssh_deploy_tag.sh",
+    "remote_deploy_master": "./tools/scripts/ssh_deploy_master.sh"
   },
   "license": "ISC",
   "engines": {
@@ -87,5 +87,7 @@
     "watch": "^0.17.1",
     "xunit-file": "0.0.9"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "gulp-sourcemaps": "^2.4.1"
+  }
 }
