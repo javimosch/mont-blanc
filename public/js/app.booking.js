@@ -1729,13 +1729,14 @@ app.controller('ctrl.booking', ['server',
 
         s.testPayForm = () => {
             db.ctrl('Order', 'get', {
-                status: 'ordered',
+                //status: 'ordered',
                 __populate: {
                     _client: '_id email clientType address discount companyName siret wallet',
                     _diag: '_id email clientType address firstName lastName commission siret wallet'
                 }
             }).then(function(res) {
                 s._order = res.result;
+                s._order.status = 'created';
                 s.payNOW();
             });
         }

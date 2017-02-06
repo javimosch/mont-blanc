@@ -1,4 +1,4 @@
-<form name="paymentForm">
+<form name="paymentForm" novalidate>
     <div class="modal-header" style="padding:5px!important;">
         <h3 class="modal-title payment-form__title">Payer la commande</h3>
     </div>
@@ -76,7 +76,7 @@
             <div class="row  margin-bottom-one">
                 <div class="padding-none col-xs-12 col-sm-12 margin-top-half">
                     <button 
-                    ng-disabled="paymentForm.$invalid || !response.cardType || isProcessing()"
+                    ng-disabled="!isFormValid() || isProcessing()"
                     class="center-block btn diags-btn bg-azure-radiance" type="button" ng-click="yes()">Payer</button>
                 </div>
                 <div class="padding-none  col-xs-12 col-sm-12 margin-top-half">

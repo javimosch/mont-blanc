@@ -27,6 +27,14 @@
                         this.response.cardDate = zeroFill(parseInt(this.data.cardDateMonth), 2).toString() + '/' + this.data.cardDateYear;
                     },
                     isProcessing: () => isProcessing,
+                    isFormValid: function() {
+                        var modalScope = this;
+                        if (modalScope.response.cardType == undefined) return false;
+                        if (modalScope.response.cardNumber == undefined) return false;
+                        if (modalScope.response.cardDate == undefined) return false;
+                        if (modalScope.response.cardCode == undefined) return false;
+                        return true;
+                    },
                     onCardTypeChange: function() {
                         var modalScope = this;
                         $timeout(function() {
@@ -57,7 +65,7 @@
         var self = {
             isProcessing: () => isProcessing,
             pay: function(order) {
-                return MyPromise(function(resolve, err, emit) {
+                return $U.MyPromise(function(resolve, err, emit) {
 
                     if (!order) return emit('validate', 'order required');
 
@@ -84,7 +92,7 @@
                                 var year = split[1];
                                 if (year.length <= 2) {
                                     var yearPart = moment().format('YYYY').substring(0, 2);
-                                    formResponse.cardDate = split[0]+'/'+yearPart+year;
+                                    formResponse.cardDate = split[0] + '/' + yearPart + year;
                                 }
                                 return formResponse;
                             }
@@ -95,7 +103,7 @@
 
                         formResponse = fixCardDateYear(formResponse);
 
-                        
+
 
                         var payload = {
                             wallet: order._client.wallet,
@@ -110,7 +118,7 @@
                         };
                         payload = {
                             orderId: order._id,
-                            secret: btoa(JSON.stringify(payload)) + btoa('secret'),
+                            secret: window.btoa(JSON.stringify(payload)) + window.btoa('secret'),
                             p2pDiag: {
                                 debitWallet: order._client.wallet,
                                 creditWallet: order._diag.wallet,
