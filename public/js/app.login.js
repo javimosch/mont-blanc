@@ -103,13 +103,24 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', 'LoginService', 
     });
 
 
-    s.login = function() {
+    s.login = function(silent) {
+        silent = silent !== undefined ? silent : false;
         LoginService.login(r._login.email, r._login.password, r._login.rememberPass).then(() => {
             r.route('dashboard');
         }).on('validate', msg => {
-            r.warningMessage(msg);
+            if (!silent) {
+                r.warningMessage(msg);
+            }
+            else {
+                s.show = true;
+            }
         }).error(msg => {
-            r.errorMessage(msg);
+            if (!silent) {
+                r.errorMessage(msg);
+            }
+            else {
+                s.show = true;
+            }
         });
     };
 
@@ -140,7 +151,7 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', 'LoginService', 
     }
 
     if (loginFieldsWereFillWithQueryStringParameters()) {
-        return s.login();
+        return s.login(true);
     }
 
 
@@ -148,9 +159,11 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', 'LoginService', 
         LoginService.updateSession().then(() => {
             r.route('dashboard');
         }).on('validate', msg => {
-            r.warningMessage(msg);
+            //r.warningMessage(msg);
+            s.show = true;
         }).error(msg => {
-            r.errorMessage(msg);
+            //r.errorMessage(msg);
+            s.show = true;
         }).on('session-lost', () => {
             s.show = true;
         });
@@ -196,9 +209,11 @@ app.controller('adminLoginExternal', ['server', '$scope', '$rootScope', 'LoginSe
         LoginService.updateSession().then(() => {
             s.redirect();
         }).on('validate', msg => {
-            r.warningMessage(msg);
+            //r.warningMessage(msg);
+            s.show = true;
         }).error(msg => {
-            r.errorMessage(msg);
+            //r.errorMessage(msg);
+            s.show = true;
         }).on('session-lost', () => {
             s.show = true;
         });
