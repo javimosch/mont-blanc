@@ -1388,6 +1388,7 @@ label.minimal {
 
 .diags-form .diags-input.half {
     width: 140px;
+    min-width: 140px;
 }
 
 .diags-form .label,
