@@ -106,7 +106,8 @@
                                         }
                                         
                                         orderPrice.set({
-                                            diagIsAutoentrepreneur: d.result.isAutoentrepreneur||false
+                                            diagIsAutoentrepreneur: d.result.isAutoentrepreneur||false,
+                                            date:date
                                         });
                                         r.price = orderPrice.getPriceTTC();
                                         
