@@ -9,21 +9,31 @@
             </div>
             <div class="row margin-top-quarter">
                 <div class="padding-none col-xs-12 col-sm-4" >
+                    <!--
                     <label class="sm-float-left">
                         <input ng-change="onCardTypeChange()" type="checkbox" check-box-group check-box-model='response.cardType' ng-model="response.cardType" class="check mark-white" name="type" value="0" />
                         <span class="sky-blue"></span>
                     </label>
                     <span class="padding-left-halve sm-float-left padding-top-01em">CB</span>
+                    -->
+                    <pretty-radio color="blue" value="'0'" ng-change="onCardTypeChange()" ng-model="response.cardType" label="'CB'"></pretty-radio>
+                    
                 </div>
                 <div class="padding-none col-xs-12 col-sm-4">
+                    <!--
                     <label class="sm-float-left">
                         <input ng-change="onCardTypeChange()" type="checkbox" check-box-group check-box-model='response.cardType' ng-model="response.cardType" class="check mark-white" name="type" value="1" /><span class="sky-blue"></span></label>
                     <span class="padding-left-halve sm-float-left padding-top-01em">VISA</span>
+                    -->
+                    <pretty-radio color="blue" value="'1'" ng-change="onCardTypeChange()" ng-model="response.cardType" label="'VISA'"></pretty-radio>
                 </div>
                 <div class="padding-none col-xs-12 col-sm-4">
+                    <!--
                     <label class="sm-float-left">
                         <input ng-change="onCardTypeChange()" type="checkbox" check-box-group check-box-model='response.cardType' ng-model="response.cardType" class="check mark-white" name="type" value="2" /><span class="sky-blue"></span></label>
                     <span class="padding-left-halve sm-float-left padding-top-01em">MasterCard</span>
+                    -->
+                     <pretty-radio color="blue" value="'2'" ng-change="onCardTypeChange()" ng-model="response.cardType" label="'MasterCard'"></pretty-radio>
                 </div>
             </div>
             <div class="row margin-top-half">
