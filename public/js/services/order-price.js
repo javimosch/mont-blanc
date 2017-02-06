@@ -208,7 +208,7 @@
                     return 0;
                 }
                 //return (this.getPriceHT() * (settings.diagCommissionRate || 1) / 100).toFixed(2)
-                return this.getPriceTTC() - this.getPriceRevenueTTC();
+                return (this.getPriceTTC() - this.getPriceRevenueTTC()).toFixed(2);
             },
             getPriceRevenueHT: function() {
                 //Diagnostical revenue
