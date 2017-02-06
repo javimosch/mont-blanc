@@ -59,7 +59,15 @@
                             }).then(_resolve);
                         }
                         else {
-                            db.getAvailableRanges(order, _settings).then(_resolve);
+                            //db.getAvailableRanges(order, _settings).then(_resolve);
+                            
+                             orderRdv.getAll({
+                                date: date,
+                                time: time,
+                                diagId: _settings.diagId,
+                                fixedSlots:true
+                            }).then(_resolve);
+                            
                         }
 
 
