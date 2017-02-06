@@ -402,11 +402,18 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     };
 
 
-    r.hasMouse = false;
+    r.hasMouse = true;
+    
+    if(window.screen.width < 1200){
+        r.hasMouse = false;
+    }
+    
+    /*
     $hasMouse((v) => {
         r.hasMouse = v;
         r.dom();
     });
+    */
 
 
 }]);
