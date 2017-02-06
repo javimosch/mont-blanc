@@ -1,11 +1,10 @@
-
-
 /**/
-div [bind-html-compile],p [bind-html-compile],span [bind-html-compile]{
+
+div [bind-html-compile],
+p [bind-html-compile],
+span [bind-html-compile] {
     display: none;
 }
-
-
 
 .cssfx {}
 
@@ -1162,8 +1161,8 @@ h2.diags.black>div {
     border-radius: 5px;
 }
 
-.diags-date-day-item:hover{
-    background-color:white;
+.diags-date-day-item:hover {
+    background-color: white;
 }
 
 .diags-date-day-item.selected {
@@ -1277,7 +1276,7 @@ table.dg-dates tr.selected {
 .diags-input,
 .pika-wrapper.diags,
 .pika-single.diags .pika-select {
-    width: 286px;
+    max-width: 286px;
     height: 48px;
     background-color: #EDF5F9;
     box-shadow: none;
@@ -1288,6 +1287,14 @@ table.dg-dates tr.selected {
     font-size: 14px;
     padding: 0px 20px;
     border-radius: 5px;
+}
+
+@media screen and (min-width: 480px) {
+    .diags-input,
+    .pika-wrapper.diags,
+    .pika-single.diags .pika-select {
+        min-width: 286px;
+    }
 }
 
 .order-pdf-label {
