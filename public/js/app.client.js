@@ -146,7 +146,8 @@
 
                 function update(cb) {
                     dbPaginate.ctrl({
-                        userType: 'client'
+                        userType: 'client',
+                        __sort: "-createdAt"
                     }, s.model).then((res) => {
                         if (cb) {
                             cb(res.result);
@@ -200,6 +201,11 @@
                     }, {
                         label: "Siret",
                         name: "siret"
+                    },
+                    {
+                        label: "Created At",
+                        name: "createdAt",
+                        format: (v, item) => r.momentDateTime(v)
                     }],
                     items: []
                 };
