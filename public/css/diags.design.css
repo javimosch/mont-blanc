@@ -81,6 +81,7 @@ body {
 
 body,
 html {
+    -webkit-text-size-adjust: none;
     height: 100%;
 }
 
