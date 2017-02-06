@@ -83,18 +83,25 @@
 
 
                                 setOrderDetails(date);
-                                r.price = orderPrice.getPriceTTC();
+                                
 
 
                                 //
                                 db.ctrl('User', 'get', {
-                                    _id: r._diag
+                                    _id: r._diag,
+                                    __select:"firstName lastName diagPriority isAutoentrepreneur"
                                 }).then(d => {
                                     if (d.ok && d.result) {
                                         r.name = d.result.firstName + ', ' + d.result.lastName.substring(0, 1);
                                         if (d.result.diagPriority) {
                                             r.name += ' (' + d.result.diagPriority + ')';
                                         }
+                                        
+                                        orderPrice.set({
+                                            diagIsAutoentrepreneur: d.result.isAutoentrepreneur||false
+                                        });
+                                        r.price = orderPrice.getPriceTTC();
+                                        
                                         cbHell.next();
                                     }
                                 });
@@ -165,6 +172,8 @@
                     var _nextTimes = 0;
                     var cursor = moment();
                     var o = {};
+                    window._rdvService = o;
+                    o.settings=()=>_settings;
                     o.setDiag = function(_diag) {
                         if (_diag && _diag._id && _diag._id != _settings._diag) {
                             _settings.diagId = _diag && _diag._id || _diag || undefined;
