@@ -402,6 +402,7 @@ app.controller('ctrl-diag-edit', [
             paymentApi.registerUserWallet(s.item).then(function() {
                 r.dom();
                 r.infoMessage('Linked to ' + s.item.wallet + '.');
+                s.save(true);
             }).error(function(res) {
                 r.errorMessage();
             }).on('validate', function(msg) {
@@ -913,7 +914,8 @@ app.controller('ctrl-diag-edit', [
 
 
 
-        s.save = function() {
+        s.save = function(silent) {
+            silent = silent || false;
 
             var payload = {
                 email: s.item.email,
@@ -927,7 +929,9 @@ app.controller('ctrl-diag-edit', [
                         _save(); //same diag
                     }
                     else {
-                        s.warningMessage('Email address in use.');
+                        if (!silent) {
+                            s.warningMessage('Email address in use.');
+                        }
                     }
                 }
                 else {
@@ -949,6 +953,10 @@ app.controller('ctrl-diag-edit', [
                             s.sendAccountCreatedNotificationToDiag(s.item);
                         }*/
 
+                        if (silent) {
+                            return;
+                        }
+
                         if (!logged) {
                             if (s.item && s.item.diplomes && s.item.diplomes.length > 0) {
                                 r.route('login');
@@ -962,15 +970,14 @@ app.controller('ctrl-diag-edit', [
                             }
                         }
                         else {
-
-
-
                             r.route('diags', 0);
                         }
 
                     }
                     else {
-                        r.warningMessage('Error, try later', 'warning');
+                        if (!silent) {
+                            r.warningMessage('Error, try later', 'warning');
+                        }
                     }
                 }).error(handleErrors);
 
@@ -1010,7 +1017,7 @@ app.controller('ctrl-diag-edit', [
             }).then(function(res) {
                 s.original = _.clone(res.result);
                 s.item = res.result;
-                s.$emit('item.read',s.item);
+                s.$emit('item.read', s.item);
                 s.diplomesUpdate();
                 if (!res.ok) {
                     r.infoMessage('Registry not found, maybe it was deleted.', 'warning', 5000);

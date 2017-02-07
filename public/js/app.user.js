@@ -216,7 +216,9 @@ app.controller('adminUsersEdit', [
                         _save(); //same user
                     }
                     else {
-                        s.message('Email address in use.');
+                        if (!silent) {
+                            s.message('Email address in use.');
+                        }
                     }
                 }
                 else {
