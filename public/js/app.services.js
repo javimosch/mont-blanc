@@ -151,7 +151,7 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
             };
             var wrapper = $('<editable-text>').css(inheritCss);
             wrapper.append($.parseHTML(html));
-            wrapper.find('*').css(inheritCss);
+            //wrapper.find('*').css(inheritCss);
 
 
             if (r.userIs('admin')) {
