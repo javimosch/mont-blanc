@@ -592,6 +592,13 @@
  }
 
  function LogSaveLemonway(methodName, level, payload, error) {
+  
+  if(payload.wlLogin) delete payload.wlLogin;
+  if(payload.wlPass) delete payload.wlPass;
+  if(payload.language) delete payload.language;
+  if(payload.walletIp) delete payload.walletIp;
+  if(payload.walletUa) delete payload.walletUa;
+  
   LogSave('Lemonway ' + methodName + '', level, {
    methodName: methodName,
    payload: payload,

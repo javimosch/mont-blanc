@@ -752,6 +752,7 @@ function htmlOrderSelectedDiagsList(_order) {
 
 function LogSave(msg, type, data) {
     Log.save({
+        category:'mailing',
         message: msg,
         type: type,
         data: data
