@@ -423,7 +423,8 @@
                             termites: false,
                             gaz: false,
                             electricity: false,
-                            parasitaire: false
+                            parasitaire: false,
+                            dta:false
                         },
                         _client: {
                             email: '',
