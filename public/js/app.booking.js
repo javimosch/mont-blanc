@@ -109,8 +109,8 @@ app.config(['$routeProvider',
 
 
 app.controller('ctrl.booking', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion',
-    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion) {
+    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText',
+    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion, appText) {
 
         $timeout(function() {
             r.openModal = s.openModal;
@@ -133,7 +133,7 @@ app.controller('ctrl.booking', ['server',
 
         var MESSAGES = {
             ANSWER_SELL_OR_RENT: 'Répondre Vendez / Louer',
-            ANSWER_APPARTAMENT_OR_MAISON: 'Répondre Appartament / Maison',
+            ANSWER_APPARTAMENT_OR_MAISON: appText.VALIDATE_BUILDING_TYPE,
             FRENCH_ADDRESS_REQUIRED: 'Adresse besoin d&#39;appartenir à France',
         };
 
@@ -341,7 +341,7 @@ app.controller('ctrl.booking', ['server',
                     return r.route('rendez-vous');
                 }
                 else {
-                    return r.warningMessage('Sélectionnez au moins un choix');
+                    return r.warningMessage(appText.BOOKING_PROCEED_TO_DATE_SELECTION_FLASH_MESSAGE);
                 }
             }, () => {
                 r.route('home');
@@ -498,10 +498,10 @@ app.controller('ctrl.booking', ['server',
                 [s.item.info.buildingState, '==', undefined, MESSAGES.ANSWER_SELL_OR_RENT],
                 [s.item.info.buildingType, '==', undefined, MESSAGES.ANSWER_APPARTAMENT_OR_MAISON],
                 [s.item.info.squareMeters, '==', undefined, "Répondre Superficie"],
-                [s.item.info.constructionPermissionDate, '==', undefined, "Répondre Permis de construire"],
+                [s.item.info.constructionPermissionDate, '==', undefined, appText.VALIDATE_CONSTRUCTION_DATE],
                 [s.item.info.gasInstallation, '==', undefined, "Répondre Gaz"],
                 [s.item.info.electricityInstallation, '==', undefined, "Répondre Electricité"],
-                [s.item.address, '==', undefined, "Répondre Address"],
+                [s.item.address, '==', undefined, appText.VALIDATE_ADDRESS],
 
                 /*
                 removed: autocomplete is now limited to france
@@ -511,7 +511,7 @@ app.controller('ctrl.booking', ['server',
                 */
 
             ], (m) => {
-                s.warningMsg(m[0]);
+                s.warningMsg(m[0],6000);
                 if (err) err();
             }, () => {
                 s.validateAddressDepartment(cb, err);
@@ -1219,8 +1219,8 @@ app.controller('ctrl.booking', ['server',
                     squareMeters: param('squareMeters', s.squareMeters) || '90 - 110m²', // '- de 20m²',
                     // apartamentType: param('apartamentType', s.apartamentType) || undefined,
                     constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined, // 'Entre 1949 et le 01/07/1997',
-                    gasInstallation: param('gasInstallation', s.gasInstallation) || undefined, // 'Oui, Moins de 15 ans',
-                    electricityInstallation: param('electricityInstallation', s.electricityInstallation) || s.item.info.electricityInstallation || undefined // 'Plus de 15 ans',
+                    gasInstallation: param('gasInstallation', s.gasInstallation) || 'Oui, Plus de 15 ans', // 'Oui, Moins de 15 ans',
+                    electricityInstallation: param('electricityInstallation', s.electricityInstallation) || s.item.info.electricityInstallation || 'Plus de 15 ans' // 'Plus de 15 ans',
                 },
                 address: param('address') || undefined, // "15 rue L'Hopital Sain Louis",
                 date: paramDate('date'),
