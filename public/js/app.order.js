@@ -87,9 +87,10 @@
                 if (s.pdf[code].type !== 'application/pdf') {
                     return r.warningMessage("Format pdf nécessaire", 5000);
                 }
-                if (s.pdf[code].size / 1000 > 1624) {
-                    return r.warningMessage("Limite 1.5mb pour le fichier pdf", 5000);
+                if (s.pdf[code].size / 1024 > 10240) {
+                    return r.warningMessage("Limite 10mb pour le fichier pdf", 5000);
                 }
+
 
                 s.item.files = s.item.files || {};
 
