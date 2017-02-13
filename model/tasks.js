@@ -1,8 +1,9 @@
-var req         = (n) => require(process.cwd()+'/model/tasks/'+n);
+var req = (n) => require(process.cwd() + '/model/tasks/' + n);
 var tasks = [
     req('task.diplomeExpiration'),
     req('task.deleteTemporalFiles'),
-    req('task.diags-remove-unpaid-orders')
+    req('task.diags-remove-unpaid-orders'),
+    req('task-remove-expired-work-execeptions')
 ];
 exports.configure = (app) => {
     tasks.forEach((t) => {
