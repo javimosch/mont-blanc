@@ -1,7 +1,7 @@
 /*global angular*/
 var srv = angular.module('app.routes', []);
-srv.config(['$routeProvider',
-    function($routeProvider, $rootScope) {
+srv.config(['$routeProvider', '$locationProvider',
+    function($routeProvider, $locationProvider) {
 
 
         $routeProvider.
@@ -49,15 +49,20 @@ srv.config(['$routeProvider',
         when('/settings-invoice', {
             templateUrl: 'views/diags/backoffice/settings/diags-settings-invoice.html'
         }).
-        
+
         when('/settings-password-reset', {
             templateUrl: 'views/settings-password-reset.html'
         }).
 
+        when('/settings-htmls/:id', {
+            templateUrl: 'views/settings-htmls.html'
+        }).
+
+
         when('/settings-database', {
             templateUrl: 'views/diags/backoffice/settings/diags-settings-database.html'
         }).
-        
+
         when('/settings-database-text', {
             templateUrl: 'views/diags/backoffice/settings/diags-settings-database-text.html'
         }).
@@ -74,8 +79,8 @@ srv.config(['$routeProvider',
             templateUrl: 'views/diags/backoffice/settings/diags-settings-exportation-texts.html'
         }).
 
-       
-      
+
+
 
         when('/notifications', {
             templateUrl: 'views/diags/backoffice/notification/notification-list.html'
@@ -118,13 +123,13 @@ srv.config(['$routeProvider',
         when('/clients/edit/:id', {
             templateUrl: 'views/diags/backoffice/client/client.edit.html'
         }).
-        
-        
+
+
 
         when('/price-modifiers', {
             templateUrl: 'views/diags/backoffice/price-modifiers.html'
         }).
-        
+
         when('/prices', {
             templateUrl: 'views/diags/backoffice/prices.html'
         }).
@@ -168,5 +173,8 @@ srv.config(['$routeProvider',
             redirectTo: '/'
         });
         //console.info('app.admin.routes:config');
+
+        // use the HTML5 History API
+        $locationProvider.html5Mode(true);
     }
 ]);

@@ -22,7 +22,8 @@ var app = angular.module('app', [
     'ui.bootstrap',
     //'srv.diagPrice',
     'pretty-checkable',
-    'srv.diagSlots'
+    'srv.diagSlots',
+    'app-router'
 ]);
 var URL = {
     HOME: 'home',
@@ -42,11 +43,14 @@ var URL = {
     PAYMENT: 'payment',
 };
 
-app.config(['$routeProvider',
-    function($routeProvider) {
+app.config(['$routeProvider', '$locationProvider',
+    function($routeProvider, $locationProvider) {
         $routeProvider.
-        when('/home', {
+        when('/', {
             templateUrl: 'views/diags/booking/booking-1-home.html'
+        }).
+        when('/home', {
+            templateUrl: '/views/diags/booking/booking-1-home.html'
         }).
         when('/mentions-legales', {
             templateUrl: 'views/diags/legal-mentions.html'
@@ -101,16 +105,17 @@ app.config(['$routeProvider',
         }).
 
         otherwise({
-            redirectTo: '/home'
+            redirectTo: '/'
         });
+        $locationProvider.html5Mode(true);
     }
 ]);
 
 
 
 app.controller('ctrl.booking', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText',
-    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion, appText) {
+    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter',
+    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter) {
 
         $timeout(function() {
             r.openModal = s.openModal;
@@ -146,35 +151,23 @@ app.controller('ctrl.booking', ['server',
 
 
 
-        $U.on('route-change', function(url) {
-            //console.info('route-change ', url);
+        appRouter.onChange(function(pathFrom, pathTo) {
+            $log.log('pathTo',pathTo);
 
             r.dom($U.scrollToTop);
 
-            if ($U.indexOf(url, [URL.PAYMENT])) {
-                if ((s.__manualUrlChange || 0) + 5000 < new Date().getTime()) {
-                    resolvePaymentScreenAuth().then(resolvePaymentScreenOrder);
-                }
-            }
-            else {
-                $U.url.clear();
-            }
-
-            if ($U.indexOf(url, [URL.HOME]) || url == '') {
+            if (!pathTo || pathTo == URL.HOME) {
                 s.__header = 1;
-
                 s._order = {}; //reset
-
                 setTimeout(function() {
                     $U.emit('render-ranges');
                 }, 1000);
-
             }
             else {
                 s.__header = 2;
             }
 
-            if (url.indexOf(URL.RDV) !== -1) {
+            if (pathTo == URL.RDV) {
                 var wait = setInterval(() => {
                     if (!s.diagSlots) return;
                     clearInterval(wait);
@@ -184,16 +177,27 @@ app.controller('ctrl.booking', ['server',
                 }, 100)
             }
 
-            if ($U.indexOf(url, [URL.ACCOUNT_DETAILS])) {
+            if (pathTo == URL.ACCOUNT_DETAILS) {
                 if (!s._user || !s._user.__subscribeMode) {
                     console.warn('current _user is not in _subscribeMode');
                     r.route(URL.HOME);
+                    return false;
                 }
                 else {
                     delete s._user.__subscribeMode;
                 }
             }
 
+            if (pathTo == URL.PAYMENT) {
+                if ((s.__manualUrlChange || 0) + 5000 < new Date().getTime()) {
+                    resolvePaymentScreenAuth().then(resolvePaymentScreenOrder);
+                }
+            }
+            else {
+                //$U.url.clear();
+            }
+        
+            return true;
         });
 
         function resolvePaymentScreenAuth() {
@@ -511,7 +515,7 @@ app.controller('ctrl.booking', ['server',
                 */
 
             ], (m) => {
-                s.warningMsg(m[0],6000);
+                s.warningMsg(m[0], 6000);
                 if (err) err();
             }, () => {
                 s.validateAddressDepartment(cb, err);
@@ -1380,6 +1384,7 @@ app.controller('ctrl.booking', ['server',
         };
         s.bookingDescriptionBody = function(item) {
             item = item || s.item;
+            if (!item || !item.info) return '';
             var rta = "";
             if (item.info.buildingType == '0') {
                 rta += "Maison";
@@ -1760,7 +1765,7 @@ app.controller('ctrl.booking', ['server',
                     s.booking.payment.complete = true;
                     r.dom(() => {
                         updateAutoSave(false);
-                        $U.url.clear();
+                        //$U.url.clear();
                         s.gotoOrderConfirmationScreen();
                     });
                 }).error(function(res) {

@@ -6,30 +6,25 @@
                 <h4 bind-html-compile="html('PAGE_ERNMT_BLOCK_TITLE')"></h4>
             </div>
         </div>
-
-
         <div class="row diag-row margin-top-one">
             <div class="col-xs-12 col-sm-12 col-md-12 ">
                 <p bind-html-compile="html('PAGE_ERNMT_BLOCK_CONTENT')">
                 </p>
             </div>
-
-
         </div>
-
-
         <div class="row diag-row margin-top-three padding-bottom-two">
             <div class="col-md-12 ">
-                <div ng-include="'views/booking/partials/booking-diags-icons.html'" includeReplace></div>
+                <div ng-include="'views/diags/booking/partials/booking-diags-icons.html'" includeReplace></div>
             </div>
         </div>
         <div class="row diag-row margin-top-one padding-bottom-two">
-           <div class="col-md-12 ">
-                <p class="stripe-message"><span class="fnt-30 text-top">*</span>  <span class="">
+            <div class="col-md-12 ">
+                <p class="stripe-message"><span class="fnt-30 text-top">*</span> <span class="">
                                 <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
                             </span></p>
             </div>
         </div>
         <div class="row diags-bg-block-40 hidden-xs"></div>
+
     </div>
 </div>
