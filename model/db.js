@@ -107,6 +107,7 @@ model('BalanceItem', require('../schemas/schema.balance-item').def);
 model('TimeRange', require('../schemas/schema.time-range').def);
 model('User', require('../schemas/schema.diags-user').def);
 model('Order', require('../schemas/schema.diags-order').def);
+model('htmls', require('../schemas/schema.htmls').def);
 
 
 configureGridFSActions();

@@ -1,3 +1,210 @@
+/*HELPERS*/
+
+.fnt-38{
+    font-size:38px;
+}
+.fnt-22{
+    font-size:22px;
+}
+.roman{
+    font-family: 'Avenir-Roman';
+}
+.black{
+    color:black;
+}
+
+/*SEPARATORS*/
+
+.separator-athens-gray{
+    background-color:#F1F3F7;
+    height:6px;
+    width:100%;
+    border-radius: 10px;
+}
+
+/*DYNAMIC BLOCK*/
+
+.dynamic-block {
+    width: 100%;
+    min-height: 100px;
+    background-color: white;
+}
+
+.dynamic-block p {
+    color: black;
+    text-align: center;
+}
+
+
+/*SECTION PAGE: HOME_DIAG_CARDS*/
+
+.home-diags-cards__city-text,
+.home-diags-cards__city-text>h3 {
+    color: black;
+    font-family: 'Avenir-Roman';
+    font-size: 22px;
+    margin: 0px;
+    line-height: 22px;
+    margin-top: 15px;
+}
+
+
+/* HEADER, NAV*/
+
+.nav-title {
+    margin: 10px 10px;
+    font-size: 27px;
+    line-height: 50px;
+}
+
+@media screen and (min-width: 320px) {}
+
+@media screen and (min-width: 480px) {
+    .nav-title {
+        margin: 10px 10px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .nav-title {
+        margin: 10px 10px;
+        line-height: 30px;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .nav-title {
+        margin: 10px 10px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .nav-title {
+        line-height: 50px;
+        margin: 0px;
+    }
+}
+
+
+/* DIAG ICONS, DIAG PAGES, DIAG TYPES*/
+
+.diag-link {}
+
+.diag-icon {
+    display: block;
+    margin: 0 auto!important;
+}
+
+.diag-title {
+    font-size: 36px;
+    font-family: 'Avenir-Roman';
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 0px;
+}
+
+.diag-subtitle {
+    font-size: 25px;
+    color: black;
+    font-family: 'Avenir-Roman';
+    text-align: center;
+    max-width: 400px;
+    display: block;
+    margin: 0 auto!important;
+    line-height: 24px;
+}
+
+.validite-box {
+    width: 253px;
+    height: 77px;
+    border-radius: 10px;
+    margin-top: 28px!important;
+}
+
+.validite-text {
+    font-family: 'Avenir-Roman';
+    font-size: 35px;
+    color: white;
+    text-align: center;
+    line-height: 77px;
+    margin: 0px;
+}
+
+.validite-title {
+    font-size: 24px;
+    color: #999999;
+    text-align: center;
+}
+
+.diag-description {
+    color: black;
+    font-family: 'Avenir-Roman';
+    font-size: 20px;
+    text-align: center;
+    padding-bottom: 0px;
+    padding-top: 28px;
+    max-width: 400px;
+    display: block;
+    margin: 0 auto!important;
+}
+
+.color-dpe {
+    color: #01BB55;
+}
+
+.bg-dpe {
+    background-color: #01BB55;
+}
+
+.color-electricite {
+    color: #CD0F23;
+}
+
+.bg-electricite {
+    background-color: #CD0F23;
+}
+
+.color-amiante {
+    color: #FF8B00;
+}
+
+.bg-amiante {
+    background-color: #FF8B00;
+}
+
+.plus-circle {
+    color: white;
+    font-family: 'Avenir-Roman';
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    font-size: 50px;
+    line-height: 70px;
+    text-align: center;
+    font-weight: 900;
+    display: block;
+    margin: 0 auto!important;
+}
+
+@media screen and (min-width: 320px) {}
+
+@media screen and (min-width: 480px) {}
+
+@media screen and (min-width: 768px) {}
+
+@media screen and (min-width: 992px) {}
+
+@media screen and (min-width: 1200px) {
+    .plus-circle {
+        margin: 28px;
+    }
+    .diag-icon {
+        display: initial;
+        margin: 0px
+    }
+}
+
+
 /**/
 
 div [bind-html-compile],
@@ -198,9 +405,8 @@ html {
     line-height: 45px;
 }
 
-
-.btn-stack{
-    width:100%!important;
+.btn-stack {
+    width: 100%!important;
     max-width: none!important;
 }
 
@@ -555,6 +761,7 @@ a.diag-btn-info:hover {
 
 .title {
     color: white;
+    font-style: normal;
 }
 
 .title-1 {

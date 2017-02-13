@@ -340,10 +340,32 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         r.__route = url;
         return url;
     }
-
+    
+    function html5RouteTo(path) {
+        path = path || '/';
+        if(path.toString().charAt(0)!=='/'){
+            path = '/' + path;
+        }
+        var link = document.createElement('a');
+        link.href = "" + path;
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+    }
+    
+    r.routeExternal = function(url){
+      window.location.href = url;  
+    };
     r.route = function(url, delay) {
 
         setTimeout(function() {
+            
+            //ex www.domain.com/admin -> admin
+            var routePart = window.location.href.substring(window.location.origin.length+1);
+            $U.emit('route-exit:' + routePart);
+            r.$emit('route-change', url);
+            return html5RouteTo(url);
+            
             var path = window.location.origin + window.location.pathname;
             path += '#/' + url;
             $U.emit('route-exit:' + $U.url.hashName());
@@ -363,6 +385,8 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         r.__route = url;
         return url;
     };
+    
+    /*
     r.routeIs = (n) => r.__route && r.__route.toString().toLowerCase().indexOf(n && n.toLowerCase() || 'invalid') !== -1 || false;
     r.__route = window.location.href.replace(window.location.origin + window.location.pathname, '');
     r.__routeHashName = $U.url.hashName();
@@ -375,7 +399,10 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         $U.emit('route-exit:' + r.__routeHashName);
         r.__routeHashName = $U.url.hashName();
         $U.emitPreserve('route-change', r.__route.slice(2))
-    });
+    });*/
+    setTimeout(function() {
+        $U.emitPreserve('route-change', window.location.href.substring(window.location.origin.length+1));
+    }, 500);
 
     r.userIs = (arr) => {
         if (!r.logged()) return false;
