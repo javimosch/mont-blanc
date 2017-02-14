@@ -1,3 +1,21 @@
+<div id="footer">
+    <div ng-include="'views/diags/backoffice/partials/app-footer.html'"></div>
+</div>
 
-    </body>
+
+
+<!--GLOBAL DIRECTIVES -->
+<modal-custom open="openModal"></modal-custom>
+<modal-confirm open="openConfirm"></modal-confirm>
+<modal-custom open="okModal" template-url="views/common/partials/popup.message.ok.html"></modal-custom>
+<span data-spinner show="state.working"></span>
+
+<!--TEMPLATES-->
+<div ng-include="'views/templates/templates.user.html'"></div>
+
+{{PROD}}
+
+{{>scripts-vendors}} {{>scripts}}
+</body>
+
 </html>

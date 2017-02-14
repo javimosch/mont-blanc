@@ -92,7 +92,7 @@ app.get('/preprod.html', function(req, res) {
 });
 
 require('./tools/static-generator/sg-index').configure(app).then(() => {
-	setAppRoute();
+	//setAppRoute();
 	setupServer();
 });
 

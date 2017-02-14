@@ -91,10 +91,14 @@ function ensureDirectory(path) {
         fs.mkdirSync(path);
 }
 
-function concatenateAllFilesFromArray(arr) {
+function concatenateAllFilesFromArray(arr, relativePath) {
     var raws = [];
-    arr.forEach(path => {
-        raws.push(fs.readFileSync((process.cwd() + '/' + path).replace('//', '/'), 'utf8'));
+    arr.forEach(localPath => {
+        var _path = path.join(process.cwd(), localPath);
+        if (relativePath) {
+            _path= path.join(process.cwd(), relativePath, localPath);
+        }
+        raws.push(fs.readFileSync(_path.replace('//', '/'), 'utf8'));
     });
     return raws.join('\n\n\n');
 }
@@ -298,9 +302,9 @@ function normalizeFilesTreePreservePath(files, rta, path) {
 }
 
 function getAbsolutePathFromCWD() {
-  var dir = process.cwd();
-  var pathArgs = [dir].concat(Array.prototype.splice.call(arguments, 0));
-  return path.join.apply(path, pathArgs);
+    var dir = process.cwd();
+    var pathArgs = [dir].concat(Array.prototype.splice.call(arguments, 0));
+    return path.join.apply(path, pathArgs);
 };
 
 function watchHelper(PATH, CB) {

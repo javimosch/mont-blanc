@@ -1,0 +1,78 @@
+<!--BUNDLE_JS_1-->
+<!--COMMON-->
+<script type="text/javascript" src="/js/common/fs.env.js"></script>
+<script type="text/javascript" src="/js/common/fs.utils.js"></script>
+
+<!--COMMON-DIAGS-->
+<script src="/js/app.diags-utils.js"></script>
+
+<!-- BOOTSTRAPER -->
+<script src="/js/app.backoffice.js"></script>
+
+<!-- CONFIG -->
+
+<!-- RUN -->
+<script src="/js/app.run.js"></script>
+
+<!-- SERVICES -->
+<script src="/js/app.services.js"></script>
+<script src="/js/services/srv.crud.js"></script>
+<script src="/js/services/srv.diags-prices.js"></script>
+<script src="/js/services/srv.diags-slots.js"></script>
+<script src="/js/services/order-price.js"></script>
+<script src="/js/services/order-question.js"></script>
+<script src="/js/services/order-rdv.js"></script>
+<script src="/js/services/lemonway-api.js"></script>
+<script src="/js/services/payment-api.js"></script>
+<script src="/js/services/backend-api.js"></script>
+<script src="/js/services/order-payment-form.js"></script>
+<script src="/js/services/app-text.js"></script>
+<script src="/js/services/app-router.js"></script>
+<script src="/js/app.diags-booking-slots.js"></script>
+<script src="/js/app.directives.js"></script>
+<script src="/js/directives/remove-hidden.js"></script>
+
+<!-- DIRECTIVES -->
+<script src="/js/directives/checkbox.js"></script>
+<script src="/js/directives/awesome-complete.js"></script>
+<script src="/js/directives/toggle.js"></script>
+<script src="/js/directives/ng-pikaday.js"></script>
+<script src="/js/directives/dynamic-html.js"></script>
+<script src="/js/directives/range.js"></script>
+
+<!-- FILTERS -->
+<script src="/js/filters/no-fraction-filter.js"></script>
+
+<!-- CONTROLLERS -->
+<script src="/js/app.booking.js"></script>
+<script type="text/javascript" src="/js/diags/ctrls/diags_ctrl_settings.js"></script>
+<script type="text/javascript" src="/js/controllers/settings-invoice.js"></script>
+<script type="text/javascript" src="/js/controllers/settings-password-reset.js"></script>
+<script type="text/javascript" src="/js/controllers/settings-htmls.js"></script>
+<script type="text/javascript" src="/js/diags/ctrls/diags_ctrl_contact_form.js"></script>
+<script type="text/javascript" src="/js/diags/ctrls/diags_ctrl_tools.js"></script>
+<script src="/js/controllers/header-controller.js"></script>
+<script type="text/javascript" src="/js/controllers/order-confirmation-screen-ctrl.js"></script>
+
+<!-- OTHERS -->
+<script src="/js/app.run-calendar.js"></script>
+<script src="/js/app.admin.js"></script>
+<script src="/js/app.text.js"></script>
+<script src="/js/app.routes.js"></script>
+<script src="/js/app.tools.js"></script>
+<script src="/js/app.calendar.js"></script>
+<script src="/js/app.notifications.js"></script>
+<script src="/js/app.login.js"></script>
+<script src="/js/app.user.js"></script>
+<script src="/js/app.log.js"></script>
+<script src="/js/app.diag.js"></script>
+<script src="/js/app.diag.inscription.js"></script>
+<script src="/js/app.diag.complete.js"></script>
+<script src="/js/app.diag.balance.js"></script>
+<script src="/js/app.client.js"></script>
+<script src="/js/app.diag.js"></script>
+<script src="/js/app.order.js"></script>
+<script src="/js/app.client.payments.js"></script>
+<!--/BUNDLE_JS_1-->
+ 
+ {{#if PROD}} <!--PROD <script src="/app.bundle.js"></script>-->  {{else}} <!--NON-PROD--> {{/if}}

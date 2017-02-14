@@ -1,4 +1,5 @@
 "use strict";
+var minifyHTML = require('html-minifier').minify;
 let co = require("co");
 var sgUtilsParser = require('./sg-utils-html-parser');
 var sgUtils = require('./sg-utils');
@@ -18,6 +19,11 @@ var global_partials = null;
 var PROD = process.env.PROD && process.env.PROD.toString() == '1' || false;
 var APP_NAME = process.env.APP_NAME || process.env.app || process.env.APP || null;
 var removeHtmlComments = require('remove-html-comments');
+const RELATIVE_PATH_FOR_VENDOR_CUSTOM = 'public';
+
+function getOutput(str) {
+    return path.join(OUTPUT_PATH, str);
+}
 
 Handlebars.registerHelper('json', function(context) {
     return JSON.stringify(context);
@@ -176,7 +182,7 @@ function* buildTemplatesPartials(src, append) {
 }
 
 function compileTemplates(src, path) {
-    //console.log('Compiling', path);
+    console.log('Compiling DATA', sgData());
     var rta = Handlebars.compile(src)(sgData());
     return rta;
 }
@@ -226,7 +232,7 @@ function compileVendorCustom(opt) { //{{root}}
             outputFileName = params.name;
         }
 
-        var buildPath = sgData().output(ext + '/' + outputFileName + '.' + ext);
+        var buildPath = getOutput(ext + '/' + outputFileName + '.' + ext);
         buildPath = buildPath.replaceAll('//', '/');
         var sectionRaw = sgUtilsParser.getSection(sectionName, raw);
 
@@ -236,7 +242,7 @@ function compileVendorCustom(opt) { //{{root}}
 
         var arr = sgUtilsParser.readTags(sectionRaw, tagName, tagAttributeName);
         //
-        var _url = sgData().root + '/' + ext + '/' + outputFileName + '.' + ext;
+        var _url = '/' + ext + '/' + outputFileName + '.' + ext;
         _url = _url.replaceAll('//', '/');
         //console.log('he script vendor url',_url);
         var _replaceWith = replaceCb(_url);
@@ -261,7 +267,7 @@ function compileVendorCustom(opt) { //{{root}}
             return sgUtilsParser.replaceSection(sectionName, raw, _replaceWith);
         }
 
-        var compiledCode = sgUtils.concatenateAllFilesFromArray(arr);
+        var compiledCode = sgUtils.concatenateAllFilesFromArray(arr, RELATIVE_PATH_FOR_VENDOR_CUSTOM);
         if (opt.middleWare) {
             compiledCode = opt.middleWare(compiledCode);
         }
@@ -336,7 +342,7 @@ function compileSectionBundles(raw, path) {
 
 function buildTemplates() {
 
-    console.log('DEBUG: build static');
+    console.log('DEBUG: build static with data', sgData());
 
     return new Promise((resolve, error) => {
 
@@ -364,15 +370,38 @@ function buildTemplates() {
         function handleNewFileTransform(raw, path) {
             var rta = raw;
             if (needsCompilation(raw, path)) {
+
+                // console.log('RAW', rta);
+
                 var rta = Handlebars.compile(raw)(sgData());
+
+                // console.log('COMPILED', rta);
+
                 rta = compileVendorJS(rta, path);
+
+                //console.log('WITH VENDOR JS', rta);
+
                 rta = compileVendorCSS(rta, path);
+
+                //console.log('WITH VENDOR CSS', rta);
+
                 rta = compileSectionBundles(rta, path);
                 //console.log('DEBUG: ',path,'compiled');
+
+                //console.log('WITH VENDOR BUNDLES', rta);
 
                 if (PROD) {
 
                     //rta = removeHtmlComments(rta);
+
+                    rta = minifyHTML(rta, {
+                        removeAttributeQuotes: false,
+                        removeScriptTypeAttributes: true,
+                        collapseWhitespace: true,
+                        minifyCSS: true,
+                        caseSensitive: true
+                    });
+
                 }
 
             }
@@ -404,7 +433,7 @@ function buildTemplates() {
                     throw e;
                 }
 
-                //console.log('building templates writing',rta.length,'chars...');
+                //console.log('building templates writing',rta.length,'chars...',rta,path);
 
                 return rta;
 

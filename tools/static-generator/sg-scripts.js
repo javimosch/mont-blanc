@@ -1,23 +1,20 @@
-var heParser = require('./utils.html-parser');
+var sgUtilsParser = require('./sg-utils-html-parser');
 var path = require('path');
-var heUtils = require('./utils');
+var sgUtils = require('./sg-utils');
 var minify = require('minify-content');
-var heConfig = require('../config');
+var sgData = require('./sg-data');
 var babel = require("babel-core");
 var PROD = process.env.PROD && process.env.PROD.toString() == '1' || false;
 
-
-
 var g = {
-	destFilename: 'app.js'
+	destFilename: 'bundle.js'
 }
-var PATH = './src/' + process.env.APP_NAME + 'js';
-var DIST = './dist/js';
-var DEST_FOLDER = 'js';
+var PATH = path.join(process.cwd(),'static-generator/js');
+var DEST_FOLDER = path.join(process.cwd(),'static-generator/output/js');
 
 function watch() {
 	//console.log('DEBUG: scripts watch',PATH);
-	heUtils.watch(PATH, () => {
+	sgUtils.watch(PATH, () => {
 		build();
 
 	
@@ -38,7 +35,7 @@ function build() {
 
 	//console.log('DEBUG: MAIN Build JS Path',PATH);
 
-	var raw = heUtils.concatenateAllFilesFrom(PATH, {
+	var raw = sgUtils.concatenateAllFilesFrom(PATH, {
 		debug: false
 	});
 
@@ -74,9 +71,9 @@ function build() {
 	}
 
 	function build_next(_raw) {
-		heConfig().jsVendorFileName = g.destFilename;
-		var dest = heConfig().output(DEST_FOLDER + '/' + g.destFilename);
-		heUtils.createFile(dest, _raw);
+		sgData().jsVendorFileName = g.destFilename;
+		var dest = DEST_FOLDER + '/' + g.destFilename;
+		sgUtils.createFile(dest, _raw);
 		console.log('DEBUG: scripts build ' + g.destFilename + ' success at ' + new Date());
 		emit('build-success');
 	}
@@ -92,11 +89,11 @@ var _events = {};
 
 
 function getAll() {
-	return heUtils.retrieveFilesFromPathSync(PATH);
+	return sgUtils.retrieveFilesFromPathSync(PATH);
 }
 
 function tagTemplate(context) {
-	var rta = heUtils.replaceAll('<script type="text/javascript" src="_SRC_"></script>', '_SRC_', context.src || '[src_field_required]');
+	var rta = sgUtils.replaceAll('<script type="text/javascript" src="_SRC_"></script>', '_SRC_', context.src || '[src_field_required]');
 	return rta;
 }
 
@@ -113,7 +110,6 @@ function printTags(folderPath) {
 
 module.exports = {
 	path: (p) => PATH = p,
-	dest: (dest) => DIST = dest + '/' + DEST_FOLDER,
 	build: build,
 	tagTemplate: tagTemplate,
 	printTags: printTags,

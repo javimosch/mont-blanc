@@ -1,7 +1,32 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        
-    </head>
-    <body>
-        
+<html class="no-js" ng-app="app">
+
+<head>
+    <!-- PREPROD LOGIN-->
+    <script src="/js/vendor/vendor-check-preprod-session.js"></script>
+    <!--TITLE-->
+    <title>Diagnostical : Diagnostics immobiliers</title>
+    {{>metas}} {{>links}}
+    <script src="/js/vendor/vendor.selectivizr-min.js"></script>
+    <base id="baseHref" href="/">
+</head>
+
+<body class="diags-style modal-scrollfix">
+
+    <!-- TEXT EDITOR -->
+    <div ng-if="userIs('admin')" ng-show="htmlEditItem.show" ng-include="'views/common/partials/html-edit-ck-editor.html'">
+    </div>
+
+    <!-- GLOBAL LAYOUT -->
+    <div id="wrapper">
+
+        {{>header}}
+        <!--CONTENT-->
+        <div class="container-fluid">
+            <div class="row-fluid diags-content">
+                <div ng-view></div>
+            </div>
+        </div>
+
+    </div>
+   
