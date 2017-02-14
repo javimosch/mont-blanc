@@ -81,7 +81,7 @@ app.get('/app.bundle.js', function(req, res) {
 	res.sendFile(path.join(__dirname + '/public/app.bundle.booking.js'));
 });
 app.get('/config.json', function(req, res) {
-	console.log('SENDING FILE ',path.join(__dirname + '/public/config.json'));
+	console.log('SENDING FILE ', path.join(__dirname + '/public/config.json'));
 	res.sendFile(path.join(__dirname + '/public/config.json'));
 });
 app.get('/data.json', function(req, res) {
@@ -91,33 +91,42 @@ app.get('/preprod.html', function(req, res) {
 	res.sendFile(path.join(__dirname + '/public/preprod.html'));
 });
 
-if (PROD) {
-	//production!
-	app.get('/*', function(req, res) {
-		res.sendFile(__dirname + '/admin-min.html');
-	});
-}
-else {
-	app.get('/*', function(req, res) {
-		res.sendFile(__dirname + '/admin.html');
-	});
+require('./tools/static-generator/sg-index').configure(app).then(() => {
+	setAppRoute();
+	setupServer();
+});
+
+function setAppRoute() {
+	if (PROD) {
+		//production!
+		app.get('/*', function(req, res) {
+			res.sendFile(__dirname + '/admin-min.html');
+		});
+	}
+	else {
+		app.get('/*', function(req, res) {
+			res.sendFile(__dirname + '/admin.html');
+		});
+	}
 }
 
-if (process.env.SSL_CERT) {
-	//HTTPS
-	var options = {
-		key: fs.readFileSync(process.env.SSL_KEY),
-		cert: fs.readFileSync(process.env.SSL_CERT),
-	};
-	https.createServer(options, app).listen(port, listening);
-}
-else {
-	//HTTP
-	app.listen(port, listening);
+function setupServer() {
+	if (process.env.SSL_CERT) {
+		//HTTPS
+		var options = {
+			key: fs.readFileSync(process.env.SSL_KEY),
+			cert: fs.readFileSync(process.env.SSL_CERT),
+		};
+		https.createServer(options, app).listen(port, listening);
+	}
+	else {
+		//HTTP
+		app.listen(port, listening);
+	}
 }
 
 function listening() {
 	console.log('Production? ' + (PROD ? 'Oui!' : 'Non!'));
-	console.log('serverURL', process.env.serverURL || 'http://localhost:5000');
-	console.log('diags-project-frontend app listening on port ' + port + '!');
+	console.log('ServerURL', process.env.serverURL || 'http://localhost:5000');
+	console.log('Diagnostical listening on port ' + port + '!');
 }

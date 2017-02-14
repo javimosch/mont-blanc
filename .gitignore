@@ -13,7 +13,7 @@ public/app.bundle.js
 backend.log
 .fuse*
 **/.fuse*
-
+static-generator/output/**
 backend.log
 public/app.bundle.booking.js
 public/app.bundle.js
