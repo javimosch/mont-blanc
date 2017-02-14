@@ -30,7 +30,7 @@ app.controller('adminUsers', [
             r.route(optionalRouteForEdition || 'users/edit/-1');
         };
         s.delete = function(item) {
-            s.confirm('Remove ' + s.selectedItems.length + ' item/s?', function() {
+            r.openConfirm('Remove ' + s.selectedItems.length + ' item/s?', function() {
                 console.log('adminUsers:removeAll:in-progress');
                 s.message('deleting . . .', 'info');
                 s.requesting = true;
@@ -270,7 +270,7 @@ app.controller('adminUsersEdit', [
             });
 
             function _proceedDelete() {
-                s.confirm('Delete User ' + s.item.email + ' ?', function() {
+                r.openConfirm('Delete User ' + s.item.email + ' ?', function() {
                     db.ctrl('User', 'remove', {
                         _id: s.item._id
                     }).then(function(res) {

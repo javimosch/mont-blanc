@@ -16,64 +16,66 @@
 </script>
 
 
+<div class="container-fluid backoffice-wrapper">
 
-<div class="row" ng-show="!params.code">
-    <div class="col-sm-12 padding-none">
-        <ol class="breadcrumb">
-            <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
-            <li><a class="link" ng-click="route('texts')">Texts</a></li>
-            <li>Text Details</li>
-        </ol>
-    </div>
-</div>
-<div class="container" ng-controller="ctrl-text-edit">
-    <modal-confirm open="confirm"></modal-confirm>
-    <div class="row diags-row margin-bottom-two">
-        <div class="col-sm-12 col-md-12">
+    <div class="container" ng-controller="ctrl-text-edit">
 
-            <div class="row margin-top-one" ng-show="!params.code">
-                <label>Page Section</label>
+        <div class="row" ng-show="!params.code">
+            <div class="col-sm-12 padding-none">
+                <ol class="breadcrumb">
+                    <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+                    <li><a class="link" ng-click="route('texts')">Texts</a></li>
+                    <li>Text Details</li>
+                </ol>
             </div>
-            <div class="row  margin-top-half" ng-show="!params.code">
-                <select ng-model="item._category" class="diags-input" ng-options="item._id as item.code for item in categories">
+        </div>
+        <div class="row diags-row margin-bottom-two">
+            <div class="col-sm-12 col-md-12">
+
+                <div class="row margin-top-one" ng-show="!params.code">
+                    <label>Page Section</label>
+                </div>
+                <div class="row  margin-top-half" ng-show="!params.code">
+                    <select ng-model="item._category" class="diags-input" ng-options="item._id as item.code for item in categories">
                     <option value="">Select</option>
                     <!--<option ng-repeat="item in categories" ng-value="item._id" ng-bind="item.code"></option>-->
                 </select>
-            </div>
-            <div class="row margin-top-one" ng-show="!params.code">
-                <label>Code</label>
-            </div>
-            <div class="row  margin-top-half" ng-show="!params.code">
-                <input ng-disabled="state.working()" ng-model="item.code" class="diags-input" placeholder="Code">
-            </div>
-            <div class="row margin-top-one" ng-show="!params.code">
-                <label>Description</label>
-            </div>
-            <div class="row  margin-top-half" ng-show="!params.code">
-                <input ng-disabled="state.working()" ng-model="item.description" class="diags-input" placeholder="Description">
-            </div>
-
-            <div class="row margin-top-one">
-                <div id="editor" class="diags-rich-text-editor" ng-if="!params.code">
-                    <p></p>
                 </div>
-                
-                <textarea ck-editor name="editor" ng-if="params.code"></textarea>
-                
+                <div class="row margin-top-one" ng-show="!params.code">
+                    <label>Code</label>
+                </div>
+                <div class="row  margin-top-half" ng-show="!params.code">
+                    <input ng-disabled="state.working()" ng-model="item.code" class="diags-input" placeholder="Code">
+                </div>
+                <div class="row margin-top-one" ng-show="!params.code">
+                    <label>Description</label>
+                </div>
+                <div class="row  margin-top-half" ng-show="!params.code">
+                    <input ng-disabled="state.working()" ng-model="item.description" class="diags-input" placeholder="Description">
+                </div>
+
+                <div class="row margin-top-one">
+                    <div id="editor" class="diags-rich-text-editor" ng-if="!params.code">
+                        <p></p>
+                    </div>
+
+                    <textarea ck-editor name="editor" ng-if="params.code"></textarea>
+
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row diags-row margin-bottom-two" ng-show="!params.code">
-        <div class="col-sm-12">
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="save()">Enregistrer</button>
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="route('texts')">Annuler</button>
-            <button ng-show="userIs('admin')" ng-disabled="state.working() || !item._id " class="btn diags-btn bg-azure-radiance" ng-click="delete()">Supprimer</button>
+        <div class="row diags-row margin-bottom-two" ng-show="!params.code">
+            <div class="col-sm-12">
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="save()">Enregistrer</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="route('texts')">Annuler</button>
+                <button ng-show="userIs('admin')" ng-disabled="state.working() || !item._id " class="btn diags-btn bg-azure-radiance" ng-click="delete()">Supprimer</button>
+            </div>
         </div>
-    </div>
-    <div class="row diags-row margin-bottom-two" ng-show="params.code">
-        <div class="col-sm-12">
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="(save()&&false) || _modal.close(true)">Enregistrer</button>
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="_modal.close()">Annuler</button>
+        <div class="row diags-row margin-bottom-two" ng-show="params.code">
+            <div class="col-sm-12">
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="(save()&&false) || _modal.close(true)">Enregistrer</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="_modal.close()">Annuler</button>
+            </div>
         </div>
     </div>
 </div>

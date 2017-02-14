@@ -93,35 +93,13 @@ app.get('/preprod.html', function(req, res) {
 
 if (PROD) {
 	//production!
-	app.get('/admin', function(req, res) {
-		res.sendFile(__dirname + '/admin-min.html');
-	});
-	app.get('/admin/*', function(req, res) {
-		res.sendFile(__dirname + '/admin-min.html');
-	});
 	app.get('/*', function(req, res) {
-		res.sendFile(__dirname + '/booking-min.html');
+		res.sendFile(__dirname + '/admin-min.html');
 	});
 }
 else {
-	//without bundling (developement)
-	app.get('/admin', function(req, res) {
-		res.sendFile(__dirname + '/admin.html');
-	});
-	app.get('/admin/*', function(req, res) {
-		res.sendFile(__dirname + '/admin.html');
-	});
 	app.get('/*', function(req, res) {
-		res.sendFile(__dirname + '/booking.html');
-	});
-
-	//bundling testing
-	app.get('/prod/*', function(req, res) {
-		res.sendFile(path.join(__dirname + '/' + 'booking-min' + '.html'));
-	});
-
-	app.get('/admin-prod/*', function(req, res) {
-		res.sendFile(path.join(__dirname + '/' + 'admin-min' + '.html'));
+		res.sendFile(__dirname + '/admin.html');
 	});
 }
 

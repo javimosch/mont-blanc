@@ -109,7 +109,7 @@
                 });
             };
             s.delete = function() {
-                s.confirm('Delete ' + s.item.code + ' ?', function() {
+                r.openConfirm('Delete ' + s.item.code + ' ?', function() {
                     db.ctrl('Text', 'remove', {
                         _d: s.item._id
                     });

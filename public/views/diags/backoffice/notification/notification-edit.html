@@ -1,69 +1,70 @@
-<div class="row">
-    <div class="col-sm-12 padding-none">
-        <ol class="breadcrumb">
-            <li><a class="link" ng-click="route('settings')">Settings</a></li>
-            <li><a class="link" ng-click="route('notifications')">Notifications</a></li>
-            <li>Details</li>
-        </ol>
-    </div>
-</div>
-<div class="container" ng-controller="notificationEdit">
-    <modal-confirm open="confirm"></modal-confirm>
-    <div class="row">
-        <div class="col-sm-12">
-
-            <div class="row margin-top-one">
-                <label>Type</label>
-            </div>
-            <div class="row margin-top-half">
-                <input class="diags-input min-md-min-width-400" ng-disabled="true" type="text" ng-value="item.type" placeholder="Type">
-            </div>
-
-            <div class="row margin-top-one">
-                <label>Subject</label>
-            </div>
-            <div class="row margin-top-half">
-                <input class="diags-input min-md-min-width-400" ng-disabled="state.working()" disabled type="text" ng-value="item.subject" placeholder="Subject">
-            </div>
-
-            <div class="row margin-top-one">
-                <label>To</label>
-            </div>
-            <div class="row margin-top-half">
-                <input class="diags-input" ng-disabled="state.working()" disabled type="text" ng-value="item.to" placeholder="To">
-            </div>
-
-            <div class="row margin-top-one">
-                <label>Content</label>
-            </div>
-            <div class="row margin-top-half">
-                <div class="diags-input-div" ng-bind-html="item.contents">
-                </div>
-            </div>
-            
-            <div class="row margin-top-half">
-                <div class="diags-input-div">
-                    {{item.metadata | json}}
-                </div>
-            </div>
-
-            <div class="row margin-top-one">
-                <label>Sended</label>
-            </div>
-            <div class="row margin-top-half">
-                <input class="diags-input" ng-disabled="state.working()" disabled type="text" ng-value="item.sended?'Yes':'No'" placeholder="Sended?">
-            </div>
-            <div class="row margin-top-half">
-                <input class="diags-input" ng-disabled="state.working()" disabled type="text" ng-value="momentFormat(item.sendedDate,'DD-MM-YY HH:mm')" placeholder="Sended date">
+<div class="container-fluid backoffice-wrapper">
+    <div class="container" ng-controller="notificationEdit">
+        <div class="row">
+            <div class="col-sm-12 padding-none">
+                <ol class="breadcrumb">
+                    <li><a class="link" ng-click="route('settings')">Settings</a></li>
+                    <li><a class="link" ng-click="route('notifications')">Notifications</a></li>
+                    <li>Details</li>
+                </ol>
             </div>
         </div>
-    </div>
-    <div class="row margin-top-one">
-        <div class="col-sm-12">
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Enregistrer</button>
-            <button  ng-disabled="state.working()||!item._id" class="btn diags-btn bg-blaze-orange" ng-click="send()">Send</button>
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="cancel()">Annuler</button>
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="delete()">Supprimer</button>
+        <div class="row">
+            <div class="col-sm-12">
+
+                <div class="row margin-top-one">
+                    <label>Type</label>
+                </div>
+                <div class="row margin-top-half">
+                    <input class="diags-input min-md-min-width-400" ng-disabled="true" type="text" ng-value="item.type" placeholder="Type">
+                </div>
+
+                <div class="row margin-top-one">
+                    <label>Subject</label>
+                </div>
+                <div class="row margin-top-half">
+                    <input class="diags-input min-md-min-width-400" ng-disabled="state.working()" disabled type="text" ng-value="item.subject" placeholder="Subject">
+                </div>
+
+                <div class="row margin-top-one">
+                    <label>To</label>
+                </div>
+                <div class="row margin-top-half">
+                    <input class="diags-input" ng-disabled="state.working()" disabled type="text" ng-value="item.to" placeholder="To">
+                </div>
+
+                <div class="row margin-top-one">
+                    <label>Content</label>
+                </div>
+                <div class="row margin-top-half">
+                    <div class="diags-input-div" ng-bind-html="item.contents">
+                    </div>
+                </div>
+
+                <div class="row margin-top-half">
+                    <div class="diags-input-div">
+                        {{item.metadata | json}}
+                    </div>
+                </div>
+
+                <div class="row margin-top-one">
+                    <label>Sended</label>
+                </div>
+                <div class="row margin-top-half">
+                    <input class="diags-input" ng-disabled="state.working()" disabled type="text" ng-value="item.sended?'Yes':'No'" placeholder="Sended?">
+                </div>
+                <div class="row margin-top-half">
+                    <input class="diags-input" ng-disabled="state.working()" disabled type="text" ng-value="momentFormat(item.sendedDate,'DD-MM-YY HH:mm')" placeholder="Sended date">
+                </div>
+            </div>
+        </div>
+        <div class="row margin-top-one">
+            <div class="col-sm-12">
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Enregistrer</button>
+                <button ng-disabled="state.working()||!item._id" class="btn diags-btn bg-blaze-orange" ng-click="send()">Send</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="cancel()">Annuler</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="delete()">Supprimer</button>
+            </div>
         </div>
     </div>
 </div>

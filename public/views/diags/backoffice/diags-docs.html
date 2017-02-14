@@ -1,109 +1,111 @@
-<div class="row">
-    <div class="col-sm-12 padding-none">
-        <ol class="breadcrumb">
-            <li><a class="link" ng-click="route('settings')">Settings</a></li>
-            <li>Documentation</li>
-        </ol>
-    </div>
-</div>
-<div class="container">
-    <div class="row margin-top-two">
-        <div class="col-sm-12">
-            <table class="table table-striped table-condensed link questions">
-                <tr class="link" ng-click="route('tools/termites-check')">
-                    <td class="link">
-                        <a href="#order-status" class="link minimal">Order Status</a>
-                    </td>
-                </tr>
-                <tr class="link" ng-click="route('tools/termites-check')">
-                    <td class="link">
-                        <a href="#notifications" class="link minimal">Notifications</a>
-                    </td>
-                </tr>
-            </table>
+<div class="container-fluid backoffice-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 padding-none">
+                <ol class="breadcrumb">
+                    <li><a class="link" ng-click="route('settings')">Settings</a></li>
+                    <li>Documentation</li>
+                </ol>
+            </div>
         </div>
-    </div>
-    <div class="row margin-top-two">
-        <div class="col-sm-12">
-            <h3 id="order-status">Order status</h3>
-
-            <b>created</b>
-            <br>
-            <p>The order was created using the booking system but it was not delegated neither paid.</p>
-
-            <b>ordered</b>
-            <br>
-            <p>The order was created using the booking system and it was delegated or paid. Also, the order may had been created by an admin using the BO.</p>
-
-            <b>prepaid</b>
-            <br>
-            <p>The order was paid but no delivered. The previous status may had been created or ordered.</p>
-
-            <b>delivered</b>
-            <br>
-            <p>The order is delivered (done and pdf uploaded) but not paid. The previous status was ordered.</p>
-
-            <b>completed</b>
-            <br>
-            <p>The order is done with pdf uploaded and paid. The previous status was delivered or prepaid.</p>
-
+        <div class="row margin-top-two">
+            <div class="col-sm-12">
+                <table class="table table-striped table-condensed link questions">
+                    <tr class="link" ng-click="route('tools/termites-check')">
+                        <td class="link">
+                            <a href="#order-status" class="link minimal">Order Status</a>
+                        </td>
+                    </tr>
+                    <tr class="link" ng-click="route('tools/termites-check')">
+                        <td class="link">
+                            <a href="#notifications" class="link minimal">Notifications</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
-        <div class="col-sm-12">
-            <h3 id="notifications">Notifications</h3>
-            <p>A notification is the representation an email that may had been sended or not to an email address.
-                <br> Is created in the moment that the server decide to send an email.
-                <br> It has a flag that indicate if the email has been sended or not but this only indicate that the order has been sended to the smtp server by the diags server. The real email may had been delayed depends on the smtp overload.
+        <div class="row margin-top-two">
+            <div class="col-sm-12">
+                <h3 id="order-status">Order status</h3>
+
+                <b>created</b>
                 <br>
-                <br> An <b>User</b> (Admin, Diag or Client), may had <b>N</b> notifications associated at any time. The
-            </p>
-            <p>Next, a list of available notifications.</p>
-            <ul class="docs-notification-types">
-                <li>
-                    <h6 id="ADMIN_NEW_ACCOUNT">ADMIN_NEW_ACCOUNT</h6>
-                    <p>When this type of user is created, this notification is generated to the user email.</p>
-                </li>
-                <li>
-                    <h6 id="DIAG_NEW_ACCOUNT">DIAG_NEW_ACCOUNT</h6>
-                    <p>When this type of user is created, this notification is generated to the user email.</p>
-                </li>
-                <li>
-                    <h6 id="CLIENT_NEW_ACCOUNT">CLIENT_NEW_ACCOUNT</h6>
-                    <p>When this type of user is created, this notification is generated to the user email.</p>
-                </li>
+                <p>The order was created using the booking system but it was not delegated neither paid.</p>
 
-                <li>
-                    <h6 id="NEW_CONTACT_FORM_MESSAGE">NEW_CONTACT_FORM_MESSAGE</h6>
-                    <p>Its fired when someone use the contact form of the web site.</p>
-                </li>
+                <b>ordered</b>
+                <br>
+                <p>The order was created using the booking system and it was delegated or paid. Also, the order may had been created by an admin using the BO.</p>
 
-                <li>
-                    <h6 id="DIPLOME_EXPIRATION">DIPLOME_EXPIRATION</h6>
-                    <p>Its fired one time in an automated-task when a diplome is expired.</p>
-                </li>
+                <b>prepaid</b>
+                <br>
+                <p>The order was paid but no delivered. The previous status may had been created or ordered.</p>
 
-                <li>
-                    <h6 id="ORDER_CREATED">ORDER_CREATED</h6>
-                    <p>Its fired for the Client and Diag man once an order has been created. Status created.</p>
-                </li>
-                
-                <li>
-                    <h6 id="PASSWORD_RESET">PASSWORD_RESET</h6>
-                    <p>Its fired for user after he request a password reset.</p>
-                </li>
-                
-                <li>
-                    <h6 id="PAYMENT_LINK">PAYMENT_LINK</h6>
-                    <p>Its fired for client of an order ('to' targeting the landlord email) after he request to delegate an order payment.</p>
-                </li>
-                
-                
-                
+                <b>delivered</b>
+                <br>
+                <p>The order is delivered (done and pdf uploaded) but not paid. The previous status was ordered.</p>
 
-                <li>
-                    <h6 id="ORDER_PAYMENT_SUCCESS">ORDER_PAYMENT_SUCCESS</h6>
-                    <p>When an order had been paid succefully. Targets the Client, the diag, and all the Admins.</p>
-                </li>
-            </ul>
+                <b>completed</b>
+                <br>
+                <p>The order is done with pdf uploaded and paid. The previous status was delivered or prepaid.</p>
+
+            </div>
+            <div class="col-sm-12">
+                <h3 id="notifications">Notifications</h3>
+                <p>A notification is the representation an email that may had been sended or not to an email address.
+                    <br> Is created in the moment that the server decide to send an email.
+                    <br> It has a flag that indicate if the email has been sended or not but this only indicate that the order has been sended to the smtp server by the diags server. The real email may had been delayed depends on the smtp overload.
+                    <br>
+                    <br> An <b>User</b> (Admin, Diag or Client), may had <b>N</b> notifications associated at any time. The
+                </p>
+                <p>Next, a list of available notifications.</p>
+                <ul class="docs-notification-types">
+                    <li>
+                        <h6 id="ADMIN_NEW_ACCOUNT">ADMIN_NEW_ACCOUNT</h6>
+                        <p>When this type of user is created, this notification is generated to the user email.</p>
+                    </li>
+                    <li>
+                        <h6 id="DIAG_NEW_ACCOUNT">DIAG_NEW_ACCOUNT</h6>
+                        <p>When this type of user is created, this notification is generated to the user email.</p>
+                    </li>
+                    <li>
+                        <h6 id="CLIENT_NEW_ACCOUNT">CLIENT_NEW_ACCOUNT</h6>
+                        <p>When this type of user is created, this notification is generated to the user email.</p>
+                    </li>
+
+                    <li>
+                        <h6 id="NEW_CONTACT_FORM_MESSAGE">NEW_CONTACT_FORM_MESSAGE</h6>
+                        <p>Its fired when someone use the contact form of the web site.</p>
+                    </li>
+
+                    <li>
+                        <h6 id="DIPLOME_EXPIRATION">DIPLOME_EXPIRATION</h6>
+                        <p>Its fired one time in an automated-task when a diplome is expired.</p>
+                    </li>
+
+                    <li>
+                        <h6 id="ORDER_CREATED">ORDER_CREATED</h6>
+                        <p>Its fired for the Client and Diag man once an order has been created. Status created.</p>
+                    </li>
+
+                    <li>
+                        <h6 id="PASSWORD_RESET">PASSWORD_RESET</h6>
+                        <p>Its fired for user after he request a password reset.</p>
+                    </li>
+
+                    <li>
+                        <h6 id="PAYMENT_LINK">PAYMENT_LINK</h6>
+                        <p>Its fired for client of an order ('to' targeting the landlord email) after he request to delegate an order payment.</p>
+                    </li>
+
+
+
+
+                    <li>
+                        <h6 id="ORDER_PAYMENT_SUCCESS">ORDER_PAYMENT_SUCCESS</h6>
+                        <p>When an order had been paid succefully. Targets the Client, the diag, and all the Admins.</p>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>

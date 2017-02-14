@@ -69,7 +69,8 @@
                             if (item.cellPhone) {
                                 if (!v) {
                                     v = 'M: ' + item.cellPhone;
-                                } else {
+                                }
+                                else {
                                     v += ' M: ' + item.cellPhone;
                                 }
                             }
@@ -141,7 +142,8 @@
                         if (res.ok) {
                             if (cb) {
                                 cb(res.result);
-                            } else {
+                            }
+                            else {
                                 s.model.update(res.result, null);
                             }
                         }
@@ -157,7 +159,8 @@
                     if (r.userIs('diag')) return 'dashboard';
                     if (params.id) {
                         return 'diags/edit/' + params.id;
-                    } else {
+                    }
+                    else {
                         return 'exceptions';
                     }
                 };
@@ -196,8 +199,8 @@
                         if (item.repeat == 'none') return 'Indisponibilité spécifique';
                         if (item.repeat == 'day') return 'Indisponibilité tous les jours';
                         if (item.repeat == 'week') {
-                            var day = '('+moment().weekday(item.weekday).format('dddd')+')';
-                            return 'Indisponibilité toutes les semaines '+(item.weekday?day:'');
+                            var day = '(' + moment().weekday(item.weekday).format('dddd') + ')';
+                            return 'Indisponibilité toutes les semaines ' + (item.weekday ? day : '');
                         }
                         return 'Error';
                     }
@@ -209,7 +212,7 @@
                     init: () => update(),
                     remove: (item, index) => {
                         var msg = 'Delete Indisponibilité  ' + item.description + ' / De ' + r.momentDateTime(item.start) + ' À ' + r.momentDateTime(item.end);
-                        s.confirm(msg, () => {
+                        r.openConfirm(msg, () => {
                             db.ctrl('TimeRange', 'remove', {
                                 _id: item._id
                             }).then(() => {
@@ -257,9 +260,7 @@
             //
             $U.expose('s', s);
 
-            $timeout(function() {
-                s.confirm = s.confirm || r.openConfirm || null;
-            }, 2000);
+
 
 
 
@@ -285,7 +286,7 @@
                     var el = $('input[name="daterange"]');
 
                     var format = 'DD/MM/YYYY HH[h]mm';
-                    if(s.item.repeat!=='none'){
+                    if (s.item.repeat !== 'none') {
                         //format = 'HH[h]mm';
                     }
 
@@ -400,14 +401,15 @@
                 o.selected = o.items[0].label;
                 s.$watch('item.repeat', (v) => {
                     if (v !== 'none') {
-                        if(s.item.weekday){
-                            s.days.select(s.item.weekday);    
-                        }else{
-                            s.days.select(-1);    
+                        if (s.item.weekday) {
+                            s.days.select(s.item.weekday);
+                        }
+                        else {
+                            s.days.select(-1);
                         }
                     }
                 });
-                
+
                 return o;
             })();
 
@@ -448,7 +450,8 @@
                         delete r.params.item;
                     }
                     return;
-                } else {
+                }
+                else {
                     s.refreshFix();
                 }
             };
@@ -467,7 +470,8 @@
                     s.item = r.params.item;
                     r.params.item = null;
                     s.onLoad();
-                } else {
+                }
+                else {
                     db.ctrl('TimeRange', 'get', {
                         _id: params.id,
                         __populate: {
@@ -477,7 +481,8 @@
                         if (d.ok) {
                             s.item = d.result;
                             s.onLoad();
-                        } else {
+                        }
+                        else {
                             r.notify({
                                 message: 'Loading error, try later',
                                 type: "warning"
@@ -485,7 +490,8 @@
                         }
                     })
                 }
-            } else {
+            }
+            else {
                 s.onLoad(true);
             }
             s.save = () => {
@@ -496,10 +502,10 @@
             s.cancel = () => r.route(r.params && r.params.prevRoute || 'dashboard');
             s.delete = () => {
                 var msg = 'Delete ' + (s.item.description || '') + ' ' + r.momentDateTime(s.item.start) + ' - ' + r.momentDateTime(s.item.end);
-                if(s.item.repeat=='week'){
-                    msg+' ('+moment().weekday(s.item.weekday).format('dddd')+ ')';
+                if (s.item.repeat == 'week') {
+                    msg + ' (' + moment().weekday(s.item.weekday).format('dddd') + ')';
                 }
-                s.confirm(msg, () => {
+                r.openConfirm(msg, () => {
                     db.ctrl('TimeRange', 'remove', {
                         _id: s.item._id
                     }).then(() => {
@@ -511,9 +517,9 @@
                 db.ctrl('Order', 'getAll', {
                     __select: 'start end',
                     _diag: s.item._user,
-                    __rules:{
-                        status:{
-                            $ne:'completed'
+                    __rules: {
+                        status: {
+                            $ne: 'completed'
                         }
                     }
                 }).then((d) => {
@@ -522,17 +528,17 @@
                         var start = s.item.start;
                         var end = s.item.end;
                         d.result.forEach(v => {
-                            if(s.item.repeat=='week'&&moment(v.start).weekday()!=s.item.weekday){
+                            if (s.item.repeat == 'week' && moment(v.start).weekday() != s.item.weekday) {
                                 return;
                             }
-                            if(s.item.repeat=='day' || s.item.repeat=='week'){
+                            if (s.item.repeat == 'day' || s.item.repeat == 'week') {
                                 start = moment(v.start).hour(moment(start).hour()).minute(moment(start).minute())
                                 end = moment(v.end).hour(moment(end).hour()).minute(moment(end).minute())
                             }
                             if (moment.range(v.start, v.end).overlaps(moment.range(start, end))) {
                                 yesFlag = true;
                                 if (!yes) {
-                                    $log.debug('dates do collide with order',v);
+                                    $log.debug('dates do collide with order', v);
                                 }
                                 return yes && yes(v);
                             }
@@ -542,7 +548,8 @@
                             $log.debug('dates do not collide with orders');
                         }
                         return no && no();
-                    } else {
+                    }
+                    else {
                         console.warn('rangeCollide order fetch error');
                         return no && no();
                     }
@@ -557,24 +564,24 @@
                 s.item.start = s.getStartDate();
                 s.item.end = s.getEndDate();
 
-                if(s.item.repeat=='week' && s.item.weekday==undefined){
+                if (s.item.repeat == 'week' && s.item.weekday == undefined) {
                     return r.warningMessage('Jour de semaine requis.');
                 }
 
                 s.rangeCollideWithOrder((order) => {
-                    switch(s.item.repeat){
+                    switch (s.item.repeat) {
                         case 'none':
-                        return r.warningMessage('Une commande existe à la date choisie.');
-                        break;
+                            return r.warningMessage('Une commande existe à la date choisie.');
+                            break;
                         case 'day':
-                        return r.warningMessage("Une commande existe à l&#39;heure choisie.");
-                        break;
+                            return r.warningMessage("Une commande existe à l&#39;heure choisie.");
+                            break;
                         case 'week':
-                        var day = moment().weekday(s.item.weekday).format('dddd');
-                        return r.warningMessage("Une commande existe un jour "+day+" à l&#39;heure choisie.");
-                        break;
+                            var day = moment().weekday(s.item.weekday).format('dddd');
+                            return r.warningMessage("Une commande existe un jour " + day + " à l&#39;heure choisie.");
+                            break;
                     }
-                    
+
                 }, () => {
 
                     $U.ifThenMessage([
@@ -589,7 +596,8 @@
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             r.notify(m[0](), 'warning');
-                        } else {
+                        }
+                        else {
                             r.notify(m[0], 'warning');
                         }
                     }, s.save);

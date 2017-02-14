@@ -51,6 +51,7 @@
                         //$log.debug('order time',r.momentDateTime(order.day),JSON.stringify(order.time));
 
                         if (_settings.maxSlots && _settings.maxSlots > 4) {
+                            //console.log('RDV-NON-FIXED',_settings.maxSlots);
                             //NEW
                             orderRdv.getAll({
                                 date: date,
@@ -60,7 +61,7 @@
                         }
                         else {
                             //db.getAvailableRanges(order, _settings).then(_resolve);
-                            
+                            //console.log('RDV-FIXED',_settings.maxSlots);
                              orderRdv.getAll({
                                 date: date,
                                 time: time,

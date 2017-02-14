@@ -81,7 +81,8 @@
                 "Extract Data": "settings-exportation",
                 "Invoice Template": "settings-invoice",
                 "Password reset": "settings-password-reset",
-                "HTML Registries": "settings-htmls/-1"
+                "Dynamic HTML": "settings-htmls/-1",
+                //"Content Pages": "settings-pages/-1"
             };
 
             s.priceModifiers = {

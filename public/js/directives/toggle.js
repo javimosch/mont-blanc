@@ -21,7 +21,7 @@ app.directive('toggleClick', function($rootScope, $timeout, $compile) {
                     if (word == last) return;
                     ss = ss[word];
                     if (ss == undefined) {
-                        console.warn('toggleValue ', attrs.toggleValue, word + ' is undefined');
+//                        console.warn('toggleValue ', attrs.toggleValue, word + ' is undefined');
                         return 0;
                     }
                 });

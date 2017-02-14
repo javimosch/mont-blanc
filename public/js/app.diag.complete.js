@@ -699,7 +699,7 @@ app.controller('ctrl-diag-edit', [
         s.diplomesDelete = (_id) => {
             if (!s.diplomesExists(_id)) return;
             var name = s.diplomesData[_id] && s.diplomesData[_id].info.filename || "File";
-            s.confirm('Delete ' + name + ' ?', () => {
+            r.openConfirm('Delete ' + name + ' ?', () => {
                 db.ctrl('File', 'remove', {
                     _id: _id
                 }).then((d) => {
@@ -986,7 +986,7 @@ app.controller('ctrl-diag-edit', [
 
         };
         s.delete = function() {
-            s.confirm('Delete Diag ' + s.item.email + ' ?', function() {
+            r.openConfirm('Delete Diag ' + s.item.email + ' ?', function() {
                 db.ctrl('User', 'remove', {
                     _id: s.item._id
                 }).then(function(res) {

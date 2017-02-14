@@ -11,117 +11,110 @@
 /*global sizePrice*/
 /*global totalPrice*/
 /*global $D*/
-var app = angular.module('app', [
-    'app.run',
-    'ngSanitize',
-    'app.services',
-    'app.directives',
-    'app.login',
-    'ngRoute',
-    'diags_ctrl_contact_form',
-    'ui.bootstrap',
-    //'srv.diagPrice',
-    'pretty-checkable',
-    'srv.diagSlots',
-    'app-router'
-]);
-var URL = {
-    HOME: 'home',
-    CONTACT_US: 'contactez-nous',
-    ERNT: 'ernmt',
-    FAQ: 'faq',
-    GENERAL_CONDITIONS: 'conditions-generales-utilisation',
-    CGU_LEMONWAY: 'cgu-lemonway',
-    LEGAL_MENTIONS: 'mentions-legales',
-    DIAGS: 'choix-diagnostics',
-    RDV: 'rendez-vous',
-    LOGIN: 'connexion',
-    ESPACE_ENTERPRISE: 'espace-enterprise',
-    ESPACE_DIAG: 'espace-diagnostiqueur',
-    ACCOUNT_DETAILS: 'account-details',
-    ACCOUNT_DETAILS_BOOKING: 'inscription-details',
-    PAYMENT: 'payment',
-};
-
-app.config(['$routeProvider', '$locationProvider',
-    function($routeProvider, $locationProvider) {
-        $routeProvider.
-        when('/', {
-            templateUrl: 'views/diags/booking/booking-1-home.html'
-        }).
-        when('/home', {
-            templateUrl: '/views/diags/booking/booking-1-home.html'
-        }).
-        when('/mentions-legales', {
-            templateUrl: 'views/diags/legal-mentions.html'
-        }).
-        when('/conditions-generales-utilisation', {
-            templateUrl: 'views/diags/general-conditions.html'
-        }).
-        when('/cgu-lemonway', {
-            templateUrl: 'views/diags/cgu-lemonway.html'
-        }).
-        when('/ernmt', {
-            templateUrl: 'views/diags/ernmt.html'
-        }).
-        when('/faq', {
-            templateUrl: 'views/diags/faq.html'
-        }).
-        when('/contactez-nous', {
-            templateUrl: 'views/diags/contact-us.html'
-        }).
-        when('/choix-diagnostics', {
-            templateUrl: 'views/diags/booking/booking-2-diags-selection.html'
-        }).
-        when('/rendez-vous', {
-            templateUrl: 'views/diags/booking/booking-3-date-selection.html'
-        }).
-        when('/connexion', {
-            templateUrl: 'views/diags/booking/booking-4-connection.html'
-        }).
-        when('/new-inscription', {
-            templateUrl: 'views/diags/booking/booking-espace-enterprise.html'
-        }).
-
-        when('/espace-enterprise', {
-            templateUrl: 'views/diags/booking/booking-espace-enterprise.html'
-        }).
-
-        when('/espace-diagnostiqueur', {
-            templateUrl: 'views/diags/booking/booking-espace-diagnostiqueur.html'
-        }).
-
-        when('/account-details', {
-            templateUrl: 'views/diags/booking/booking-inscription-details.html'
-        }).
-        when('/inscription-details', {
-            templateUrl: 'views/diags/booking/booking-5-inscription.html'
-        }).
-        when('/payment', {
-            templateUrl: 'views/diags/booking/booking-6-payment.html'
-        }).
-        when('/order-confirm', {
-            templateUrl: 'views/diags/booking/order-confirmation-screen.html'
-        }).
-
-        otherwise({
-            redirectTo: '/'
-        });
-        $locationProvider.html5Mode(true);
-    }
-]);
-
-
-
+var app = angular.module('app');
 app.controller('ctrl.booking', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter',
     function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter) {
+
+
+        /*BOOKING METADATA*/
+        s.item = {
+            date: undefined,
+            diags: {},
+            clientType: 'landlord',
+            info: {}
+        };
+        s._user = {
+            address: null
+        }; //user (when auth success)
+        s._order = {}; //order (when saved)
+        s.booking = {
+            order: {
+                saved: false,
+                exists: false,
+                taken: false
+            },
+            complete: false,
+            payment: {
+                complete: false
+            }
+        };
+
+        /*INIT*/
+        db.localData().then(function(data) {
+            Object.assign(s, data);
+            s.diags = _.sortBy(s.diags, function(o) {
+                return o.sort;
+            });
+            //accessors for diags
+            s.diag = s.diag || {};
+            s.diags.forEach(diag => {
+                s.diag[diag.name] = diag;
+            });
+            s.diagSelected = s.diag.dpe;
+            orderQuestion.bindAnswersToDefaultDiags(s);
+            //updateChecksVisibilityOnDemand();
+            waitForProperties([loadDefaults, loadMetadata, validateMetadata, r.dom], ['notify']);
+        });
+
+        function validateMetadata() {
+            if (appRouter.currentPath == 'payment') {
+                var meta = r.sessionMetadata();
+                if (!meta.booking || !meta.booking._order) {
+                    console.log('DEBUG INVALID-METADATA ROUTING-TO-HOME ORDER-EXPECTED', r.sessionMetadata());
+                    return changeRoute(r.URL.HOME);
+                }
+            }
+            if (appRouter.currentPath == '') {
+                r.sessionMetadata({
+                    booking: {
+                        _order: {}
+                    }
+                });
+                return;
+            }
+            validateQuestions(() => {}, () => {
+                console.log('DEBUG INVALID-METADATA ROUTING-TO-HOME', r.sessionMetadata());
+                r.sessionMetadata({
+                    booking: {}
+                });
+                loadDefaults();
+                changeRoute(r.URL.HOME);
+            });
+        }
+
+
+        function loadMetadata() {
+
+            var meta = r.sessionMetadata();
+            if (meta.booking && meta.booking.item) s.item = meta.booking.item;
+            if (meta.booking && meta.booking._order) s._order = meta.booking._order;
+            if (meta.booking && meta.booking._user) s._user = meta.booking._user;
+            if (meta.booking && meta.booking._booking) s.booking = meta.booking._booking;
+            if (meta.booking && meta.booking.diags) s.diags = meta.booking.diags;
+        }
+
+        function changeRoute(url, delay) {
+            console.log('VIRTUAL-ROUTE-TO ', url);
+            r.sessionMetadata({
+                booking: {
+                    item: s.item,
+                    _order: s._order,
+                    _user: s._user
+                }
+            });
+            r.route(url, delay);
+        }
+
+
+
+
 
         $timeout(function() {
             r.openModal = s.openModal;
         }, 2000);
 
-        r.URL = Object.assign(r.URL, URL);
+
 
         r.dom(); //compile directives
 
@@ -133,6 +126,8 @@ app.controller('ctrl.booking', ['server',
         function creatediagSlots() {
             s.diagSlots = diagSlots(s, s.item);
         }
+
+
 
 
 
@@ -151,23 +146,13 @@ app.controller('ctrl.booking', ['server',
 
 
 
-        appRouter.onChange(function(pathFrom, pathTo) {
-            $log.log('pathTo',pathTo);
-
+        function onRouteChange(pathFrom, pathTo) {
             r.dom($U.scrollToTop);
-
-            if (!pathTo || pathTo == URL.HOME) {
-                s.__header = 1;
-                s._order = {}; //reset
-                setTimeout(function() {
-                    $U.emit('render-ranges');
-                }, 1000);
-            }
-            else {
-                s.__header = 2;
+            if (!pathTo || pathTo == r.URL.HOME) {
+                //s._order = {}; //reset
             }
 
-            if (pathTo == URL.RDV) {
+            if (pathTo == r.URL.RDV) {
                 var wait = setInterval(() => {
                     if (!s.diagSlots) return;
                     clearInterval(wait);
@@ -177,10 +162,10 @@ app.controller('ctrl.booking', ['server',
                 }, 100)
             }
 
-            if (pathTo == URL.ACCOUNT_DETAILS) {
+            if (pathTo == r.URL.ACCOUNT_DETAILS) {
                 if (!s._user || !s._user.__subscribeMode) {
                     console.warn('current _user is not in _subscribeMode');
-                    r.route(URL.HOME);
+                    changeRoute(r.URL.HOME);
                     return false;
                 }
                 else {
@@ -188,20 +173,27 @@ app.controller('ctrl.booking', ['server',
                 }
             }
 
-            if (pathTo == URL.PAYMENT) {
-                if ((s.__manualUrlChange || 0) + 5000 < new Date().getTime()) {
-                    resolvePaymentScreenAuth().then(resolvePaymentScreenOrder);
-                }
+            if (pathTo == r.URL.PAYMENT) {
+                //if ((s.__manualUrlChange || 0) + 5000 < new Date().getTime()) {
+                //resolvePaymentScreenAuth().then(resolvePaymentScreenOrder);
+                //}
             }
             else {
                 //$U.url.clear();
             }
-        
+
             return true;
+        }
+
+        appRouter.onChange(function(pathFrom, pathTo) {
+            return onRouteChange(pathFrom, pathTo);
         });
+        onRouteChange(appRouter.currentPath, appRouter.currentPath);
 
         function resolvePaymentScreenAuth() {
             return $U.MyPromise(function(resolve, err, emit) {
+                return resolve();
+                //
                 if (s._user && s._user._id) {
                     if (!$U.url.get('auth')) {
                         $U.url.set('auth', s._user._id);
@@ -222,12 +214,12 @@ app.controller('ctrl.booking', ['server',
                             resolve();
                         }
                         else {
-                            return r.moveToLogin();
+                            return moveToLogin();
                         }
                     });
                 }
                 else {
-                    return r.moveToLogin();
+                    return moveToLogin();
                 }
             });
         }
@@ -254,21 +246,7 @@ app.controller('ctrl.booking', ['server',
         }
 
         //
-        s._user = {
-            address: null
-        }; //user (when auth success)
-        s._order = {}; //order (when saved)
-        s.booking = {
-            order: {
-                saved: false,
-                exists: false,
-                taken: false
-            },
-            complete: false,
-            payment: {
-                complete: false
-            }
-        };
+
 
         s.checks = {
             selectAll: false
@@ -286,12 +264,12 @@ app.controller('ctrl.booking', ['server',
         //MAIN BUTTONS
         s.proceedToDiagsSelection = function() {
 
-            //s.validateBeforePayment(()=r.route(URL.PAYMENT));
+            //s.validateBeforePayment(()=changeRoute(r.URL.PAYMENT));
 
             s.validateQuestions(function() {
-                r.route('choix-diagnostics');
+                changeRoute('choix-diagnostics');
             }, () => {
-                // r.route('home');
+                // changeRoute('home');
 
                 if (!s.addressDepartmentCovered) {
 
@@ -342,13 +320,13 @@ app.controller('ctrl.booking', ['server',
             s.validateQuestions(function() {
                 //at least one diag selected
                 if (atLeastOneDiagSelected()) {
-                    return r.route('rendez-vous');
+                    return changeRoute('rendez-vous');
                 }
                 else {
                     return r.warningMessage(appText.BOOKING_PROCEED_TO_DATE_SELECTION_FLASH_MESSAGE);
                 }
             }, () => {
-                r.route('home');
+                changeRoute('/');
             });
         }
         s.proceedToConnect = function(range) {
@@ -366,10 +344,10 @@ app.controller('ctrl.booking', ['server',
                 //
                 s.validateDate(function() {
                     if (s._user && s._user._id) {
-                        r.route(URL.PAYMENT);
+                        changeRoute(r.URL.PAYMENT);
                     }
                     else {
-                        s.moveToLogin();
+                        moveToLogin();
                     }
 
                 });
@@ -378,16 +356,16 @@ app.controller('ctrl.booking', ['server',
 
         }
 
-        s.moveToLogin = () => {
+        function moveToLogin() {
             if (true && r.logged() && r.session().userType && r.session().clientType && r.session().userType == 'client') {
                 s.auth.email = r.session().email;
                 s.auth.pass = r.session().password;
                 s.login();
             }
             else {
-                r.route(URL.LOGIN);
+                changeRoute(r.URL.LOGIN);
             }
-        };
+        }
 
         s.dateSlot = {
             proceedToConnect: s.proceedToConnect
@@ -458,11 +436,23 @@ app.controller('ctrl.booking', ['server',
                 }
             });
         }
-        s.validateBeforePayment = function(cb, validateLoginAlso) {
-            if (validateLoginAlso && (!s._user || !s._user._id)) return r.moveToLogin();
+        s.validateBeforePayment = function(cb, shouldValidateLoginAsWell) {
+            console.log('DEBUG-VALIDATING-LOGIN');
+            if (shouldValidateLoginAsWell && (!s._user || !s._user._id)) {
+                console.log('DEBUG-INVALID-LOGIN', s._user);
+                return r.moveToLogin();
+            }
+            console.log('DEBUG-VALIDATING-QUESTIONS');
             s.validateQuestions(function() {
-                s.validateDate(cb, () => r.route(URL.RDV));
-            }, () => r.route(URL.HOME));
+                console.log('DEBUG-VALIDATING-DATE');
+                s.validateDate(cb, () => {
+                    console.log('DEBUG-INVALID-DATE ROUTING-TO-RDV');
+                    changeRoute(r.URL.RDV)
+                });
+            }, () => {
+                console.log('DEBUG-INVALID-QUESTIONS ROUTING-TO-HOME');
+                changeRoute(r.URL.HOME)
+            });
         }
         s.validateDate = function(cb, err) {
             ifThenMessage([
@@ -497,7 +487,9 @@ app.controller('ctrl.booking', ['server',
         };
 
 
-        s.validateQuestions = function(cb, err) {
+        s.validateQuestions = validateQuestions;
+
+        function validateQuestions(cb, err) {
             ifThenMessage([
                 [s.item.info.buildingState, '==', undefined, MESSAGES.ANSWER_SELL_OR_RENT],
                 [s.item.info.buildingType, '==', undefined, MESSAGES.ANSWER_APPARTAMENT_OR_MAISON],
@@ -520,46 +512,9 @@ app.controller('ctrl.booking', ['server',
             }, () => {
                 s.validateAddressDepartment(cb, err);
             });
-        };
+        }
 
-        /*
-                //DIAG DATE SELECTION -> Get the slot that the user had selected to the right place.
-                s.$watch('item.range', function(id) {
-                    if (!id) return;
-                    if (typeof id !== 'string') return;
-                    //console.log('item.range', id);
-                    var data = JSON.parse(window.atob(id));
-                    //console.log('item.range data', data);
-                    s.item._diag = data._diag;
-                    s.item.start = data.start;
-                    s.item.end = data.end;
-                });
-                */
 
-        /*
-                function setSelectedRangeIDUsingOrder(slots, rngId) {
-                    if (!$U.val(s._order, '_diag._id')) return;
-                    if (rngId) return null;
-                    slots.forEach(v => {
-                        var data = JSON.parse(window.atob(v.id));
-                        if (data._diag == s._order._diag || data._diag == s._order._diag._id) {
-                            if (data.start == s._order.start && data.end == s._order.end) {
-                                r.dom(function() {
-                                    s.item.range = v.id;
-                                    return v.id;
-                                });
-                            }
-                        }
-                    })
-                }
-
-                function setSelectedRangeDateUsingOrder() {
-                    if (!$U.indexOf(r.__route, [URL.RDV])) return;
-                    var id = setSelectedRangeIDUsingOrder(s.slots1, null);
-                    id = setSelectedRangeIDUsingOrder(s.slots2, id);
-                    id = setSelectedRangeIDUsingOrder(s.slots3, id);
-                    id = setSelectedRangeIDUsingOrder(s.slots4, id);
-                }*/
 
         //DOM CLASS
         s.dateSlotSelected = function(rng) {
@@ -587,6 +542,11 @@ app.controller('ctrl.booking', ['server',
                 _id: s.item._diag
             }).then(res => {
                 s.__diag = res.result;
+
+                if (s._order) {
+                    s._order._diag = s.__diag;
+                }
+
             }).error(() => {
                 fetch_diag_info_called = false;
             });
@@ -715,7 +675,7 @@ app.controller('ctrl.booking', ['server',
                         //console.info('auto-save: saved');
                     })
                 }
-            }, 5000);
+            }, 10000);
 
             function cloneOrder() {
                 s.__clonedOrder = _.cloneDeep(s._order);
@@ -925,15 +885,11 @@ app.controller('ctrl.booking', ['server',
             return !s.isLandLord();
         };
 
-        s.item = {
-            date: undefined,
-            diags: {},
-            clientType: 'landlord'
-        };
 
 
 
-        var waitForProperties = (cbArray, props) => {
+
+        function waitForProperties(cbArray, props) {
             var i = setInterval(function() {
                 var rta = true;
                 props.forEach((v) => {
@@ -948,7 +904,7 @@ app.controller('ctrl.booking', ['server',
                     });
                 }
             }, 200);
-        };
+        }
 
         s.__constructionPermissionDateSelectLabel = 'choisir';
         s.__constructionPermissionDateSelect = (key, val) => {
@@ -989,25 +945,7 @@ app.controller('ctrl.booking', ['server',
         s.homeThreeTitle = () => decodeURI(val(s.diagSelected, 'dialogs.two.title'));
         s.homeThreeContent = () => decodeURI(val(s.diagSelected, 'dialogs.three.content'));
 
-        db.localData().then(function(data) {
-            Object.assign(s, data);
 
-            s.diags = _.sortBy(s.diags, function(o) {
-                return o.sort;
-            });
-
-            //accessors for diags
-            s.diag = s.diag || {};
-            s.diags.forEach(diag => {
-                s.diag[diag.name] = diag;
-            });
-            s.diagSelected = s.diag.dpe;
-
-
-            orderQuestion.bindAnswersToDefaultDiags(s);
-            //updateChecksVisibilityOnDemand();
-            waitForProperties([loadDefaults, r.dom], ['notify']);
-        });
 
 
 
@@ -1109,109 +1047,7 @@ app.controller('ctrl.booking', ['server',
 
         s.lineThrough = (item) => (item.show == false);
 
-        /*
-                function updateChecksVisibilityOnDemand() {
 
-                    function toggleMandatory(n, val) {
-                        s.diags.forEach((diag) => {
-                            if ((n && diag.name == n) || !n) {
-                                diag.mandatory = val;
-                                //console.log('toggle-mandatory ',n,val);
-                                r.dom();
-                            }
-                        });
-                    }
-                    s.toggleMandatory = toggleMandatory;
-
-                    var toggle = (n, val) => {
-                        s.diags.forEach((diag) => {
-                            if ((n && diag.name == n) || !n) {
-                                diag.show = val;
-                                if (diag.show == false) {
-                                    s.item.diags[diag.name] = false;
-                                }
-                            }
-                        });
-                    };
-                    s.diags.forEach(function(val, key) {
-                        s.item.diags[val.name] = (val.mandatory) ? true : false;
-                    });
-
-                    s.$watch('item.info.constructionPermissionDate', updateChecks);
-                    s.$watch('item.info.buildingState', updateChecks);
-                    s.$watch('item.info.gasInstallation', updateChecks);
-                    s.$watch('item.info.address', updateChecks);
-                    s.$watch('item.info.electricityInstallation', updateChecks);
-
-                    function updateChecks() {
-                        if (s.item.info.constructionPermissionDate === 'Avant le 01/01/1949') {
-                            toggle('crep', true);
-                            s.item.diags.crep = true; //mandatory
-                            toggleMandatory('crep', true);
-                        }
-                        else {
-                            s.item.diags.crep = false; //
-                            toggle('crep', true);
-                            toggleMandatory('crep', false);
-                        }
-
-                        if (s.departmentHasTermites() && s.item.sell) {
-                            //toggle('termites', true);
-                            s.item.diags.termites = true;
-                            toggleMandatory('termites', true);
-                        }
-                        else {
-                            toggle('termites', false);
-                            s.item.diags.termites = false;
-                            toggleMandatory('termites', false);
-                        }
-
-                        if (_.includes(['Avant le 01/01/1949', 'Entre 1949 et le 01/07/1997'], s.item.constructionPermissionDate)) {
-                            toggle('dta', true);
-                            s.item.diags.dta = true; //mandatory
-                            toggleMandatory('dta', true);
-                        }
-                        else {
-                            toggle('dta', true);
-                            s.item.diags.dta = false;
-                            toggleMandatory('dta', false);
-                        }
-
-                        if (_.includes(['Oui, Plus de 15 ans', 'Oui, Moins de 15 ans'], s.item.gasInstallation)) {
-                            toggle('gaz', true);
-                            if (s.item.sell == true && s.item.gasInstallation === 'Oui, Plus de 15 ans') {
-                                s.item.diags.gaz = true;
-                                toggleMandatory('gaz', true);
-                            }
-                            else {
-                                s.item.diags.gaz = false;
-                                toggleMandatory('gaz', false);
-                            }
-                        }
-                        else {
-                            toggle('gaz', false);
-                            toggleMandatory('gaz', false);
-                        }
-                        if (_.includes(['Plus de 15 ans', 'Moins de 15 ans'], s.item.electricityInstallation)) {
-                            toggle('electricity', true);
-                            if (s.item.sell == true && s.item.electricityInstallation === 'Plus de 15 ans') {
-                                s.item.diags.electricity = true;
-                                toggleMandatory('electricity', true);
-                            }
-                            else {
-                                s.item.diags.electricity = false;
-                                toggleMandatory('electricity', false);
-                            }
-                        }
-                        else {
-                            toggle('electricity', false);
-                            toggleMandatory('electricity', false);
-                        }
-
-                    }
-                    toggle(undefined, true); //all checks visibles.
-                }
-                */
 
         function loadDefaults() {
             //console.log('loadDefaults');
@@ -1279,11 +1115,16 @@ app.controller('ctrl.booking', ['server',
 
 
         s.gotoOrderConfirmationScreen = function() {
+
+            r.sessionMetadata({
+                booking: {}
+            });
+
             r.routeParams({
                 _order: s._order,
                 _client: s._user
             });
-            r.route('order-confirm');
+            changeRoute('order-confirm');
         };
 
         s.selectedDate = function() {
@@ -1347,8 +1188,10 @@ app.controller('ctrl.booking', ['server',
                         s._user = _user;
 
                         s.validateBeforePayment(function() {
+                            console.log('DEBUG-SAVING');
                             s.saveAsync().on('success', function() {
-                                s.route(URL.PAYMENT);
+                                console.log('DEBUG-ROUTING-TO-PAYMENT');
+                                changeRoute(r.URL.PAYMENT);
                             });
                         }, true);
 
@@ -1379,6 +1222,7 @@ app.controller('ctrl.booking', ['server',
 
         s.bookingDescriptionTitle = function(item) {
             item = item || s.item;
+            if (!item || !item.info) return '';
             if (item.info.buildingState == '1') return "Pack Vente: ";
             else return "Pack Location: ";
         };
@@ -1469,16 +1313,16 @@ app.controller('ctrl.booking', ['server',
         s.subscribeClientStandAlone = function() {
             s.createClient(function() {
                 s.infoMsg('Le compte a été créé . Vérifiez votre email .');
-                r.route(URL.HOME);
+                changeRoute(r.URL.HOME);
             });
-        }
+        };
 
         s.subscribeClient = function() {
             s.createClient(function() {
                 //s.infoMsg('Le compte a été créé . Vérifiez votre email .');
                 s.validateBeforePayment(function() {
                     s.saveAsync().on('success', function() {
-                        s.route(URL.PAYMENT);
+                        changeRoute(r.URL.PAYMENT);
                     });
                 }, true);
             });
@@ -1498,8 +1342,8 @@ app.controller('ctrl.booking', ['server',
             });
         };
 
-        s.subscribeModeBooking = (clientType) => s.subscribe(clientType, URL.ACCOUNT_DETAILS_BOOKING, false);
-        s.subscribeMode = (clientType) => s.subscribe(clientType, URL.ACCOUNT_DETAILS);
+        s.subscribeModeBooking = (clientType) => s.subscribe(clientType, r.URL.ACCOUNT_DETAILS_BOOKING, false);
+        s.subscribeMode = (clientType) => s.subscribe(clientType, r.URL.ACCOUNT_DETAILS);
 
         s.subscribe = (clientType, nextRoute, useAuthCredentials) => {
             useAuthCredentials = useAuthCredentials == undefined ? true : useAuthCredentials;
@@ -1533,7 +1377,7 @@ app.controller('ctrl.booking', ['server',
                 }
                 s._user.clientType = clientType;
                 s._user.__subscribeMode = true;
-                r.route(nextRoute);
+                changeRoute(nextRoute);
             }
         };
 
@@ -1581,6 +1425,15 @@ app.controller('ctrl.booking', ['server',
             s._order = _order;
             updateOrderPrices(s._order);
             commitOrderInfo();
+
+            r.sessionMetadata({
+                booking: {
+                    _order: s._order,
+                    _user: s._user,
+                    item: s.item
+                }
+            });
+
             updateAutoSave();
         }
 
@@ -1654,7 +1507,7 @@ app.controller('ctrl.booking', ['server',
 
                 if ($U.hasUndefinedProps(s.item, ['_diag', 'start', 'end'])) {
                     s.warningMsg('Select one available date');
-                    return r.route(URL.RDV);
+                    return changeRoute(r.URL.RDV);
                 }
 
                 $log.debug('first-time-saving', _.clone(s.item));
@@ -1662,7 +1515,7 @@ app.controller('ctrl.booking', ['server',
                 db.ctrl('Order', 'saveWithEmail', s.item).then(data => {
                     var saved = data.ok;
 
-                    console.info('save-order', data.err)
+                    console.info('save-order', data.err);
 
                     var exists = (data.err === 'ORDER_EXISTS');
                     var taken = (data.err === 'ORDER_TAKEN');
@@ -1722,7 +1575,7 @@ app.controller('ctrl.booking', ['server',
                         s.booking.order.taken = (taken == true);
                     });
                     //
-                }).err(err => {
+                }).err(_err => {
                     s.notify('There was a server issue during the order saving proccess. Retrying in 10 seconds. Wait.', {
                         type: 'warning',
                         duration: 100000
@@ -1744,7 +1597,7 @@ app.controller('ctrl.booking', ['server',
                 s._order.status = 'created';
                 s.payNOW();
             });
-        }
+        };
 
         //require an order to be saved (s._order)
         s.payNOW = (success) => {
@@ -1777,15 +1630,6 @@ app.controller('ctrl.booking', ['server',
             //------
         };
 
-        function emailOfPersonWhoPaid() {
-            var session = r.session();
-            if (session && session._id == s._order._client._id) {
-                return s._order._client.email;
-            }
-            else {
-                return s._order.landLordEmail || '';
-            }
-        }
 
 
 

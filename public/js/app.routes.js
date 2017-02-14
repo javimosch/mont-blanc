@@ -5,15 +5,63 @@ srv.config(['$routeProvider', '$locationProvider',
 
 
         $routeProvider.
+        
+        /*BOOKING*/
+         when('/', {
+            templateUrl: 'views/diags/booking/booking-1-home.html'
+        }).
+        when('/home', {
+            templateUrl: '/views/diags/booking/booking-1-home.html'
+        }).
+       
+       
+        when('/choix-diagnostics', {
+            templateUrl: 'views/diags/booking/booking-2-diags-selection.html'
+        }).
+        when('/rendez-vous', {
+            templateUrl: 'views/diags/booking/booking-3-date-selection.html'
+        }).
+        when('/connexion', {
+            templateUrl: 'views/diags/booking/booking-4-connection.html'
+        }).
+        when('/new-inscription', {
+            templateUrl: 'views/diags/booking/booking-espace-enterprise.html'
+        }).
+
+        when('/espace-enterprise', {
+            templateUrl: 'views/diags/booking/booking-espace-enterprise.html'
+        }).
+
+        when('/espace-diagnostiqueur', {
+            templateUrl: 'views/diags/booking/booking-espace-diagnostiqueur.html'
+        }).
+
+        when('/account-details', {
+            templateUrl: 'views/diags/booking/booking-inscription-details.html'
+        }).
+        when('/inscription-details', {
+            templateUrl: 'views/diags/booking/booking-5-inscription.html'
+        }).
+        when('/payment', {
+            templateUrl: 'views/diags/booking/booking-6-payment.html'
+        }).
+        when('/order-confirm', {
+            templateUrl: 'views/diags/booking/order-confirmation-screen.html'
+        }).
+
 
         //SHARED
         when('/mentions-legales', {
             templateUrl: 'views/diags/legal-mentions.html'
         }).
+      
+        when('/cgu-lemonway', {
+            templateUrl: 'views/diags/cgu-lemonway.html'
+        }).
         when('/conditions-generales-utilisation', {
             templateUrl: 'views/diags/general-conditions.html'
         }).
-        when('/ernt', {
+         when('/ernmt', {
             templateUrl: 'views/diags/ernmt.html'
         }).
         when('/faq', {
@@ -32,9 +80,10 @@ srv.config(['$routeProvider', '$locationProvider',
         }).
 
         //PRIVATE
+        /*
         when('/', {
             templateUrl: 'views/diags/backoffice/dashboard.html'
-        }).
+        }).*/
         when('/dashboard', {
             templateUrl: 'views/diags/backoffice/dashboard.html'
         }).
@@ -130,9 +179,7 @@ srv.config(['$routeProvider', '$locationProvider',
             templateUrl: 'views/diags/backoffice/price-modifiers.html'
         }).
 
-        when('/prices', {
-            templateUrl: 'views/diags/backoffice/prices.html'
-        }).
+       
 
         when('/documentation', {
             templateUrl: 'views/diags/backoffice/diags-docs.html'

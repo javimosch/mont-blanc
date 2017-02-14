@@ -1,33 +1,35 @@
-<div class="" ng-controller="adminDashboard">
-    <div class="row">
-        <div class="col-sm-12 padding-none">
-            <ol class="breadcrumb">
-                <li>Tableau de bord</li>
-            </ol>
+<div class="container-fluid backoffice-wrapper">
+    <div class="container" ng-controller="adminDashboard">
+        <div class="row">
+            <div class="col-sm-12 padding-none">
+                <ol class="breadcrumb">
+                    <li>Tableau de bord</li>
+                </ol>
+            </div>
         </div>
-    </div>
-    <div class="row padding-none">
-        <div class="col-sm-12 col-md-9 padding-one padding-left-two">
+        <div class="row padding-none">
+            <div class="col-sm-12 col-md-9 padding-one padding-left-two">
 
-            <h6 class="dash-welcome">{{session().firstName || session().email}}, Bienvenue dans votre tableau de bord</h6>
-            <out ng-if="false">
-                <h5 class="margin-top-two">Raccourcis</h5>
-                <h6>Ouvrir la <a href="/" target="_blank" >réservation</a> dans un nouvel onglet.</h6>
-            </out>
+                <h6 class="dash-welcome">{{session().firstName || session().email}}, Bienvenue dans votre tableau de bord</h6>
+                <out ng-if="false">
+                    <h5 class="margin-top-two">Raccourcis</h5>
+                    <h6>Ouvrir la <a href="/" target="_blank">réservation</a> dans un nouvel onglet.</h6>
+                </out>
+
+            </div>
+            <div class="col-sm-12 col-md-3 padding-one padding-right-two" ng-if="userIs('client')">
+                <button class=" center-block v-margin-1 btn diags-btn bg-madison" type="button" ng-click="route('clients/edit/' + session()._id)">Mon profil</button>
+            </div>
+        </div>
+        <div class="row padding-none">
+
+            <div ng-if="session().userType=='diag'" ng-include=" 'views/diags/backoffice/partials/dashboard.diag.html' ">
+            </div>
+            <div ng-if="session().userType=='client'" ng-include=" 'views/diags/backoffice/partials/dashboard.client.html' ">
+            </div>
+            <div ng-if="session().userType=='admin'" ng-include=" 'views/diags/backoffice/partials/dashboard.admin.html' ">
+            </div>
 
         </div>
-        <div class="col-sm-12 col-md-3 padding-one padding-right-two" ng-if="userIs('client')">
-            <button class=" center-block v-margin-1 btn diags-btn bg-madison" type="button" ng-click="route('clients/edit/' + session()._id)">Mon profil</button>
-        </div>
-    </div>
-    <div class="row padding-none">
-
-        <div ng-if="session().userType=='diag'" ng-include=" 'views/diags/backoffice/partials/dashboard.diag.html' ">
-        </div>
-        <div ng-if="session().userType=='client'" ng-include=" 'views/diags/backoffice/partials/dashboard.client.html' ">
-        </div>
-        <div ng-if="session().userType=='admin'" ng-include=" 'views/diags/backoffice/partials/dashboard.admin.html' ">
-        </div>
-
     </div>
 </div>

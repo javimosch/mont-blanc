@@ -1,4 +1,4 @@
-<div class="diags-bg">
+<div class="diags-bg" ng-controller="ctrl.booking"> 
     <div class="diags-content container diags-selection padding-none">
         <div class="row diags-bg-block-40 hidden-xs"></div>
         <div class="row diag-row padding-top-one">
@@ -58,10 +58,10 @@
                         <div class="row margin-top-half diags-botticelli-wrapper ">
                             <div class="col-xs-2 padding-none margin-none">
                                 <div class="row padding-none margin-none">
-                                    <img class="" src="img/icon-calendar.png">
+                                    <img class="" src="/img/icon-calendar.png">
                                 </div>
                                 <div class="row padding-none margin-none">
-                                    <img class="margin-top-two" src="img/icon-guy.png">
+                                    <img class="margin-top-two" src="/img/icon-guy.png">
                                 </div>
                             </div>
                             <div class="col-xs-10 padding-none margin-none">
@@ -74,7 +74,7 @@
                                 Liste de Diagnostics :
                             </div>
                             <div class="row padding-none diags-icons margin-top-half" ng-show="_order && _order.diags">
-                                <img ng-repeat="(k,v) in _order.diags" ng-show="v" ng-src="img/icons/icon_{{k}}.png">
+                                <img ng-repeat="(k,v) in _order.diags" ng-show="v" ng-src="/img/icons/icon_{{k}}.png">
                             </div>
                         </div>
 

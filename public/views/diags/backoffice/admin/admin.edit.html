@@ -1,79 +1,79 @@
-<modal-confirm open="confirm"></modal-confirm>
-<div class="row">
-    <div class="col-sm-12 padding-none">
-        <ol class="breadcrumb">
-            <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
-            <li><a class="link" ng-click="route('administrators')">Admins</a></li>
-            <li>Admin Details</li>
-        </ol>
-    </div>
-</div>
-<div class="container" ng-controller="adminUsersEdit">
-    <div class="row diags-row margin-bottom-two">
-        <div class="col-sm-6 col-md-4">
-            <div class="row margin-top-one">
-                <label>Adresse email</label>
+<div class="container-fluid backoffice-wrapper">
+    <div class="container" ng-controller="adminUsersEdit">
+        <div class="row">
+            <div class="col-sm-12 padding-none">
+                <ol class="breadcrumb">
+                    <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+                    <li><a class="link" ng-click="route('administrators')">Admins</a></li>
+                    <li>Admin Details</li>
+                </ol>
             </div>
-            <div class="row  margin-top-half">
-                <input ng-disabled="state.working() || item._id" ng-model="item.email" class="diags-input" placeholder="Adresse email">
-            </div>
-            <div class="row margin-top-one">
-                <label>Mot de passe</label>
-            </div>
-            <div class="row  margin-top-half">
-                <input type="password" ng-disabled="state.working()" ng-model="item.password" class="diags-input" placeholder="mot de passe">
-            </div>
-            <div class="row margin-top-one">
-                <label>Prénom</label>
-            </div>
-            <div class="row  margin-top-half">
-                <input ng-disabled="state.working()" ng-model="item.firstName" class="diags-input" placeholder="prénom">
-            </div>
-            <div class="row margin-top-one">
-                <label>Nom</label>
-            </div>
-            <div class="row  margin-top-half">
-                <input ng-disabled="state.working()" ng-model="item.lastName" class="diags-input" placeholder="nom">
-            </div>
-            <div class="row margin-top-one" ng-show="item.clientType == 'agency'">
-                <label>Raison sociale</label>
-            </div>
-            <div class="row  margin-top-half" ng-show="item.clientType == 'agency'">
-                <input ng-disabled="state.working()" ng-model="item.companyName" class="diags-input" placeholder="Raison sociale">
-            </div>
-            <div class="row margin-top-one">
-                <label>Téléphone fixe</label>
-            </div>
-            <div class="row  margin-top-half">
-                <input ng-disabled="state.working()" ng-model="item.fixedTel" class="diags-input" placeholder="Téléphone fixe">
-            </div>
-            <div class="row margin-top-one">
-                <label>Mobile</label>
-            </div>
-            <div class="row  margin-top-half">
-                <input ng-disabled="state.working()" ng-model="item.cellPhone" class="diags-input" placeholder="Mobile">
-            </div>
-
         </div>
-        <div class="col-sm-6 col-md-8">
-            <div class="row margin-top-one">
-                <label>Adresse</label>
-            </div>
-            <div class="row  margin-top-half">
-                <input ng-disabled="state.working()" type="text" data-address model="item" field="address" placeholder="Street Address" city="city" department="department" region="region" country="country" post-code="postCode" class="diags-input fullwidth max-w-500">
-            </div>
+        <div class="row diags-row margin-bottom-two">
+            <div class="col-sm-6 col-md-4">
+                <div class="row margin-top-one">
+                    <label>Adresse email</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="state.working() || item._id" ng-model="item.email" class="diags-input" placeholder="Adresse email">
+                </div>
+                <div class="row margin-top-one">
+                    <label>Mot de passe</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input type="password" ng-disabled="state.working()" ng-model="item.password" class="diags-input" placeholder="mot de passe">
+                </div>
+                <div class="row margin-top-one">
+                    <label>Prénom</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="state.working()" ng-model="item.firstName" class="diags-input" placeholder="prénom">
+                </div>
+                <div class="row margin-top-one">
+                    <label>Nom</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="state.working()" ng-model="item.lastName" class="diags-input" placeholder="nom">
+                </div>
+                <div class="row margin-top-one" ng-show="item.clientType == 'agency'">
+                    <label>Raison sociale</label>
+                </div>
+                <div class="row  margin-top-half" ng-show="item.clientType == 'agency'">
+                    <input ng-disabled="state.working()" ng-model="item.companyName" class="diags-input" placeholder="Raison sociale">
+                </div>
+                <div class="row margin-top-one">
+                    <label>Téléphone fixe</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="state.working()" ng-model="item.fixedTel" class="diags-input" placeholder="Téléphone fixe">
+                </div>
+                <div class="row margin-top-one">
+                    <label>Mobile</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="state.working()" ng-model="item.cellPhone" class="diags-input" placeholder="Mobile">
+                </div>
 
-            <div class="row margin-top-one">
-                <label>Wallet ID</label>
             </div>
-            <div class="row  margin-top-half">
-                <input ng-disabled="true" ng-value="item.wallet" class="diags-input" placeholder="(Sans wallet)">
-            </div>
-            <div class="row margin-top-quarter" ng-show="userIs('admin')&&!item.wallet">
-                <button ng-click="createWallet()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance">Create wallet</button>
-            </div>
+            <div class="col-sm-6 col-md-8">
+                <div class="row margin-top-one">
+                    <label>Adresse</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="state.working()" type="text" data-address model="item" field="address" placeholder="Street Address" city="city" department="department" region="region" country="country" post-code="postCode" class="diags-input fullwidth max-w-500">
+                </div>
 
-            <!--
+                <div class="row margin-top-one">
+                    <label>Wallet ID</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="true" ng-value="item.wallet" class="diags-input" placeholder="(Sans wallet)">
+                </div>
+                <div class="row margin-top-quarter" ng-show="userIs('admin')&&!item.wallet">
+                    <button ng-click="createWallet()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance">Create wallet</button>
+                </div>
+
+                <!--
             <div class="row margin-top-one">
                 <label>Ville</label>
             </div>
@@ -112,13 +112,14 @@
 
             -->
 
+            </div>
         </div>
-    </div>
-    <div class="row diags-row margin-bottom-two">
-        <div class="col-sm-12">
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Enregistrer</button>
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="cancel()">Annuler</button>
-            <button ng-show="userIs('admin')" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="delete()">Supprimer</button>
+        <div class="row diags-row margin-bottom-two">
+            <div class="col-sm-12">
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Enregistrer</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="cancel()">Annuler</button>
+                <button ng-show="userIs('admin')" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="delete()">Supprimer</button>
+            </div>
         </div>
     </div>
 </div>

@@ -1,113 +1,114 @@
-<div class="container" ng-controller="adminOrdersEdit">
-    <modal-confirm open="confirm"></modal-confirm>
-    <div class="row">
-        <div class="col-sm-12">
-            <h3 class="v-margin-2 padding-0">Order Details</h3>
-        </div>
-    </div>
-    <div class="row margin-top-one">
-        <div class="col-xs-12 col-sm-12 col-md-6">
-
-            <div class="row margin-top-one">
-                <label class="unselectable">Diagnostiqueur</label>
-            </div>
-            <div class="row margin-top-quarter">
-                <input ng-disabled="true" ng-value="item._diag.email" class="diags-input" placeholder="Diag Man">
-            </div>
-            <div class="row margin-top-half">
-                <label class="unselectable">Adresse</label>
-            </div>
-            <div class="row margin-top-quarter">
-                <input ng-disabled="true" class="diags-input" ng-value="item.address" placeholder="Adresse">
-            </div>
-
-            <div class="row margin-top-half">
-                <label class="unselectable">Liste diags</label>
-            </div>
-            <div class="row margin-top-quarter">
-                <table class="table table-striped table-condensed unselectable">
-                    <tr ng-repeat="(k,o) in item.diags" class="unselectable" ng-show="o">
-                        <td ng-bind="diagNameConvertion(k)"></td>
-                    </tr>
-                </table>
-            </div>
-            <div class="row margin-top-half">
-                <label class="unselectable">Date de début</label>
-            </div>
-            <div class="row margin-top-quarter">
-                <input ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.start)" placeholder="Adresse">
-            </div>
-            <div class="row margin-top-half">
-                <label class="unselectable">Clés</label>
-            </div>
-            <div class="row margin-top-quarter">
-                <input ng-disabled="true" class="diags-input" ng-value="item.keysAddress" placeholder="Adresse">
-            </div>
-            <div class="row margin-top-quarter">
-                <input ng-disabled="true" class="diags-input" ng-value="momentFormat(item.keysTimeFrom,'HH[h]mm')" placeholder="Adresse">
-            </div>
-            <div class="row margin-top-quarter">
-                <input ng-disabled="true" class="diags-input" ng-value="momentFormat(item.keysTimeTo,'HH[h]mm')" placeholder="Adresse">
-            </div>
-
-
-
-
-
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-6 ">
-
-
-            <div class="row margin-top-half">
-                <label class="unselectable">Propriétaire</label>
-            </div>
-            <div class="row margin-top-quarter">
-                <input ng-disabled="true" class="diags-input" ng-value="item.landLordFullName" placeholder="Propriétaire">
-            </div>
-            <div class="row margin-top-quarter">
-                <input ng-disabled="true" class="diags-input" ng-value="item.landLordEmail" placeholder="Propriétaire Email">
-            </div>
-            <div class="row margin-top-half">
-                <label class="unselectable">Observations</label>
-            </div>
-            <div class="row margin-top-quarter">
-                <textarea ng-disabled="false" type="text" class="diags-input fullwidth min-height-100 no-resize" ng-model="item.obs"></textarea>
-            </div>
-
-
-            <div class="row margin-top-one">
-                <div ng-include="'views/diags/backoffice/partials/order-details-pdf-files.html'" includeReplace></div>
-            </div>
-
-
-        </div>
-    </div>
-    <div class="row margin-top-one">
-        <div class="col-sm-12">
-            <div class="row margin-top-half">
-                <label class="unselectable">Price</label>
-            </div>
-            <div class="row margin-top-quarter">
-                <input ng-disabled="true" type="text" class="diags-input" ng-value="item.price">
-            </div>
-            <div class="row margin-top-half">
-                <label class="unselectable">Etat</label>
-            </div>
-            <div class="row margin-top-quarter">
-                <input ng-disabled="true" type="text" class="diags-input" ng-value="item.status">
+<div class="container-fluid bg-black-squeeze">
+    <div class="container bg-white" ng-controller="adminOrdersEdit">
+        <div class="row breadcrumbs">
+            <div class="col-sm-12">
+                <h3 class="v-margin-2 padding-0">Order Details</h3>
             </div>
         </div>
-    </div>
-    <div class="row margin-top-one" ng-show="isPaid()">
-        <div class="col-sm-12">
-            <div class="alert alert-info">
-                Cette commande est déjà payé
+        <div class="row margin-top-one">
+            <div class="col-xs-12 col-sm-12 col-md-6">
+
+                <div class="row margin-top-one">
+                    <label class="unselectable">Diagnostiqueur</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="true" ng-value="item._diag.email" class="diags-input" placeholder="Diag Man">
+                </div>
+                <div class="row margin-top-half">
+                    <label class="unselectable">Adresse</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="true" class="diags-input" ng-value="item.address" placeholder="Adresse">
+                </div>
+
+                <div class="row margin-top-half">
+                    <label class="unselectable">Liste diags</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <table class="table table-striped table-condensed unselectable">
+                        <tr ng-repeat="(k,o) in item.diags" class="unselectable" ng-show="o">
+                            <td ng-bind="diagNameConvertion(k)"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row margin-top-half">
+                    <label class="unselectable">Date de début</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="true" class="diags-input" ng-value="momentDateTime(item.start)" placeholder="Adresse">
+                </div>
+                <div class="row margin-top-half">
+                    <label class="unselectable">Clés</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="true" class="diags-input" ng-value="item.keysAddress" placeholder="Adresse">
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="true" class="diags-input" ng-value="momentFormat(item.keysTimeFrom,'HH[h]mm')" placeholder="Adresse">
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="true" class="diags-input" ng-value="momentFormat(item.keysTimeTo,'HH[h]mm')" placeholder="Adresse">
+                </div>
+
+
+
+
+
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 ">
+
+
+                <div class="row margin-top-half">
+                    <label class="unselectable">Propriétaire</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="true" class="diags-input" ng-value="item.landLordFullName" placeholder="Propriétaire">
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="true" class="diags-input" ng-value="item.landLordEmail" placeholder="Propriétaire Email">
+                </div>
+                <div class="row margin-top-half">
+                    <label class="unselectable">Observations</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <textarea ng-disabled="false" type="text" class="diags-input fullwidth min-height-100 no-resize" ng-model="item.obs"></textarea>
+                </div>
+
+
+                <div class="row margin-top-one">
+                    <div ng-include="'views/diags/backoffice/partials/order-details-pdf-files.html'" includeReplace></div>
+                </div>
+
+
             </div>
         </div>
-    </div>
-    <div class="row margin-top-one">
-        <div class="col-sm-12">
-            <button ng-show="item._id && item.status!=='prepaid' && item.status !=='completed'" ng-disabled="state.working()" class="btn diags-btn bg-blaze-orange" ng-click="pay()">Payez Maintenant</button>
+        <div class="row margin-top-one">
+            <div class="col-sm-12">
+                <div class="row margin-top-half">
+                    <label class="unselectable">Price</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="true" type="text" class="diags-input" ng-value="item.price">
+                </div>
+                <div class="row margin-top-half">
+                    <label class="unselectable">Etat</label>
+                </div>
+                <div class="row margin-top-quarter">
+                    <input ng-disabled="true" type="text" class="diags-input" ng-value="item.status">
+                </div>
+            </div>
+        </div>
+        <div class="row margin-top-one" ng-show="isPaid()">
+            <div class="col-sm-12">
+                <div class="alert alert-info">
+                    Cette commande est déjà payé
+                </div>
+            </div>
+        </div>
+        <div class="row margin-top-one">
+            <div class="col-sm-12">
+                <button ng-show="item._id && item.status!=='prepaid' && item.status !=='completed'" ng-disabled="state.working()" class="btn diags-btn bg-blaze-orange" ng-click="pay()">Payez Maintenant</button>
+            </div>
         </div>
     </div>
 </div>

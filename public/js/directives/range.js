@@ -1,21 +1,21 @@
 /*global app*/
 /*global $*/
 /*global $U*/
-app.directive('rangeModel', function($rootScope, $timeout, $compile) {
+app.directive('rangeModel', function($rootScope, $timeout, $compile, $log) {
     return {
         restrict: 'A',
         link: function(scope, el, attrs) {
             if (!attrs.rangeValues) throw Error('rangeModel: rangeValues attribute requited.');
 
-            var _init_done = false;
+            var isInitialized = false;
             scope.$watch(attrs.rangeValues, function(x) {
-                if (x !== undefined && !_init_done) {
-                    init();
-                    _init_done = true;
+                if (x !== undefined && !isInitialized) {
+                    initialize();
+                    isInitialized = true;
                 }
             });
 
-            function init() {
+            function initialize() {
                 var vals = scope[attrs.rangeValues];
                 var handler = el.get(0);
                 $timeout(function() {
@@ -24,33 +24,37 @@ app.directive('rangeModel', function($rootScope, $timeout, $compile) {
                     el.attr('step', 1);
                     el.rangeslider({
                         polyfill: false,
-                         onSlide: function(position, value) {
-                             update(value);
-                         }
+                        onSlide: function(position, value) {
+                            update(value);
+                        }
                     });
                     $rootScope.$apply();
                 })
 
                 function update(value) {
                     var index = Math.round(parseInt(value));
-                    var val = get(index);
-                    //console.info('range', index, val);
-                    set(val, scope);
+                    var val = getValueFromIndex(index);
+                    setModelValue(val, scope);
                     $timeout(function() {
                         $rootScope.$apply();
                     });
                 }
 
-                $U.on('render-ranges', function() {
-                    //console.info('init-render-ranges',$U.val(scope, attrs.rangeModel));
-                    setDomVal($U.val(scope, attrs.rangeModel), vals);
+
+
+                var unwatch = scope.$watch(attrs.rangeModel, (v) => {
+                    if (v) {
+                        $log.info('RANGE AUTO SET ', v);
+                        setElementValue(v, vals);
+                        unwatch();
+                    }
                 });
 
-                function get(index) {
+                function getValueFromIndex(index) {
                     return vals[Object.keys(vals)[index]];
                 }
 
-                function set(val, ss) {
+                function setModelValue(val, ss) {
                     var split = attrs.rangeModel.split('.');
                     split.forEach(word => {
                         if (word == split[split.length - 1]) return;
@@ -58,12 +62,10 @@ app.directive('rangeModel', function($rootScope, $timeout, $compile) {
                         if (ss == undefined) throw Error(word, ' is undefined');
                     });
                     ss[split[split.length - 1]] = val;
-                    setDomVal(val, vals);
+                    //setDomVal(val, vals);
                 }
 
-                function setDomVal(val, valsObject) {
-
-
+                function setElementValue(val, valsObject) {
                     $rootScope.dom(function() {
                         try {
                             var x = 0;
@@ -75,9 +77,7 @@ app.directive('rangeModel', function($rootScope, $timeout, $compile) {
                                     x++;
                                 }
                             }
-                            //$("input[type=range]").val(x);
-                            handler.noUiSlider.set(x);
-                            // console.log('range: set-dom-val-at-', x);
+                            el.val(x).change();
                         }
                         catch (e) {}
                     });

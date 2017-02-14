@@ -1,8 +1,8 @@
 <ul class="nav navbar-nav navbar-right">
     <li><a ng-click="route(URL.ESPACE_ENTERPRISE)" class="link diag-button diag-btn-success">Espace Entreprise</a></li>
 
-    <li ng-show="routeIs('home')"><a ng-click="route(URL.ESPACE_DIAG)" class="link diag-button diag-btn-info">Espace Diagnostiqueur</a></li>
-    <li ng-show="!routeIs('home')">
+    <li ng-show="routeIs('')"><a ng-click="route(URL.ESPACE_DIAG)" class="link diag-button diag-btn-info">Espace Diagnostiqueur</a></li>
+    <li ng-show="!routeIs('')">
         <div class="diags-pill-info " style="height: 37px!important;margin-top: 7px;">
             <span class="avenir-book txt-md white" bind-html-compile="html('BOOKING_HOME_BG_TEXT_2',STATIC.BOOKING_HOME_BG_TEXT_2)">
                                 <!--"-->

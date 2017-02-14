@@ -1,4 +1,4 @@
-<div class="diags-bg">
+<div class="diags-bg" ng-controller="ctrl.booking">
     <div class="diags-content container diags-selection padding-none">
         <div class="row diags-bg-block-40 hidden-xs"></div>
         <div class="row diag-row padding-top-one">
@@ -51,7 +51,7 @@
                     <li ng-repeat="(k,v) in diags" ng-show="v.mandatory && (v.hide==undefined||v.hide==false)" class="margin-right-quarter margin-bottom-quarter float-left">
                         <div class="diag check row">
                             <div class="col-xs-2 padding-none">
-                                <img ng-src="img/icons/icon_{{v.name}}.png">
+                                <img ng-src="/img/icons/icon_{{v.name}}.png">
                             </div>
                             <div class="col-xs-8 padding-none">
                                 <span>{{v.label}}</span>
@@ -78,7 +78,7 @@
                     <li ng-repeat="(k,v) in diags" ng-show="!v.mandatory && (v.hide==undefined||v.hide==false)" class="margin-right-quarter margin-bottom-quarter float-left">
                         <div class="diag check row">
                             <div class="col-xs-2 padding-none">
-                                <img ng-src="img/icons/icon_{{v.name}}.png">
+                                <img ng-src="/img/icons/icon_{{v.name}}.png">
                             </div>
                             <div class="col-xs-8 padding-none">
                                 <span>{{v.label}}</span>
@@ -107,7 +107,7 @@
                         <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
                     </span>
                 </div>
-                <button class="btn-prende-un-rendez-vous btn md-margin-top-one  diag-btn-main diag-btn-width306 sm-float-right" ng-click="proceedToDateSelection()">Prendre un rendez-vous</button>
+                <button class="btn-prende-un-rendez-vous btn md-margin-top-one  diag-btn-main diag-btn-width306 sm-float-right"  ng-disabled="state.working()" ng-click="proceedToDateSelection()">Prendre un rendez-vous</button>
             </div>
         </div>
         <div class="row diags-bg-block-40 hidden-xs"></div>

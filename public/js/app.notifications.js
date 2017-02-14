@@ -16,7 +16,7 @@
 
         s.send = () => {
             var item = s.item;
-            s.confirm('Confirm sending to ' + item.to + '?', () => {
+            r.openConfirm('Confirm sending to ' + item.to + '?', () => {
                 //html from to subject
                 db.ctrl('Email', 'send', {
                     _user: item._user,
@@ -122,7 +122,7 @@
 
                 var modalData = {
                     send: (item) => {
-                        s.confirm('Confirm sending to ' + item.to + '?', () => {
+                        r.openConfirm('Confirm sending to ' + item.to + '?', () => {
                             //html from to subject
                             db.ctrl('Email', 'send', {
                                 _user: item._user,

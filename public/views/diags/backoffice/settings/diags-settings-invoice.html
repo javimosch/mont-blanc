@@ -7,8 +7,8 @@
         //$.getScript("https://cdn.tinymce.com/4/tinymce.min.js");
         $.getScript("https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js", function() {
             //$.getScript("https://cdn.jsdelivr.net/ace/1.2.6/noconflict/theme-monokai.js", function() {
-                $.getScript('https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.8/beautify-html.js');
-                $.getScript('js/vendor/vendor.pdfobject.min.js');
+            $.getScript('https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.8/beautify-html.js');
+            $.getScript('js/vendor/vendor.pdfobject.min.js');
 
 
 
@@ -18,102 +18,103 @@
 
     }
 </script>
-<div class="row">
-    <div class="col-sm-12 padding-none">
-        <ol class="breadcrumb">
-            <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
-            <li><a class="link" ng-click="route('settings')">Settings</a></li>
-            <li>Invoice</li>
-        </ol>
-    </div>
-</div>
-<div class="container" ng-controller="settings-invoice">
-    <modal-confirm open="confirm"></modal-confirm>
-    
-    <div class="row diags-row margin-bottom-two" ng-show="isPreviewPDF()">
-        <div class="col-sm-12 col-md-12">
-            <div class="row margin-top-one">
-                <label>Preview PDF</label>
-                <i class="fa fa-times link" ng-click="closePreviewPDF()" aria-hidden="true"></i>
+<div class="container-fluid backoffice-wrapper">
+    <div class="container" ng-controller="settings-invoice">
+
+        <div class="row">
+            <div class="col-sm-12 padding-none">
+                <ol class="breadcrumb">
+                    <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+                    <li><a class="link" ng-click="route('settings')">Settings</a></li>
+                    <li>Invoice</li>
+                </ol>
             </div>
-            <div class="row">
-                <div id="previewPDF">
+        </div>
+        <div class="row diags-row margin-bottom-two" ng-show="isPreviewPDF()">
+            <div class="col-sm-12 col-md-12">
+                <div class="row margin-top-one">
+                    <label>Preview PDF</label>
+                    <i class="fa fa-times link" ng-click="closePreviewPDF()" aria-hidden="true"></i>
+                </div>
+                <div class="row">
+                    <div id="previewPDF">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-     <div class="row diags-row" ng-show="isPreviewHTML()">
-        <div class="col-sm-12 col-md-12">
-            <div class="row margin-top-one">
-                <label>Preview HTML</label>
-                <i class="fa fa-times link" ng-click="closePreviewHTML()" aria-hidden="true"></i>
-            </div>
-            <div class="row">
-                <div id="previewHTML">
+
+        <div class="row diags-row" ng-show="isPreviewHTML()">
+            <div class="col-sm-12 col-md-12">
+                <div class="row margin-top-one">
+                    <label>Preview HTML</label>
+                    <i class="fa fa-times link" ng-click="closePreviewHTML()" aria-hidden="true"></i>
+                </div>
+                <div class="row">
+                    <div id="previewHTML">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <div class="row diags-row margin-bottom-two">
-        <div class="col-sm-12 col-md-12">
-            <div class="row margin-top-one">
-                <div id="editor" class="diags-rich-text-editor">
+
+        <div class="row diags-row margin-bottom-two">
+            <div class="col-sm-12 col-md-12">
+                <div class="row margin-top-one">
+                    <div id="editor" class="diags-rich-text-editor">
+                    </div>
                 </div>
-            </div>
-             <div class="row margin-top-one">
-                 <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="previewHTML()">Preview HTML</button>
-                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="previewPDF()">Preview PDF</button>
-                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="formatCode()">Format code</button>
-                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="toggleFullscreen()">Toggle Fullscreen</button>
-            </div>
-            <div class="row margin-top-one">
-                <label>Variables</label>
-            </div>
-            <div class="row margin-top-one">
-                <ul>
-                    <li ng-repeat="(k,v) in variables">
-                        <span ng-bind="k" class="fnt-9"></span> :
-                        <span ng-bind="v" class="fnt-9"></span>
-                    </li>
-                </ul>
-            </div>
-            <div class="row margin-top-one">
-                <label>Conditionals</label>
-                <p>Example:
-                    <br>(NOTE: you must <b>use double arrows</b> and not double anchors)</p>
-                <textarea style="overflow:hidden;height:100px;min-width:300px;font-size:10px" disabled no-resize no-scroll>
+                <div class="row margin-top-one">
+                    <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="previewHTML()">Preview HTML</button>
+                    <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="previewPDF()">Preview PDF</button>
+                    <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="formatCode()">Format code</button>
+                    <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-bottom-half" ng-click="toggleFullscreen()">Toggle Fullscreen</button>
+                </div>
+                <div class="row margin-top-one">
+                    <label>Variables</label>
+                </div>
+                <div class="row margin-top-one">
+                    <ul>
+                        <li ng-repeat="(k,v) in variables">
+                            <span ng-bind="k" class="fnt-9"></span> :
+                            <span ng-bind="v" class="fnt-9"></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row margin-top-one">
+                    <label>Conditionals</label>
+                    <p>Example:
+                        <br>(NOTE: you must <b>use double arrows</b> and not double anchors)</p>
+                    <textarea style="overflow:hidden;height:100px;min-width:300px;font-size:10px" disabled no-resize no-scroll>
                     [[IF DIAG_SIRET]] 
                     The content inside the conditional block will appear only if the variable has a value. SIRET: [[DIAG_SIRET]] 
                     [[END IF DIAG_SIRET]]
                 </textarea>
-            </div>
-            <div class="row margin-top-one">
-                <label>INFO: French invoice requirements</label>
-                <p>
-                    Invoices must contain at least the following basic information:
-                    <br> Date of issuance
-                    <br> A unique, sequential number
-                    <br> VAT number of the supplier
-                    <br> Full address of the supplier and customer
-                    <br> Full description of the goods or services provided
-                    <br> Details of quantities of goods, if applicable Unit prices, if applicable A date of the supply if different from the invoice date
-                    <br> The net, taxable value of the supply
-                    <br> The VAT rate(s) applied, and the amount of VAT broken out by rate
-                    <br> The gross, total amountof the invoice
-                </p>
+                </div>
+                <div class="row margin-top-one">
+                    <label>INFO: French invoice requirements</label>
+                    <p>
+                        Invoices must contain at least the following basic information:
+                        <br> Date of issuance
+                        <br> A unique, sequential number
+                        <br> VAT number of the supplier
+                        <br> Full address of the supplier and customer
+                        <br> Full description of the goods or services provided
+                        <br> Details of quantities of goods, if applicable Unit prices, if applicable A date of the supply if different from the invoice date
+                        <br> The net, taxable value of the supply
+                        <br> The VAT rate(s) applied, and the amount of VAT broken out by rate
+                        <br> The gross, total amountof the invoice
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
 
 
-    
 
-    <div class="row diags-row margin-bottom-two">
-        <div class="col-sm-12">
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="save()">Enregistrer</button>
-            
+
+        <div class="row diags-row margin-bottom-two">
+            <div class="col-sm-12">
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="save()">Enregistrer</button>
+
+            </div>
         </div>
     </div>
 </div>

@@ -64,7 +64,7 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     });
 }]);
 
-app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
+app.run(['server', '$timeout', '$rootScope', 'appRouter', function(db, $timeout, r, appRouter) {
     //    console.info('app.admin:run');
 
     r.isDevEnv = __SHARE_FUNCTIONS.isDevEnv;
@@ -72,12 +72,22 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     r.URL = {
         LOGIN: 'login',
         DIAG_SIGN_UP: 'diag-inscription',
-        HOME: 'home',
+        LEGAL_MENTIONS: 'mentions-legales',
+        HOME: '/',
         CONTACT_US: 'contactez-nous',
-        ERNT: 'ernt',
+        ERNT: 'ernmt',
         FAQ: 'faq',
         GENERAL_CONDITIONS: 'conditions-generales-utilisation',
-        LEGAL_MENTIONS: 'mentions-legales'
+        CGU_LEMONWAY: 'cgu-lemonway',
+        LEGAL_MENTIONS: 'mentions-legales',
+        DIAGS: 'choix-diagnostics',
+        RDV: 'rendez-vous',
+        LOGIN: 'connexion',
+        ESPACE_ENTERPRISE: 'espace-enterprise',
+        ESPACE_DIAG: 'espace-diagnostiqueur',
+        ACCOUNT_DETAILS: 'account-details',
+        ACCOUNT_DETAILS_BOOKING: 'inscription-details',
+        PAYMENT: 'payment',
     };
 
 
@@ -191,7 +201,7 @@ app.run(['$rootScope', '$location', '$window', '$log',
     }
 ]);
 
-app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
+app.run(['server', '$timeout', '$rootScope', 'appRouter', function(db, $timeout, r, appRouter) {
     //console.info('app.common.root:run');
     window.r = r;
     r.getHashParams = getHashParams;
@@ -266,19 +276,29 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         if (data) {
             if (reset) {
                 $U.store.set(id, data);
-                return data;
+                return data || {};
             }
             else {
                 var combinedData = $U.store.get(id) || {};
                 Object.assign(combinedData, data);
                 $U.store.set(id, combinedData);
-                return combinedData;
+                return combinedData || {};
             }
         }
         else {
             return $U.store.get(id) || {};
         }
     };
+    //
+
+    /*Metadata is only persistent in booking pages except first page*/
+    if (appRouter.currentPath == '') {
+        r.sessionMetadata({
+            booking: {}
+        });
+    }
+
+
     r.logged = function() {
         var ss = r.session();
         return ss._id !== null && ss.email !== null && ss.password !== null;
@@ -340,52 +360,31 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         r.__route = url;
         return url;
     }
-    
-    function html5RouteTo(path) {
-        path = path || '/';
-        if(path.toString().charAt(0)!=='/'){
-            path = '/' + path;
-        }
-        var link = document.createElement('a');
-        link.href = "" + path;
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode.removeChild(link);
-    }
-    
-    r.routeExternal = function(url){
-      window.location.href = url;  
+
+
+
+    r.routeExternal = function(url) {
+        window.location.href = url;
     };
     r.route = function(url, delay) {
 
         setTimeout(function() {
-            
+
             //ex www.domain.com/admin -> admin
-            var routePart = window.location.href.substring(window.location.origin.length+1);
+            var routePart = window.location.href.substring(window.location.origin.length + 1);
             $U.emit('route-exit:' + routePart);
             r.$emit('route-change', url);
-            return html5RouteTo(url);
-            
-            var path = window.location.origin + window.location.pathname;
-            path += '#/' + url;
-            $U.emit('route-exit:' + $U.url.hashName());
-            r.$emit('route-change', url);
 
-            $U.url.hash(url);
-            window.location.href = window.location.href;
-
-            if (window.ga) {
-                var pageval = ('/' + url + '.html').replaceAll('//', '/');
-                //ga('set', 'page', pageval);
-                //ga('send', 'pageview');
-                //console.log('ga set ',pageval,' send pageview','virtual route',url);
+            if (url.toString().charAt(0) !== '/') {
+                url = '/' + url;
             }
 
+            return appRouter.to(url);
         }, delay || 0);
         r.__route = url;
         return url;
     };
-    
+
     /*
     r.routeIs = (n) => r.__route && r.__route.toString().toLowerCase().indexOf(n && n.toLowerCase() || 'invalid') !== -1 || false;
     r.__route = window.location.href.replace(window.location.origin + window.location.pathname, '');
@@ -400,8 +399,13 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
         r.__routeHashName = $U.url.hashName();
         $U.emitPreserve('route-change', r.__route.slice(2))
     });*/
+
+    r.routeIs = (n) => {
+        return appRouter.currentPath == n;
+    };
+
     setTimeout(function() {
-        $U.emitPreserve('route-change', window.location.href.substring(window.location.origin.length+1));
+        $U.emitPreserve('route-change', window.location.href.substring(window.location.origin.length + 1));
     }, 500);
 
     r.userIs = (arr) => {
@@ -412,8 +416,15 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
     };
 
     r.routeParams = (obj) => {
-        r.params = Object.assign(r.params || {}, obj);
+        if (obj) {
+            r.params = Object.assign(r.params || {}, obj);
+            r.sessionMetadata({
+                params: r.params
+            });
+        }
+        return r.params;
     };
+    r.routeParams(r.sessionMetadata().params || {});
 
 
     r.lookUp = function(scope, property) {
@@ -430,11 +441,11 @@ app.run(['server', '$timeout', '$rootScope', function(db, $timeout, r) {
 
 
     r.hasMouse = true;
-    
-    if(window.screen.width < 1200){
+
+    if (window.screen.width < 1200) {
         r.hasMouse = false;
     }
-    
+
     /*
     $hasMouse((v) => {
         r.hasMouse = v;

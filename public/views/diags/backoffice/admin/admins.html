@@ -1,16 +1,18 @@
-<div class="row">
-    <div class="col-sm-12 padding-none">
-        <ol class="breadcrumb">
-            <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
-            <li>Admins</li>
-        </ol>
-    </div>
-</div>
-<div class="container">
-    <div class="row margin-top-four margin-bottom-four">
-        <div class="col-sm-12">
-            <admins-list></admins-list>
+<div class="container-fluid backoffice-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 padding-none">
+                <ol class="breadcrumb">
+                    <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+                    <li>Admins</li>
+                </ol>
+            </div>
+        </div>
+        <div class="row margin-top-four margin-bottom-four">
+            <div class="col-sm-12">
+                <admins-list></admins-list>
+            </div>
         </div>
     </div>
 </div>
-<modal-confirm open="confirm"></modal-confirm>
+

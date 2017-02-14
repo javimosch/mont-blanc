@@ -23,7 +23,7 @@
         "diags_ctrl_settings",
         'diags_ctrl_contact_form',
         'diags_ctrl_tools',
-        //'diags_ctrl_unit_tests',
+        'header-controller',
 
         'app.admin',
         'app.routes',
@@ -41,7 +41,8 @@
         'app.client.payments',
         'app.directives',
         'app.services',
-        'app.tools'
+        'app.tools',
+        'app-router'
     ]);
 
     app.run(function(uibPaginationConfig) {

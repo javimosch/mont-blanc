@@ -107,6 +107,7 @@ app.controller('adminLogin', ['server', '$scope', '$rootScope', 'LoginService', 
         silent = silent !== undefined ? silent : false;
         LoginService.login(r._login.email, r._login.password, r._login.rememberPass).then(() => {
             r.route('dashboard');
+            r.__hideNavMenu = false;
         }).on('validate', msg => {
             if (!silent) {
                 r.warningMessage(msg);
@@ -200,8 +201,8 @@ app.controller('adminLoginExternal', ['server', '$scope', '$rootScope', 'LoginSe
 
 
     s.redirect = function() {
-        var path = 'admin#/login?email=' + r._login.email + '&k=' + window.btoa(r._login.password || 'dummy');
-        r.routeRelative(path);
+        var path = '/login?email=' + r._login.email + '&k=' + window.btoa(r._login.password || 'dummy');
+        r.route(path);
     };
 
 

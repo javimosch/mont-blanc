@@ -1,20 +1,22 @@
-<div class="row">
-    <div class="col-sm-12 padding-none">
-        <ol class="breadcrumb">
-            <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
-            <li><a class="link" ng-click="route('settings')">Settings</a></li>
-            <li>Texts</li>
-        </ol>
-    </div>
-</div>
-<div class="container">
-    <div class="row margin-top-four margin-bottom-four">
-        <div class="col-sm-12">
-            <texts-list></texts-list>
+<div class="container-fluid backoffice-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 padding-none">
+                <ol class="breadcrumb">
+                    <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+                    <li><a class="link" ng-click="route('settings')">Settings</a></li>
+                    <li>Texts</li>
+                </ol>
+            </div>
+        </div>
+        <div class="row margin-top-four margin-bottom-four">
+            <div class="col-sm-12">
+                <texts-list></texts-list>
+            </div>
         </div>
     </div>
 </div>
-<modal-confirm open="confirm"></modal-confirm>
+
 
 <script type="text/ng-template" id="textsFilter.html">
     <ul class="form-tiny center-block float-right">
@@ -26,9 +28,7 @@
         </li>-->
         <li>
             <label class="diags-label-horizontal">Page Section</label>
-            <select class="diags-input" ng-model="model.filter.fields._category"
-            ng-change="model.filter.filter()"
-            ng-options="item._id as item.code for item in model.categories">
+            <select class="diags-input" ng-model="model.filter.fields._category" ng-change="model.filter.filter()" ng-options="item._id as item.code for item in model.categories">
                 <option value="">Select</option>
             </select>
         </li>
@@ -39,5 +39,3 @@
 
     </ul>
 </script>
-
-

@@ -1,37 +1,38 @@
-<div class="row">
-    <div class="col-sm-12 padding-none">
-        <ol class="breadcrumb">
-            <li><a class="link" ng-click="route('settings')">Settings</a></li>
-            <li><a class="link" ng-click="route('logs')">Logs</a></li>
-            <li>Details</li>
-        </ol>
-    </div>
-</div>
-<div class="container" ng-controller="logEdit">
-    <modal-confirm open="confirm"></modal-confirm>
-    <div class="row">
-        <div class="col-sm-8">
-            <ul class="form-tiny labelx2 center-block">
-                <li>
-                    <label>Message</label>
-                    <textarea ng-disabled="true" type="text" class="fullwidth min-height-100 no-resize" ng-model="item.message"></textarea>
-                </li>
-                <li>
-                    <label>Data</label>
-                    <textarea ng-disabled="true" type="text" class="fullwidth min-height-300" ng-bind="item.data|json"></textarea>
-                </li>
-                <li>
-                    <label>Created</label>
-                    <span ng-bind="item.createdAt && momentDateTime(item.createdAt) || ''"></span>
-                </li>
-            </ul>
+<div class="container-fluid backoffice-wrapper">
+    <div class="container" ng-controller="logEdit">
+        <div class="row">
+            <div class="col-sm-12 padding-none">
+                <ol class="breadcrumb">
+                    <li><a class="link" ng-click="route('settings')">Settings</a></li>
+                    <li><a class="link" ng-click="route('logs')">Logs</a></li>
+                    <li>Details</li>
+                </ol>
+            </div>
         </div>
-    </div>
-    <div class="row margin-top-one">
-        <div class="col-sm-12">
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Enregistrer</button>
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="cancel()">Annuler</button>
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="delete()">Supprimer</button>
+        <div class="row">
+            <div class="col-sm-8">
+                <ul class="form-tiny labelx2 center-block">
+                    <li>
+                        <label>Message</label>
+                        <textarea ng-disabled="true" type="text" class="fullwidth min-height-100 no-resize" ng-model="item.message"></textarea>
+                    </li>
+                    <li>
+                        <label>Data</label>
+                        <textarea ng-disabled="true" type="text" class="fullwidth min-height-300" ng-bind="item.data|json"></textarea>
+                    </li>
+                    <li>
+                        <label>Created</label>
+                        <span ng-bind="item.createdAt && momentDateTime(item.createdAt) || ''"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row margin-top-one">
+            <div class="col-sm-12">
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Enregistrer</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="cancel()">Annuler</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="delete()">Supprimer</button>
+            </div>
         </div>
     </div>
 </div>

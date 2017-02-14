@@ -35,7 +35,7 @@
             s.pdfDelete = (code) => {
                 if (!s.pdfExists(code)) return;
                 var name = s.item.files[code] && s.item.files[code].filename || "File";
-                s.confirm('Delete ' + name + ' ?', () => {
+                r.openConfirm('Delete ' + name + ' ?', () => {
                     db.ctrl('File', 'remove', {
                         _id: s.item.files[code]._id
                     }).then((d) => {
@@ -838,7 +838,7 @@
 
 
                     function _sendPaymentLink() {
-                        s.confirm({
+                        r.openConfirm({
                             message: 'You want to send a payment link to ' + s.item.landLordEmail + ' ?',
                             templateUrl: 'views/directives/modal.yes-not-now.html'
                         }, () => {
@@ -1025,7 +1025,7 @@
                     if (!opt || opt && opt.assignDiagFeature !== true) {
                         if (s.prevItem && s.prevItem._diag && s.prevItem._diag.email && s.item._diag && s.item._diag.email && s.prevItem._diag.email != s.item._diag.email) {
                             var msg = "Manually assign of diagnostiqueur " + s.item._diag.firstName + ' ' + s.item._diag.lastName + ' will trigger notifications again. Please confirm. ';
-                            s.confirm(msg, () => {
+                            r.openConfirm(msg, () => {
                                 reEnableNotifications();
                                 s.save(Object.assign(opt || {}, {
                                     assignDiagFeature: true
@@ -1037,7 +1037,7 @@
 
                     if (!opt || opt.assignNewRDVSlot !== true) {
                         if (s.item._id && s.hasUserSelectedAnRDVSlot) {
-                            s.confirm('Manually assign of RDV slot may change diagnostiqueur, date and price and will trigger notifications again. Please Confirm. ', () => {
+                            r.openConfirm('Manually assign of RDV slot may change diagnostiqueur, date and price and will trigger notifications again. Please Confirm. ', () => {
                                 reEnableNotifications();
                                 s.save(Object.assign(opt || {}, {
                                     assignNewRDVSlot: true
@@ -1095,7 +1095,7 @@
                     if (!s.pdfFileInfo) {
                         return console.warn('s.pdfFileInfo expected.');
                     }
-                    s.confirm('Delete ' + s.pdfFileInfo.filename + ' ?', () => {
+                    r.openConfirm('Delete ' + s.pdfFileInfo.filename + ' ?', () => {
                         db.ctrl('File', 'remove', {
                             _id: s.pdfFileInfo._id
                         }).then((d) => {
@@ -1127,7 +1127,7 @@
 
                     var time = (d) => moment(d).format('HH:mm');
                     var descr = s.item.address + ' (' + time(s.item.start) + ' - ' + time(s.item.end) + ')';
-                    s.confirm('Delete Order ' + descr + ' ?', function() {
+                    r.openConfirm('Delete Order ' + descr + ' ?', function() {
                         // s.message('deleting . . .', 'info');
 
                         db.ctrl('Order', 'remove', {

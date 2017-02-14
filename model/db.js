@@ -108,6 +108,7 @@ model('TimeRange', require('../schemas/schema.time-range').def);
 model('User', require('../schemas/schema.diags-user').def);
 model('Order', require('../schemas/schema.diags-order').def);
 model('htmls', require('../schemas/schema.htmls').def);
+model('pages', require('../schemas/schema.pages').def);
 
 
 configureGridFSActions();

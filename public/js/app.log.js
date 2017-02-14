@@ -109,7 +109,7 @@
                         label:"Delete all",
                         type: () => "btn diags-btn bg-blaze-orange",
                         click: () => {
-                            s.confirm('Sure?',()=>{
+                            r.openConfirm('Sure?',()=>{
                                 db.ctrl('Log','removeAll',{}).then(d=>{
                                     if(d.ok){
                                         r.infoMessage('All records were deleted');

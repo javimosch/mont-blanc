@@ -1,20 +1,20 @@
-<div class="row">
-    <div class="col-sm-12 padding-none">
-        <ol class="breadcrumb">
-            <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
-            <li>Indisponibilité</li>
-        </ol>
-    </div>
-</div>
-
 <div class="container" ng-controller="diagExceptionEdit">
+    <div class="row">
+        <div class="col-sm-12 padding-none">
+            <ol class="breadcrumb">
+                <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+                <li>Indisponibilité</li>
+            </ol>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-12 col-md-6 margin-top-one">
             <div class="row margin-top-half" ng-if="userIs(['admin'])">
                 <label>Diag</label>
             </div>
             <div class="row" ng-if="userIs(['admin'])">
-                <input ng-disabled="state.working() || item._id" type="text" class="diags-input" ng-model="item._user" placeholder="Diag" uib-typeahead="item as item.email for item in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading diags. . .'" typeahead-no-results="noResults">
+                <input ng-disabled="state.working() || item._id" type="text" class="diags-input" ng-model="item._user" placeholder="Diag" uib-typeahead="item as item.email for item in getDiags($viewValue) | limitTo:8" typeahead-loading="LoadingClients||'Loading diags. . .'"
+                    typeahead-no-results="noResults">
             </div>
             <div class="row margin-top-half">
                 <label>Motif (Optionnel)</label>
@@ -22,7 +22,7 @@
             <div class="row">
                 <input type="text" class="diags-input" ng-disabled="state.working()" ng-model="item.description" placeholder="Motive (optional)">
             </div>
-             <div class="row margin-top-half"  ng-show="item.repeat=='week'">
+            <div class="row margin-top-half" ng-show="item.repeat=='week'">
                 <label>Day</label>
             </div>
             <div class="row" ng-show="item.repeat=='week'">
@@ -46,12 +46,10 @@
                 <label>Plage horaire</label>
             </div>
             <div class="row">
-                <input type="text" 
-                class="diags-input" ng-disabled="state.working()"
-                name="daterange" value="01/01/2015 1:30 PM - 01/01/2015 2:00 PM" />
+                <input type="text" class="diags-input" ng-disabled="state.working()" name="daterange" value="01/01/2015 1:30 PM - 01/01/2015 2:00 PM" />
             </div>
 
-<!--
+            <!--
             <div class="row margin-top-half">
                 <label>De</label>
             </div>
@@ -113,9 +111,8 @@
         <div class="col-sm-12 col-md-6">
             <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-one" ng-click="validate()">Ajouter l'indisponibilité</button>
             <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-one" ng-click="cancel()">Annuler</button>
-            <button 
-            ng-show="item._id"
-            ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-one" ng-click="delete()">Supprimer</button>
+            <button ng-show="item._id" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance margin-top-one" ng-click="delete()">Supprimer</button>
         </div>
     </div>
+</div>
 </div>

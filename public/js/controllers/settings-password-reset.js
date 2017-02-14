@@ -21,7 +21,7 @@ angular.module('app').controller('settings-password-reset', ['server', '$scope',
                 return r.warningMessage("Email required");
             }
 
-            if (!confirmed && s.confirm('Reset ' + getEmail() + ' account password ?')) {
+            if (!confirmed && r.openConfirm('Reset ' + getEmail() + ' account password ?')) {
                 return r.dom(function() {
                     s.resetPassword(true);
                 }, 1000);

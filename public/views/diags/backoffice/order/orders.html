@@ -1,19 +1,20 @@
-<div class="row">
-    <div class="col-sm-12 padding-none">
-        <ol class="breadcrumb">
-            <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
-            <li>Orders</li>
-        </ol>
-    </div>
-</div>
-<div class="container">
-    <div class="row margin-top-four margin-bottom-four">
-        <div class="col-sm-12">
-            <orders-list></orders-list>
+<div class="container-fluid bg-black-squeeze">
+    <div class="container bg-white">
+        <div class="row breadcrumbs">
+            <div class="col-sm-12 padding-none">
+                <ol class="breadcrumb">
+                    <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+                    <li>Orders</li>
+                </ol>
+            </div>
+        </div>
+        <div class="row margin-top-four margin-bottom-four">
+            <div class="col-sm-12">
+                <orders-list></orders-list>
+            </div>
         </div>
     </div>
 </div>
-<modal-confirm open="confirm"></modal-confirm>
 
 <script type="text/ng-template" id="ordersFilter.html">
     <ul class="form-tiny center-block float-right">
@@ -38,7 +39,7 @@
             </datalist>
 
         </li>
-        
+
         <li>
             <label>CreatedAt</label>
             <select class="diags-input minimal" ng-model="model.filter.fields.createdAt" ng-options="index as month for (index,month) in model.months()" ng-change="model.filter.filter()">

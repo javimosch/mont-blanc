@@ -1,15 +1,17 @@
-<div class="row">
-    <div class="col-sm-12 padding-none">
-        <ol class="breadcrumb">
-            <li><a class="link" ng-click="route('settings')">Settings</a></li>
-            <li>Notifications</li>
-        </ol>
-    </div>
-</div>
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <section-notifications></section-notifications>
+<div class="container-fluid backoffice-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 padding-none">
+                <ol class="breadcrumb">
+                    <li><a class="link" ng-click="route('settings')">Settings</a></li>
+                    <li>Notifications</li>
+                </ol>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <section-notifications></section-notifications>
+            </div>
         </div>
     </div>
 </div>
@@ -17,21 +19,11 @@
     <ul class="form-tiny center-block float-right">
         <li>
             <label class="diags-label-horizontal">User</label>
-            <input  
-                type="text" 
-                class="diags-input" 
-                ng-model="model.filter.fields._user" 
-                placeholder="User" 
-                uib-typeahead="o as o.email for o in model.getUsers($viewValue) | limitTo:8" 
-                typeahead-loading="'Loading users. . .'"
-                typeahead-no-results="noResults"
-            >
+            <input type="text" class="diags-input" ng-model="model.filter.fields._user" placeholder="User" uib-typeahead="o as o.email for o in model.getUsers($viewValue) | limitTo:8" typeahead-loading="'Loading users. . .'" typeahead-no-results="noResults">
         </li>
         <li>
             <label class="diags-label-horizontal">To</label>
-            <input 
-            class="diags-input" 
-            ng-model="model.filter.fields.to" placeholder="Filter" />
+            <input class="diags-input" ng-model="model.filter.fields.to" placeholder="Filter" />
         </li>
     </ul>
 </script>
