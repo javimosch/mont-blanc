@@ -467,7 +467,7 @@ app.run(['server', '$timeout', '$rootScope', "dbText", 'backendApi', 'appRouter'
             if (res.ok && res.result) {
                 r.session(res.result);
                 //console.log('DEBUG: Session updated');
-                if (r.session().userType == 'client') {
+                if (r.session().userType == 'client' && !r.isDevEnv()) {
                     $U.emit('intercom');
                 }
             }
@@ -477,7 +477,7 @@ app.run(['server', '$timeout', '$rootScope', "dbText", 'backendApi', 'appRouter'
         });
     }
     else {
-        if (appRouter.currentPath == '') {
+        if (appRouter.currentPath == '' && !r.isDevEnv()) {
             $U.emit('intercom');
         }
     }
