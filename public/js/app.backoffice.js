@@ -4,10 +4,10 @@
 (function() {
     var app = angular.module('app', [
         'app.run',
-        
+
         'credit-cards',
         'pretty-checkable',
-        
+
         'ngRoute',
         'ngSanitize',
 
@@ -54,6 +54,21 @@
 
     //diags
     moment.locale('fr')
+
+
+    $.post('/ctrl/pages/getAll', {}, function(res) {
+        console.log('DEBUG PAGES-FETCH', res);
+        if (res && res.ok && res.result) {
+            window.__pages = res.result;
+        }
+        else {
+            console.log('WARN dynamic-routes could not be loaded.', res);
+        }
+        angular.element(function() {
+            angular.bootstrap(document, ['app']);
+            console.log('DEBUG BOOTSTRAPING...');
+        });
+    }, 'json');
 
     expose('app', app);
 })();

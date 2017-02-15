@@ -20,6 +20,15 @@ angular.module('header-controller', []).controller('header-controller', ['$scope
         'contactez-nous'
     ];
 
+    if (window.__pages) {
+        window.__pages.forEach(page => {
+            var url = page.url;
+            if (url.toString().charAt(0) == '/');
+            url = url.slice(1);
+            BOOKING_ROUTES.push(url);
+        });
+    }
+
     s.isBooking = () => {
         var arr = BOOKING_ROUTES.filter(v => v == appRouter.currentPath);
         return arr && arr.length > 0;

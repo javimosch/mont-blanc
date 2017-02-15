@@ -5,16 +5,16 @@ srv.config(['$routeProvider', '$locationProvider',
 
 
         $routeProvider.
-        
+
         /*BOOKING*/
-         when('/', {
+        when('/', {
             templateUrl: 'views/diags/booking/booking-1-home.html'
         }).
         when('/home', {
             templateUrl: '/views/diags/booking/booking-1-home.html'
         }).
-       
-       
+
+
         when('/choix-diagnostics', {
             templateUrl: 'views/diags/booking/booking-2-diags-selection.html'
         }).
@@ -54,14 +54,14 @@ srv.config(['$routeProvider', '$locationProvider',
         when('/mentions-legales', {
             templateUrl: 'views/diags/legal-mentions.html'
         }).
-      
+
         when('/cgu-lemonway', {
             templateUrl: 'views/diags/cgu-lemonway.html'
         }).
         when('/conditions-generales-utilisation', {
             templateUrl: 'views/diags/general-conditions.html'
         }).
-         when('/ernmt', {
+        when('/ernmt', {
             templateUrl: 'views/diags/ernmt.html'
         }).
         when('/faq', {
@@ -105,6 +105,9 @@ srv.config(['$routeProvider', '$locationProvider',
 
         when('/settings-htmls/:id', {
             templateUrl: 'views/settings-htmls.html'
+        }).
+        when('/settings-pages/:id', {
+            templateUrl: 'views/settings-pages.html'
         }).
 
 
@@ -179,7 +182,7 @@ srv.config(['$routeProvider', '$locationProvider',
             templateUrl: 'views/diags/backoffice/price-modifiers.html'
         }).
 
-       
+
 
         when('/documentation', {
             templateUrl: 'views/diags/backoffice/diags-docs.html'
@@ -215,13 +218,42 @@ srv.config(['$routeProvider', '$locationProvider',
         }).
         when('/orders/view/:id', {
             templateUrl: 'views/diags/backoffice/order/order.view.html'
-        }).
-        otherwise({
+        });
+
+        //
+        if (window.__pages) {
+            window.__pages.forEach((page) => {
+
+                var html = '';
+
+                if (page.template) {
+                    html = window.decodeURIComponent(page.template).replace('__HTML__', window.decodeURIComponent(page.content));
+                    console.log('DEBUG ', page.url, html.length, page.template.length);
+                }
+                else {
+                    html = window.decodeURIComponent(page.content);
+                    console.log('DEBUG ', page.url, html.length);
+                }
+
+                $routeProvider.when(page.url, {
+                    template: html
+                });
+
+
+
+                console.log('DEBUG ROUTE-ADDED', page.url, window.decodeURIComponent(page.content).length + ' chars');
+            });
+            //delete window.__pages;
+        }
+
+
+
+
+        $routeProvider.otherwise({
             redirectTo: '/'
         });
-        //console.info('app.admin.routes:config');
-
-        // use the HTML5 History API
         $locationProvider.html5Mode(true);
+        console.log('DEBUG routes OK');
+
     }
 ]);

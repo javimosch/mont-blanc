@@ -82,7 +82,7 @@
                 "Invoice Template": "settings-invoice",
                 "Password reset": "settings-password-reset",
                 "Dynamic HTML": "settings-htmls/-1",
-                //"Content Pages": "settings-pages/-1"
+                "Content Pages": "settings-pages/-1"
             };
 
             s.priceModifiers = {

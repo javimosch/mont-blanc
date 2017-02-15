@@ -9,11 +9,24 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
         var collection = (action, data) => {
             return db.ctrl('pages', action, data);
         };
+
+        var template = '<div class="diags-bg">';
+        template += '<div class="diags-content container diags-selection padding-none">';
+        template += '<div class="row diags-bg-block-40 hidden-xs"></div>';
+        template += '<div class="row diag-row padding-top-three">';
+        template += '__HTML__';
+        template += '</div>';
+        template += '</div>';
+        template += '<div class="row diags-bg-block-40 hidden-xs"></div>';
+        template += '</div>';
+
         if (s.isDetailView()) {
             s.item = {};
             s.save = () => {
                 if (!s.item.code) return r.warningMessage('Code required');
+                if (!s.item.description) return r.warningMessage('Description required');
                 s.item.content = getACEContent(true);
+                s.item.template = window.encodeURIComponent(template);
                 collection('save', s.item).then(res => {
                     if (res && res.ok) {
                         //r.infoMessage('Saved');
@@ -26,7 +39,14 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                             }, 1000);
                         });
                     }
-                });
+                    else {
+                        r.warningMessage('Server error, see the developer console.');
+                    }
+                }).error((msg) => {
+                    r.errorMessage(JSON.stringify(msg));
+                }).on('validate', (msg) => {
+                    r.warningMessage(JSON.stringify(msg));
+                })
             };
             s.back = () => {
                 return r.route('settings-pages/-1');
@@ -215,7 +235,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                     });
                 },
                 filter: {
-                    template: 'htmlsFilter',
+                    template: 'pagesFilter',
                     update: update,
                     rules: {
                         status: 'in'
@@ -231,7 +251,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                     r.routeParams({
                         item: item,
                     });
-                    r.route('settings-htmls/' + item._id);
+                    r.route('settings-pages/' + item._id);
                 },
                 buttons: [{
                     label: "Rafraîchir",
@@ -240,11 +260,19 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                 }, {
                     label: "Créer",
                     type: () => "btn diags-btn bg-azure-radiance margin-right-1",
-                    click: () => r.route('settings-htmls/new')
+                    click: () => r.route('settings-pages/new')
                 }],
                 columns: [{
                     label: "Code",
                     name: 'code',
+                    //format: (v, item) => item._diag.email
+                }, {
+                    label: "Description",
+                    name: 'description',
+                    //format: (v, item) => item._diag.email
+                }, {
+                    label: "URL",
+                    name: 'url',
                     //format: (v, item) => item._diag.email
                 }, {
                     label: 'Created',

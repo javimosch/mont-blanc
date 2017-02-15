@@ -1,4 +1,5 @@
 "use strict";
+var babel = require("babel-core");
 var minifyHTML = require('html-minifier').minify;
 let co = require("co");
 var sgUtilsParser = require('./sg-utils-html-parser');
@@ -225,6 +226,7 @@ function compileVendorCustom(opt) { //{{root}}
     var sectionName = opt.sectionName || ('VENDOR-' + ext.toUpperCase());
     if (sgUtilsParser.hasSection(sectionName, raw)) {
 
+        console.log('DEBUG: Compiling section ',sectionName);
 
         var params = sgUtilsParser.getSectionParameters(sectionName, raw);
 
@@ -260,16 +262,21 @@ function compileVendorCustom(opt) { //{{root}}
 
         }
         else {
-            return raw; //do not remplace on dev env
+            
+            //return raw; 
         }
 
+/*
         if (!vendorChanges(ext, arr)) {
             return sgUtilsParser.replaceSection(sectionName, raw, _replaceWith);
         }
+        */
 
         var compiledCode = sgUtils.concatenateAllFilesFromArray(arr, RELATIVE_PATH_FOR_VENDOR_CUSTOM);
         if (opt.middleWare) {
+            console.log('DEBUG: bundle before middleware', compiledCode.length);
             compiledCode = opt.middleWare(compiledCode);
+            console.log('DEBUG: bundle after middleware', compiledCode.length);
         }
         sgUtils.createFile(buildPath, compiledCode);
         console.log('DEBUG: bundle output ' + buildPath + ' success at '); // + new Date());
@@ -318,6 +325,7 @@ function compileVendorJS(raw, path) {
 function compileSectionBundles(raw, path) {
     for (var x = 0; x < 10; x++) {
         if (sgUtilsParser.hasSection('BUNDLE_JS_' + (x + 1), raw)) {
+            console.log('DEBUG: inspecting section','BUNDLE_JS_' + (x + 1));
             raw = compileVendorCustom({
                 outputFileName: 'bundle_' + (x + 1).toString(),
                 sectionName: 'BUNDLE_JS_' + (x + 1),
@@ -331,6 +339,16 @@ function compileSectionBundles(raw, path) {
                 tagAttribute: 'src',
                 middleWare: _raw => {
                     //heStyles.minify(_raw);
+
+                    if (PROD) {
+                        var settings = {
+                            presets: ["es2015"],
+                            minified: true,
+                            comments: false
+                        };
+                        _raw = babel.transform(_raw, settings).code;
+                    }
+
                     return _raw;
                 }
             });

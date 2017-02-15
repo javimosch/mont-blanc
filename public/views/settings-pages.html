@@ -7,64 +7,73 @@
     }
 </script>
 
-<div class="container" ng-controller="settings-htmls">
-    <div class="row">
-        <div class="col-sm-12 padding-none">
-            <ol class="breadcrumb">
-                <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
-                <li><a class="link" ng-click="route('settings')">Settings</a></li>
-                <li><a class="link" ng-click="route('settings-htmls/-1')">Content Pages</a></li>
-            </ol>
+<div class="container-fluid backoffice-wrapper">
+    <div class="container" ng-controller="settings-pages">
+        <div class="row">
+            <div class="col-sm-12 padding-none">
+                <ol class="breadcrumb">
+                    <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
+                    <li><a class="link" ng-click="route('settings')">Settings</a></li>
+                    <li><a class="link" ng-click="route('settings-pages/-1')">Content Pages</a></li>
+                </ol>
+            </div>
         </div>
-    </div>
-    <div class="row diags-row margin-top-two margin-bottom-two" ng-show="!isDetailView()">
-        <div class="col-sm-12">
-            <htmls-list></htmls-list>
+        <div class="row diags-row margin-top-two margin-bottom-two" ng-show="!isDetailView()">
+            <div class="col-sm-12">
+                <pages-list></pages-list>
+            </div>
         </div>
-    </div>
 
-    <div class="row diags-row margin-top-two margin-bottom-two" ng-show="isDetailView()">
-        <div class="col-sm-12 col-md-12">
-            <!-- CODE -->
-            <div class="row margin-top-half">
-                <label class="unselectable">Code</label>
-            </div>
-            <div class="row margin-top-half">
-                <input class="diags-input" type="text" placeholder="Code" ng-model="item.code">
-            </div>
-            <!-- URL -->
-            <div class="row margin-top-half">
-                <label class="unselectable">URL</label>
-            </div>
-            <div class="row margin-top-half">
-                <input class="diags-input" type="text" placeholder="/about-diagnostical" ng-model="item.url">
-            </div>
-            <!-- CONTENT -->
-            <div class="row margin-top-half">
-                <label class="unselectable">Content</label>
-            </div>
-            <div class="row margin-top-half">
-                <div id="editor" class="diags-rich-text-editor">
+        <div class="row diags-row margin-top-two margin-bottom-two" ng-show="isDetailView()">
+            <div class="col-sm-12 col-md-12">
+                <!-- CODE -->
+                <div class="row margin-top-half">
+                    <label class="unselectable">Code</label>
+                </div>
+                <div class="row margin-top-half">
+                    <input class="diags-input" type="text" placeholder="Code" ng-model="item.code">
+                </div>
+                <!-- DESCRIPTION -->
+                <div class="row margin-top-half">
+                    <label class="unselectable">Description</label>
+                </div>
+                <div class="row margin-top-half">
+                    <input class="diags-input" type="text" placeholder="Description" ng-model="item.description">
+                </div>
+                <!-- URL -->
+                <div class="row margin-top-half">
+                    <label class="unselectable">URL</label>
+                </div>
+                <div class="row margin-top-half">
+                    <input class="diags-input" type="text" placeholder="/about-diagnostical" ng-model="item.url">
+                </div>
+                <!-- CONTENT -->
+                <div class="row margin-top-half">
+                    <label class="unselectable">Content</label>
+                </div>
+                <div class="row margin-top-half">
+                    <div id="editor" class="diags-rich-text-editor">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="row diags-row margin-bottom-two" ng-show="isDetailView()">
-        <div class="col-sm-12">
-            <div class="alert alert-info" id="save-hint">
-                Press Ctrl + Shift + S to Save.
+        <div class="row diags-row margin-bottom-two" ng-show="isDetailView()">
+            <div class="col-sm-12">
+                <div class="alert alert-info" id="save-hint">
+                    Press Ctrl + Shift + S to Save.
+                </div>
             </div>
-        </div>
-        <div class="col-sm-12">
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="save()">Save</button>
-            <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="back()">Retourner</button>
+            <div class="col-sm-12">
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="save()">Save</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="back()">Retourner</button>
 
+            </div>
         </div>
     </div>
 </div>
 
-<script type="text/ng-template" id="htmlsFilter.html">
+<script type="text/ng-template" id="pagesFilter.html">
     <ul class="form-tiny center-block float-right">
         <li>
             <label>
