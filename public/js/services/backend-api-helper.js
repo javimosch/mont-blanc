@@ -27,6 +27,15 @@
                 return $U.MyPromise((resolve, reject, emit) => {
                     var payload = {};
                     payload[fieldName] = item[fieldName];
+                    if (item._id) {
+                        Object.assign(payload, {
+                            __rules: {
+                                _id: {
+                                    $ne: item._id
+                                }
+                            }
+                        });
+                    }
                     return controller.exists(payload).then(res => {
                         if (res && res.ok && res.result) {
                             return emit('duplicate');
