@@ -12,7 +12,7 @@
     "local": "nodemon 'app.js' --watch .env --watch model --watch controllers --watch schemas --watch templates --watch app.js --watch api.js",
     "deploy": "git push production master:master",
     "build": "node ./tools/node_bundle.js",
-    "heroku": "npm run build && npm run start",
+    "heroku": "npm run start",
     "preview": "git push heroku preview:master",
     "remote_logs": "./tools/scripts/ssh_logs.sh",
     "remote_deploy_tag": "./tools/scripts/ssh_deploy_tag.sh",
