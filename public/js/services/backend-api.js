@@ -5,6 +5,11 @@
 (function() {
     var app = angular.module('app').service('backendApi', function($rootScope, server, $log) {
 
+        const CONSTANT = {
+            COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate'],
+            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User']
+        };
+
         function getLemonwayMessage(res) {
             return res.err.Msg + '  (LEMONWAY CODE ' + res.err.Code + ')';
         }
@@ -14,7 +19,7 @@
         }
 
         function handle(controller, action, payload) {
-            return MyPromise(function(resolve, err, emit) {
+            return $U.MyPromise(function(resolve, err, emit) {
                 server.ctrl(controller, action, payload).then(function(res) {
                     if (res.ok != undefined && res.ok == false) {
                         if (res.err && res.err.Code) {
@@ -40,12 +45,61 @@
             });
         }
 
+        /*CUSTOM*/
+        function createActions(collectionName, includeClientSideCustomApiActions) {
+            includeClientSideCustomApiActions = includeClientSideCustomApiActions == undefined ? true : includeClientSideCustomApiActions;
+            var self = {};
+            var actions = CONSTANT.COMMON_DATABASE_ACTIONS;
+
+            for (var x in actions) {
+                (function(collectionName, actionName) {
+                    self[actionName] = (data) => {
+                        return handle(collectionName, actionName, data);
+                    };
+                })(collectionName, actions[x]);
+            }
+
+            if (includeClientSideCustomApiActions && customApiActions[collectionName] !== undefined) {
+                Object.keys(customApiActions[collectionName]).forEach(actionName => {
+                    self[actionName] = (data) => {
+                        return $U.MyPromise(function(resolve, reject, emit) {
+                            return customApiActions[collectionName][actionName](data, resolve, reject, emit);
+                        });
+                    };
+                });
+            }
+
+            self.custom = (actionName, data) => {
+                return handle(collectionName, actionName, data);
+            };
+
+            return self;
+        }
+
+        var customApiActions = {};
+
         var self = {
+            addCustomAction: (collectionName, actionName, handler) => {
+                customApiActions[collectionName] = customApiActions[collectionName] || {};
+                customApiActions[collectionName][actionName] = handler;
+            },
+            addController: (controllerName, collectionName, customActions) => {
+                if (customActions) {
+                    Object.keys(customActions).forEach(actionName => {
+                        self.addCustomAction(collectionName, actionName, customActions[actionName])
+                    });
+                }
+                self[controllerName] = createActions(collectionName);
+            },
             payOrder: function(data) {
                 return handle('order', 'payUsingLW', data);
             }
         };
         $rootScope._backendApi = self;
+
+        CONSTANT.COMMON_DATABASE_CONTROLLERS.forEach((controllerName) => {
+            self.addController(controllerName, controllerName);
+        });
         return self;
 
     });

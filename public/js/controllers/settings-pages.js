@@ -1,6 +1,6 @@
 /*global angular*/
-angular.module('app').controller('settings-pages', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$log', '$timeout',
-    function(db, s, r, params, focus, $log, $timeout) {
+angular.module('app').controller('settings-pages', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$log', '$timeout', 'backendApi',
+    function(db, s, r, params, focus, $log, $timeout, backendApi) {
         window.s = s;
         s.params = params;
         s.isNew = () => s.params && s.params.id && s.params.id.toString() === 'new';
@@ -27,7 +27,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                 if (!s.item.description) return r.warningMessage('Description required');
                 s.item.content = getACEContent(true);
                 s.item.template = window.encodeURIComponent(template);
-                collection('save', s.item).then(res => {
+                backendApi.pages.save(s.item).then(res => {
                     if (res && res.ok) {
                         //r.infoMessage('Saved');
                         r.dom(() => {

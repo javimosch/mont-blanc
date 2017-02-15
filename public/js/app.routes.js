@@ -228,11 +228,11 @@ srv.config(['$routeProvider', '$locationProvider',
 
                 if (page.template) {
                     html = window.decodeURIComponent(page.template).replace('__HTML__', window.decodeURIComponent(page.content));
-                    console.log('DEBUG ', page.url, html.length, page.template.length);
+                   // console.log('DEBUG ', page.url, html.length, page.template.length);
                 }
                 else {
                     html = window.decodeURIComponent(page.content);
-                    console.log('DEBUG ', page.url, html.length);
+                    //console.log('DEBUG ', page.url, html.length);
                 }
 
                 $routeProvider.when(page.url, {
@@ -241,7 +241,7 @@ srv.config(['$routeProvider', '$locationProvider',
 
 
 
-                console.log('DEBUG ROUTE-ADDED', page.url, window.decodeURIComponent(page.content).length + ' chars');
+                //console.log('DEBUG ROUTE-ADDED', page.url, window.decodeURIComponent(page.content).length + ' chars');
             });
             //delete window.__pages;
         }
@@ -253,7 +253,7 @@ srv.config(['$routeProvider', '$locationProvider',
             redirectTo: '/'
         });
         $locationProvider.html5Mode(true);
-        console.log('DEBUG routes OK');
+        //console.log('DEBUG routes OK');
 
     }
 ]);

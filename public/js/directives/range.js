@@ -44,7 +44,7 @@ app.directive('rangeModel', function($rootScope, $timeout, $compile, $log) {
 
                 var unwatch = scope.$watch(attrs.rangeModel, (v) => {
                     if (v) {
-                        $log.info('RANGE AUTO SET ', v);
+                        //$log.info('RANGE AUTO SET ', v);
                         setElementValue(v, vals);
                         unwatch();
                     }

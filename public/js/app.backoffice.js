@@ -19,6 +19,7 @@
         'srv.crud',
         'srv.diagPrice',
         'srv.diagSlots',
+        'app-settings-service',
 
         "diags_ctrl_settings",
         'diags_ctrl_contact_form',
@@ -56,17 +57,24 @@
     moment.locale('fr')
 
 
-    $.post('/ctrl/pages/getAll', {}, function(res) {
-        console.log('DEBUG PAGES-FETCH', res);
+    $.post('/ctrl/pages/getAll', {
+        __select: "content template url"
+    }, function(res) {
+        //console.log('DEBUG PAGES-FETCH', res);
         if (res && res.ok && res.result) {
             window.__pages = res.result;
         }
         else {
-            console.log('WARN dynamic-routes could not be loaded.', res);
+            //console.log('WARN dynamic-routes could not be loaded.', res);
         }
         angular.element(function() {
             angular.bootstrap(document, ['app']);
-            console.log('DEBUG BOOTSTRAPING...');
+            //console.log('DEBUG BOOTSTRAPING...');
+            if (window.__bootTimerStart) {
+                window.__bootTimerMilli = Date.now() - window.__bootTimerStart;
+                window.__bootTimerSeconds = window.__bootTimerMilli / 1000;
+                console.log('Load-time until angular bootstraping', window.__bootTimerSeconds, 'Seconds');
+            }
         });
     }, 'json');
 

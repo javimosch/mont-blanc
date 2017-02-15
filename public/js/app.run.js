@@ -263,7 +263,7 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', function(db, $timeout,
             $U.store.set(id, data);
             r._session = data;
         }
-        r._session = $U.store.get(id);
+        r._session = $U.store.get(id) || {};
         if (!r._session) {
             $U.store.set(id, {});
             r._session = {};
@@ -457,6 +457,29 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', function(db, $timeout,
 }]);
 
 
-app.run(['server', '$timeout', '$rootScope', "dbText", function(db, $timeout, r, dbText) {
+app.run(['server', '$timeout', '$rootScope', "dbText", 'backendApi', 'appRouter', function(db, $timeout, r, dbText, backendApi, appRouter) {
     dbText.update(); //at app start.
+
+    //update current user data
+
+    if (r.session()._id) {
+        backendApi.User.getById(r.session()).then(function(res) {
+            if (res.ok && res.result) {
+                r.session(res.result);
+                //console.log('DEBUG: Session updated');
+                if (r.session().userType == 'client') {
+                    $U.emit('intercom');
+                }
+            }
+            else {
+                //console.log('DEBUG: Session update fail');
+            }
+        });
+    }
+    else {
+        if (appRouter.currentPath == '') {
+            $U.emit('intercom');
+        }
+    }
+
 }]);
