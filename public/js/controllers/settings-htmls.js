@@ -1,6 +1,6 @@
 /*global angular*/
-angular.module('app').controller('settings-htmls', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$log', '$timeout',
-    function(db, s, r, params, focus, $log, $timeout) {
+angular.module('app').controller('settings-htmls', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$log', '$timeout', 'backendApi',
+    function(db, s, r, params, focus, $log, $timeout, backendApi) {
         window.s = s;
         s.params = params;
         s.isNew = () => s.params && s.params.id && s.params.id.toString() === 'new';
@@ -11,6 +11,19 @@ angular.module('app').controller('settings-htmls', ['server', '$scope', '$rootSc
         };
         if (s.isDetailView()) {
             s.item = {};
+            if (s.isEdit()) {
+                s.showRemove = () => s.item && s.item._id;
+                s.remove = () => {
+                    r.openConfirm('Remove ' + s.item.code + ' ?', () => {
+                        backendApi.pages.removeWhen({
+                            _id: s.item._id
+                        }).then(res => {
+                            r.route('settings-htmls/-1');
+                        });
+                    });
+
+                };
+            }
             s.save = () => {
                 if (!s.item.code) return r.warningMessage('Code required');
                 s.item.content = getACEContent(true);
@@ -25,6 +38,15 @@ angular.module('app').controller('settings-htmls', ['server', '$scope', '$rootSc
                                 el.html(hint);
                             }, 1000);
                         });
+                    }
+                    else {
+                        if (res.err && res.err.code == 11000) {
+                            var errmsg = res.err.errmsg;
+                            var value = errmsg.substring(errmsg.indexOf('"') + 1, errmsg.lastIndexOf('"'));
+                            var field = Object.keys(res.err.op).filter(k => res.err.op[k] == value)[0];
+                            return r.warningMessage('Value ' + value + ' (field ' + field + ') already exists in database.');
+                        }
+                        r.warningMessage('Server error, see the developer console.');
                     }
                 });
             };

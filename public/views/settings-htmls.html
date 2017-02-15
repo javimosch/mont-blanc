@@ -50,6 +50,7 @@
             </div>
             <div class="col-sm-12">
                 <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="save()">Save</button>
+                <button ng-show="showRemove()" ng-disabled="state.working()" class="btn diags-btn bg-pomegranate" ng-click="remove()">Remove</button>
                 <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="back()">Retourner</button>
 
             </div>

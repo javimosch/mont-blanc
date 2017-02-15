@@ -5,7 +5,8 @@ module.exports = {
     def: {
         code:{
             type:String,
-            required:true
+            required:true,
+            unique:true
         },
         content: {
             type: String,

@@ -1,6 +1,6 @@
 /*global angular*/
-angular.module('app').controller('settings-pages', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$log', '$timeout', 'backendApi',
-    function(db, s, r, params, focus, $log, $timeout, backendApi) {
+angular.module('app').controller('settings-pages', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$log', '$timeout', 'backendApi', 'backendApiHelper',
+    function(db, s, r, params, focus, $log, $timeout, backendApi, backendApiHelper) {
         window.s = s;
         s.params = params;
         s.isNew = () => s.params && s.params.id && s.params.id.toString() === 'new';
@@ -20,33 +20,73 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
         template += '<div class="row diags-bg-block-40 hidden-xs"></div>';
         template += '</div>';
 
+
+
         if (s.isDetailView()) {
             s.item = {};
+            var apiHelper = backendApiHelper(backendApi.pages, s.item);
+            //if (s.isEdit()) {
+            s.showRemove = () => s.item && s.item._id;
+            s.remove = () => {
+                if (!s.showRemove()) return;
+                r.openConfirm('Remove ' + s.item.code + ' ?', () => {
+                    backendApi.pages.removeWhen({
+                        _id: s.item._id
+                    }).then(res => {
+                        r.route('settings-pages/-1');
+                    });
+                });
+
+            };
+            //}
             s.save = () => {
                 if (!s.item.code) return r.warningMessage('Code required');
                 if (!s.item.description) return r.warningMessage('Description required');
+
+
+                if (apiHelper.notChecked('code') && apiHelper.isNew()) {
+                    return apiHelper.checkExists('code').on('ok', s.save).on('duplicate', () => r.warningMessage('Code already exists'));
+                }
+
+                if (apiHelper.notChecked('url')) {
+                    return apiHelper.checkExists('url').on('ok', s.save).on('duplicate', () => r.warningMessage('Url already exists'));
+                }
+
+
+
+
                 s.item.content = getACEContent(true);
                 s.item.template = window.encodeURIComponent(template);
-                backendApi.pages.save(s.item).then(res => {
-                    if (res && res.ok) {
-                        //r.infoMessage('Saved');
+                var payload = Object.assign({}, s.item);
+                payload.__match = {
+                    code: payload.code
+                };
+                backendApi.pages.save(payload).then(res => {
+                    if (res && res.ok && res.result) {
                         r.dom(() => {
                             var el = $('#save-hint');
                             var hint = el.html();
                             el.html('Saved!');
+                            s.item = res.result;
                             r.dom(() => {
                                 el.html(hint);
                             }, 1000);
                         });
                     }
                     else {
+                        if (res.err && res.err.code == 11000) {
+                            var errmsg = res.err.errmsg;
+                            var value = errmsg.substring(errmsg.indexOf('"') + 1, errmsg.lastIndexOf('"'));
+                            var field = Object.keys(res.err.op).filter(k => res.err.op[k] == value)[0];
+                            return r.warningMessage('Value ' + value + ' (field ' + field + ') already exists in database.');
+                        }
                         r.warningMessage('Server error, see the developer console.');
                     }
                 }).error((msg) => {
                     r.errorMessage(JSON.stringify(msg));
                 }).on('validate', (msg) => {
                     r.warningMessage(JSON.stringify(msg));
-                })
+                });
             };
             s.back = () => {
                 return r.route('settings-pages/-1');

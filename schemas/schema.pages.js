@@ -5,7 +5,8 @@ module.exports = {
     def: {
         code: {
             type: String,
-            required: true
+            required: true,
+            unique:true
         },
         description: {
             type: String,
@@ -13,7 +14,8 @@ module.exports = {
         },
         url: {
             type: String,
-            required: true
+            required: true,
+            unique:true
         },
         template: {
             type: String,
