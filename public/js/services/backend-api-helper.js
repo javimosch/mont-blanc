@@ -47,6 +47,7 @@
                     });
                 });
             };
+            instance.setItem=(_item)=>item = _item;
             instance.isEdit = () => item._id;
             instance.isNew = () => !item._id;
             return instance;

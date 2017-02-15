@@ -226,7 +226,7 @@ function compileVendorCustom(opt) { //{{root}}
     var sectionName = opt.sectionName || ('VENDOR-' + ext.toUpperCase());
     if (sgUtilsParser.hasSection(sectionName, raw)) {
 
-        console.log('DEBUG: Compiling section ',sectionName);
+        console.log('DEBUG: Compiling section ', sectionName);
 
         var params = sgUtilsParser.getSectionParameters(sectionName, raw);
 
@@ -262,15 +262,15 @@ function compileVendorCustom(opt) { //{{root}}
 
         }
         else {
-            
+
             //return raw; 
         }
 
-/*
-        if (!vendorChanges(ext, arr)) {
-            return sgUtilsParser.replaceSection(sectionName, raw, _replaceWith);
-        }
-        */
+        /*
+                if (!vendorChanges(ext, arr)) {
+                    return sgUtilsParser.replaceSection(sectionName, raw, _replaceWith);
+                }
+                */
 
         var compiledCode = sgUtils.concatenateAllFilesFromArray(arr, RELATIVE_PATH_FOR_VENDOR_CUSTOM);
         if (opt.middleWare) {
@@ -325,7 +325,7 @@ function compileVendorJS(raw, path) {
 function compileSectionBundles(raw, path) {
     for (var x = 0; x < 10; x++) {
         if (sgUtilsParser.hasSection('BUNDLE_JS_' + (x + 1), raw)) {
-            console.log('DEBUG: inspecting section','BUNDLE_JS_' + (x + 1));
+            console.log('DEBUG: inspecting section', 'BUNDLE_JS_' + (x + 1));
             raw = compileVendorCustom({
                 outputFileName: 'bundle_' + (x + 1).toString(),
                 sectionName: 'BUNDLE_JS_' + (x + 1),
@@ -388,30 +388,11 @@ function buildTemplates() {
         function handleNewFileTransform(raw, path) {
             var rta = raw;
             if (needsCompilation(raw, path)) {
-
-                // console.log('RAW', rta);
-
                 var rta = Handlebars.compile(raw)(sgData());
-
-                // console.log('COMPILED', rta);
-
-                rta = compileVendorJS(rta, path);
-
-                //console.log('WITH VENDOR JS', rta);
-
-                rta = compileVendorCSS(rta, path);
-
-                //console.log('WITH VENDOR CSS', rta);
-
-                rta = compileSectionBundles(rta, path);
-                //console.log('DEBUG: ',path,'compiled');
-
-                //console.log('WITH VENDOR BUNDLES', rta);
-
                 if (PROD) {
-
-                    //rta = removeHtmlComments(rta);
-
+                    rta = compileVendorJS(rta, path);
+                    rta = compileVendorCSS(rta, path);
+                    rta = compileSectionBundles(rta, path);
                     rta = minifyHTML(rta, {
                         removeAttributeQuotes: false,
                         removeScriptTypeAttributes: true,
@@ -419,7 +400,6 @@ function buildTemplates() {
                         minifyCSS: true,
                         caseSensitive: true
                     });
-
                 }
 
             }

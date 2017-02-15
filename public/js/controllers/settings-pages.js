@@ -22,8 +22,12 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
 
 
 
+
         if (s.isDetailView()) {
             s.item = {};
+
+            initTinyMCE();
+
             var apiHelper = backendApiHelper(backendApi.pages, s.item);
             //if (s.isEdit()) {
             s.showRemove = () => s.item && s.item._id;
@@ -51,7 +55,6 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                 if (apiHelper.notChecked('url')) {
                     return apiHelper.checkExists('url').on('ok', s.save).on('duplicate', () => r.warningMessage('Url already exists'));
                 }
-
 
 
 
@@ -103,6 +106,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                     }).then(res => {
                         if (res && res.ok) {
                             s.item = res.result;
+                            apiHelper.setItem(s.item);
                             setACEContent(window.decodeURIComponent(s.item.content));
                         }
                         else {
@@ -120,10 +124,80 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
             }, 1000);
         }
 
+        /*TINYMCE*/
+        function initTinyMCE() {
+            if (typeof window.tinymce == 'undefined') return setTimeout(initTinyMCE, 500);
+            var removeTrial = () => {
+                $timeout(() => {
+                    if ($('.mce-notification-warning').length > 0) {
+                        $('.mce-notification-warning').remove()
+                    }
+                    else {
+                        $timeout(removeTrial, 500);
+                    }
+                });
+            }
+            removeTrial();
+            tinymce.init({
+                selector: '#editor-WYSIWYG',
+                init_instance_callback: function(editor) {
+                    editor.on('Change', function(e) {
+                        setACEContent(s.tiny.getContent());
+                        
+                        //console.log('Editor contents was changed.');
+                    });
+                },
+                height: 500,
+                theme: 'modern',
+                plugins: [
+                    'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                    'searchreplace wordcount visualblocks visualchars code fullscreen',
+                    'insertdatetime media nonbreaking save table contextmenu directionality',
+                    'emoticons template paste textcolor colorpicker textpattern imagetools codesample toc'
+                ],
+                toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+                toolbar2: 'print preview media | forecolor backcolor emoticons | codesample',
+                image_advtab: true,
+                templates: [{
+                    title: 'Test template 1',
+                    content: 'Test 1'
+                }, {
+                    title: 'Test template 2',
+                    content: 'Test 2'
+                }],
+                content_css: [
+                    '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+                    '//www.tinymce.com/css/codepen.min.css'
+                ]
+            });
+            s.tiny = tinymce.editors[0];
+            s.copyToTiny = () => {
+                s.tiny.setContent(window.decodeURIComponent(s.item.content));
+            }
+            s.copyToTiny();
+        }
 
         /*ACE*/
+        var editorMode = 1; //1: ACE 0:TinyMCE
+        s.showACE = () => editorMode == 1;
+        s.showTinyMCE = () => editorMode == 0;
+        s.toggleEditorMode = () => {
+            var nextMode = (editorMode == 1 ? 0 : 1);
+            if (nextMode == 1) {
+                //TINY TO ACE
+                //already done in tiny initilization (change event)
+                s.formatACECode();
+            }
+            else {
+                //ACE TO TINY
+                s.tiny.setContent(getACEContent(false));
+            }
+            editorMode = nextMode;
+        };
+        s.toggleEditorModeLabel = () => editorMode == 1 ? 'View compiled' : 'View Source';
+
         function getACEContent(encode) {
-            encode = encode || true;
+            encode = encode == undefined ? true : encode;
             var rta = '';
             if (s.editor && s.editor.getValue) {
                 rta = s.editor.getValue() || '';
@@ -149,7 +223,13 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                 enableBasicAutocompletion: true,
                 enableSnippets: true
             });
-            s.editor.getSession().setUseWrapMode(true)
+            s.editor.getSession().setUseWrapMode(true);
+            s.toggleFullscreen = function() {
+                s.editor.container.webkitRequestFullscreen();
+            };
+            s.formatACECode = () => {
+                s.editor.session.setValue(html_beautify(s.editor.session.getValue()));
+            };
             s.editor.commands.addCommand({
                 name: "fullscreen",
                 bindKey: "ctrl-shift-f",
@@ -185,7 +265,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                     name: "beautify",
                     bindKey: "ctrl-alt-f",
                     exec: function(env, args, request) {
-                        s.editor.session.setValue(html_beautify(s.editor.session.getValue()));
+                        s.formatACECode();
                     }
                 });
                 $log.debug('Beautify added (CTRL + ALT + K)');

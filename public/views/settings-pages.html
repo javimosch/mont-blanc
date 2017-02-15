@@ -1,5 +1,8 @@
 <script type="text/javascript">
     /*global $*/
+    if (typeof window.tinymce == 'undefined') {
+        $.getScript("https://cloud.tinymce.com/stable/tinymce.min.js");
+    }
     if (typeof window.ace == 'undefined') {
         $.getScript("https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js", function() {
             $.getScript('https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.8/beautify-html.js');
@@ -51,9 +54,23 @@
                 <div class="row margin-top-half">
                     <label class="unselectable">Content</label>
                 </div>
-                <div class="row margin-top-half">
+                    <!-- ACE  -->
+                <div class="row margin-top-half" ng-show="showACE()">
                     <div id="editor" class="diags-rich-text-editor">
                     </div>
+                </div>
+                    <!-- WYSIWYG  -->
+                <div class="row margin-top-half" ng-show="showTinyMCE()">
+                    <div id="editor-WYSIWYG" class="diags-rich-text-editor">
+                    </div>
+                </div>
+                    <!-- BUTTONS  -->
+                <div class="row margin-top-half">
+                    <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="toggleEditorMode()" ng-bind="toggleEditorModeLabel()"></button>
+                    
+                    <button ng-show="showACE()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="toggleFullscreen()" ng-bind="'Fullscreen'"></button>
+                    <button ng-show="showACE()" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="formatACECode()" ng-bind="'Format code'"></button>
+                    
                 </div>
             </div>
         </div>
