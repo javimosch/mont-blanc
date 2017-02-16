@@ -224,7 +224,7 @@
                 <textarea ng-disabled="state.working()" class="diags-input fullwidth min-height-100 no-resize" ng-model="item.obs"></textarea>
             </div>
             <div class="row margin-top-one">
-                <div ng-include="'views/diags/backoffice/partials/order-details-pdf-files.html'" includeReplace></div>
+                <div ng-include="'/views/diags/backoffice/partials/order-details-pdf-files.html'" includeReplace></div>
             </div>
             <div class="row margin-top-half">
                 <label class="unselectable">Remise des clés</label>
@@ -286,7 +286,7 @@
                 <button ng-show="isRDVSelectButtonActivated()" ng-click="activateSlotSelectionManually()" ng-disabled="state.working()" class="btn diags-btn bg-madison margin-top-quarter">
                 Modifier</button>
                 <div ng-show="rdvConditions()" style="max-height: 600px;overflow: auto;">
-                    <div ng-include="'views/diags/backoffice/admin/admin-order-details-slots.html'" includeReplace></div>
+                    <div ng-include="'/views/diags/backoffice/admin/admin-order-details-slots.html'" includeReplace></div>
                 </div>
             </div>
 

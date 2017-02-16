@@ -21,6 +21,9 @@ function configure(app) {
             app.get('/css/vendor.css', function(req, res) {
                 res.sendFile(path.join(process.cwd(), 'static-generator/output/css/vendor.css'));
             });
+            app.get('/iframe', function(req, res) {
+                res.sendFile(path.join(process.cwd(), 'static-generator/output/iframe/index.html'));
+            });
             app.get('/*', function(req, res) {
                 res.sendFile(path.join(process.cwd(), 'static-generator/output/index.html'));
             });

@@ -1,3 +1,8 @@
+{{#if iframe}}
+{{>scripts-iframe}}
+{{else}}
+
+
 <div id="footer">
     <div ng-include="'views/diags/backoffice/partials/app-footer.html'"></div>
 </div>
@@ -18,6 +23,9 @@
 {{>scripts-vendors}} {{>scripts}} {{>scripts-fast-click}}
 
 {{>scripts-intercom}}
+
+{{/if}}
+
 </body>
 
 </html>

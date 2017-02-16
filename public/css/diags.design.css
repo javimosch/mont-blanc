@@ -1,26 +1,56 @@
+/*IFRAME*/
+
+.booking-iframe {
+    width: 360px;
+    height: 864px;
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+}
+
+
+/*EDITORS*/
+
+.ace-render {}
+
+.ace-render>iframe {
+    width: 100%;
+    min-height: 400px;
+    margin: 0px;
+    border: 0px;
+    outline: 1px dashed rgba(0, 0, 0, .2);
+}
+
+
 /*HELPERS*/
 
-.fnt-38{
-    font-size:38px;
+.fnt-38 {
+    font-size: 38px;
 }
-.fnt-22{
-    font-size:22px;
+
+.fnt-22 {
+    font-size: 22px;
 }
-.roman{
+
+.roman {
     font-family: 'Avenir-Roman';
 }
-.black{
-    color:black;
+
+.black {
+    color: black;
 }
+
 
 /*SEPARATORS*/
 
-.separator-athens-gray{
-    background-color:#F1F3F7;
-    height:6px;
-    width:100%;
+.separator-athens-gray {
+    background-color: #F1F3F7;
+    height: 6px;
+    width: 100%;
     border-radius: 10px;
 }
+
 
 /*DYNAMIC BLOCK*/
 

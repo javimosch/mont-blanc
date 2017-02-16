@@ -30,6 +30,13 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
 
             var apiHelper = backendApiHelper(backendApi.pages, s.item);
             //if (s.isEdit()) {
+            s.showOpenUrl = () => (s.isDetailView() && s.item && s.item.url);
+            s.openUrl = () => {
+                if (!s.showOpenUrl()) return;
+                var win = window.open(s.item.url, '_blank');
+                win.focus();
+
+            };
             s.showRemove = () => s.item && s.item._id;
             s.remove = () => {
                 if (!s.showRemove()) return;
@@ -71,6 +78,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                             var hint = el.html();
                             el.html('Saved!');
                             s.item = res.result;
+                            apiHelper.setItem(s.item);
                             r.dom(() => {
                                 el.html(hint);
                             }, 1000);
@@ -133,7 +141,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                         $('.mce-notification-warning').remove()
                     }
                     else {
-                        $timeout(removeTrial, 500);
+                        $timeout(removeTrial, 200);
                     }
                 });
             }
@@ -143,7 +151,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                 init_instance_callback: function(editor) {
                     editor.on('Change', function(e) {
                         setACEContent(s.tiny.getContent());
-                        
+
                         //console.log('Editor contents was changed.');
                     });
                 },
@@ -172,7 +180,8 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
             });
             s.tiny = tinymce.editors[0];
             s.copyToTiny = () => {
-                s.tiny.setContent(window.decodeURIComponent(s.item.content));
+                if (!tinymce.editors[0]) return;
+                tinymce.editors[0].setContent(window.decodeURIComponent(s.item.content));
             }
             s.copyToTiny();
         }
@@ -194,7 +203,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
             }
             editorMode = nextMode;
         };
-        s.toggleEditorModeLabel = () => editorMode == 1 ? 'View compiled' : 'View Source';
+        s.toggleEditorModeLabel = () => editorMode == 1 ? 'Toggle Visual editor' : 'View Source editor';
 
         function getACEContent(encode) {
             encode = encode == undefined ? true : encode;
@@ -224,6 +233,37 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                 enableSnippets: true
             });
             s.editor.getSession().setUseWrapMode(true);
+
+            var previewRendered = false;
+            var _keyPressedAt = Date.now();
+            s.editor.on("input", function() {
+                previewRendered = false;
+                _keyPressedAt = Date.now();
+            });
+            setInterval(function() {
+                if (previewRendered) return;
+                if ((Date.now() - _keyPressedAt < 1000 * 2)) {
+                    return console.log('DEBUG waiting 2 seconds delay...');
+                }
+                if (s.showACE()) {
+                    previewRendered = true;
+                    $timeout(function() {
+                        try {
+                            var iframe = document.createElement('iframe');
+                            var html = getACEContent(false);
+                            $('#ace-render').empty().append(iframe);
+                            iframe.contentWindow.document.open();
+                            iframe.contentWindow.document.write(html);
+                            iframe.contentWindow.document.close();
+                        }
+                        catch (err) {
+                            $log.log('DEBUG WARN ace-render', err);
+                        }
+                        s.$apply();
+                    });
+                }
+            }, 2000);
+
             s.toggleFullscreen = function() {
                 s.editor.container.webkitRequestFullscreen();
             };

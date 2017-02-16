@@ -1,5 +1,15 @@
 <!DOCTYPE html>
-<html class="no-js" >
+
+ {{#if iframe}}
+        <html class="no-js" style="
+    overflow: hidden;
+">
+    {{else}}
+        <html class="no-js" >
+    {{/if}}
+
+
+
 
 <head>
     <script type="text/javascript">
@@ -9,13 +19,22 @@
     <script src="/js/vendor/vendor-check-preprod-session.js"></script>
     <!--TITLE-->
     <title>Diagnostical : Diagnostics immobiliers</title>
-    {{>metas}} {{>links}}
+    {{>metas}} 
+    
+    {{#if iframe}}
+        {{>links iframe="1"}}
+    {{else}}
+        {{>links}}
+    {{/if}}
     <script src="/js/vendor/vendor.selectivizr-min.js"></script>
     <base id="baseHref" href="/">
 </head>
 
 <body class="diags-style modal-scrollfix">
 
+{{#if iframe}}
+    {{>booking-iframe}}
+{{else}}
     <!-- TEXT EDITOR -->
     <div ng-if="userIs('admin')" ng-show="htmlEditItem.show" ng-include="'views/common/partials/html-edit-ck-editor.html'">
     </div>
@@ -33,3 +52,4 @@
 
     </div>
    
+{{/if}}

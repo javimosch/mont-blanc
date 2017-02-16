@@ -637,7 +637,9 @@ app.directive('address', function($rootScope, $timeout) {
                 }
                 catch (e) {
                     var msg = 'Google library issue, address autocomplete feature is temporaly disabled.';
-                    return console.warn(msg);
+                    console.warn(msg);
+                    return console.log('error details',e);
+                    
                     //return r.notify(, 'warning');
                 }
 

@@ -65,7 +65,13 @@ app.get('/serverURL', function(req, res) {
 require('./api').configure(app);
 
 
-app.use("/views", express.static(__dirname + "/public/views"));
+//app.use("/views", express.static(__dirname + "/public/views"));
+
+app.get('/views/*', function(req, res) {
+	console.log('DEBUG SENDING VIEW',req.url);
+	res.sendFile(path.join(__dirname + '/public'+req.url));
+});
+
 app.use("/temp", express.static(__dirname + "/public/temp"));
 app.use("/js", express.static(__dirname + "/public/js"));
 app.use("/img", express.static(__dirname + "/public/img"));
