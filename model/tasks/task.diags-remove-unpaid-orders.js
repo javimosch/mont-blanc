@@ -28,7 +28,7 @@ function handler(data, cb) {
         if (err) return LogSave(name + " error", err);
         orders.forEach(_order => {
            // console.log('bs debug task order id', _order._id);
-            if (Date.now() - new Date(_order.createdAt) > 1000 * 60 * 30) {
+            if (Date.now() - new Date(_order.createdAt) > 1000 * 60 * 60 * 48) {
                 //console.log('bs debug task order remove');
                 Order.remove(_order, (err) => {
                     //console.log('bs debug task order remove success', !err);
