@@ -15,7 +15,7 @@ angular.module('app').controller('settings-htmls', ['server', '$scope', '$rootSc
                 s.showRemove = () => s.item && s.item._id;
                 s.remove = () => {
                     r.openConfirm('Remove ' + s.item.code + ' ?', () => {
-                        backendApi.pages.removeWhen({
+                        backendApi.htmls.removeWhen({
                             _id: s.item._id
                         }).then(res => {
                             r.route('settings-htmls/-1');
