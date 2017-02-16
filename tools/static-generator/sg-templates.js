@@ -303,10 +303,10 @@ function compileVendorCSS(raw, path) {
             if (PROD) {
                 var options = { /* options */ };
                 var output = new CleanCSS(options).minify(_raw);
-                if (output.errors && output.errors.length>0) {
+                if (output.errors && output.errors.length > 0) {
                     console.log("DEBUG CSS MINIFY ERROR:", output.errors); // a list of errors raised    
                 }
-                if (output.warnings && output.warnings.length>0) {
+                if (output.warnings && output.warnings.length > 0) {
                     console.log("DEBUG CSS MINIFY WARN:", output.warnings); // a list of errors raised    
                 }
                 console.log("DEBUG CSS BUNDLE", output.stats.originalSize, "to", output.stats.minifiedSize, " Efficiency:", output.stats.efficiency);
@@ -328,7 +328,9 @@ function compileVendorJS(raw, path) {
         tagName: 'script',
         tagAttribute: 'src',
         middleWare: _raw => {
-            //heStyles.minify(_raw);
+            if (PROD) {
+                _raw = bundleJS(_raw);
+            }
             return _raw;
         }
     });
@@ -353,12 +355,7 @@ function compileSectionBundles(raw, path) {
                     //heStyles.minify(_raw);
 
                     if (PROD) {
-                        var settings = {
-                            presets: ["es2015"],
-                            minified: true,
-                            comments: false
-                        };
-                        _raw = babel.transform(_raw, settings).code;
+                        _raw = bundleJS(_raw);
                     }
 
                     return _raw;
@@ -368,6 +365,16 @@ function compileSectionBundles(raw, path) {
         }
     }
     return raw;
+}
+
+function bundleJS(_raw) {
+    var settings = {
+        presets: ["es2015"],
+        minified: true,
+        comments: false
+    };
+    _raw = babel.transform(_raw, settings).code;
+    return _raw;
 }
 
 function buildTemplates() {

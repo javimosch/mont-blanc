@@ -15,6 +15,9 @@ function configure(app) {
             app.get('/js/bundle_1.js', function(req, res) {
                 res.sendFile(path.join(process.cwd(), 'static-generator/output/js/bundle_1.js'));
             });
+            app.get('/js/vendor.js', function(req, res) {
+                res.sendFile(path.join(process.cwd(), 'static-generator/output/js/vendor.js'));
+            });
             app.get('/css/vendor.css', function(req, res) {
                 res.sendFile(path.join(process.cwd(), 'static-generator/output/css/vendor.css'));
             });
