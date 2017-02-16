@@ -1,4 +1,5 @@
 "use strict";
+var CleanCSS = require('clean-css');
 var babel = require("babel-core");
 var minifyHTML = require('html-minifier').minify;
 let co = require("co");
@@ -299,7 +300,18 @@ function compileVendorCSS(raw, path) {
         tagName: 'link',
         tagAttribute: 'href',
         middleWare: _raw => {
-            //heStyles.minify(_raw);
+            if (PROD) {
+                var options = { /* options */ };
+                var output = new CleanCSS(options).minify(_raw);
+                if (output.errors && output.errors.length>0) {
+                    console.log("DEBUG CSS MINIFY ERROR:", output.errors); // a list of errors raised    
+                }
+                if (output.warnings && output.warnings.length>0) {
+                    console.log("DEBUG CSS MINIFY WARN:", output.warnings); // a list of errors raised    
+                }
+                console.log("DEBUG CSS BUNDLE", output.stats.originalSize, "to", output.stats.minifiedSize, " Efficiency:", output.stats.efficiency);
+                _raw = output.styles;
+            }
             return _raw;
         }
     });
