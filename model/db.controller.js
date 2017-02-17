@@ -30,12 +30,14 @@ function create(name) {
     try{
         //console.log(cwd() + '/' + path);
         specialActions = require(cwd() + '/' + path);
+        
     }catch(e){
         specialActions = {};
         console.log('db.controller.'+name+'.create',e);
     }
     //console.log('db.controller '+ name + ' special actions are '+JSON.stringify(Object.keys(specialActions)));
-    return Object.assign(createDbActions(name), specialActions);
+    var rta = Object.assign(createDbActions(name), specialActions);
+    return rta;
 }
 var EXPORT = {
     register: register,

@@ -13,7 +13,7 @@ var logger = require('./model/logger')('API.js');
  var http = require('http');
  //
 
-logger.info('Initializing');
+
 
  function configure(app) {
   var config = JSON.parse(fs.readFileSync(process.cwd() + '/package.json'));

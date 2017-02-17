@@ -18,3 +18,4 @@ backend.log
 public/app.bundle.booking.js
 public/app.bundle.js
 .env
+log.txt

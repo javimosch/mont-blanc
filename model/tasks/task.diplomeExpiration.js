@@ -3,7 +3,7 @@ var _ = require('lodash');
 var moment = require('moment');
 var User = require('../db.actions').create('User');
 var Order = require('../db.actions').create('Order');
-var Log = require('../db.actions').create('Log');
+var Log = require('../db.controller').create('Log');
 var Email = require('../../controllers/ctrl.email');
 var Notif = require('../../controllers/ctrl.notification');
 var NOTIFICATION = Notif.NOTIFICATION;
@@ -16,17 +16,31 @@ var dblog = (msg, type) => Log.save({
     type: type
 });
 
+
+var Logger = Log.createLogger({
+    name: "AUTOMATED-TASK",
+    category: "DIPLOME-EXPIRATION"
+});
+
+module.exports = {
+    name: name,
+    interval: 1000 * 60 * 60, //each hour
+    handler: handler,
+    startupInterval: true,
+    startupIntervalDelay: 1000 //20000
+};
+
 function handler(data, cb) {
-   // log('retrieve diags in progress');
+    // log('retrieve diags in progress');
     User.getAll({
         userType: 'diag'
     }, (err, r) => {
         if (err) return dblog(log('Fail to retreive diags.'));
-       // log('retrieve diags ok');
+        // log('retrieve diags ok');
         var filename, info;
         r.forEach(diag => {
             if (_.isUndefined(diag.diplomesInfo)) {
-              //  log(diag.email + ' diplomesInfo undefined.');
+                //  log(diag.email + ' diplomesInfo undefined.');
             }
             else {
                 //expirationDateNotificationEnabled
@@ -37,20 +51,38 @@ function handler(data, cb) {
                 Object.keys(diag.diplomesInfo).forEach((id) => {
                     info = diag.diplomesInfo[id];
                     filename = info.filename || 'unkown-file-name (' + id + ' = ' + JSON.stringify(info) + ')';
+
+                    //console.log('DIAG ', diag.email, ' DIPLOMA', filename, 'INFO', info);
+
                     //
                     if (_.isUndefined(info.expirationDateNotificationEnabled)) {
                         //log(diag.email + ' ' + filename + ' expirationDateNotificationEnabled field required.');
                     }
                     else {
                         if (_.isUndefined(info.expirationDate)) {
-                           // log(diag.email + ' ' + filename + ' expirationDate field required.');
+                            // log(diag.email + ' ' + filename + ' expirationDate field required.');
+                            Logger.setSaveData(info);
+                            Logger.warnSave(diag.email+' has a file without date.');
                         }
                         else {
+
+                            //console.log('DIAG ', diag.email, ' DIPLOMA', filename, 'CHECKING..');
+
                             if (moment().diff(moment(info.expirationDate), 'days') < 31) {
                                 if (!_.isUndefined(info.expirationDateNotificationSended) && info.expirationDateNotificationSended === true) {
-                                   // log(diag.email + ' ' + filename + ' has expire and alert was already sended.');
+                                    // log(diag.email + ' ' + filename + ' has expire and alert was already sended.');
+                                    //console.log('DIAG ', diag.email, ' DIPLOMA', filename, 'SENDED ALREADY');
+
+                                    Logger.setSaveData(info);
+                                    Logger.debugSave(diag.email+' has an expired file.');
+
                                 }
                                 else {
+                                    
+                                    Logger.setSaveData(info);
+                                    Logger.debugSave(diag.email+' file expiration notified to admins.');
+                                    
+                                    //console.log('DIAG ', diag.email, ' DIPLOMA', filename, 'SENDING NOW');
                                     User.getAll({
                                         userType: 'admin'
                                     }, (err, admins) => {
@@ -82,23 +114,23 @@ function sendEmail(_admin, _diag, _info, _diplomeId) {
         filename: _info.filename,
 
     }, (_err, r) => {
-        if (_err) return dblog(log('Fail when sending alert email to ' + _admin.email));
+        if (_err) {
+            Logger.errorSave('Try to send the notification to an admin ', _err);
+            //returndblog(log('Fail when sending alert email to ' + _admin.email));
+        }
         //dblog(log('Email sended to ' + _admin.email), 'success');
         //
         _info.expirationDateNotificationSended = true;
         _diag.diplomesInfo[_diplomeId] = _info;
         //
         User.update(_diag, (_err, r) => {
-            if (_err) return dblog(log('Fail when updating expirationDateNotificationSended on ' + _diag.email));
+            if (_err) {
+                Logger.setSaveData(_err);
+                Logger.errorSave('Try to update the diploma flag after sending notification ', _err);
+                //return dblog(log('Fail when updating expirationDateNotificationSended on ' + _diag.email));
+            }
+
         });
     })
 
 }
-
-module.exports = {
-    name: name,
-    interval: 1000 * 60 * 60, //each hour
-    handler: handler,
-    startupInterval: false,
-    startupIntervalDelay:20000
-};
