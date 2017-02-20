@@ -352,7 +352,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                 s = $scope,
                 dbPaginate = $mongoosePaginate.get('pages');
 
-            s.title = "";
+            window.s = s;
             r.routeParams({
                 prevRoute: 'settings'
             });
@@ -398,7 +398,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                     template: 'pagesFilter',
                     update: update,
                     rules: {
-                        status: 'in'
+                        code: 'contains'
                     }
                 },
                 pagination: {
