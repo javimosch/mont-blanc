@@ -1,0 +1,98 @@
+.navbar-header {
+    width: 100%;
+}
+
+.nav-title {
+    margin: 5px;
+    font-size: 25px;
+    line-height: 34px;
+}
+
+.navbar-right {
+    float: none!important;
+    padding-bottom: 25px!important;
+}
+
+.navbar-collapse {
+    padding: 0px;
+}
+
+.navbar-nav {
+    padding-top: 5px;
+}
+
+.navbar-nav a {
+    margin: 0 auto!important;
+}
+
+.navbar-nav li {
+    padding: 0px;
+    padding-top: 5px;
+}
+
+.navbar-toggle {
+    margin-top: 14px;
+}
+
+@media screen and (min-width: 320px) {}
+
+@media screen and (min-width: 480px) {
+    .navbar-nav a {
+        margin-right:10px!important;
+    }
+    .nav-title {
+        margin: 10px 10px;
+        font-size: 27px;
+        line-height: 40px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .navbar-nav {
+        line-height: 40px!important;
+        padding: 5px;
+    }
+    .navbar-nav li {
+        padding-top: 0px;
+    }
+    .nav-title {
+        margin: 10px 10px;
+        line-height: 40px;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .navbar-nav a {
+        margin: 2px 10px 0px 10px!important;
+    }
+    .navbar-nav {
+        /* padding-top: 0px; */
+        height: 45px!important;
+    }
+    .navbar-nav li {
+        padding: 5px;
+    }
+    .navbar-right {
+        float: right!important;
+    }
+    .navbar-collapse {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+    .nav-title {
+        margin: 10px 10px;
+    }
+    .navbar-header {
+        width: initial;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .nav-title {
+        line-height: 50px;
+        margin: 0px;
+    }
+    .navbar-nav {
+        padding-top: 0px;
+    }
+}
