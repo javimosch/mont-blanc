@@ -391,8 +391,9 @@ html {
     font-family: 'Avenir-Book';
     font-size: 14px;
     color: #878787;
-    line-height: 37px;
-    padding-top: 7px;
+    /* line-height: 37px; */
+    /* padding-top: 7px; */
+    /* background: aliceblue; */
 }
 
 .diags-navbar-2 .dropdown-menu a {
@@ -416,6 +417,7 @@ html {
     max-width: 232px;
     font-family: 'Avenir-Book';
     font-size: 14px;
+    vertical-align: baseline;
 }
 
 .diags-navbar-2,
@@ -466,7 +468,7 @@ html {
     .diags-navbar-2 div,
     .diags-navbar-2 ul,
     .diags-navbar-2 li {
-        /* padding: 0px; */
+        padding: 0px;
     }
 }
 
@@ -498,25 +500,7 @@ ul.menu li a {
     background: white;
 }
 
-.navbar-default .navbar-brand {
-    font-family: 'Avenir-Black';
-    padding: 11px 24px;
-    font-size: 40px;
-    color: #00A9FF;
-    margin: 2px;
-}
 
-.navbar-default .navbar-brand:hover,
-.navbar-default .navbar-brand:focus,
-.navbar-default .navbar-brand:active {
-    color: #00A9FF;
-}
-
-.navbar-default .navbar-brand .cal {
-    font-family: 'Avenir-Book';
-    font-size: 40px;
-    color: #00A9FF;
-}
 
 
 /*GRID FIX*/
