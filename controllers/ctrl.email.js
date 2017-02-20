@@ -547,7 +547,7 @@ function DIAG_DIAG_ACCOUNT_CREATED(data, cb) {
     
     DIAGS_CUSTOM_NOTIFICATION(
         NOTIFICATION.DIAG_DIAG_ACCOUNT_CREATED, data, cb, "Plus qu’une étape pour démarrer sur Diagnostical", data._user.email, data._user, 'User',{
-         from: 'noemie@diagnostical.fr (Noémie Diagnostical)'  
+         from: 'pierre@diagnostical.fr (Pierre de Diagnostical)'  
         });
 }
 
