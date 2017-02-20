@@ -79,9 +79,6 @@
 }
 
 
-
-
-
 /* DIAG ICONS, DIAG PAGES, DIAG TYPES*/
 
 .diag-link {}
@@ -89,14 +86,14 @@
 .diag-icon {
     display: block;
     margin: 0 auto!important;
+    /* width: 104px; */
 }
 
 .diag-title {
     font-size: 36px;
     font-family: 'Avenir-Roman';
     text-align: center;
-    margin-top: 20px;
-    margin-bottom: 0px;
+    padding: 5px;
 }
 
 .diag-subtitle {
@@ -107,7 +104,8 @@
     max-width: 400px;
     display: block;
     margin: 0 auto!important;
-    line-height: 24px;
+    line-height: 33px;
+    padding: 0px 5px;
 }
 
 .validite-box {
@@ -138,7 +136,7 @@
     font-size: 20px;
     text-align: center;
     padding-bottom: 0px;
-    padding-top: 28px;
+    padding-top: 15px;
     max-width: 400px;
     display: block;
     margin: 0 auto!important;
@@ -152,12 +150,36 @@
     background-color: #01BB55;
 }
 
-.color-electricite {
-    color: #CD0F23;
+.color-carrez {
+    color: #B45134;
 }
 
-.bg-electricite {
-    background-color: #CD0F23;
+.bg-carrez {
+    background-color: #B45134;
+}
+
+.color-ernmt {
+    color: #821E78;
+}
+
+.bg-ernmt {
+    background-color: #821E78;
+}
+
+.color-termites {
+    color: #7C0616;
+}
+
+.bg-termites {
+    background-color: #7C0616;
+}
+
+.color-plomb {
+    color: #0153A7;
+}
+
+.bg-plomb {
+    background-color: #0153A7;
 }
 
 .color-amiante {
@@ -166,6 +188,22 @@
 
 .bg-amiante {
     background-color: #FF8B00;
+}
+
+.color-electricite {
+    color: #CD0F23;
+}
+
+.bg-electricite {
+    background-color: #CD0F23;
+}
+
+.color-gaz {
+    color: #F8BD17;
+}
+
+.bg-gaz {
+    background-color: #F8BD17;
 }
 
 .plus-circle {
@@ -179,7 +217,7 @@
     text-align: center;
     font-weight: 900;
     display: block;
-    margin: 0 auto!important;
+    margin: 10px auto 40px auto;
 }
 
 @media screen and (min-width: 320px) {}
@@ -191,6 +229,24 @@
 @media screen and (min-width: 992px) {}
 
 @media screen and (min-width: 1200px) {
+    .diag-title {
+        font-size: 36px;
+        font-family: 'Avenir-Roman';
+        text-align: -webkit-left;
+        padding-left: 5px;
+        margin: 0px;
+    }
+    .diag-subtitle {
+        font-size: 25px;
+        color: black;
+        font-family: 'Avenir-Roman';
+        text-align: left;
+        max-width: 400px;
+        display: block;
+        line-height: 33px;
+        margin: 0px;
+        padding: 10px 5px;
+    }
     .plus-circle {
         margin: 28px;
     }
@@ -396,6 +452,12 @@ html {
     /* background: aliceblue; */
 }
 
+.dlink:hover,
+.dlink:focus {
+    text-decoration: none;
+    outline: 0px;
+}
+
 .diags-navbar-2 .dropdown-menu a {
     width: 100%;
     height: 100%;
@@ -434,7 +496,6 @@ html {
 }
 
 @media screen and (min-width: 768px) {
-   
     .diags-navbar-2 a {
         display: inline-table!important;
     }
@@ -453,7 +514,6 @@ html {
         padding-left: 0px;
         margin-right: 88px
     }
-
     .diags .nav.navbar-right {
         padding-left: 14.8%;
     }
@@ -499,8 +559,6 @@ ul.menu li a {
 .navbar-header {
     background: white;
 }
-
-
 
 
 /*GRID FIX*/
