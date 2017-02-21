@@ -91,7 +91,7 @@
 
 .diag-title {
     font-size: 36px;
-    font-family: 'Avenir-Roman';
+    font-family: 'Avenir-Medium'!important;
     text-align: center;
     padding: 5px;
 }
@@ -130,13 +130,22 @@
     text-align: center;
 }
 
-.diag-description {
+.diag-city{
     color: black;
+    font-family: 'Avenir-Medium';
+    font-size: 22px;
+    margin: 0px;
+    line-height: 22px;
+    margin-top: 15px;
+}
+
+.diag-description {
+    color: #000;
     font-family: 'Avenir-Roman';
-    font-size: 20px;
+    font-size: 18px;
     text-align: center;
-    padding-bottom: 0px;
-    padding-top: 15px;
+    padding-bottom: 0;
+    padding-top: 28px;
     max-width: 400px;
     display: block;
     margin: 0 auto!important;
@@ -1918,7 +1927,7 @@ p.stripe-home-message>span {
 .diags-style h4,
 .diags-style h5,
 .diags-style h6 {
-    font-family: 'Avenir-Black'!important;
+    font-family: 'Avenir-Black';
 }
 
 .diags-style h4 {
