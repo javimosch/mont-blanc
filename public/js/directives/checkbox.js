@@ -1,6 +1,6 @@
 /*global app*/
 /*global $*/
-app.directive('niceCheckBox', function($rootScope, $timeout, $compile) {
+angular.module('app').directive('niceCheckBox', function($rootScope, $timeout, $compile) {
     return {
         restrict: 'E',
         scope: {
@@ -44,7 +44,7 @@ app.directive('niceCheckBox', function($rootScope, $timeout, $compile) {
     };
 });
 
-app.directive('checkBoxGroup', function($rootScope, $timeout, $compile, $parse) {
+angular.module('app').directive('checkBoxGroup', function($rootScope, $timeout, $compile, $parse) {
     return {
         restrict: 'A',
         link: function(scope, el, attrs) {
@@ -65,7 +65,7 @@ app.directive('checkBoxGroup', function($rootScope, $timeout, $compile, $parse) 
     };
 });
 
-app.directive('checkBoxModel', function($rootScope, $timeout, $compile, $log) {
+angular.module('app').directive('checkBoxModel', function($rootScope, $timeout, $compile, $log) {
     return {
         restrict: 'A',
         scope: false,

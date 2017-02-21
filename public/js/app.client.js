@@ -8,7 +8,7 @@
 
 
 
-    app.directive('clientOrders', function(
+    angular.module('app').directive('clientOrders', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',
@@ -126,7 +126,7 @@
     });
 
     //
-    app.directive('clientsList', function(
+    angular.module('app').directive('clientsList', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',

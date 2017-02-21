@@ -2,7 +2,7 @@
 /*global $U*/
 var app = angular.module('app.login', []);
 
-app.service('LoginService', ['server', '$rootScope', function(db, r) {
+angular.module('app').service('LoginService', ['server', '$rootScope', function(db, r) {
     var self = {};
 
     const MSG_VALIDATE_EMAIL = 'Email est requis';

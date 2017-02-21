@@ -1,10 +1,13 @@
-/*global app*/
+/*global angular*/
 /*global $*/
 /*global $U*/
-app.directive('rangeModel', function($rootScope, $timeout, $compile, $log) {
+angular.module('app').directive('rangeModel', function($rootScope, $timeout, $compile, $log) {
     return {
         restrict: 'A',
         link: function(scope, el, attrs) {
+            
+            
+            
             if (!attrs.rangeValues) throw Error('rangeModel: rangeValues attribute requited.');
 
             var isInitialized = false;

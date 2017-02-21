@@ -2,7 +2,7 @@
 /*global Awesomplete*/
 /*global $U*/
 /*global $*/
-app.directive('awesomeComplete', function($rootScope, $timeout, $compile) {
+angular.module('app').directive('awesomeComplete', function($rootScope, $timeout, $compile) {
     return {
         restrict: 'A',
         scope: {

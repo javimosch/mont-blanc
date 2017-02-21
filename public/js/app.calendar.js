@@ -2,7 +2,7 @@
 /*global angular*/
 var app = angular.module('app.calendar', []);
 
-app.directive('globalCalendar', function(
+angular.module('app').directive('globalCalendar', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
     return {
         restrict: 'AE',

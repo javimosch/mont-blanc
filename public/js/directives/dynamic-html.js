@@ -1,7 +1,7 @@
 /*global app*/
 /*global $*/
 /*global $U*/
-app.directive('dynamicHtml', function($rootScope, $timeout, $compile, $log, server, dynamicHtmlService) {
+angular.module('app').directive('dynamicHtml', function($rootScope, $timeout, $compile, $log, server, dynamicHtmlService) {
     return {
         restrict: 'A',
         scope: false,

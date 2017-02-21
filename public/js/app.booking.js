@@ -1054,8 +1054,15 @@ app.controller('ctrl.booking', ['server',
             s.item.info = s.item.info || {};
             s.item = Object.assign(s.item, {
                 info: {
-                    buildingState: paramBool('buildingState') || '1',
-                    buildingType: paramBool('buildingType') || undefined,
+                    buildingState: param('buildingState', {
+                        '0': '0',
+                        '1': '1'
+                    }) || '1',
+                    buildingType: param('buildingType', {
+                        '0': '0',
+                        '1': '1',
+                        '2': '2'
+                    }) || undefined,
                     squareMeters: param('squareMeters', s.squareMeters) || '90 - 110m²', // '- de 20m²',
                     // apartamentType: param('apartamentType', s.apartamentType) || undefined,
                     constructionPermissionDate: param('cpd', s.constructionPermissionDate) || undefined, // 'Entre 1949 et le 01/07/1997',
@@ -1063,6 +1070,7 @@ app.controller('ctrl.booking', ['server',
                     electricityInstallation: param('electricityInstallation', s.electricityInstallation) || s.item.info.electricityInstallation || 'Plus de 15 ans' // 'Plus de 15 ans',
                 },
                 address: param('address') || undefined, // "15 rue L'Hopital Sain Louis",
+                postCode: param('postCode') || undefined, // "15 rue L'Hopital Sain Louis",
                 date: paramDate('date'),
                 time: param('time', ['any']),
                 clientType: param('clientType', s.CLIENT_TYPES)

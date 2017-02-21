@@ -5,7 +5,7 @@
 /*global moment*/
 var app = angular.module('app.directives', []);
 
-app.directive('compileHtml', ['$compile', function($compile) {
+angular.module('app').directive('compileHtml', ['$compile', function($compile) {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
@@ -20,7 +20,7 @@ app.directive('compileHtml', ['$compile', function($compile) {
     };
 }]);
 
-app.directive("bindHtmlCompile", ["$compile", function(compile) {
+angular.module('app').directive("bindHtmlCompile", ["$compile", function(compile) {
     return {
         restrict: "A",
         link: function(s, el, attrs) {
@@ -74,7 +74,7 @@ app.directive("bindHtmlCompile", ["$compile", function(compile) {
     }
 }]);
 
-app.directive('tableFilter', function(
+angular.module('app').directive('tableFilter', function(
     $rootScope, $timeout, $compile, $templateRequest, $sce, tpl) {
     return {
         restrict: 'AE',
@@ -276,7 +276,7 @@ app.directive('tableFilter', function(
     };
 });
 
-app.directive('ctrlDtp', function($rootScope) {
+angular.module('app').directive('ctrlDtp', function($rootScope) {
     /*
     <ctrl-dtp options="timePickerKeys"></ctrl-dtp>
     */
@@ -353,7 +353,7 @@ app.directive('ctrlDtp', function($rootScope) {
     };
 });
 
-app.directive('ctrlSelect', function($rootScope) {
+angular.module('app').directive('ctrlSelect', function($rootScope) {
     return {
         restrict: 'AE',
         scope: {
@@ -465,7 +465,7 @@ app.directive('ctrlSelect', function($rootScope) {
     };
 });
 
-app.directive('includeReplace', function() {
+angular.module('app').directive('includeReplace', function() {
     return {
         require: 'ngInclude',
         restrict: 'A',
@@ -476,7 +476,7 @@ app.directive('includeReplace', function() {
     };
 });
 
-app.directive('activeRoute', function($rootScope) {
+angular.module('app').directive('activeRoute', function($rootScope) {
     return {
         restrict: 'A',
         link: function(scope, el, attrs) {
@@ -496,7 +496,7 @@ app.directive('activeRoute', function($rootScope) {
     };
 });
 
-app.directive('focusOn', function() {
+angular.module('app').directive('focusOn', function() {
     return function(scope, elem, attr) {
         scope.$on('focusOn', function(e, name) {
             if (name === attr.focusOn) {
@@ -506,7 +506,7 @@ app.directive('focusOn', function() {
     };
 });
 
-app.directive('collapseNav', function($timeout, $rootScope) {
+angular.module('app').directive('collapseNav', function($timeout, $rootScope) {
     return {
         restrict: 'AE',
         replace: false,
@@ -538,7 +538,7 @@ app.factory('focus', function($rootScope, $timeout) {
     }
 });
 
-app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
+angular.module('app').directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
     return {
         restrict: 'AE',
         replace: true,
@@ -610,7 +610,7 @@ app.directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
     };
 });
 
-app.directive('address', function($rootScope, $timeout) {
+angular.module('app').directive('address', function($rootScope, $timeout) {
     return {
         scope: {
             model: "=model",
@@ -732,7 +732,7 @@ app.directive('address', function($rootScope, $timeout) {
 });
 
 
-app.directive('debug', function($rootScope, $timeout, server, $compile) {
+angular.module('app').directive('debug', function($rootScope, $timeout, server, $compile) {
     return {
         scope: {
             show: "=show"
@@ -819,7 +819,7 @@ app.directive('debug', function($rootScope, $timeout, server, $compile) {
         }
     };
 });
-app.directive('spinner', function($rootScope, $timeout) {
+angular.module('app').directive('spinner', function($rootScope, $timeout) {
     return {
         scope: {
             show: "=show"
@@ -833,7 +833,7 @@ app.directive('spinner', function($rootScope, $timeout) {
     };
 });
 
-app.directive('checkBox', function($rootScope, $timeout) {
+angular.module('app').directive('checkBox', function($rootScope, $timeout) {
     return {
         scope: {
             val: "=val",
@@ -867,7 +867,7 @@ app.directive('checkBox', function($rootScope, $timeout) {
 });
 
 
-app.directive('notify', function($rootScope, $timeout) {
+angular.module('app').directive('notify', function($rootScope, $timeout) {
     return {
         scope: {
             message: "@message",
@@ -949,7 +949,7 @@ app.directive('notify', function($rootScope, $timeout) {
     };
 });
 
-app.directive('myAlert', function($rootScope, $timeout) {
+angular.module('app').directive('myAlert', function($rootScope, $timeout) {
     return {
         scope: {
             message: "@message",
@@ -1004,7 +1004,7 @@ app.directive('myAlert', function($rootScope, $timeout) {
     };
 });
 
-app.directive('myAlerts', function($rootScope, $timeout, $compile) {
+angular.module('app').directive('myAlerts', function($rootScope, $timeout, $compile) {
     return {
         restrict: 'AE',
         replace: true,
@@ -1107,7 +1107,7 @@ app.directive('myAlerts', function($rootScope, $timeout, $compile) {
     };
 });
 
-app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal) {
+angular.module('app').directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal) {
     return {
         restrict: 'AE',
         replace: true,
@@ -1189,7 +1189,7 @@ app.directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal)
     };
 });
 
-app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal) {
+angular.module('app').directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal) {
     return {
         restrict: 'AE',
         replace: true,
@@ -1252,7 +1252,7 @@ app.directive('modalConfirm', function($rootScope, $timeout, $compile, $uibModal
     };
 });
 
-app.directive('dynamicTable', function(
+angular.module('app').directive('dynamicTable', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce) {
     return {
         restrict: 'AE',
@@ -1337,7 +1337,7 @@ app.directive('dynamicTable', function(
     };
 });
 
-app.directive('appendChild', function(
+angular.module('app').directive('appendChild', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce) {
     return {
         restrict: 'AE',
@@ -1354,7 +1354,7 @@ app.directive('appendChild', function(
 });
 
 
-app.directive('htmlContent', function(
+angular.module('app').directive('htmlContent', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce) {
     return {
         restrict: 'AE',
@@ -1378,7 +1378,7 @@ app.directive('htmlContent', function(
     };
 });
 
-app.directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
+angular.module('app').directive('timeRange', function($rootScope, $timeout, $compile, $uibModal) {
     return {
         restrict: 'AE',
         replace: true,

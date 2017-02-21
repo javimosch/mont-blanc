@@ -2,7 +2,7 @@
 /*global moment*/
 (() => {
     var app = angular.module('app.diag.balance', []);
-    app.directive('diagBalance', function(
+    angular.module('app').directive('diagBalance', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',

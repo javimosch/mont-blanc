@@ -7,7 +7,7 @@
 (function() {
     var app = angular.module('app.diag', []);
 
-    app.directive('diagsList', function(
+    angular.module('app').directive('diagsList', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
         return {
             restrict: 'AE',
@@ -94,7 +94,7 @@
             }
         };
     });
-    app.directive('diagExceptionList', function(
+    angular.module('app').directive('diagExceptionList', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate, $routeParams) {
         return {
             restrict: 'AE',

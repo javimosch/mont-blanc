@@ -6,7 +6,7 @@
 /*global $U*/
 (function() {
     var app = angular.module('srv.diagPrice', []);
-    app.service('diagPrice', function($rootScope, server) {
+    angular.module('app').service('diagPrice', function($rootScope, server) {
         var r = $rootScope,
             db = server;
 

@@ -44,7 +44,7 @@
             }
         }).init();
     }]);
-    app.directive('logList', function(
+    angular.module('app').directive('logList', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server,$mongoosePaginate) {
         return {
             restrict: 'AE',

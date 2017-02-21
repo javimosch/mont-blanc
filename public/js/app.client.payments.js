@@ -1,7 +1,7 @@
 var app = angular.module('app.client.payments', []);
 
 
-app.directive('clientPayments', function(
+angular.module('app').directive('clientPayments', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
     return {
         restrict: 'AE',

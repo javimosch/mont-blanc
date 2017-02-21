@@ -1219,7 +1219,7 @@
 
 
 
-    app.directive('ordersList', function(
+    angular.module('app').directive('ordersList', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',

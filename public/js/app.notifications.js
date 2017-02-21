@@ -75,7 +75,7 @@
     }]);
 
 
-    app.directive('sectionNotifications', function(
+    angular.module('app').directive('sectionNotifications', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',

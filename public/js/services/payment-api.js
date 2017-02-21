@@ -3,7 +3,7 @@
 /*global moment*/
 /*global $U*/
 (function() {
-	var app = angular.module('app').service('paymentApi', function($rootScope, server, backendApi, $log, lemonwayApi) {
+	angular.module('app').service('paymentApi', function($rootScope, server, backendApi, $log, lemonwayApi) {
 		function isCompany(d) {
 			return d.siret && (d.isAutoentrepreneur==undefined||d.isAutoentrepreneur==false);
 		}

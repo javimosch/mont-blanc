@@ -2,7 +2,7 @@
 /*global $U*/
 (function() {
     var app = angular.module('srv.crud', []);
-    app.service('crud', function($rootScope, server) {
+    angular.module('app').service('crud', function($rootScope, server) {
         var r = $rootScope,
             db = server;
 

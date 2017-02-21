@@ -30,7 +30,7 @@
 
 
 
-    app.directive("ckEditor", ["$compile", function(compile) {
+    angular.module('app').directive("ckEditor", ["$compile", function(compile) {
         return {
             restrict: "A",
             link: function(s, el, attrs) {
@@ -200,7 +200,7 @@
 
 
 
-    app.directive('textsList', function(
+    angular.module('app').directive('textsList', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',

@@ -5,7 +5,7 @@
 /*global _*/
 (function() {
     var app = angular.module('srv.diagSlots', []);
-    app.service('diagSlots', function($rootScope, server, orderPrice, $log, orderRdv) {
+    angular.module('app').service('diagSlots', function($rootScope, server, orderPrice, $log, orderRdv) {
         var r = $rootScope,
             db = server;
 

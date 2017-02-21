@@ -1,17 +1,24 @@
 /*global app*/
-app.directive('toggleClick', function($rootScope, $timeout, $compile) {
+angular.module('app').directive('toggleClick', function($rootScope, $timeout, $compile) {
     return {
         restrict: 'A',
         link: function(scope, el, attrs) {
 
+            var dataValue = attrs.ngValue;
+            if (typeof dataValue == 'string' && dataValue.toLowerCase() == 'true') {
+                dataValue = true;
+            }
+            if (typeof dataValue == 'string' && dataValue.toLowerCase() == 'false') {
+                dataValue = false;
+            }
+
             el.on('click', () => {
-                var v = typeof attrs.ngValue == 'string' && attrs.ngValue.toLowerCase() == 'true' || attrs.ngValue == true;
-                val(v);
+                val(dataValue);
             });
-            
+
             //first time
             $rootScope.$emit(attrs.toggleValue + '-changed', val());
-            
+
 
             function val(value) {
                 var ss = scope;
@@ -21,64 +28,62 @@ app.directive('toggleClick', function($rootScope, $timeout, $compile) {
                     if (word == last) return;
                     ss = ss[word];
                     if (ss == undefined) {
-//                        console.warn('toggleValue ', attrs.toggleValue, word + ' is undefined');
+                        //                        console.warn('toggleValue ', attrs.toggleValue, word + ' is undefined');
                         return 0;
                     }
                 });
                 if (ss == undefined) return;
-                if (value!==undefined) {
+                if (value !== undefined) {
                     ss[last] = value;
                     //$rootScope.$emit(attrs.toggleValue + '-changed', value);
                     $timeout($rootScope.$apply());
-                }else{
+                }
+                else {
                     return ss[last];
                 }
             }
         }
     };
-});
-app.directive('toggleClass', function($rootScope, $timeout, $compile) {
+}).directive('toggleClass', function($rootScope, $timeout, $compile) {
     return {
         restrict: 'A',
         link: function(scope, el, attrs) {
-            var val = typeof attrs.ngValue == 'string' && attrs.ngValue.toLowerCase() == 'true' || attrs.ngValue == true;
             if (!attrs.toggleValue) return console.warn('toggle-class: toggle-value attribute required.');
-            //
-            function update(v) {
-                if (v == val) {
+
+            var dataValue = attrs.ngValue;
+            if (typeof dataValue == 'string' && dataValue.toLowerCase() == 'true') {
+                dataValue = true;
+            }
+            if (typeof dataValue == 'string' && dataValue.toLowerCase() == 'false') {
+                dataValue = false;
+            }
+
+            scope.$watch(attrs.toggleValue, function(newValue) {
+                if (newValue == dataValue) {
                     el.addClass(attrs.toggleClass);
                 }
                 else {
                     el.removeClass(attrs.toggleClass);
                 }
-            }
-            $rootScope.$on(attrs.toggleValue + '-changed', function(evt, v) {
-                //update(v);
-            });
-            
-            scope.$watch(attrs.toggleValue,function(v){
-                if(typeof v == 'boolean') update(v);
             })
         }
     };
-});
-
-app.directive('keyBind', function() {
+}).directive('keyBind', function() {
     return {
-      restrict: 'A',
-      link: function($scope, $element, $attrs) {
-        $element.bind($attrs.eventType||"keypress", function(event) {
-          var keyCode = event.which || event.keyCode;
+        restrict: 'A',
+        link: function($scope, $element, $attrs) {
+            $element.bind($attrs.eventType || "keypress", function(event) {
+                var keyCode = event.which || event.keyCode;
 
-          if (keyCode == $attrs.code) {
-            $scope.$apply(function() {
-              $scope.$eval($attrs.keyBind, {$event: event});
+                if (keyCode == $attrs.code) {
+                    $scope.$apply(function() {
+                        $scope.$eval($attrs.keyBind, {
+                            $event: event
+                        });
+                    });
+
+                }
             });
-
-          }
-        });
-      }
+        }
     };
-  });
-
-  
+});

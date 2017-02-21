@@ -1,5 +1,5 @@
 /*global app*/
-app.directive('removeHidden', function($rootScope, $timeout, $compile) {
+angular.module('app').directive('removeHidden', function($rootScope, $timeout, $compile) {
     return {
         restrict: 'A',
         link: function(scope, el, attrs) {

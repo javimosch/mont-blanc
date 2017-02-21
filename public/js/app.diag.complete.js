@@ -27,7 +27,7 @@ function TABLE_COLUMNS(r) {
     ];
 }
 
-app.directive('diagOrders', function(
+angular.module('app').directive('diagOrders', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
     return {
         restrict: 'AE',
@@ -120,7 +120,7 @@ app.directive('diagOrders', function(
     };
 });
 
-app.directive('diagOrdersSucceded', function(
+angular.module('app').directive('diagOrdersSucceded', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
     return {
         restrict: 'AE',
@@ -217,7 +217,7 @@ app.directive('diagOrdersSucceded', function(
 
 
 
-app.directive('diagCalendar', function(
+angular.module('app').directive('diagCalendar', function(
     $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
     return {
         restrict: 'AE',

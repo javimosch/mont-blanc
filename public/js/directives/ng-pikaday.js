@@ -3,7 +3,7 @@
 /*global Pikaday*/
 /*global moment*/
 /*global $U*/
-app.directive('pikaday', function($rootScope, $timeout, $compile, $parse) {
+angular.module('app').directive('pikaday', function($rootScope, $timeout, $compile, $parse) {
     return {
         restrict: 'A',
         scope: false,

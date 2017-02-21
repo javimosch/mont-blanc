@@ -15,13 +15,59 @@ var app = angular.module('app');
 app.controller('booking-iframe-controller', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter',
     function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter) {
+        /*
+          info: {
+                    buildingState: paramBool('buildingState') || '1',
+                    buildingType: paramBool('buildingType') || undefined,
+                    squareMeters: getParam('squareMeters', s.squareMeters) || '90 - 110m²', // '- de 20m²',
+                    // apartamentType: param('apartamentType', s.apartamentType) || undefined,
+                    constructionPermissionDate: getParam('cpd', s.constructionPermissionDate) || undefined, // 'Entre 1949 et le 01/07/1997',
+                    gasInstallation: getParam('gasInstallation', s.gasInstallation) || 'Oui, Plus de 15 ans', // 'Oui, Moins de 15 ans',
+                    electricityInstallation: getParam('electricityInstallation', s.electricityInstallation) || s.item.info.electricityInstallation || 'Plus de 15 ans' // 'Plus de 15 ans',
+                },
+                address: getParam('address') 
+                */
+                
+        s.warningMsg = (msg,delay)=>{
+            r.warningMessage(msg,delay);
+        };
 
         s.proceedToDiagsSelection = function() {
             s.validateQuestions(function() {
                 if (!window.serverURL) {
-                    return r.warningMessage('Define serverURL');
+                //    return r.warningMessage('Define serverURL');
                 }
-                r.routeExternal(window.serverURL);
+                var url = "https://white-house-78-javoche.c9users.io/";
+                
+                if(!r.isDevEnv()){
+                    url = "https://www.diagnostical.fr/";
+                }
+                
+                if(window.location.href.indexOf('herokuapp')!==-1){
+                    url = 'https://diagnostical-preview.herokuapp.com/';
+                }
+                
+                url+='choix-diagnostics';
+                
+                var addParam = (n,v)=>{
+                  if(url.indexOf('?')==-1) {
+                      url+='?';
+                  }else{
+                      url+='&';
+                  }
+                  url+=n.toString()+'='+v.toString();
+                };
+                
+                addParam('buildingState',s.item.info.buildingState);
+                addParam('buildingType',s.item.info.buildingType);
+                addParam('squareMeters',s.item.info.squareMeters);
+                addParam('cpd',s.item.info.constructionPermissionDate);
+                addParam('gasInstallation',s.item.info.gasInstallation);
+                addParam('electricityInstallation',s.item.info.electricityInstallation);
+                addParam('address',s.item.address);
+                addParam('postCode',s.item.postCode);
+                
+                return r.routeExternal(url);
             }, () => {
                 if (!s.addressDepartmentCovered) {
                     var msg = "Votre département n'est pas encore couvert par Diagnostical.<br>";
