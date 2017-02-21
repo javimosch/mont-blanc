@@ -67,7 +67,8 @@ app.controller('booking-iframe-controller', ['server',
                 addParam('address',s.item.address);
                 addParam('postCode',s.item.postCode);
                 
-                return r.routeExternal(url);
+                //return r.routeExternal(url);
+                return window.open(url, '_newtab');
             }, () => {
                 if (!s.addressDepartmentCovered) {
                     var msg = "Votre département n'est pas encore couvert par Diagnostical.<br>";
