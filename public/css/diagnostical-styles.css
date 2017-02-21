@@ -99,7 +99,7 @@
 .diag-subtitle {
     font-size: 25px;
     color: black;
-    font-family: 'Avenir-Roman';
+    font-family: 'Avenir-Medium'!important;
     text-align: center;
     max-width: 400px;
     display: block;
