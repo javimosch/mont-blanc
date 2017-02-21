@@ -10,6 +10,8 @@
     color: #00A9FF;
 }
 
+
+
 .navbar-default .navbar-brand .cal {
     font-family: 'Avenir-Book';
     font-size: 40px;
@@ -88,6 +90,9 @@
 }
 
 @media screen and (min-width: 992px) {
+    .navbar-nav .diags-pill-info{
+        margin: 2px 0px 0px 10px!important;
+    }
     .navbar-brand {
         margin: 0px;
     }
