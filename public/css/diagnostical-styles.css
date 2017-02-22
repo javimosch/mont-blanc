@@ -130,7 +130,7 @@
     text-align: center;
 }
 
-.diag-city{
+.diag-city {
     color: black;
     font-family: 'Avenir-Medium';
     font-size: 22px;
@@ -747,16 +747,23 @@ a.diag-btn-info:hover {
 }
 
 .diags-home-bg {
-    background: url(../img/background.jpg);
-    background-repeat: no-repeat;
-    min-height: 620px;
-    background-size: cover;
-}
+        background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/home_bg.jpg) no-repeat;
+        background-position: center top;
+    }
 
-@media screen and (max-width: 480px) {
+@media screen and (min-width: 480px) {
     .diags-home-bg {
         background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/intermediary-background.jpg) no-repeat;
         background-position: center top;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .diags-home-bg {
+        background: url(../img/background.jpg);
+        background-repeat: no-repeat;
+        min-height: 620px;
+        background-size: cover;
     }
 }
 
