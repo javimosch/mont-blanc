@@ -296,7 +296,9 @@
                     if (rta && !s.__rdvInit) {
                         s.__rdvInit = true;
 
-                        var settings = {};
+                        var settings = {
+                            //department: s.item.
+                        };
 
                         if (hasSlotSelectionActivatedManualyByAdmin()) {
                             settings.maxSlots = 40;

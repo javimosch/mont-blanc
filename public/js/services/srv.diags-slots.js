@@ -38,6 +38,7 @@
                             scope.item && scope.item.diags,
                         availableDiags: scope.diags
                     });
+
                 }
 
                 function requestSlots(date) {
@@ -56,19 +57,21 @@
                             orderRdv.getAll({
                                 date: date,
                                 time: time,
-                                diagId: _settings.diagId
+                                diagId: _settings.diagId,
+                                department: _settings.department
                             }).then(_resolve);
                         }
                         else {
                             //db.getAvailableRanges(order, _settings).then(_resolve);
-                            //console.log('RDV-FIXED',_settings.maxSlots);
-                             orderRdv.getAll({
+
+                            orderRdv.getAll({
                                 date: date,
                                 time: time,
                                 diagId: _settings.diagId,
-                                fixedSlots:true
+                                fixedSlots: true,
+                                department: _settings.department
                             }).then(_resolve);
-                            
+
                         }
 
 
@@ -92,26 +95,26 @@
 
 
                                 setOrderDetails(date);
-                                
+
 
 
                                 //
                                 db.ctrl('User', 'get', {
                                     _id: r._diag,
-                                    __select:"firstName lastName diagPriority isAutoentrepreneur"
+                                    __select: "firstName lastName diagPriority isAutoentrepreneur"
                                 }).then(d => {
                                     if (d.ok && d.result) {
                                         r.name = d.result.firstName + ', ' + d.result.lastName.substring(0, 1);
                                         if (d.result.diagPriority) {
                                             r.name += ' (' + d.result.diagPriority + ')';
                                         }
-                                        
+
                                         orderPrice.set({
-                                            diagIsAutoentrepreneur: d.result.isAutoentrepreneur||false,
-                                            date:date
+                                            diagIsAutoentrepreneur: d.result.isAutoentrepreneur || false,
+                                            date: date
                                         });
                                         r.price = orderPrice.getPriceTTC();
-                                        
+
                                         cbHell.next();
                                     }
                                 });
@@ -183,11 +186,11 @@
                     var cursor = moment();
                     var o = {};
                     window._rdvService = o;
-                    o.settings=()=>_settings;
+                    o.settings = () => _settings;
                     o.setDiag = function(_diag) {
                         if (_diag && _diag._id && _diag._id != _settings._diag) {
                             _settings.diagId = _diag && _diag._id || _diag || undefined;
-                            o.request();
+                            o.init(null,_settings);
                         }
                     };
                     o.updatePrices = function() {
@@ -217,9 +220,17 @@
                         }
 
                         opt = opt || {};
-                        _settings.department = opt.department;
+
                         _settings.maxSlots = opt.maxSlots || _settings.maxSlots;
                         _settings.allowFixedAllocation = opt.allowFixedAllocation;
+
+                        if (scope.item && scope.item.postCode) {
+                            $log.debug('rdv-slots: parsing department',scope.item.postCode);
+                            _settings.department = scope.item.postCode.substring(0, 2);
+                        }else{
+                            $log.warn('rdv-slots: Department missing');
+                        }
+
                         o.request();
                     };
                     o.backIsDisabled = function() {

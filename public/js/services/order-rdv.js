@@ -7,9 +7,9 @@
 
         var DIAG_NAME = {};
 
-        function fetchDiagGuys() {
+        function fetchDiagGuys(settings) {
             return $U.MyPromise(function(resolve, err, emit) {
-                db.ctrl('User', 'getAll', {
+                var payload = {
                     userType: 'diag',
                     __rules: {
                         disabled: {
@@ -17,7 +17,13 @@
                         }
                     },
                     __select: 'priority firstName'
-                }).then((data) => {
+                };
+                if (settings.department) {
+                    payload.__rules.departments = {
+                        $eq: settings.department.toString()
+                    };
+                }
+                db.ctrl('User', 'getAll', payload).then((data) => {
                     data.result.forEach(function(d) {
                         DIAG_NAME[d._id] = d.firstName;
                     });
@@ -231,7 +237,7 @@
                     return resolve([]);
                 }
 
-                fetchDiagGuys().then(function(rdvDiags) {
+                fetchDiagGuys(settings).then(function(rdvDiags) {
                     //$log.debug(ID, 'DIAGS_LENGTH', rdvDiags.length);
                     fetchCollisions(settings.date).then(function(diagsCollisions) {
                         //$log.debug(ID, 'TOTAL_COLLISIONS', diagsCollisions.length);
