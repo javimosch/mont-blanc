@@ -1,6 +1,6 @@
 {
   "name": "diagnostical",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Fullstack Application (Angular / NodeJs / Mongo)",
   "main": "index.js",
   "author": "Javier Arancibia (arancibiajav@gmail.com)",
@@ -16,13 +16,12 @@
     "test3": "./node_modules/.bin/mocha --recursive -R xunit test/ > test-reports.xml && exit 0",
     "start": "node --max_old_space_size=512 app.js",
     "local": "nodemon 'app.js' --watch .env --watch model --watch controllers --watch schemas --watch templates --watch app.js --watch api.js --watch public/js --watch tools/static-generator",
-    "deploy": "git push production master:master",
+    "deploy": "./tools/scripts/ssh_deploy_tag.sh",
     "build": "node ./tools/node_bundle.js",
     "heroku": "npm run start",
     "preview": "git push heroku preview:master",
     "logs": "./tools/scripts/ssh_logs.sh",
-    "deploy": "./tools/scripts/ssh_deploy_tag.sh",
-    "remoteTags":"git ls-remote --tags prod"
+    "remoteTags": "git ls-remote --tags prod"
   },
   "license": "ISC",
   "engines": {
