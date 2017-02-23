@@ -12,7 +12,7 @@ var app = angular.module('app.run', []);
 
 var __SHARE_FUNCTIONS = {
     isDevEnv: () => {
-        return window.location.hostname.indexOf('c9users.io') !== -1 || window.location.hostname.indexOf('localhost') !== -1 || window.location.hostname.indexOf('herokuapp') !== -1
+        return window.location.hostname.indexOf('c9users.io') !== -1 || window.location.hostname.indexOf('localhost') !== -1 || window.location.hostname.indexOf('herokuapp') !== -1 || window.location.hostname.indexOf('62.210.97.81') !== -1
     }
 };
 
