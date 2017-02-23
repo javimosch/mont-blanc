@@ -9,6 +9,7 @@ var Category = require('../model/db.actions').create('Category');
 var moment = require('moment');
 var S = require('string');
 var btoa = require('btoa')
+var path = require('path');
 var _ = require('lodash');
 var modelName = 'text';
 var cbHell = require('../model/utils').cbHell;
@@ -17,11 +18,30 @@ var actions = {
         console.log(modelName.toUpperCase() + ': ' + m);
     }
 };
+
+var dbLogger = ctrl('Log').createLogger({
+    name: "TEXTS",
+    category: "DB"
+});
+
 module.exports = {
     reportNotFound: reportNotFound,
     import: _import,
-    importAll: _importAll
+    importAll: _importAll,
+    save:save
 };
+
+function save(data,cb){
+    ctrl('Text').core.save(data,function(err,res){
+       if(err)  return cb(err);
+       
+       //dbLogger.setSaveData(res);
+       //dbLogger.debugSave('Save success');
+       require(path.join(process.cwd(),'model/views')).update(data.code,data.content);
+       
+       return cb(null,res)
+    });
+}
 
 function _importAll(data, cb) {
     actions.log('IMPORT_ALL:start');

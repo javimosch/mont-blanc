@@ -8,6 +8,7 @@ var http = require('http');
 var fs = require('fs');
 var skipMap = require('skip-map')
 require('dotenv').config();
+var sgTemplating = require('./tools/static-generator/sg-templates');
 
 var appDetails = {};
 
@@ -64,13 +65,20 @@ app.get('/serverURL', function(req, res) {
 });
 require('./api').configure(app);
 
+var compileView = require('./model/views').compile;
 
 //app.use("/views", express.static(__dirname + "/public/views"));
 
+
 app.get('/views/*', function(req, res) {
-	console.log('DEBUG SENDING VIEW',req.url);
-	res.sendFile(path.join(__dirname + '/public'+req.url));
+	var fullPath = path.join(__dirname + '/public' + req.url);
+	//console.log('DEBUG PREPARING VIEW', req.url);
+	compileView(fullPath).then((html) => {
+		//console.log('DEBUG SENDING VIEW', req.url);
+		res.send(html);
+	});
 });
+
 
 app.use("/temp", express.static(__dirname + "/public/temp"));
 app.use("/js", express.static(__dirname + "/public/js"));
