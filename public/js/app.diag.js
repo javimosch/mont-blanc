@@ -5,17 +5,19 @@
 /*global $D*/
 
 (function() {
-    var app = angular.module('app.diag', []);
-
-    angular.module('app').directive('diagsList', function(
+    angular.module('app.diag', [])
+    .directive('diagsList', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
         return {
-            restrict: 'AE',
+            restrict: 'E',
             replace: true,
             scope: {},
-            templateUrl: 'views/directives/directive.fast-crud.html',
+            templateUrl: '/views/directives/directive.fast-crud.html',
             link: function(s, elem, attrs) {},
             controller: function($scope, $element, $attrs, $transclude) {
+                
+                console.log('INFO diagsList controller');
+                
                 var r = $rootScope,
                     db = server,
                     s = $scope;
@@ -93,8 +95,8 @@
                 update();
             }
         };
-    });
-    angular.module('app').directive('diagExceptionList', function(
+    })
+    .directive('diagExceptionList', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate, $routeParams) {
         return {
             restrict: 'AE',
@@ -249,8 +251,8 @@
 
             }
         };
-    });
-    app.controller('diagExceptionEdit', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$timeout', '$log',
+    })
+    .controller('diagExceptionEdit', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$timeout', '$log',
         function(db, s, r, params, focus, $timeout, $log) {
 
             r.dom(function() {

@@ -74,7 +74,7 @@ app.get('/views/*', function(req, res) {
 	var fullPath = path.join(__dirname + '/public' + req.url);
 	//console.log('DEBUG PREPARING VIEW', req.url);
 	compileView(fullPath).then((html) => {
-		//console.log('DEBUG SENDING VIEW', req.url);
+		//console.log('DEBUG SENDING VIEW', req.url,html.length);
 		res.send(html);
 	});
 });
