@@ -15,7 +15,7 @@ var urlencode = require('urlencode');
 var urldecode = require('urldecode');
 var absolute_path = require('relative-path');
 var Watch = require('fs-watcher').watch;
-
+var Promise = require(path.join(process.cwd(),'model/utils')).promise;
 
 module.exports = {
     watch: watchHelper,
@@ -96,7 +96,7 @@ function concatenateAllFilesFromArray(arr, relativePath) {
     arr.forEach(localPath => {
         var _path = path.join(process.cwd(), localPath);
         if (relativePath) {
-            _path= path.join(process.cwd(), relativePath, localPath);
+            _path = path.join(process.cwd(), relativePath, localPath);
         }
         raws.push(fs.readFileSync(_path.replace('//', '/'), 'utf8'));
     });
@@ -154,13 +154,12 @@ function createFile(dest, content) {
 
 function copyFilesFromTo(FROM_PATH, DEST, opt) {
     var hasErrors = false;
-    var rta = new Promise((resolve, error) => {
+    return new Promise((resolve, error) => {
         opt = opt || {
             formatContentHandler: undefined,
             formatPathHandler: undefined
         }
         if (!fs.existsSync(FROM_PATH)) {
-            //console.log('DEBUG:  utils copyFilesFromTo skip for', FROM_PATH);
             return resolve({
                 ok: false
             });
@@ -168,43 +167,56 @@ function copyFilesFromTo(FROM_PATH, DEST, opt) {
         var files = normalizeFilesTreePreservePath(readDirFiles.readSync(FROM_PATH));
         var folders = getPaths(files);
         folders = folders.map(v => DEST + '/' + v);
-
-        //console.log('DEBUG: utils copy files len', Object.keys(files).length);
-
-        var _wait = cbHell(Object.keys(files).length, function() {
-            resolve({
-                ok: !hasErrors
+        var _path, rawContent, compiledContent, fullpath;
+        var filesStack = Object.keys(files);
+        var writeFile = (partialPath, content) => {
+            return new Promise((_resolve, err) => {
+                fullpath = DEST + '/' + partialPath;
+                sander.writeFile(getPath(fullpath), getFileName(fullpath), content).then(() => {
+                    _resolve();
+                });
             });
-        });
-        var path, rawContent, compiledContent, fullpath;
-        // console.log('ss debug copyFilesFromTo prepare-to-copy ',Object.keys(files).length,'files');
-        Object.keys(files).forEach(k => {
-            path = k;
+        }
+        var parseNextIterator = (_path, content) => {
+            //console.log('UTILS-DEBUG copyFilesFromTo writeFile start', _path);
+            return writeFile(_path, content).then(() => {
+                //console.log('UTILS-DEBUG copyFilesFromTo writeFile end', _path);
+                filesStack = filesStack.slice(1);
+                parseNext();
+            });
+        };
+        var parseNext = () => {
+            //console.log('UTILS-DEBUG copyFilesFromTo parseNext', filesStack.length);
+            if (filesStack.length == 0) {
+                resolve({
+                    ok: !hasErrors
+                });
+                return;
+            }
+            var k = filesStack[0];
+            _path = k;
             rawContent = files[k];
             if (opt.formatPathHandler) {
-                path = opt.formatPathHandler(path);
+                _path = opt.formatPathHandler(_path);
             }
             if (opt.formatContentHandler) {
-                try {
-                    compiledContent = opt.formatContentHandler(rawContent, path);
-                }
-                catch (e) {
-                    //console.log('DEBUG: utils copyFilesFromTo write error', e);
-                    hasErrors = true;
-                }
+                //console.log('UTILS-DEBUG copyFilesFromTo formatContentHandler detected', _path);
+                var _promise = new Promise((_resolve, error) => {
+                    //console.log('UTILS-DEBUG copyFilesFromTo formatContentHandler call', _path);
+                    opt.formatContentHandler(rawContent, _path, _resolve);
+                    //console.log('UTILS-DEBUG copyFilesFromTo formatContentHandler end', _path);
+                });
+                _promise.then(compiledContent => {
+                    //console.log('UTILS-DEBUG copyFilesFromTo formatContentHandler resolved', _path);
+                    parseNextIterator(_path, compiledContent);
+                });
             }
             else {
-                compiledContent = rawContent;
+                parseNextIterator(_path, rawContent);
             }
-            fullpath = DEST + '/' + path;
-            sander.writeFile(getPath(fullpath), getFileName(fullpath), compiledContent).then(() => {
-                //console.log('ss debug copyFilesFromTo write success');
-                _wait.add();
-            });
-            //console.log('he utils generating file ',fullpath);
-        });
+        };
+        parseNext(); //start..
     });
-    return rta;
 }
 
 //waits to success N basic async operations to procced.

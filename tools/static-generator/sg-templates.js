@@ -6,7 +6,7 @@ let co = require("co");
 var sgUtilsParser = require('./sg-utils-html-parser');
 var sgUtils = require('./sg-utils');
 var sgScript = require('./sg-scripts');
-var Handlebars = require('handlebars');
+var hbs = require('handlebars');
 var readDirFiles = require('read-dir-files');
 var mkdirp = require('mkdirp');
 var fs = require('fs');
@@ -22,16 +22,19 @@ var PROD = process.env.PROD && process.env.PROD.toString() == '1' || false;
 var APP_NAME = process.env.APP_NAME || process.env.app || process.env.APP || null;
 var removeHtmlComments = require('remove-html-comments');
 const RELATIVE_PATH_FOR_VENDOR_CUSTOM = 'public';
+var Promise = require(path.join(process.cwd(),'model/utils')).promise;
 
 function getOutput(str) {
     return path.join(OUTPUT_PATH, str);
 }
 
-Handlebars.registerHelper('json', function(context) {
-    return JSON.stringify(context);
+hbs.registerHelper('json', function(context) {
+    var rta = JSON.stringify(context);
+    var done = this.async();
+    done(null, rta);
 });
 
-Handlebars.registerHelper('i18n', function(context, abs) {
+hbs.registerHelper('i18n', function(context, abs) {
     //console.log('i18n ',context,abs);
     if (!sgData().i18n_config) {
         return '[' + context.toUpperCase() + ']';
@@ -41,16 +44,27 @@ Handlebars.registerHelper('i18n', function(context, abs) {
     if (!sgData().i18n) return raw;
     if (!sgData().i18n[context]) return raw;
     if (!sgData().i18n[context][current]) return raw;
-    return sgData().i18n[context][current] || raw;
+    var rta = sgData().i18n[context][current] || raw;
+
+    var done = this.async();
+    done(null, rta);
 });
 
 
-Handlebars.registerHelper('file', function(options) {
+hbs.registerHelper('file', function(options) {
     var p = options.fn(this);
-    var raw = fs.readFileSync(process.cwd() + p)
-    return raw;
+    var raw = fs.readFileSync(process.cwd() + p);
+    var done = this.async();
+    done(null, raw);
 });
 
+
+hbs.registerHelper('asyncHelper', function(arg1, options) {
+    var callback = this.async();
+    process.nextTick(function() {
+        return callback(null, arg1.toUpperCase() + '-' + options.hash.arg2);
+    });
+});
 
 
 
@@ -164,16 +178,16 @@ function* buildTemplatesPartials(src, append) {
                 //    console.log('WARN: Firebase data not found',name);
                 // }
 
-                if (isAfter) {
-                    Handlebars.registerPartial(name, sgUtils.urldecode(remoteData.content)); //We finally register the handlebar partial
-                    console.log('TEMPLATES: Using firebase version for ', name);
-                }
-                else {
-                    //If we plan to use the local file data, we send the file to firebase
+                // if (isAfter) {
+                //    hbs.registerPartial(name, sgUtils.urldecode(remoteData.content)); //We finally //register the handlebar partial
+                //    console.log('TEMPLATES: Using firebase version for ', name);
+                // }
+                // else {
+                //If we plan to use the local file data, we send the file to firebase
 
-                    Handlebars.registerPartial(name, global_partials[key]); //We finally register the handlebar partial
-                }
-                //console.log('DEBUG: Partial registered', name);
+                hbs.registerPartial(name, global_partials[key]); //We finally register the handlebar partial
+                // }
+                //console.log('COMPILE-DEBUG: Partial registered', name);
             }
             //console.log('DEBUG: partials',global_partials);
             resolve(true);
@@ -183,11 +197,8 @@ function* buildTemplatesPartials(src, append) {
     });
 }
 
-function compileTemplates(src, path) {
-    console.log('Compiling DATA', sgData());
-    var rta = Handlebars.compile(src)(sgData());
-    return rta;
-}
+
+
 
 
 var vendorData = {};
@@ -396,39 +407,47 @@ function buildTemplates() {
 
         //console.log('ss debug templates building to ['+heConfig().output()+']');
 
-        function compile(raw) {
-            return Handlebars.compile(raw)(sgData())
-        }
+
 
         function needsCompilation(raw, path) {
             return raw.indexOf('HBSIGNORE') == -1;
         }
 
         function handleNewFileTransform(raw, path) {
-            var rta = raw;
-            if (needsCompilation(raw, path)) {
-                var rta = Handlebars.compile(raw)(sgData());
-                if (PROD) {
-                    rta = compileVendorJS(rta, path);
-                    rta = compileVendorCSS(rta, path);
-                    rta = compileSectionBundles(rta, path);
-                    rta = minifyHTML(rta, {
-                        removeAttributeQuotes: false,
-                        removeScriptTypeAttributes: true,
-                        collapseWhitespace: true,
-                        minifyCSS: true,
-                        caseSensitive: true
-                    });
-                }
+            return new Promise((resolve, reject) => {
+                var rta = raw;
+                if (needsCompilation(raw, path)) {
 
-            }
-            else {
-                //console.log('DEBUG: ',path,'skip');
-            }
-            return rta;
+                    //console.log('COMPILE-DEBUG', 'handleNewFileTransform start');
+                    try {
+                        var rta = hbs.compile(raw)(sgData());
+                        //console.log('COMPILE-DEBUG', 'handleNewFileTransform hbs passed');
+                        if (PROD) {
+                            rta = compileVendorJS(rta, path);
+                            rta = compileVendorCSS(rta, path);
+                            rta = compileSectionBundles(rta, path);
+                            rta = minifyHTML(rta, {
+                                removeAttributeQuotes: false,
+                                removeScriptTypeAttributes: true,
+                                collapseWhitespace: true,
+                                minifyCSS: true,
+                                caseSensitive: true
+                            });
+                            //console.log('COMPILE-DEBUG', 'handleNewFileTransform bundling passed');
+                        }
+                        return resolve(rta);
+                    }
+                    catch (_err) {
+                        console.log('COMPILE-ERROR', _err);
+                    }
+                }
+                else {
+                    return resolve(raw);
+                }
+            });
         }
 
-        console.log('DEBUG: Copy from ', SRC_STATIC_FOLDER, 'to', OUTPUT_PATH);
+        //console.log('COMPILE-DEBUG: Copy from ', SRC_STATIC_FOLDER, 'to', OUTPUT_PATH);
         sgUtils.copyFilesFromTo(SRC_STATIC_FOLDER, OUTPUT_PATH, {
             formatPathHandler: (path) => {
                 if (path.indexOf('index') !== -1) {
@@ -436,27 +455,19 @@ function buildTemplates() {
                 }
                 return path;
             },
-            formatContentHandler: (raw, path) => {
-
-                console.log('DEBUG:', path, 'format handler');
-
+            formatContentHandler: (raw, path, _resolve) => {
+                //console.log('COMPILE-DEBUG: formatContentHandler start', path);
                 var rta = raw;
-                try {
-                    rta = handleNewFileTransform(raw, path);
-                }
-                catch (e) {
-                    rta = raw;
-                    console.log('WARN: templates compiling fail', e);
-                    throw e;
-                }
-
-                //console.log('building templates writing',rta.length,'chars...',rta,path);
-
-                return rta;
-
+                handleNewFileTransform(raw, path).then((rta) => {
+                    console.log('COMPILE-RESOLVE:', path);
+                    _resolve(rta);
+                }).error(err => {
+                    console.log('COMPILE-ERROR', err);
+                });
+                //console.log('COMPILE-DEBUG: formatContentHandler end', path);
             }
         }).then((res) => {
-            console.log('DEBUG: templates build ' + (res.ok ? 'success' : 'with errors') + ' at ' + new Date());
+            console.log('COMPILE-DEBUG:', 'FINISH', (res.ok ? 'success' : 'with errors'), 'at', new Date());
             emit('build-success');
             resolve();
         })
