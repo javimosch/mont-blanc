@@ -1,5 +1,11 @@
 (function() {
-    if (window.location.origin.indexOf('herokuapp') === -1) return;
+    function urlHas(arr){
+        for(var x in arr){
+            if(window.location.origin.indexOf(arr[x])!==-1) return true;
+        }
+        return false;
+    }
+    if (!urlHas(['herokuapp',"62.210.97.81",'c9users'])) return;
 
     function decode() {
         var encoded = localStorage.getItem('store#diags-preview-session') || '';
