@@ -13,8 +13,8 @@ module.exports = {
     name: name,
     interval: 1000 * 60 * 10, //each minutes
     handler: handler,
-    startupInterval: false,
-    startupIntervalDelay: 1000,
+    runAtStartup: false,
+    runAtStartup: 1000,
 };
 
 function handler(data, cb) {

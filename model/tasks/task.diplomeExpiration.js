@@ -24,10 +24,10 @@ var Logger = Log.createLogger({
 
 module.exports = {
     name: name,
-    interval: 1000 * 60 * 3, //each hour
+    interval: 1000 * 60 * 10, //each 10 hours
     handler: handler,
-    startupInterval: true,
-    startupIntervalDelay: 20000 //20000
+    runAtStartup: false,
+    runAtStartupDelay: 20000 //20000
 };
 
 function handler(data, cb) {

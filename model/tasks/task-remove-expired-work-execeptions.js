@@ -36,6 +36,14 @@ var logExpired = (item) => {
     });
 };
 
+module.exports = {
+    name: name,
+    interval: 1000 * 60 * 10, //each 10 minutes
+    handler: handler,
+    runAtStartup: true,
+    runAtStartupDelay: 20000
+};
+
 function handler(data, cb) {
     selectController('User').getAll({
         userType: 'diag'
@@ -72,10 +80,4 @@ function handler(data, cb) {
     });
 }
 
-module.exports = {
-    name: name,
-    interval: 1000 * 60 * 10, //each 10 minutes
-    handler: handler,
-    startupInterval: true,
-    startupIntervalDelay: 20000
-};
+

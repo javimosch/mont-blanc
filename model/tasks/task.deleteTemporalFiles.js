@@ -34,6 +34,14 @@ function replaceAll(word, search, replacement) {
 
 var _testDone = true;
 
+module.exports = {
+    name: name,
+    interval: 1000 * 60 * 60, //each hour
+    handler: handler,
+    runAtStartup: true
+};
+
+
 function handler(data, cb) {
     log('start');
 
@@ -93,9 +101,3 @@ function handler(data, cb) {
     });
 }
 
-module.exports = {
-    name: name,
-    interval: 1000 * 60 * 60, //each hour
-    handler: handler,
-    startupInterval: true
-};

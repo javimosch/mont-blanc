@@ -17,17 +17,16 @@ exports.configure = (app) => {
             }
         }
         setInterval(() => {
-            loop
+            loop();
         }, t.interval);
 
 
-        if (t.startupInterval) {
-            loop();
-        }
-        else {
-            if (t.startupIntervalDelay) {
-                setTimeout(loop, t.startupIntervalDelay || 0);
+        if (t.runAtStartup) {
+            if (t.runAtStartupDelay) {
+                setTimeout(loop, t.runAtStartupDelay || 0);
+            }else{
+                loop();
             }
         }
     });
-}
+};
