@@ -12,7 +12,7 @@ var _hook = function(schemaName, n, cb, data, index) {
 
 
 
-    __hookData[schemaName] = __hookData[schemaName] || {}
+    __hookData[schemaName] = __hookData[schemaName] || {};
     var _hooks = __hookData[schemaName];
     _hooks[n] = _hooks[n] || [];
     //
@@ -150,8 +150,8 @@ exports.create = function(modelName, m) {
 
                 if (matchData.length && typeof matchData !== 'string') {
                     //an array of string that represents the fields to match
-                    if (matchData.filter(k => data[k] === undefined).length == 0) {
-                        var _matchData = {}
+                    if (matchData.filter(k => data[k] === undefined).length === 0) {
+                        var _matchData = {};
                         matchData.map(key => _matchData[key] = data[key]);
                         matchData = _matchData;
                     }
@@ -185,7 +185,7 @@ exports.create = function(modelName, m) {
                                 return rta(err, r);
                             }, requiredKeys);
                         }
-                    })
+                    });
                 }
                 else {
                     log('createUpdate:creating', data);
@@ -227,7 +227,7 @@ exports.create = function(modelName, m) {
 
     function getAll(data, cb) {
         //log('getAll=' + JSON.stringify(data));
-        var query = Model.find(toRules(data))
+        var query = Model.find(toRules(data));
         if (data.__select) {
             query = query.select(data.__select);
         }
@@ -302,18 +302,30 @@ exports.create = function(modelName, m) {
         });
     }
 
+    var resultLogger;
+
     function result(res, options) {
+
+        var ctrl = require('./db.controller').create;
+        resultLogger = resultLogger || ctrl('Log').createLogger({
+            name: "DB",
+            category: "RESULT"
+        });
         return function(err, r) {
 
-            if (typeof err == 'string' ||
-                (Object.keys(err||{}).length == 0 && err != undefined)) {
+            //||                (Object.keys(err || {}).length === 0 && err !== undefined)
+            if (typeof err == 'string') {
                 err = {
                     message: err.toString()
                 };
             }
+            
+            if (err) {
+                resultLogger.warn(modelName, err);
+            }
 
             var rta = {
-                ok: !err,
+                ok: err == undefined,
                 message: (err) ? 'Error' : 'Success',
                 err: err || null,
                 result: (r !== null) ? r : ((r === false) ? false : null)
@@ -321,7 +333,7 @@ exports.create = function(modelName, m) {
 
             //log error
             if (!rta.ok) {
-                logger.error(modelName, ' ', err);
+                //logger.error(modelName, ' ', err);
             }
 
             //when result contains something like {ok,message,result}
@@ -348,7 +360,7 @@ exports.create = function(modelName, m) {
         //log('getById=' + JSON.stringify(data._id));
         check(data, ['_id'], (err, r) => {
             if (err) return cb(err, r);
-            var query = Model.findById(data._id)
+            var query = Model.findById(data._id);
             if (data.__select) {
                 query = query.select(data.__select);
             }
@@ -366,7 +378,7 @@ exports.create = function(modelName, m) {
         log('get=' + JSON.stringify(data));
         //check(data, ['_id'], (err, r) => {
         //  if (err) return cb(err, r);
-        var query = Model.findOne(toRules(data))
+        var query = Model.findOne(toRules(data));
         if (data.__select) {
             query = query.select(data.__select);
         }
@@ -424,15 +436,16 @@ exports.create = function(modelName, m) {
         var rules = {};
         for (var x in data) {
             if (x.indexOf('__') !== -1) {
+                var k;
                 if (x == '__$where') {
-                    for (var k in data[x]) {
+                    for (k in data[x]) {
                         rules[k] = {
                             $where: data[x][k]
                         };
                     }
                 }
                 if (x == '__regexp') {
-                    for (var k in data[x]) {
+                    for (k in data[x]) {
                         rules[k] = new RegExp(data[x][k], 'i');
                         log('toRules:exp' + data[x][k]);
                     }
@@ -494,7 +507,7 @@ exports.create = function(modelName, m) {
         });
     }
 
-    return {
+    var rta = {
         schema: schema,
         model: Model,
         _hook: hook,
@@ -516,9 +529,9 @@ exports.create = function(modelName, m) {
         removeAll: removeAll,
         toRules: toRules,
         find: find,
-        create: _create,
         log: log
     };
+    return rta;
 };
 
 console.log('db.actions end', JSON.stringify(Object.keys(module.exports)));

@@ -3,7 +3,7 @@ var fs = require('fs');
 var simpleLogger = require('simple-node-logger');
 
 module.exports = function(moduleName) {
-	opts = {
+	var opts = {
 		domain:moduleName,
 		category:moduleName,
 		logFilePath:'backend.log',
@@ -15,4 +15,4 @@ module.exports = function(moduleName) {
 		log.setLevel(process.env.LOG_LEVEL);
 	}
 	return log;
-}
+};

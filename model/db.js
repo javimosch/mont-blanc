@@ -73,7 +73,7 @@ function model(n, def) {
         def.updatedAt = {
             type: Date,
             default: Date.now
-        }
+        };
     }
     var schema = new mongoose.Schema(def);
     schema.plugin(mongoosePaginate);

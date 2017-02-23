@@ -1,5 +1,5 @@
 var req = (n) => require(process.cwd() + '/model/' + n);
-var mime = require('mime-types')
+var mime = require('mime-types');
 var mongoose = req('db').mongoose;
 var _ = require('lodash');
 var dbController = require('./db.controller');
@@ -17,7 +17,7 @@ dbController.register('Pdf');
 dbController.register('Lemonway');
 var NOTIFICATION = dbController.create("Notification").NOTIFICATION;
 var Log = dbController.create("Log");
-var File = dbController.create('File')
+var File = dbController.create('File');
     //
 const MODULE = 'ROUTING';
 var logger = require('../model/logger')(MODULE);
@@ -62,10 +62,10 @@ exports.configure = function(app) {
         //
         if (actions[action]) {
             if (strIn(action,['get','getAll','getById','paginate','find'])) {
-                console.log(MODULE, ' to ', action);
+                //console.log(MODULE, ' to ', action);
             } else {
                 //logger.info(MODULE, ' to ', action);
-                console.log(MODULE, ' to ', action);
+                //console.log(MODULE, ' to ', action);
             }
             actions[action](data, actions.result(res), req, res);
         } else {

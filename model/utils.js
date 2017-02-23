@@ -26,7 +26,7 @@ exports.getFilePath = getFilePath;
 exports.has = (data, props) => {
     for (var x in props) {
         if (typeof data[props[x]] === 'undefined') return false;
-        if (data[props[x]] == undefined) return false;
+        if (data[props[x]] === undefined) return false;
     }
     return true;
 };
@@ -51,7 +51,7 @@ exports.getFile = (file) => readFileSync(file, undefined, false);
 
 function replaceAll(word, search, replacement) {
     return word.replace(new RegExp(search, 'g'), replacement);
-};
+}
 
 exports.replaceAll = replaceAll;
 
@@ -63,13 +63,13 @@ function cbHell(quantity, cb) {
             console.log('backstuff-utils-cbHell: ' + quantity + ' threads left.');
             if (quantity === 0) cb();
         }
-    }
+    };
 }
 exports.cbHell = cbHell;
 
 //routing
 function adminUrl(join, angularRoute) {
-    var angularRoute = angularRoute || true;
+    angularRoute = angularRoute || true;
     console.log('Using adminURL VAR: ' + process.env.adminURL);
     var path = process.env.adminURL || 'http://localhost:3000/admin#';
     if (!process.env.adminURL) {

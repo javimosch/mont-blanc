@@ -1,5 +1,5 @@
 var req         = (n) => require(process.cwd()+'/model/'+n);
-var mime = require('mime-types')
+var mime = require('mime-types');
 var fs = require('fs');
 var mailgun = require('mailgun-js')({
 	//apiKey: 'key-4b58a66565bdaeceeaa5c3a0b29f64f8',
@@ -46,7 +46,7 @@ function mailgunHTML(options, cb) {
 			_options.attachments = [{
 				filename: options.attachment.fileName,
 				content: fileStream
-			}]
+			}];
 			console.log('MAILING: Attachment File added ' + options.attachment.fileName + ' type ' + mime.lookup(options.attachment.path) || undefined);
 		}
 		else {
