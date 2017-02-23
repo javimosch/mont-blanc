@@ -325,7 +325,7 @@ exports.create = function(modelName, m) {
             }
 
             var rta = {
-                ok: err == undefined,
+                ok: err === undefined,
                 message: (err) ? 'Error' : 'Success',
                 err: err || null,
                 result: (r !== null) ? r : ((r === false) ? false : null)

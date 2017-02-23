@@ -25,7 +25,7 @@ ctrl('Text').getAll({
 }, function(err, _texts) {
     if (err) {
         dbLogger.setSaveData(err);
-        dbLogger.errorSave('While fetching items')
+        dbLogger.errorSave('While fetching items');
     }
     else {
         _texts.forEach(text => {
