@@ -20,9 +20,9 @@
     "build": "node ./tools/node_bundle.js",
     "heroku": "npm run start",
     "preview": "git push heroku preview:master",
-    "remote_logs": "./tools/scripts/ssh_logs.sh",
-    "remote_deploy_tag": "./tools/scripts/ssh_deploy_tag.sh",
-    "remote_deploy_master": "./tools/scripts/ssh_deploy_master.sh"
+    "logs": "./tools/scripts/ssh_logs.sh",
+    "deploy": "./tools/scripts/ssh_deploy_tag.sh",
+    "remoteTags":"git ls-remote --tags prod"
   },
   "license": "ISC",
   "engines": {

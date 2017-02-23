@@ -43,10 +43,11 @@ function pm2Logs() {
     }).start();
 }
 
-function deployTag(tagName, callback) {
+function deployTag(tagName,enviroment, callback) {
+    if(!tagName) return deployMaster(callback);
     console.log('[SSH]', 'deploy-tag', tagName, '[START]');
     ssh.exec(DEPLOY_TAG_COMMAND, {
-        args: [tagName],
+        args: [tagName,enviroment],
         out: function(stdout) {
             console.log('[SSH]', 'deploy-tag', tagName, '[STDOUT]', stdout);
         },
