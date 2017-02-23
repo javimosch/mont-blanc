@@ -23,12 +23,12 @@
     max-width: 70px;
     display: inline;
     text-align: center;
-    min-width: 70px;
+    min-width: 70px!important;
 }
 
 .payment-form__card-expiration-year {
     max-width: 70px;
-    min-width: 70px;
+    min-width: 70px!important;
     display: inline;
     text-align: center;
 }

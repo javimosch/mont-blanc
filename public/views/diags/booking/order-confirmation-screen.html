@@ -9,12 +9,12 @@
         <div class="row diag-row padding-top-one">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
                 <p>
-                    <span ng-if="false">Bonjour {{data._client.firstName}},
+                    <span ng-if="false">Bonjour {[{data._client.firstName}]},
         <br></span>
                     <br> 
                     
                     <out ng-show="data.status=='prepaid'">
-                    Nous vous confirmons votre commande. Votre rendez-vous est confirmé. Le diagnostiqueur a été notifié : {{(data._diag.firstName||data._diag.email) + ' ' + (data._diag.lastName||'')}}
+                    Nous vous confirmons votre commande. Votre rendez-vous est confirmé. Le diagnostiqueur a été notifié : {[{(data._diag.firstName||data._diag.email) + ' ' + (data._diag.lastName||'')}]}
                     </out>
                     
                     <out ng-show="data.status=='ordered'">
@@ -23,8 +23,8 @@
                     
                     <br>
                     <br> Vous avez une nouveau rendez-vous :
-                    <br> Date : {{momentDateTimeWords(data.start)}}
-                    <br> Adresse : {{data.address}}
+                    <br> Date : {[{momentDateTimeWords(data.start)}]}
+                    <br> Adresse : {[{data.address}]}
                     <br> Diagnostics :
                     <br>
                 </p>
@@ -36,12 +36,12 @@
                 <p ng-show="data.obs">
                     Observations complémentaires :
                     <br>
-                    <br>{{data.obs}}
+                    <br>{[{data.obs}]}
                 </p>
                 <p>
-                    <br> Remise des clefs : {{data.keysInfo}}
+                    <br> Remise des clefs : {[{data.keysInfo}]}
                     <br>
-                    <br> Votre commande prix TTC : {{data.price}} €
+                    <br> Votre commande prix TTC : {[{data.price}]} €
                 </p>
             </div>
         </div>

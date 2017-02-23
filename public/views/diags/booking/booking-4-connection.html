@@ -66,8 +66,8 @@
                                 </div>
                             </div>
                             <div class="col-xs-10 padding-none margin-none">
-                                <div class="row roman-16">{{orderDateFormattedFromITEM()}}</div>
-                                <div class="row margin-top-08em roman-16">{{orderDiagFormattedFromITEM()}}</div>
+                                <div class="row roman-16">{[{orderDateFormattedFromITEM()}]}</div>
+                                <div class="row margin-top-08em roman-16">{[{orderDiagFormattedFromITEM()}]}</div>
                             </div>
                         </div>
                         <div class="row margin-top-half">
@@ -75,7 +75,7 @@
                                 Liste de Diagnostics :
                             </div>
                             <div class="row padding-none diags-icons margin-top-half" ng-show="item && item.diags">
-                                <img ng-repeat="(k,v) in item.diags" ng-show="v" ng-src="/img/icons/icon_{{k}}.png">
+                                <img ng-repeat="(k,v) in item.diags" ng-show="v" ng-src="/img/icons/icon_{[{k}]}.png">
                             </div>
                         </div>
 
@@ -159,7 +159,7 @@
                     <span class="fnt-30 text-top">*</span> 
                     <span class="">
                         <out class="inline-childs-divs" dynamic-block code="BOOKING_STRIPE_TEXT">
-                                        {{{text.BOOKING_STRIPE_TEXT}}}
+                                        {{{text.BOOKING_STRIPE_TEXT}]}]}
                         </out>
                     </span>
                 </p>

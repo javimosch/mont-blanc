@@ -60,7 +60,7 @@
                     <table ng-show="item.departments.length>0" class="table table-striped table-condensed unselectable questions" style="width: 286px;">
                         <tr ng-repeat="(k,o) in item.departments" class="unselectable">
                             <td>
-                                {{o}}
+                                <span ng-bind="o"></span>
                                 <i ng-click="removeDeparment(o)" class='float-right fa fa-times link' style="color: rgba(0,0,0,.1);
     margin-top: 3px;" aria-hidden='true'></i>
                             </td>

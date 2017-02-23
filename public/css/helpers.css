@@ -179,6 +179,16 @@
   overflow-x: hidden;
 }
 
+.padding-xs-none {
+  padding: 0px!important;
+}
+
+@media (min-width: 480px) {
+  .padding-xs-none {
+    padding: initial!important;
+  }
+}
+
 @media (min-width: 768px) {
   .sm-float-left {
     float: left;

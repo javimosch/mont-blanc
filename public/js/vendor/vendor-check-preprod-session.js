@@ -1,7 +1,7 @@
 (function() {
     function urlHas(arr){
         for(var x in arr){
-            if(window.location.origin.indexOf(arr[x])!==-1) return true;
+            if(window.location.href.indexOf(arr[x])!==-1) return true;
         }
         return false;
     }
@@ -37,9 +37,9 @@
                 var now = Date.now();
                 var offset = 1000 * 60 * 20;
                 if (urlHas(['c9users'])) {
-                    offset = 1000 * 60 * 60 * 24
+                    offset = 1000 * 60 * 60 * 24;
                 }
-                if (now - session.logged_at < 1000 * 60 * 20) {
+                if (now - session.logged_at < offset) {
                     return validSessionCallback(true);
                 }
                 return validSessionCallback(false);

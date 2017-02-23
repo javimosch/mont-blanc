@@ -4,7 +4,7 @@
     </li>
     <li ng-repeat="(id,d) in diplomesData" class="relative diplome">
         <!--FILE-->
-        <input id="{{'file_'+id}}" class="form-control hidden" type="file" file-model="diplomesFile[id]" file-model-overwrite="true" ng-disabled="!item._id || state.working()" file-model-change="diplomesFileChange(id)">
+        <input id="{[{'file_'+id}]}" class="form-control hidden" type="file" file-model="diplomesFile[id]" file-model-overwrite="true" ng-disabled="!item._id || state.working()" file-model-change="diplomesFileChange(id)">
         <div class="inline childs-margin-1">
             <!--DELETE-->
             <i ng-show="diplomesExists(id)" ng-click="diplomesDelete(id)" class="fa fa-times file-button"></i>
@@ -13,7 +13,7 @@
                 ng-if="false"
                 ng-show="false && !diplomesExists(id)" class="fa fa-cloud-upload file-button" ng-disabled="!item._id || state.working() || !diplomesFile[id]" ng-click="!diplomesFile[id] || diplomesSave(id)"></i>
             <!--LABEL-->
-            <label class="link file-label" for="{{'file_'+id}}">{{diplomesLabel(id)}}</label>
+            <label class="link file-label" for="{[{'file_'+id}]}">{[{diplomesLabel(id)}]}</label>
             <!--DOWNLOAD-->
             <i ng-show="diplomesExists(id)" ng-disabled="!item._id || state.working() || !diplomesExists(id)" ng-click="!diplomesExists(id) || diplomesDownload(id)" class="fa fa-download file-button"></i>
             <!--ACTIVATE EXPIRATION NOTIFICATION-->

@@ -43,7 +43,7 @@
         <div class="row diag-row margin-top-none">
             <div class="col-sm-12">
                 <span class="booking-descr-title" ng-bind="bookingDescriptionTitle()"></span>
-                <span class="booking-descr">{{bookingDescriptionBody()}}</span>
+                <span class="booking-descr" ng-bind="bookingDescriptionBody()"></span>
             </div>
         </div>
         <div class="row diag-row margin-top-one">
@@ -52,10 +52,10 @@
                     <li ng-repeat="(k,v) in diags" ng-show="v.mandatory && (v.hide==undefined||v.hide==false)" class="margin-right-quarter margin-bottom-quarter float-left">
                         <div class="diag check row">
                             <div class="col-xs-2 padding-none">
-                                <img ng-src="/img/icons/icon_{{v.name}}.png">
+                                <img ng-src="/img/icons/icon_{[{v.name}]}.png">
                             </div>
                             <div class="col-xs-8 padding-none">
-                                <span>{{v.label}}</span>
+                                <span>{[{v.label}]}</span>
                             </div>
                             <div class="col-xs-2 padding-none">
                                 <pretty-checkbox color="blue" ng-model="item.diags[v.name]" label="false"></pretty-checkbox>
@@ -79,10 +79,10 @@
                     <li ng-repeat="(k,v) in diags" ng-show="!v.mandatory && (v.hide==undefined||v.hide==false)" class="margin-right-quarter margin-bottom-quarter float-left">
                         <div class="diag check row">
                             <div class="col-xs-2 padding-none">
-                                <img ng-src="/img/icons/icon_{{v.name}}.png">
+                                <img ng-src="/img/icons/icon_{[{v.name}]}.png">
                             </div>
                             <div class="col-xs-8 padding-none">
-                                <span>{{v.label}}</span>
+                                <span>{[{v.label}]}</span>
                             </div>
                             <div class="col-xs-2 padding-none">
                                 

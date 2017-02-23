@@ -29,11 +29,11 @@
                 <span uib-dropdown name='day'>
       					<button ng-disabled="repeat=='day'" id="single-button" type="button" 
       					class="btn diags-btn bg-azure-radiance padding-right-one btn-sm" uib-dropdown-toggle ng-disabled="disabled">
-        				{{days.selected}}<span class="caret"></span>
+        				{[{days.selected}]}<span class="caret"></span>
                 </button>
                 <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
                     <li ng-repeat="choice in days.items">
-                        <a href ng-click="days.click(choice)">{{choice.label || choice}}</a>
+                        <a href ng-click="days.click(choice)">{[{choice.label || choice}]}</a>
                     </li>
                 </ul>
                 </span>
@@ -57,8 +57,8 @@
                 <input 
                 pikaday="item.start" 
                 theme="diags" 
-                ng-attr-min={{datepicker.minDate}}
-                ng-attr-max={{datepicker.maxDate}}
+                ng-attr-min={[{datepicker.minDate}]}
+                ng-attr-max={[{datepicker.maxDate}]}
                 placeholder="De">
             </div>
             <div class="row margin-top-half">
@@ -69,8 +69,8 @@
                  <input 
                 pikaday="item.end" 
                 theme="diags" 
-                ng-attr-min={{datepicker.minDate}}
-                ng-attr-max={{datepicker.maxDate}}
+                ng-attr-min={[{datepicker.minDate}]}
+                ng-attr-max={[{datepicker.maxDate}]}
                 placeholder="À">
             </div>
 -->

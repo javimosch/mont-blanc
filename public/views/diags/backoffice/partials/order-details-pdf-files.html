@@ -9,7 +9,7 @@
         <!--LABEL-->
         <label ng-bind="diagNameConvertion(diagCode)"></label>
         <!--FILE-->
-        <input ng-show="!pdfExists(diagCode)" ng-disabled="state.working()" id="{{'file_'+diagCode}}" class="form-control" type="file" file-model="pdf[diagCode]" file-model-overwrite="true" file-model-change="pdfChange(diagCode)">
+        <input ng-show="!pdfExists(diagCode)" ng-disabled="state.working()" id="{[{'file_'+diagCode}]}" class="form-control" type="file" file-model="pdf[diagCode]" file-model-overwrite="true" file-model-change="pdfChange(diagCode)">
 
         <!--LABEL PDF FILENAME (IF UPLOADED)-->
         <p ng-show="pdfExists(diagCode)">

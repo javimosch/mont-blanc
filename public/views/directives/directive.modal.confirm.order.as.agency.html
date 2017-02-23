@@ -3,7 +3,7 @@
 </div>
 <div class="modal-body">
     <div ng-show="data.hasUser">
-        Welcome back {{data._user.firstName || data._user.email}}.
+        Welcome back {[{data._user.firstName || data._user.email}]}.
         <br>
     </div>
     You will receive an email notifying the creation of the order.

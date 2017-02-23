@@ -588,12 +588,12 @@ app.controller('ctrl.booking', ['server',
         });
 
 
-
+/*
         s.htmlReplaceDiagName = function(str) {
             var code = str.replace('$NAME', s.diagSelected.label2).toUpperCase();
             return r.html(code);
         }
-
+*/
 
         function orderPaid() {
             return _.includes($D.ORDER_STATUS_PAID, s._order.status);

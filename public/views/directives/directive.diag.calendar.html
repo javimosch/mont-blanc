@@ -5,11 +5,11 @@
       margin-left-one
       margin-bottom-one
       padding-right-two" uib-dropdown-toggle ng-disabled="disabled">
-        {{views.label}}: {{views.selected}}<span class="caret"></span>
+        {[{views.label}]}: {[{views.selected}]}<span class="caret"></span>
         </button>
         <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
             <li ng-repeat="choice in views.items">
-                <a href ng-click="views.click(choice)">{{choice.label}}</a>
+                <a href ng-click="views.click(choice)">{[{choice.label}]}</a>
             </li>
         </ul>
         </span>

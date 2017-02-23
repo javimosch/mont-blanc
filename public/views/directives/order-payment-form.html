@@ -45,7 +45,7 @@
                 -->
                 <input class="diags-input btn-stack" ng-required="true" name="cardNumber" placeholder="Numéro" type="text" ng-model="response.cardNumber" cc-number cc-type="response.cardTypeString">
                 <p class="payment-form__error-text" 
-                ng-show="response.cardTypeString!='' && paymentForm.cardNumber.$error.ccNumberType">{{response.cardTypeString}} non valide.</p>
+                ng-show="response.cardTypeString!='' && paymentForm.cardNumber.$error.ccNumberType">{[{response.cardTypeString}]} non valide.</p>
 
             </div>
             <div class="row margin-top-half">
@@ -65,7 +65,7 @@
                 <p class="unselectable payment-form__amount-label">Total</p>
             </div>
             <div class="row">
-                <h2 ng-bind="'€ '+ {{data.amount}}+ ' TTC'" class="payment-form__amount"></h2>
+                <h2 ng-bind="'€ '+ {[{data.amount}]}+ ' TTC'" class="payment-form__amount"></h2>
 
             </div>
         </div>

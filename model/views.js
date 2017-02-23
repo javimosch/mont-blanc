@@ -38,11 +38,11 @@ ctrl('Text').getAll({
 module.exports = {
     update:(code,content)=>{
       context.text[code] = content;
-      compilerLogger.setSaveData({
+      /*compilerLogger.setSaveData({
           code:code,
           content:decodeURIComponent(content)
-      });
-      compilerLogger.debugSave('Update success');
+      });*/
+      //compilerLogger.debugSave('Update success');
     },
     compile: function(fullPath) {
         return new Promise(function(resolve, err) {

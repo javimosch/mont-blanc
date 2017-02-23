@@ -70,7 +70,9 @@
             };
 
             s.menuItems = {
-                'Texts': 'texts',
+                'Dynamic blocks (Texts)': 'texts',
+                "Dynamic HTML": "settings-htmls/-1",
+                "Content Pages": "settings-pages/-1",
                 'Notifications': 'notifications',
                 'Logs': 'logs',
                 "Tools": 'tools',
@@ -80,9 +82,7 @@
                 "Database": "settings-database",
                 "Extract Data": "settings-exportation",
                 "Invoice Template": "settings-invoice",
-                "Password reset": "settings-password-reset",
-                "Dynamic HTML": "settings-htmls/-1",
-                "Content Pages": "settings-pages/-1"
+                "Password reset": "settings-password-reset"
             };
 
             s.priceModifiers = {

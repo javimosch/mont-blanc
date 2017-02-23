@@ -7,15 +7,15 @@
                 <li class="list-group-item list-group-item-info">
                     <h3>Clients (Landlords)</h3></li>
                 <li class="list-group-item list-group-item-default">
-                    <h4>{{g.nroLandlords}}</h4></li>
+                    <h4>{[{g.nroLandlords}]}</h4></li>
                 <li class="list-group-item list-group-item-info">
                     <h3>Clients (Agencies / Others)</h3></li>
                 <li class="list-group-item list-group-item-default">
-                    <h4>{{g.nroAgencies}}</h4></li>
+                    <h4>{[{g.nroAgencies}]}</h4></li>
                 <li class="list-group-item list-group-item-info">
                     <h3>Active Diags</h3></li>
                 <li class="list-group-item list-group-item-default">
-                    <h4>{{g.nroDiags}}</h4></li>
+                    <h4>{[{g.nroDiags}]}</h4></li>
             </ul>
         </div>
         <div class="col-md-6">
@@ -25,23 +25,23 @@
                 <li class="list-group-item list-group-item-info">
                     <h3>Created </h3><span class="avenir-book fnt-12">Non confirmed or paid yet.</span></li>
                 <li class="list-group-item list-group-item-default">
-                    <h4>{{g.nroOrdersCreated}}</h4></li>
+                    <h4>{[{g.nroOrdersCreated}]}</h4></li>
                 <li class="list-group-item list-group-item-info">
                     <h3>Ordered</h3><span class="avenir-book fnt-12">Confirmed but non paid yet.</span></li>
                 <li class="list-group-item list-group-item-default">
-                    <h4>{{g.nroOrdersOrdered}}</h4></li>
+                    <h4>{[{g.nroOrdersOrdered}]}</h4></li>
                 <li class="list-group-item list-group-item-info">
                     <h3>Prepaid</h3><span class="avenir-book fnt-12">Confirmed and paid.</span></li>
                 <li class="list-group-item list-group-item-default">
-                    <h4>{{g.nroOrdersPrepaid}}</h4></li>
+                    <h4>{[{g.nroOrdersPrepaid}]}</h4></li>
                 <li class="list-group-item list-group-item-info">
                     <h3>Delivered</h3><span class="avenir-book fnt-12">Confirmed and done but non paid yet.</span></li>
                 <li class="list-group-item list-group-item-default">
-                    <h4>{{g.nroOrdersDelivered}}</h4></li>
+                    <h4>{[{g.nroOrdersDelivered}]}</h4></li>
                 <li class="list-group-item list-group-item-info">
                     <h3>Completed</h3><span class="avenir-book fnt-12">Paid and done.</span></li>
                 <li class="list-group-item list-group-item-default">
-                    <h4>{{g.nroOrdersCompleted}}</h4></li>
+                    <h4>{[{g.nroOrdersCompleted}]}</h4></li>
             </ul>
         </div>
         <!--
@@ -52,11 +52,11 @@
                 <li class="list-group-item list-group-item-info">
                     <h3>Available</h3><span class="avenir-book fnt-12">For wire-transfer</span></li>
                 <li class="list-group-item list-group-item-default">
-                    <h4>{{b.available}} eur</h4></li>
+                    <h4>{[{b.available}]} eur</h4></li>
                 <li class="list-group-item list-group-item-info">
                     <h3>Pending</h3><span class="avenir-book fnt-12">Being processing by Stripe.</span></li>
                 <li class="list-group-item list-group-item-default">
-                    <h4>{{b.pending}} eur</h4></li>
+                    <h4>{[{b.pending}]} eur</h4></li>
                 <li class="list-group-item list-group-item-success">
                     <h3>Live Mode (Stripe)</h3><span class="avenir-book fnt-12">Live mode means that the linked Stripe account is working with real payments.</span></li>
                 <li class="list-group-item list-group-item-primary" ng-show="b.livemode">

@@ -10,7 +10,7 @@
         <div class="row padding-none">
             <div class="col-sm-12 col-md-9 padding-one padding-left-two">
 
-                <h6 class="dash-welcome">{{session().firstName || session().email}}, Bienvenue dans votre tableau de bord</h6>
+                <h6 class="dash-welcome">{[{session().firstName || session().email}]}, Bienvenue dans votre tableau de bord</h6>
                 <out ng-if="false">
                     <h5 class="margin-top-two">Raccourcis</h5>
                     <h6>Ouvrir la <a href="/" target="_blank">réservation</a> dans un nouvel onglet.</h6>

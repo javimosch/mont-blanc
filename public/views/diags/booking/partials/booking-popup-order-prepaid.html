@@ -4,13 +4,13 @@
 <div class="modal-body">
 
     <p>
-        <span ng-if="false">Bonjour {{data._client.firstName}},
+        <span ng-if="false">Bonjour {[{data._client.firstName}]},
         <br></span>
-        <br> Nous vous confirmons votre commande. Votre rendez-vous est confirmé. Le diagnostiqueur a été notifié : {{(data._order._diag.firstName||data._order._diag.email) + (data._order._diag.lastName||'')}}
+        <br> Nous vous confirmons votre commande. Votre rendez-vous est confirmé. Le diagnostiqueur a été notifié : {[{(data._order._diag.firstName||data._order._diag.email) + (data._order._diag.lastName||'')}]}
         <br>
         <br> Vous avez une nouveau rendez-vous :
-        <br> Date : {{momentDateTimeWords(data._order.start)}}
-        <br> Adresse : {{data._order.address}}
+        <br> Date : {[{momentDateTimeWords(data._order.start)}]}
+        <br> Adresse : {[{data._order.address}]}
         <br> Diagnostics :
         <br>
     </p>
@@ -22,12 +22,12 @@
     <p ng-show="data._order.obs">
         Observations complémentaires :
         <br>
-        <br>{{data._order.obs}}
+        <br>{[{data._order.obs}]}
     </p>
     <p>
-        <br> Remise des clefs : {{data.keysInfo}}
+        <br> Remise des clefs : {[{data.keysInfo}]}
         <br>
-        <br> Votre commande prix TTC : {{data._order.price}} €
+        <br> Votre commande prix TTC : {[{data._order.price}]} €
     </p>
 
 </div>

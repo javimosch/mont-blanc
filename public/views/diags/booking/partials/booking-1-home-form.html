@@ -47,7 +47,7 @@
              range-values="squareMeters" 
              range-model="item.info.squareMeters" />
             <div class="margin-top-half">
-                <span class="fnt-12 avenir-roman padding-top-quarter">{{item.info.squareMeters||'&nbsp;'}}</span>
+                <span class="fnt-12 avenir-roman padding-top-quarter">{[{item.info.squareMeters||'&nbsp;'}]}</span>
             </div>
         </div>
     </div>
@@ -75,12 +75,12 @@
             <div class="dropdown with-caret">
 
                 <button class="btn btn-default btn-permis-de-construire dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span>{{__constructionPermissionDateSelectLabel}}</span>
+                    <span>{[{__constructionPermissionDateSelectLabel}]}</span>
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                     <li ng-repeat="(k,v) in constructionPermissionDate">
-                        <a class="link" ng-click="__constructionPermissionDateSelect(k,v)">{{k}}</a>
+                        <a class="link" ng-click="__constructionPermissionDateSelect(k,v)">{[{k}]}</a>
                     </li>
                 </ul>
             </div>
@@ -90,13 +90,13 @@
             <label>Gaz</label>
             <div class="dropdown with-caret gaz-dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span>{{__gazSelectLabel}}</span>
+                    <span>{[{__gazSelectLabel}]}</span>
                     <span class="caret"></span>
                 </button>
 
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                     <li ng-repeat="(k,v) in gasInstallation">
-                        <a class="link" ng-click="__gazSelect(k,v)">{{k}}</a>
+                        <a class="link" ng-click="__gazSelect(k,v)">{[{k}]}</a>
                     </li>
                 </ul>
             </div>
