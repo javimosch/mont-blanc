@@ -4,8 +4,14 @@
   "description": "Fullstack Application (Angular / NodeJs / Mongo)",
   "main": "index.js",
   "author": "Javier Arancibia (arancibiajav@gmail.com)",
+  "maintainers": [
+    {
+      "name": "javimosch",
+      "email": "arancibiajav@gmail.com"
+    }
+  ],
   "scripts": {
-    "test": "mocha",
+    "test": "make test",
     "test2": "echo \"Error: no test specified\" && exit 1",
     "test3": "./node_modules/.bin/mocha --recursive -R xunit test/ > test-reports.xml && exit 0",
     "start": "node --max_old_space_size=512 app.js",
@@ -42,6 +48,7 @@
     "del": "^2.2.2",
     "dotenv": "^2.0.0",
     "es6-promise": "^3.0.2",
+    "expect": "^1.20.2",
     "express": "^4.13.4",
     "express-busboy": "^2.4.5",
     "express-cors": "0.0.3",
@@ -61,7 +68,7 @@
     "gulp-util": "^3.0.7",
     "gulp-watch": "^4.3.11",
     "gutil": "^1.6.4",
-    "handlebars": "^4.0.6",
+    "handlebars": "latest",
     "html-minifier": "^3.3.1",
     "html-to-pdf": "^0.1.11",
     "http": "0.0.0",
@@ -105,5 +112,10 @@
     "watch": "^0.17.1",
     "xunit-file": "0.0.9"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "jshint": "^2.9.4",
+    "mocha": "^2.5.3",
+    "semver": "^5.3.0"
+  }
 }
