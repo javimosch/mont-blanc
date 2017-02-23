@@ -11,7 +11,7 @@ var LogSave = (msg, data, type) => ctrl('Log').save({
 });
 module.exports = {
     name: name,
-    interval: 1000 * 60 * 10, //each minutes
+    interval: 1000 * 60 * 30, //each 30 minutes
     handler: handler,
     runAtStartup: false,
     runAtStartup: 1000,

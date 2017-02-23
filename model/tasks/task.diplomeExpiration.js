@@ -24,7 +24,7 @@ var Logger = Log.createLogger({
 
 module.exports = {
     name: name,
-    interval: 1000 * 60 * 10, //each 10 hours
+    interval: 1000 * 60 * 60 * 10, //each 10 hours
     handler: handler,
     runAtStartup: false,
     runAtStartupDelay: 20000 //20000

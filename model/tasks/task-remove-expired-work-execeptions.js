@@ -38,7 +38,7 @@ var logExpired = (item) => {
 
 module.exports = {
     name: name,
-    interval: 1000 * 60 * 10, //each 10 minutes
+    interval: 1000 * 60 * 60, //each 60 minutes
     handler: handler,
     runAtStartup: true,
     runAtStartupDelay: 20000

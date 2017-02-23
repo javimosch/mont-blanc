@@ -31,7 +31,6 @@
         'app.login',
         'app.user',
         'app.diag',
-        'app.log',
         'app.diag.complete',
         'app.diag.balance',
         'app.order',
