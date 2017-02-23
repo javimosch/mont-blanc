@@ -32,6 +32,9 @@ angular.module('app').directive("bindHtmlCompile", ["$compile", function(compile
                 if (attrs.bindHtmlScope) {
                     f = s.$eval(attrs.bindHtmlScope);
                 }
+                
+                
+                
                 var compiled = compile(el.contents())(f);
                 //console.info(compiled);
                 el.html('').append(compiled);

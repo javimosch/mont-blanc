@@ -8,7 +8,7 @@
 /*global diagsGetAvailableRanges*/
 var srv = angular.module('app.services', []);
 
-srv.service('dbText', ["$rootScope", "server", function(r, db) {
+srv.service('dbText', ["$rootScope", "server", '$timeout', function(r, db, $timeout) {
     r.__texts = [];
     r.__text = r.__text || {};
     r.__textSTATIC = r.__textSTATIC || {};
@@ -26,28 +26,64 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
         r.dom();
     }
     r.htmlEditSave = () => {
-        r.htmlEditItem.content = window.encodeURIComponent(window.CKEDITOR.instances.editor.getData());
-        console.log('save', window.decodeURIComponent(r.htmlEditItem.content).substring(0, 10) + ' ...');
-        r.__text[r.htmlEditItem.code] = window.decodeURIComponent(r.htmlEditItem.content);
-        db.ctrl('Text', 'save', r.htmlEditItem).then(() => {});
-        r.htmlEditItem = undefined;
-        r.dom();
+        r.htmlEditItem.content = window.encodeURIComponent(window.tinymce.editors[0].getContent());
+        db.ctrl('Text', 'save', r.htmlEditItem).then(() => {
+            r.htmlEditItem = undefined;
+            r.dom();
+            window.location.reload();
+        });
+
     }
     r.htmlEdit = (code) => {
         r.routeParams({
             code: code
         });
 
-        if (!window.CKEDITOR) {
-            $.getScript("https://cdn.ckeditor.com/4.5.9/full/ckeditor.js");
+        if (!window.tinymce) {
+            $.getScript("https://cloud.tinymce.com/stable/tinymce.min.js", () => {
+                var removeTrial = () => {
+                    $timeout(() => {
+                        if ($('.mce-notification-warning').length > 0) {
+                            $('.mce-notification-warning').remove()
+                        }
+                        else {
+                            $timeout(removeTrial, 200);
+                        }
+                    });
+                }
+                removeTrial();
+                tinymce.init({
+                    selector: '#editor',
+                    init_instance_callback: function(editor) {
+                        editor.on('Change', function(e) {});
+                    },
+                    height: 150,
+                    theme: 'modern',
+                    plugins: ['code'],
+                    /*plugins: [
+                        'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                        'searchreplace code fullscreen',
+                        'media nonbreaking save table contextmenu directionality',
+                        'template paste textcolor textpattern toc'
+                    ],*/
+                    // toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+                    //toolbar2: 'print preview media | forecolor backcolor emoticons | codesample',
+                    //image_advtab: true,
+                    content_css: [
+                        '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+                        '//www.tinymce.com/css/codepen.min.css'
+                    ]
+                });
+            });
         }
 
         function setData(decodedData) {
-            if (!window.CKEDITOR ||
-                (window.CKEDITOR && !window.CKEDITOR.instances) ||
-                (window.CKEDITOR && window.CKEDITOR.instances && !window.CKEDITOR.instances.editor))
+            if (!window.tinymce ||
+                (window.tinymce && !window.tinymce.editors) ||
+                (window.tinymce && window.tinymce.editors && !window.tinymce.editors[0])) {
                 return setTimeout(() => setData(decodedData), 50);
-            window.CKEDITOR.instances.editor.setData(decodedData);
+            }
+            window.tinymce.editors[0].setContent(decodedData);
             setTimeout(function() {
                 r.htmlEditItem.show = true;
                 $U.scrollToTop();
@@ -58,19 +94,15 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
         }).then(res => {
             if (res.ok && res.result) {
                 r.htmlEditItem = res.result;
-                r.htmlEditItem.show = true;
-                //console.log(r.htmlEditItem);
-                if (!r.htmlEditItem.content) {
-                    if (r.__textSTATIC && r.__textSTATIC[r.htmlEditItem.code]) {
-                        r.htmlEditItem.content = window.encodeURIComponent(r.__textSTATIC[r.htmlEditItem.code]);
-                        console.log('FROM LOCAL', r.htmlEditItem.content);
-                    }
-                    else {
-                        r.htmlEditItem.content = window.encodeURIComponent(r.htmlEditItem.code);
-                    }
-                }
-                setData(window.decodeURIComponent(r.htmlEditItem.content))
             }
+            else {
+                r.htmlEditItem = {
+                    code: r.params.code,
+                    content: window.encodeURIComponent(r.params.code)
+                };
+            }
+            r.htmlEditItem.show = true;
+            setData(window.decodeURIComponent(r.htmlEditItem.content))
         });
 
 
@@ -87,12 +119,19 @@ srv.service('dbText', ["$rootScope", "server", function(r, db) {
                 r.__textsNotFound[code] = code;
                 if (r.isDevEnv()) {
                     var payload = {
-                        code: code,
-                        categoryCode: $U.url.hashName() || 'home',
-                        categoryRootCode: "DIAGS",
-                        content: txt
+                        level: 'warn',
+                        type: 'warn',
+                        category: 'dynamic-blocks',
+                        message: code + " required.",
+                        //categoryCode: $U.url.hashName() || 'home',
+                        //categoryRootCode: "DIAGS",
+                        data: {
+                            code: code,
+                            staticContent: txt
+                        }
                     };
-                    db.stackCtrl('reportNotFound', 'Text', 'reportNotFound', payload);
+                    //db.stackCtrl('reportNotFound', 'Text', 'reportNotFound', payload);
+                    db.stackCtrl('logTextNotFound', 'Log', 'save', payload);
                 }
             }
 
@@ -749,7 +788,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', f
                     var d = stack.promises.shift();
                     ctrl(d.arg1, d.arg2, d.arg3).then(function(res) {
                         stack.flag = false;
-//                        console.log('stackCtrlPromise-watcher-resolve ' + id + '. left:' + stack.promises.length);
+                        //                        console.log('stackCtrlPromise-watcher-resolve ' + id + '. left:' + stack.promises.length);
                         $U.emit(id + '-stack-pop');
                     });
                 }
