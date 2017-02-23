@@ -54,6 +54,7 @@ srv.service('dbText', ["$rootScope", "server", '$timeout', function(r, db, $time
                 removeTrial();
                 tinymce.init({
                     selector: '#editor',
+                    forced_root_block: false,
                     init_instance_callback: function(editor) {
                         editor.on('Change', function(e) {});
                     },
@@ -113,6 +114,7 @@ srv.service('dbText', ["$rootScope", "server", '$timeout', function(r, db, $time
         if (r.__text && r.__text[code]) {
 
         }
+        /*
         else {
             r.__textsNotFound = r.__textsNotFound || {};
             if (!r.__textsNotFound[code]) {
@@ -135,7 +137,7 @@ srv.service('dbText', ["$rootScope", "server", '$timeout', function(r, db, $time
                 }
             }
 
-        }
+        }*/
 
 
 

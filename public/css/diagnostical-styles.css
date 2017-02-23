@@ -747,13 +747,17 @@ a.diag-btn-info:hover {
 }
 
 .diags-home-bg {
-        background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/intermediary-background.jpg) no-repeat;
-        background-position: center top;
+        background: url(../img/intermediary-background.jpg);
+        /*background-position: center top;*/
+        background-repeat: no-repeat;
+        background-size: cover;
     }
 
 @media screen and (min-width: 480px) {
     .diags-home-bg {
-        background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/intermediary-background.jpg) no-repeat;
+        /*
+        background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/intermediary-background.jpg) no-repeat;*/
+        background: url(../img/intermediary-background.jpg);
         background-position: center top;
     }
 }

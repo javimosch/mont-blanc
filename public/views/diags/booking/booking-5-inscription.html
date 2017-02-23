@@ -1,3 +1,4 @@
+<!--COMPILE_WITH_HANDLEBARS-->
 <div class="diags-bg" ng-controller="ctrl.booking">
     <div class="diags-content container diags-selection padding-none">
         <div class="row diags-bg-block-40 hidden-xs"></div>
@@ -106,7 +107,14 @@
         </div>
         <div class="row diag-row margin-top-one padding-bottom-two">
             <div class="col-md-12 ">
-                <p class="stripe-message"><span class="fnt-30 text-top">*</span> <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out></p>
+                <p class="stripe-message">
+                    <span class="fnt-30 text-top">*</span> 
+                    <span class="">
+                        <out class="inline-childs-divs" dynamic-block code="BOOKING_STRIPE_TEXT">
+                                        {{{text.BOOKING_STRIPE_TEXT}}}
+                        </out>
+                    </span>
+                </p>
             </div>
         </div>
         <div class="row diags-bg-block-40 hidden-xs"></div>

@@ -1,3 +1,4 @@
+<!--COMPILE_WITH_HANDLEBARS-->
 <div class="diags-bg" ng-controller="ctrl.booking">
     <div class="diags-content container diags-selection padding-none">
         <div class="row diags-bg-block-40 hidden-xs"></div>
@@ -104,7 +105,9 @@
                 <div class="diags-payment-info inline-flex">
                     <span class="avenir-medium fnt-30 line-60 middle sky-blue padding-02em">*</span>
                     <span class="avenir-medium fnt-16 line-60 middle violet">
-                        <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
+                        <out class="inline-childs-divs" dynamic-block code="BOOKING_STRIPE_TEXT">
+                                        {{{text.BOOKING_STRIPE_TEXT}}}
+                        </out>
                     </span>
                 </div>
                 <button class="btn-prende-un-rendez-vous btn md-margin-top-one  diag-btn-main diag-btn-width306 sm-float-right"  ng-disabled="state.working()" ng-click="proceedToDateSelection()">Prendre un rendez-vous</button>

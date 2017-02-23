@@ -29,7 +29,7 @@ ctrl('Text').getAll({
     }
     else {
         _texts.forEach(text => {
-            context.text[text.code] = text.content;
+            context.text[text.code] = decodeURIComponent(text.content);
         });
         dbLogger.info('Fetch ok', _texts.length, ' items in memory.');
     }

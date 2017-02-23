@@ -38,77 +38,45 @@ angular.module('app')
             restrict: 'A',
             scope: false,
             link: function(s, el, attrs) {
-                s.$watch(function() {
-                    return s.$eval(attrs.dynamicBlock);
-                }, function(e) {
-                    var f = s;
-                    if (attrs.dynamicBlockScope) {
-                        f = s.$eval(attrs.bindHtmlScope);
-                    }
+                var f = s;
+                if (attrs.dynamicBlockScope) {
+                    f = s.$eval(attrs.bindHtmlScope);
+                }
+                var code = attrs.code || null;
+                var content = el.html();
+                try {
+                    content = window.decodeURIComponent(content);
+                }
+                catch (err) {
 
-                    //
-                    var code = attrs.code || null;
-                    var content = window.decodeURIComponent(e && e.toString());
-                    
-                    console.log(content);
-                    
-                    var tag = document.createElement('tag');
-                    tag.innerHTML = content;
-                    
-                    console.log(content,tag.childNodes.length,tag.childNodes[0].tagName);
-                    
-                    if (tag.childNodes && tag.childNodes.length == 1 && tag.childNodes[0].tagName == 'P') {
-                        content = tag.childNodes[0].innerHTML;
-                    }
-                    var html = content;
-                    var inheritCss = {
-                        margin: '0px',
-                        padding: '0px',
-                        color: 'inherit',
-                        "font-family": 'inherit',
-                        "line-height": 'inherit',
-                        "font-size": 'inherit',
-                        "display": 'initial'
-                    };
-                    var wrapper = $('<editable-text>').css(inheritCss);
-                    wrapper.append($.parseHTML(html));
-                    if ($rootScope.userIs('admin') && code) {
-                        wrapper.attr('onclick', "r.htmlEdit('" + code + "')").addClass('editable-text');
-                    }
-                    html = $('<div>').append(wrapper).html();
-                    //
-
-                    var compiled = $compile(html)(f);
-                    //console.info(compiled);
+                }
+                if (!content) {
+                    content = code;
+                    $log.warn(code, 'dynamicBlock innerHTML expected.');
+                }
+                var inheritCss = {
+                    margin: '0px',
+                    padding: '0px',
+                    color: 'inherit',
+                    "font-family": 'inherit',
+                    "line-height": 'inherit',
+                    "font-size": 'inherit',
+                    "display": 'initial'
+                };
+                var wrapper = $('<editable-text>').css(inheritCss);
+                wrapper.append($.parseHTML(content));
+                if ($rootScope.userIs('admin') && code) {
+                    wrapper.attr('onclick', "r.htmlEdit('" + code + "')").addClass('editable-text');
+                }
+                content = $('<div>').append(wrapper).html();
+                console.log('DYNAMIC-BLOCK',content);
+                var compiled = $compile(content)(f);
+                if (attrs.replace != undefined) {
+                    el.replaceWith(compiled);
+                }
+                else {
                     el.html('').append(compiled);
-
-                    //default
-                    el.css('display', "inherit");
-
-                    var key = window.btoa(window.encodeURIComponent(e.toString()));
-
-                    var first = el.find(':first-child');
-                    var tag = first && first.get(0) && first.get(0).tagName.toUpperCase() || "NONE";
-                    if (tag == "SPAN") { //|| tag == "DIV"
-                        var other = $(el).find("*").not(":first");
-                        first.append(other);
-                        el.html(first.html());
-                    }
-
-                    //the follow fix is for avoid double span in dom tree ex: span > span
-                    var text = '';
-                    el.children().each(function() {
-                        if ($(this).get(0).tagName == 'SPAN') {
-                            text += $(this).text();
-                        }
-                    });
-                    if (text.length > 0) {
-                        el.text(text);
-                    }
-
-                    //console.log('FIRST',first.html(),'EL',el.html());
-
-                })
+                }
             }
         };
     }).service('dynamicHtmlService', function($rootScope, server, $log) {

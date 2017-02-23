@@ -3,15 +3,9 @@
 <script type="text/javascript">
     /*global $*/
     /*global r*/
-    if (r && r.params && r.params.code) {
-        $.getScript("https://cdn.ckeditor.com/4.5.9/full/ckeditor.js");
-    }
-    else {
 
-        if (typeof window.tinymce == 'undefined') {
-            $.getScript("https://cdn.tinymce.com/4/tinymce.min.js");
-        }
-
+    if (typeof window.tinymce == 'undefined') {
+        $.getScript("https://cdn.tinymce.com/4/tinymce.min.js");
     }
 </script>
 
@@ -20,7 +14,7 @@
 
     <div class="container" ng-controller="ctrl-text-edit">
 
-        <div class="row" ng-show="!params.code">
+        <div class="row">
             <div class="col-sm-12 padding-none">
                 <ol class="breadcrumb">
                     <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
@@ -41,25 +35,23 @@
                     <!--<option ng-repeat="item in categories" ng-value="item._id" ng-bind="item.code"></option>-->
                 </select>
                 </div>
-                <div class="row margin-top-one" ng-show="!params.code">
+                <div class="row margin-top-one" >
                     <label>Code</label>
                 </div>
-                <div class="row  margin-top-half" ng-show="!params.code">
+                <div class="row  margin-top-half" >
                     <input ng-disabled="state.working()" ng-model="item.code" class="diags-input" placeholder="Code">
                 </div>
-                <div class="row margin-top-one" ng-show="!params.code">
+                <div class="row margin-top-one" >
                     <label>Description</label>
                 </div>
-                <div class="row  margin-top-half" ng-show="!params.code">
+                <div class="row  margin-top-half" >
                     <input ng-disabled="state.working()" ng-model="item.description" class="diags-input" placeholder="Description">
                 </div>
 
                 <div class="row margin-top-one">
-                    <div id="editor" class="diags-rich-text-editor" ng-if="!params.code">
+                    <div id="editor-text" class="diags-rich-text-editor">
                         <p></p>
                     </div>
-
-                    <textarea ck-editor name="editor" ng-if="params.code"></textarea>
 
                 </div>
             </div>

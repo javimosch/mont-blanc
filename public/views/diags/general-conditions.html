@@ -1,12 +1,11 @@
+<!--COMPILE_WITH_HANDLEBARS-->
 <div class="diags-bg">
     <div class="diags-content container diags-selection padding-none">
         <div class="row diags-bg-block-40 hidden-xs"></div>
         <div class="row diag-row padding-top-three">
             <div class="col-sm-12 ">
-                <h4
-                    bind-html-compile="html('PAGE_GENERAL_CONDITIONS_BLOCK_TITLE','Conditions Générales de Utilisation')"
-                    >
-                    
+                <h4 dynamic-block code="PAGE_GENERAL_CONDITIONS_BLOCK_TITLE">
+                    {{{text.PAGE_GENERAL_CONDITIONS_BLOCK_TITLE}}}
                 </h4>
             </div>
         </div>
@@ -14,11 +13,9 @@
 
         <div class="row diag-row margin-top-one">
             <div class="col-xs-12 col-sm-12 col-md-12 ">
-                <p
-                bind-html-compile="html('PAGE_GENERAL_CONDITIONS_BLOCK_CONTENT')"
-                >
-                    
-                </p>
+                <div dynamic-block code="PAGE_GENERAL_CONDITIONS_BLOCK_CONTENT" replace>
+                    {{{text.PAGE_GENERAL_CONDITIONS_BLOCK_CONTENT}}}
+                </div>
             </div>
 
 
@@ -30,11 +27,16 @@
                 <div ng-include="'/views/diags/booking/partials/booking-diags-icons.html'" includeReplace></div>
             </div>
         </div>
-        <div class="row diag-row margin-top-one padding-bottom-two">
-           <div class="col-md-12 ">
-                <p class="stripe-message"><span class="fnt-30 text-top">*</span>  <span class="">
-                                <out class="inline-childs-divs" bind-html-compile="html('BOOKING_STRIPE_TEXT',STATIC.STRIPE)"></out>
-                            </span></p>
+         <div class="row diag-row margin-top-one padding-bottom-two">
+            <div class="col-md-12 ">
+                <p class="stripe-message">
+                    <span class="fnt-30 text-top">*</span> 
+                    <span class="">
+                        <out class="inline-childs-divs" dynamic-block code="BOOKING_STRIPE_TEXT">
+                                        {{{text.BOOKING_STRIPE_TEXT}}}
+                        </out>
+                    </span>
+                </p>
             </div>
         </div>
         <div class="row diags-bg-block-40 hidden-xs"></div>

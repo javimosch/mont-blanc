@@ -30,21 +30,6 @@
 
 
 
-    angular.module('app').directive("ckEditor", ["$compile", function(compile) {
-        return {
-            restrict: "A",
-            link: function(s, el, attrs) {
-                function init() {
-                    if (typeof window.CKEDITOR !== 'undefined') {
-                        CKEDITOR.replace(attrs.name);
-                    }
-                    else setTimeout(init, 1000);
-                }
-                init();
-            }
-        }
-    }]);
-
     app.controller('ctrl-text-edit', ['server', '$scope', '$rootScope', '$routeParams', 'focus',
         function(db, s, r, params) {
             //
@@ -57,17 +42,12 @@
                 updatedByHuman: true
             };
 
-            var isCKEditor = () => r.params.code || r.params.ckeditor;
-            s.isCKEditor = isCKEditor;
-
+           
             updateCategorySelectData(s, db);
 
-            if (isCKEditor()) {
-                init(); //async
-            }
-            else {
+           
                 check(); //checks when the wysing lib is ready and init the components.    
-            }
+            
 
             //
             s.read = function() {
@@ -92,12 +72,9 @@
                 if (!s.item._category) return r.warningMessage('Page Section required');
                 //
                 s.item.updatedByHuman = true;
-                if (isCKEditor()) {
-                    s.item.content = window.encodeURIComponent(CKEDITOR.instances.editor.getData());
-                }
-                else {
+               
                     s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
-                }
+                
 
                 db.ctrl('Text', 'save', s.item).then(function() {
                     r.route('texts');
@@ -128,13 +105,9 @@
             //
 
             function setData(decodedData) {
-                if (isCKEditor()) {
-                    if (!CKEDITOR) return setTimeout(() => setData(decodedData), 500);
-                    CKEDITOR.instances.editor.setData(decodedData);
-                }
-                else {
+                
                     tinymce.activeEditor.setContent(decodedData);
-                }
+                
             }
 
 
@@ -151,13 +124,14 @@
                 }
 
                 tinymce.init({
-                    selector: '#editor',
+                    selector: '#editor-text',
+                    forced_root_block: false,
                     theme: 'modern',
                     //width: 600,
                     height: 300,
                     plugins: [
-                        //'autoresize',
-                        'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+                        //'autoresize', //spellchecker
+                        'advlist autolink link image lists charmap print preview hr anchor pagebreak',
                         'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
                         'save table contextmenu directionality emoticons template paste textcolor'
                     ],
@@ -169,12 +143,9 @@
 
             function init() {
 
-                if (isCKEditor()) {
-                    //uses directive
-                }
-                else {
+                
                     initTinyMCE();
-                }
+                
 
 
 

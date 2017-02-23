@@ -1,27 +1,21 @@
+<!--COMPILE_WITH_HANDLEBARS-->
 <ul class="nav navbar-nav navbar-right">
+   
     <li><a ng-click="route(URL.ESPACE_ENTERPRISE)" class="link diag-button diag-btn-success">Espace Client</a></li>
-
+    
     <li ng-show="routeIs('')"><a ng-click="route(URL.ESPACE_DIAG)" class="link diag-button diag-btn-info">Espace&nbsp;Diagnostiqueur</a></li>
+    
     <li ng-show="!routeIs('')">
+        
         <div class="diags-pill-info " style="height: 37px!important;">
-            <span class="avenir-book txt-md white" bind-html-compile="html('BOOKING_HOME_BG_TEXT_2',STATIC.BOOKING_HOME_BG_TEXT_2)">
-                                <!--"-->
-                                Nous joindre au
-                            </span>
-            <span class="xxs-flex avenir-black txt-xl white middle" bind-html-compile="html('BOOKING_HOME_BG_TEXT_PHONE',STATIC.BOOKING_HOME_BG_TEXT_PHONE)">
-                                <!-- bind-html-compile="html('BOOKING_HOME_BG_TEXT_PHONE',STATIC.BOOKING_HOME_BG_TEXT_PHONE)" -->
-                                06 20 75 45 79
-                                </span>
+            <span class="avenir-book txt-md white" dynamic-block code="BOOKING_HOME_BG_TEXT_2">
+                {{{text.BOOKING_HOME_BG_TEXT_2}}}
+            </span>
+            <span class="xxs-flex avenir-black txt-xl white middle" dynamic-block code="BOOKING_HOME_BG_TEXT_PHONE">
+                {{{text.BOOKING_HOME_BG_TEXT_PHONE}}}
+            </span>
         </div>
+        
     </li>
-
+    
 </ul>
-
-<!--
-<ul class="nav navbar-nav navbar-right">
-
-    <li><a ng-click="route(URL.CONTACT_US)" class="link diag-link">Contactez-nous</a></li> 
-     <li><a ng-click="route(URL.ERNT)" class="link diag-link">ERNMT</a></li>
-   <li><a ng-click="route(URL.FAQ)" class="link diag-link">FAQ</a></li> 
-</ul>
--->

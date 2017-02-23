@@ -35,6 +35,10 @@
                 res = JSON.parse(res);
                 if (!res.result) return validSessionCallback(false);
                 var now = Date.now();
+                var offset = 1000 * 60 * 20;
+                if (urlHas(['c9users'])) {
+                    offset = 1000 * 60 * 60 * 24
+                }
                 if (now - session.logged_at < 1000 * 60 * 20) {
                     return validSessionCallback(true);
                 }
