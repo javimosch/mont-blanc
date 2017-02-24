@@ -5,6 +5,7 @@
     }
     if (typeof window.ace == 'undefined') {
         $.getScript("https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js", function() {
+            //https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js
             $.getScript('https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.8/beautify-html.js');
         });
     }
@@ -57,7 +58,7 @@
                 </div>
                     <!-- ACE  -->
                 <div class="row margin-top-half" ng-show="showACE()">
-                    <div id="editor" class="diags-rich-text-editor">
+                    <div id="editor-ace" class="diags-rich-text-editor">
                     </div>
                 </div>
                 <div class="row margin-top-half" ng-show="showACE()">

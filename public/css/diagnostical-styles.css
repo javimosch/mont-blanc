@@ -1777,6 +1777,8 @@ p.stripe-home-message>span {
     border: 1px solid #C6DEE8;
     background-color: #EDF5F9;
     border-radius: 5px;
+    min-height: 400px;
+    width: 100%;
 }
 
 p.stripe-home-message {

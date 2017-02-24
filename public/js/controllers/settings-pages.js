@@ -1,7 +1,7 @@
 /*global angular*/
 angular.module('app').controller('settings-pages', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$log', '$timeout', 'backendApi', 'backendApiHelper',
     function(db, s, r, params, focus, $log, $timeout, backendApi, backendApiHelper) {
-        window.s = s;
+        window.details = s;
         s.params = params;
         s.isNew = () => s.params && s.params.id && s.params.id.toString() === 'new';
         s.isEdit = () => s.params && s.params.id && s.params.id.toString() != '-1' && !s.isNew();
@@ -184,6 +184,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                 tinymce.editors[0].setContent(window.decodeURIComponent(s.item.content));
             }
             s.copyToTiny();
+            $log.info('tinymce ok',s.tiny);
         }
 
         /*ACE*/
@@ -223,11 +224,14 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                 r.errorMessage('A value is trying to be set and ACE Editor is not yet initialized.');
             }
         }
-
+    
+        s.initAce = initAce;
         function initAce() {
-            s.editor = window.ace.edit("editor");
+            $log.info('initAce');
+            s.editor = window.ace.edit("editor-ace");
+            s.editor.setTheme("ace/theme/monokai");
             s.editor.getSession().setMode("ace/mode/html");
-            s.editor.setTheme("ace/theme/merbivore");
+            
             s.editor.setOptions({
                 enableBasicAutocompletion: true,
                 enableSnippets: true
@@ -241,6 +245,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
                 _keyPressedAt = Date.now();
             });
             setInterval(function() {
+                return;
                 if (previewRendered) return;
                 if ((Date.now() - _keyPressedAt < 1000 * 2)) {
                     return console.log('DEBUG waiting 2 seconds delay...');

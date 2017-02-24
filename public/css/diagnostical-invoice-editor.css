@@ -1,9 +1,9 @@
-#editor{
+#editor-ace{
     display:block;
     width:100%;
     min-height: 400px;
 }
-#editor .ace_content *{
+#editor-ace .ace_content *{
    font-family: monospace, monospace;
    font-size:12px;
 }
