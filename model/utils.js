@@ -3,20 +3,32 @@ var fs = require("fs"),
 var urlencode = require('urlencode2');
 var urldecode = require('urldecode');
 var moment = require('moment');
-
+var path = require('path');
 var tempFolderPath = process.env.tempFolderPath || '/public/temp/';
 var filesPath = '/public/files/';
 
+
+var dbLogger = null;
+
+function loggerDelayedInit() {
+    if (!dbLogger) {
+        dbLogger = require(path.join(process.cwd(), 'model/db.controller')).create('Log').createLogger({
+            name: "backend-general",
+            category: "UTILS"
+        });
+    }
+}
+
 function getFileTempPath(n) {
-    var path = process.cwd() + tempFolderPath + (n||'');
+    var path = process.cwd() + tempFolderPath + (n || '');
     path = replaceAll(path, '//', '/');
     console.log('debug ctrl.pdf.getFileTempPath', path);
     return path;
 }
 exports.getFileTempPath = getFileTempPath;
 
-function getFilePath(fileName){
-    var path = process.cwd() + filesPath + (fileName||'');
+function getFilePath(fileName) {
+    var path = process.cwd() + filesPath + (fileName || '');
     path = replaceAll(path, '//', '/');
     console.log('debug getFilePath', path);
     return path;
@@ -68,17 +80,15 @@ function cbHell(quantity, cb) {
 exports.cbHell = cbHell;
 
 //routing
-function adminUrl(join, angularRoute) {
-    angularRoute = angularRoute || true;
-    console.log('Using adminURL VAR: ' + process.env.adminURL);
-    var path = process.env.adminURL || 'http://localhost:3000/admin#';
-    if (!process.env.adminURL) {
-        console.log('process.env.adminURL not found. Using ' + path);
+function adminUrl(join, serverURL) {
+    loggerDelayedInit();
+    var host = serverURL || process.env.serverURL || 'http://localhost:3000';
+    var rta = path.join(host, join);
+    if (!serverURL && !process.env.serverURL) {
+        dbLogger.warnSave('Enviromental serverURL required');
     }
-    var url = path + (angularRoute ? '#/' : '') + join;
-    url = replaceAll(url, '//', '/');
-    url = replaceAll(url, ':/', '://');
-    return url;
+    //dbLogger.debugSave('adminUrl resolves ', rta);
+    return rta;
 }
 exports.adminUrl = adminUrl;
 

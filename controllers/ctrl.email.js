@@ -628,8 +628,9 @@ function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type,moreOpt
     var _order = data._order;
     var _admin = data._admin;
     var _client = data._client;
+    var loginQueryData = '?email=' + _user.email + '&k=' + btoa(_user.password || 'dummy');
     var replaceData = {
-        '$BACKOFFICE_URL': adminUrl('login?email=' + _user.email + '&k=' + btoa(_user.password || 'dummy'))
+        '$BACKOFFICE_URL': adminUrl('login'+loginQueryData)
     };
     if (_user) {
         Object.assign(replaceData, {
@@ -643,7 +644,7 @@ function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type,moreOpt
             '$USER_PHONE': _user.cellPhone,
             '$USER_ADDRESS': _user.address,
             '$USER_CLIENT_TYPE': _user.clientType,
-            '$USER_EDIT_URL': adminUrl('/clients/edit/' + _user._id)
+            '$USER_EDIT_URL': adminUrl('/clients/edit/' + _user._id+loginQueryData)
         });
     }
     if (_client) {
@@ -655,7 +656,7 @@ function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type,moreOpt
             '$CLIENT_PHONE': _client.cellPhone,
             '$CLIENT_ADDRESS': _client.address,
             '$CLIENT_TYPE': _client.clientType,
-            '$CLIENT_EDIT_URL': adminUrl('/clients/edit/' + _client._id)
+            '$CLIENT_EDIT_URL': adminUrl('/clients/edit/' + _client._id+loginQueryData)
         });
     }
     if (_admin) {
@@ -708,7 +709,7 @@ function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type,moreOpt
 
             '$ORDER_DATE_HOUR': dateTime2(_order.start),
             '$ORDER_DESCRIPTION': _order.info.description,
-            '$ORDER_URL': adminUrl('/orders/edit/' + _order._id),
+            '$ORDER_URL': adminUrl('/orders/edit/' + _order._id+loginQueryData),
             '$ORDER_PUBLIC_URL': adminUrl('/orders/view/' + _order._id)
                 //'$ORDER_DESCR': _order.address + ' (' + time(_order.diagStart) + ' - ' + time(_order.diagEnd) + ')',
         });

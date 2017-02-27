@@ -73,8 +73,8 @@ function handler(data, cb) {
                                     // log(diag.email + ' ' + filename + ' has expire and alert was already sended.');
                                     //console.log('DIAG ', diag.email, ' DIPLOMA', filename, 'SENDED ALREADY');
 
-                                    Logger.setSaveData(info);
-                                    Logger.debugSave(diag.email+' has an expired file.');
+                                    //Logger.setSaveData(info);
+                                    //Logger.debugSave(diag.email+' has an expired file.');
 
                                 }
                                 else {
