@@ -932,11 +932,13 @@ input[type="checkbox"]:disabled+span {
 
 .diag-col-label {
     padding: 0px;
+    padding-left: 0px!important;
 }
 
 .diag-col-label-1 {
     width: 26.888%;
     padding: 0px;
+    padding-left: 0px!important;
 }
 
 .booking-form .label {
