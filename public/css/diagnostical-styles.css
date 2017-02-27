@@ -750,7 +750,7 @@ a.diag-btn-info:hover {
         background: url(../img/intermediary-background.jpg);
         /*background-position: center top;*/
         background-repeat: no-repeat;
-        background-size: cover;
+        background-size: contain;
     }
 
 @media screen and (min-width: 480px) {
@@ -1541,6 +1541,8 @@ table.dg-dates tr.selected {
     .booking-form-wrapper {
         padding: 0px;
         margin: 0px;
+        background-color: #04B567;
+        padding-bottom: 15px;
     }
 }
 
