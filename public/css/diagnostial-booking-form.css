@@ -9,6 +9,12 @@
     margin-bottom: 10px;
 }
 
+.diag-col-electricite {
+    width: 26.888%;
+    padding: 0px;
+    padding-left: 0px!important;
+}
+
 
 /*320px 480*/
 
@@ -16,5 +22,16 @@
     .booking-form__building-type-list-item {
         display: inline;
         margin-bottom: 0px;
+    }
+}
+
+@media screen and (min-width: 480px) {
+    .diag-col-electricite {
+        width: 22.888%;
+        padding: 0px;
+        padding-left: 0px!important;
+    }
+    .diag-col-electricite-min {
+        min-width: 34.333333%;
     }
 }
