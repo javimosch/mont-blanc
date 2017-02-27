@@ -8,6 +8,7 @@ var http = require('http');
 var fs = require('fs');
 var skipMap = require('skip-map')
 require('dotenv').config();
+var sander = require('sander');
 var sgTemplating = require('./tools/static-generator/sg-templates');
 
 var appDetails = {};
@@ -78,6 +79,13 @@ app.get('/views/*', function(req, res) {
 		res.send(html);
 	});
 });
+
+if (sander.existsSync(path.join(process.cwd(), 'resources'))) {
+	console.log('DEBUG RES -> RESOURCES ON');
+	app.use("/res", express.static(path.join(process.cwd(), 'resources')));
+}else{
+	console.log('DEBUG RES -> RESOURCES OFF');
+}
 
 
 app.use("/temp", express.static(__dirname + "/public/temp"));
