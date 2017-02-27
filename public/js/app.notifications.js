@@ -50,7 +50,7 @@
                 back: 'notifications'
             },
             modals: {
-                confirm: 'confirm',
+                confirm: r.openConfirm,
                 delete: {
                     description: () => 'Delete item ' + s.item.type + ' ' + r.momentDateTime(s.item.created)
                 }

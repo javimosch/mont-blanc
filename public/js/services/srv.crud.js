@@ -46,7 +46,7 @@
             };
             s.delete = function() {
                 if (opt.modals && opt.modals.confirm) {
-                    s[opt.modals.confirm]($U.val(opt, 'modals.delete.description') || 'Delete item?', function() {
+                    opt.modals.confirm($U.val(opt, 'modals.delete.description') || 'Delete item?', function() {
                         s.deleteSilent();
                     });
                 } else {

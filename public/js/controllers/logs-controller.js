@@ -20,7 +20,7 @@ angular.module('app').controller('logEdit', ['$rootScope', '$scope', 'server', '
             back: 'logs'
         },
         modals: {
-            confirm: 'confirm',
+            confirm: r.openConfirm,
             delete: {
                 description: () => 'Delete item ' + s.item.type + ' ' + r.momentDateTime(s.item.created)
             }
