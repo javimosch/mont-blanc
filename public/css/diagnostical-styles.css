@@ -227,7 +227,7 @@
     text-align: center;
     font-weight: 900;
     display: block;
-    margin: 10px auto 40px auto;
+    margin: 10px auto 40px auto!important;
 }
 
 @media screen and (min-width: 320px) {}
