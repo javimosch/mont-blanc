@@ -3,6 +3,7 @@ node_modules/*
 bower_components/
 bower_components/**
 .env
+cache/*
 public/temp
 yarn.lock
 app.bundle.js
