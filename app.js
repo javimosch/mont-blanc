@@ -11,6 +11,13 @@ require('dotenv').config();
 var sander = require('sander');
 var sgTemplating = require('./tools/static-generator/sg-templates');
 
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 var appDetails = {};
 
 function appDetailsFill() {

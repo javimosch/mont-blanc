@@ -126,7 +126,7 @@
                 tinymce.init({
                     selector: '#editor-text',
                     forced_root_block: false,
-                    theme: 'modern',
+                    //theme: 'modern',
                     //width: 600,
                     height: 300,
                     plugins: [
@@ -135,7 +135,7 @@
                         'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
                         'save table contextmenu directionality emoticons template paste textcolor'
                     ],
-                    content_css: 'css/diags.design.css',
+                    content_css: '/css/diagnostical-styles.css',
                     toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
                 });
 

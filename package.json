@@ -73,6 +73,7 @@
     "http": "0.0.0",
     "https": "^1.0.0",
     "lodash": "^4.3.0",
+    "lowdb": "^0.15.5",
     "mailcomposer": "^3.6.2",
     "mailgun-js": "^0.7.7",
     "mime-types": "^2.1.11",
