@@ -14,7 +14,7 @@ db.defaults({
         text:{}
     }
 }).write().then(() => {
-
+    
     ctrl('Text').getAll({
         __select: "content code"
     }, function(err, _texts) {
@@ -52,7 +52,7 @@ function updateText(code, content) {
 }
 
 function getContext() {
-    return db.get('context').value();
+    return db.read().getState().context;
 }
 
 module.exports = {
