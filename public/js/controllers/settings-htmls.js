@@ -104,7 +104,7 @@ angular.module('app').controller('settings-htmls', ['server', '$scope', '$rootSc
         }
 
         function initAce() {
-            s.editor = window.ace.edit("editor");
+            s.editor = window.ace.edit("editor-ace");
             s.editor.getSession().setMode("ace/mode/html");
             s.editor.setTheme("ace/theme/merbivore");
             s.editor.setOptions({

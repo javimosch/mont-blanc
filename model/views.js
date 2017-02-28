@@ -4,8 +4,8 @@ var sander = require('sander');
 var decodeURIComponent = require('./utils').decodeURIComponent;
 var path = require('path');
 
-const low = require('lowdb')
-const fileAsync = require('lowdb/lib/storages/file-async')
+const low = require('lowdb');
+const fileAsync = require('lowdb/lib/storages/file-async');
 const db = low(path.join(process.cwd(), 'cache/views.json'), {
     storage: fileAsync
 });
