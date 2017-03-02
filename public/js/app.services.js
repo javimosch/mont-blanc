@@ -87,6 +87,7 @@ srv.service('dbText', ["$rootScope", "server", '$timeout', function(r, db, $time
             window.tinymce.editors[0].setContent(decodedData);
             setTimeout(function() {
                 r.htmlEditItem.show = true;
+                console.log('inline editor scrolltop');
                 $U.scrollToTop();
             }, 500);
         }

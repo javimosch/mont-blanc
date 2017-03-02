@@ -946,6 +946,7 @@ angular.module('app').directive('notify', function($rootScope, $timeout) {
 
             if (s.settings.scroll == true) {
                 r.dom($U.scrollToTop);
+                console.log('notify scroll up');
             }
 
         }
@@ -996,6 +997,7 @@ angular.module('app').directive('myAlert', function($rootScope, $timeout) {
                 elem.find('[data-message]').html(v);
                 if (v && scope.scroll) {
                     r.dom(() => {
+                        console.log('my alert irective scroll top');
                         $('html, body').animate({
                             scrollTop: elem.offset().top
                         }, 500);

@@ -147,6 +147,7 @@ app.controller('ctrl.booking', ['server',
 
 
         function onRouteChange(pathFrom, pathTo) {
+            //$log.log('booking.onRouteChange scrollTop');
             r.dom($U.scrollToTop);
             if (!pathTo || pathTo == r.URL.HOME) {
                 //s._order = {}; //reset

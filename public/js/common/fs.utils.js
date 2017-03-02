@@ -151,7 +151,7 @@ $(function() {
         return hash.replace('/', '');
     };
     $.scrollToAnchor = () => {
-        //console.log('scrollToAnchor '+$.hrefAnchor());
+        console.log('scrollToAnchor ' + $.hrefAnchor());
         var elem = $('#' + $.hrefAnchor());
         //console.info(elem);
         $('html, body').animate({
@@ -614,9 +614,32 @@ function indexOf(str, values) {
 
 
 function scrollToTop(time) {
+    //console.log('fs.utils scrolltop');
+
+    (function() {
+        var change = false;
+        var start = Date.now();
+        $(window).on('scroll.fsutils', function() {
+            change = true;
+        });
+        setTimeout(function() {
+            if (change) {
+                //console.log('scroll.should.abort');
+            }
+            else {
+                //console.log('scroll.should.go.up');
+                $('html, body').animate({
+                    scrollTop: 0
+                }, time || 800);
+            }
+            $(window).off('scroll.fsutils');
+        }, 1500);
+    })();
+
+    /*
     $('html, body').animate({
         scrollTop: 0
-    }, time || 800);
+    }, time || 800);*/
 }
 
 function fetchCountry(address) {
@@ -702,7 +725,7 @@ function downloadContent(content, fileName, mimeType) {
 
 function replaceHTML(html, obj) {
     for (var x in obj) {
-        html = html.replaceAll("{{" + x.toUpperCase() + "}}", obj[x] && obj[x].toString()||'');
+        html = html.replaceAll("{{" + x.toUpperCase() + "}}", obj[x] && obj[x].toString() || '');
     }
     return html;
 }
@@ -724,7 +747,7 @@ else {
     window.ifThenMessage = ifThenMessage;
 
     window.$U = {
-        readJSONSync:readJSONSync,
+        readJSONSync: readJSONSync,
         store: store,
         replaceHTML: replaceHTML,
         toCSV: toCSV,

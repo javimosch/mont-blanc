@@ -256,6 +256,7 @@
         function(db, s, r, params, focus, $timeout, $log) {
 
             r.dom(function() {
+                console.log('diag exception edit scrolltop');
                 document.body.scrollTop = 0;
             });
 
