@@ -163,6 +163,8 @@ app.controller('ctrl.booking', ['server',
             }
 
             if (pathTo == r.URL.ACCOUNT_DETAILS) {
+                return true; //deprecated, this route belongs to another controller
+                /*
                 if (!s._user || !s._user.__subscribeMode) {
                     console.warn('current _user is not in _subscribeMode');
                     changeRoute(r.URL.HOME);
@@ -171,6 +173,7 @@ app.controller('ctrl.booking', ['server',
                 else {
                     delete s._user.__subscribeMode;
                 }
+                */
             }
 
             if (pathTo == r.URL.PAYMENT) {
