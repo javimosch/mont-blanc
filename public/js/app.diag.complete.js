@@ -855,61 +855,7 @@ app.controller('ctrl-diag-edit', [
 
 
 
-        s.shouldSendAccountCreatedNotificationToDiag = (_user) => {
-            var rta = (_user.userType === 'diag') && _user.disabled === true && (_user.notifications == undefined || _user.notifications.DIAG_DIAG_ACCOUNT_CREATED === undefined || _user.notifications.DIAG_DIAG_ACCOUNT_CREATED == false);
-            console.info('shouldSendAccountCreatedNotificationToDiag', rta);
-            return rta;
-        };
-        s.sendAccountCreatedNotificationToDiag = (_user) => {
-            s.item = _user || s.item;
-            db.ctrl('Notification', 'DIAG_DIAG_ACCOUNT_CREATED', {
-                _user: s.item
-            }).then(res => {
-                if (res.ok) {
-                    s.item.notifications = s.item.notifications || {};
-                    s.item.notifications.DIAG_DIAG_ACCOUNT_CREATED = true;
-                    db.ctrl('User', 'save', s.item);
-                    console.info('sendAccountCreatedNotificationToDiag:success', res.message);
-                }
-                else {
-                    console.info('sendAccountCreatedNotificationToDiag:failed', res.err);
-                }
-            });
-        };
-
-        s.adminsNeedToBeNotifiedAboutDiagAccountCreation = (_user) => {
-            var rta = (_user.userType === 'diag') && _user.disabled == true && (!_user.notifications || _user.notifications.ADMIN_DIAG_ACCOUNT_CREATED == undefined || _user.notifications.ADMIN_DIAG_ACCOUNT_CREATED == false);
-            console.info('adminsNeedToBeNotifiedAboutDiagAccountCreation', rta);
-            return rta;
-        };
-        s.notifyAdminsAboutDiagAccountCreation = (_diag) => {
-            db.ctrl('User', 'getAll', {
-                userType: 'admin',
-                __select: "email"
-            }).then(res => {
-                console.info('notifyAdminsAboutDiagAccountCreation:admins:', res.result.length);
-                if (res.ok) {
-                    var cbHell = $U.cbHell(res.result.length, () => {
-                        Object.assign(s.item, _diag);
-                        s.item.notifications = s.item.notifications || {};
-                        s.item.notifications.ADMIN_DIAG_ACCOUNT_CREATED = 1;
-                        db.ctrl('User', 'save', s.item);
-                        console.info('notifyAdminsAboutDiagAccountCreation:success');
-                    });
-                    res.result.forEach(_admin => {
-                        db.ctrl('Notification', 'ADMIN_DIAG_ACCOUNT_CREATED', {
-                            _user: _diag,
-                            _admin: {
-                                email: _admin.email
-                            }
-                        }).then(rta => {
-                            cbHell.next();
-                        });
-                    });
-                }
-            });
-
-        };
+        
 
 
 
@@ -946,13 +892,7 @@ app.controller('ctrl-diag-edit', [
                     var _r = res;
                     if (_r.ok) {
                         s.item._id = res.result._id;
-                        /*
-                        if (s.adminsNeedToBeNotifiedAboutDiagAccountCreation(s.item)) {
-                            s.notifyAdminsAboutDiagAccountCreation(s.item);
-                        }
-                        if (s.shouldSendAccountCreatedNotificationToDiag(s.item)) {
-                            s.sendAccountCreatedNotificationToDiag(s.item);
-                        }*/
+                       
 
                         if (silent) {
                             return;

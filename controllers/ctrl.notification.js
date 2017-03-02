@@ -16,6 +16,12 @@ var actions = {
     }
 };
 
+var ctrl = require('../model/db.controller').create;
+var dbLogger = ctrl('Log').createLogger({
+    name: "NOTIFICATION",
+    category: "DB"
+});
+
 const MODULE = "NOTIFICATION";
 var logger = require('../model/logger')(MODULE);
 
@@ -69,29 +75,14 @@ function LogSave(msg, type, data) {
 }
 
 function trigger(name, data, cb) {
-    //try {
-        //actions.log('trigger=' + JSON.stringify(data));
-        actions.log('trigger ',name, data, cb);
-        
-        logger.info('Triggering ',name);
-        
-        if (!name) return cb && cb("name required");
-        if (!NOTIFICATION[name]) {
-            logger.info('Not found ',name);
-            LogSave('Notification trigger name not found: ' + name, 'error', data);
-            return cb && cb("trigger notification not found: " + name);
-        }
-        //actions.log('trigger:routing-' + name + '=' + JSON.stringify(data));
-        data.__notificationType = name;
-        return EmailHandler[name](data, cb);
-    
-      /*  
-    } catch (err) {
-        logger.error(name,data);
-        logger.error(err);
-        LogSave("Notification triggering error", 'error', err);
-        return cb && cb(err);
-    }*/
+    dbLogger.debug('Trigger',name,data);
+    if (!name) return cb && cb("name required");
+    if (!NOTIFICATION[name]) {
+        dbLogger.warnSave('Not found',name);
+        return cb && cb("Notification " + name+' not found');
+    }
+    data.__notificationType = name;
+    return EmailHandler[name](data, cb);
 }
 
 
@@ -100,61 +91,34 @@ function save(data, cb) {
     var _user = data._user;
     var _userID = _user && _user._id || _user;
 
-    if(typeof _user === 'object' && !_user._id){
-        return console.log(MODULE,"save",'data._user needs to have an _id property.',{
+    if (typeof _user === 'object' && !_user._id) {
+        dbLogger.setSaveData({
+            detail:'data._user needs to have an _id property.',
             type: data.type,
-            subject:data.subject,
-            to:data.to
+            subject: data.subject,
+            to: data.to
         });
+        return dbLogger.errorSave('Save error from user' + _user.email);
     }
 
     if (!_userID) {
-        LogSave('notification-save user-not-found', 'error', data);
-        if (cb) cb("notification-save user-not-found");
+        dbLogger.setSaveData(data);
+        dbLogger.errorSave('Not enought data to assign user');
+        if (cb) cb("Not enought data to assign user");
         return;
     }
 
-    //data: html,from,to,subject
-    UserNotifications.get({
-        _user: _userID
-    }, (err, _config) => {
+    Notification.create({
+        _user: _userID,
+        type: data.type || 'no-type',
+        to: data.to || 'not-specified',
+        subject: data.subject || 'not specified',
+        contents: data.html || '',
+    }, (err, _notification) => {
         if (err) {
-            return LogSave('Unable to retreive UserNotifications', {
-                user: _user.email,
-                description: err
-            });
+            dbLogger.setSaveData(err);
+            return dbLogger.errorSave('Save error from user' + _user.email);
         }
-        if (!_config) {
-            //dblog("UserNotifications not found for " + _user.email + '.', 'info');
-            UserNotifications.create({
-                _user: _userID
-            }, (err, _config) => {
-                if (err) return LogSave('UserNotifications create fail for user ' + _user.email);
-                saveNotificationOn(_config);
-            })
-        } else {
-            saveNotificationOn(_config);
-        }
+        if (cb) cb(_notification);
     });
-
-    function saveNotificationOn(_config) {
-        Notification.create({
-            _config: _config.id,
-            _user: _userID,
-            type: data.type || 'no-type',
-            to: data.to || 'not-specified',
-            subject: data.subject || 'not specified',
-            contents: data.html || '',
-        }, (err, _notification) => {
-            if (err) return LogSave('saveNotification fail when creating a notification for user ' + _user.email + ' : ' + JSON.stringify(err));
-            if (cb) cb(_notification);
-
-            _config.notifications.push(_notification);
-            _config.save();
-        });
-    }
 }
-
-
-//console.log('NOTIFICATION = EXPORTS',JSON.stringify(Object.keys(module.exports)));
-//console.log('NOTIFICATION.ACTIONS / NOTIFICATION / DEBUG = ',JSON.stringify(Object.keys(exports.NOTIFICATION)));

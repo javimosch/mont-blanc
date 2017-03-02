@@ -21,6 +21,10 @@ const MODULE = 'USER';
 var logger = require('../model/logger')(MODULE);
 
 
+var dbLogger = ctrl('Log').createLogger({
+    name: "USER",
+    category: "DB"
+});
 
 function everyAdmin(cb) {
     ctrl('User').getAll({
@@ -341,12 +345,21 @@ function save(data, cb) {
 
 
     function postCreate_notifications(err, _user) {
+        /*
+        dbLogger.setSaveData({
+            _user:_user,
+            err:err
+        });
+        dbLogger.debugSave('OnCreate: ',_user.email);
+        return;*/
+        
         switch (_user.userType) {
             case 'admin':
                 {
                     Notif.trigger(NOTIFICATION.ADMIN_ADMIN_ACCOUNT_CREATED, {
                         _user: _user
                     }, (_err, r) => handleNewAccount(_user, err, r));
+                    return;
                 }
                 break;
             case 'client':
@@ -361,9 +374,10 @@ function save(data, cb) {
                             _user: _user,
                             _admin: _admin
                         }, (_err, r) => handleNewAccount(_user, err, r));
-                    })
-
+                    });
+                    return;
                 }
+                break;
             case 'diag':
                 {
                     Notif.trigger(NOTIFICATION.DIAG_DIAG_ACCOUNT_CREATED, {
@@ -376,7 +390,8 @@ function save(data, cb) {
                             _user: _user,
                             _admin: _admin
                         }, (_err, r) => handleNewAccount(_user, err, r));
-                    })
+                    });
+                    return;
                 }
                 break;
         }
@@ -426,23 +441,6 @@ function createDiag(data, cb) {
     data.userType = 'diag';
     createUser(data, (err, _user) => {
         if (err) return cb(err, null);
-
-
-
-        Notif.DIAG_NEW_ACCOUNT(_user, (err, r) => {
-            //async (write log on error)
-            if (r.ok) {
-                actions.log(_user.email + ' new account email sended' + JSON.stringify(r));
-                _user.passwordSended = true;
-                _user.save((err, r) => {
-                    if (!err) actions.log(_user.email + ' passwordSended=true');
-                });
-            }
-            else {
-                actions.log(_user.email + ' new account email sended failed');
-                actions.log(JSON.stringify(err));
-            }
-        });
         return cb(err, _user);
     });
 }

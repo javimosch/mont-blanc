@@ -15,7 +15,7 @@ angular.module('app').directive('compileHtml', ['$compile', function($compile) {
                 element.html(value);
                 $compile(element.contents())(scope);
             });
-            console.log('compile-html running');
+            //console.log('compile-html running');
         }
     };
 }]);
@@ -946,7 +946,6 @@ angular.module('app').directive('notify', function($rootScope, $timeout) {
 
             if (s.settings.scroll == true) {
                 r.dom($U.scrollToTop);
-                console.log('notify scroll up');
             }
 
         }

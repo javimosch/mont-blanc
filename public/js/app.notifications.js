@@ -102,8 +102,7 @@
                     }
                     var data = {
                         __populate: {
-                            _user: 'email',
-                            _config: '',
+                            _user: 'email'
                         },
                         __sort: "-createdAt"
                     };
@@ -174,14 +173,11 @@
                         var rule = {
                             _id: item._id
                         };
-                        item._config.notifications = _.pull(item._config.notifications, item._id);
-                        db.ctrl('UserNotifications', 'update', item._config).then((d) => {
-                            if (d.ok) {
-                                db.ctrl('Notification', 'remove', rule).then((d) => {
-                                    update();
-                                });
-                            }
+
+                        db.ctrl('Notification', 'remove', rule).then((d) => {
+                            update();
                         });
+
                     },
                     buttonsTpl: vars.TPL_CRUD_BUTTONS,
                     tfoot: vars.TPL_CRUD_TFOOT,

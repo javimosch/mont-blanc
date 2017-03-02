@@ -38,12 +38,14 @@
                 <div class="row  margin-top-half">
                     <input ng-disabled="state.working()" ng-model="item.lastName" class="diags-input" placeholder="nom">
                 </div>
+                <!--
                 <div class="row margin-top-one" ng-show="item.clientType !== 'landlord'">
                     <label>Raison sociale</label>
                 </div>
                 <div class="row  margin-top-half" ng-show="item.clientType !== 'landlord'">
                     <input ng-disabled="state.working()" ng-model="item.companyName" class="diags-input" placeholder="Raison sociale">
                 </div>
+                -->
                 <div class="row margin-top-one">
                     <label>Téléphone fixe</label>
                 </div>
@@ -127,6 +129,9 @@
                     <select ng-disabled="state.working() || !userIs('admin')" ng-model="item.clientType" class="max-w-150 diags-input">
                     <option value='landlord'>LandLord</option>
                     <option value='agency'>Agency</option>
+                    <option value='enterprise'>Enterprise</option>
+                    <option value='other'>Other</option>
+                    <!--agency', 'enterprise', 'landlord', 'other'-->
                 </select>
                 </div>
 

@@ -164,42 +164,28 @@ function send(opt, resCb) {
                 if (err) {
                     return LogSave('notification getById fail in function send');
                 }
-                if (!_.includes(_notification._config.disabledTypes, _notification.type)) {
 
-                    if (process.env.disableMailing === '1') {
-                        actions.log('send:mailing-disabled');
-                        _notification.sended = true;
-                        _notification.sendedDate = Date.now();
-                        Notification.update(_notification, (err, _notification) => {
-                            if (err) LogSave('notification sended update fail in function send.');
 
-                            if (resCb) resCb(null, {
-                                message: 'Success (Mailing disabled)',
-                                ok: true
-                            });
+                if (process.env.disableMailing === '1') {
+                    actions.log('send:mailing-disabled');
+                    _notification.sended = true;
+                    _notification.sendedDate = Date.now();
+                    Notification.update(_notification, (err, _notification) => {
+                        if (err) LogSave('notification sended update fail in function send.');
 
+                        if (resCb) resCb(null, {
+                            message: 'Success (Mailing disabled)',
+                            ok: true
                         });
-                        return dummySuccessResponse(opt.cb);
-                    }
-                    else {
-                        _send(_notification);
-                    }
 
-
+                    });
+                    return dummySuccessResponse(opt.cb);
                 }
                 else {
-
-                    if (opt.cb) {
-                        return opt.cb(null, {
-                            ok: true,
-                            message: 'Notification type disabled'
-                        })
-                    }
-
-                    if (resCb) {
-                        resCb('SENDING_DISABLED_TYPE', "");
-                    }
+                    _send(_notification);
                 }
+
+
             });
         }
 
@@ -289,16 +275,17 @@ function generateInvoiceAttachmentIfNecessary(data, t, cb) {
 
 
 
-function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notifItemType,moreOptions) {
+function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notifItemType, moreOptions) {
     notifItem.notifications = notifItem.notifications || {};
-    if (notifItem.notifications[type] !== true || (data.forceSend!=undefined&&data.forceSend==true)) {
+    if (notifItem.notifications[type] !== true || (data.forceSend != undefined && data.forceSend == true)) {
         return DIAGS_CUSTOM_EMAIL(data, (err, r) => {
             notifItem.notifications[type] = true;
             ctrl(notifItemType).update(notifItem);
             if (cb) cb(err, r);
-        }, subject, type, to, NOTIFICATION[type],moreOptions);
-    }else{
-        logger.warn('Notification alredy sended',type);
+        }, subject, type, to, NOTIFICATION[type], moreOptions);
+    }
+    else {
+        logger.warn('Notification alredy sended', type);
         cb && cb('Already sended');
     }
 }
@@ -537,17 +524,17 @@ function CLIENT_ORDER_PAYMENT_SUCCESS(data, cb) {
 //DIAG//#1 OK ctrl.user app.diag.complete
 function DIAG_DIAG_ACCOUNT_CREATED(data, cb) {
     //requires: _user 
-    
+
     //229-remove-attached-file
     //var fileName = 'mail-subscription-before-activated.docx';
     //data.attachment = {
-        //path: _utils.getFilePath(fileName),
-        //fileName: fileName
+    //path: _utils.getFilePath(fileName),
+    //fileName: fileName
     //};
-    
+
     DIAGS_CUSTOM_NOTIFICATION(
-        NOTIFICATION.DIAG_DIAG_ACCOUNT_CREATED, data, cb, "Plus qu’une étape pour démarrer sur Diagnostical", data._user.email, data._user, 'User',{
-         from: 'pierre@diagnostical.fr (Pierre de Diagnostical)'  
+        NOTIFICATION.DIAG_DIAG_ACCOUNT_CREATED, data, cb, "Plus qu’une étape pour démarrer sur Diagnostical", data._user.email, data._user, 'User', {
+            from: 'pierre@diagnostical.fr (Pierre de Diagnostical)'
         });
 }
 
@@ -621,7 +608,7 @@ function removeCountryFromString(string) {
     return string;
 }
 
-function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type,moreOptions) {
+function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type, moreOptions) {
     actions.log(_type + '=START');
     moment.locale('fr')
     var _user = data._user;
@@ -630,7 +617,7 @@ function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type,moreOpt
     var _client = data._client;
     var loginQueryData = '?email=' + _user.email + '&k=' + btoa(_user.password || 'dummy');
     var replaceData = {
-        '$BACKOFFICE_URL': adminUrl('login'+loginQueryData)
+        '$BACKOFFICE_URL': adminUrl('login' + loginQueryData)
     };
     if (_user) {
         Object.assign(replaceData, {
@@ -644,7 +631,7 @@ function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type,moreOpt
             '$USER_PHONE': _user.cellPhone,
             '$USER_ADDRESS': _user.address,
             '$USER_CLIENT_TYPE': _user.clientType,
-            '$USER_EDIT_URL': adminUrl('/clients/edit/' + _user._id+loginQueryData)
+            '$USER_EDIT_URL': adminUrl('/clients/edit/' + _user._id + loginQueryData)
         });
     }
     if (_client) {
@@ -656,7 +643,7 @@ function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type,moreOpt
             '$CLIENT_PHONE': _client.cellPhone,
             '$CLIENT_ADDRESS': _client.address,
             '$CLIENT_TYPE': _client.clientType,
-            '$CLIENT_EDIT_URL': adminUrl('/clients/edit/' + _client._id+loginQueryData)
+            '$CLIENT_EDIT_URL': adminUrl('/clients/edit/' + _client._id + loginQueryData)
         });
     }
     if (_admin) {
@@ -709,7 +696,7 @@ function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type,moreOpt
 
             '$ORDER_DATE_HOUR': dateTime2(_order.start),
             '$ORDER_DESCRIPTION': _order.info.description,
-            '$ORDER_URL': adminUrl('/orders/edit/' + _order._id+loginQueryData),
+            '$ORDER_URL': adminUrl('/orders/edit/' + _order._id + loginQueryData),
             '$ORDER_PUBLIC_URL': adminUrl('/orders/view/' + _order._id)
                 //'$ORDER_DESCR': _order.address + ' (' + time(_order.diagStart) + ' - ' + time(_order.diagEnd) + ')',
         });
@@ -718,7 +705,7 @@ function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type,moreOpt
         attachment: data.attachment || null,
         __notificationType: _type,
         _user: _user,
-        from:moreOptions&&moreOptions.from || undefined,
+        from: moreOptions && moreOptions.from || undefined,
         to: _to,
         subject: _subject,
         templateName: templateName,
@@ -753,7 +740,7 @@ function htmlOrderSelectedDiagsList(_order) {
 
 function LogSave(msg, type, data) {
     Log.save({
-        category:'mailing',
+        category: 'mailing',
         message: msg,
         type: type,
         data: data
