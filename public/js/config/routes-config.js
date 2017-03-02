@@ -25,11 +25,11 @@ srv.config(['$routeProvider', '$locationProvider',
             templateUrl: 'views/diags/booking/booking-4-connection.html'
         }).
         when('/new-inscription', {
-            templateUrl: 'views/diags/booking/booking-espace-enterprise.html'
+            templateUrl: 'views/diags/booking/client-space.html'
         }).
 
-        when('/espace-enterprise', {
-            templateUrl: 'views/diags/booking/booking-espace-enterprise.html'
+        when('/espace-client', {
+            templateUrl: 'views/diags/booking/client-space.html'
         }).
 
         when('/espace-diagnostiqueur', {
