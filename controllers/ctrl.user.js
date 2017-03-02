@@ -278,11 +278,13 @@ function _preUpdateWallet(data, cb, next) {
 
             ctrl('Lemonway').updateWalletDetails(payload, (err, res) => {
                 if (err) {
-                    logger.error('LEMONWAY WALLET (automatic update before saving user)', err);
+                    
+                    /*logger.error('LEMONWAY WALLET (automatic update before saving user)', err);
                     LogSave('LEMONWAY WALLET (automatic update before saving user)', 'error', {
                         err: err,
                         payload: payload
                     });
+                    */
                 }
                 return next(data, cb);
             });

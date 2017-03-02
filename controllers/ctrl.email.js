@@ -7,6 +7,12 @@ var template = require('../utils/template');
 var sendEmail = require('../model/utils.mailing').sendEmail;
 var _utils = require('../model/utils');
 
+
+var emailTriggerLogger = ctrl('Log').createLogger({
+    name: "EMAIL",
+    category: "TRIGGER"
+});
+
 const MODULE = 'EMAIL';
 var logger = require('../model/logger')(MODULE);
 
@@ -120,8 +126,11 @@ function send(opt, resCb) {
     };
 
     var logData = _.clone(data);
-    delete logData.html;
-    LogSave('Notification ' + data.type, 'info', logData);
+    //delete logData.html;
+    //LogSave('Notification ' + data.type, 'info', logData);
+    
+    emailTriggerLogger.setSaveData(logData);
+    emailTriggerLogger.debugSave('Notification',data.type||'undefined');
 
     data.metadata = {}
 

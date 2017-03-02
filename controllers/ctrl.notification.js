@@ -98,7 +98,7 @@ function save(data, cb) {
             subject: data.subject,
             to: data.to
         });
-        return dbLogger.errorSave('Save error from user' + _user.email);
+        return dbLogger.errorSave('Save error from user' , _user.email);
     }
 
     if (!_userID) {
@@ -108,17 +108,22 @@ function save(data, cb) {
         return;
     }
 
-    Notification.create({
+    var payload = {
         _user: _userID,
         type: data.type || 'no-type',
         to: data.to || 'not-specified',
         subject: data.subject || 'not specified',
-        contents: data.html || '',
-    }, (err, _notification) => {
+        contents: data.html || data.contents || ''
+    };
+    if(data._id) payload._id = data._id;
+    Notification.save(payload, (err, _notification) => {
         if (err) {
-            dbLogger.setSaveData(err);
-            return dbLogger.errorSave('Save error from user' + _user.email);
+            dbLogger.setSaveData({
+                err:err,
+                payload:payload
+            });
+            return dbLogger.errorSave('Save error from user' , _user.email);
         }
-        if (cb) cb(_notification);
+        if (cb) cb(null,_notification);
     });
 }

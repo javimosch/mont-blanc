@@ -23,7 +23,8 @@
                     _notification: item._id,
                     html: item.contents,
                     to: item.to,
-                    subject: item.subject
+                    subject: item.subject,
+                    __notificationType:item.type
                 }).then(d => {
                     console.info(d);
                     r.infoMessage('Copy send to ' + item.to);
@@ -94,6 +95,10 @@
                 ]);
 
                 $U.expose('s', s);
+                
+                r.routeParams({
+                    prevRoute:'notifications'
+                });
 
                 function update(items, cb) {
                     if (items) {
