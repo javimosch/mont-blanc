@@ -12,6 +12,10 @@ var emailTriggerLogger = ctrl('Log').createLogger({
     name: "EMAIL",
     category: "TRIGGER"
 });
+var dbLogger = ctrl('Log').createLogger({
+    name: "EMAIL",
+    category: "DB"
+});
 
 const MODULE = 'EMAIL';
 var logger = require('../model/logger')(MODULE);
@@ -63,6 +67,7 @@ var EXPORT_ACTIONS = {
     CLIENT_ORDER_DELEGATED: CLIENT_ORDER_DELEGATED,
     CLIENT_ORDER_PAYMENT_SUCCESS: CLIENT_ORDER_PAYMENT_SUCCESS,
 
+    DIAG_DIAG_ACCOUNT_ACTIVATED: DIAG_DIAG_ACCOUNT_ACTIVATED,
     DIAG_DIAG_ACCOUNT_CREATED: DIAG_DIAG_ACCOUNT_CREATED,
     DIAG_NEW_RDV: DIAG_NEW_RDV,
     DIAG_RDV_CONFIRMED: DIAG_RDV_CONFIRMED,
@@ -109,7 +114,6 @@ function dummySuccessResponse(cb) {
 }
 
 function send(opt, resCb) {
-    //actions.log('send:start=' + JSON.stringify(opt));
     var html = opt.html || template(opt.templateName, opt.templateReplace);
     if (opt.subject) {
         if (process.env.companyName) {
@@ -126,11 +130,11 @@ function send(opt, resCb) {
     };
 
     var logData = _.clone(data);
-    //delete logData.html;
-    //LogSave('Notification ' + data.type, 'info', logData);
-    
+    delete logData.html;
+
+
     emailTriggerLogger.setSaveData(logData);
-    emailTriggerLogger.debugSave('Notification',data.type||'undefined');
+    emailTriggerLogger.debugSave('Notification', data.type || 'undefined');
 
     data.metadata = {}
 
@@ -138,92 +142,59 @@ function send(opt, resCb) {
         data.metadata.attachment = data.attachment;
     }
 
-    if (opt._user) {
-        if (opt._notification) {
-            actions.log('send:using-_notification=' + JSON.stringify({
-                to: opt._notification.to,
-                subject: opt._notification.subject
-            }));
-            Notification.getById({
-                _id: opt._notification
-            }, (err, _notification) => {
-                if (err) {
-                    return LogSave('notification getById fail in function send');
-                }
-                validateSending(_notification);
-            });
-        }
-        else {
-            actions.log('send:saving-notification');
-            data._user = opt._user;
-            NotificationHandler.save(data, (_notification) => {
-                if (_notification) {
-                    _notification.__populate = {
-                        _config: 'disabledTypes'
-                    }
-                    actions.log('send:using-_notification=' + JSON.stringify(_notification));
-                    validateSending(_notification);
-                }
-            });
-        }
-
-        function validateSending(_notification) {
-            //actions.log('send:validateSending=' + JSON.stringify(_notification));
-            Notification.getById(_notification, (err, _notification) => {
-                if (err) {
-                    return LogSave('notification getById fail in function send');
-                }
-
-
-                if (process.env.disableMailing === '1') {
-                    actions.log('send:mailing-disabled');
-                    _notification.sended = true;
-                    _notification.sendedDate = Date.now();
-                    Notification.update(_notification, (err, _notification) => {
-                        if (err) LogSave('notification sended update fail in function send.');
-
-                        if (resCb) resCb(null, {
-                            message: 'Success (Mailing disabled)',
-                            ok: true
-                        });
-
-                    });
-                    return dummySuccessResponse(opt.cb);
-                }
-                else {
-                    _send(_notification);
-                }
-
-
-            });
-        }
-
+    if (opt._notification) {
+        Notification.getById({
+            _id: opt._notification
+        }, (err, _notification) => {
+            if (err) return _handleError(err);
+            _send(_notification);
+        });
     }
     else {
-        if (process.env.disableMailing === '1') return dummySuccessResponse(opt.cb);
-        _send();
+        data._user = opt._user;
+        NotificationHandler.save(data, (err, _notification) => {
+            if (err) return _handleError(err);
+            _send(_notification);
+        });
     }
 
+    function _handleError(err) {
+        resCb && resCb(err);
+        opt.cb && opt.cb(err);
+    }
+
+
     function _send(_notification) {
-        actions.log('send:real-sending');
+        if (!_notification) {
+            return emailTriggerLogger.error('_send', '_notification required');
+        }
+        if (process.env.disableMailing === '1') {
+            _updateSendStatus(_notification);
+            dummySuccessResponse(opt.cb); //client callback
+            resCb && resCb(null, {
+                message: 'Success (Mailing disabled)',
+                ok: true
+            }); //server callback
+            return;
+        }
         sendEmail(data, (err, r) => {
-            actions.log('send:real-sending:rta: ' + JSON.stringify(r));
-
-            if (!err && _notification) {
-                _notification.sended = true;
-                _notification.sendedDate = Date.now();
-                Notification.update(_notification, (err, _notification) => {
-                    if (err) LogSave('notification sended update fail in function send.');
-
-                    if (resCb) resCb(null, r);
-
-                });
-            }
-            if (opt.cb) {
-                opt.cb(err, r);
-            }
             if (err) {
-                LogSave('sendEmail fail, the data was ' + JSON.stringify(data));
+                emailTriggerLogger.setSaveData(data);
+                emailTriggerLogger.errorSave(_notification.type, 'Error');
+            }
+            _updateSendStatus(_notification);
+            opt.cb && opt.cb(err, r); //client callback
+            resCb && resCb(null, r); //server callback
+        });
+    }
+
+    function _updateSendStatus(_notification) {
+        _notification.sended = true;
+        _notification.sendedDate = Date.now();
+        Notification.update(_notification, (err, n) => {
+            if (err) {
+                dbLogger.setSaveData(_notification)
+                return dbLogger.errorSave('Save error');
             }
         });
     }
@@ -294,7 +265,8 @@ function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notif
         }, subject, type, to, NOTIFICATION[type], moreOptions);
     }
     else {
-        logger.warn('Notification alredy sended', type);
+        emailTriggerLogger.warn(type, 'Already sended');
+        //logger.warn('Notification alredy sended', type);
         cb && cb('Already sended');
     }
 }
@@ -529,6 +501,12 @@ function CLIENT_ORDER_PAYMENT_SUCCESS(data, cb) {
 }
 
 
+function DIAG_DIAG_ACCOUNT_ACTIVATED(data, cb) {
+    DIAGS_CUSTOM_NOTIFICATION(
+        NOTIFICATION.DIAG_DIAG_ACCOUNT_ACTIVATED, data, cb, "Votre compte diagnostiqueur sur Diagnostical est activé !", data._user.email, data._user, 'User', {
+            from: 'romain@diagnostical.fr (Romain de Diagnostical)'
+        });
+}
 
 //DIAG//#1 OK ctrl.user app.diag.complete
 function DIAG_DIAG_ACCOUNT_CREATED(data, cb) {

@@ -278,7 +278,7 @@ function _preUpdateWallet(data, cb, next) {
 
             ctrl('Lemonway').updateWalletDetails(payload, (err, res) => {
                 if (err) {
-                    
+
                     /*logger.error('LEMONWAY WALLET (automatic update before saving user)', err);
                     LogSave('LEMONWAY WALLET (automatic update before saving user)', 'error', {
                         err: err,
@@ -335,10 +335,39 @@ function save(data, cb) {
         _preUpdateWallet(data, cb, __save);
     });
 
-
+/*
+    var originalItem = null;
+    function __fetch(data, cb) {
+        if (data._id) {
+            actions.get({
+                _id: data._id
+            }, (err, _user) => {
+                if (err) return cb(err);
+                originalItem = _user;
+                return __save(data, cb);
+            });
+        }
+        else {
+            return __save(data, cb);
+        }
+    }*/
 
     function __save(data, cb) {
-        actions.createUpdate(data, cb, {
+        actions.createUpdate(data, (err, _user) => {
+            if (err) return cb(err);
+
+            //if originalItem is diag disabled and new item is diag activated, send email
+            if (_user.userType == 'diag' && !_user.disabled) {
+                if(_user.notifications && !_user.notifications.DIAG_DIAG_ACCOUNT_ACTIVATED){
+                    //dbLogger.debugSave('Should notify activation ', _user.email);    
+                     Notif.trigger(NOTIFICATION.DIAG_DIAG_ACCOUNT_ACTIVATED, {
+                        _user: _user
+                    }, (_err, r) => handleNewAccount(_user, err, r));
+                }
+            }
+
+            return cb(err, _user);
+        }, {
             email: data.email,
             userType: data.userType
         }, ['userType', 'email']).on('created', postCreate_notifications);
@@ -354,7 +383,7 @@ function save(data, cb) {
         });
         dbLogger.debugSave('OnCreate: ',_user.email);
         return;*/
-        
+
         switch (_user.userType) {
             case 'admin':
                 {
@@ -411,6 +440,9 @@ function LogSave(msg, type, data, category) {
 }
 
 function handleNewAccount(_user, err, r) {
+    return; 
+    //deprecated
+    /*
     if (err) return LogSave(err.message, 'error', err);
     if (r && r.ok) {
         actions.log(_user.email + ':passwordSended');
@@ -420,7 +452,7 @@ function handleNewAccount(_user, err, r) {
     else {
         actions.log(_user.email + ' passwordSended email fail ' + JSON.stringify(r));
         LogSave(r.message, 'warning', r);
-    }
+    }*/
 }
 
 function create(data, cb) {
@@ -531,7 +563,7 @@ function passwordReset(data, cb) {
 
                 Notif.trigger('USER_PASSWORD_RESET', {
                     _user: _user,
-                    forceSend:true
+                    forceSend: true
                 }, (err, r) => {
                     LogSave("Password reset notification", err ? "warning" : 'info', {
                         email: _user.email,
