@@ -77,6 +77,11 @@ angular.module('app').controller('database-files', ['server', '$scope', '$rootSc
                     data = Object.assign(data, s.model.filter.payload || {});
                     //
                     dbPaginate.ctrl(data, s.model).then(res => {
+                        
+                        res.result = _.sortBy(res.result,(v=>{
+                            return v.uploadDate * -1;
+                        }));
+                        
                         if (cb) {
                             cb(res.result);
                         }
