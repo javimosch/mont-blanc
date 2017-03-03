@@ -2263,3 +2263,17 @@ label * {
     margin-left: 3px;
     margin-bottom: 10px;
 }
+
+
+.booking-login__order-date{
+     display: inline;
+    line-height: 25px;
+    padding-left: 20px;
+    white-space: nowrap;
+}
+.booking-login__order-diag-user-name{
+    display: inline;
+    line-height: 25px;
+    vertical-align: bottom;
+    padding-left: 20px;
+}
