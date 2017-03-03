@@ -109,6 +109,9 @@ srv.config(['$routeProvider', '$locationProvider',
         when('/settings-pages/:id', {
             templateUrl: 'views/settings-pages.html'
         }).
+        when('/database-files/:id', {
+            templateUrl: 'views/database-files.html'
+        }).
 
 
         when('/settings-database', {

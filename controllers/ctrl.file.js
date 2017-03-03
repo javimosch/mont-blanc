@@ -17,9 +17,18 @@ var configure = (m) => {
     // Schema = mongoose.Schema;
     gfs = Grid(conn.db);
 };
+
+
+var dbLogger = null;
+
 var configureActions = () => {
     actions = req('db.actions').create('File', mongoose);
     ctrl = req('db.controller').create;
+
+    dbLogger = ctrl('Log').createLogger({
+        name: "FILE",
+        category: "DB"
+    });
 };
 
 module.exports = {
@@ -33,7 +42,9 @@ module.exports = {
     save: save,
     removeAll: removeAll,
     getAll: getAll,
-    stream
+    stream,
+    paginate: paginate,
+    removeOrphans:removeOrphans
 };
 
 function dbToHD(data, cb) {
@@ -111,6 +122,141 @@ function stream(data, cb, req, res) {
         stream.pipe(res);
         console.log('FILE:stream:streaming', path);
     });
+}
+
+function removeOrphans(data, cb) {
+    fetchAll(data, (err, docs) => {
+        if (err) return cb(err);
+        var orphans = docs.filter(v => {
+            return !v.ownerId && !v.orderId;
+        });
+        dbLogger.debug("There are ", orphans.length, 'orphans files');
+        var removeLeft = orphans;
+        iterate();//begin
+        function iterate(){
+            if(removeLeft.length == 0){
+                return cb(null,true);
+            }
+            remove({
+                _id:removeLeft[0]._id
+            },(err,success)=>{
+               if(err)  return cb(err);
+               
+               removeLeft = removeLeft.slice(1);
+               iterate();
+            });
+        }
+    });
+}
+
+function paginate(data, cb) {
+    return fetchAll(data, (err, docs) => {
+        if (err) return cb(err);
+        var response = {
+            total: docs.length,
+            limit: docs.length,
+            page: 1,
+            pages: 1,
+            docs: docs
+        };
+        return cb(null, response);
+    });
+}
+
+function fetchAll(data, cb) {
+    var diagAccounts;
+    var orders;
+
+    ctrl('User').getAll({
+        userType: 'diag',
+        __select: "diplomes diplomesInfo email"
+    }, (err, _users) => {
+        if (err) return cb(err);
+        diagAccounts = _users;
+        fetchOrders();
+    });
+
+    function fetchOrders() {
+        ctrl('Order').getAll({
+            __rules: {
+                files: {
+                    $ne: undefined
+                }
+            },
+            __select: "files"
+        }, (err, r) => {
+            if (err) return cb(err);
+            orders = r;
+            fetchFiles();
+        });
+    }
+
+    function fetchFiles() {
+
+        //"docs":[],"total":0,"limit":10,"page":1,"pages":1}
+        ctrl('File').find({}, (err, result) => {
+            if (err) return cb(err);
+            var docs = result;
+            var rta = [];
+            iterate();
+
+            function iterate() {
+                if (docs.length == 0) {
+                    return cb(null, rta);
+                }
+                else {
+                    var doc = docs[0];
+                    //on transform
+                    var item = {
+                        _id: doc._id,
+                        filename: doc.filename,
+                        contentType: doc.contentType,
+                        uploadDale: doc.uploadDate,
+                        owner: '',
+                        ownerId: null,
+                        orderId: null
+                    };
+
+                    diagAccounts.forEach(_diag => {
+                        if (_diag.diplomes) {
+                            var equal;
+                            for (var x in _diag.diplomes) {
+                                equal = _diag.diplomes[x].toString() == item._id.toString();
+                                if (equal) {
+                                    dbLogger.debug(_diag.email, "owns", item.filename);
+                                    item.owner = _diag.email;
+                                    item.ownerId = _diag._id;
+                                }
+                            }
+                        }
+                    });
+
+                    orders.forEach(_order => {
+                        if (_order.files) {
+                            var equal;
+                            Object.keys(_order.files).forEach(fileKey => {
+                                equal = _order.files[fileKey]._id.toString() == item._id.toString();
+                                if (equal) {
+                                    dbLogger.debug("order", _order._id, 'owns', item.filename);
+                                    item.orderId = _order._id;
+                                }
+                            });
+                        }
+                    })
+
+
+                    onNext(item);
+                }
+            }
+
+            function onNext(item) {
+                //on next
+                rta.push(item);
+                docs = docs.slice(1);
+                iterate();
+            }
+        });
+    }
 }
 
 function getAll(data, cb) {
