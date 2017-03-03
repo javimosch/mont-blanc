@@ -633,11 +633,18 @@ app.controller('ctrl-diag-edit', [
                     _id: s.item._id,
                     diplomesInfo: s.item.diplomesInfo
                 });
+                
+                $log.debug('diplomesUpdate');
 
                 s.item.diplomes.forEach((_id, k) => {
+                    
+                    $log.debug('File find',_id);
                     db.ctrl('File', 'find', {
                         _id: _id
                     }).then(data => {
+                        
+                        $log.debug('File find',data);
+                        
                         var file = data.result;
                         if (data.ok && file) {
                             s.item.diplomesInfo = s.item.diplomesInfo || {};
@@ -656,8 +663,11 @@ app.controller('ctrl-diag-edit', [
                                 });
                                 //
                                 console.info('diplome-info-created', _id);
+                            }else{
+                                s.item.diplomesInfo[_id].filename = file.filename;
                             }
-                            file = Object.assign(file, s.item.diplomesInfo && s.item.diplomesInfo[file._id] || {});
+                            //file = Object.assign(file, s.item.diplomesInfo && s.item.diplomesInfo[file._id] || {});
+                            
                             s.diplomesData[file._id] = s.diplomesDataCreate(file);
                         }
                         else {
