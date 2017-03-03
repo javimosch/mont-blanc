@@ -146,16 +146,37 @@ angular.module('app').controller('database-files', ['server', '$scope', '$rootSc
                     name: 'filename',
                     //format: (v, item) => item._diag.email
                 }, {
-                    label: "User",
+                    label: "Relation",
                     name: 'owner',
-                    //format: (v, item) => item._diag.email
-                }, {
+                    format: (v, item) => {
+                        if(!item.orderId && !item.ownerId){
+                            return 'None';
+                        }
+                        if(item.ownerId){
+                            return 'Diag account '+item.owner;
+                        }else{
+                            return 'Order '+item.orderId;
+                        }
+                    }
+                },/* {
                     label: 'Order',
                     name: 'orderId'
+                }, */{
+                    label: 'Linked',
+                    name: 'orderId',
+                    format: (v, item) =>{
+                        if(!item.orderId && !item.ownerId){
+                            return '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
+                        }else{
+                            return '<i class="fa fa-check" aria-hidden="true"></i>';
+                        }
+                    }
                 }, {
                     label: "Type",
                     name: 'contentType',
-                    //format: (v, item) => item._diag.email
+                    format: (v, item) => {
+                        return item.contentType.replace('application/','');
+                    }
                 }, {
                     label: 'Created',
                     name: 'uploadDate',
