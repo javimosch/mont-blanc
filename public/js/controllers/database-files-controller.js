@@ -142,6 +142,10 @@ angular.module('app').controller('database-files', ['server', '$scope', '$rootSc
                     }
                 }],
                 columns: [{
+                    label: "Internal Id",
+                    name: '_id',
+                    //format: (v, item) => item._diag.email
+                },{
                     label: "Name",
                     name: 'filename',
                     //format: (v, item) => item._diag.email
