@@ -211,7 +211,7 @@ function fetchAll(data, cb) {
                         _id: doc._id,
                         filename: doc.filename,
                         contentType: doc.contentType,
-                        uploadDale: doc.uploadDate,
+                        uploadDate: doc.uploadDate,
                         owner: '',
                         ownerId: null,
                         orderId: null
