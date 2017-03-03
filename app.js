@@ -116,6 +116,10 @@ app.get('/config.json', function(req, res) {
 app.get('/data.json', function(req, res) {
 	res.sendFile(path.join(__dirname + '/public/data.json'));
 });
+app.get('/sitemap.xml', function(req, res) {
+	res.sendFile(path.join(__dirname + '/public/sitemap.xml'));
+});
+
 app.get('/preprod.html', function(req, res) {
 	res.sendFile(path.join(__dirname + '/public/preprod.html'));
 });
