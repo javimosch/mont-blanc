@@ -49,7 +49,7 @@
     height: 6px;
     width: 100%;
     border-radius: 10px;
-    margin-bottom:20px;
+    margin-bottom: 20px;
 }
 
 
@@ -748,11 +748,11 @@ a.diag-btn-info:hover {
 }
 
 .diags-home-bg {
-        background: url(../img/intermediary-background.jpg);
-        /*background-position: center top;*/
-        background-repeat: no-repeat;
-        background-size: contain;
-    }
+    background: url(../img/intermediary-background.jpg);
+    /*background-position: center top;*/
+    background-repeat: no-repeat;
+    background-size: contain;
+}
 
 @media screen and (min-width: 480px) {
     .diags-home-bg {
@@ -2264,16 +2264,17 @@ label * {
     margin-bottom: 10px;
 }
 
-
-.booking-login__order-date{
-     display: inline;
+.booking-login__order-date {
+    display: inline;
     line-height: 25px;
-    padding-left: 20px;
+    padding-left: 5px;
     white-space: nowrap;
+    vertical-align: bottom;
 }
-.booking-login__order-diag-user-name{
+
+.booking-login__order-diag-user-name {
     display: inline;
     line-height: 25px;
     vertical-align: bottom;
-    padding-left: 20px;
+    padding-left: 5px;
 }
