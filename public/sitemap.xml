@@ -1,115 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>http://www.diagnostical.fr</loc>
+        <loc>https://www.diagnostical.fr</loc>
+        <priority>1</priority>
+    </url>
+    <url>
+        <loc>https://www.diagnostical.fr/</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/</loc>
+        <loc>https://www.diagnostical.fr/files/spf.pdf</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/files/spf.pdf</loc>
+        <loc>https://www.diagnostical.fr/dpe</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/dpe</loc>
+        <loc>https://www.diagnostical.fr/carrez</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/carrez</loc>
+        <loc>https://www.diagnostical.fr/ernmt</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/ernmt</loc>
+        <loc>https://www.diagnostical.fr/termites</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/termites</loc>
+        <loc>https://www.diagnostical.fr/plomb</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/plomb</loc>
+        <loc>https://www.diagnostical.fr/amiante</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/amiante</loc>
+        <loc>https://www.diagnostical.fr/electricite</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/electricite</loc>
+        <loc>https://www.diagnostical.fr/gaz</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/gaz</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-paris</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-paris</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-nice</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-nice</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-dijon</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-dijon</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-marseille</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-marseille</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-toulouse</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-toulouse</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-rennes</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-rennes</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-lyon</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-lyon</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-bordeaux</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-bordeaux</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-tours</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-tours</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-grenoble</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-grenoble</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-angers</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-angers</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-creteil</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-creteil</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-saint-etienne</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-saint-etienne</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-lille</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-lille</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-melun</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-melun</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-nantes</loc>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-nantes</loc>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>http://www.diagnostical.fr/diagnostic-immobilier-strasbourg</loc>
+        <loc>https://www.diagnostical.fr/diagnostic-immobilier-strasbourg</loc>
         <priority>0.5</priority>
     </url>
 </urlset>

@@ -30,7 +30,7 @@ var callHook = function(schemaName, hookName, dataOrHandler) {
         logger: null,
         listeners: {}
     };
-    var hookData = hooksData[schemaName]
+    var hookData = hooksData[schemaName];
     
     //Lazy initialization and get of logger
     hookDataLoggerLazyInitialization(hookData);
