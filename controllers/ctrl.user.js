@@ -25,6 +25,10 @@ var dbLogger = ctrl('Log').createLogger({
     name: "USER",
     category: "DB"
 });
+var afterSaveLogger = ctrl('Log').createLogger({
+    name: "USER",
+    category: "afterSave"
+});
 
 function everyAdmin(cb) {
     ctrl('User').getAll({
@@ -312,11 +316,12 @@ function _preCreateWallet(data, cb, next) {
         return ctrl('Lemonway').registerWallet(payload, (err, res) => {
             if (!err && res && res.WALLET) {
                 data.wallet = res.WALLET.ID;
-                logger.info('LEMONWAY WALLET (automatic registration before saving user)', data.wallet);
+                //logger.info('LEMONWAY WALLET (automatic registration before saving user)', data.wallet);
             }
             if (err) {
-                logger.error('LEMONWAY WALLET (automatic registration before saving user)', err);
-                LogSave('LEMONWAY WALLET (automatic registration before saving user)', 'error', err);
+                //already logged by lemonway controller ..
+                //logger.error('LEMONWAY WALLET (automatic registration before saving user)', err);
+                //LogSave('LEMONWAY WALLET (automatic registration before saving user)', 'error', err);
             }
             return next(data, cb);
         });
@@ -335,36 +340,36 @@ function save(data, cb) {
         _preUpdateWallet(data, cb, __save);
     });
 
-/*
-    var originalItem = null;
-    function __fetch(data, cb) {
-        if (data._id) {
-            actions.get({
-                _id: data._id
-            }, (err, _user) => {
-                if (err) return cb(err);
-                originalItem = _user;
+    /*
+        var originalItem = null;
+        function __fetch(data, cb) {
+            if (data._id) {
+                actions.get({
+                    _id: data._id
+                }, (err, _user) => {
+                    if (err) return cb(err);
+                    originalItem = _user;
+                    return __save(data, cb);
+                });
+            }
+            else {
                 return __save(data, cb);
-            });
-        }
-        else {
-            return __save(data, cb);
-        }
-    }*/
+            }
+        }*/
 
     function __save(data, cb) {
         actions.createUpdate(data, (err, _user) => {
             if (err) return cb(err);
 
-            //if originalItem is diag disabled and new item is diag activated, send email
+            /*
             if (_user.userType == 'diag' && !_user.disabled) {
-                if(_user.notifications && !_user.notifications.DIAG_DIAG_ACCOUNT_ACTIVATED){
+                if (_user.notifications && !_user.notifications.DIAG_DIAG_ACCOUNT_ACTIVATED) {
                     //dbLogger.debugSave('Should notify activation ', _user.email);    
-                     Notif.trigger(NOTIFICATION.DIAG_DIAG_ACCOUNT_ACTIVATED, {
+                    Notif.trigger(NOTIFICATION.DIAG_DIAG_ACCOUNT_ACTIVATED, {
                         _user: _user
                     }, (_err, r) => handleNewAccount(_user, err, r));
                 }
-            }
+            }*/
 
             return cb(err, _user);
         }, {
@@ -376,13 +381,14 @@ function save(data, cb) {
 
 
     function postCreate_notifications(err, _user) {
+
         /*
-        dbLogger.setSaveData({
-            _user:_user,
-            err:err
-        });
-        dbLogger.debugSave('OnCreate: ',_user.email);
-        return;*/
+                dbLogger.setSaveData({
+                    _user: _user,
+                    err: err
+                });
+                dbLogger.debugSave('OnCreate: ', _user.email);
+        */
 
         switch (_user.userType) {
             case 'admin':
@@ -414,15 +420,15 @@ function save(data, cb) {
                     Notif.trigger(NOTIFICATION.DIAG_DIAG_ACCOUNT_CREATED, {
                         _user: _user
                     }, (_err, r) => handleNewAccount(_user, err, r));
-
-                    everyAdmin((err, _admin) => {
-                        if (err) return cb && cb(err) || LogSave(JSON.stringify(err), 'error', err);
-                        Notif.trigger(NOTIFICATION.ADMIN_DIAG_ACCOUNT_CREATED, {
-                            _user: _user,
-                            _admin: _admin
-                        }, (_err, r) => handleNewAccount(_user, err, r));
-                    });
-                    return;
+                    /*
+                                        everyAdmin((err, _admin) => {
+                                            if (err) return cb && cb(err) || LogSave(JSON.stringify(err), 'error', err);
+                                            Notif.trigger(NOTIFICATION.ADMIN_DIAG_ACCOUNT_CREATED, {
+                                                _user: _user,
+                                                _admin: _admin
+                                            }, (_err, r) => handleNewAccount(_user, err, r));
+                                        });
+                                        return;*/
                 }
                 break;
         }
@@ -440,7 +446,7 @@ function LogSave(msg, type, data, category) {
 }
 
 function handleNewAccount(_user, err, r) {
-    return; 
+    return;
     //deprecated
     /*
     if (err) return LogSave(err.message, 'error', err);
@@ -604,17 +610,48 @@ module.exports = {
     create: create,
     log: actions.log,
     _configure: (hook) => {
-        hook('preSave', preSave);
+        //hook('preSave', preSave);
+        hook('afterSave', afterSave);
     }
 };
 
 
-function preSave(data) {
+function afterSave(data) {
+    if (!data) {
+        afterSaveLogger.errorSave('data required (_user)');
+        return data;
+    }
+    if (data && !data._id) {
+        afterSaveLogger.setSaveData(data);
+        afterSaveLogger.warnSave('_user should have an _id');
+        return data;
+    }
+    else {
+        //afterSaveLogger.setSaveData(data);
+         //afterSaveLogger.debugSave('Success');
+         
+         /*if(!data.__fetch){
+             return ctrl('User').get({
+                 _id:data._id
+             },(err,_user)=>{
+                data.__fetch = true;
+                if(!err) Object.assign(data,_user);
+                return afterSave(data);
+             })
+         }*/
+
+        data.notifications = data.notifications || {};
+
+    }
 
     //ADMIN#1 OK ctrl.user
     if (data.notifications && data.userType == 'admin' && !data.notifications.ADMIN_ADMIN_ACCOUNT_CREATED) {
         Notif.trigger(NOTIFICATION.ADMIN_ADMIN_ACCOUNT_CREATED, {
             _user: data
+        },err=>{
+            if(!err){
+                data.notifications.ADMIN_ADMIN_ACCOUNT_CREATED = true;
+            }
         });
     }
 
@@ -631,25 +668,27 @@ function preSave(data) {
     }
 
 
-    //DIAG//#1 OK ctrl.user app.diag.complete
-    if (data.notifications && data.userType == 'diag' && data.disabled == false && !data.notifications.DIAG_DIAG_ACCOUNT_CREATED) {
-        Notif.trigger(NOTIFICATION.DIAG_DIAG_ACCOUNT_CREATED, {
+    //DIAG// AFTER ACCOUNT ACTIVATION
+    if (data.notifications && data.userType == 'diag' && data.disabled == false && !data.notifications.DIAG_DIAG_ACCOUNT_ACTIVATED) {
+        Notif.trigger(NOTIFICATION.DIAG_DIAG_ACCOUNT_ACTIVATED, {
             _user: data
+        },err=>{
+            if(!err){
+                data.notifications.DIAG_DIAG_ACCOUNT_ACTIVATED = true;
+            }
         });
     }
 
-    //ADMIN//#3 OK ctrl.user
-    if (data.notifications && data.userType == 'diag' && data.disabled == true && !data.notifications.ADMIN_DIAG_ACCOUNT_CREATED) {
+    //ADMIN DIAG AFTER ACCOUNT CREATION
+    if (data.notifications && data.userType == 'diag' && !data.notifications.ADMIN_DIAG_ACCOUNT_CREATED) {
         everyAdmin((err, _admin) => {
-            if (err) return LogSave(JSON.stringify(err), 'error', err);
-
-            console.log(JSON.stringify(_admin));
-
+            if (err) return afterSaveLogger.errorSave('admins iteration error');
             Notif.trigger(NOTIFICATION.ADMIN_DIAG_ACCOUNT_CREATED, {
                 _user: _.cloneDeep(data),
                 _admin: _admin
             });
         });
+        data.notifications.ADMIN_DIAG_ACCOUNT_CREATED = true;
     }
 
     return data;

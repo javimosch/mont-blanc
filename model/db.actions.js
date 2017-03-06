@@ -5,49 +5,62 @@ var getSchema = req('db').getSchema;
 var validate = req('validator').validate;
 var promise = req('utils').promise;
 
+var hookLogger;
 
+function hookDataLoggerLazyInitialization(hookData) {
+    var ctrl = require('./db.controller').create;
+    hookData.logger = hookData.logger || ctrl('Log').createLogger({
+        name: "DB-Hook",
+        category: hookData.schema
+    });
+    if (hookData.schema == 'Log' || hookData.schema == 'logs') {
+        hookData.logger.debugSave = hookData.logger.debug;
+        hookData.logger.errorSave = hookData.logger.error;
+        hookData.logger.warnSave = hookData.logger.warnSave;
+        //This way, we prevent Maximum call stack size exceeded
+    }
+}
 
-var __hookData = {};
-var _hook = function(schemaName, n, cb, data, index) {
+var hooksData = {}; //Store all the hooks data here
+var callHook = function(schemaName, hookName, dataOrHandler) {
 
+    //Initialize an object to store hook listeners and logger (hook data)
+    hooksData[schemaName] = hooksData[schemaName] || {
+        schema: schemaName,
+        logger: null,
+        listeners: {}
+    };
+    var hookData = hooksData[schemaName]
+    
+    //Lazy initialization and get of logger
+    hookDataLoggerLazyInitialization(hookData);
+    var hookLogger = hookData.logger;
 
+    //Get the hook listeners from the current schema and hook type (preSave, afterSave, etc)
+    hookData.listeners[hookName] = hookData.listeners[hookName] || [];
+    var listeners = hookData.listeners[hookName];
 
-    __hookData[schemaName] = __hookData[schemaName] || {};
-    var _hooks = __hookData[schemaName];
-    _hooks[n] = _hooks[n] || [];
-    //
-    if (typeof cb == 'function') {
-        _hooks[n].push(cb);
-        //console.log(schemaName, 'HOOK', n, 'added at', _hooks[n].length);
+    if (typeof dataOrHandler === 'function') {
+        //Handlers are stored
+        listeners.push(dataOrHandler);
+        hookLogger.debug('Register', hookName, '(', listeners.length, ')');
     }
     else {
-
-        if (data && index) {
-
-            var _cb = _hooks[n][index] || undefined;
-            if (!_cb) {
-                //console.log(schemaName, 'HOOK:RTA', JSON.stringify(data));
-                return data;
+        //Data is used to call listeners 
+        var _data = dataOrHandler;
+        if (listeners.length > 0) {
+            var handler;
+            for (var x in listeners) {
+                handler = listeners[x];
+                _data = handler(_data);
             }
-            else {
-                console.log(schemaName, 'HOOK', n, 'fire:index:', index, '  total:', _hooks[n].length);
-                data = _cb(data);
-                return _hook(schemaName, n, null, data, index++);
-            }
+
+            hookLogger.debug('Trigger', hookName, '(', listeners.length, ' times)');
+
+            return _data;
         }
         else {
-
-            var _data = cb;
-            if (_hooks[n][0]) {
-                console.log(schemaName, 'HOOK', n, 'fire:index:', 0, '  total:', _hooks[n].length);
-                //console.log(schemaName, 'HOOK', n, 'firing', 0);
-                _data = _hooks[n][0](_data);
-                return _hook(schemaName, n, null, _data, 1);
-            }
-            else {
-                //console.log(schemaName, 'HOOK', n, 'skip');
-                return _data;
-            }
+            return _data;
         }
     }
 };
@@ -64,8 +77,8 @@ exports.create = function(modelName, m) {
 
     var logger = require('./logger')(modelName.toUpperCase());
 
-    var hook = (a, b, c, d) => {
-        return _hook(modelName, a, b, c, d);
+    var hook = (hookName, dataOrHandler) => {
+        return callHook(modelName, hookName, dataOrHandler);
     };
 
     function log(x) {
@@ -141,6 +154,7 @@ exports.create = function(modelName, m) {
                     }), data).exec((err, r) => {
                         if (err) return rta(err, null);
                         if (!r) return rta(modelName + '= ' + _id + ' do not belong to any item.', null);
+                        r = hook('afterSave', r);
                         return rta(err, r);
                     });
                 }
@@ -172,6 +186,7 @@ exports.create = function(modelName, m) {
                             }
                             data = hook('preSave', data);
                             return r.save((err, r) => {
+                                r = hook('afterSave', r);
                                 emit('updated', err, r);
                                 return rta(err, r);
                             });
@@ -181,6 +196,7 @@ exports.create = function(modelName, m) {
                             data = hook('preSave', data);
                             _create(data, (err, r) => {
                                 if (err) return rta(err, null);
+                                r = hook('afterSave', r);
                                 emit('created', err, r);
                                 return rta(err, r);
                             }, requiredKeys);
@@ -192,6 +208,7 @@ exports.create = function(modelName, m) {
                     data = hook('preSave', data);
                     _create(data, (err, r) => {
                         if (err) return rta(err, null);
+                        r = hook('afterSave', r);
                         emit('created', err, r);
                         return rta(err, r);
                     }, requiredKeys);
@@ -319,7 +336,7 @@ exports.create = function(modelName, m) {
                     message: err.toString()
                 };
             }
-            
+
             if (err) {
                 resultLogger.warn(modelName, err);
             }
@@ -431,6 +448,10 @@ exports.create = function(modelName, m) {
         }
     }
 
+    function handleError(action, data, msg) {
+
+    }
+
     function toRules(data) {
         data = data || {};
         var rules = {};
@@ -501,6 +522,7 @@ exports.create = function(modelName, m) {
                 log('update:ok=' + !err + ' ' + JSON.stringify(err));
                 if (!cb) return;
                 if (err) return cb(err, null);
+                r = hook('afterSave', r);
                 log('update:rta=' + JSON.stringify(r));
                 return cb(null, r);
             });

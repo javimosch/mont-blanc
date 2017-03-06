@@ -17,6 +17,10 @@ var actions = {
 };
 
 var ctrl = require('../model/db.controller').create;
+var triggerLogger = ctrl('Log').createLogger({
+    name: "NOTIFICATION",
+    category: "TRIGGER"
+});
 var dbLogger = ctrl('Log').createLogger({
     name: "NOTIFICATION",
     category: "DB"
@@ -82,6 +86,12 @@ function trigger(name, data, cb) {
         dbLogger.warnSave('Not found',name);
         return cb && cb("Notification " + name+' not found');
     }
+    
+    if(data._user && !data._user._id){
+        triggerLogger.setSaveData(data._user);
+        triggerLogger.warnSave('_user should have an _id');
+    }
+    
     data.__notificationType = name;
     return EmailHandler[name](data, cb);
 }
@@ -95,9 +105,7 @@ function save(data, cb) {
     if (typeof _user === 'object' && !_user._id) {
         dbLogger.setSaveData({
             detail:'data._user needs to have an _id property.',
-            type: data.type,
-            subject: data.subject,
-            to: data.to
+            data:data._user
         });
         return dbLogger.errorSave('Save error from user' , _user.email);
     }

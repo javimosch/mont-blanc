@@ -114,6 +114,13 @@ function dummySuccessResponse(cb) {
 }
 
 function send(opt, resCb) {
+    
+    /*
+    if(!opt._user._id){
+        emailTriggerLogger.setSaveData(opt._user);
+        emailTriggerLogger.warnSave('_user should have an _id');
+    }*/
+    
     var html = opt.html || template(opt.templateName, opt.templateReplace);
     if (opt.subject) {
         if (process.env.companyName) {
