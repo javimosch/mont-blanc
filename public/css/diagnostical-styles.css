@@ -2270,6 +2270,7 @@ label * {
     padding-left: 5px;
     white-space: nowrap;
     vertical-align: bottom;
+    margin-right: -15px;
 }
 
 .booking-login__order-diag-user-name {
