@@ -624,13 +624,13 @@ function scrollToTop(time) {
         });
         setTimeout(function() {
             if (change) {
-                //console.log('scroll.should.abort');
+                console.log('scroll.should.abort');
             }
             else {
-                //console.log('scroll.should.go.up');
+                console.log('scroll.should.go.up');
                 $('html, body').animate({
                     scrollTop: 0
-                }, time || 800);
+                }, time || 0);
             }
             $(window).off('scroll.fsutils');
         }, 1500);

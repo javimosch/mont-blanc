@@ -537,7 +537,9 @@ app.controller('ctrl.booking', ['server',
         };
 
         var fetch_diag_info_called = false;
-
+        s.$watch('item._diag', function() {
+            fetch_diag_info_called = false;
+        },true);
         function fetch_diag_info() {
             if (fetch_diag_info_called) return;
             fetch_diag_info_called = true;
