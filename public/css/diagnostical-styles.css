@@ -1428,14 +1428,14 @@ h2.diags.black>div {
     display: -webkit-flex;
     /* NEW - Chrome */
     display: flex;
-    background-color: #D5EFFD;
+    background-color: #def3ff;
     width: 179px;
     margin: 36px auto;
     border-radius: 5px;
 }
 
 .diags-date-day-item:hover {
-    background-color: white;
+    background-color: #12d681;
 }
 
 .diags-date-day-item.selected {
@@ -1447,6 +1447,12 @@ h2.diags.black>div {
     padding: 25px 29px;
 }
 
+.diags-date-day-item:hover .diags-date-day-item-description-wrapper .time-price{
+    color:white;
+}
+.diags-date-day-item:hover .diags-date-day-item-description-wrapper .diag-guy{
+    color:white;
+}
 .diags-date-day-item .diags-date-day-item-description-wrapper .time-price {
     color: #0B3967;
     /*normal*/
