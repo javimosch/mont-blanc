@@ -747,8 +747,6 @@ a.diag-btn-info:hover {
     min-height: 653px;
 }
 
-
-
 .diags-pill-success {
     background-color: #01DF8A;
     width: 63px;
@@ -1409,6 +1407,8 @@ h2.diags.black>div {
     width: 179px;
     margin: 36px auto;
     border-radius: 5px;
+    margin-left: auto!important;
+    margin-right: auto!important;
 }
 
 .diags-date-day-item:hover {
@@ -1424,12 +1424,14 @@ h2.diags.black>div {
     padding: 25px 29px;
 }
 
-.diags-date-day-item:hover .diags-date-day-item-description-wrapper .time-price{
-    color:white;
+.diags-date-day-item:hover .diags-date-day-item-description-wrapper .time-price {
+    color: white;
 }
-.diags-date-day-item:hover .diags-date-day-item-description-wrapper .diag-guy{
-    color:white;
+
+.diags-date-day-item:hover .diags-date-day-item-description-wrapper .diag-guy {
+    color: white;
 }
+
 .diags-date-day-item .diags-date-day-item-description-wrapper .time-price {
     color: #0B3967;
     /*normal*/
