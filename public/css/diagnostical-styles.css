@@ -747,30 +747,7 @@ a.diag-btn-info:hover {
     min-height: 653px;
 }
 
-.diags-home-bg {
-    background: url(../img/intermediary-background.jpg);
-    /*background-position: center top;*/
-    background-repeat: no-repeat;
-    background-size: contain;
-}
 
-@media screen and (min-width: 480px) {
-    .diags-home-bg {
-        /*
-        background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/intermediary-background.jpg) no-repeat;*/
-        background: url(../img/intermediary-background.jpg);
-        background-position: center top;
-    }
-}
-
-@media screen and (min-width: 1200px) {
-    .diags-home-bg {
-        background: url(../img/background.jpg);
-        background-repeat: no-repeat;
-        min-height: 620px;
-        background-size: cover;
-    }
-}
 
 .diags-pill-success {
     background-color: #01DF8A;
