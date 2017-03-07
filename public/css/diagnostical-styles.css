@@ -1416,7 +1416,7 @@ h2.diags.black>div {
 }
 
 .diags-date-day-item.selected {
-    background-color: #D9F3FF;
+    background-color: #12d681;
 }
 
 .diags-date-day-item-check-wrapper {
@@ -1424,11 +1424,18 @@ h2.diags.black>div {
     padding: 25px 29px;
 }
 
-.diags-date-day-item:hover .diags-date-day-item-description-wrapper .time-price {
-    color: white;
+.rdv-day-wrapper{
+    min-height: 420px!important;
 }
 
-.diags-date-day-item:hover .diags-date-day-item-description-wrapper .diag-guy {
+.diags-date-day-item:hover .diags-date-day-item-description-wrapper .time-price,
+.diags-date-day-item.selected .diags-date-day-item-description-wrapper .time-price{
+    color: white;
+    /*color: #00A9FF!important;*/
+}
+
+.diags-date-day-item:hover .diags-date-day-item-description-wrapper .diag-guy,
+.diags-date-day-item.selected .diags-date-day-item-description-wrapper .diag-guy{
     color: white;
 }
 
@@ -1441,9 +1448,7 @@ h2.diags.black>div {
     padding-top: 6px;
 }
 
-.diags-date-day-item.selected .diags-date-day-item-description-wrapper .time-price {
-    color: #00A9FF!important;
-}
+
 
 .diags-date-day-item-description-wrapper .diag-guy {
     color: #0B3967;
