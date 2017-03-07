@@ -62,6 +62,7 @@ var EXPORT_ACTIONS = {
     ADMIN_ORDER_PAYMENT_DELEGATED: ADMIN_ORDER_PAYMENT_DELEGATED,
     ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS: ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS,
     ADMIN_ORDER_PAYMENT_SUCCESS: ADMIN_ORDER_PAYMENT_SUCCESS,
+    ADMIN_ORDER_CREATED_SUCCESS:ADMIN_ORDER_CREATED_SUCCESS,
 
     CLIENT_CLIENT_NEW_ACCOUNT: CLIENT_CLIENT_NEW_ACCOUNT,
     CLIENT_ORDER_DELEGATED: CLIENT_ORDER_DELEGATED,
@@ -458,6 +459,19 @@ function ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS(data, cb) {
             data._order.currentMonthTotalRevenueHT = _currentMonthTotalRevenueHT;
             DIAGS_CUSTOM_NOTIFICATION(
                 NOTIFICATION.ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS, data, cb, 'Nouvelle commande prépayée', data._user.email, data._order, 'Order');
+        });
+    }
+}
+
+//ADMIN//#8 OK ctrl.order
+function ADMIN_ORDER_CREATED_SUCCESS(data, cb) {
+    //requires: _user _order
+    var subject = 'Paiement créée: ' + data._order.address + '/' + dateTime(data._order.start);
+    if (data._order.notifications.ADMIN_ORDER_CREATED_SUCCESS !== true) {
+        statsActions.currentMonthTotalRevenueHT({}, (_err, _currentMonthTotalRevenueHT) => {
+            data._order.currentMonthTotalRevenueHT = _currentMonthTotalRevenueHT;
+            DIAGS_CUSTOM_NOTIFICATION(
+                NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, data, cb, subject, data._user.email, data._order, 'Order');
         });
     }
 }

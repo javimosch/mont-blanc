@@ -31,6 +31,11 @@ var saveKeys = ['_client', '_diag', 'start', 'end', 'diags'
 ];
 
 
+var dbLogger = ctrl('Log').createLogger({
+    name: "ORDER",
+    category: "DB"
+});
+
 function LogSave(msg, type, data) {
     try {
         Log.save({
@@ -135,7 +140,7 @@ function payUsingLW(data, callback) {
             __select: "status"
         }, function(err, _order) {
             if (err) return cb(err);
-            if (_.includes(['created','ordered'],_order.status)) {
+            if (_.includes(['created', 'ordered'], _order.status)) {
                 data.__allowPayment = true;
                 return payUsingLW(data, cb);
             }
@@ -151,27 +156,29 @@ function payUsingLW(data, callback) {
 
     if (!data.secret) return cb('secret field required');
     if (!data.p2pDiag) return cb('p2pDiag field required');
-    
- 
+
+
     var decodedPayload = decodePayload(data.secret);
-    
-    
+
+
     //263 master-wallet-for-payments (IMMOCAL, technical wallet)
-    if(!data.masterWallet){
+    if (!data.masterWallet) {
         return ctrl('Lemonway').getWalletDetails({
-            wallet:"IMMOCAL"
-        },function(err,res){
-            if(err) return cb(err);
-            if(res.WALLET){
+            wallet: "IMMOCAL"
+        }, function(err, res) {
+            if (err) return cb(err);
+            if (res.WALLET) {
                 data.masterWallet = res.WALLET.ID;
-                return payUsingLW(data,cb);
-            }else{
+                return payUsingLW(data, cb);
+            }
+            else {
                 //If there is not an IMMOCAL wallet (rare), we pay with client wallet as normal.
                 data.masterWallet = decodedPayload.wallet;
-                return payUsingLW(data,cb);
+                return payUsingLW(data, cb);
             }
         })
-    }else{
+    }
+    else {
         decodedPayload.wallet = data.masterWallet; //we use this wallet for the client payment move.
         data.p2pDiag.debitWallet = data.masterWallet; //we use this wallet for the diag p2p movement.
     }
@@ -221,7 +228,7 @@ function payUsingLW(data, callback) {
                 ctrl('Lemonway').sendPayment(p2pPayload, function(err, res) {
                     logger.info(MODULE, ' P2P-RESULT', err, res);
                     if (err) {
-                       // logger.error(MODULE, ' P2P after card transaction ', err);
+                        // logger.error(MODULE, ' P2P after card transaction ', err);
                         //LogSave('P2P after card transaction error', 'error', err);
                     }
                     else {
@@ -295,7 +302,7 @@ function notifyClientOrderCreation(_order) {
             }, (_err, _client) => {
                 _client._orders.push(_order.id);
 
-                
+
 
             });
         }
@@ -326,7 +333,7 @@ function save(data, cb, customRequiredKeys) {
 
 
     function _saveNext() {
-       
+
         actions.createUpdate(data, (err, r) => {
             if (err) return cb(err, r);
             cb(err, r);
@@ -507,6 +514,13 @@ function everyAdmin(cb) {
     UserAction.getAll({
         userType: 'admin'
     }, (_err, _admins) => {
+        if (_err) {
+            dbLogger.setSaveData({
+                err: _err
+            });
+            dbLogger.errorSave('User fetch (Admins)');
+            return;
+        }
         _admins.forEach((_admin) => {
             cb(_admin);
         });
@@ -643,6 +657,30 @@ function saveWithEmail(data, cb) {
     });
 }
 
+function afterSave(data) {
+    if (data.status == 'created') {
+        ctrl('Order').get({
+            _id: data._id,
+            __populate: {
+                _diag: "firstName lastName",
+                _client: "firstName lastName cellPhone fixedTel companyName"
+            }
+        }, (err, _order) => {
+            if (err) return;
+            _order.notifications = _order.notifications || {};
+            if (_order.status == 'created' && !_order.notifications.ADMIN_ORDER_CREATED_SUCCESS) {
+                everyAdmin((_admin) => {
+                    Notif.trigger(NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, {
+                        _order: _order,
+                        _user: _admin
+                    });
+                });
+            }
+        });
+    }
+    return data;
+}
+
 function preSave(data) {
 
 
@@ -681,5 +719,6 @@ module.exports = {
     log: actions.log,
     _configure: (hook) => {
         hook('preSave', preSave);
+        hook('afterSave', afterSave);
     }
 };
