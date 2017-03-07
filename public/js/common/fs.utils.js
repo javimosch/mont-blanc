@@ -60,6 +60,7 @@ function numberBetween(n, min, max) {
 }
 
 function expose(path, v) {
+    if(window.r && window.r.isDevEnv && !window.r.isDevEnv()) return;
     setVal(window, path, v);
 }
 
