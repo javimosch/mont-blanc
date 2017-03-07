@@ -114,6 +114,7 @@
             }
 
             var end = moment(cursor).add(settings.time.hours, 'hours').add(settings.time.minutes, 'minutes');
+            var equal = end._d == moment(cursor)._d;
             var hasCollisions = collisions.filter((r) => {
                 if (r.repeat && r.repeat === 'none') {
                     if (moment.range(r.start, r.end).overlaps(moment.range(cursor, end))) {
@@ -243,15 +244,16 @@
                         //$log.debug(ID, 'TOTAL_COLLISIONS', diagsCollisions.length);
 
 
-                        function allocateSlots(rdvDiags, diagsCollisions, iterations) {
+                        function allocateSlots(rdvDiags, diagCollisions, iterations) {
                             //$log.debug(ID, 'allocate START iterations ', iterations);
                             if (iterations == 0) {
                                 //$log.debug(ID, 'RESOLVE (ITERATIONS WARN)', slots.length, 'slots');
                                 //return resolve(slots);
                             }
+                            var diagCollisions;
                             for (var index in rdvDiags) {
                                 diagId = rdvDiags[index];
-
+                                diagCollisions = [];
                                 if (settings.diagId != undefined) {
                                     if (settings.diagId != diagId) {
                                         continue;
@@ -265,17 +267,29 @@
 
                                 if (isFixedSlots(settings)) {
                                     //morning
-                                    if (isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(9).minutes(0), settings) && slots.length < 4) {
+
+                                    var availableAtSlot1 = isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(9).minutes(0), settings) && slots.length < 4;
+
+                                    if (availableAtSlot1) {
                                         slots.push(createRdvSlot(diagId, moment(cursor).hour(9).minutes(0), settings));
+                                    }
+                                    var availableAtSlot2 = isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(10).minutes(0), settings) && slots.length < 4;
+                                    if (availableAtSlot2) {
                                         slots.push(createRdvSlot(diagId, moment(cursor).hour(10).minutes(0), settings));
                                     }
+
                                     //afternoon
-                                    if (isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(14).minutes(0), settings) && slots.length < 4) {
+                                    availableAtSlot1 = isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(14).minutes(0), settings) && slots.length < 4;
+                                    if (availableAtSlot1) {
                                         slots.push(createRdvSlot(diagId, moment(cursor).hour(14).minutes(0), settings));
+                                    }
+                                    availableAtSlot1 = isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(15).minutes(0), settings) && slots.length < 4;
+                                    if (availableAtSlot2) {
                                         slots.push(createRdvSlot(diagId, moment(cursor).hour(15).minutes(0), settings));
                                     }
+
                                     if (slots.length == 4) {
-                                       // $log.debug(ID, 'resolved with', slots.length, ' fixed slots');
+                                        // $log.debug(ID, 'resolved with', slots.length, ' fixed slots');
                                         return resolve(slots);
                                     }
                                     else {
@@ -301,7 +315,7 @@
                             }
 
                             if (isFixedSlots(settings)) {
-                               // $log.debug(ID, 'resolved (after loop) with', slots.length, ' fixed slots');
+                                // $log.debug(ID, 'resolved (after loop) with', slots.length, ' fixed slots');
                                 return resolve(slots);
                             }
                             else {

@@ -730,6 +730,17 @@ function replaceHTML(html, obj) {
     return html;
 }
 
+function dateRangeOverlaps(a_start, a_end, b_start, b_end) {
+    if(a_start._d) a_start = a_start._d;
+    if(a_end._d) a_end = a_end._d;
+    if(b_start._d) b_start = b_start._d;
+    if(b_end._d) b_end = b_end._d;
+    if (a_start <= b_start && b_start <= a_end) return true; // b starts in a
+    if (a_start <= b_end   && b_end   <= a_end) return true; // b ends in a
+    if (b_start <  a_start && a_end   <  b_end) return true; // a in b
+    return false;
+}
+
 if (typeof exports !== 'undefined') {
     exports.MyPromise = MyPromise;
     exports.getHashParams = getHashParams;
@@ -747,6 +758,7 @@ else {
     window.ifThenMessage = ifThenMessage;
 
     window.$U = {
+        dateRangeOverlaps:dateRangeOverlaps,
         readJSONSync: readJSONSync,
         store: store,
         replaceHTML: replaceHTML,
