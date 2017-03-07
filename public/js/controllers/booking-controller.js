@@ -61,7 +61,7 @@ app.controller('ctrl.booking', ['server',
             if (appRouter.currentPath == 'payment') {
                 var meta = r.sessionMetadata();
                 if (!meta.booking || !meta.booking._order) {
-                    console.log('DEBUG INVALID-METADATA ROUTING-TO-HOME ORDER-EXPECTED', r.sessionMetadata());
+                    //$log.debug('DEBUG INVALID-METADATA ROUTING-TO-HOME ORDER-EXPECTED', r.sessionMetadata());
                     return changeRoute(r.URL.HOME);
                 }
             }
@@ -74,7 +74,7 @@ app.controller('ctrl.booking', ['server',
                 return;
             }
             validateQuestions(() => {}, () => {
-                console.log('DEBUG INVALID-METADATA ROUTING-TO-HOME', r.sessionMetadata());
+                //$log.debug('DEBUG INVALID-METADATA ROUTING-TO-HOME', r.sessionMetadata());
                 r.sessionMetadata({
                     booking: {}
                 });
@@ -95,7 +95,7 @@ app.controller('ctrl.booking', ['server',
         }
 
         function changeRoute(url, delay) {
-            console.log('VIRTUAL-ROUTE-TO ', url);
+            //$log.debug('VIRTUAL-ROUTE-TO ', url,Object.assign({},s.item));
             r.sessionMetadata({
                 booking: {
                     item: s.item,
@@ -342,6 +342,20 @@ app.controller('ctrl.booking', ['server',
             s.item.start = range.start;
             s.item.end = range.end;
 
+            if (s.item._diag) {
+                //$log.debug('fetch _diag',s.item._diag);
+                db.ctrl('User', 'get', {
+                    _id: s.item._diag,
+                    __select: "firstName lastName email"
+                }).then(res => {
+                //    $log.debug('fetch _diag',res.result);
+                    s.item.__diag = res.result;
+                });
+            }
+            else {
+                $log.warn('item._diag should exists prior to route booking connexion view');
+            }
+
             //this is fire from the date checkbox and they need a time to change the state.
             //lets execute this with a delay.
             setTimeout(function() {
@@ -441,20 +455,20 @@ app.controller('ctrl.booking', ['server',
             });
         }
         s.validateBeforePayment = function(cb, shouldValidateLoginAsWell) {
-            console.log('DEBUG-VALIDATING-LOGIN');
+            //$log.debug('DEBUG-VALIDATING-LOGIN');
             if (shouldValidateLoginAsWell && (!s._user || !s._user._id)) {
-                console.log('DEBUG-INVALID-LOGIN', s._user);
+                //$log.debug('DEBUG-INVALID-LOGIN', s._user);
                 return r.moveToLogin();
             }
-            console.log('DEBUG-VALIDATING-QUESTIONS');
+            //$log.debug('DEBUG-VALIDATING-QUESTIONS');
             s.validateQuestions(function() {
-                console.log('DEBUG-VALIDATING-DATE');
+                //$log.debug('DEBUG-VALIDATING-DATE');
                 s.validateDate(cb, () => {
-                    console.log('DEBUG-INVALID-DATE ROUTING-TO-RDV');
+                    //$log.debug('DEBUG-INVALID-DATE ROUTING-TO-RDV');
                     changeRoute(r.URL.RDV)
                 });
             }, () => {
-                console.log('DEBUG-INVALID-QUESTIONS ROUTING-TO-HOME');
+                //$log.debug('DEBUG-INVALID-QUESTIONS ROUTING-TO-HOME');
                 changeRoute(r.URL.HOME)
             });
         }
@@ -536,36 +550,19 @@ app.controller('ctrl.booking', ['server',
             return m.substring(0, 1).toUpperCase() + m.slice(1);
         };
 
-        var fetch_diag_info_called = false;
-        s.$watch('item._diag', function() {
-            fetch_diag_info_called = false;
-        },true);
-        function fetch_diag_info() {
-            if (fetch_diag_info_called) return;
-            fetch_diag_info_called = true;
 
-            db.ctrl('User', 'get', {
-                _id: s.item._diag
-            }).then(res => {
-                s.__diag = res.result;
 
-                if (s._order) {
-                    s._order._diag = s.__diag;
-                }
 
-            }).error(() => {
-                fetch_diag_info_called = false;
-            });
 
-        }
+
+
 
         s.orderDiagFormattedFromITEM = function() {
-
-            if (!s.__diag) fetch_diag_info();
-
+            if (!s.item || !s.item.__diag) return '';
+            var diag = s.item.__diag;
             return 'Avec ' +
-                (((s.__diag && s.__diag.firstName) && s.__diag.firstName + ' ') || '') +
-                (((s.__diag && s.__diag.lastName) && s.__diag.lastName.substring(0, 1).toUpperCase() + ' ') || '');
+                (((diag && diag.firstName) && diag.firstName + ' ') || '') +
+                (((diag && diag.lastName) && diag.lastName.substring(0, 1).toUpperCase() + ' ') || '');
         };
 
         s.orderDateFormatted = function() {
@@ -594,12 +591,12 @@ app.controller('ctrl.booking', ['server',
         });
 
 
-/*
-        s.htmlReplaceDiagName = function(str) {
-            var code = str.replace('$NAME', s.diagSelected.label2).toUpperCase();
-            return r.html(code);
-        }
-*/
+        /*
+                s.htmlReplaceDiagName = function(str) {
+                    var code = str.replace('$NAME', s.diagSelected.label2).toUpperCase();
+                    return r.html(code);
+                }
+        */
 
         function orderPaid() {
             return _.includes($D.ORDER_STATUS_PAID, s._order.status);
@@ -1056,7 +1053,7 @@ app.controller('ctrl.booking', ['server',
 
 
         function loadDefaults() {
-            //console.log('loadDefaults');
+            ////$log.debug('loadDefaults');
             s.item.info = s.item.info || {};
             s.item = Object.assign(s.item, {
                 info: {
@@ -1098,7 +1095,7 @@ app.controller('ctrl.booking', ['server',
                         }
                     }
                     $("input[type=range]").val(x);
-                    // console.log('range-set-at-', x);
+                    // //$log.debug('range-set-at-', x);
                 }
                 catch (e) {}
             });
@@ -1202,9 +1199,9 @@ app.controller('ctrl.booking', ['server',
                         s._user = _user;
 
                         s.validateBeforePayment(function() {
-                            console.log('DEBUG-SAVING');
+                            //$log.debug('DEBUG-SAVING');
                             s.saveAsync().on('success', function() {
-                                console.log('DEBUG-ROUTING-TO-PAYMENT');
+                                //$log.debug('DEBUG-ROUTING-TO-PAYMENT');
                                 changeRoute(r.URL.PAYMENT);
                             });
                         }, true);
