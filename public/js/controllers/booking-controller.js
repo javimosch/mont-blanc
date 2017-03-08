@@ -37,7 +37,8 @@ app.controller('ctrl.booking', ['server',
             complete: false,
             payment: {
                 complete: false
-            }
+            },
+            autoSelectDiagsCards: (appRouter.currentPath === "" || appRouter.currentPath === "home")
         };
 
         /*INIT*/
@@ -52,7 +53,15 @@ app.controller('ctrl.booking', ['server',
                 s.diag[diag.name] = diag;
             });
             s.diagSelected = s.diag.dpe;
-            orderQuestion.bindAnswersToDefaultDiags(s);
+
+            if (s.booking.autoSelectDiagsCards) {
+                $log.debug('autoSelectDiagCards enabled');
+                orderQuestion.bindAnswersToDefaultDiags(s);
+            }
+            else {
+                $log.debug('autoSelectDiagCards disabled');
+            }
+
             //updateChecksVisibilityOnDemand();
             waitForProperties([loadDefaults, loadMetadata, validateMetadata, r.dom], ['notify']);
         });
@@ -151,6 +160,10 @@ app.controller('ctrl.booking', ['server',
             r.dom($U.scrollToTop);
             if (!pathTo || pathTo == r.URL.HOME) {
                 //s._order = {}; //reset
+
+            }
+            else {
+
             }
 
             if (pathTo == r.URL.RDV) {
@@ -348,7 +361,7 @@ app.controller('ctrl.booking', ['server',
                     _id: s.item._diag,
                     __select: "firstName lastName email"
                 }).then(res => {
-                //    $log.debug('fetch _diag',res.result);
+                    //    $log.debug('fetch _diag',res.result);
                     s.item.__diag = res.result;
                 });
             }
