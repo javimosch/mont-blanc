@@ -64,6 +64,7 @@ function minifyResponse(html) {
         minifyCSS: true,
         caseSensitive: true
     });
+    return html;
 }
 
 module.exports = {
