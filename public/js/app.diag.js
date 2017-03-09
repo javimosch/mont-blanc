@@ -29,7 +29,7 @@
                     function update() {
                         db.ctrl('User', 'getAll', {
                             userType: 'diag',
-                            __select: "priority firstName email lastName fixedTel cellPhone commission wallet departments"
+                            __select: "priority firstName email lastName fixedTel cellPhone commission wallet departments disabled"
                         }).then((res) => {
                             res.result = _.orderBy(res.result, ['priority'], ['asc']);
                             
