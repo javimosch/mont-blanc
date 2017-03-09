@@ -104,7 +104,7 @@
                                     __select: "firstName lastName diagPriority isAutoentrepreneur"
                                 }).then(d => {
                                     if (d.ok && d.result) {
-                                        r.name = d.result.firstName + ', ' + d.result.lastName.substring(0, 1);
+                                        r.name = d.result.firstName.substring(0, 1) + '. ' + d.result.lastName.substring(0, 1)+'.';
                                         if (d.result.diagPriority) {
                                             r.name += ' (' + d.result.diagPriority + ')';
                                         }
