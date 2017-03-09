@@ -431,6 +431,7 @@ function buildTemplates() {
                                 removeScriptTypeAttributes: true,
                                 collapseWhitespace: true,
                                 minifyCSS: true,
+                                minifyJS:true,
                                 caseSensitive: true
                             });
                             //console.log('COMPILE-DEBUG', 'handleNewFileTransform bundling passed');

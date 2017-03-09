@@ -3,7 +3,7 @@ var ctrl = require('./db.controller').create;
 var sander = require('sander');
 var decodeURIComponent = require('./utils').decodeURIComponent;
 var path = require('path');
-
+var minifyHTML = require('html-minifier').minify;
 const low = require('lowdb');
 const fileAsync = require('lowdb/lib/storages/file-async');
 const db = low(path.join(process.cwd(), 'cache/views.json'), {
@@ -11,10 +11,10 @@ const db = low(path.join(process.cwd(), 'cache/views.json'), {
 });
 db.defaults({
     context: {
-        text:{}
+        text: {}
     }
 }).write().then(() => {
-    
+
     ctrl('Text').getAll({
         __select: "content code"
     }, function(err, _texts) {
@@ -48,16 +48,27 @@ var dbLogger = ctrl('Log').createLogger({
 
 
 function updateText(code, content) {
-    return db.set('context.text.'+code,content).write();
+    return db.set('context.text.' + code, content).write();
 }
 
 function getContext() {
     return db.read().getState().context;
 }
 
+
+function minifyResponse(html) {
+    html = minifyHTML(html, {
+        removeAttributeQuotes: false,
+        removeScriptTypeAttributes: true,
+        collapseWhitespace: true,
+        minifyCSS: true,
+        caseSensitive: true
+    });
+}
+
 module.exports = {
     update: (code, content) => {
-        updateText(code,content);
+        updateText(code, content);
         compilerLogger.setSaveData({
             code: code,
             content: decodeURIComponent(content)
@@ -77,15 +88,18 @@ module.exports = {
                     try {
                         compilerLogger.log('Compiling view file ', fileName);
                         var compiledHTML = Handlebars.compile(html)(context);
+                        compiledHTML = minifyResponse(compiledHTML);
                         resolve(compiledHTML);
                     }
                     catch (err) {
                         compilerLogger.setSaveData(err);
                         compilerLogger.errorSave('File ', fileName);
+                        html = minifyResponse(html);
                         resolve(html);
                     }
                 }
                 else {
+                    html = minifyResponse(html);
                     resolve(html);
                 }
             });

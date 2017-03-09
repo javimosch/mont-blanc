@@ -39,6 +39,7 @@
     "body-parser": "^1.14.2",
     "btoa": "^1.1.2",
     "busboy": "^0.2.12",
+    "cache-headers": "0.0.5",
     "chai": "^3.5.0",
     "clean-css": "^4.0.7",
     "co": "^4.6.0",

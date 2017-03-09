@@ -10,7 +10,34 @@ var skipMap = require('skip-map')
 require('dotenv').config();
 var sander = require('sander');
 var sgTemplating = require('./tools/static-generator/sg-templates');
+const cache = require('cache-headers');
 
+const cacheOptions = {
+    paths: {
+        '/fonts/**': {
+            maxAge: 'TEN_MINUTES',
+            sMaxAge: 'ONE_DAY',
+            staleRevalidate: 'ONE_HOUR',
+            staleError: 'ONE_HOUR'
+        },
+        '/css/**': {
+            maxAge: 'TEN_MINUTES',
+            sMaxAge: 'ONE_DAY',
+            staleRevalidate: 'ONE_HOUR',
+            staleError: 'ONE_HOUR'
+        },
+        '/views/**': {
+            maxAge: 60,
+            sMaxAge: 600
+        },
+        '/ctrl/**': false,
+        '/**': false
+    }
+};
+ 
+// some other middleware
+ 
+app.use(cache.middleware(cacheOptions));
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
