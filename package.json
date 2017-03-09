@@ -1,6 +1,6 @@
 {
   "name": "diagnostical",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "description": "Fullstack Application (Angular / NodeJs / Mongo)",
   "main": "index.js",
   "author": "Javier Arancibia (arancibiajav@gmail.com)",
@@ -72,6 +72,7 @@
     "html-to-pdf": "^0.1.11",
     "http": "0.0.0",
     "https": "^1.0.0",
+    "image-min": "^0.3.2",
     "lodash": "^4.3.0",
     "lowdb": "^0.15.5",
     "mailcomposer": "^3.6.2",
@@ -89,6 +90,7 @@
     "path": "^0.12.7",
     "promise": "^7.1.1",
     "public-ip": "^2.0.1",
+    "pump": "^1.0.2",
     "rand-token": "^0.3.0",
     "read-dir-files": "^0.1.1",
     "relative-path": "^1.1.0",
