@@ -36,13 +36,14 @@
     <base id="baseHref" href="/">
 </head>
 
-<body class="diags-style modal-scrollfix">
+<body class="diags-style modal-scrollfix ">
 
 {{#if iframe}}
     {{>booking-iframe}}
 {{else}}
     <!-- TEXT EDITOR -->
-    <div ng-if="userIs('admin')" ng-show="htmlEditItem.show" ng-include="'views/common/partials/html-edit-ck-editor.html'">
+    <div ng-if="userIs('admin')" ng-show="htmlEditItem.show">
+        {{>html-inline-editor}}
     </div>
 
     <!-- GLOBAL LAYOUT -->

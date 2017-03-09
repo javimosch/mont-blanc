@@ -255,6 +255,12 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', function(db, $timeout,
         });
     };
 
+    setTimeout(function() {
+        r.$apply(function(){
+            $('.remove-hidden').removeClass('hidden').removeClass('remove-hidden');
+        });
+    }, 300);
+
 
 
     r.session = function(data) {
