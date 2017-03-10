@@ -22,6 +22,7 @@ var configure = (m) => {
 var dbLogger = null;
 
 var configureActions = () => {
+    console.log(Object.keys(req('db.actions')));
     actions = req('db.actions').create('File', mongoose);
     ctrl = req('db.controller').create;
 

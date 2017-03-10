@@ -1,8 +1,8 @@
 var Handlebars = require('handlebars');
-var ctrl = require('./db.controller').create;
-var sander = require('sander');
-var decodeURIComponent = require('./utils').decodeURIComponent;
 var path = require('path');
+var ctrl = require(path.join(process.cwd(), 'model/db.controller')).create;
+var sander = require('sander');
+var decodeURIComponent = require(path.join(process.cwd(), 'model/utils')).decodeURIComponent;
 var minifyHTML = require('html-minifier').minify;
 const low = require('lowdb');
 const fileAsync = require('lowdb/lib/storages/file-async');

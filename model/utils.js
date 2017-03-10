@@ -10,6 +10,13 @@ var filesPath = '/public/files/';
 
 var dbLogger = null;
 
+
+var ensureDirectory = (path) => {
+    if (!fs.existsSync(path))
+        fs.mkdirSync(path);
+}
+exports.ensureDirectory=ensureDirectory;
+
 function loggerDelayedInit() {
     if (!dbLogger) {
         dbLogger = require(path.join(process.cwd(), 'model/db.controller')).create('Log').createLogger({

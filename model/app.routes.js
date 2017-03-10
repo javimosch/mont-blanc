@@ -1,3 +1,4 @@
+console.log('model/app.routes');
 var req = (n) => require(process.cwd() + '/model/' + n);
 var mime = require('mime-types');
 var mongoose = req('db').mongoose;

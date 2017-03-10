@@ -1,3 +1,4 @@
+var path = require('path');
 var req         = (n) => require(process.cwd()+'/controllers/'+n);
 require('es6-promise').polyfill();
 var mongoose = require('mongoose');
