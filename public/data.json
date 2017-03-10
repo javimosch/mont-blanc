@@ -70,16 +70,6 @@
         "Moins de 15 ans": "Moins de 15 ans",
         "Plus de 15 ans": "Plus de 15 ans"
     },
-    "diagsNames": [ //Deprecated ?
-        "DPE",
-        "Amiante",
-        "Plomb",
-        "Carrez",
-        "ERNMT",
-        "Termites",
-        "Gaz",
-        "Electricite"
-    ],
     "diags": [{
 
             "label": "DPE",
