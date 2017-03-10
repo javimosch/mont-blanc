@@ -70,7 +70,7 @@
         "Moins de 15 ans": "Moins de 15 ans",
         "Plus de 15 ans": "Plus de 15 ans"
     },
-    "diagsNames": [
+    "diagsNames": [ //Deprecated ?
         "DPE",
         "Amiante",
         "Plomb",
@@ -111,8 +111,8 @@
             "time": 30,
             "price": 44
         }, {
-            "label": "Carrez",
-            "label2": "CARREZ",
+            "label": "Métrage",
+            "label2": "Métrage",
             "name": "loiCarrez",
             "sort":4,
             "mandatory": true,

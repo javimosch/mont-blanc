@@ -206,7 +206,7 @@ function diagNameConvertion(key) {
     if (key == 'gaz') return 'Gaz';
     if (key == 'termites') return 'Termites';
     if (key == 'ernt') return 'État des risques naturels, miniers et technologiques';
-    if (key == 'loiCarrez') return 'Carrez';
+    if (key == 'loiCarrez') return 'Métrage';
     if (key == 'crep') return 'Plomb';
     if (key == 'dta') return 'Amiante';
     if (key == 'dpe') return 'DPE';
