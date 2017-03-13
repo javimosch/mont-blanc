@@ -62,7 +62,7 @@ var EXPORT_ACTIONS = {
     ADMIN_ORDER_PAYMENT_DELEGATED: ADMIN_ORDER_PAYMENT_DELEGATED,
     ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS: ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS,
     ADMIN_ORDER_PAYMENT_SUCCESS: ADMIN_ORDER_PAYMENT_SUCCESS,
-    ADMIN_ORDER_CREATED_SUCCESS:ADMIN_ORDER_CREATED_SUCCESS,
+    ADMIN_ORDER_CREATED_SUCCESS: ADMIN_ORDER_CREATED_SUCCESS,
 
     CLIENT_CLIENT_NEW_ACCOUNT: CLIENT_CLIENT_NEW_ACCOUNT,
     CLIENT_ORDER_DELEGATED: CLIENT_ORDER_DELEGATED,
@@ -115,25 +115,44 @@ function dummySuccessResponse(cb) {
 }
 
 function send(opt, resCb) {
-    
+
     /*
     if(!opt._user._id){
         emailTriggerLogger.setSaveData(opt._user);
         emailTriggerLogger.warnSave('_user should have an _id');
     }*/
-    
+
     var html = opt.html || template(opt.templateName, opt.templateReplace);
     if (opt.subject) {
         if (process.env.companyName) {
             opt.subject = process.env.companyName + ' | ' + opt.subject;
         }
     }
+
+
+    if (!opt.to) {
+        var resolutionMessage = "Email was send to " + process.env.emailTo;
+        if (!process.env.emailTo) {
+            resolutionMessage = "Email was not send. Configure enviromental variable 'emailTo' to send to a default email address";
+        }
+        emailTriggerLogger.setSaveData({
+            subject: opt.subject,
+            from: opt.from,
+            to: opt.to,
+            resolution: resolutionMessage
+        });
+        emailTriggerLogger.warnSave('no destinatary for ', opt.subject);
+        if (!process.env.emailTo) {
+            return _handleError('no destinatary found');
+        }
+    }
+
     var data = {
         attachment: opt.attachment || null,
         type: opt.__notificationType,
         html: html,
         from: opt.from || process.env.emailFrom || 'commande@diagnostical.fr',
-        to: opt.to || process.env.emailTo || 'arancibiajav@gmail.com',
+        to: opt.to || process.env.emailTo,
         subject: opt.subject
     };
 
@@ -356,23 +375,25 @@ function ALL_ADMINS_ASYNC_CUSTOM(type, opt) {
             everyAdmin((_admin) => {
                 if (_admin) {
                     _opt.data._user = _admin;
-                    _opt.to = _admin.email;
+                    _opt.data.to = _admin.email;
                     return ALL_ADMINS_ASYNC_CUSTOM(_type, _opt);
                 }
             }, _opt.select);
             //
         })(type, opt);
     }
-    actions.log(type + '=' + JSON.stringify(data));
-    var sendPayload = {
-        to: data.to,
-        __notificationType: type,
-        _user: data._user,
-        templateName: type,
-        cb: () => {}
-    };
-    Object.assign(sendPayload, opt.sendPayload(data));
-    send(sendPayload, () => {});
+    else {
+        actions.log(type + '=' + JSON.stringify(data));
+        var sendPayload = {
+            to: data.to,
+            __notificationType: type,
+            _user: data._user,
+            templateName: type,
+            cb: () => {}
+        };
+        Object.assign(sendPayload, opt.sendPayload(data));
+        send(sendPayload, () => {});
+    }
 }
 
 
