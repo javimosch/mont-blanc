@@ -14,7 +14,7 @@ var dbLogger = null;
 var ensureDirectory = (path) => {
     if (!fs.existsSync(path))
         fs.mkdirSync(path);
-}
+};
 exports.ensureDirectory=ensureDirectory;
 
 function loggerDelayedInit() {

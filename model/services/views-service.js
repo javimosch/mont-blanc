@@ -1,5 +1,5 @@
 var Handlebars = require('handlebars');
-var ctrl = require('./db.controller').create;
+var ctrl = require(path.join(process.cwd(), 'model/db.controller')).create;
 var sander = require('sander');
 var path = require('path');
 var decodeURIComponent = require(path.join(process.cwd(), 'model/utils')).decodeURIComponent;
