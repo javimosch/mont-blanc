@@ -37,7 +37,7 @@ function save(data,cb){
        
        //dbLogger.setSaveData(res);
        //dbLogger.debugSave('Save success');
-       require(path.join(process.cwd(),'model/views')).update(data.code,data.content);
+       require(path.join(process.cwd(),'model/services/views-service')).update(data.code,data.content);
        
        return cb(null,res)
     });
