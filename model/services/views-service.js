@@ -10,6 +10,7 @@ const fileAsync = require('lowdb/lib/storages/file-async');
 const db = low(path.join(process.cwd(), 'cache/views.json'), {
     storage: fileAsync
 });
+var ignoreMinify = [];
 var initialized = false;
 console.log('views-service-start');
 db.defaults({
@@ -62,13 +63,19 @@ function getContext() {
 
 
 function minifyResponse(html) {
-    html = minifyHTML(html, {
-        removeAttributeQuotes: false,
-        removeScriptTypeAttributes: true,
-        collapseWhitespace: true,
-        minifyCSS: true,
-        caseSensitive: true
-    });
+    try {
+        html = minifyHTML(html, {
+            removeAttributeQuotes: false,
+            removeScriptTypeAttributes: false,
+            collapseWhitespace: false,
+            minifyCSS: true,
+            caseSensitive: true
+        });
+    }
+    catch (err) {
+        compilerLogger.setSaveData(err);
+        compilerLogger.warnSave('minify response fail');
+    }
     return html;
 }
 
@@ -99,7 +106,6 @@ module.exports = {
             var fileName = fullPath.substring(fullPath.lastIndexOf('/') || 0);
 
             var context = getContext();
-
             sander.readFile(fullPath, {
                 encoding: 'utf-8'
             }).then((html) => {
@@ -118,7 +124,9 @@ module.exports = {
                     }
                 }
                 else {
+                    console.log('views-service response 1', fullPath, html.length);
                     html = minifyResponse(html);
+                    console.log('views-service response 2', fullPath, html.length);
                     resolve(html);
                 }
             });

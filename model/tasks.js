@@ -22,9 +22,10 @@ exports.configure = (app) => {
 
 
         if (t.runAtStartup) {
-            if (t.runAtStartupDelay) {
-                setTimeout(loop, t.runAtStartupDelay || 0);
+            if (t.runAtStartupDelay!=undefined) {
+                setTimeout(loop, t.runAtStartupDelay);
             }else{
+                console.log('task-manager:run-at-startup-imminently');
                 loop();
             }
         }

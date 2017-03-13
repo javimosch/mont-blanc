@@ -40,7 +40,7 @@ module.exports = {
     name: name,
     interval: 1000 * 60 * 60, //each 60 minutes
     handler: handler,
-    runAtStartup: true,
+    runAtStartup: false,
     runAtStartupDelay: 20000
 };
 
