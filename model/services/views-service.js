@@ -1,7 +1,7 @@
 var Handlebars = require('handlebars');
+var path = require('path');
 var ctrl = require(path.join(process.cwd(), 'model/db.controller')).create;
 var sander = require('sander');
-var path = require('path');
 var decodeURIComponent = require(path.join(process.cwd(), 'model/utils')).decodeURIComponent;
 var Promise = require(path.join(process.cwd(), 'model/utils')).promise;
 var minifyHTML = require('html-minifier').minify;
