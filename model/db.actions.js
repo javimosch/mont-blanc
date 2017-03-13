@@ -126,6 +126,7 @@ exports.create = function(modelName, m) {
     }
     //
     function createUpdate(data, cb, matchData, requiredKeys) {
+        var payload = Object.assign({},removePropertiesThatStartWith(data,'__'));
         //matchData, requiredKeys: req,res (if is being called directly)
         if (matchData && (matchData.body || matchData.params)) {
             matchData = null;
@@ -154,7 +155,7 @@ exports.create = function(modelName, m) {
                     }), data).exec((err, r) => {
                         if (err) return rta(err, null);
                         if (!r) return rta(modelName + '= ' + _id + ' do not belong to any item.', null);
-                        r = hook('afterSave', r);
+                        r = hook('afterSave', payload);
                         return rta(err, r);
                     });
                 }
@@ -451,6 +452,16 @@ exports.create = function(modelName, m) {
     function handleError(action, data, msg) {
 
     }
+    
+    function removePropertiesThatStartWith(obj,str){
+        var newObj = {};
+        for(var x in obj){
+            if(x.indexOf(str)!==0){
+                newObj[x] = obj[x];
+            }
+        }
+        return newObj;
+    }
 
     function toRules(data) {
         data = data || {};
@@ -511,6 +522,7 @@ exports.create = function(modelName, m) {
     function update(data, cb) {
         //log('update=' + JSON.stringify(data));
         //log('update:start');
+        var payload = Object.assign({},removePropertiesThatStartWith(data,'__'));
         check(data, ['_id'], (err, r) => {
             if (err) return cb && cb(err, null);
             var _id = data._id;
@@ -522,7 +534,7 @@ exports.create = function(modelName, m) {
                 log('update:ok=' + !err + ' ' + JSON.stringify(err));
                 if (!cb) return;
                 if (err) return cb(err, null);
-                r = hook('afterSave', r);
+                r = hook('afterSave', payload);
                 log('update:rta=' + JSON.stringify(r));
                 return cb(null, r);
             });
