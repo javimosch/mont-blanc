@@ -149,8 +149,7 @@ app.controller('ctrl.booking', ['server',
         r.__textSTATIC = {
             BOOKING_STRIPE_TEXT: "Paiement simplifié et sécurisé avec Lemon Way accrédité ACPR",
             BOOKING_HOME_BG_TEXT_1: "Accédez aux calendriers en live des diagnostiqueurs immobiliers certifiés, disponibles, au bon prix*",
-            BOOKING_HOME_BG_TEXT_2: "Nous joindre au",
-            BOOKING_HOME_BG_TEXT_PHONE: "0899 399 039"
+            BOOKING_HOME_BG_TEXT_2: "Nous joindre au"
         };
 
 
