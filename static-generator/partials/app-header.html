@@ -1,4 +1,4 @@
-<div class="container-fluid bg-white">
+<div class="container-fluid bg-white  hidden remove-hidden" >
     <div class="container" ng-show="navShow">
         <nav class="diags-navbar-2 navbar navbar-default">
             <div class="container-fluid">
@@ -44,8 +44,7 @@
                         <li><a ng-click="route(URL.CONTACT_US)" class="link diag-link" data-toggle="collapse" data-target=".navbar-collapse.in">Contactez-nous</a></li>
                         <li ng-show="logged()">
                             <a class="link diag-link" ng-click="logout()">Logout
-                      <span class="small" ng-show="false">
-                        ({[{session().email}]})
+                      <span class="small" ng-cloak ng-show="false" ng-bind="session().email">
                       </span>
                     </a>
                         </li>
