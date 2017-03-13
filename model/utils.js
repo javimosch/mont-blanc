@@ -155,3 +155,5 @@ function MyPromise(cb) {
 }
 
 exports.promise = MyPromise;
+exports.Promise = MyPromise;
+exports.MyPromise = MyPromise;

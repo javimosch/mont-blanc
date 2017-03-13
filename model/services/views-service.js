@@ -3,7 +3,7 @@ var path = require('path');
 var ctrl = require(path.join(process.cwd(), 'model/db.controller')).create;
 var sander = require('sander');
 var decodeURIComponent = require(path.join(process.cwd(), 'model/utils')).decodeURIComponent;
-var Promise = require(path.join(process.cwd(), 'model/utils')).promise;
+//var Promise = require(path.join(process.cwd(), 'model/utils')).promise;
 var minifyHTML = require('html-minifier').minify;
 const low = require('lowdb');
 const fileAsync = require('lowdb/lib/storages/file-async');
@@ -73,11 +73,10 @@ function minifyResponse(html) {
 }
 
 module.exports = {
-    getContext: () => {
+    fetchContext: () => {
         return new Promise((resolve, reject, emit) => {
             function check() {
                 if (initialized) {
-                    console.log('views-service-resolve');
                     return resolve(getContext());
                 }
                 else {

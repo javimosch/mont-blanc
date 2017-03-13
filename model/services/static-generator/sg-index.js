@@ -11,14 +11,11 @@ function configure(app) {
     
     //fetch texts from db first
     if(!heData().text){
-        console.log('sg-index-wait');
-        return require('../views-service').getContext().then(context=>{
+        return require('../views-service').fetchContext().then(context=>{
             heData(context);
-            console.log('sg-index-set-texts');    
             return configure(app);
         });
     }else{
-        console.log('sg-index-continue');
     }
     
     

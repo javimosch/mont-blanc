@@ -390,7 +390,7 @@ function bundleJS(_raw) {
 
 function buildTemplates() {
 
-    console.log('DEBUG: build static with data', sgData());
+    console.log('DEBUG: build static with data', Object.keys(sgData()));
 
     return new Promise((resolve, error) => {
 
