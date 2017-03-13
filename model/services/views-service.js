@@ -1,20 +1,24 @@
 var Handlebars = require('handlebars');
-var path = require('path');
-var ctrl = require(path.join(process.cwd(), 'model/db.controller')).create;
+var ctrl = require('./db.controller').create;
 var sander = require('sander');
+var path = require('path');
 var decodeURIComponent = require(path.join(process.cwd(), 'model/utils')).decodeURIComponent;
+var Promise = require(path.join(process.cwd(), 'model/utils')).promise;
 var minifyHTML = require('html-minifier').minify;
 const low = require('lowdb');
 const fileAsync = require('lowdb/lib/storages/file-async');
 const db = low(path.join(process.cwd(), 'cache/views.json'), {
     storage: fileAsync
 });
+var initialized = false;
+console.log('views-service-start');
 db.defaults({
     context: {
         text: {}
     }
 }).write().then(() => {
 
+    console.log('views-service-fetch');
     ctrl('Text').getAll({
         __select: "content code"
     }, function(err, _texts) {
@@ -28,6 +32,7 @@ db.defaults({
                 text[t.code] = decodeURIComponent(t.content);
             });
             db.set('context.text', text).write().then(() => {
+                initialized = true;
                 dbLogger.info('Fetch ok', _texts.length, ' items in memory.');
             });
         }
@@ -68,6 +73,20 @@ function minifyResponse(html) {
 }
 
 module.exports = {
+    getContext: () => {
+        return new Promise((resolve, reject, emit) => {
+            function check() {
+                if (initialized) {
+                    console.log('views-service-resolve');
+                    return resolve(getContext());
+                }
+                else {
+                    setTimeout(check, 1000);
+                }
+            }
+            check();
+        });
+    },
     update: (code, content) => {
         updateText(code, content);
         compilerLogger.setSaveData({

@@ -1,12 +1,27 @@
 var path = require('path');
 var Promise = require(path.join(process.cwd(), 'model/utils')).promise;
 var heTpls = require('./sg-templates');
+var heData = require('./sg-data');
 var sander = require('sander');
 module.exports = {
     configure: configure
 }
 
 function configure(app) {
+    
+    //fetch texts from db first
+    if(!heData().text){
+        console.log('sg-index-wait');
+        return require('../views-service').getContext().then(context=>{
+            heData(context);
+            console.log('sg-index-set-texts');    
+            return configure(app);
+        });
+    }else{
+        console.log('sg-index-continue');
+    }
+    
+    
     return Promise((resolve, reject, emit) => {
         heTpls.watch();
         heTpls.build().then(() => {
