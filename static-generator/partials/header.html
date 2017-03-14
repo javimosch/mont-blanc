@@ -1,14 +1,14 @@
 <!--HEADER-->
 <div class="container-fluid" ng-controller="header-controller">
     <div class="row-fluid" ng-cloak ng-show="!isBooking()">
-        {{>app-header}}
+        {{>header-backoffice}}
     </div>
     <div class="row-fluid" ng-cloak ng-show="isBooking()">
         <div class="hidden remove-hidden" ng-cloak ng-show="__header==1">
-            {{>booking-header}}
+            {{>header-booking-version-1}}
         </div>
         <div class="hidden remove-hidden" ng-cloak ng-show="__header==2">
-            {{>booking-header-2}}
+            {{>header-booking-version-2}}
         </div>
     </div>
 </div>
