@@ -479,10 +479,13 @@ html {
     max-width: none!important;
 }
 
+
 /*.diags-navbar-2 .navbar-nav>li>a*/
-.diag-button:hover{
+
+.diag-button:hover {
     text-decoration: none;
 }
+
 .diag-button {
     text-shadow: none!important;
     line-height: 39px!important;
@@ -673,10 +676,6 @@ a.diag-btn-success {
     font-size: 14px;
 }
 
-.txt-xl {
-    font-size: 24px;
-}
-
 .txt-38 {
     font-size: 38px;
 }
@@ -687,6 +686,22 @@ a.diag-btn-success {
 
 .fnt-18 {
     font-size: 18px;
+}
+
+.txt-xl {
+    font-size: 20px;
+}
+
+@media only screen and (min-width: 320px) {
+    .txt-xl {
+        font-size: 22px;
+    }
+}
+
+@media only screen and (min-width: 480px) {
+    .txt-xl {
+        font-size: 24px;
+    }
 }
 
 
@@ -1430,18 +1445,18 @@ h2.diags.black>div {
     padding: 25px 29px;
 }
 
-.rdv-day-wrapper{
+.rdv-day-wrapper {
     min-height: 420px!important;
 }
 
 .diags-date-day-item:hover .diags-date-day-item-description-wrapper .time-price,
-.diags-date-day-item.selected .diags-date-day-item-description-wrapper .time-price{
+.diags-date-day-item.selected .diags-date-day-item-description-wrapper .time-price {
     color: white;
     /*color: #00A9FF!important;*/
 }
 
 .diags-date-day-item:hover .diags-date-day-item-description-wrapper .diag-guy,
-.diags-date-day-item.selected .diags-date-day-item-description-wrapper .diag-guy{
+.diags-date-day-item.selected .diags-date-day-item-description-wrapper .diag-guy {
     color: white;
 }
 
@@ -1453,8 +1468,6 @@ h2.diags.black>div {
     /*before: 25*/
     padding-top: 6px;
 }
-
-
 
 .diags-date-day-item-description-wrapper .diag-guy {
     color: #0B3967;
