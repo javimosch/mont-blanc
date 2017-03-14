@@ -2,7 +2,7 @@
     <nav class="diags-navbar-2 navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#ex1" aria-expanded="false">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapsableMenu1" aria-expanded="false">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -12,7 +12,10 @@
     font-family: 'Avenir-Medium'!important;
 ">Diagnostic immobilier dans toute la France</h1>
             </div>
-            <div class="collapse navbar-collapse" id="ex1">
+            
+            {{>header-booking-fixed-menu}}
+            
+            <div class="collapse navbar-collapse" id="collapsableMenu1">
                 {{>booking-header-nav}}
             </div>
         </div>

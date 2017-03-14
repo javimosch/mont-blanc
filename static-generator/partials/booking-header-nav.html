@@ -1,36 +1,25 @@
 <!--COMPILE_WITH_HANDLEBARS-->
 <ul class="nav navbar-nav navbar-right hidden remove-hidden">
-    
-    <li class="visible-xs-block"><a ng-click="route('/')" class="link diag-button diag-btn-success">Devis et RDV en ligne</a></li>
-   
+
+
+
     <li><a ng-click="route(URL.ESPACE_ENTERPRISE)" class="link diag-button diag-btn-success">Espace Client</a></li>
-    
+
     <li ng-show="routeIs('')"><a ng-click="route(URL.ESPACE_DIAG)" class="link diag-button diag-btn-info">Espace&nbsp;Diagnostiqueur</a></li>
-    
-    <li class="visible-xs-block">
-        <div class="diags-pill-info " style="height: 37px!important;">
+
+
+
+    <li ng-show="!routeIs('')" class="visible-sm-block visible-md-block visible-lg-block">
+        <div class="diags-pill-info " style="height: 37px!important;position: relative;top: 3px;">
             <span class="avenir-book txt-md white" dynamic-block code="BOOKING_HOME_BG_TEXT_2">
                 {{{text.BOOKING_HOME_BG_TEXT_2}}}
             </span>
-            <span class="xxs-flex avenir-black txt-xl white middle" >
+            <span class="xxs-flex avenir-black txt-xl white middle">
                 <!--dynamic-block code="BOOKING_HOME_BG_TEXT_PHONE"-->
                  01 79 72 82 33
                 <!--text.BOOKING_HOME_BG_TEXT_PHONE-->
             </span>
         </div>
     </li>
-    
-    <li ng-show="!routeIs('')">
-        <div class="diags-pill-info " style="height: 37px!important;">
-            <span class="avenir-book txt-md white" dynamic-block code="BOOKING_HOME_BG_TEXT_2">
-                {{{text.BOOKING_HOME_BG_TEXT_2}}}
-            </span>
-            <span class="xxs-flex avenir-black txt-xl white middle" >
-                <!--dynamic-block code="BOOKING_HOME_BG_TEXT_PHONE"-->
-                 01 79 72 82 33
-                <!--text.BOOKING_HOME_BG_TEXT_PHONE-->
-            </span>
-        </div>
-    </li>
-    
+
 </ul>

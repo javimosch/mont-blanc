@@ -479,17 +479,22 @@ html {
     max-width: none!important;
 }
 
-.diags-navbar-2 .navbar-nav>li>a.diag-button {
-    line-height: 37px;
+/*.diags-navbar-2 .navbar-nav>li>a*/
+.diag-button:hover{
+    text-decoration: none;
+}
+.diag-button {
+    text-shadow: none!important;
+    line-height: 39px!important;
     height: 37px;
-    padding: 0px 20px;
+    padding: 0px 15px!important;
     margin: 2px 10px 0px 10px;
     border-radius: 20px;
-    color: white;
+    color: white!important;
     max-width: 232px;
     font-family: 'Avenir-Book';
-    font-size: 14px;
-    vertical-align: baseline;
+    font-size: 14px!important;
+    vertical-align: sub;
 }
 
 .diags-navbar-2,
@@ -603,15 +608,15 @@ a.diag-btn-success {
     background-color: #23DC8C!important;
 }
 
-a.diag-btn-success:hover {
+.diag-btn-success:hover {
     background-color: #23DC8C!important;
 }
 
-a.diag-btn-info {
+.diag-btn-info {
     background-color: #00A9FF!important;
 }
 
-a.diag-btn-info:hover {
+.diag-btn-info:hover {
     background-color: #00A9FF!important;
 }
 
@@ -762,6 +767,7 @@ a.diag-btn-info:hover {
     display: inline-block;
     line-height: 30px;
     color: white;
+    max-width: 303.7px;
 }
 
 .diag46 {

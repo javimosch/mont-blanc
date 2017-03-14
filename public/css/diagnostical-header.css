@@ -10,8 +10,6 @@
     color: #00A9FF;
 }
 
-
-
 .navbar-default .navbar-brand .cal {
     font-family: 'Avenir-Book';
     font-size: 40px;
@@ -32,6 +30,7 @@
     margin: 5px;
     font-size: 25px;
     line-height: 34px;
+    margin-left: 0px;
 }
 
 .navbar-right {
@@ -50,7 +49,7 @@
 }
 
 .navbar-nav a {
-    margin: 0 auto!important;
+    margin: 0!important;
 }
 
 .navbar-nav li {
@@ -62,9 +61,37 @@
     margin-top: 14px;
 }
 
+.diags-navbar-2 {
+    padding-bottom: 10px;
+}
+
+.diag-button {
+    margin-left: 0px;
+}
+
+.header-fixed-menu {
+    margin-left: -15px;
+    margin-right: -15px;
+    position: relative;
+    bottom: -5px;
+    padding-left: 0px;
+}
+
+.nav {
+    padding-left: 0px
+}
+
 @media screen and (min-width: 320px) {}
 
 @media screen and (min-width: 480px) {
+    .header-fixed-menu {
+        margin-left: -15px!important;
+        margin-right: -15px!important;
+        padding-left: 10px;
+    }
+    .nav {
+        padding-left: 10px;
+    }
     .navbar-nav a {
         margin-right: 10px!important;
     }
@@ -76,6 +103,12 @@
 }
 
 @media screen and (min-width: 768px) {
+    .diag-button {
+        margin-left: initial;
+    }
+    .diags-navbar-2 {
+        padding-bottom: initial;
+    }
     .navbar-nav {
         line-height: 40px!important;
         padding: 5px;
@@ -90,7 +123,7 @@
 }
 
 @media screen and (min-width: 992px) {
-    .navbar-nav .diags-pill-info{
+    .navbar-nav .diags-pill-info {
         margin: 2px 0px 0px 10px!important;
     }
     .navbar-brand {

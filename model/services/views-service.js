@@ -12,7 +12,7 @@ const db = low(path.join(process.cwd(), 'cache/views.json'), {
 });
 var ignoreMinify = [];
 var initialized = false;
-console.log('views-service-start');
+//console.log('views-service-start');
 db.defaults({
     context: {
         text: {}
@@ -124,9 +124,9 @@ module.exports = {
                     }
                 }
                 else {
-                    console.log('views-service response 1', fullPath, html.length);
+                   // console.log('views-service response 1', fullPath, html.length);
                     html = minifyResponse(html);
-                    console.log('views-service response 2', fullPath, html.length);
+                    //console.log('views-service response 2', fullPath, html.length);
                     resolve(html);
                 }
             });
