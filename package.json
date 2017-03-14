@@ -101,7 +101,6 @@
     "serve": "^1.4.0",
     "shift-codegen": "^4.0.3",
     "shift-parser": "^4.1.1",
-    "simple-node-logger": "^0.93.14",
     "simple-ssh": "^0.9.0",
     "skip-map": "^1.0.0",
     "string": "^3.3.1",

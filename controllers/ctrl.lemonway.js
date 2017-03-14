@@ -19,8 +19,12 @@
  const uid = require('rand-token').uid;
  let login = process.env.LEMON_LOGIN,
   pass = process.env.LEMON_PASS;
- let MODULE = 'LEMONWAY';
- var logger = require('../model/logger')(MODULE);
+
+ var dbLogger = ctrl('Log').createLogger({
+  name: "PAYMENTS",
+  category: "LEMONWAY"
+ });
+
  var commonParams = {
   "wlLogin": login,
   "wlPass": pass,
@@ -133,7 +137,7 @@
   callback = callback || (() => {});
   data.wallet = uid(5).toString().toUpperCase();
   lemonway.registerWallet(data).then((r) => {
-   logger.info('LEMONWAY WALLET manual registration', data.clientMail);
+   dbLogger.debug('LEMONWAY WALLET manual registration', data.clientMail);
    callback(null, r);
   }, (err) => {
 
@@ -141,7 +145,7 @@
     return lemonway.getWalletDetails({
      email: data.clientMail
     }).then(function(res) {
-     logger.info('LEMONWAY WALLET manual registration (existing) ', data.clientMail);
+     dbLogger.debug('LEMONWAY WALLET manual registration (existing) ', data.clientMail);
      callback(null, res);
     }, function(err) {
      callback(err);
@@ -185,10 +189,6 @@
    */
  function moneyInWithCardId(data, callback) {
 
-  logger.info(MODULE, ' PAYMENT ', {
-   cardId: data.cardId != undefined,
-   cardId_ok: data.cardId_ok
-  });
 
   if (!data.wallet) return callback({
    msg: 'wallet champ requis'
@@ -223,7 +223,7 @@
      return callback(err);
     }
     else {
-     logger.info(MODULE, ' PAYMENT reading CARDS from wallet ', res.WALLET.ID);
+     //dbLogger.debug('reading CARDS from wallet ', res.WALLET.ID);
 
      if (res.WALLET && res.WALLET.CARDS) {
       var num = '';
@@ -231,7 +231,7 @@
        num = res.WALLET.CARDS[x].EXTRA.NUM;
        if (num.substring(num.length - 4).toString() == data.cardNumber.substring(data.cardNumber.length - 4)) {
 
-        logger.info(MODULE, ' PAYMENT card number belongs to a registered card.');
+        //dbLogger.debug('card number belongs to a registered card.');
 
         return moneyInWithCardId(Object.assign(data, {
          cardId: res.WALLET.CARDS[x].ID,
@@ -241,7 +241,7 @@
       }
 
      }
-     logger.info(MODULE, ' PAYMENT card number is not a registered card, registering');
+     //dbLogger.debug(' card number is not a registered card, registering');
      return registerCard({
       wallet: data.wallet,
       cardType: data.cardType,
@@ -277,7 +277,7 @@
     amountCom: data.amountCom,
     comment: data.comment
    }).then(function(res) {
-    logger.info(MODULE, ' PAYMENT CALLBACK? ', (callback != undefined), ' RES? ', (res != undefined));
+    //dbLogger.debug(' CALLBACK? ', (callback != undefined), ' RES? ', (res != undefined));
     callback(null, res);
    }, function(err) {
     callback(err);
@@ -549,10 +549,9 @@
    options.proxy = process.env.QUOTAGUARDSTATIC_URL;
   }
 
-  //console.log(MODULE, 'sending ',methodName);
-  //console.log(MODULE, postData);
+  
 
-  logger.info(MODULE, ' REQUEST ', methodName, ' ', postData);
+  dbLogger.debug(' REQUEST ', methodName, ' ', postData);
 
   // Use promise to avoid callback hell
   var promise = new Promise(function(resolve, reject) {
@@ -561,13 +560,12 @@
     if (error) {
      // Handle request error
      LogSaveLemonway(methodName + ' (REQUEST-ERROR)', 'error', postData, error);
-     logger.info(MODULE, ' RESPONSE ', methodName, '  REQUEST-ERROR ', error);
      reject(error);
     }
     else if (response.statusCode != 200) {
      // Handle HTTP error
      LogSaveLemonway(methodName + ' (HTTP-ERROR)', 'error', postData, error);
-     logger.info(MODULE, ' RESPONSE ', methodName, '  HTTP-ERROR ', error);
+
      reject({
       code: response.statusCode,
       message: body.Message
@@ -576,12 +574,12 @@
     else {
      if (body.d.E) {
       LogSaveLemonway(methodName + ' (API-ERROR)', 'warning', postData, body.d.E);
-      logger.info(MODULE, ' RESPONSE ', methodName, '  API-ERROR ', body.d.E);
+
       reject(body.d.E);
      }
      else {
       LogSaveLemonway(methodName + ' (SUCCESS)', 'info', postData, body.d.E);
-      logger.info(MODULE, ' RESPONSE ', methodName, '  SUCCESS ', body.d);
+
       return resolve(body.d);
      }
     }
@@ -591,29 +589,28 @@
   return promise;
  }
 
- function LogSaveLemonway(methodName, level, payload, error) {
-  
-  if(payload.wlLogin) delete payload.wlLogin;
-  if(payload.wlPass) delete payload.wlPass;
-  if(payload.language) delete payload.language;
-  if(payload.walletIp) delete payload.walletIp;
-  if(payload.walletUa) delete payload.walletUa;
-  
-  LogSave('Lemonway ' + methodName + '', level, {
-   methodName: methodName,
-   payload: payload,
-   error: error
-  });
+ function removeSensitiveData(payload) {
+  if (payload.wlLogin) delete payload.wlLogin;
+  if (payload.wlPass) delete payload.wlPass;
+  if (payload.language) delete payload.language;
+  if (payload.walletIp) delete payload.walletIp;
+  if (payload.walletUa) delete payload.walletUa;
+  return payload;
  }
 
-
- function LogSave(msg, level, data) {
-  ctrl('Log').save({
-   message: msg,
-   category: 'lemonway',
-   type: level,
-   level: level,
-   data: data || {}
+ function LogSaveLemonway(methodName, level, payload, error) {
+  var message = methodName + '',
+   level;
+  dbLogger.setSaveData({
+   methodName: methodName,
+   payload: removeSensitiveData(payload),
+   error: error
   });
+  if (level == 'warning') {
+   dbLogger.warnSave(message);
+  }
+  else {
+   dbLogger.debugSave(message);
+  }
  }
  

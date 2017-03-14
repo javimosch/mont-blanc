@@ -17,8 +17,7 @@ var Notif = require('./ctrl.notification');
 var NOTIFICATION = Notif.NOTIFICATION;
 //User.methods.name = ()=>{return };
 
-const MODULE = 'USER';
-var logger = require('../model/logger')(MODULE);
+
 
 
 var dbLogger = ctrl('Log').createLogger({
@@ -283,12 +282,7 @@ function _preUpdateWallet(data, cb, next) {
             ctrl('Lemonway').updateWalletDetails(payload, (err, res) => {
                 if (err) {
 
-                    /*logger.error('LEMONWAY WALLET (automatic update before saving user)', err);
-                    LogSave('LEMONWAY WALLET (automatic update before saving user)', 'error', {
-                        err: err,
-                        payload: payload
-                    });
-                    */
+                    
                 }
                 return next(data, cb);
             });
@@ -316,12 +310,10 @@ function _preCreateWallet(data, cb, next) {
         return ctrl('Lemonway').registerWallet(payload, (err, res) => {
             if (!err && res && res.WALLET) {
                 data.wallet = res.WALLET.ID;
-                //logger.info('LEMONWAY WALLET (automatic registration before saving user)', data.wallet);
+               
             }
             if (err) {
-                //already logged by lemonway controller ..
-                //logger.error('LEMONWAY WALLET (automatic registration before saving user)', err);
-                //LogSave('LEMONWAY WALLET (automatic registration before saving user)', 'error', err);
+                
             }
             return next(data, cb);
         });

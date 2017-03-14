@@ -63,6 +63,7 @@ function getContext() {
 
 
 function minifyResponse(html) {
+    var originalHtml = html;
     try {
         html = minifyHTML(html, {
             removeAttributeQuotes: false,
@@ -73,8 +74,11 @@ function minifyResponse(html) {
         });
     }
     catch (err) {
-        compilerLogger.setSaveData(err);
-        compilerLogger.warnSave('minify response fail');
+        compilerLogger.setSaveData({
+            error:err,
+            html:originalHtml
+        });
+        compilerLogger.warnSave('minification was not possible.');
     }
     return html;
 }

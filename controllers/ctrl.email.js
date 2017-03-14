@@ -6,7 +6,10 @@ var statsActions = require('./ctrl.stats');
 var template = require('../utils/template');
 var sendEmail = require('../model/utils.mailing').sendEmail;
 var _utils = require('../model/utils');
-
+var moment = require('moment-timezone');
+var btoa = require('btoa')
+var _ = require('lodash');
+var adminUrl = require('../model/utils').adminUrl;
 
 var emailTriggerLogger = ctrl('Log').createLogger({
     name: "EMAIL",
@@ -16,23 +19,6 @@ var dbLogger = ctrl('Log').createLogger({
     name: "EMAIL",
     category: "DB"
 });
-
-const MODULE = 'EMAIL';
-var logger = require('../model/logger')(MODULE);
-
-var moment = require('moment-timezone');
-
-
-var btoa = require('btoa')
-var _ = require('lodash');
-var adminUrl = require('../model/utils').adminUrl;
-var modelName = 'email';
-var actions = {
-    log: (m) => {
-        console.log(modelName.toUpperCase() + ': ' + m);
-    }
-};
-
 
 
 function everyAdmin(cb, selectFields) {
@@ -101,7 +87,7 @@ var NOTIFICATION = NotificationHandler.NOTIFICATION;
 //console.log('EMAIL - NOTIFICATION',require('../actions/notification.actions').actions);
 
 function dummySuccessResponse(cb) {
-    actions.log('dummySuccessResponse:cb=' + JSON.stringify(cb));
+    emailTriggerLogger.debug('dummySuccessResponse:cb=' + JSON.stringify(cb));
     var rta = {
         ok: true,
         message: 'Success (Mailing disabled)'
@@ -110,7 +96,7 @@ function dummySuccessResponse(cb) {
         cb(null, rta);
     }
     else {
-        actions.log('dummySuccessResponse:rta:(no-cb)=' + JSON.stringify(rta));
+        emailTriggerLogger.debug('dummySuccessResponse:rta:(no-cb)=' + JSON.stringify(rta));
     }
 }
 
@@ -247,7 +233,7 @@ function dateTime2(d) {
 
 function generateInvoiceAttachmentIfNecessary(data, t, cb) {
     if (data.attachmentPDFHTML) {
-        actions.log(t + ':attachment-build');
+        emailTriggerLogger.debug(t + ':attachment-build');
         ctrl('Pdf').generate({
             fileName: 'invoice_' + Date.now(),
             html: data.attachmentPDFHTML
@@ -260,7 +246,7 @@ function generateInvoiceAttachmentIfNecessary(data, t, cb) {
                 return cb(data);
             }
             if (res.ok) {
-                actions.log(t + ':attachment-ok');
+                emailTriggerLogger.debug(t + ':attachment-ok');
                 data.attachment = {
                     //path: process.cwd() + '/www/temp/' + res.fileName,
                     path: _utils.getFileTempPath(res.fileName),
@@ -293,7 +279,6 @@ function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notif
     }
     else {
         emailTriggerLogger.warn(type, 'Already sended');
-        //logger.warn('Notification alredy sended', type);
         cb && cb('Already sended');
     }
 }
@@ -383,7 +368,7 @@ function ALL_ADMINS_ASYNC_CUSTOM(type, opt) {
         })(type, opt);
     }
     else {
-        actions.log(type + '=' + JSON.stringify(data));
+        emailTriggerLogger.debug(type + '=' + JSON.stringify(data));
         var sendPayload = {
             to: data.to,
             __notificationType: type,
@@ -401,7 +386,7 @@ function ALL_ADMINS_ASYNC_CUSTOM(type, opt) {
 
 //ADMIN//#4 OK task.diplomeExpiration
 function ADMIN_DIPLOME_EXPIRATION(data, cb) {
-    actions.log('ADMIN_DIPLOME_EXPIRATION=' + JSON.stringify(data));
+    emailTriggerLogger.debug('ADMIN_DIPLOME_EXPIRATION=' + JSON.stringify(data));
     //data = {_admin,_diag,}
     //vars: ADMIN_NAME DIAG_NAME DIAG_DIPLOME_FILENAME DIAG_EDIT_URL
     send({
@@ -423,7 +408,7 @@ function ADMIN_DIPLOME_EXPIRATION(data, cb) {
 
 //ADMIN//#5 OK app.booking
 function ADMIN_NEW_CONTACT_FORM_MESSAGE(data, cb) {
-    actions.log('ADMIN_NEW_CONTACT_FORM_MESSAGE=' + JSON.stringify(data));
+    emailTriggerLogger.debug('ADMIN_NEW_CONTACT_FORM_MESSAGE=' + JSON.stringify(data));
     cb(null, "Send in progress"); //async op
     User.getAll({
         userType: 'admin'
@@ -444,7 +429,7 @@ function ADMIN_NEW_CONTACT_FORM_MESSAGE(data, cb) {
 
 //ADMIN//#5 OK app.booking
 function ADMIN_NEW_CONTACT_FORM_MESSAGE_SINGLE(data, cb) {
-    actions.log('ADMIN_NEW_CONTACT_FORM_MESSAGE_SINGLE=' + JSON.stringify(data));
+    emailTriggerLogger.debug('ADMIN_NEW_CONTACT_FORM_MESSAGE_SINGLE=' + JSON.stringify(data));
     send({
         __notificationType: NOTIFICATION.ADMIN_NEW_CONTACT_FORM_MESSAGE,
         _user: data._user,
@@ -638,7 +623,7 @@ function removeCountryFromString(string) {
 }
 
 function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type, moreOptions) {
-    actions.log(_type + '=START');
+    emailTriggerLogger.debug(_type + '=START');
     moment.locale('fr')
     var _user = data._user;
     var _order = data._order;

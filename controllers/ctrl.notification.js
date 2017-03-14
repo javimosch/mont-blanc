@@ -26,8 +26,7 @@ var dbLogger = ctrl('Log').createLogger({
     category: "DB"
 });
 
-const MODULE = "NOTIFICATION";
-var logger = require('../model/logger')(MODULE);
+
 
 var NOTIFICATION = {
 

@@ -75,7 +75,7 @@ exports.create = function(modelName, m) {
     var schema = getSchema(modelName);
 
 
-    var logger = require('./logger')(modelName.toUpperCase());
+    
 
     var hook = (hookName, dataOrHandler) => {
         return callHook(modelName, hookName, dataOrHandler);
@@ -338,10 +338,6 @@ exports.create = function(modelName, m) {
                 };
             }
 
-            if (err) {
-                resultLogger.warn(modelName, err);
-            }
-
             var rta = {
                 ok: err === undefined || err === null,
                 message: (err) ? 'Error' : 'Success',
@@ -351,7 +347,8 @@ exports.create = function(modelName, m) {
 
             //log error
             if (!rta.ok) {
-                //logger.error(modelName, ' ', err);
+                resultLogger.setSaveData(rta);
+                resultLogger.warn(modelName, err);
             }
 
             //when result contains something like {ok,message,result}

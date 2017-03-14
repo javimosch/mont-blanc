@@ -20,8 +20,7 @@ var NOTIFICATION = dbController.create("Notification").NOTIFICATION;
 var Log = dbController.create("Log");
 var File = dbController.create('File');
     //
-const MODULE = 'ROUTING';
-var logger = require('../model/logger')(MODULE);
+
 //
 exports.configure = function(app) {
     //
@@ -63,10 +62,7 @@ exports.configure = function(app) {
         //
         if (actions[action]) {
             if (strIn(action,['get','getAll','getById','paginate','find'])) {
-                //console.log(MODULE, ' to ', action);
             } else {
-                //logger.info(MODULE, ' to ', action);
-                //console.log(MODULE, ' to ', action);
             }
             actions[action](data, actions.result(res), req, res);
         } else {

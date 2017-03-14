@@ -22,30 +22,31 @@ var email = require('./ctrl.email');
 var Notif = require('./ctrl.notification');
 var NOTIFICATION = Notif.NOTIFICATION;
 
-const MODULE = 'ORDER';
-var logger = require('../model/logger')(MODULE);
+
 
 var saveKeys = ['_client', '_diag', 'start', 'end', 'diags'
 
     , 'address', 'price' //, 'time'
 ];
 
-
+var paymentLogger = ctrl('Log').createLogger({
+    name: "ORDER",
+    category: "PAYMENT"
+});
 var dbLogger = ctrl('Log').createLogger({
     name: "ORDER",
     category: "DB"
 });
 
 function LogSave(msg, type, data) {
-    try {
-        Log.save({
-            message: msg,
-            type: type || 'error',
-            data: data || {}
-        });
+    dbLogger.setSaveData(data);
+    if(type == 'error'){
+        dbLogger.errorSave(msg)    
     }
-    catch (err) {
-        logger.error(MODULE, " LOG-SAVE ", err);
+    if(type == 'warning'){
+        dbLogger.warnSave(msg)    
+    }else{
+        dbLogger.debug(msg)    
     }
 }
 
@@ -106,13 +107,11 @@ function moveToPrepaid(data, cb) {
     save(payload, function(err, order) {
 
         if (err) {
-            logger.error(MODULE, ' MOVE-TO-PREPAID ERROR ', err);
             LogSave('Order moving to prepaid error', 'error', err);
             return cb(err);
         }
         else {
             LogSave('Order moved to prepaid', 'info', payload);
-            logger.info(MODULE, ' MOVE-TO-PREPAID SUCESS ', payload);
             return cb(null, payload);
         }
 
@@ -190,26 +189,20 @@ function payUsingLW(data, callback) {
         if (err) return cb(err);
         decodedPayload.comment = decodedPayload.comment.replace('_INVOICE_NUMBER_', invoiceNumber);
 
-        logger.info(MODULE, ' PAY-WITH-LW INVOICE-NMBER ', invoiceNumber);
-
         //step 1 payment with card
         ctrl('Lemonway').moneyInWithCardId(decodedPayload, function(err, LWRES) {
             if (err) {
                 return cb(err);
             }
 
-            logger.info(MODULE, ' PAY-WITH-LW MONEY-IN-RESULT ', LWRES);
-
             if (LWRES && LWRES.TRANS && LWRES.TRANS.HPAY && LWRES.TRANS.HPAY.STATUS == '3') {}
             else {
-                logger.error(MODULE, ' PAY-WITH-LW INVALID-RESPONSE ', LWRES);
-                LogSave('Invalid response from Lemonway (moneyInWithCardId)', 'error', LWRES);
                 return cb({
                     message: "Invalid response from Lemonway. Check the logs."
                 });
             }
 
-            logger.info(MODULE, ' MOVE-TO-PREPAID #', invoiceNumber);
+           
 
 
             //step 2, moving the order to prepaid
@@ -221,22 +214,22 @@ function payUsingLW(data, callback) {
             }, function(err, res) {
                 console.log('MOVE-TO-PREPAID RESULT', err, res);
 
-                logger.info(MODULE, ' P2P LOOK-UP');
+               
+               paymentLogger.debug('P2P Lookup');
                 //step 3  p2p to diag wallet 
                 var p2pPayload = data.p2pDiag;
                 p2pPayload.message = "Order #" + invoiceNumber;
                 ctrl('Lemonway').sendPayment(p2pPayload, function(err, res) {
-                    logger.info(MODULE, ' P2P-RESULT', err, res);
+                    
                     if (err) {
-                        // logger.error(MODULE, ' P2P after card transaction ', err);
-                        //LogSave('P2P after card transaction error', 'error', err);
+                        
                     }
                     else {
-                        //logger.info(MODULE, ' P2P after card transaction ', res);
+                        
                         //LogSave('P2P after card transaction success', 'info', res);
                     }
 
-                    logger.info(MODULE, ' PAY-USING-LW SUCCESS ');
+                   
                     return cb(err, true);
                 });
 
