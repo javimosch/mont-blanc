@@ -1,7 +1,7 @@
 var Stripe = require('../model/db.actions').create('Stripe');
 var User = require('../model/db.actions').create('User');
 var Log = require('../model/db.actions').create('Log');
-var UserNotifications = require('../model/db.actions').create('UserNotifications');
+
 var Notification = require('../model/db.actions').create('Notification');
 var getFile = require('../model/utils').getFile;
 var sendEmail = require('../model/utils.mailing').sendEmail;

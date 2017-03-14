@@ -41,12 +41,7 @@
                 <div class="row  margin-top-half">
                     <input ng-disabled="state.working()" ng-model="item.lastName" class="diags-input" placeholder="nom">
                 </div>
-                <div class="row margin-top-one" ng-show="item.clientType == 'agency'">
-                    <label>Raison sociale</label>
-                </div>
-                <div class="row  margin-top-half" ng-show="item.clientType == 'agency'">
-                    <input ng-disabled="state.working()" ng-model="item.companyName" class="diags-input" placeholder="Raison sociale">
-                </div>
+
                 <div class="row margin-top-one">
                     <label>Téléphone fixe</label>
                 </div>
@@ -91,6 +86,32 @@
                         <button ng-click="addDepartment()" ng-disabled="!department" class="float-right btn diags-btn bg-azure-radiance" style="margin-right: 3.9px;">Ajouter</button>
                     </div>
                 </div>
+                <div class="row margin-top-one">
+                    <label>N° TVA Intracommunautaire</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="state.working()" ng-model="item.tva_intra_comm" class="diags-input" placeholder="N° TVA Intracommunautaire">
+                </div>
+                <div class="row margin-top-one">
+                    <label>Raison sociale</label>
+                </div>
+                <div class="row margin-top-half">
+                    <input type="text" ng-model="item.companyName" class="diags-input" placeholder="Raison sociale (Optionnelle)">
+                </div>
+                <div class="row margin-top-one">
+                    <label>Siret</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="state.working()" ng-model="item.siret" class="diags-input" placeholder="Siret">
+                </div>
+                <div class="row margin-top-one">
+                    <label>Auto entrepreneur ?</label>
+                </div>
+                <div class="row margin-top-half">
+                    <pretty-checkbox color="blue" value="true" ng-model="item.isAutoentrepreneur" label="''"></pretty-checkbox>
+                </div>
+                
+
             </div>
             <div class="col-sm-6 col-md-8">
                 <div class="row margin-top-one">
@@ -124,30 +145,7 @@
                     <input ng-disabled="state.working()" ng-model="item.country" class="diags-input" placeholder="Pays">
                 </div>
 
-                <div class="row margin-top-one">
-                    <label>N° TVA Intracommunautaire</label>
-                </div>
-                <div class="row  margin-top-half">
-                    <input ng-disabled="state.working()" ng-model="item.tva_intra_comm" class="diags-input" placeholder="N° TVA Intracommunautaire">
-                </div>
-                 <div class="row margin-top-one">
-                    <label>Raison sociale</label>
-                </div>
-                <div class="row margin-top-half">
-                    <input type="text" ng-model="item.companyName" class="diags-input" placeholder="Raison sociale (Optionnelle)">
-                </div>
-                <div class="row margin-top-one">
-                    <label>Siret</label>
-                </div>
-                <div class="row  margin-top-half">
-                    <input ng-disabled="state.working()" ng-model="item.siret" class="diags-input" placeholder="Siret">
-                </div>
-                <div class="row margin-top-one">
-                    <label>Auto entrepreneur ?</label>
-                </div>
-                <div class="row margin-top-half">
-                    <pretty-checkbox color="blue" value="true" ng-model="item.isAutoentrepreneur" label="''"></pretty-checkbox>
-                </div>
+
                 <div class="row margin-top-one" ng-show="userIs('admin')">
                     <label>Reversement</label>
                 </div>
@@ -172,6 +170,26 @@
                 </div>
                 <div class="row margin-top-half" ng-show="item._id">
                     <div ng-include="'/views/diags/backoffice/diag/diags-diplomes-partial.html'" includeReplace></div>
+                </div>
+                <div class="row margin-top-one">
+                    <label>Notifications sended</label>
+                </div>
+                <div class="row margin-top-half">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Mark as sended</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="(type,val) in item.notifications">
+                                <td ng-bind="type"></td>
+                                <td class="link" ng-click="uncheckNotification(type)" ng-bind="val?'Yes':'No'"></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

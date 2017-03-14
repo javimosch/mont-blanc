@@ -271,11 +271,41 @@ function generateInvoiceAttachmentIfNecessary(data, t, cb) {
 function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notifItemType, moreOptions) {
     notifItem.notifications = notifItem.notifications || {};
     if (notifItem.notifications[type] !== true || (data.forceSend != undefined && data.forceSend == true)) {
-        return DIAGS_CUSTOM_EMAIL(data, (err, r) => {
-            notifItem.notifications[type] = true;
-            ctrl(notifItemType).update(notifItem);
-            if (cb) cb(err, r);
-        }, subject, type, to, NOTIFICATION[type], moreOptions);
+
+        var next = function() {
+            return DIAGS_CUSTOM_EMAIL(data, (err, r) => {
+                notifItem.notifications[type] = true;
+                ctrl(notifItemType).update(notifItem);
+                if (cb) cb(err, r);
+            }, subject, type, to, NOTIFICATION[type], moreOptions);
+        };
+
+        //check: if there is no forceSend and there is a notification item in notifications collection, we skip the email.
+        if (!data.forceSend && data._user && data._user._id) {
+            return ctrl('Notification').get({
+                _user: data._user._id,
+                type: type,
+                sended: true
+            }, (err, _notification) => {
+                if (err) return;
+                if (_notification) {
+                    /*
+                    emailTriggerLogger.setSaveData({
+                        item_found:_notification
+                    });
+                    emailTriggerLogger.warnSave('Duplicate prevented for',type);
+                    */
+                }
+                else {
+                    next();
+                }
+            });
+        }
+        else {
+            next();
+        }
+
+
     }
     else {
         emailTriggerLogger.warn(type, 'Already sended');

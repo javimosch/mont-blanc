@@ -395,7 +395,25 @@ app.controller('ctrl-diag-edit', [
 
 
 
+        s.uncheckNotification = (type) => {
+            if (!s.item.notifications[type]) return;
+            if(type.toUpperCase().indexOf('CREATED')!==-1){
+                return r.okModal('CREATED notifications are only triggered uppon account creation. You can still manually send this email from the notifications section.');
+            }
+            r.openConfirm('If you uncheck the flag, this notification will be sended in the next trigger event. Normally, this will happen after saving this document.', () => {
 
+                db.ctrl('Notification', 'removeWhen', {
+                    _user: s.item._id,
+                    type: type
+                }).then((res => {
+                    s.item.notifications[type] = false;
+                    r.dom();
+                    //s.save(true);
+                }));
+
+
+            });
+        };
 
 
         s.createWallet = function() {
@@ -633,18 +651,18 @@ app.controller('ctrl-diag-edit', [
                     _id: s.item._id,
                     diplomesInfo: s.item.diplomesInfo
                 });
-                
+
                 $log.debug('diplomesUpdate');
 
                 s.item.diplomes.forEach((_id, k) => {
-                    
-                    $log.debug('File find',_id);
+
+                    $log.debug('File find', _id);
                     db.ctrl('File', 'find', {
                         _id: _id
                     }).then(data => {
-                        
-                        $log.debug('File find',data);
-                        
+
+                        $log.debug('File find', data);
+
                         var file = data.result;
                         if (data.ok && file) {
                             s.item.diplomesInfo = s.item.diplomesInfo || {};
@@ -663,11 +681,12 @@ app.controller('ctrl-diag-edit', [
                                 });
                                 //
                                 console.info('diplome-info-created', _id);
-                            }else{
+                            }
+                            else {
                                 s.item.diplomesInfo[_id].filename = file.filename;
                             }
                             //file = Object.assign(file, s.item.diplomesInfo && s.item.diplomesInfo[file._id] || {});
-                            
+
                             s.diplomesData[file._id] = s.diplomesDataCreate(file);
                         }
                         else {
@@ -801,7 +820,7 @@ app.controller('ctrl-diag-edit', [
                 return r.warningMessage("Format pdf nécessaire", 5000);
             }
             if (file.size / 1024 > 10240) {
-                $log.warn('size',file.size);
+                $log.warn('size', file.size);
                 return r.warningMessage("Limite 10mb pour le fichier pdf", 5000);
             }
 
@@ -865,7 +884,7 @@ app.controller('ctrl-diag-edit', [
 
 
 
-        
+
 
 
 
@@ -902,7 +921,7 @@ app.controller('ctrl-diag-edit', [
                     var _r = res;
                     if (_r.ok) {
                         s.item._id = res.result._id;
-                       
+
 
                         if (silent) {
                             return;

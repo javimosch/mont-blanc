@@ -1,6 +1,6 @@
 var ctrl = require('../model/db.controller').create;
 var Notification = require('../model/db.actions').create('Notification');
-var UserNotifications = require('../model/db.actions').create('UserNotifications');
+
 var User = require('../model/db.actions').create('User');
 var Order = require('../model/db.actions').create('Order');
 var Log = require('../model/db.actions').create('Log');

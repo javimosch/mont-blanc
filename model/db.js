@@ -101,7 +101,6 @@ model('Category', require('../schemas/schema.category').def);
 model('Text', require('../schemas/schema.text').def);
 model('Notification', require('../schemas/schema.notification').def);
 model('Log', require('../schemas/schema.log').def);
-model('UserNotifications', require('../schemas/schema.user-notifications').def);
 model('StripeTransaction', require('../schemas/schema.diags-stripe-transaction').def);
 model('Balance', require('../schemas/schema.balance').def);
 model('BalanceItem', require('../schemas/schema.balance-item').def);
