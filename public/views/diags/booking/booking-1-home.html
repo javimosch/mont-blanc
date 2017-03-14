@@ -2,7 +2,7 @@
 <div class="container-fluid diags-content diags-home-bg home" ng-controller="ctrl.booking">
     <div class="container padding-none">
         <div class="row-fluid">
-            <div class="col-sm-12 col-md-7 margin-bottom-four margin-bottom-none-mobile">
+            <div class="col-sm-12 col-md-6 margin-bottom-four margin-bottom-none-mobile">
 
                 <ul class="home-bg-dialog without-dots">
                     <li>
@@ -15,11 +15,14 @@
 
                     </li>
                     <li>
-                        <div class="diags-pill-info ">
+                        <div class="diags-pill-info " style="
+    position: relative;
+    top: -5px;
+">
                             <span class="avenir-book txt-md white" dynamic-block code="BOOKING_HOME_BG_TEXT_2">
                                 {{{text.BOOKING_HOME_BG_TEXT_2}}}
                             </span>
-                            <span class="avenir-black txt-xl white middle" >
+                            <span class="avenir-black txt-xl white middle">
                                 <!--dynamic-block code="BOOKING_HOME_BG_TEXT_PHONE"-->
                                 01 79 72 82 33
                                 <!--text.BOOKING_HOME_BG_TEXT_PHONE-->
@@ -28,7 +31,7 @@
                     </li>
                     <li>
                         <p class="home-brandon-re-38-489" dynamic-block code="BOOKING_HOME_BG_TEXT_1">
-                             {{{text.BOOKING_HOME_BG_TEXT_1}}}
+                            {{{text.BOOKING_HOME_BG_TEXT_1}}}
                         </p>
                     </li>
                 </ul>
@@ -46,7 +49,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-5 margin-bottom-four margin-bottom-none-mobile booking-form-wrapper">
+            <div class="col-sm-12 col-md-6 margin-bottom-four margin-bottom-none-mobile booking-form-wrapper">
                 <div ng-include="'/views/diags/booking/partials/booking-1-home-form.html'" includeReplace></div>
             </div>
         </div>
