@@ -13,7 +13,7 @@ angular.module('app').controller('settings-pages', ['server', '$scope', '$rootSc
         var template = '<div class="diags-bg">';
         template += '<div class="diags-content container diags-selection padding-none">';
         template += '<div class="row diags-bg-block-40 hidden-xs"></div>';
-        template += '<div class="row diag-row padding-top-three">';
+        template += '<div class="row diag-row padding-top-half">';
         template += '__HTML__';
         template += '</div>';
         template += '</div>';
