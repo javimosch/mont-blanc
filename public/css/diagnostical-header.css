@@ -123,6 +123,17 @@
 }
 
 @media screen and (min-width: 992px) {
+    .navbar-collapse {
+        position: relative;
+        background-color: transparent!important;
+        top: 10px;
+        float: right;
+    }
+    .nav,
+    .nav li {
+        background-color: transparent!important;
+    }
+    
     .navbar-nav .diags-pill-info {
         margin: 0px 0px 0px 10px!important;
     }
@@ -167,16 +178,7 @@
     .navbar-nav {
         padding-top: 0px;
     }
-    .navbar-collapse {
-        position: relative;
-        background-color: transparent!important;
-        top: 10px;
-        float: right;
-    }
-    .nav,
-    .nav li {
-        background-color: transparent!important;
-    }
+    
 }
 
 .nowrap {
