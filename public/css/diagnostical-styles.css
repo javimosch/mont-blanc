@@ -482,27 +482,7 @@ html {
 
 /*.diags-navbar-2 .navbar-nav>li>a*/
 
-.diag-button:hover {
-    text-decoration: none;
-}
 
-.diag-button-phone {
-    max-width: 308px!important;
-}
-
-.diag-button {
-    text-shadow: none!important;
-    line-height: 39px!important;
-    height: 37px;
-    padding: 0px 15px!important;
-    margin: 2px 10px 0px 10px;
-    border-radius: 20px;
-    color: white!important;
-    max-width: 232px;
-    font-family: 'Avenir-Book';
-    font-size: 14px!important;
-    vertical-align: sub;
-}
 
 .diags-navbar-2,
 .diags-navbar-2 nav,
