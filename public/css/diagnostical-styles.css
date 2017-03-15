@@ -486,6 +486,10 @@ html {
     text-decoration: none;
 }
 
+.diag-button-phone {
+    max-width: 308px!important;
+}
+
 .diag-button {
     text-shadow: none!important;
     line-height: 39px!important;
@@ -778,11 +782,12 @@ a.diag-btn-success {
 .diags-pill-info {
     border-radius: 20px;
     background-color: #00A8FF!important;
-    padding: 3px 15px!important;
+    padding: 0px 15px!important;
     display: inline-block;
-    line-height: 30px;
     color: white;
     max-width: 303.7px;
+    position: relative;
+    top: 5px;
 }
 
 .diag46 {

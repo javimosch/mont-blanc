@@ -124,7 +124,7 @@
 
 @media screen and (min-width: 992px) {
     .navbar-nav .diags-pill-info {
-        margin: 2px 0px 0px 10px!important;
+        margin: 0px 0px 0px 10px!important;
     }
     .navbar-brand {
         margin: 0px;
@@ -139,7 +139,7 @@
     .navbar-nav li {
         padding-top: 0px;
         min-height: 66px;
-        line-height: 66px;
+        /*line-height: 66px;*/
     }
     .navbar-right {
         float: right!important;
@@ -167,4 +167,21 @@
     .navbar-nav {
         padding-top: 0px;
     }
+    .navbar-collapse {
+        position: relative;
+        background-color: transparent!important;
+        top: 10px;
+        float: right;
+    }
+    .nav,
+    .nav li {
+        background-color: transparent!important;
+    }
+}
+
+.nowrap {
+    display: inline;
+    white-space: nowrap;
+    position: relative;
+    width: 99999%;
 }
