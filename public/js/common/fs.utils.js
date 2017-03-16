@@ -13,19 +13,19 @@ var readJSONSync = (url) => {
 };
 
 /* global localStorage */
-var store = (() => {
+var localStorageWrapper = (() => {
     return {
         set: (id, raw) => {
             //return new Promise((resolve, error) => {
             id = 'store#' + id;
             try {
                 raw = JSON.stringify(raw);
-                localStorage.setItem(id, raw);
+                window.store.set(id, raw);
                 // resolve();
                 return true;
             }
             catch (e) {
-                console.warn('store setData fails');
+                console.warn('store setData fails',e);
                 // error();
                 return false;
             }
@@ -35,12 +35,12 @@ var store = (() => {
             //return new Promise((resolve, error) => {
             id = 'store#' + id;
             try {
-                var localData = JSON.parse(localStorage.getItem(id));
+                var localData = JSON.parse(window.store.get(id)||"{}");
                 //     resolve(localData);
                 return localData;
             }
             catch (e) {
-                console.warn('store getData fails');
+                console.warn('store getData fails',e,window.store.get(id));
                 //      error();
                 return null;
             }
@@ -761,7 +761,7 @@ else {
     window.$U = {
         dateRangeOverlaps:dateRangeOverlaps,
         readJSONSync: readJSONSync,
-        store: store,
+        store: localStorageWrapper,
         replaceHTML: replaceHTML,
         toCSV: toCSV,
         downloadContent: downloadContent,
