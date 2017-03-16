@@ -36,31 +36,33 @@
 
 
         <div class="row diag-row margin-top-one">
-            <div class="col-md-12">
+            <div class="col-md-12" style="
+    min-height: 400px;
+">
+
+                <div class="loading-icon-wrapper" ng-show="state.working()">
+                    <span class="loading-icon-helper"></span>
+                    <img class="loading-icon" src="/img/ring-alt.svg" alt="rdv-loading-icon">
+                </div>
+
                 <div ng-include="'/views/diags/booking/partials/booking-3-dates.html'" includeReplace></div>
             </div>
         </div>
 
         <div class="row diag-row margin-top-one">
             <div class="col-md-12 col-lg-6">
-                <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 center" 
-                ng-disabled="state.working() || slotsDays.nextIsDisabled()"
-                ng-click="diagSlots.back()"
-                >Créneau précédent</button>
+                <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 center" ng-disabled="state.working() || slotsDays.nextIsDisabled()" ng-click="diagSlots.back()">Créneau précédent</button>
             </div>
             <div class="col-md-12 col-lg-6">
-                
-                <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 center" 
-                ng-disabled="state.working() || slotsDays.nextIsDisabled()"
-                ng-click="diagSlots.next()"
-                >Créneau suivant</button>
+
+                <button class="btn md-margin-top-one  diag-btn-main diag-btn-width306 center" ng-disabled="state.working() || slotsDays.nextIsDisabled()" ng-click="diagSlots.next()">Créneau suivant</button>
             </div>
         </div>
 
         <div class="row diag-row margin-top-one padding-bottom-two">
             <div class="col-md-12 ">
                 <p class="stripe-message">
-                    <span class="fnt-30 text-top">*</span> 
+                    <span class="fnt-30 text-top">*</span>
                     <span class="">
                         <out class="inline-childs-divs" dynamic-block code="BOOKING_STRIPE_TEXT">
                                         {{{text.BOOKING_STRIPE_TEXT}}}
