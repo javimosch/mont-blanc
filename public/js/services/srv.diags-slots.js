@@ -15,7 +15,9 @@
                 //var s = scope;
                 //s.totalTime
 
-                var _settings = {};
+                var _settings = {
+                    daysPerPage:4
+                };
                 $rootScope._diagSlotsSettings = _settings;
 
                 function setOrderDetails(date) {
@@ -223,6 +225,7 @@
 
                         _settings.maxSlots = opt.maxSlots || _settings.maxSlots;
                         _settings.allowFixedAllocation = opt.allowFixedAllocation;
+                        _settings.daysPerPage = opt.daysPerPage || 4;
 
                         if (scope.item && scope.item.postCode) {
                             $log.debug('rdv-slots: parsing department',scope.item.postCode);
@@ -245,12 +248,12 @@
                             return o.init(null, _settings);
                         }
                         _nextTimes++;
-                        cursor = cursor.add(4, 'days');
+                        cursor = cursor.add(_settings.daysPerPage, 'days');
                         o.request();
                     };
                     o.back = function() {
                         if (cursor.isSame(moment(), 'days')) return; //on today ,back is not possible.
-                        cursor = cursor.subtract(4, 'days');
+                        cursor = cursor.subtract(_settings.daysPerPage, 'days');
                         if (cursor.isBefore(moment(), 'days')) {
                             cursor = moment();
                         }
@@ -259,25 +262,20 @@
                         }
                         o.request();
                     };
+                    o.isWorking = ()=> o._isWorking || false,
                     o.request = function() {
+                        o._isWorking = true;
                         var _localCursor = moment(cursor);
-                        var cbHell = $U.cbHell(4, function() {
-                            // console.info('slots-days-request-end');
-
-                            //if the first day is today and there is 0 slots, we move one day ahead.
+                        var cbHell = $U.cbHell(_settings.daysPerPage, function() {
+                            o._isWorking = false;
                             if (o.get()[0].date.isSame(moment(), 'day') && o.get()[0].slots.length == 0) {
                                 o.init(moment().add(1, 'days').toDate(), _settings);
                             }
-
                         });
-                        // console.info('slots-days-request-begin for', r.momentFormat(_localCursor, 'DD-MM-YY'));
-                        asyncRequest(_localCursor._d, cbHell, 0); //
-                        _localCursor = _localCursor.add(1, 'days');
-                        asyncRequest(_localCursor._d, cbHell, 1); //
-                        _localCursor = _localCursor.add(1, 'days');
-                        asyncRequest(_localCursor._d, cbHell, 2); //
-                        _localCursor = _localCursor.add(1, 'days');
-                        asyncRequest(_localCursor._d, cbHell, 3); //
+                        for(var x=0;x<_settings.daysPerPage;x++){
+                            asyncRequest(_localCursor._d, cbHell, x); //
+                            _localCursor = _localCursor.add(1, 'days');
+                        }
                     };
                     return o;
                 }();

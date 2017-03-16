@@ -40,7 +40,7 @@
     min-height: 400px;
 ">
 
-                <div class="loading-icon-wrapper" ng-show="state.working()">
+                <div class="loading-icon-wrapper" ng-show="state.working() || diagSlots.isWorking()">
                     <span class="loading-icon-helper"></span>
                     <img class="loading-icon" src="/img/ring-alt.svg" alt="rdv-loading-icon">
                 </div>

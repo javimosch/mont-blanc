@@ -1411,7 +1411,7 @@ h2.diags.black>div {
     display: flex;
     background-color: #def3ff;
     width: 179px;
-    margin: 36px auto;
+    margin: 6px auto;
     border-radius: 5px;
     margin-left: auto!important;
     margin-right: auto!important;
@@ -1431,7 +1431,7 @@ h2.diags.black>div {
 }
 
 .rdv-day-wrapper {
-    min-height: 420px!important;
+    min-height: 280px!important;
 }
 
 .diags-date-day-item:hover .diags-date-day-item-description-wrapper .time-price,
