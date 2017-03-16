@@ -482,8 +482,6 @@ html {
 
 /*.diags-navbar-2 .navbar-nav>li>a*/
 
-
-
 .diags-navbar-2,
 .diags-navbar-2 nav,
 .diags-navbar-2 div,
@@ -1410,11 +1408,39 @@ h2.diags.black>div {
     /* NEW - Chrome */
     display: flex;
     background-color: #def3ff;
-    width: 179px;
     margin: 6px auto;
     border-radius: 5px;
+    width: 146px;
     margin-left: auto!important;
     margin-right: auto!important;
+    float: none;
+}
+
+@media only screen and (min-width: 320px) {
+    .diags-date-day-item {
+        width: 161px;
+        margin-left: 2px!important;
+        margin-right: 2px!important;
+        float: left;
+    }
+}
+
+@media only screen and (min-width: 480px) {
+    .diags-date-day-item {
+        width: 179px;
+        margin-left: auto!important;
+        margin-right: auto!important;
+        float: none;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .diags-date-day-item {
+        width: 179px;
+        margin-left: auto!important;
+        margin-right: auto!important;
+        float: none;
+    }
 }
 
 .diags-date-day-item:hover {
@@ -1431,7 +1457,28 @@ h2.diags.black>div {
 }
 
 .rdv-day-wrapper {
-    min-height: 280px!important;
+    min-height: 170px!important;
+    padding: 0px;
+    padding-left: 0px!important;
+    padding-right: 0px!important;
+}
+
+@media only screen and (min-width: 768px) {
+    .rdv-day-wrapper {
+        min-height: 100px!important;
+    }
+}
+
+@media only screen and (min-width: 960px) {
+    .rdv-day-wrapper {
+        min-height: 170px!important;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .rdv-day-wrapper {
+        min-height: 280px!important;
+    }
 }
 
 .diags-date-day-item:hover .diags-date-day-item-description-wrapper .time-price,

@@ -170,7 +170,7 @@ app.controller('ctrl.booking', ['server',
                     if (!s.diagSlots) return;
                     clearInterval(wait);
                     s.diagSlots.init(undefined, {
-                        daysPerPage: $(window).width()>1200?8:4,
+                        daysPerPage: 8,//$(window).width()>1200?8:4,
                         department: s.item && s.item.postCode && s.item.postCode.substring(0, 2)
                     });
                 }, 100)
