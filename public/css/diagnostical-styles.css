@@ -671,10 +671,10 @@ a.diag-btn-success {
 }
 
 .txt-xl {
-    font-size: 20px;
+    font-size: 19px;
 }
 
-@media only screen and (min-width: 320px) {
+@media only screen and (min-width: 321px) {
     .txt-xl {
         font-size: 22px;
     }

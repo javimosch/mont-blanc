@@ -184,6 +184,6 @@
 .nowrap {
     display: inline;
     white-space: nowrap;
-    position: relative;
-    width: 99999%;
+    /*position: relative;
+    width: 99999%;*/
 }
