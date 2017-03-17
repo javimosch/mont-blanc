@@ -500,7 +500,9 @@ app.controller('ctrl.booking', ['server',
         s.addressDepartmentCovered = true;
         s.validateAddressDepartment = (cb, err) => {
             var code = s.item.postCode.substring(0, 2);
-            //console.info('debug validating address department', code);
+            
+            console.info('debug validating address department', code,s.item.postCode);
+            
             db.ctrl('User', 'departmentCoveredBy', {
                 department: code.toString()
             }).then(res => {
@@ -536,6 +538,9 @@ app.controller('ctrl.booking', ['server',
                     'Frankreich', 'Frankrike', 'Francja'
                 ], s.item.country), '==', false, MESSAGES.FRENCH_ADDRESS_REQUIRED]
                 */
+                
+                [s.item.postCode,'==','France',appText.VALIDATE_ADDRESS_PRECISION],
+                [s.item.postCode,'==','Francia',appText.VALIDATE_ADDRESS_PRECISION]
 
             ], (m) => {
                 s.warningMsg(m[0], 6000);
