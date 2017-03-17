@@ -201,7 +201,7 @@ app.run(['$rootScope', '$location', '$window', '$log',
     }
 ]);
 
-app.run(['server', '$timeout', '$rootScope', 'appRouter', function(db, $timeout, r, appRouter) {
+app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(db, $timeout, r, appRouter, localData) {
     //console.info('app.common.root:run');
     window.r = r;
     r.getHashParams = getHashParams;
@@ -214,7 +214,7 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', function(db, $timeout,
     r.config = $U.readJSONSync(window.env.CONFIG_JSON_PATH);
     env.$set(r.config);
 
-    db.localData().then((data) => Object.assign(r.config, data.config || {}));
+    localData().then((data) => Object.assign(r.config, data.config || {}));
 
 
     r.__cache = {};
@@ -256,7 +256,7 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', function(db, $timeout,
     };
 
     setTimeout(function() {
-        r.$apply(function(){
+        r.$apply(function() {
             $('.remove-hidden').removeClass('hidden').removeClass('remove-hidden');
         });
     }, 300);

@@ -56,7 +56,7 @@
                         <tr ng-repeat="(k,o) in localData.squareMetersPrice">
                             <td>
                                 <label class="minimal" ng-bind="k"></label>
-                                <input disabled class="diags-input minimal" placeholder="%" ng-value="o+'%'" />
+                                <input class="diags-input minimal" placeholder="%" ng-model="localData.squareMetersPrice[k]" />
                             </td>
                         </tr>
                     </table>

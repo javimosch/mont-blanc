@@ -2,7 +2,7 @@ var app = angular.module('app.client.payments', []);
 
 
 angular.module('app').directive('clientPayments', function(
-    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server,localData) {
     return {
         restrict: 'AE',
         replace: true,
@@ -85,7 +85,7 @@ angular.module('app').directive('clientPayments', function(
             s.model = {
                 click: (item, index) => {
                     var data = {};
-                    ws.localData().then(function(d) {
+                    localData().then(function(d) {
                         Object.assign(data, d);
                     });
                     s.open({

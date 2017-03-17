@@ -10,8 +10,8 @@
 
     app.controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi',
-        function(db, s, r, params, focus, diagSlots, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi) {
+        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi', 'localData',
+        function(db, s, r, params, focus, diagSlots, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData) {
             r.setCurrentCtrl(s);
 
 
@@ -573,7 +573,7 @@
                     }
                 });
 
-                db.localData().then(function(data) {
+                localData().then(function(data) {
                     Object.assign(s, data);
                     s.diags.forEach((diag) => {
                         diag.show = true;

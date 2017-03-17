@@ -11,6 +11,8 @@
         'srv.crud',
         'srv.diagPrice',
         'srv.diagSlots',
+        'app-settings-service',
+        'local-data',
         'app.directives',
         'app.services',
         'app-router'
@@ -19,9 +21,9 @@
     }]);
     moment.locale('fr')
     angular.element(function() {
-        
+
         console.log('BOOTSTRAPING!');
-        
+
         angular.bootstrap(document, ['app']);
         if (window.__bootTimerStart) {
             window.__bootTimerMilli = Date.now() - window.__bootTimerStart;

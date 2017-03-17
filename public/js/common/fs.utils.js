@@ -25,7 +25,7 @@ var localStorageWrapper = (() => {
                 return true;
             }
             catch (e) {
-                console.warn('store setData fails',e);
+                console.warn('store setData fails', e);
                 // error();
                 return false;
             }
@@ -35,12 +35,12 @@ var localStorageWrapper = (() => {
             //return new Promise((resolve, error) => {
             id = 'store#' + id;
             try {
-                var localData = JSON.parse(window.store.get(id)||"{}");
+                var localData = JSON.parse(window.store.get(id) || "{}");
                 //     resolve(localData);
                 return localData;
             }
             catch (e) {
-                console.warn('store getData fails',e,window.store.get(id));
+                console.warn('store getData fails', e, window.store.get(id));
                 //      error();
                 return null;
             }
@@ -60,7 +60,7 @@ function numberBetween(n, min, max) {
 }
 
 function expose(path, v) {
-    if(window.r && window.r.isDevEnv && !window.r.isDevEnv()) return;
+    if (window.r && window.r.isDevEnv && !window.r.isDevEnv()) return;
     setVal(window, path, v);
 }
 
@@ -732,14 +732,19 @@ function replaceHTML(html, obj) {
 }
 
 function dateRangeOverlaps(a_start, a_end, b_start, b_end) {
-    if(a_start._d) a_start = a_start._d;
-    if(a_end._d) a_end = a_end._d;
-    if(b_start._d) b_start = b_start._d;
-    if(b_end._d) b_end = b_end._d;
+    if (a_start._d) a_start = a_start._d;
+    if (a_end._d) a_end = a_end._d;
+    if (b_start._d) b_start = b_start._d;
+    if (b_end._d) b_end = b_end._d;
     if (a_start <= b_start && b_start <= a_end) return true; // b starts in a
-    if (a_start <= b_end   && b_end   <= a_end) return true; // b ends in a
-    if (b_start <  a_start && a_end   <  b_end) return true; // a in b
+    if (a_start <= b_end && b_end <= a_end) return true; // b ends in a
+    if (b_start < a_start && a_end < b_end) return true; // a in b
     return false;
+}
+
+function exposeGlobal(name, val) {
+    window.$g = window.$g || {};
+    window.$g[name] = val;
 }
 
 if (typeof exports !== 'undefined') {
@@ -759,7 +764,8 @@ else {
     window.ifThenMessage = ifThenMessage;
 
     window.$U = {
-        dateRangeOverlaps:dateRangeOverlaps,
+        exposeGlobal:exposeGlobal,
+        dateRangeOverlaps: dateRangeOverlaps,
         readJSONSync: readJSONSync,
         store: localStorageWrapper,
         replaceHTML: replaceHTML,

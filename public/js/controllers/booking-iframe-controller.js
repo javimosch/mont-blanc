@@ -13,8 +13,8 @@
 /*global $D*/
 var app = angular.module('app');
 app.controller('booking-iframe-controller', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter',
-    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter) {
+    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData',
+    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData) {
         /*
           info: {
                     buildingState: paramBool('buildingState') || '1',
@@ -27,46 +27,47 @@ app.controller('booking-iframe-controller', ['server',
                 },
                 address: getParam('address') 
                 */
-                
-        s.warningMsg = (msg,delay)=>{
-            r.warningMessage(msg,delay);
+
+        s.warningMsg = (msg, delay) => {
+            r.warningMessage(msg, delay);
         };
 
         s.proceedToDiagsSelection = function() {
             s.validateQuestions(function() {
                 if (!window.serverURL) {
-                //    return r.warningMessage('Define serverURL');
+                    //    return r.warningMessage('Define serverURL');
                 }
                 var url = "https://white-house-78-javoche.c9users.io/";
-                
-                if(!r.isDevEnv()){
+
+                if (!r.isDevEnv()) {
                     url = "https://www.diagnostical.fr/";
                 }
-                
-                if(window.location.href.indexOf('herokuapp')!==-1){
+
+                if (window.location.href.indexOf('herokuapp') !== -1) {
                     url = 'https://diagnostical-preview.herokuapp.com/';
                 }
-                
-                url+='choix-diagnostics';
-                
-                var addParam = (n,v)=>{
-                  if(url.indexOf('?')==-1) {
-                      url+='?';
-                  }else{
-                      url+='&';
-                  }
-                  url+=n.toString()+'='+v.toString();
+
+                url += 'choix-diagnostics';
+
+                var addParam = (n, v) => {
+                    if (url.indexOf('?') == -1) {
+                        url += '?';
+                    }
+                    else {
+                        url += '&';
+                    }
+                    url += n.toString() + '=' + v.toString();
                 };
-                
-                addParam('buildingState',s.item.info.buildingState);
-                addParam('buildingType',s.item.info.buildingType);
-                addParam('squareMeters',s.item.info.squareMeters);
-                addParam('cpd',s.item.info.constructionPermissionDate);
-                addParam('gasInstallation',s.item.info.gasInstallation);
-                addParam('electricityInstallation',s.item.info.electricityInstallation);
-                addParam('address',s.item.address);
-                addParam('postCode',s.item.postCode);
-                
+
+                addParam('buildingState', s.item.info.buildingState);
+                addParam('buildingType', s.item.info.buildingType);
+                addParam('squareMeters', s.item.info.squareMeters);
+                addParam('cpd', s.item.info.constructionPermissionDate);
+                addParam('gasInstallation', s.item.info.gasInstallation);
+                addParam('electricityInstallation', s.item.info.electricityInstallation);
+                addParam('address', s.item.address);
+                addParam('postCode', s.item.postCode);
+
                 //return r.routeExternal(url);
                 return window.open(url, '_newtab');
             }, () => {
@@ -116,7 +117,7 @@ app.controller('booking-iframe-controller', ['server',
             clientType: 'landlord',
             info: {}
         };
-        db.localData().then(function(data) {
+        localData().then(function(data) {
             Object.assign(s, data);
             s.diags = _.sortBy(s.diags, function(o) {
                 return o.sort;

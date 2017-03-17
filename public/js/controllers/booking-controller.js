@@ -13,8 +13,8 @@
 /*global $D*/
 var app = angular.module('app');
 app.controller('ctrl.booking', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter',
-    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter) {
+    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData',
+    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData) {
 
 
         /*BOOKING METADATA*/
@@ -42,7 +42,7 @@ app.controller('ctrl.booking', ['server',
         };
 
         /*INIT*/
-        db.localData().then(function(data) {
+        localData().then(function(data) {
             Object.assign(s, data);
             s.diags = _.sortBy(s.diags, function(o) {
                 return o.sort;
@@ -170,7 +170,7 @@ app.controller('ctrl.booking', ['server',
                     if (!s.diagSlots) return;
                     clearInterval(wait);
                     s.diagSlots.init(undefined, {
-                        daysPerPage: 8,//$(window).width()>1200?8:4,
+                        daysPerPage: 8, //$(window).width()>1200?8:4,
                         department: s.item && s.item.postCode && s.item.postCode.substring(0, 2)
                     });
                 }, 100)
@@ -500,9 +500,9 @@ app.controller('ctrl.booking', ['server',
         s.addressDepartmentCovered = true;
         s.validateAddressDepartment = (cb, err) => {
             var code = s.item.postCode.substring(0, 2);
-            
-            console.info('debug validating address department', code,s.item.postCode);
-            
+
+            console.info('debug validating address department', code, s.item.postCode);
+
             db.ctrl('User', 'departmentCoveredBy', {
                 department: code.toString()
             }).then(res => {
@@ -538,9 +538,9 @@ app.controller('ctrl.booking', ['server',
                     'Frankreich', 'Frankrike', 'Francja'
                 ], s.item.country), '==', false, MESSAGES.FRENCH_ADDRESS_REQUIRED]
                 */
-                
-                [s.item.postCode,'==','France',appText.VALIDATE_ADDRESS_PRECISION],
-                [s.item.postCode,'==','Francia',appText.VALIDATE_ADDRESS_PRECISION]
+
+                [s.item.postCode, '==', 'France', appText.VALIDATE_ADDRESS_PRECISION],
+                [s.item.postCode, '==', 'Francia', appText.VALIDATE_ADDRESS_PRECISION]
 
             ], (m) => {
                 s.warningMsg(m[0], 6000);

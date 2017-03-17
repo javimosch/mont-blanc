@@ -20,6 +20,7 @@
         'srv.diagPrice',
         'srv.diagSlots',
         'app-settings-service',
+        'local-data',
 
         "diags_ctrl_settings",
         'diags_ctrl_contact_form',

@@ -28,7 +28,7 @@ function TABLE_COLUMNS(r) {
 }
 
 angular.module('app').directive('diagOrders', function(
-    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate,localData) {
     return {
         restrict: 'AE',
         replace: true,
@@ -96,7 +96,7 @@ angular.module('app').directive('diagOrders', function(
                 },
                 click: (item, index) => {
                     var data = {};
-                    ws.localData().then(function(d) {
+                    localData().then(function(d) {
                         Object.assign(data, d);
                     });
 
@@ -121,7 +121,7 @@ angular.module('app').directive('diagOrders', function(
 });
 
 angular.module('app').directive('diagOrdersSucceded', function(
-    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
+    $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate,localData) {
     return {
         restrict: 'AE',
         replace: true,
@@ -190,7 +190,7 @@ angular.module('app').directive('diagOrdersSucceded', function(
                 },
                 click: (item, index) => {
                     var data = {};
-                    ws.localData().then(function(d) {
+                    localData().then(function(d) {
                         Object.assign(data, d);
                     });
 

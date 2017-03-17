@@ -1,14 +1,106 @@
-/*global angular*/
-var app = angular.module('app-settings-service', []).service('appSettings', ['$rootScope', '$log', '$timeout', function(r, $log, $timeout) {
-    var self = {
-        URL: window.location.origin+'/'
-    };
-    if(window.__settings){
-        for(var x in window.__settings){
-            self[x] = window.__settings[x];
+(function() {
+    /*global angular*/
+    /*global $U*/
+    angular.module('app-settings-service', []).service('appSettings', ['$rootScope', '$log', '$timeout', 'server', function(r, $log, $timeout, server) {
+
+        var requested = false;
+        var self = {
+            URL: window.location.origin + '/',
+            databaseSettings: null,
+            parseLocalData: parseLocalData
+        };
+        assignGlobalSettings(self);
+        fetchDatabaseSettings(); //initial and unique fetch
+        $U.exposeGlobal('appSettings', self);
+        return self;
+
+
+        function getDatabaseSettings(resolve) {
+            if (self.databaseSettings) {
+                //$log.log('appSettings databaseSettings', 'resolved');
+                return resolve(self.databaseSettings);
+            }
+            else return setTimeout(() => {
+                getDatabaseSettings(resolve);
+            }, 200);
         }
-        delete window.__settings;
+
+        function fetchDatabaseSettings() {
+            requested = true;
+            server.ctrl('Settings', 'getAll', {}).then(r => {
+                if (r.ok && r.result.length > 0) {
+                    self.databaseSettings = r.result[0];
+                }
+                else {
+                    self.databaseSettings = {};
+                    $log.warn('Unable to fetch database settings');
+                }
+            });
+        }
+
+
+
+        function parseLocalData(localData) {
+            return $U.MyPromise(function(resolve, error) {
+                getDatabaseSettings(dbSettings => {
+
+                    if (!dbSettings.metadata) {
+                        $log.warn('appSettings databaseSettings metadata missing');
+                    }
+                    else {
+                        if (dbSettings.metadata.prices) {
+                            localData = inyectPrices(dbSettings, localData);
+                        }
+                        if (dbSettings.metadata.squareMetersPrice) {
+                            for (var x in dbSettings.metadata.squareMetersPrice) {
+                                localData.squareMetersPrice[x] = dbSettings.metadata.squareMetersPrice[x];
+                            }
+                        }
+
+                    }
+                    return resolve(localData);
+                });
+            });
+        }
+
+    }]);
+
+    function assignGlobalSettings(self) {
+        if (window.__settings) {
+            for (var x in window.__settings) {
+                self[x] = window.__settings[x];
+            }
+            delete window.__settings;
+        }
     }
-    window._appSettings = self;
-    return self;
-}]);
+
+    function inyectPrices(dbSettings, localData) {
+        if (dbSettings.metadata.prices.basePrice !== undefined &&
+            !isNaN(dbSettings.metadata.prices.basePrice) &&
+            dbSettings.metadata.prices.basePrice !== '') {
+            try {
+                localData.basePrice = parseInt(dbSettings.metadata.prices.basePrice);
+            }
+            catch (err) {}
+        }
+        else {}
+        Object.keys(dbSettings.metadata.prices).forEach(function(diagName) {
+            for (var i in localData.diags) {
+                if (localData.diags[i].name == diagName) {
+
+                    if (dbSettings.metadata.prices[diagName] !== undefined) {
+                        try {
+                            localData.diags[i].price = parseInt(dbSettings.metadata.prices[diagName]);
+                        }
+                        catch (e) {
+
+                        }
+                    }
+                }
+            }
+        });
+        return localData;
+    }
+
+
+})();

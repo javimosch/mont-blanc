@@ -6,8 +6,8 @@
     angular.module('app.admin', [])
         .controller('adminDashboard', [
 
-            'server', '$scope', '$rootScope',
-            function(db, s, r) {
+            'server', '$scope', '$rootScope', 'localData',
+            function(db, s, r, localData) {
                 //        console.info('app.admin.login:adminDashboard');
                 //
                 r.toggleNavbar(true);
@@ -51,7 +51,7 @@
                 }
             };
         }).directive('adminTurnover', function(
-            $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
+            $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate, localData) {
             return {
                 restrict: 'AE',
                 replace: true,
@@ -115,7 +115,7 @@
                         },
                         click: (item, index) => {
                             var data = {};
-                            db.localData().then(function(d) {
+                            localData().then(function(d) {
                                 Object.assign(data, d);
                             });
 

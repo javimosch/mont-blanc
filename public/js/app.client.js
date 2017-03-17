@@ -9,7 +9,7 @@
 
 
     angular.module('app').directive('clientOrders', function(
-        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
+        $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate, localData) {
         return {
             restrict: 'AE',
             replace: true,
@@ -89,7 +89,7 @@
                     },
                     click: (item, index) => {
                         var data = {};
-                        ws.localData().then(function(d) {
+                        localData().then(function(d) {
                             Object.assign(data, d);
                         });
 
@@ -100,18 +100,18 @@
                         r.route('orders/edit/' + item._id);
 
                     },
-                    hideTooltip:true,
+                    hideTooltip: true,
                     buttons: [{
                         label: "Refresh",
-                        show:false,
+                        show: false,
                         type: () => "btn diags-btn bg-madison spacing-h-1",
                         click: () => update()
                     }],
                     columns: [{
                         label: "Debug",
                         name: "start",
-                        format:(v,item)=>r.momentDateTimeWords2(item.start)
-                    },{
+                        format: (v, item) => r.momentDateTimeWords2(item.start)
+                    }, {
                         label: "Address",
                         name: 'address'
                     }, {
@@ -188,10 +188,10 @@
                         label: "Type",
                         name: 'clientType'
                     }, {
-                        label:"Description",
-                        name:"firstName",
-                        format:(x,o)=>o.firstName+((o.lastName)?', '+o.lastName:'')
-                    },{
+                        label: "Description",
+                        name: "firstName",
+                        format: (x, o) => o.firstName + ((o.lastName) ? ', ' + o.lastName : '')
+                    }, {
                         label: "Email",
                         name: 'email'
                     }, {
@@ -201,8 +201,7 @@
                     }, {
                         label: "Siret",
                         name: "siret"
-                    },
-                    {
+                    }, {
                         label: "Created At",
                         name: "createdAt",
                         format: (v, item) => r.momentDateTime(v)

@@ -6,18 +6,18 @@
 /*global tinymce*/
 (function() {
     var app = angular.module('diags_ctrl_settings', []);
-    app.controller('diags_ctrl_settings', ['server', '$scope', '$rootScope', 'diagPrice', '$log', 'orderPrice',
-        function(db, s, r, diagPrice, $log, orderPrice) {
+    app.controller('diags_ctrl_settings', ['server', '$scope', '$rootScope', 'diagPrice', '$log', 'orderPrice', 'localData',
+        function(db, s, r, diagPrice, $log, orderPrice, localData) {
 
             s.orderPrice = orderPrice;
 
-            db.localData().then(function(data) {
+            localData().then(function(data) {
                 s.localData = data;
                 //s.$emit('localData');
             });
 
             function mergeStaticPrices() {
-                db.localData().then(function(data) {
+                localData().then(function(data) {
                     var diags = data.diags;
 
                     s.item.metadata = s.item.metadata || {};
@@ -83,7 +83,7 @@
                 "Extract Data": "settings-exportation",
                 "Invoice Template": "settings-invoice",
                 "Password reset": "settings-password-reset",
-                "Database files":"database-files/-1"
+                "Database files": "database-files/-1"
             };
 
             s.priceModifiers = {
@@ -192,6 +192,14 @@
                 $U.ifThenMessage(rules, r.warningMessage, s.save);
             };
             s.save = () => {
+
+                //copy squareMetersPrice from localData to database settings registry
+                s.item.metadata = s.item.metadata || {};
+                s.item.metadata.squareMetersPrice = s.item.metadata.squareMetersPrice || {};
+                for (var x in s.localData.squareMetersPrice) {
+                    s.item.metadata.squareMetersPrice[x] = s.localData.squareMetersPrice[x];
+                }
+
                 db.ctrl('Settings', 'save', s.item).then(d => {
                     if (d.ok) {
                         r.infoMessage('Changes saved');
@@ -414,7 +422,7 @@
                     //localData.settings needs to be the db settings object.
                     //item: start info.squareMeters postCode diags (ex:{dpe:true})
                     diagCommissionRate: 75,
-                    diagIsAutoentrepreneur:false,
+                    diagIsAutoentrepreneur: false,
                     item: {
                         start: moment(),
                         postCode: '75010',
@@ -427,7 +435,7 @@
                             gaz: false,
                             electricity: false,
                             parasitaire: false,
-                            dta:false
+                            dta: false
                         },
                         _client: {
                             email: '',

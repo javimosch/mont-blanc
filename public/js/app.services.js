@@ -398,7 +398,7 @@ srv.service('fileUpload', ['$http', function($http) {
             .error(err);
     };
 }]);
-srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', function(http, localdb, r, fileUpload, $log) {
+srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '$timeout', function(http, localdb, r, fileUpload, $log, $timeout) {
     //var URL = 'http://ujkk558c0c9a.javoche.koding.io:3434';
     var URL = 'http://localhost:5000';
 
@@ -425,12 +425,12 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', f
 
     //var URL = 'http://blooming-plateau-64344.herokuapp.com/';
     var globalState = {}; //containts a global state of the service. (db)
-    var localData = null;
+    var _localData = null;
 
     var spinner = (() => {
         return (v) => {
             r.showSpinner = v;
-            r.dom();
+            $timeout(() => r.$apply());
         }
     })();
     var logger = (() => {
@@ -557,96 +557,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', f
         //console.info('LOGGER:CLEAR');
     });
 
-    function getLocalData() {
-        function onResolve(resolve, data) {
-            resolve(data);
-            localData = data; //cache
-        }
-        return MyPromise(function(resolve, error) {
 
-            //$log.debug('localData promise at',Date.now());
-
-            if (localData) {
-                //$log.debug('localData returns cache');
-                onResolve(resolve, localData);
-            }
-            else {
-
-                //$log.debug('localData fetch start');
-                $.getJSON('./data.json', function(localData) {
-
-
-
-                    //$log.debug('settings fetch');
-                    //patch prices from db if available
-                    ctrl('Settings', 'getAll', {}).then(r => {
-                        if (r.ok && r.result.length > 0) {
-                            var dbSettings = r.result[0];
-
-                            //$log.debug('setting has prices');
-                            if (dbSettings.metadata && dbSettings.metadata.prices) {
-
-
-                                //$log.debug('setting has basePrice');
-                                if (dbSettings.metadata.prices.basePrice !== undefined &&
-                                    !isNaN(dbSettings.metadata.prices.basePrice) &&
-                                    dbSettings.metadata.prices.basePrice !== '') {
-                                    try {
-                                        //$log.debug('basePrice fetch value is',dbSettings.metadata.prices.basePrice);
-                                        localData.basePrice = parseInt(dbSettings.metadata.prices.basePrice);
-                                        //$log.debug('localData basePrice is ',localData.basePrice);
-                                    }
-                                    catch (err) {
-                                        //$log.debug('basePrice fetch',err);
-                                    }
-                                }
-                                else {
-                                    //$log.debug('basePrice fetch is skip');
-                                }
-
-                                Object.keys(dbSettings.metadata.prices).forEach(function(diagName) {
-
-                                    for (var i in localData.diags) {
-                                        if (localData.diags[i].name == diagName) {
-
-                                            if (dbSettings.metadata.prices[diagName] !== undefined) {
-                                                try {
-                                                    localData.diags[i].price = parseInt(dbSettings.metadata.prices[diagName]);
-                                                }
-                                                catch (e) {
-
-                                                }
-                                            }
-
-
-                                        }
-                                    }
-
-                                });
-
-                                onResolve(resolve, localData);
-
-                            }
-                            else {
-                                onResolve(resolve, localData);
-                            }
-
-
-                        }
-                        else {
-                            onResolve(resolve, localData);
-                        }
-
-                    });
-
-
-                }).fail(function(jqxhr, textStatus, error) {
-                    var err = textStatus + ", " + error;
-                    console.log("Request Failed: " + err);
-                });
-            }
-        });
-    }
 
 
     function handleServerError(err) {
@@ -818,7 +729,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', f
         // save: save,
         // get: getSingle,
         // getAll: getAll,
-        localData: getLocalData,
+
         //custom: custom,
         http: function(ctrl, action, data) {
             return http.post(URL + '/' + 'ctrl/' + ctrl + '/' + action, data);

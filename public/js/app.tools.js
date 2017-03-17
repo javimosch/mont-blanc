@@ -1,6 +1,6 @@
 (function() {
     var app = angular.module('app.tools', []);
-    app.controller('termitesChecker', ['server', '$scope', '$rootScope', (db, s, r) => {
+    app.controller('termitesChecker', ['server', '$scope', '$rootScope', 'localData', (db, s, r, localData) => {
         s.item = [];
         s.check = () => {
             if (!s.item.address) return r.notify('Address required', 'warning');
@@ -13,17 +13,18 @@
                 var has = _.includes(s.termitesDepartments.map(v => (v.toString())), code);
                 s.item.hasTermites = has ? 'Yes' : 'No';
                 s.item.message = code;
-            } else {
+            }
+            else {
                 s.item.message = 'department expected.';
             }
         };
 
-        s.termites= ()=>{
-        	if(!s.termitesDepartments) return "";
-        	return s.termitesDepartments.join(', ');
+        s.termites = () => {
+            if (!s.termitesDepartments) return "";
+            return s.termitesDepartments.join(', ');
         };
 
-        db.localData().then(function(data) {
+        localData().then(function(data) {
             Object.assign(s, data);
         });
 
