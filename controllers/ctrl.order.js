@@ -40,13 +40,14 @@ var dbLogger = ctrl('Log').createLogger({
 
 function LogSave(msg, type, data) {
     dbLogger.setSaveData(data);
-    if(type == 'error'){
-        dbLogger.errorSave(msg)    
+    if (type == 'error') {
+        dbLogger.errorSave(msg)
     }
-    if(type == 'warning'){
-        dbLogger.warnSave(msg)    
-    }else{
-        dbLogger.debug(msg)    
+    if (type == 'warning') {
+        dbLogger.warnSave(msg)
+    }
+    else {
+        dbLogger.debug(msg)
     }
 }
 
@@ -202,7 +203,7 @@ function payUsingLW(data, callback) {
                 });
             }
 
-           
+
 
 
             //step 2, moving the order to prepaid
@@ -214,22 +215,22 @@ function payUsingLW(data, callback) {
             }, function(err, res) {
                 console.log('MOVE-TO-PREPAID RESULT', err, res);
 
-               
-               paymentLogger.debug('P2P Lookup');
+
+                paymentLogger.debug('P2P Lookup');
                 //step 3  p2p to diag wallet 
                 var p2pPayload = data.p2pDiag;
                 p2pPayload.message = "Order #" + invoiceNumber;
                 ctrl('Lemonway').sendPayment(p2pPayload, function(err, res) {
-                    
+
                     if (err) {
-                        
+
                     }
                     else {
-                        
+
                         //LogSave('P2P after card transaction success', 'info', res);
                     }
 
-                   
+
                     return cb(err, true);
                 });
 
@@ -651,26 +652,36 @@ function saveWithEmail(data, cb) {
 }
 
 function afterSave(data) {
-    if (data.status == 'created') {
-        ctrl('Order').get({
-            _id: data._id,
-            __populate: {
-                _diag: "firstName lastName",
-                _client: "firstName lastName cellPhone fixedTel companyName"
-            }
-        }, (err, _order) => {
-            if (err) return;
-            _order.notifications = _order.notifications || {};
-            if (_order.status == 'created' && !_order.notifications.ADMIN_ORDER_CREATED_SUCCESS) {
-                everyAdmin((_admin) => {
-                    Notif.trigger(NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, {
-                        _order: _order,
-                        _user: _admin
-                    });
-                });
-            }
-        });
+
+    if (!data._id) {
+        dbLogger.setSaveData(data);
+        dbLogger.errorSave('afterSave expects order data field (_id)');
     }
+
+    ctrl('Order').get({
+        _id: data._id,
+        __populate: {
+            _diag: "firstName lastName",
+            _client: "firstName lastName cellPhone fixedTel companyName"
+        }
+    }, (err, _order) => {
+        if (err) {
+            dbLogger.setSaveData(err);
+            dbLogger.errorSave('Error when fetching order afterSave');
+            return;
+        }
+        _order.notifications = _order.notifications || {};
+        if (!_order.notifications.ADMIN_ORDER_CREATED_SUCCESS) {
+            dbLogger.debug('Notifying admins','ADMIN_ORDER_CREATED_SUCCESS');
+            everyAdmin((_admin) => {
+                Notif.trigger(NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, {
+                    _order: _order,
+                    _user: _admin
+                });
+            });
+        }
+    });
+
     return data;
 }
 

@@ -86,19 +86,7 @@ var NOTIFICATION = NotificationHandler.NOTIFICATION;
 //console.log('EMAIL - NOTIFICATION',require('../actions/notification.actions'));
 //console.log('EMAIL - NOTIFICATION',require('../actions/notification.actions').actions);
 
-function dummySuccessResponse(cb) {
-    emailTriggerLogger.debug('dummySuccessResponse:cb=' + JSON.stringify(cb));
-    var rta = {
-        ok: true,
-        message: 'Success (Mailing disabled)'
-    };
-    if (cb) {
-        cb(null, rta);
-    }
-    else {
-        emailTriggerLogger.debug('dummySuccessResponse:rta:(no-cb)=' + JSON.stringify(rta));
-    }
-}
+
 
 function send(opt, resCb) {
 
@@ -156,6 +144,7 @@ function send(opt, resCb) {
     }
 
     if (opt._notification) {
+        emailTriggerLogger.debug(opt.__notificationType, 'Fetching notification');
         Notification.getById({
             _id: opt._notification
         }, (err, _notification) => {
@@ -164,6 +153,7 @@ function send(opt, resCb) {
         });
     }
     else {
+        emailTriggerLogger.debug(opt.__notificationType, 'Saving notification');
         data._user = opt._user;
         NotificationHandler.save(data, (err, _notification) => {
             if (err) return _handleError(err);
@@ -172,6 +162,9 @@ function send(opt, resCb) {
     }
 
     function _handleError(err) {
+        emailTriggerLogger.debug(opt.__notificationType, 'Handling error');
+        emailTriggerLogger.setSaveData(err);
+        emailTriggerLogger.errorSave('Error during mailing process');
         resCb && resCb(err);
         opt.cb && opt.cb(err);
     }
@@ -179,21 +172,28 @@ function send(opt, resCb) {
 
     function _send(_notification) {
         if (!_notification) {
-            return emailTriggerLogger.error('_send', '_notification required');
+            return emailTriggerLogger.errorSave('_send', '_notification required');
         }
+
         if (process.env.disableMailing === '1') {
             _updateSendStatus(_notification);
-            dummySuccessResponse(opt.cb); //client callback
-            resCb && resCb(null, {
+            emailTriggerLogger.debug(_notification.type, 'Email could be sended ok (mailing is disabled)');
+            var responseData = {
                 message: 'Success (Mailing disabled)',
                 ok: true
-            }); //server callback
+            };
+            opt.cb && opt.cb(null, responseData)
+            resCb && resCb(null, responseData); //server callback
             return;
         }
+        emailTriggerLogger.debug(_notification.type, 'Sending real email...');
         sendEmail(data, (err, r) => {
             if (err) {
                 emailTriggerLogger.setSaveData(data);
                 emailTriggerLogger.errorSave(_notification.type, 'Error');
+            }
+            else {
+                emailTriggerLogger.debug(_notification.type, 'Email is on the way');
             }
             _updateSendStatus(_notification);
             opt.cb && opt.cb(err, r); //client callback
@@ -271,8 +271,11 @@ function generateInvoiceAttachmentIfNecessary(data, t, cb) {
 function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notifItemType, moreOptions) {
     notifItem.notifications = notifItem.notifications || {};
     if (notifItem.notifications[type] !== true || (data.forceSend != undefined && data.forceSend == true)) {
+        
+        
 
         var next = function() {
+            emailTriggerLogger.debug(type, 'Calling custom fn (templating)');
             return DIAGS_CUSTOM_EMAIL(data, (err, r) => {
                 notifItem.notifications[type] = true;
                 ctrl(notifItemType).update(notifItem);
@@ -282,6 +285,13 @@ function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notif
 
         //check: if there is no forceSend and there is a notification item in notifications collection, we skip the email.
         if (!data.forceSend && data._user && data._user._id) {
+            
+            if(notifItemType!=='User'){
+                return next();
+            }
+            
+            emailTriggerLogger.debug(type, 'Fetching an existing notification... (This validation apply only to notifications that belong to users)');
+            
             return ctrl('Notification').get({
                 _user: data._user._id,
                 type: type,
@@ -289,6 +299,8 @@ function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notif
             }, (err, _notification) => {
                 if (err) return;
                 if (_notification) {
+                    
+                    emailTriggerLogger.warn(type, 'Existing notification found, email skipped.');
                     /*
                     emailTriggerLogger.setSaveData({
                         item_found:_notification
@@ -503,12 +515,23 @@ function ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS(data, cb) {
 function ADMIN_ORDER_CREATED_SUCCESS(data, cb) {
     //requires: _user _order
     var subject = 'Paiement créée: ' + data._order.address + '/' + dateTime(data._order.start);
+
+    if (!data._order.notifications) {
+        emailTriggerLogger.warn('ADMIN_ORDER_CREATED_SUCCESS', 'order do not have notification object.');
+    }
+
+
     if (data._order.notifications.ADMIN_ORDER_CREATED_SUCCESS !== true) {
+        emailTriggerLogger.debug('ADMIN_ORDER_CREATED_SUCCESS', 'Collecting month revenue');
         statsActions.currentMonthTotalRevenueHT({}, (_err, _currentMonthTotalRevenueHT) => {
             data._order.currentMonthTotalRevenueHT = _currentMonthTotalRevenueHT;
+            emailTriggerLogger.debug('ADMIN_ORDER_CREATED_SUCCESS', 'Calling custom sending fn');
             DIAGS_CUSTOM_NOTIFICATION(
                 NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, data, cb, subject, data._user.email, data._order, 'Order');
         });
+    }
+    else {
+        emailTriggerLogger.warn('ADMIN_ORDER_CREATED_SUCCESS', 'Already checked as sended, we skip this one.');
     }
 }
 

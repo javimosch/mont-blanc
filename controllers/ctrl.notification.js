@@ -80,7 +80,7 @@ function LogSave(msg, type, data) {
 }
 
 function trigger(name, data, cb) {
-    dbLogger.debug('Trigger',name,data);
+    triggerLogger.debug(name,'Start');
     if (!name) return cb && cb("name required");
     if (!NOTIFICATION[name]) {
         dbLogger.warnSave('Not found',name);
@@ -89,10 +89,11 @@ function trigger(name, data, cb) {
     
     if(data._user && !data._user._id){
         triggerLogger.setSaveData(data._user);
-        triggerLogger.warnSave('_user should have an _id');
+        return triggerLogger.errorSave('Associated User do not have field (_id)');
     }
     
     data.__notificationType = name;
+    triggerLogger.debug(name,'Calling email handler for');
     return EmailHandler[name](data, cb);
 }
 
