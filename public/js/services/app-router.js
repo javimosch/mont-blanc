@@ -22,9 +22,15 @@ var app = angular.module('app-router', []).service('appRouter', ['$rootScope', '
         var link = document.createElement('a');
         link.href = "" + path;
         //$log.debug('ROUTING (HTML5) to ', link.href);
-        document.body.appendChild(link);
-        link.click();
+        document.body.append(link);
+
+        //link.click();
+        var evObj = document.createEvent('MouseEvents');
+        evObj.initMouseEvent('click', true, true, window);
+        link.dispatchEvent(evObj);
+
         link.parentNode.removeChild(link);
+
     }
 
     var self = {
@@ -87,7 +93,7 @@ var app = angular.module('app-router', []).service('appRouter', ['$rootScope', '
     r.$on("$routeChangeSuccess", function(event, next, current) {
         //$log.warn(normalizePath(next.$$route.originalPath),'SUCCESS!');
     });
-    self.onChange((from,to)=>{
+    self.onChange((from, to) => {
         //$log.log('PATH CHANGE TO ',from,to);
         return true;
     });

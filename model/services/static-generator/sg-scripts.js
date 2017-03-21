@@ -4,7 +4,9 @@ var sgUtils = require('./sg-utils');
 var minify = require('minify-content');
 var sgData = require('./sg-data');
 var babel = require("babel-core");
+
 var PROD = process.env.PROD && process.env.PROD.toString() == '1' || false;
+var MINIFYJS = (process.env.MINIFYJS!==undefined) ? process.env.MINIFYJS.toString() == '1' : true;
 
 var g = {
 	destFilename: 'bundle.js'
@@ -51,7 +53,7 @@ function build() {
 
 		var settings = {
 			presets: ["es2015"],
-			minified: true,
+			minified: MINIFYJS,
 			comments: true
 		};
 

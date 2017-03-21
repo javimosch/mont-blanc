@@ -24,6 +24,11 @@ var removeHtmlComments = require('remove-html-comments');
 const RELATIVE_PATH_FOR_VENDOR_CUSTOM = 'public';
 var Promise = require(path.join(process.cwd(),'model/utils')).promise;
 
+var ENABLE_MINIFY_JS = (process.env.MINIFYJS!==undefined) ? process.env.MINIFYJS.toString() == '1' : true;
+var ENABLE_SOURCEMAPS = (process.env.SOURCEMAPS!==undefined) ? process.env.SOURCEMAPS.toString() == '1' : false;
+
+
+
 function getOutput(str) {
     return path.join(OUTPUT_PATH, str);
 }
@@ -381,7 +386,9 @@ function compileSectionBundles(raw, path) {
 function bundleJS(_raw) {
     var settings = {
         presets: ["es2015"],
-        minified: true,
+        minified: ENABLE_MINIFY_JS,
+        compact:ENABLE_MINIFY_JS,
+        sourceMaps: ENABLE_SOURCEMAPS?'inline':false,
         comments: false
     };
     _raw = babel.transform(_raw, settings).code;
