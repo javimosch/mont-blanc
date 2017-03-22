@@ -34,6 +34,7 @@ angular.module('app')
             }
         };
     }).service('dynamicHtmlService', function($rootScope, server, $log) {
+        var DISABLE_REMOTE_HTML_FOR_DEBUGGING = true;
         var STATIC = {
             HOME_DIAG_CARDS: "views/home-bottom-new.html"
         };
@@ -60,7 +61,7 @@ angular.module('app')
             server.ctrl('htmls', 'get', {
                 code: code
             }).then(res => {
-                if (res && res.ok && res.result) {
+                if (res && res.ok && res.result && !DISABLE_REMOTE_HTML_FOR_DEBUGGING) {
                     cache[code] = res.result.content;
                     //$log.log('dynamic html ', code, 'resolved with ', res.result.content.length, ' characters');
                     emit('finish', window.decodeURIComponent(res.result.content));
