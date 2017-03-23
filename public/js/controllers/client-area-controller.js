@@ -125,6 +125,7 @@ angular.module('app').controller('client-area-controller', ['server',
                         [!s._user.email, '==', true, "Email c&#39;est obligatoire."],
                         [!s._user.password, '==', true, "Password c&#39;est obligatoire."],
                         [!s._user.cellPhone, '==', true, "Mobile c&#39;est obligatoire"],
+                        [!s._user.address, '==', true, "Adresse c&#39;est obligatoire"],
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             s.warningMsg(m[0]())
