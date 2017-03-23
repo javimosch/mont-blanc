@@ -1019,6 +1019,10 @@
                         s.item.notifications.LANDLORD_ORDER_PAYMENT_SUCCESS = false;
                     }
                 }
+                
+                function displayWarning(msg){
+                    r.okModal({data:{title:'Warning'},message:msg});
+                }
 
                 s.save = function(opt) {
 
@@ -1026,6 +1030,9 @@
                     //on diag change, notifications are re-sended
                     if (!opt || opt && opt.assignDiagFeature !== true) {
                         if (s.prevItem && s.prevItem._diag && s.prevItem._diag.email && s.item._diag && s.item._diag.email && s.prevItem._diag.email != s.item._diag.email) {
+                            
+                            if(s.isPaid()) return displayWarning('You change the diag account but the order is already paid. Unable to assign a new diag account.');
+                            
                             var msg = "Manually assign of diagnostiqueur " + s.item._diag.firstName + ' ' + s.item._diag.lastName + ' will trigger notifications again. Please confirm. ';
                             r.openConfirm(msg, () => {
                                 reEnableNotifications();
@@ -1039,6 +1046,9 @@
 
                     if (!opt || opt.assignNewRDVSlot !== true) {
                         if (s.item._id && s.hasUserSelectedAnRDVSlot) {
+                            
+                            if(s.isPaid()) return displayWarning('You change the rdv slot but the order is already paid. Unable to assign a new rdv slot.');
+                            
                             r.openConfirm('Manually assign of RDV slot may change diagnostiqueur, date and price and will trigger notifications again. Please Confirm. ', () => {
                                 reEnableNotifications();
                                 s.save(Object.assign(opt || {}, {

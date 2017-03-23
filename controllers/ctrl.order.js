@@ -309,6 +309,12 @@ function notifyClientOrderCreation(_order) {
     }
 }
 
+function attachHelpers(order){
+    obj = _.clone(order);
+    obj.isPaid = ()=> obj.status === 'prepaid';
+    return obj;
+}
+
 function save(data, cb, customRequiredKeys) {
     //actions.log('save=' + JSON.stringify(data))
     actions.log('save:start');
@@ -340,17 +346,8 @@ function save(data, cb, customRequiredKeys) {
                 actions.log('save:prevStatus=' + prevStatus);
                 actions.log('save:currentStatus=' + _order.status);
 
-                //on notification flag change
-                if (_order.notifications && _order.notifications.DIAG_NEW_RDV == false) {
-                    sendDiagRDVNotification(_order);
-                }
-                if (_order.notifications && _order.notifications.ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS == false) {
-                    sendNotificationToEachAdmin(_order);
-                }
-                if (_order.notifications && _order.notifications.CLIENT_ORDER_PAYMENT_SUCCESS == false) {
-                    sendClientNotifications(_order)
-                }
-
+                _order.notification = _order.notifications || {};
+                
                 //on status change
                 if (prevStatus == 'created' && _order.status == 'prepaid') { //PREPAID DURING BOOKING
                     sendNotificationToEachAdmin(_order);
