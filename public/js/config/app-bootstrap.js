@@ -4,6 +4,8 @@
 (function() {
     var app = angular.module('app', [
         'app.run',
+        
+        'focusOn',
 
         'credit-cards',
         'pretty-checkable',

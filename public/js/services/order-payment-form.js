@@ -3,7 +3,7 @@
 /*global moment*/
 /*global $U*/
 (function() {
-    var app = angular.module('app').service('orderPaymentForm', ['$rootScope', '$log', 'server', 'paymentApi', '$timeout', function(r, $log, db, paymentApi, $timeout) {
+    var app = angular.module('app').service('orderPaymentForm', ['$rootScope', '$log', 'server', 'paymentApi', '$timeout','focus', function(r, $log, db, paymentApi, $timeout,focus) {
 
         var isProcessing = false;
 
@@ -23,6 +23,40 @@
                 windowTopClass: 'order-payment-form-modal',
                 data: data,
                 helpers: {
+                    withScope:function(modalScope){
+                        
+                        modalScope.$watch('response.cardNumber',(cardNumber)=>{
+                            if(cardNumber && cardNumber.toString().length == 16){
+                                focus('cardDateMonth')
+                            }
+                        });
+                        
+                        modalScope.$watch('response.cardDate',(cardDate)=>{
+                            if(!cardDate) return;
+                            console.log(cardDate);
+                            var cardDateMonth = cardDate.split('/')[0];
+                            if(cardDateMonth==undefined || cardDateMonth.length!==2){
+                                return focus('cardDateMonth')
+                            }
+                            var cardDateYear = cardDate.split('/')[1];
+                            if(cardDateYear==undefined || cardDateYear.length!==4){
+                                return focus('cardDateYear')
+                            }else{
+                                focus('cardCode');
+                            }
+                        });
+                     
+                        
+                        modalScope.$watch('response.cardCode',(cardCode)=>{
+                            if(cardCode && cardCode.toString().length == 3){
+                                focus('payerButton');
+                            }
+                        });
+                        
+                        
+                        
+                        
+                    },
                     onCardDateChange: function() {
                         this.response.cardDate = zeroFill(parseInt(this.data.cardDateMonth), 2).toString() + '/' + this.data.cardDateYear;
                     },
@@ -52,6 +86,7 @@
                                     modalScope.response.cardTypeString = '';
                                     break;
                             }
+                            focus('cardNumber');
                         }, 300);
                     }
                 }

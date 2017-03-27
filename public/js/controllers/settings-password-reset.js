@@ -1,5 +1,5 @@
-angular.module('app').controller('settings-password-reset', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$log',
-    function(db, s, r, params, focus, $log) {
+angular.module('app').controller('settings-password-reset', ['server', '$scope', '$rootScope', '$routeParams', '$log',
+    function(db, s, r, params, $log) {
         window.s = s;
         s.getUsers = function(val) {
             return db.http('User', 'getAll', {

@@ -499,15 +499,7 @@ angular.module('app').directive('activeRoute', function($rootScope) {
     };
 });
 
-angular.module('app').directive('focusOn', function() {
-    return function(scope, elem, attr) {
-        scope.$on('focusOn', function(e, name) {
-            if (name === attr.focusOn) {
-                elem[0].focus();
-            }
-        });
-    };
-});
+
 
 angular.module('app').directive('collapseNav', function($timeout, $rootScope) {
     return {
@@ -533,13 +525,6 @@ angular.module('app').directive('collapseNav', function($timeout, $rootScope) {
 
 
 
-app.factory('focus', function($rootScope, $timeout) {
-    return function(name) {
-        $timeout(function() {
-            $rootScope.$broadcast('focusOn', name);
-        });
-    }
-});
 
 angular.module('app').directive('crudModal', function($rootScope, $timeout, $compile, $uibModal) {
     return {
@@ -1136,12 +1121,16 @@ angular.module('app').directive('modalCustom', function($rootScope, $timeout, $c
                     controller: function($scope, $uibModalInstance) {
                         $rootScope._modalScope = $scope;
                         $scope.data = opt.data;
+                        
+                        $scope.response = {}; //response payload
+                        
                         if (opt.helpers) {
                             for (var x in opt.helpers) {
                                 $scope[x] = opt.helpers[x];
                             }
+                            if(opt.helpers.withScope) opt.helpers.withScope($scope);
                         }
-                        $scope.response = {}; //response payload
+                        
                         $scope.message = message;
 
                         $scope.messageEl = opt.messageEl || null;

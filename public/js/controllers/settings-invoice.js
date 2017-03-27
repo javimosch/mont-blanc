@@ -1,5 +1,5 @@
-angular.module('app').controller('settings-invoice', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$log',
-    function(db, s, r, params, focus, $log) {
+angular.module('app').controller('settings-invoice', ['server', '$scope', '$rootScope', '$routeParams', '$log',
+    function(db, s, r, params, $log) {
         //
         $U.expose('s', s);
 

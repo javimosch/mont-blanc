@@ -10,8 +10,8 @@
 
     app.controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'focus', 'diagSlots', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi', 'localData',
-        function(db, s, r, params, focus, diagSlots, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData) {
+        'server', '$scope', '$rootScope', '$routeParams', 'diagSlots', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi', 'localData',
+        function(db, s, r, params, diagSlots, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData) {
             r.setCurrentCtrl(s);
 
 
@@ -521,7 +521,7 @@
 
                 s.type = r.session().userType;
                 s.is = (arr) => _.includes(arr, s.type);
-                s.focus = focus;
+                
                 window.s = s;
             }
 

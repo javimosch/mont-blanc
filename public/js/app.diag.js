@@ -287,8 +287,8 @@
                 }
             };
         })
-        .controller('diagExceptionEdit', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$timeout', '$log',
-            function(db, s, r, params, focus, $timeout, $log) {
+        .controller('diagExceptionEdit', ['server', '$scope', '$rootScope', '$routeParams', '$timeout', '$log',
+            function(db, s, r, params, $timeout, $log) {
 
                 r.dom(function() {
                     console.log('diag exception edit scrolltop');

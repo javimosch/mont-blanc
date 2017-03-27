@@ -1,6 +1,6 @@
 /*global angular*/
-angular.module('app').controller('settings-htmls', ['server', '$scope', '$rootScope', '$routeParams', 'focus', '$log', '$timeout', 'backendApi',
-    function(db, s, r, params, focus, $log, $timeout, backendApi) {
+angular.module('app').controller('settings-htmls', ['server', '$scope', '$rootScope', '$routeParams', '$log', '$timeout', 'backendApi',
+    function(db, s, r, params, $log, $timeout, backendApi) {
         window.s = s;
         s.params = params;
         s.isNew = () => s.params && s.params.id && s.params.id.toString() === 'new';

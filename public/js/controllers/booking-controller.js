@@ -1623,6 +1623,7 @@ app.controller('ctrl.booking', ['server',
                     _diag: '_id email clientType address firstName lastName commission siret wallet'
                 }
             }).then(function(res) {
+                console.log(res);
                 s._order = res.result;
                 s._order.status = 'created';
                 s.payNOW();

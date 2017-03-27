@@ -43,7 +43,19 @@
                 <!--
                 <select ng-disabled="true" ng-model="response.cardTypeString" ng-options="type for type in ['Visa', 'MasterCard']"></select>
                 -->
-                <input class="diags-input btn-stack" ng-required="true" name="cardNumber" placeholder="Numéro" type="text" ng-model="response.cardNumber" cc-number cc-type="response.cardTypeString">
+                
+                <input  
+                focus-on="cardNumber" 
+                class="diags-input btn-stack" 
+                ng-required="true" 
+                name="cardNumber" 
+                placeholder="Numéro" 
+                type="text" 
+                ng-model="response.cardNumber" 
+                cc-number 
+                cc-format
+                cc-type="response.cardTypeString" >
+                
                 <p class="payment-form__error-text" 
                 ng-show="response.cardTypeString!='' && paymentForm.cardNumber.$error.ccNumberType">{[{response.cardTypeString}]} non valide.</p>
 
@@ -52,14 +64,14 @@
                 <label class="unselectable">Date d'expiration</label>
             </div>
             <div class="row margin-top-quarter">
-                <input cc-exp-month ng-change="onCardDateChange()" class="diags-input payment-form__card-expiration-month" placeholder="MM" type="text" ng-model="data.cardDateMonth" ng-required="true">
-                <input cc-exp-year ng-change="onCardDateChange()" class="diags-input payment-form__card-expiration-year" placeholder="AA" type="text" ng-model="data.cardDateYear" ng-required="true">
+                <input focus-on="cardDateMonth" cc-exp-month ng-change="onCardDateChange()" class="diags-input payment-form__card-expiration-month" placeholder="MM" type="text" ng-model="data.cardDateMonth" ng-required="true">
+                <input focus-on="cardDateYear" cc-exp-year ng-change="onCardDateChange()" class="diags-input payment-form__card-expiration-year" placeholder="AA" type="text" ng-model="data.cardDateYear" ng-required="true">
             </div>
             <div class="row margin-top-half">
                 <label class="unselectable">Code de vérification à 3 chiffres</label>
             </div>
             <div class="row margin-top-quarter">
-                <input class="diags-input btn-stack" cc-cvc placeholder="Card Code (Ex: 003)" type="text" ng-model='response.cardCode' ng-required="true">
+                <input focus-on="cardCode" class="diags-input btn-stack" cc-cvc placeholder="Card Code (Ex: 003)" type="text" ng-model='response.cardCode' ng-required="true">
             </div>
             <div class="row margin-top-half">
                 <p class="unselectable payment-form__amount-label">Total</p>
@@ -85,7 +97,7 @@
         <div class="col-xs-12 col-sm-12">
             <div class="row  margin-bottom-one">
                 <div class="padding-none col-xs-12 col-sm-12 margin-top-half">
-                    <button 
+                    <button focus-on="payerButton"
                     ng-disabled="!isFormValid() || isProcessing()"
                     class="center-block btn diags-btn bg-azure-radiance" type="button" ng-click="yes()">Payer</button>
                 </div>

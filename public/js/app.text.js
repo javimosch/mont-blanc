@@ -30,7 +30,7 @@
 
 
 
-    app.controller('ctrl-text-edit', ['server', '$scope', '$rootScope', '$routeParams', 'focus',
+    app.controller('ctrl-text-edit', ['server', '$scope', '$rootScope', '$routeParams',
         function(db, s, r, params) {
             //
             $U.expose('s', s);
@@ -288,7 +288,6 @@
                     }],
                     editItem: (item) => {
                         var win = window.open(window.location.origin + "/admin#/texts/edit/" + item._id, '_blank');
-                        //win.focus();
                     },
 
                     items: [],

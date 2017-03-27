@@ -5,6 +5,7 @@
     var app = angular.module('app', [
         'ui.bootstrap',
         'app.run',
+        'focusOn',
         'credit-cards',
         'pretty-checkable',
         'ngSanitize',
