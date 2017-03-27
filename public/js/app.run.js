@@ -463,8 +463,7 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(
 }]);
 
 
-app.run(['server', '$timeout', '$rootScope', "dbText", 'backendApi', 'appRouter', function(db, $timeout, r, dbText, backendApi, appRouter) {
-    dbText.update(); //at app start.
+app.run(['server', '$timeout', '$rootScope', 'backendApi', 'appRouter', function(db, $timeout, r, backendApi, appRouter) {
 
     //update current user data
 

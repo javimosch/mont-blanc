@@ -8,6 +8,7 @@
 /*global diagsGetAvailableRanges*/
 var srv = angular.module('app.services', []);
 
+/*deprecated service*/
 srv.service('dbText', ["$rootScope", "server", '$timeout', function(r, db, $timeout) {
     r.__texts = [];
     r.__text = r.__text || {};
