@@ -34,8 +34,20 @@
     }
 }
 
-
-
+@media screen and (min-width: 959px) and (max-width: 992px) {
+    .col-md-959-wrapper.container{
+        width:950px;
+    }
+    .col-md-959-wrapper .col-md-1{
+        width: 8.33333333%;
+    }
+    .col-md-959-wrapper .col-md-3{
+        width: 25%;
+    }
+    .col-md-959-wrapper .col-md-4{
+        width: 33.33333333%;
+    }
+}
 
 
 
