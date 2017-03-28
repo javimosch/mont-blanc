@@ -82,7 +82,7 @@ module.exports = {
                 saveData = {};
             }
         }
-        return {
+        var self =  {
             debug: function() {
                 log(Array.prototype.slice.call(arguments), 'DEBUG');
             },
@@ -112,7 +112,13 @@ module.exports = {
             },
             setSaveData: function(data) {
                 saveData = data;
+                return self;
+            },
+            withData: function(data) {
+                saveData = data;
+                return self;
             }
-        }
+        };
+        return self;
     }
 };
