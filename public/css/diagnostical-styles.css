@@ -95,12 +95,13 @@
     font-family: 'Avenir-Medium'!important;
     text-align: center;
     padding: 5px;
-    margin:0px;
+    margin: 0px;
 }
 
-.diags-style .diag-subtitle{
+.diags-style .diag-subtitle {
     font-size: 1.4em!important;
 }
+
 .diag-subtitle {
     font-size: 25px;
     color: black;
@@ -121,9 +122,9 @@
 }
 
 @media screen and (min-width: 1200px) {
-    .diags-style .diag-subtitle{
+    .diags-style .diag-subtitle {
         font-size: 1.5em!important;
-    }    
+    }
     .validite-box {
         width: 253px;
         height: 77px;
@@ -388,6 +389,7 @@ html {
 #footer {
     height: 110px;
     margin-top: -110px;
+    padding-top: 20px;
 }
 
 .footer__lemonway-icons {
