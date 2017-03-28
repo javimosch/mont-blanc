@@ -215,6 +215,10 @@
         }
 
 
+        function isFutureDate(m){
+            return !m.isSame(moment(),'day') || ( m.isSame(moment(),'day') && m.subtract(30,'minutes').isAfter(moment()));
+        }
+
 
         function getAll(settings) {
             var ID = "RDV-" + moment(settings.date).format('DD-MM') + moment().format('--ss-SSS');
@@ -268,22 +272,23 @@
                                 if (isFixedSlots(settings)) {
                                     //morning
 
-                                    var availableAtSlot1 = isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(9).minutes(0), settings) && slots.length < 4;
+                                    
+                                    var availableAtSlot1 = isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(9).minutes(0), settings) && slots.length < 4 && isFutureDate(moment(cursor).hour(9).minutes(0));
 
                                     if (availableAtSlot1) {
                                         slots.push(createRdvSlot(diagId, moment(cursor).hour(9).minutes(0), settings));
                                     }
-                                    var availableAtSlot2 = isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(10).minutes(0), settings) && slots.length < 4;
+                                    var availableAtSlot2 = isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(10).minutes(0), settings) && slots.length < 4 && isFutureDate(moment(cursor).hour(10).minutes(0));
                                     if (availableAtSlot2) {
                                         slots.push(createRdvSlot(diagId, moment(cursor).hour(10).minutes(0), settings));
                                     }
 
                                     //afternoon
-                                    availableAtSlot1 = isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(14).minutes(0), settings) && slots.length < 4;
+                                    availableAtSlot1 = isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(14).minutes(0), settings) && slots.length < 4 && isFutureDate(moment(cursor).hour(14).minutes(0));
                                     if (availableAtSlot1) {
                                         slots.push(createRdvSlot(diagId, moment(cursor).hour(14).minutes(0), settings));
                                     }
-                                    availableAtSlot1 = isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(15).minutes(0), settings) && slots.length < 4;
+                                    availableAtSlot1 = isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(15).minutes(0), settings) && slots.length < 4 && isFutureDate(moment(cursor).hour(15).minutes(0));
                                     if (availableAtSlot2) {
                                         slots.push(createRdvSlot(diagId, moment(cursor).hour(15).minutes(0), settings));
                                     }
