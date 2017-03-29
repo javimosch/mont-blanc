@@ -23,14 +23,17 @@ var app = angular.module('app-router', []).service('appRouter', ['$rootScope', '
         link.href = "" + path;
         //$log.debug('ROUTING (HTML5) to ', link.href);
         document.body.append(link);
-
-        //link.click();
-        var evObj = document.createEvent('MouseEvents');
-        evObj.initMouseEvent('click', true, true, window);
-        link.dispatchEvent(evObj);
-
+        
+        if(window.bowser.webkit){
+            var evObj = document.createEvent('MouseEvents');
+            evObj.initMouseEvent('click', true, true, window);
+            link.dispatchEvent(evObj);        
+        }else{
+            //link.dispatchEvent(new window.Event('click')); //link.click();  
+            link.click();  
+        }
+        
         link.parentNode.removeChild(link);
-
     }
 
     var self = {
