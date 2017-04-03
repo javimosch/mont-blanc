@@ -40,13 +40,20 @@
                 <label class="unselectable">Numéro de carte</label>
             </div>
             <div class="row margin-top-quarter">
-                <!--
-                <select ng-disabled="true" ng-model="response.cardTypeString" ng-options="type for type in ['Visa', 'MasterCard']"></select>
-                -->
-                <input class="diags-input btn-stack" ng-required="true" name="cardNumber" placeholder="Numéro" type="text" ng-model="response.cardNumber" cc-number cc-type="response.cardTypeString">
+                <input  
+                card-number-mask
+                focus-on="cardNumber" 
+                class="diags-input btn-stack" 
+                ng-required="true" 
+                name="cardNumber" 
+                placeholder="Numéro" 
+                type="text" 
+                ng-model="data.cardNumberMask" 
+                data-mask="0000 0000 0000 0000"
+                >
+                <input type="hidden"  class="diags-input btn-stack cardNumber" disabled ng-value="response.cardNumber" >
                 <p class="payment-form__error-text" 
-                ng-show="response.cardTypeString!='' && paymentForm.cardNumber.$error.ccNumberType">{[{response.cardTypeString}]} non valide.</p>
-
+                ng-show="response.cardTypeString!=undefined && response.cardTypeString!='' && data.invalidCardNumber">{[{response.cardTypeString}]} non valide.</p>
             </div>
             <div class="row margin-top-half">
                 <label class="unselectable">Date d'expiration</label>

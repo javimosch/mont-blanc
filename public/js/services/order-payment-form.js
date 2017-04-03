@@ -2,8 +2,9 @@
 /*global _*/
 /*global moment*/
 /*global $U*/
+/*global $*/
 (function() {
-    var app = angular.module('app').service('orderPaymentForm', ['$rootScope', '$log', 'server', 'paymentApi', '$timeout', function(r, $log, db, paymentApi, $timeout) {
+    var app = angular.module('app').service('orderPaymentForm', ['$rootScope', '$log', 'server', 'paymentApi', '$timeout', 'focus', function(r, $log, db, paymentApi, $timeout, focus) {
 
         var isProcessing = false;
 
@@ -23,6 +24,64 @@
                 windowTopClass: 'order-payment-form-modal',
                 data: data,
                 helpers: {
+                    withScope: function(modalScope) {
+
+                        function validCreditCardNumber() {
+                            var rta = true;
+                            var result = $('.cardNumber').validateCreditCard({
+                                accept: ['visa', 'mastercard']
+                            });
+                            if (result.card_type && modalScope.response.cardTypeString && modalScope.response.cardTypeString.toLowerCase() == result.card_type.name && !result.valid && modalScope.response.cardNumber.length == 16) {
+                                return false;
+                            }
+                            $log.debug('validCreditCardNumber', rta);
+                            return rta;
+                        }
+
+                        //cardNumberMask: Copy real value to cardNumber
+                        modalScope.$watch('data.cardNumberMask', (cardNumberMask) => {
+                            if (!cardNumberMask) return;
+                            //$log.debug('cardNumberMask', cardNumberMask);
+                            modalScope.response.cardNumber = cardNumberMask.replace(/ /g, "");
+                        });
+
+                        modalScope.$watch('response.cardNumber', (cardNumber) => {
+                            //Validate card number
+                            modalScope.data.invalidCardNumber = !validCreditCardNumber();
+                            //Switch focus to card date
+                            if (cardNumber && cardNumber.toString().length == 16 && !modalScope.data.invalidCardNumber) {
+                                focus('cardDateMonth')
+                            }
+                        });
+
+
+                        modalScope.$watch('data.cardDateMonth', (cardDateMonth) => {
+                            var cardDateMonth = $('.payment-form__card-expiration-month').val();
+                            $log.debug('cardDateMonth', cardDateMonth);
+                            if (cardDateMonth !== undefined && cardDateMonth.length === 2) {
+                                return focus('cardDateYear')
+                            }
+                        });
+
+                        modalScope.$watch('response.cardDate', (cardDate) => {
+                            if (!cardDate) return;
+                            var cardDateYear = cardDate.split('/')[1];
+                            if (cardDateYear !== undefined && cardDateYear.length === 4) {
+                                focus('cardCode');
+                            }
+                        });
+
+
+                        modalScope.$watch('response.cardCode', (cardCode) => {
+                            if (cardCode && cardCode.toString().length == 3) {
+                                focus('payerButton');
+                            }
+                        });
+
+
+
+
+                    },
                     onCardDateChange: function() {
                         this.response.cardDate = zeroFill(parseInt(this.data.cardDateMonth), 2).toString() + '/' + this.data.cardDateYear;
                     },
@@ -41,6 +100,7 @@
                             switch (modalScope.response.cardType) {
                                 case '0':
                                     modalScope.response.cardTypeString = '';
+                                    modalScope.data.invalidCardNumber = false;
                                     break;
                                 case '1':
                                     modalScope.response.cardTypeString = 'Visa';
@@ -50,6 +110,7 @@
                                     break;
                                 default:
                                     modalScope.response.cardTypeString = '';
+                                    modalScope.data.invalidCardNumber = false;
                                     break;
                             }
                         }, 300);
