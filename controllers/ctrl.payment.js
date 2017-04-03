@@ -4,7 +4,6 @@ var utils = require('../model/utils');
 var Order = require('../model/db.actions').create('Order');
 var User = require('../model/db.actions').create('User');
 var getFile = require('../model/utils').getFile;
-var sendEmail = require('../model/utils.mailing').sendEmail;
 var moment = require('moment');
 var S = require('string');
 var btoa = require('btoa')

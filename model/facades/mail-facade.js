@@ -1,6 +1,6 @@
 var path = require('path');
 var selectController = require(path.join(process.cwd(), 'model/db.controller')).create;
-var sendEmail = require(path.join(process.cwd(), 'model/utils.mailing')).sendEmail;
+var sendEmailWithMailgun = require(path.join(process.cwd(), 'model/external-services/mailgun')).send;
 var Promise = require('promise');
 var isMailingDisabled = require(path.join(process.cwd(), 'model/config')).isMailingDisabled;
 var Logger = selectController('Log').createLogger({
@@ -20,7 +20,7 @@ module.exports = {
                 Logger.debug('Email is on the way (fake action) ');
                 return resolve();
             }
-            sendEmail(params, (err, res) => {
+            sendEmailWithMailgun(params, (err, res) => {
                 if (err) {
                     Logger.setSaveData({
                         params: params,

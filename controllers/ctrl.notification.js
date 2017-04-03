@@ -113,7 +113,7 @@ function save(data, cb) {
         });
     }
     else {
-        dbLogger.debug('User is ', _user,typeof _user);
+        //dbLogger.debug('User is ', _user,typeof _user);
     }
 
     var _userID = _user && _user._id || _user;

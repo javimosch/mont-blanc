@@ -5,7 +5,8 @@ var User = require('../model/db.actions').create('User');
 var Log = require('../model/db.actions').create('Log');
 var statsActions = require('./ctrl.stats');
 var template = require('../utils/template');
-var sendEmail = require('../model/utils.mailing').sendEmail;
+var ERROR = require(path.join(process.cwd(), 'model/config')).ERROR;
+var MailFacade = require(path.join(process.cwd(), 'model/facades/mail-facade'));
 var _utils = require('../model/utils');
 var moment = require('moment-timezone');
 var btoa = require('btoa');
@@ -80,15 +81,6 @@ var EXPORT_ACTIONS = {
                     from: params.from || EMAIL_FROM
                 });
         });
-    },
-
-    send: send, //calling this function directly is deprecated.
-    test: () => {
-        NotificationHandler.save({
-            message: "test-notification-delete-now"
-        }, (_notification) => {
-            console.log('test-success');
-        });
     }
 };
 module.exports = EXPORT_ACTIONS;
@@ -101,27 +93,13 @@ var NotificationHandler = require('../controllers/ctrl.notification');
 var NOTIFICATION = NotificationHandler.NOTIFICATION;
 
 
-//console.log('EMAIL - NOTIFICATION',require('../actions/notification.actions'));
-//console.log('EMAIL - NOTIFICATION',require('../actions/notification.actions').actions);
-
-
-
-function send(opt, resCb) {
-
-    /*
-    if(!opt._user._id){
-        emailTriggerLogger.setSaveData(opt._user);
-        emailTriggerLogger.warnSave('_user should have an _id');
-    }*/
-
+function saveNotificationAndSendEmail(opt, resCb) {
     var html = opt.html || template(opt.templateName, opt.templateReplace);
     if (opt.subject) {
         if (process.env.companyName) {
             opt.subject = process.env.companyName + ' | ' + opt.subject;
         }
     }
-
-
     if (!opt.to) {
         var resolutionMessage = "Email was send to " + process.env.emailTo;
         if (!process.env.emailTo) {
@@ -138,7 +116,6 @@ function send(opt, resCb) {
             return _handleError('no destinatary found');
         }
     }
-
     var data = {
         attachment: opt.attachment || null,
         type: opt.__notificationType,
@@ -147,78 +124,54 @@ function send(opt, resCb) {
         to: opt.to || process.env.emailTo,
         subject: opt.subject
     };
-
     var logData = _.clone(data);
     delete logData.html;
-
-
     emailTriggerLogger.setSaveData(logData);
     emailTriggerLogger.debugSave('Notification', data.type || 'undefined');
-
     data.metadata = {}
-
     if (data.attachment) {
         data.metadata.attachment = data.attachment;
     }
-
     if (opt._notification) {
         emailTriggerLogger.debug(opt.__notificationType, 'Fetching notification');
         Notification.getById({
             _id: opt._notification
         }, (err, _notification) => {
             if (err) return _handleError(err);
+            if (!_notification) return _handleError(ERROR.DATABASE_ISSUE);
             _send(_notification);
         });
     }
     else {
-        emailTriggerLogger.debug(opt.__notificationType, 'Saving notification');
+        //emailTriggerLogger.debug(opt.__notificationType, 'Saving notification');
         data._user = opt._user;
         NotificationHandler.save(data, (err, _notification) => {
             if (err) return _handleError(err);
+            if (!_notification) return _handleError(ERROR.DATABASE_ISSUE);
             _send(_notification);
         });
     }
-
     function _handleError(err) {
-        emailTriggerLogger.debug(opt.__notificationType, 'Handling error');
-        emailTriggerLogger.setSaveData(err);
-        emailTriggerLogger.errorSave('Error during mailing process');
+        emailTriggerLogger.setSaveData({
+            code:ERROR.DATABASE_ISSUE_CODE,
+            message:ERROR.DATABASE_ISSUE,
+            detail:err
+        });
+        emailTriggerLogger.errorSave(ERROR.DATABASE_ISSUE);
         resCb && resCb(err);
         opt.cb && opt.cb(err);
     }
-
-
     function _send(_notification) {
-        if (!_notification) {
-            return emailTriggerLogger.errorSave('_send', '_notification required');
-        }
-
-        if (process.env.disableMailing === '1') {
+        data.type = _notification.type;
+        MailFacade.send(data).then(res=>{
             _updateSendStatus(_notification);
-            emailTriggerLogger.debug(_notification.type, 'Email could be sended ok (mailing is disabled)');
-            var responseData = {
-                message: 'Success (Mailing disabled)',
-                ok: true
-            };
-            opt.cb && opt.cb(null, responseData)
-            resCb && resCb(null, responseData); //server callback
-            return;
-        }
-        emailTriggerLogger.debug(_notification.type, 'Sending real email...');
-        sendEmail(data, (err, r) => {
-            if (err) {
-                emailTriggerLogger.setSaveData(data);
-                emailTriggerLogger.errorSave(_notification.type, 'Error');
-            }
-            else {
-                emailTriggerLogger.debug(_notification.type, 'Email is on the way');
-            }
-            _updateSendStatus(_notification);
-            opt.cb && opt.cb(err, r); //client callback
-            resCb && resCb(null, r); //server callback
+            opt.cb && opt.cb(null, res);
+            resCb && resCb(null, res); 
+        }).catch((err)=>{
+            opt.cb && opt.cb(err, null);
+            resCb && resCb(null, null); 
         });
     }
-
     function _updateSendStatus(_notification) {
         _notification.sended = true;
         _notification.sendedDate = Date.now();
@@ -437,7 +390,7 @@ function ALL_ADMINS_ASYNC_CUSTOM(type, opt) {
             cb: () => {}
         };
         Object.assign(sendPayload, opt.sendPayload(data));
-        send(sendPayload, () => {});
+        saveNotificationAndSendEmail(sendPayload, () => {});
     }
 }
 
@@ -449,7 +402,7 @@ function ADMIN_DIPLOME_EXPIRATION(data, cb) {
     emailTriggerLogger.debug('ADMIN_DIPLOME_EXPIRATION=' + JSON.stringify(data));
     //data = {_admin,_diag,}
     //vars: ADMIN_NAME DIAG_NAME DIAG_DIPLOME_FILENAME DIAG_EDIT_URL
-    send({
+    saveNotificationAndSendEmail({
         __notificationType: data.__notificationType,
         _user: data._diag,
         to: data._admin.email,
@@ -490,7 +443,7 @@ function ADMIN_NEW_CONTACT_FORM_MESSAGE(data, cb) {
 //ADMIN//#5 OK app.booking
 function ADMIN_NEW_CONTACT_FORM_MESSAGE_SINGLE(data, cb) {
     emailTriggerLogger.debug('ADMIN_NEW_CONTACT_FORM_MESSAGE_SINGLE=' + JSON.stringify(data));
-    send({
+    saveNotificationAndSendEmail({
         __notificationType: NOTIFICATION.ADMIN_NEW_CONTACT_FORM_MESSAGE,
         _user: data._user,
         to: data._user.email,
@@ -687,8 +640,7 @@ function removeCountryFromString(string) {
 }
 
 function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type, moreOptions) {
-    emailTriggerLogger.debug(_type + '=START');
-    send({
+    saveNotificationAndSendEmail({
         attachment: data.attachment || null,
         __notificationType: _type,
         _user: data._user,

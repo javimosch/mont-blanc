@@ -4,7 +4,6 @@ var Log = require('../model/db.actions').create('Log');
 
 var Notification = require('../model/db.actions').create('Notification');
 var getFile = require('../model/utils').getFile;
-var sendEmail = require('../model/utils.mailing').sendEmail;
 var moment = require('moment');
 var S = require('string');
 var btoa = require('btoa')

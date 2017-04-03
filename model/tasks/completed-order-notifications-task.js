@@ -34,7 +34,7 @@ function handler() {
     }, (err, _orders) => {
         if (err) {
             Logger.setSaveData(err);
-            return Logger.errorSave("Fetch issue");
+            return Logger.errorSave(ERROR.DATABASE_ISSUE);
         }
         if (_orders.length == 0) return;
         _orders.forEach(_order => {
@@ -84,7 +84,7 @@ function completedNotification(_order) {
         type: type
     }, (_err, exists) => {
         if (exists) {
-            Logger.debug("Completed notification already added");
+            //Logger.debug("Completed notification already added");
         }
         else {
 
@@ -129,7 +129,7 @@ function completedNotification(_order) {
                     notifications: _order.notifications
                 });
                 
-                Logger.debug("Mark this notification as triggered (somewhere)", type);
+                //Logger.debug("Mark this notification as triggered (somewhere)", type);
 
 
             });
