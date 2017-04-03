@@ -1,3 +1,4 @@
+var path = require('path');
 var ctrl = require('../model/db.controller').create;
 var Order = require('../model/db.actions').create('Order');
 var User = require('../model/db.actions').create('User');
@@ -7,10 +8,11 @@ var template = require('../utils/template');
 var sendEmail = require('../model/utils.mailing').sendEmail;
 var _utils = require('../model/utils');
 var moment = require('moment-timezone');
-var btoa = require('btoa')
+var btoa = require('btoa');
+var adminUrl = require(path.join(process.cwd(), 'model/utils')).adminUrl;
 var _ = require('lodash');
-var adminUrl = require('../model/utils').adminUrl;
-
+var Promise = require('promise');
+var replaceDiagnosticalData = require(path.join(process.cwd(), 'model/facades/email-template-facade')).replaceDiagnosticalData;
 var emailTriggerLogger = ctrl('Log').createLogger({
     name: "EMAIL",
     category: "TRIGGER"
@@ -20,6 +22,8 @@ var dbLogger = ctrl('Log').createLogger({
     category: "DB"
 });
 
+const EMAIL_FROM = process.env.emailFrom || 'commande@diagnostical.fr';
+const EMAIL_FROM_ALTERNATIVE = 'romain@diagnostical.fr (Romain de Diagnostical)';
 
 function everyAdmin(cb, selectFields) {
     var payload = {
@@ -36,6 +40,7 @@ function everyAdmin(cb, selectFields) {
 }
 
 var EXPORT_ACTIONS = {
+    EMAIL_FROM_ALTERNATIVE: EMAIL_FROM_ALTERNATIVE,
 
     ADMIN_BOOKING_MISSING_DEPARTMENT: ADMIN_BOOKING_MISSING_DEPARTMENT,
     ADMIN_BOOKING_MISSING_DEPARTMENT_REQUEST: ADMIN_BOOKING_MISSING_DEPARTMENT_REQUEST,
@@ -63,6 +68,19 @@ var EXPORT_ACTIONS = {
     LANDLORD_ORDER_PAYMENT_SUCCESS: LANDLORD_ORDER_PAYMENT_SUCCESS,
 
     USER_PASSWORD_RESET: USER_PASSWORD_RESET,
+
+    sendDiagnosticalCustomEmail: (params, callback) => {
+        if (callback) return callback('Not available');
+        return new Promise((resolve, reject) => {
+            DIAGS_CUSTOM_NOTIFICATION(
+                params.type, params.data, (err, res) => {
+                    if (err) return reject(err);
+                    resolve(res);
+                }, params.subject, params.to, params.collectionItem, params.collection, {
+                    from: params.from || EMAIL_FROM
+                });
+        });
+    },
 
     send: send, //calling this function directly is deprecated.
     test: () => {
@@ -125,7 +143,7 @@ function send(opt, resCb) {
         attachment: opt.attachment || null,
         type: opt.__notificationType,
         html: html,
-        from: opt.from || process.env.emailFrom || 'commande@diagnostical.fr',
+        from: opt.from || EMAIL_FROM,
         to: opt.to || process.env.emailTo,
         subject: opt.subject
     };
@@ -271,8 +289,8 @@ function generateInvoiceAttachmentIfNecessary(data, t, cb) {
 function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notifItemType, moreOptions) {
     notifItem.notifications = notifItem.notifications || {};
     if (notifItem.notifications[type] !== true || (data.forceSend != undefined && data.forceSend == true)) {
-        
-        
+
+
 
         var next = function() {
             emailTriggerLogger.debug(type, 'Calling custom fn (templating)');
@@ -285,13 +303,13 @@ function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notif
 
         //check: if there is no forceSend and there is a notification item in notifications collection, we skip the email.
         if (!data.forceSend && data._user && data._user._id) {
-            
-            if(notifItemType!=='User'){
+
+            if (notifItemType !== 'User') {
                 return next();
             }
-            
+
             emailTriggerLogger.debug(type, 'Fetching an existing notification... (This validation apply only to notifications that belong to users)');
-            
+
             return ctrl('Notification').get({
                 _user: data._user._id,
                 type: type,
@@ -299,7 +317,7 @@ function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notif
             }, (err, _notification) => {
                 if (err) return;
                 if (_notification) {
-                    
+
                     emailTriggerLogger.warn(type, 'Existing notification found, email skipped.');
                     /*
                     emailTriggerLogger.setSaveData({
@@ -660,14 +678,7 @@ function USER_PASSWORD_RESET(data, cb) {
         NOTIFICATION.USER_PASSWORD_RESET, data, cb, "Password reset", data._user.email, data._user, 'User');
 }
 
-function tryParseFloatToFixed(v, n) {
-    try {
-        return parseFloat(v).toFixed(n || 2);
-    }
-    catch (err) {
-        return v;
-    }
-}
+
 
 function removeCountryFromString(string) {
     string = string.replace(', France', '');
@@ -677,132 +688,22 @@ function removeCountryFromString(string) {
 
 function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type, moreOptions) {
     emailTriggerLogger.debug(_type + '=START');
-    moment.locale('fr')
-    var _user = data._user;
-    var _order = data._order;
-    var _admin = data._admin;
-    var _client = data._client;
-    var loginQueryData = '?email=' + _user.email + '&k=' + btoa(_user.password || 'dummy');
-    var replaceData = {
-        '$BACKOFFICE_URL': adminUrl('login' + loginQueryData)
-    };
-    if (_user) {
-        Object.assign(replaceData, {
-            '$USER_EMAIL': _user.email,
-            '$USER_FULL_NAME': _user.firstName || _user.email + ' ' + (_user.lastName || ''),
-            '$USER_FIRSTNAME': _user.firstName || _user.email,
-            '$USER_LASTNAME': _user.lastName,
-            '$USER_PASSWORD': _user.password || '[Press reset password in the login screen]',
-            '$USER_EMAIL': _user.email,
-            '$USER_COMPANY_NAME': _user.companyName,
-            '$USER_PHONE': _user.cellPhone,
-            '$USER_ADDRESS': _user.address,
-            '$USER_CLIENT_TYPE': _user.clientType,
-            '$USER_EDIT_URL': adminUrl('/clients/edit/' + _user._id + loginQueryData)
-        });
-    }
-    if (_client) {
-        Object.assign(replaceData, {
-            '$CLIENT_EMAIL': _client.email,
-            '$CLIENT_COMPANY_NAME': _client.companyName,
-            '$CLIENT_FIRSTNAME': _client.lastName,
-            '$CLIENT_LASTNAME': _client.lastName,
-            '$CLIENT_PHONE': _client.cellPhone,
-            '$CLIENT_ADDRESS': _client.address,
-            '$CLIENT_TYPE': _client.clientType,
-            '$CLIENT_EDIT_URL': adminUrl('/clients/edit/' + _client._id + loginQueryData)
-        });
-    }
-    if (_admin) {
-        Object.assign(replaceData, {
-            '$ADMIN_EMAIL': _admin.email,
-            '$ADMIN_FIRSTNAME': _admin.firstName,
-            '$ADMIN_LASTNAME': _admin.lastName
-        });
-    }
-    if (_order) {
-
-        //229 //remove country from address
-        for (var key in _order) {
-            if (_order[key] && key.toUpperCase().indexOf('ADDRESS') != -1) {
-                _order[key] = removeCountryFromString(_order[key]);
-            }
-        }
-
-
-        Object.assign(replaceData, {
-            '$CLIENT_LANDLORD_DISPLAY': (_order._client.clientType == 'landlord') ? 'block' : 'none',
-            '$CLIENT_COMPANY_DISPLAY': (_order._client.clientType !== 'landlord') ? 'block' : 'none',
-            '$CLIENT_HAS_COMPANY_NAME': (_order._client.companyName) ? 'block' : 'none',
-            '$CLIENT_COMPANY_NAME': _order._client.companyName,
-            '$CLIENT_HAS_NAME': (_order._client.firstName) ? 'block' : 'none',
-            '$CLIENT_FULL_NAME': _order._client.firstName + ' ' + (_order._client.lastName || ''),
-            '$CLIENT_FIRSTNAME': _order._client.firstName,
-            '$CLIENT_HAS_PHONE': (_order._client.cellPhone || _order._client.fixedTel) ? 'block' : 'none',
-            '$CLIENT_PHONE_NUMBER': _order._client.cellPhone || _order._client.fixedTel,
-            '$CLIENT_EMAIL': _order._client.email,
-            '$DIAG_EMAIL': _order._diag.email,
-            '$DIAG_FULL_NAME': _order._diag.firstName + ' ' + _order._diag.lastName,
-            '$DIAG_FIRSTNAME': _order._diag.firstName,
-            '$DIAG_LASTNAME': _order._diag.lastName,
-            '$LANDLORD_FULLNAME': _order.landLordFullName,
-            '$LANDLORD_EMAIL': _order.landLordEmail,
-            '$LANDLORD_PHONE': _order.landLordPhone,
-            '$ORDER_DIAG_LIST': htmlOrderSelectedDiagsList(_order),
-            '$ORDER_ADDRESS': _order.address,
-            '$ORDER_KEYS_INFO': _order.keysAddress + ' / ' + dateTime2(_order.keysTimeFrom) + ' - ' + time(_order.keysTimeTo),
-
-            '$ORDER_OBSERVATION': _order.obs,
-            '$OBS_DISPLAY': (_order.obs) ? 'block' : 'none',
-
-            '$ORDER_PRICE_TTC': tryParseFloatToFixed(_order.price),
-            '$ORDER_PRICE_HT': tryParseFloatToFixed(_order.priceHT),
-            '$ORDER_DIAG_REMUNERATION_HT': tryParseFloatToFixed(_order.diagRemunerationHT),
-            '$ORDER_REVENUE_HT': tryParseFloatToFixed(_order.revenueHT),
-            '$ORDER_MONTH_REVENUE_HT': tryParseFloatToFixed(_order.currentMonthTotalRevenueHT),
-
-            '$ORDER_DATE_HOUR': dateTime2(_order.start),
-            '$ORDER_DESCRIPTION': _order.info.description,
-            '$ORDER_URL': adminUrl('/orders/edit/' + _order._id + loginQueryData),
-            '$ORDER_PUBLIC_URL': adminUrl('/orders/view/' + _order._id)
-                //'$ORDER_DESCR': _order.address + ' (' + time(_order.diagStart) + ' - ' + time(_order.diagEnd) + ')',
-        });
-    }
     send({
         attachment: data.attachment || null,
         __notificationType: _type,
-        _user: _user,
+        _user: data._user,
         from: moreOptions && moreOptions.from || undefined,
         to: _to,
         subject: _subject,
         templateName: templateName,
-        templateReplace: replaceData,
+        templateReplace: replaceDiagnosticalData(data),
         cb: cb
     });
 }
 
-function diagNameConvertion(key) {
-    if (key == 'electricity') return 'Electricité';
-    if (key == 'parasitaire') return 'Parasitaire';
-    if (key == 'gaz') return 'Gaz';
-    if (key == 'termites') return 'Termites';
-    if (key == 'ernt') return 'État des risques naturels, miniers et technologiques';
-    if (key == 'loiCarrez') return 'Carrez';
-    if (key == 'crep') return 'Plomb';
-    if (key == 'dta') return 'Amiante';
-    if (key == 'dpe') return 'DPE';
-    return key;
-}
 
-function htmlOrderSelectedDiagsList(_order) {
-    var rta = "<ul>";
-    Object.keys(_order.diags).forEach(key => {
-        if (_order.diags[key]) {
-            rta += "<li>" + diagNameConvertion(key) + "</li>";
-        }
-    })
-    return rta + '</ul>';
-}
+
+
 
 
 function LogSave(msg, type, data) {

@@ -310,21 +310,19 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(
         return ss._id !== null && ss.email !== null && ss.password !== null;
     };
 
-
-    r.viewAsClient = () => {
-        r._session = r._session || {};
-        r._session.userType = 'client';
+    
+    r.__viewAs = (t) => {
+        r.session({userType:t});
         r.dom();
+    }
+    r.viewAsClient = () => {
+        return r.__viewAs('client');
     };
     r.viewAsDiag = () => {
-        r._session = r._session || {};
-        r._session.userType = 'diag';
-        r.dom();
+        return r.__viewAs('diag');
     };
     r.viewAsAdmin = () => {
-        r._session = r._session || {};
-        r._session.userType = 'admin';
-        r.dom();
+        return r.__viewAs('admin');
     };
 
 

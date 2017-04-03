@@ -34,7 +34,7 @@ db.defaults({
             });
             db.set('context.text', text).write().then(() => {
                 initialized = true;
-                dbLogger.info('Fetch ok', _texts.length, ' items in memory.');
+                //dbLogger.info('Fetch ok', _texts.length, ' items in memory.');
             });
         }
     });

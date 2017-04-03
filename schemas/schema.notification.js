@@ -12,6 +12,11 @@ module.exports = {
             type: String,
             required: true
         },
+        from: {
+            type: String,
+            required: true,
+            default: process.env.emailFrom || 'commande@diagnostical.fr'
+        },
         to: {
             type: String,
             required: true

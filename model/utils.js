@@ -29,7 +29,7 @@ function loggerDelayedInit() {
 function getFileTempPath(n) {
     var path = process.cwd() + tempFolderPath + (n || '');
     path = replaceAll(path, '//', '/');
-    console.log('debug ctrl.pdf.getFileTempPath', path);
+    //console.log('debug ctrl.pdf.getFileTempPath', path);
     return path;
 }
 exports.getFileTempPath = getFileTempPath;

@@ -10,6 +10,8 @@ var generatePassword = require("password-maker");
 var utils = require(process.cwd() + '/model/utils');
 var modelName = 'file';
 var conn, gfs, mongoose, actions; //Schema
+var Promise = require('promise');
+var mime = require('mime-types');
 var configure = (m) => {
     mongoose = m;
     Grid.mongo = mongoose.mongo;
@@ -45,8 +47,44 @@ module.exports = {
     getAll: getAll,
     stream,
     paginate: paginate,
-    removeOrphans:removeOrphans
+    removeOrphans: removeOrphans,
+    moveFromFileSytemToDatabase: moveFromFileSytemToDatabase
 };
+
+function moveFromFileSytemToDatabase(absolutePath, fileName, mimetype) {
+    if (typeof fileName == 'function') return fileName('Not available');
+    return new Promise((resolve, reject) => {
+        fileName = fileName || path.basename(absolutePath)
+        mimetype = mimetype || mime.contentType(path.extname(absolutePath));
+        createReadStream(absolutePath).then(stream => {
+            //dbLogger.debug(fileName, mimetype);
+            stream.pipe(gfs.createWriteStream({
+                filename: fileName,
+                mode: 'w',
+                chunkSize: 1024,
+                content_type: mimetype
+            })).on('error', function(err) {
+                reject(err);
+            }).on('close', function(item) {
+                resolve(item);
+            });
+        });
+    });
+}
+
+function createReadStream(path) {
+    return new Promise((resolve, reject) => {
+        var readStream = fs.createReadStream(path);
+        readStream.on('open', function() {
+            resolve(readStream);
+        });
+        readStream.on('error', function(err) {
+            reject(err);
+        });
+    });
+}
+
+
 
 function dbToHD(data, cb) {
     actions.log('dbToHD:start=' + JSON.stringify(data));
@@ -133,18 +171,18 @@ function removeOrphans(data, cb) {
         });
         dbLogger.debug("There are ", orphans.length, 'orphans files');
         var removeLeft = orphans;
-        iterate();//begin
-        function iterate(){
-            if(removeLeft.length == 0){
-                return cb(null,true);
+        iterate(); //begin
+        function iterate() {
+            if (removeLeft.length == 0) {
+                return cb(null, true);
             }
             remove({
-                _id:removeLeft[0]._id
-            },(err,success)=>{
-               if(err)  return cb(err);
-               
-               removeLeft = removeLeft.slice(1);
-               iterate();
+                _id: removeLeft[0]._id
+            }, (err, success) => {
+                if (err) return cb(err);
+
+                removeLeft = removeLeft.slice(1);
+                iterate();
             });
         }
     });

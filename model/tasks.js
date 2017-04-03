@@ -3,17 +3,29 @@ var tasks = [
     req('task.diplomeExpiration'),
     req('task.deleteTemporalFiles'),
     req('task.diags-remove-unpaid-orders'),
-    req('task-remove-expired-work-execeptions')
+    req('task-remove-expired-work-execeptions'),
+    req('check-and-send-unsended-notifications-task'),
+    req('completed-order-notifications-task'),
 ];
+var selectController = require('./db.controller').create;
+var Logger = null;
+function loggerLazyInitialization() {
+    if (Logger) return Logger;
+    Logger = selectController('Log').createLogger({
+        name: "AUTOMATED-TASK",
+        category: "MANAGER"
+    });
+}
 exports.configure = (app) => {
+    loggerLazyInitialization();
     tasks.forEach((t) => {
         function loop() {
-            console.log('task-manager:start: ' + t.name);
             try {
                 t.handler(t, app);
             }
-            catch (e) {
-                console.log('task-manager-exception', e);
+            catch (err) {
+                Logger.setSaveData(err);
+                Logger.errorSave('Automated Task crash')
             }
         }
         setInterval(() => {
@@ -25,7 +37,6 @@ exports.configure = (app) => {
             if (t.runAtStartupDelay!==undefined) {
                 setTimeout(loop, t.runAtStartupDelay);
             }else{
-                console.log('task-manager:run-at-startup-imminently');
                 loop();
             }
         }

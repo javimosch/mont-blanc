@@ -43,7 +43,7 @@ var callHook = function(schemaName, hookName, dataOrHandler) {
     if (typeof dataOrHandler === 'function') {
         //Handlers are stored
         listeners.push(dataOrHandler);
-        hookLogger.debug('Register', hookName, '(', listeners.length, ')');
+        //hookLogger.debug('Register', hookName, '(', listeners.length, ')');
     }
     else {
         //Data is used to call listeners 
@@ -55,7 +55,7 @@ var callHook = function(schemaName, hookName, dataOrHandler) {
                 _data = handler(_data);
             }
 
-            hookLogger.debug('Trigger', hookName, '(', listeners.length, ' times)');
+            //hookLogger.debug('Trigger', hookName, '(', listeners.length, ' times)');
 
             return _data;
         }

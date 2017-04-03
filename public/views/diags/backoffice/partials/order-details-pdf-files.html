@@ -52,4 +52,12 @@
             <i ng-show="pdfExists(diagCode)" ng-disabled="!item._id || state.working() || !pdfExists(diagCode)" ng-click="!pdfExists(diagCode) || pdfDownload(diagCode)" class="fa fa-download file-button">&nbsp;</i>
         </p>
     </li>
+    <li ng-show="item.files.invoice" class="relative diplome">
+        <label ng-bind="'Facture pdf'"></label>
+        <p>
+            <span class="order-pdf-label link" ng-click="pdfDownload('invoice')" ng-bind="item.files['invoice'].filename"></span>
+            &nbsp;
+            <i ng-show="pdfExists('invoice')" ng-disabled="!item._id || state.working() || !pdfExists('invoice')" ng-click="!pdfExists('invoice') || pdfDownload('invoice')" class="fa fa-download file-button">&nbsp;</i>
+        </p>
+    </li>
 </ul>

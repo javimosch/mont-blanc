@@ -41,7 +41,7 @@ var NOTIFICATION = {
     ADMIN_ORDER_PAYMENT_DELEGATED: 'ADMIN_ORDER_PAYMENT_DELEGATED',
     ADMIN_ORDER_PAYMENT_SUCCESS: 'ADMIN_ORDER_PAYMENT_SUCCESS',
     ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS: 'ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS',
-    ADMIN_ORDER_CREATED_SUCCESS:'ADMIN_ORDER_CREATED_SUCCESS',
+    ADMIN_ORDER_CREATED_SUCCESS: 'ADMIN_ORDER_CREATED_SUCCESS',
 
     CLIENT_CLIENT_NEW_ACCOUNT: 'CLIENT_CLIENT_NEW_ACCOUNT',
     CLIENT_ORDER_CREATED: 'CLIENT_ORDER_CREATED',
@@ -80,20 +80,20 @@ function LogSave(msg, type, data) {
 }
 
 function trigger(name, data, cb) {
-    triggerLogger.debug(name,'Start');
+    triggerLogger.debug(name, 'Start');
     if (!name) return cb && cb("name required");
     if (!NOTIFICATION[name]) {
-        dbLogger.warnSave('Not found',name);
-        return cb && cb("Notification " + name+' not found');
+        dbLogger.warnSave('Not found', name);
+        return cb && cb("Notification " + name + ' not found');
     }
-    
-    if(data._user && !data._user._id){
+
+    if (data._user && !data._user._id) {
         triggerLogger.setSaveData(data._user);
         return triggerLogger.errorSave('Associated User do not have field (_id)');
     }
-    
+
     data.__notificationType = name;
-    triggerLogger.debug(name,'Calling email handler for');
+    triggerLogger.debug(name, 'Calling email handler for');
     return EmailHandler[name](data, cb);
 }
 
@@ -101,14 +101,29 @@ function trigger(name, data, cb) {
 
 function save(data, cb) {
     var _user = data._user;
+
+    if (!_user._id || !_user.email) {
+        return User.get({
+            _id: _user,
+            __select: '_id email'
+        }, (err, _user) => {
+            if (err) return cb(err);
+            data._user = _user;
+            return save(data, cb);
+        });
+    }
+    else {
+        dbLogger.debug('User is ', _user,typeof _user);
+    }
+
     var _userID = _user && _user._id || _user;
 
     if (typeof _user === 'object' && !_user._id) {
         dbLogger.setSaveData({
-            detail:'data._user needs to have an _id property.',
-            data:data._user
+            detail: 'data._user needs to have an _id property.',
+            data: data._user
         });
-        return dbLogger.errorSave('Save error from user' , _user.email);
+        return dbLogger.errorSave('Save error from user', _user.email);
     }
 
     if (!_userID) {
@@ -125,15 +140,15 @@ function save(data, cb) {
         subject: data.subject || 'not specified',
         contents: data.html || data.contents || ''
     };
-    if(data._id) payload._id = data._id;
+    if (data._id) payload._id = data._id;
     Notification.save(payload, (err, _notification) => {
         if (err) {
             dbLogger.setSaveData({
-                err:err,
-                payload:payload
+                err: err,
+                payload: payload
             });
-            return dbLogger.errorSave('Save error from user' , _user.email);
+            return dbLogger.errorSave('Save error from user', _user.email);
         }
-        if (cb) cb(null,_notification);
+        if (cb) cb(null, _notification);
     });
 }
