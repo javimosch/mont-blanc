@@ -63,7 +63,7 @@ function time(d) {
 
 
 function replaceDiagnosticalData(data) {
-    moment.locale('fr')
+    moment.locale('fr');
     var _user = data._user;
     var _order = data._order;
     var _admin = data._admin;
@@ -154,4 +154,5 @@ function replaceDiagnosticalData(data) {
                 //'$ORDER_DESCR': _order.address + ' (' + time(_order.diagStart) + ' - ' + time(_order.diagEnd) + ')',
         });
     }
+    return replaceData;
 }
