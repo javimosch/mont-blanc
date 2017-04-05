@@ -1,4 +1,5 @@
 "use strict";
+var farmhash = require('farmhash');
 var CleanCSS = require('clean-css');
 var babel = require("babel-core");
 var minifyHTML = require('html-minifier').minify;
@@ -22,10 +23,10 @@ var PROD = process.env.PROD && process.env.PROD.toString() == '1' || false;
 var APP_NAME = process.env.APP_NAME || process.env.app || process.env.APP || null;
 var removeHtmlComments = require('remove-html-comments');
 const RELATIVE_PATH_FOR_VENDOR_CUSTOM = 'public';
-var Promise = require(path.join(process.cwd(),'model/utils')).promise;
+var Promise = require(path.join(process.cwd(), 'model/utils')).promise;
 
-var ENABLE_MINIFY_JS = (process.env.MINIFYJS!==undefined) ? process.env.MINIFYJS.toString() == '1' : true;
-var ENABLE_SOURCEMAPS = (process.env.SOURCEMAPS!==undefined) ? process.env.SOURCEMAPS.toString() == '1' : false;
+var ENABLE_MINIFY_JS = (process.env.MINIFYJS !== undefined) ? process.env.MINIFYJS.toString() == '1' : true;
+var ENABLE_SOURCEMAPS = (process.env.SOURCEMAPS !== undefined) ? process.env.SOURCEMAPS.toString() == '1' : false;
 
 
 
@@ -383,15 +384,30 @@ function compileSectionBundles(raw, path) {
     return raw;
 }
 
+
+var bundleJS_cache = {};
+
 function bundleJS(_raw) {
+    var hash = farmhash.hash64(new Buffer(_raw));
+    if (bundleJS_cache[hash]) {
+        console.log('Bundle hash', hash, 'using cache');
+        return bundleJS_cache[hash];
+    }
+    else {
+        console.log('Bundle hash', hash, 'compiling');
+    }
+
     var settings = {
         presets: ["es2015"],
         minified: ENABLE_MINIFY_JS,
-        compact:ENABLE_MINIFY_JS,
-        sourceMaps: ENABLE_SOURCEMAPS?'inline':false,
+        compact: ENABLE_MINIFY_JS,
+        sourceMaps: ENABLE_SOURCEMAPS ? 'inline' : false,
         comments: false
     };
     _raw = babel.transform(_raw, settings).code;
+    
+    bundleJS_cache[hash] = _raw;
+    
     return _raw;
 }
 
@@ -438,7 +454,7 @@ function buildTemplates() {
                                 removeScriptTypeAttributes: true,
                                 collapseWhitespace: true,
                                 minifyCSS: true,
-                                minifyJS:true,
+                                minifyJS: true,
                                 caseSensitive: true
                             });
                             //console.log('COMPILE-DEBUG', 'handleNewFileTransform bundling passed');
