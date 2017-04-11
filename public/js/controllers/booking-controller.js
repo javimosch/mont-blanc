@@ -38,8 +38,12 @@ app.controller('ctrl.booking', ['server',
             payment: {
                 complete: false
             },
-            autoSelectDiagsCards: (appRouter.currentPath === "" || appRouter.currentPath === "home")
+            autoSelectDiagsCards: (appRouter.currentPath === "" || appRouter.currentPath === "home") || cameFromIframe()
         };
+        
+        function cameFromIframe(){
+            return getParameterByName('if').toString()==="1";
+        }
 
         /*INIT*/
         localData().then(function(data) {

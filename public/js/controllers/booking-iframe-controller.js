@@ -67,6 +67,7 @@ app.controller('booking-iframe-controller', ['server',
                 addParam('electricityInstallation', s.item.info.electricityInstallation);
                 addParam('address', s.item.address);
                 addParam('postCode', s.item.postCode);
+                addParam('if', "1");
 
                 //return r.routeExternal(url);
                 return window.open(url, '_newtab');
@@ -82,6 +83,7 @@ app.controller('booking-iframe-controller', ['server',
                     db.ctrl('Notification', 'ADMIN_BOOKING_MISSING_DEPARTMENT', {
                         department: s.item.postCode.substring(0, 2),
                     });
+                    s.openConfirm = s.openConfirm || r.openConfirm || window.top.r.openConfirm;
                     var modal = s.openConfirm({
                         message: msg,
                         data: {
