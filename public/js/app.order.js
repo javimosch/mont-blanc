@@ -71,13 +71,13 @@
                 }
                 return true;
             };
-            
-            s.moveDateBackward = ()=>{
-                s.item.start = moment().subtract(1,'days');
-                s.item.end = moment().subtract(1,'days').add(1,'hour')
+
+            s.moveDateBackward = () => {
+                s.item.start = moment().subtract(1, 'days');
+                s.item.end = moment().subtract(1, 'days').add(1, 'hour')
                 r.dom();
             };
-            
+
             s.pdfSaveSuccess = () => {
                 if (s.item.status == 'prepaid' && s.pdfAllPdfUploaded()) {
                     console.warn('every pdf was uploaded. Turning order to completed.');
@@ -239,14 +239,16 @@
                 setDefaults();
                 setBindings();
                 setActions();
-                $U.whenProperties(s, ['diags'], [setDefaultsDiags]);
+
                 //
                 if (params && params.id && params.id.toString() !== '-1') {
                     r.dom(read, 0);
                 }
                 else {
                     reset();
-
+                    
+                    $log.debug('diag-cards-auto-select');
+                    $U.whenProperties(s, ['diags'], [setDefaultsDiags]);
                     bindAnswersToDefaultDiags();
                 }
             }
@@ -432,14 +434,6 @@
                     return r.userIs(['admin']) || r.sesison()._id == s.item._diag._id;
                 };
 
-                /*
-                                s.diagPrice = () => {
-                                    if (!s.item.price) return 0;
-                                    if (isNaN(s.item.price)) return 0;
-                                    return (s.item.price - (s.item.price * 0.12)) * 0.30;
-                                };
-                                */
-
                 s.isPaid = () => {
                     return _.includes(['prepaid', 'completed'], s.item.status);
                 };
@@ -469,17 +463,6 @@
 
                 s.currentClientType = () =>
                     s.item && s.item._client && '(' + s.item._client.clientType + ')' || '';
-
-                /*
-                                s.subTotal = () => $D.subTotal(s.item, s.diags, s.basePrice);
-                                s.sizePrice = () => $D.sizePrice(s.item, s.diags, s.squareMetersPrice, s.basePrice);
-                                s.totalPrice = (showRounded) => $D.totalPrice(showRounded, s.item, s.diags, s.squareMetersPrice, s.basePrice, {
-                                    overwriteModel: false,
-                                    s: s,
-                                    r: r
-                                        //with the scope, a priceInfo object is created to debug price calc.
-                                });
-                                */
 
                 s.totalTime = () => $D.OrderTotalTime(s.item.diags, s.diags);
 
@@ -515,20 +498,9 @@
                     r.dom();
                 };
 
-                /*
-                s.applyTotalTime = () => {
-                    var t = $D.OrderTotalTime(s.item.diags, s.diags);
-                    if (s.item && s.item.start) {
-                        s.item.end = moment(s.item.start)
-                            .add(t.hours, 'hours').add(t.minutes, 'minutes')._d;
-                        r.dom();
-                    }
-                };
-                */
-
                 s.type = r.session().userType;
                 s.is = (arr) => _.includes(arr, s.type);
-                
+
                 window.s = s;
             }
 
@@ -910,32 +882,6 @@
                     });
 
 
-                    return;
-
-                    /*
-                                        var order = s.item;
-                                        $D.openStripeModalPayOrder(order, (token) => {
-                                            order.stripeToken = token.id;
-                                            db.ctrl('Order', 'pay', order).then((data) => {
-                                                if (data.ok) {
-                                                    s.item.status = (s.item === 'delivered') ? 'completed' : 'prepaid';
-                                                    s.successMsg('Commande payée');
-
-
-
-                                                    r.dom(read, 5000);
-                                                }
-                                                else {
-                                                    s.successMsg('There was a server error, try later.', 'warning');
-                                                    console.info('PAY-FAIL', data.err);
-                                                }
-                                            });
-                                        }, {
-                                            config: r.config,
-                                            email: emailOfPersonWhoPaid()
-                                        });
-                                        */
-
                 };
 
 
@@ -1026,9 +972,14 @@
                         s.item.notifications.LANDLORD_ORDER_PAYMENT_SUCCESS = false;
                     }
                 }
-                
-                function displayWarning(msg){
-                    r.okModal({data:{title:'Warning'},message:msg});
+
+                function displayWarning(msg) {
+                    r.okModal({
+                        data: {
+                            title: 'Warning'
+                        },
+                        message: msg
+                    });
                 }
 
                 s.save = function(opt) {
@@ -1037,9 +988,9 @@
                     //on diag change, notifications are re-sended
                     if (!opt || opt && opt.assignDiagFeature !== true) {
                         if (s.prevItem && s.prevItem._diag && s.prevItem._diag.email && s.item._diag && s.item._diag.email && s.prevItem._diag.email != s.item._diag.email) {
-                            
-                            if(s.isPaid()) return displayWarning('You change the diag account but the order is already paid. Unable to assign a new diag account.');
-                            
+
+                            if (s.isPaid()) return displayWarning('You change the diag account but the order is already paid. Unable to assign a new diag account.');
+
                             var msg = "Manually assign of diagnostiqueur " + s.item._diag.firstName + ' ' + s.item._diag.lastName + ' will trigger notifications again. Please confirm. ';
                             r.openConfirm(msg, () => {
                                 reEnableNotifications();
@@ -1053,9 +1004,9 @@
 
                     if (!opt || opt.assignNewRDVSlot !== true) {
                         if (s.item._id && s.hasUserSelectedAnRDVSlot) {
-                            
-                            if(s.isPaid()) return displayWarning('You change the rdv slot but the order is already paid. Unable to assign a new rdv slot.');
-                            
+
+                            if (s.isPaid()) return displayWarning('You change the rdv slot but the order is already paid. Unable to assign a new rdv slot.');
+
                             r.openConfirm('Manually assign of RDV slot may change diagnostiqueur, date and price and will trigger notifications again. Please Confirm. ', () => {
                                 reEnableNotifications();
                                 s.save(Object.assign(opt || {}, {
