@@ -1,6 +1,6 @@
 module.exports = {
 
-    PROD: process.env.PROD && process.env.PROD.toString() == '1' || false,
+    PROD:  process.env.PROD && process.env.PROD.toString() == '1' || false,
     PORT: process.env.PORT || 3000,
 
     serverURL: process.env.serverURL || 'https://www.diagnostical.fr',
@@ -11,5 +11,7 @@ module.exports = {
 
     ERROR: {
         DATABASE_ISSUE: "Database Issue (Code:200)"
-    }
+    },
+    
+    DEBUG_PDF_GENERATION: process.env.DEBUG_PDF_GENERATION && process.env.DEBUG_PDF_GENERATION.toString() == '1' || false,
 };

@@ -6,6 +6,8 @@ var _ = require('lodash');
 var atob = require('atob'); //decode
 var btoa = require('btoa'); //encode
 
+var DEBUG_PDF_GENERATION = require('../model/config').DEBUG_PDF_GENERATION;
+
 var logger = null;
 
 function initializeLogger() {
@@ -30,9 +32,9 @@ function generate(data, cb, req, res) {
     data.fileName = data.fileName || "file_" + Date.now();
     data.fileName = data.fileName.replace('.pdf', '') + '.pdf';
 
-    //logger.debug('Determining path to save');
+    logger.debug('Determining path to save');
     var pathToSave = utils.getFileTempPath(data.fileName);
-   // logger.debug('Path to save is ',pathToSave);
+    logger.debug('Path to save is ',pathToSave);
     //
     data.html = decode(data.html);
     //
@@ -43,7 +45,10 @@ function generate(data, cb, req, res) {
         //logger.debug('setInputEncoding to utf8');
         htmlToPdf.setOutputEncoding('UTF-8');
         //logger.debug('setOutputEncoding to utf8');
-        //htmlToPdf.setlogger.debug(true);
+        if(DEBUG_PDF_GENERATION){
+            logger.debug('DEBUG_PDF_GENERATION ON');
+            htmlToPdf.setDebug(true);
+        }
         logger.debug('Compiling');
         htmlToPdf.convertHTMLString(data.html, pathToSave,
             function(err, res) {

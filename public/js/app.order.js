@@ -336,7 +336,7 @@
                                 win.focus();
                             }
                             else {
-                                res.warningMessage('Server Issue, try later.');
+                                r.warningMessage('Server Issue, try later.');
                             }
                         });
                     });
