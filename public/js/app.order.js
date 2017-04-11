@@ -71,6 +71,13 @@
                 }
                 return true;
             };
+            
+            s.moveDateBackward = ()=>{
+                s.item.start = moment().subtract(1,'days');
+                s.item.end = moment().subtract(1,'days').add(1,'hour')
+                r.dom();
+            };
+            
             s.pdfSaveSuccess = () => {
                 if (s.item.status == 'prepaid' && s.pdfAllPdfUploaded()) {
                     console.warn('every pdf was uploaded. Turning order to completed.');
