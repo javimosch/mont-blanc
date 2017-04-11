@@ -42,7 +42,9 @@ app.controller('ctrl.booking', ['server',
         };
         
         function cameFromIframe(){
-            return getParameterByName('if').toString()==="1";
+            var queryStringIfParameterValue = getParameterByName('if');
+            if(!queryStringIfParameterValue) return false;
+            return queryStringIfParameterValue.toString()==="1";
         }
 
         /*INIT*/
