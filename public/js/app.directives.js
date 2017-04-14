@@ -499,16 +499,6 @@ angular.module('app').directive('activeRoute', function($rootScope) {
     };
 });
 
-angular.module('app').directive('focusOn', function() {
-    return function(scope, elem, attr) {
-        scope.$on('focusOn', function(e, name) {
-            if (name === attr.focusOn) {
-                elem[0].focus();
-            }
-        });
-    };
-});
-
 angular.module('app').directive('collapseNav', function($timeout, $rootScope) {
     return {
         restrict: 'AE',
@@ -1138,8 +1128,13 @@ angular.module('app').directive('modalCustom', function($rootScope, $timeout, $c
                         $scope.data = opt.data;
                         if (opt.helpers) {
                             for (var x in opt.helpers) {
+                                if(x == 'withScope'){
+                                    opt.helpers[x]($scope);
+                                    continue;
+                                }
                                 $scope[x] = opt.helpers[x];
                             }
+                            
                         }
                         $scope.response = {}; //response payload
                         $scope.message = message;
