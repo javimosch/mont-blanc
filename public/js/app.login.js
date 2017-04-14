@@ -2,7 +2,7 @@
 /*global $U*/
 var app = angular.module('app.login', []);
 
-angular.module('app').service('LoginService', ['server', '$rootScope', function(db, r) {
+angular.module('app').service('LoginService', ['server', '$rootScope', '$log', 'apiError', function(db, r, $log, apiError) {
     var self = {};
 
     const MSG_VALIDATE_EMAIL = 'Email est requis';
@@ -25,6 +25,12 @@ angular.module('app').service('LoginService', ['server', '$rootScope', function(
                     resolve();
                 }
                 else {
+                    
+                    
+                    if(res.err && apiError(res.err).isEqual.GUESS_ACCOUNT_RESTRICTION){
+                        return emit('validate', res.err.message);
+                    }
+                    
                     emit('validate', MSG_VALIDATE_LOGIN)
                 }
             }).error((res) => {

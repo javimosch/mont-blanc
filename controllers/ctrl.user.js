@@ -17,7 +17,8 @@ var Notif = require('./ctrl.notification');
 var NOTIFICATION = Notif.NOTIFICATION;
 //User.methods.name = ()=>{return };
 
-
+var path = require('path');
+var apiError = require(path.join(process.cwd(), 'model/errors'));
 
 
 var dbLogger = ctrl('Log').createLogger({
@@ -282,7 +283,7 @@ function _preUpdateWallet(data, cb, next) {
             ctrl('Lemonway').updateWalletDetails(payload, (err, res) => {
                 if (err) {
 
-                    
+
                 }
                 return next(data, cb);
             });
@@ -310,10 +311,10 @@ function _preCreateWallet(data, cb, next) {
         return ctrl('Lemonway').registerWallet(payload, (err, res) => {
             if (!err && res && res.WALLET) {
                 data.wallet = res.WALLET.ID;
-               
+
             }
             if (err) {
-                
+
             }
             return next(data, cb);
         });
@@ -322,47 +323,80 @@ function _preCreateWallet(data, cb, next) {
 }
 
 
+const SYSTEM_USER_TRANSFORM_KEYS = ['_id', 'email', 'discount'];
+
+function transformResponseLimitKeys(originalCallback, keys) {
+    return function(err, result) {
+        if (err) return originalCallback(err);
+        if (typeof result == 'object') {
+            var transformedResult = {};
+            keys.forEach(key => {
+                transformedResult[key] = result[key];
+            });
+            result = transformedResult;
+        }
+        return originalCallback(err, result);
+    }
+}
+
+function fetchBookingSystemUser(data, cb) {
+    ctrl('User').core.create({
+        email: "bookingbot@noreply.fr",
+        isSystemUser: true,
+    }, transformResponseLimitKeys(cb, SYSTEM_USER_TRANSFORM_KEYS));
+}
+
+function createSystemUser(data, cb) {
+    ctrl('User').core.create({
+        email: data.email,
+        isSystemUser: true,
+        __match: {
+            email: data.email
+        }
+    }, cb);
+}
+
+function updateGuestAccountFlag(_id, isGuestAccount, cb) {
+    ctrl('User').get({
+        _id: _id,
+        userType: "client",
+        clientType: "landlord"
+    }, function(err, _client) {
+        if (err) return cb(err);
+        if (!_client) return cb('User is not a Client / Landlord');
+        ctrl('User').update({
+            _id: _client._id,
+            isGuestAccount: isGuestAccount
+        }, cb);
+    });
+}
+
+function setAsGuestAccount(data, cb) {
+    if (!data._id) return cb('_id required');
+    updateGuestAccountFlag(data._id, true, cb);
+}
+
+function setAsNormalAccount(data, cb) {
+    if (!data._id) return cb('_id required');
+    updateGuestAccountFlag(data._id, false, cb);
+}
+
 
 function save(data, cb) {
     if (!_.includes(['diag', 'client', 'admin'], data.userType)) {
-        return cb("invalid userType " + data.userType);
+        if (!data.isSystemUser) {
+            return cb("valid userType required");
+        }
     }
 
     _preCreateWallet(data, cb, (data, cb) => {
         _preUpdateWallet(data, cb, __save);
     });
 
-    /*
-        var originalItem = null;
-        function __fetch(data, cb) {
-            if (data._id) {
-                actions.get({
-                    _id: data._id
-                }, (err, _user) => {
-                    if (err) return cb(err);
-                    originalItem = _user;
-                    return __save(data, cb);
-                });
-            }
-            else {
-                return __save(data, cb);
-            }
-        }*/
 
     function __save(data, cb) {
         actions.createUpdate(data, (err, _user) => {
             if (err) return cb(err);
-
-            /*
-            if (_user.userType == 'diag' && !_user.disabled) {
-                if (_user.notifications && !_user.notifications.DIAG_DIAG_ACCOUNT_ACTIVATED) {
-                    //dbLogger.debugSave('Should notify activation ', _user.email);    
-                    Notif.trigger(NOTIFICATION.DIAG_DIAG_ACCOUNT_ACTIVATED, {
-                        _user: _user
-                    }, (_err, r) => handleNewAccount(_user, err, r));
-                }
-            }*/
-
             return cb(err, _user);
         }, {
             email: data.email,
@@ -373,15 +407,6 @@ function save(data, cb) {
 
 
     function postCreate_notifications(err, _user) {
-
-        /*
-                dbLogger.setSaveData({
-                    _user: _user,
-                    err: err
-                });
-                dbLogger.debugSave('OnCreate: ', _user.email);
-        */
-
         switch (_user.userType) {
             case 'admin':
                 {
@@ -537,8 +562,16 @@ function login(data, cb) {
     console.log('USER:login=' + JSON.stringify(data));
     actions.model.findOne(actions.toRules({
         email: data.email,
-        password: data.password
-    })).exec(cb);
+        //password: data.password
+    })).exec((err, _user) => {
+        if (!err && _user && _user.isGuestAccount) {
+            return cb(apiError.GUESS_ACCOUNT_RESTRICTION);
+        }
+        if (_user.password != data.password) {
+            _user = null;
+        }
+        cb(err, _user);
+    });
 }
 
 
@@ -578,6 +611,10 @@ function passwordReset(data, cb) {
 }
 
 module.exports = {
+    fetchBookingSystemUser: fetchBookingSystemUser,
+    setAsNormalAccount: setAsNormalAccount,
+    setAsGuestAccount: setAsGuestAccount,
+
     //custom
     departmentCoveredBy: departmentCoveredBy,
     balance: balance,
@@ -613,6 +650,9 @@ function afterSave(data) {
         afterSaveLogger.errorSave('data required (_user)');
         return data;
     }
+
+    if (data.isSystemUser) return data;
+
     if (data && !data._id) {
         afterSaveLogger.setSaveData(data);
         afterSaveLogger.warnSave('_user should have an _id');
@@ -620,17 +660,17 @@ function afterSave(data) {
     }
     else {
         //afterSaveLogger.setSaveData(data);
-         //afterSaveLogger.debugSave('Success');
-         
-         /*if(!data.__fetch){
-             return ctrl('User').get({
-                 _id:data._id
-             },(err,_user)=>{
-                data.__fetch = true;
-                if(!err) Object.assign(data,_user);
-                return afterSave(data);
-             })
-         }*/
+        //afterSaveLogger.debugSave('Success');
+
+        /*if(!data.__fetch){
+            return ctrl('User').get({
+                _id:data._id
+            },(err,_user)=>{
+               data.__fetch = true;
+               if(!err) Object.assign(data,_user);
+               return afterSave(data);
+            })
+        }*/
 
         data.notifications = data.notifications || {};
 
@@ -640,8 +680,8 @@ function afterSave(data) {
     if (data.notifications && data.userType == 'admin' && !data.notifications.ADMIN_ADMIN_ACCOUNT_CREATED) {
         Notif.trigger(NOTIFICATION.ADMIN_ADMIN_ACCOUNT_CREATED, {
             _user: data
-        },err=>{
-            if(!err){
+        }, err => {
+            if (!err) {
                 data.notifications.ADMIN_ADMIN_ACCOUNT_CREATED = true;
             }
         });
@@ -664,8 +704,8 @@ function afterSave(data) {
     if (data.notifications && data.userType == 'diag' && data.disabled == false && !data.notifications.DIAG_DIAG_ACCOUNT_ACTIVATED) {
         Notif.trigger(NOTIFICATION.DIAG_DIAG_ACCOUNT_ACTIVATED, {
             _user: data
-        },err=>{
-            if(!err){
+        }, err => {
+            if (!err) {
                 data.notifications.DIAG_DIAG_ACCOUNT_ACTIVATED = true;
             }
         });

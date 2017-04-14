@@ -136,7 +136,7 @@ app.controller('booking-iframe-controller', ['server',
         moment.locale('fr')
         var MESSAGES = {
             ANSWER_SELL_OR_RENT: 'Répondre Vendez / Louer',
-            ANSWER_APPARTAMENT_OR_MAISON: appText.VALIDATE_BUILDING_TYPE,
+            ANSWER_APPARTAMENT_OR_MAISON: appText.BOOKING_VALIDATE_BUILDING_TYPE,
             FRENCH_ADDRESS_REQUIRED: 'Adresse besoin d&#39;appartenir à France',
         };
 
@@ -185,10 +185,10 @@ app.controller('booking-iframe-controller', ['server',
                 [s.item.info.buildingState, '==', undefined, MESSAGES.ANSWER_SELL_OR_RENT],
                 [s.item.info.buildingType, '==', undefined, MESSAGES.ANSWER_APPARTAMENT_OR_MAISON],
                 [s.item.info.squareMeters, '==', undefined, "Répondre Superficie"],
-                [s.item.info.constructionPermissionDate, '==', undefined, appText.VALIDATE_CONSTRUCTION_DATE],
+                [s.item.info.constructionPermissionDate, '==', undefined, appText.BOOKING_VALIDATE_CONSTRUCTION_DATE],
                 [s.item.info.gasInstallation, '==', undefined, "Répondre Gaz"],
                 [s.item.info.electricityInstallation, '==', undefined, "Répondre Electricité"],
-                [s.item.address, '==', undefined, appText.VALIDATE_ADDRESS],
+                [s.item.address, '==', undefined, appText.BOOKING_VALIDATE_ADDRESS],
 
                 /*
                 removed: autocomplete is now limited to france

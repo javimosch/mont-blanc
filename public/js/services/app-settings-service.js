@@ -7,7 +7,26 @@
         var self = {
             URL: window.location.origin + '/',
             databaseSettings: null,
-            parseLocalData: parseLocalData
+            parseLocalData: parseLocalData,
+            fetchFromRemote: () => {
+                return $U.MyPromise(function(resolve, error) {
+                    getDatabaseSettings(resolve);
+                });
+            },
+            syncAll: () => {
+                return $U.MyPromise(function(resolve, error) {
+                    function waitLocalAndRemoteData(resolve) {
+                        if (self.databaseSettings && self.localData) {
+                            return resolve(self);
+                        }
+                        else return setTimeout(() => {
+                            waitLocalAndRemoteData(resolve);
+                        }, 200);
+                    }
+                    waitLocalAndRemoteData(resolve)
+                });
+            },
+            localData: null
         };
         assignGlobalSettings(self);
         fetchDatabaseSettings(); //initial and unique fetch
@@ -58,6 +77,7 @@
                         }
 
                     }
+                    self.localData = localData;
                     return resolve(localData);
                 });
             });

@@ -220,12 +220,14 @@
             },
             //Helper function to assign prices in an existing order.
             assignPrices: function(object) {
+                $log.debug('prices settings',settings);
                 object.price = this.getPriceTTC();
                 object.priceHT = this.getPriceHT();
                 object.revenueHT = this.getPriceRevenueHT();
                 object.diagRemunerationHT = this.getPriceRemunerationHT();
                 object.vatRate = this.getRatioModifierFor('vat');
                 object.vatPrice = this.getVATPrice();
+                $log.debug('prices are set',object);
             }
         };
         return self;

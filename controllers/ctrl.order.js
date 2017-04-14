@@ -22,7 +22,8 @@ var email = require('./ctrl.email');
 var Notif = require('./ctrl.notification');
 var NOTIFICATION = Notif.NOTIFICATION;
 
-
+var path = require('path');
+var htmlFromOrder = require(path.join(process.cwd(),'model/facades/invoice-facade')).htmlFromOrder;
 
 var saveKeys = ['_client', '_diag', 'start', 'end', 'diags'
 
@@ -245,7 +246,7 @@ function payUsingLW(data, callback) {
 }
 
 
-
+//Deprecated ?
 function confirm(data, cb) {
     actions.log('confirm=' + JSON.stringify(data));
     actions.getById(data, (err, _order) => {
@@ -286,38 +287,18 @@ function create(data, cb) {
     actions.create(data, cb, saveKeys);
 }
 
-
-function notifyClientOrderCreation(_order) {
-    actions.log('async:notifyClientOrderCreation:start');
-    if (_order && _order.info) {
-        if (_order.info.clientNotified != true) {
-            UserAction.get({
-                _id: _order._client._id || _order._client
-            }, (_err, _client) => {
-                _client._orders.push(_order.id);
-
-
-
-            });
-        }
-        else {
-            actions.log('async:notifyClientOrderCreation:already-notified');
-        }
-    }
-    else {
-        actions.log('async:notifyClientOrderCreation:order-info-undefined');
-    }
-}
-
-function attachHelpers(order){
-    obj = _.clone(order);
-    obj.isPaid = ()=> obj.status === 'prepaid';
+function attachHelpers(order) {
+    var obj = _.clone(order);
+    obj.isPaid = () => obj.status === 'prepaid';
     return obj;
 }
 
 function save(data, cb, customRequiredKeys) {
-    //actions.log('save=' + JSON.stringify(data))
-    actions.log('save:start');
+    
+    //fix: set _diag _id
+    if(data._diag && data._diag._id){
+        data._diag = data._diag._id;
+    }
 
     var prevStatus = '';
     if (data._id) {
@@ -347,7 +328,7 @@ function save(data, cb, customRequiredKeys) {
                 actions.log('save:currentStatus=' + _order.status);
 
                 _order.notification = _order.notifications || {};
-                
+
                 //on status change
                 if (prevStatus == 'created' && _order.status == 'prepaid') { //PREPAID DURING BOOKING
                     sendNotificationToEachAdmin(_order);
@@ -413,7 +394,7 @@ function save(data, cb, customRequiredKeys) {
                 return;
             }
 
-            getInvoiceHTML(_order, (_err, html) => {
+            htmlFromOrder(_order, (_err, html) => {
                 if (_err) {
                     LogSave('Unable to retrieve order invoice html', 'warning', _err);
                 }
@@ -444,61 +425,10 @@ function save(data, cb, customRequiredKeys) {
 
 }
 
-function getInvoiceHTML(_order, cb) {
-    var Category = ctrl('Category');
-    var Text = ctrl('Text');
-    Category.createUpdate({
-        code: "DIAGS_SETTINGS",
-        __match: ['code']
-    }, (err, _category) => {
-        if (err) return cb(err);
 
-        Text.get({
-            code: 'INVOICE',
-        }, (err, _text) => {
-            if (err) return cb(err);
-            if (!_text) {
-                return cb(null, 'CONFIGURE ORDER INVOICE TEMPLATE');
-            }
-            var html =
-                utils.encodeURIComponent(
-                    invoiceHTMLInyectOrderDetails(utils.decodeURIComponent(_text.content), _.cloneDeep(_order)));
-            return cb(null, html);
-        });
-    });
-}
 
-function invoiceHTMLInyectOrderDetails(html, _order) {
-    _order['ORDER_DESCRIPTION'] = _order.info.description;
-    _order['CLIENT_FULLNAME'] = _order._client.firstName + ' ' + (_order._client.lastName || '');
-    _order['CLIENT_FIRSTNAME'] = _order._client.firstName;
-    _order['CLIENT_LASTNAME'] = _order._client.lastName || '';
-    _order['CLIENT_EMAIL'] = _order._client.email;
-    _order['CLIENT_ADDRESS'] = _order._client.address;
-    _order.createdAt = moment(_order.createdAt).format('DD-MM-YY HH[h]mm');
-    //
-    var backofficeURL = process.env.adminURL || ''; //blooming-refuge-27843.herokuapp.com/admin#
-    if (backofficeURL) {
-        backofficeURL = backofficeURL.substring(0, backofficeURL.lastIndexOf('/'));
-        // LogSave('Invoice Logo Injected Log','info',{
-        //    src: backofficeURL + '/img/logo.jpg'
-        // });
-        _order["LOGO"] = "<img src='" + backofficeURL + '/img/logo.jpg' + "'>";
-    }
-    else {
-        LogSave('Unable to inject LOGO in invoice. Enviromental variable adminURL required.', 'warning', _order);
-        _order["LOGO"] = "";
-    }
-    //
-    return invoiceHTMLReplaceVariable(html, _order);
-}
 
-function invoiceHTMLReplaceVariable(html, obj) {
-    for (var x in obj) {
-        html = utils.replaceAll(html, "{{" + x.toUpperCase() + "}}", obj[x]);
-    }
-    return html;
-}
+
 
 
 function everyAdmin(cb) {
@@ -541,7 +471,6 @@ function orderClient(_order, cb) {
 }
 
 function orderExists(data, cb) {
-    actions.log('orderExists=' + JSON.stringify(data));
     //Si existe un order match user:email, address, start, end, price.
     actions.getAll({
         __populate: {
@@ -552,12 +481,10 @@ function orderExists(data, cb) {
         //diagStart: data.diagStart,
         //diagEnd: data.diagEnd,
     }, (err, list) => {
-        actions.log('orderExists:getAll:err:?=' + JSON.stringify(err));
         if (err) return cb(err, list);
         var rta = null;
         var rtaErr = null;
         list.forEach((r) => {
-            actions.log('orderExists:getAll:reading=' + JSON.stringify(r._client.email));
             //check dates sameday same hour, same address
             var sameOrder = true && moment(r.diagStart).isSame(data.diagStart, 'day') && moment(r.diagEnd).isSame(data.diagEnd, 'day') && r.price == data.price && r.address == data.address;
             if (!rta) {
@@ -565,27 +492,26 @@ function orderExists(data, cb) {
                     if (sameOrder) {
                         rta = r;
                         rtaErr = 'ORDER_EXISTS';
-                        actions.log('orderExists:exists=' + JSON.stringify({
+                        dbLogger.warn('ORDER_EXISTS event', {
                             sameOrder: sameOrder,
                             clientEmail: r._client.email,
                             clientEmailBooking: data.email
-                        }));
+                        });
                     }
                 }
                 else {
                     if (sameOrder) {
                         rta = r;
                         rtaErr = 'ORDER_TAKEN';
-                        actions.log('orderExists:taken=' + JSON.stringify({
+                        dbLogger.warn('ORDER_TAKEN event', {
                             sameOrder: sameOrder,
                             clientEmail: r._client.email,
                             clientEmailBooking: data.email
-                        }));
+                        });
                     }
                 }
             }
         });
-        actions.log('orderExists:rta=' + JSON.stringify(rta));
         return cb(rtaErr, rta); //returns the order as result
     });
 }
@@ -600,20 +526,16 @@ function saveWithEmail(data, cb) {
     ], (err, r) => {
         if (err) return cb(err, r);
         //
+        
+        //This function checks if the client book a similar order recently and tries to retrieve it.
         orderExists(data, (err, r) => {
             if (err) return cb(err, r);
-
-            if (data._client) {
-                return save(data, cb);
-            }
-
             if (data._client) {
                 if (data._client._id) data._client = data._client._id;
                 return save(data, cb);
             }
             else {
-
-
+                //Legacy fallback
                 actions.check(data, ['email', 'clientType'], (err, r) => {
                     if (err) return cb(err, r);
                     _setUserUsingEmailAndClientType();
@@ -659,7 +581,7 @@ function afterSave(data) {
         _id: data._id,
         __populate: {
             _diag: "firstName lastName",
-            _client: "firstName lastName cellPhone fixedTel companyName"
+            _client: "firstName lastName cellPhone fixedTel companyName isSystemUser"
         }
     }, (err, _order) => {
         if (err) {
@@ -668,8 +590,8 @@ function afterSave(data) {
             return;
         }
         _order.notifications = _order.notifications || {};
-        if (!_order.notifications.ADMIN_ORDER_CREATED_SUCCESS) {
-            dbLogger.debug('Notifying admins','ADMIN_ORDER_CREATED_SUCCESS');
+        if (!_order.notifications.ADMIN_ORDER_CREATED_SUCCESS && !_order._client.isSystemUser) {
+            dbLogger.debug('Notifying admins', 'ADMIN_ORDER_CREATED_SUCCESS');
             everyAdmin((_admin) => {
                 Notif.trigger(NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, {
                     _order: _order,

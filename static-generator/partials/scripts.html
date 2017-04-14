@@ -15,6 +15,7 @@
 
 <!-- RUN -->
 <script src="/js/app.run.js"></script>
+<script src="/js/run/api/user-api.js"></script>
 
 <!-- SERVICES -->
 <script src="/js/app.services.js"></script>
@@ -36,6 +37,10 @@
 <script src="/js/services/app-settings-service.js"></script>
 <script src="/js/services/local-data.js"></script>
 <script src="/js/services/backend-api-helper.js"></script>
+<script src="/js/services/local-session.js"></script>
+<script src="/js/services/api-error.js"></script>
+<script src="/js/services/order/order-helper.js"></script>
+<script src="/js/services/elements/select-helper.js"></script>
 
 <!-- DIRECTIVES -->
 <script src="/js/directives/card-number-mask.js"></script>
@@ -66,6 +71,7 @@
 <script type="text/javascript" src="/js/controllers/settings-pages.js"></script>
 <script type="text/javascript" src="/js/controllers/database-files-controller.js"></script>
 <script type="text/javascript" src="/js/controllers/client-area-controller.js"></script>
+<script type="text/javascript" src="/js/controllers/booking/payment-controller.js"></script>
 <!-- OTHERS -->
 <script src="/js/app.run-calendar.js"></script>
 <script src="/js/app.admin.js"></script>
@@ -84,5 +90,9 @@
 <script src="/js/app.order.js"></script>
 <script src="/js/app.client.payments.js"></script>
 <!--/BUNDLE_JS_1-->
- 
- {{#if PROD}} <!--PROD <script src="/app.bundle.js"></script>-->  {{else}} <!--NON-PROD--> {{/if}}
+
+{{#if PROD}}
+<!--PROD <script src="/app.bundle.js"></script>-->{{else}}
+<!--NON-PROD-->{{/if}}
+
+

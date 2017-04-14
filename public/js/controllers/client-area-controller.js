@@ -14,7 +14,7 @@
 angular.module('app').controller('client-area-controller', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter',
     function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter) {
-        
+
         s._user = r.sessionMetadata()._user || {};
         s.auth = {};
         s.warningMsg = (msg) => {
@@ -29,16 +29,17 @@ angular.module('app').controller('client-area-controller', ['server',
                 duration: 5000
             });
         };
+
         function changeRoute(url, delay) {
-             r.sessionMetadata({
+            r.sessionMetadata({
                 _user: s._user
-            },true);
+            }, true);
             r.route(url, delay);
         }
         s.validateAuthInput = function(cb) {
             ifThenMessage([
-                [!s.auth.email, '==', true, "Email required."],
-                [!s.auth.pass, '==', true, "Password required."],
+                [!s.auth.email, '==', true, appText.VALIDATE_CLIENT_EMAIL],
+                [!s.auth.pass, '==', true, appText.VALIDATE_CLIENT_PASS],
             ], (m) => {
                 if (typeof m[0] !== 'string') {
                     s.warningMsg(m[0]())
@@ -67,13 +68,14 @@ angular.module('app').controller('client-area-controller', ['server',
                 }).then(exists => {
                     exists = exists.ok && exists.result == true;
                     if (exists) {
-                        s.warningMsg('This email address belongs to an existing member.');
+                        s.warningMsg(appText.DUPLICATED_EMAIL_ADDRESS);
                     }
                     else {
                         _setAndGo();
                     }
                 });
             }
+
             function _setAndGo() {
                 s._user = {};
                 if (useAuthCredentials) {
@@ -85,10 +87,10 @@ angular.module('app').controller('client-area-controller', ['server',
                 changeRoute(nextRoute);
             }
         };
-        
+
         s.subscribeClientStandAlone = function() {
             s.createClient(function() {
-                s.infoMsg('Le compte a été créé . Vérifiez votre email .');
+                s.infoMsg(appText.CLIENT_ACCOUNT_CREATED);
                 changeRoute(r.URL.HOME);
             });
         };
@@ -107,9 +109,9 @@ angular.module('app').controller('client-area-controller', ['server',
         };
         s.validateClientDetails = function(cb) {
 
-            if (!s._user.email) return s.warningMsg('Email c&#39;est obligatoire.');
+            if (!s._user.email) return s.warningMsg(appText.VALIDATE_CLIENT_EMAIL);
 
-            if (s._user.clientType !== 'landlord' && !s._user.siret) return s.warningMsg('Siret c&#39;est obligatoire.');
+            if (s._user.clientType !== 'landlord' && !s._user.siret) return s.warningMsg(appText.VALIDATE_CLIENT_SIRET);
 
             db.ctrl('User', 'exists', {
                 email: s._user.email,
@@ -117,15 +119,15 @@ angular.module('app').controller('client-area-controller', ['server',
             }).then(exists => {
                 exists = exists.ok && exists.result == true;
                 if (exists) {
-                    s.warningMsg('This email address belongs to an existing member.');
+                    s.warningMsg(appText.DUPLICATED_EMAIL_ADDRESS);
                 }
                 else {
                     //validate fields
                     ifThenMessage([
-                        [!s._user.email, '==', true, "Email c&#39;est obligatoire."],
-                        [!s._user.password, '==', true, "Password c&#39;est obligatoire."],
-                        [!s._user.cellPhone, '==', true, "Mobile c&#39;est obligatoire"],
-                        [!s._user.address, '==', true, "Adresse c&#39;est obligatoire"],
+                        [!s._user.email, '==', true, appText.VALIDATE_CLIENT_EMAIL],
+                        [!s._user.password, '==', true, appText.VALIDATE_CLIENT_PASS],
+                        [!s._user.cellPhone, '==', true, appText.VALIDATE_CLIENT_MOBILE_NUMBER],
+                        [!s._user.address, '==', true, appText.VALIDATE_CLIENT_ADDRESS],
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             s.warningMsg(m[0]())

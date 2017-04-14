@@ -374,22 +374,22 @@ function MyPromise(cb) {
         }
     };
     cb(resolve, error, emit);
+
+    function catchHandler(errorCb) {
+        if (_scope.errorRes) errorCb(_scope.errorRes);
+        else _scope.errorCb = errorCb;
+        return rta;
+    }
     var rta = {
         then: function(cb) {
             if (_scope.res) cb(_scope.res);
             else _scope.cb = cb;
             return rta;
         },
-        error: function(errorCb) {
-            if (_scope.errorRes) errorCb(_scope.errorRes);
-            else _scope.errorCb = errorCb;
-            return rta;
-        },
-        err: function(errorCb) {
-            if (_scope.errorRes) errorCb(_scope.errorRes);
-            else _scope.errorCb = errorCb;
-            return rta;
-        },
+        reject: catchHandler,
+        catch: catchHandler,
+        error: catchHandler,
+        err: catchHandler,
         on: function(n, cb) {
             _scope.evt[n] = _scope.evt[n] || {};
             _scope.evt[n].cb = cb;
@@ -764,7 +764,7 @@ else {
     window.ifThenMessage = ifThenMessage;
 
     window.$U = {
-        exposeGlobal:exposeGlobal,
+        exposeGlobal: exposeGlobal,
         dateRangeOverlaps: dateRangeOverlaps,
         readJSONSync: readJSONSync,
         store: localStorageWrapper,

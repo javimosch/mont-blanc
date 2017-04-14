@@ -28,6 +28,12 @@ module.exports = {
                 support: config.author
             });
         });
+
+        var API_ERRORS = require(path.join(process.cwd(), 'model/errors'));
+        app.get('/api/errors', function(req, res) {
+            res.json(API_ERRORS);
+        });
+
         configureRoutes(app);
         ensureDirectory(process.cwd() + '/public/temp');
         configureProgrammedTasks(app);

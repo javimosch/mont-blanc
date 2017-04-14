@@ -6,8 +6,8 @@
     var app = angular.module('app').service('backendApi', function($rootScope, server, $log) {
 
         const CONSTANT = {
-            COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate'],
-            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User']
+            COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate','create'],
+            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User','Order']
         };
 
         function getLemonwayMessage(res) {
@@ -45,6 +45,17 @@
             });
         }
 
+        var customActionScopes = {};
+
+        function getActionScope(collectionName) {
+            if (!customActionScopes[collectionName]) {
+                customActionScopes[collectionName] = {
+                    action: (action, payload) => handle(collectionName, action, payload)
+                };
+            }
+            return customActionScopes[collectionName];
+        }
+
         /*CUSTOM*/
         function createActions(collectionName, includeClientSideCustomApiActions) {
             includeClientSideCustomApiActions = includeClientSideCustomApiActions == undefined ? true : includeClientSideCustomApiActions;
@@ -63,7 +74,7 @@
                 Object.keys(customApiActions[collectionName]).forEach(actionName => {
                     self[actionName] = (data) => {
                         return $U.MyPromise(function(resolve, reject, emit) {
-                            return customApiActions[collectionName][actionName](data, resolve, reject, emit);
+                            return customApiActions[collectionName][actionName].apply(getActionScope(collectionName), [data, resolve, reject, emit]);
                         });
                     };
                 });

@@ -1,26 +1,21 @@
 <!--COMPILE_WITH_HANDLEBARS-->
-<div class="diags-bg" ng-controller="ctrl.booking"> 
+<div class="diags-bg" ng-controller="payment-controller"> 
     <div class="diags-content container diags-selection padding-none">
         <div class="row diags-bg-block-40 hidden-xs"></div>
         <div class="row diag-row padding-top-one">
             <div class="col-sm-12 ">
                 <div class='row'>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <div class="booking-phase">
                             1.Choisir vos diagnostics
                         </div>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <div class="booking-phase">
                             2.Prendre RDV
                         </div>
                     </div>
-                    <div class="col-sm-3 ">
-                        <div class="booking-phase link" ng-click="route(URL.LOGIN)">
-                            3.Connexion
-                        </div>
-                    </div>
-                    <div class="col-sm-3 ">
+                    <div class="col-sm-4 ">
                         <div class="booking-phase active">
                             4.Paiement
                         </div>
@@ -41,41 +36,42 @@
                             <p class="label">Récapitulatif de votre commande</p>
                         </div>
                         <div class="row margin-top-one">
-                            <input ng-model="_order.address" class="diags-input" placeholder="Ex: 23 rue de lyon, 75012 Paris">
+                            <input ng-model="order.address" class="diags-input" placeholder="Ex: 23 rue de lyon, 75012 Paris">
                         </div>
-                        <div class="row margin-top-half" ng-if="false" ng-show="!_order.info.house">
+                        <div class="row margin-top-half" ng-if="false" ng-show="!order.info.house">
                             <div class="diags-btn-group row">
                                 <div class="col-xs-4">
-                                    <input ng-model="_order.info.addressBatiment" class="diags-input xs" placeholder="Rue">
+                                    <input ng-model="order.info.addressBatiment" class="diags-input xs" placeholder="Rue">
                                 </div>
                                 <div class="col-xs-4">
-                                    <input ng-model="_order.info.addressCode" class="diags-input xs" placeholder="Code">
+                                    <input ng-model="order.info.addressCode" class="diags-input xs" placeholder="Code">
                                 </div>
                                 <div class="col-xs-4">
-                                    <input style="padding-left: 25px;" ng-model="_order.info.addressEtage" class="diags-input xs" placeholder="Étage">
+                                    <input style="padding-left: 25px;" ng-model="order.info.addressEtage" class="diags-input xs" placeholder="Étage">
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row margin-top-half diags-botticelli-wrapper ">
-                            <div class="col-xs-2 padding-none margin-none">
-                                <div class="row padding-none margin-none">
-                                    <img class="" src="/img/icon-calendar.png">
+                            <div class="col-xs-12 padding-none margin-none">
+                                <div class="row padding-none margin-none relative">
+                                    <img class="" src="/img/icon-calendar.png" style="/* display: inline-block; */">
+                                    <p class="roman-16 booking-login__order-date" ng-bind="orderDateFormatted()"></p>
                                 </div>
                                 <div class="row padding-none margin-none">
-                                    <img class="margin-top-two" src="/img/icon-guy.png">
+                                    <img class="margin-top-one" src="/img/icon-guy.png">
+                                    <p class="margin-top-one roman-16 booking-login__order-diag-user-name" ng-bind="orderDiagFormatted()">Avec Javier A </p>
                                 </div>
-                            </div>
-                            <div class="col-xs-10 padding-none margin-none">
-                                <div class="row roman-16">{[{orderDateFormatted()}]}</div>
-                                <div class="row margin-top-08em roman-16">{[{orderDiagFormatted()}]}</div>
                             </div>
                         </div>
+                        
+                       
                         <div class="row margin-top-half">
                             <div class="row padding-none light-14">
                                 Liste de Diagnostics :
                             </div>
-                            <div class="row padding-none diags-icons margin-top-half" ng-show="_order && _order.diags">
-                                <img ng-repeat="(k,v) in _order.diags" ng-show="v" ng-src="/img/icons/icon_{[{k}]}.png">
+                            <div class="row padding-none diags-icons margin-top-half" ng-show="order && order.diags">
+                                <img ng-repeat="(k,v) in order.diags" ng-show="v" ng-src="/img/icons/icon_{[{k}]}.png">
                             </div>
                         </div>
 
@@ -83,7 +79,7 @@
                 </div>
             </div>
 
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4  " ng-show="!isLandLord()">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4  " ng-show="showDelegateOrderElements()">
                 <div class="row-fluid frm-wrapper ">
                     <div class="diags-form">
                         <div class="row">
@@ -93,16 +89,16 @@
                             <p class="label">Informations devant figurer dans les diagnostics</p>
                         </div>
                         <div class="row margin-top-one">
-                            <input ng-model="_order.landLordFullName" class="diags-input" placeholder="Nom et prénom du Propriétaire">
+                            <input ng-model="order.landLordFullName" class="diags-input" placeholder="Nom et prénom du Propriétaire">
                         </div>
                         <div class="row margin-top-half">
-                            <input ng-model="_order.landLordEmail" class="diags-input" placeholder="Email du Propriétaire">
+                            <input ng-model="order.landLordEmail" class="diags-input" placeholder="Email du Propriétaire">
                         </div>
                         <div class="row margin-top-half">
-                            <input data-address model="_order" field="landLordAddress" class="diags-input" placeholder="Adresse de la résidence principale">
+                            <input data-address model="order" field="landLordAddress" class="diags-input" placeholder="Adresse de la résidence principale">
                         </div>
                         <div class="row margin-top-half">
-                            <input ng-model="_order.landLordPhone" class="diags-input" placeholder="Téléphone du Propriétaire">
+                            <input ng-model="order.landLordPhone" class="diags-input" placeholder="Téléphone du Propriétaire">
                         </div>
                     </div>
                 </div>
@@ -135,7 +131,7 @@
                             </div>
                         </div>
                         <div class="row margin-top-half">
-                            <input ng-disabled="_order.keysWhere!=='other'" data-address model="_order" field="keysAddress" class="diags-input" placeholder="Adresse">
+                            <input ng-disabled="order.keysWhere!=='other'" data-address model="order" field="keysAddress" class="diags-input" placeholder="Adresse">
                         </div>
                         <div class="row margin-top-half">
                             <div class="col-xs-6 padding-none">
@@ -168,19 +164,19 @@
                             </div>
                         </div>
                         <div class="row margin-top-half">
-                            <textarea ng-disabled="false" type="text" class="diags-input fullwidth min-height-100 no-resize" ng-model="_order.obs" placeholder="Informations Complémentaires"></textarea>
+                            <textarea ng-disabled="false" type="text" class="diags-input fullwidth min-height-100 no-resize" ng-model="order.obs" placeholder="Informations Complémentaires"></textarea>
                         </div>
                         <div class="row margin-top-half">
-                            <span class="avenir-medium fnt-24 azure-radiance">Prix : {[{_order.price}]} € TTC</span>
+                            <span class="avenir-medium fnt-24 azure-radiance">Prix : {[{order.price}]} € TTC</span>
                         </div>
                         <div class="row margin-top-one">
                             <p style="font-style: italic;">En cliquant sur Confirmer & Payer vous acceptez nos <a href="https://www.diagnostical.fr/#/conditions-generales-utilisation" target="_blank">Conditions Générales d'Utilisation</a>.</p>
                         </div>
                         <div class="row margin-top-quarter">
-                            <button class="btn btn-xl bg-madison" on-click-scroll-top ng-click="payNOW()" ng-disabled="state.working() || !orderSaved()">Confirmer & Payer</button>
+                            <button class="btn btn-xl bg-madison" on-click-scroll-top ng-click="payNOW()" ng-disabled="state.working() || !order._id">Confirmer & Payer</button>
                         </div>
                         <div class="row margin-top-half">
-                            <button class="btn btn-xl bg-madison" on-click-scroll-top ng-show="!isLandLord()" ng-click="sendPaymentLink()" ng-disabled="state.working() || !orderSaved() || paymentDelegated()">Déléguer au propriétaire</button>
+                            <button class="btn btn-xl bg-madison" on-click-scroll-top ng-show="showDelegateOrderElements()" ng-click="sendPaymentLink()" ng-disabled="state.working() || !order._id">Déléguer au propriétaire</button>
                         </div>
                     </div>
                 </div>

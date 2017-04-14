@@ -61,6 +61,11 @@ module.exports = {
             default: {}
         },
 
+        //A system user is created automatically by the app. 
+        isSystemUser: {
+            type: Boolean,
+            default: false
+        },
 
         //CLIENT
         clientType: {
@@ -69,6 +74,10 @@ module.exports = {
         discount: {
             type: Number,
             default: 0
+        },
+        isGuestAccount: {
+            type: Boolean,
+            default: false
         },
 
         //CLIENT  DIAG
