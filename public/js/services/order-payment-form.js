@@ -34,15 +34,21 @@
                             if (result.card_type && modalScope.response.cardTypeString && modalScope.response.cardTypeString.toLowerCase() == result.card_type.name && !result.valid && modalScope.response.cardNumber.length == 16) {
                                 return false;
                             }
-                            $log.debug('validCreditCardNumber', rta);
+                            //$log.debug('validCreditCardNumber', rta);
                             return rta;
                         }
-
+                        
+                        //$log.debug('BINDING!',modalScope);
+                        
                         //cardNumberMask: Copy real value to cardNumber
                         modalScope.$watch('data.cardNumberMask', (cardNumberMask) => {
-                            if (!cardNumberMask) return;
+                            
                             //$log.debug('cardNumberMask', cardNumberMask);
+                            
+                            if (!cardNumberMask) return;
+                            
                             modalScope.response.cardNumber = cardNumberMask.replace(/ /g, "");
+                            
                         });
 
                         modalScope.$watch('response.cardNumber', (cardNumber) => {
@@ -92,6 +98,10 @@
                         if (modalScope.response.cardNumber == undefined) return false;
                         if (modalScope.response.cardDate == undefined) return false;
                         if (modalScope.response.cardCode == undefined) return false;
+                        
+                        if(modalScope.response.cardDate.indexOf('NaN')!=-1) return false;
+                        if(modalScope.response.cardDate.indexOf('undefined')!=-1) return false;
+                        
                         return true;
                     },
                     onCardTypeChange: function() {

@@ -293,6 +293,12 @@ function attachHelpers(order) {
     return obj;
 }
 
+function attachHelpers(order){
+    obj = _.clone(order);
+    obj.isPaid = ()=> obj.status === 'prepaid';
+    return obj;
+}
+
 function save(data, cb, customRequiredKeys) {
     
     //fix: set _diag _id

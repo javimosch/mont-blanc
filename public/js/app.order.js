@@ -972,6 +972,10 @@
                         s.item.notifications.LANDLORD_ORDER_PAYMENT_SUCCESS = false;
                     }
                 }
+                
+                function displayWarning(msg){
+                    r.okModal({data:{title:'Warning'},message:msg});
+                }
 
                 function displayWarning(msg) {
                     r.okModal({

@@ -499,8 +499,11 @@ angular.module('app').directive('activeRoute', function($rootScope) {
     };
 });
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> prod
 angular.module('app').directive('collapseNav', function($timeout, $rootScope) {
     return {
         restrict: 'AE',
@@ -1126,9 +1129,13 @@ angular.module('app').directive('modalCustom', function($rootScope, $timeout, $c
                         
                         if (opt.helpers) {
                             for (var x in opt.helpers) {
+                                if(x == 'withScope'){
+                                    opt.helpers[x]($scope);
+                                    continue;
+                                }
                                 $scope[x] = opt.helpers[x];
                             }
-                            if(opt.helpers.withScope) opt.helpers.withScope($scope);
+                            
                         }
                         
                         $scope.message = message;
