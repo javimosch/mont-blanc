@@ -51,7 +51,7 @@
                 ng-model="data.cardNumberMask" 
                 data-mask="0000 0000 0000 0000"
                 >
-                <input type="text"  class="diags-input btn-stack cardNumber" disabled ng-value="response.cardNumber" >
+                <input type="hidden"  class="diags-input btn-stack cardNumber" disabled ng-value="response.cardNumber" >
                 <p class="payment-form__error-text" 
                 ng-show="response.cardTypeString!=undefined && response.cardTypeString!='' && data.invalidCardNumber">{[{response.cardTypeString}]} non valide.</p>
             </div>
