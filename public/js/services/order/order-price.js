@@ -135,9 +135,13 @@
                         return 0;
                 }
             },
+            getSelectedDiagsPrice:function(){
+                return getBasePrice(settings.selectedDiags, settings.availableDiags);
+            },
             getPriceBase: function() {
                 if (!settings.basePrice) return 0;
-                return settings.basePrice + getBasePrice(settings.selectedDiags, settings.availableDiags);
+                var base = parseFloat(settings.basePrice);
+                return base + this.getSelectedDiagsPrice();
             },
             getDayRatio: function(k) {
                 if (!settings.modifiersPercentages) {
@@ -220,14 +224,31 @@
             },
             //Helper function to assign prices in an existing order.
             assignPrices: function(object) {
+                
+                /*
                 $log.debug('prices settings',settings);
+                $log.debug('getSelectedDiagsPrice',this.getSelectedDiagsPrice());
+                $log.debug('getPriceBase',this.getPriceBase());
+                $log.debug('getPriceWithDay',this.getPriceWithDay());
+                $log.debug('getPriceWithSize',this.getPriceWithSize());
+                $log.debug('getPriceWithDiscount',this.getPriceWithDiscount());
+                $log.debug('getPriceWithDepartment',this.getPriceWithDepartment());
+                $log.debug('getPriceWithCommercial',this.getPriceWithCommercial());
+                $log.debug('getPriceTTC',this.getPriceTTC());
+                $log.debug('getPriceHT',this.getPriceHT());
+                $log.debug('getVATPrice',this.getVATPrice());
+                $log.debug('getPriceRemunerationHT',this.getPriceRemunerationHT());
+                $log.debug('getPriceRevenueHT',this.getPriceRevenueHT());
+                $log.debug('getPriceRevenueTTC',this.getPriceRevenueTTC());
+                */
+                
                 object.price = this.getPriceTTC();
                 object.priceHT = this.getPriceHT();
                 object.revenueHT = this.getPriceRevenueHT();
                 object.diagRemunerationHT = this.getPriceRemunerationHT();
                 object.vatRate = this.getRatioModifierFor('vat');
                 object.vatPrice = this.getVATPrice();
-                $log.debug('prices are set',object);
+                //$log.debug('prices are set',object);
             }
         };
         return self;

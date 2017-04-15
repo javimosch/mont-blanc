@@ -274,6 +274,10 @@
             function setHelpers() {
 
                 s.diagNameConvertion = diagNameConvertion;
+                
+                s.diagIcon = (k)=>{
+                    return "/img/icons/icon_"+k+'.png';
+                };
 
                 s.diagSlots = diagSlots(s, s.item);
 

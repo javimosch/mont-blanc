@@ -7,14 +7,26 @@
         var PAID_STATUS_LIST = ['prepaid', 'completed'];
         var CLIENT_TYPES_COMPANY = ['agency', 'enterprise', 'other'];
         var CLIENT_TYPES = ['agency', 'enterprise', 'landlord', 'other'];
-        
+
         var self = {};
+        $U.exposeGlobal('oh', self);
+
+
+
+        self.status = (o) => {
+            return {
+                isPaid: () => _.includes(PAID_STATUS_LIST, o.status),
+                isOrdered: () => o.status == 'ordered',
+                isNotCreated: () => o.status !== 'created'
+            };
+        };
 
         self.CLIENT_TYPES = CLIENT_TYPES;
         self.isLandLord = (o) => {
-            if(!o || !o._client || !o._client.clientType) return true;
+            if (!o || !o._client || !o._client.clientType) return true;
             return !_.includes(CLIENT_TYPES_COMPANY, o._client.clientType);
         }
+        self.isAgency = (o) => !self.isLandLord(o);
         self.createFromBookingData = () => {
             return $U.MyPromise(function(resolve, reject, emit) {
 
@@ -89,16 +101,14 @@
                             bookingData.keysTimeTo = moment(bookingData.start);
                         }
 
-                        return emit('available', bookingData);
+                        emit('available', bookingData);
 
                         //Lets try save
                         backendApi.Order.save(bookingData).then((res) => {
-                            if (res.ok) {
-                                localSession.setMetadata({
-                                    _order: res.result
-                                });
-                            }
-                            resolve(res);
+                            localSession.setMetadata({
+                                _order: res.result
+                            });
+                            resolve(res.result);
                         }).error(reject).on('validate', (m) => emit('validate', m));
 
                     });
@@ -109,12 +119,26 @@
             });
         };
 
+        self.getSquareMetersSelectedIndex = (o) => {
+            if (!o || !o.info || !o.info.squareMeters) return 0;
+            var x = 0;
+            for (var pos in appSettings.localData.squareMeters) {
+                if (o.info.squareMeters == appSettings.localData.squareMeters[pos]) {
+                    break;
+                }
+                else {
+                    x++;
+                }
+            }
+            return x;
+        };
+
         self.populate = (data) => {
             return $U.MyPromise(function(resolve, err, emit) {
                 var payload = {
                     _id: data._id,
                     __populate: {
-                        _client: '_id email clientType address discount companyName siret wallet',
+                        _client: '_id email clientType address firstName lastName discount companyName siret wallet',
                         _diag: '_id email clientType address firstName lastName commission siret wallet'
                     }
                 };
@@ -136,9 +160,7 @@
         self.getFromSession = () => {
             return localSession.getMetadata()._order || localSession.getMetadata().params && localSession.getMetadata().params._order || {};
         };
-        self.statusIsPaid = (status) => {
-            return _.includes(PAID_STATUS_LIST, status);
-        };
+
         self.getDiagAccountDescription = (data) => {
             if (!data || !data._diag || !data._diag.firstName) return '';
             return 'Avec ' +

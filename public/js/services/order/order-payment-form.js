@@ -28,7 +28,9 @@
 
                         function validCreditCardNumber() {
                             var rta = true;
-                            var result = $('.cardNumber').validateCreditCard({
+                            var cardNumberElement = $('.cardNumber');
+                            if(cardNumberElement.length===0) return false;
+                            var result = cardNumberElement.validateCreditCard({
                                 accept: ['visa', 'mastercard']
                             });
                             if (result.card_type && modalScope.response.cardTypeString && modalScope.response.cardTypeString.toLowerCase() == result.card_type.name && !result.valid && modalScope.response.cardNumber.length == 16) {
@@ -63,7 +65,6 @@
 
                         modalScope.$watch('data.cardDateMonth', (cardDateMonth) => {
                             var cardDateMonth = $('.payment-form__card-expiration-month').val();
-                            $log.debug('cardDateMonth', cardDateMonth);
                             if (cardDateMonth !== undefined && cardDateMonth.length === 2) {
                                 return focus('cardDateYear')
                             }
@@ -150,7 +151,7 @@
                     if (!order._diag.siret) return emit('validate', 'order _diag siret required');
                     if (!order._diag.wallet) return emit('validate', 'order _diag wallet required');
                     if (!order._client) return emit('validate', 'order _client required');
-                    if (!order._client.wallet) return emit('validate', 'order _client wallet required');
+                    //if (!order._client.wallet) return emit('validate', 'order _client wallet required');//wallet is replaced with masterWallet (IMMOCAL) see: #206
 
                     open({
                         amount: parseFloat(order.price).toFixed(2).toString()

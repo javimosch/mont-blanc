@@ -20,7 +20,7 @@
                 }).error($log.error).on('validate', $log.warn);
             }
         };
-        r._localSession = self;
+        $U.exposeGlobal('ls',self);
         return self;
     }]);
 })();

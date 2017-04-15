@@ -44,6 +44,6 @@ var app = angular.module('local-data', []).service('localData', ['$rootScope', '
         });
     };
     self.cache = () => data;
-    $U.exposeGlobal('localData',self);
+    $U.exposeGlobal('ld',self);
     return self;
 }]);

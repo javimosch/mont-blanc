@@ -56,7 +56,7 @@
     });
 
     //diags
-    moment.locale('fr')
+    moment.locale('fr');
 
 
     $.post('/ctrl/pages/getAll', {

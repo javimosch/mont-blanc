@@ -37,6 +37,7 @@ var app = angular.module('app-router', []).service('appRouter', ['$rootScope', '
     }
 
     var self = {
+        URL:()=>r.URL,
         $location: $location,
         onChange: function(listener) {
             listeners.push(listener);

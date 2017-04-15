@@ -340,14 +340,17 @@ function transformResponseLimitKeys(originalCallback, keys) {
 }
 
 function fetchBookingSystemUser(data, cb) {
-    ctrl('User').core.create({
+    ctrl('User').core.save({
         email: "bookingbot@noreply.fr",
         isSystemUser: true,
+        __match: {
+            email: data.email
+        }
     }, transformResponseLimitKeys(cb, SYSTEM_USER_TRANSFORM_KEYS));
 }
 
 function createSystemUser(data, cb) {
-    ctrl('User').core.create({
+    ctrl('User').core.save({
         email: data.email,
         isSystemUser: true,
         __match: {

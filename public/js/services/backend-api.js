@@ -106,11 +106,13 @@
                 return handle('order', 'payUsingLW', data);
             }
         };
-        $rootScope._backendApi = self;
+        
 
         CONSTANT.COMMON_DATABASE_CONTROLLERS.forEach((controllerName) => {
             self.addController(controllerName, controllerName);
         });
+        
+        $U.exposeGlobal('bp',self);
         return self;
 
     });

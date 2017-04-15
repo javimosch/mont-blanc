@@ -194,7 +194,7 @@ app.run(['$rootScope', '$location', '$window', '$log',
                 if (!$window.ga) {
                     return;
                 }
-                $log.debug('ga tracking to ' + $location.path());
+                //$log.debug('ga tracking to ' + $location.path());
                 $window.ga('set', 'page', $location.path());
                 $window.ga('send', 'pageview');
             });
@@ -203,7 +203,7 @@ app.run(['$rootScope', '$location', '$window', '$log',
 
 app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(db, $timeout, r, appRouter, localData) {
     //console.info('app.common.root:run');
-    window.r = r;
+    $U.exposeGlobal('r',r);
     r.getHashParams = getHashParams;
 
     r.debug = true;

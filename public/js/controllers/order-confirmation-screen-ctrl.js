@@ -28,8 +28,9 @@ angular.module('app').controller('orderConfirmation', ['server',
                 r.route('home');
                 return false;
             }
+            s.order._client.firstName = s.order._client.firstName || s.order._client.email;
             if (!s.order._client.firstName) {
-                $log.warn('r.params expect _order pupulated with _client details.');
+                $log.warn('r.params expect _order pupulated with _client details.',s.order._client);
                 r.route('home');
                 return false;
             }

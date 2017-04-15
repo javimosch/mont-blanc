@@ -228,7 +228,7 @@
                         _settings.daysPerPage = opt.daysPerPage || 4;
 
                         if (scope.item && scope.item.postCode) {
-                            $log.debug('rdv-slots: parsing department',scope.item.postCode);
+                            //$log.debug('rdv-slots: parsing department',scope.item.postCode);
                             _settings.department = scope.item.postCode.substring(0, 2);
                         }else{
                             $log.warn('rdv-slots: Department missing');

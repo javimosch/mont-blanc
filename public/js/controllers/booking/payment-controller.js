@@ -18,8 +18,8 @@
             s._user = localSession.getData();
             s.orderDateFormatted = () => orderHelper.getDateFormatted(order);
             s.orderDiagFormatted = () => orderHelper.getDiagAccountDescription(order);
-            s.payNOW = (success) => {
-                if (orderHelper.statusIsPaid()) {
+            s.pay = (success) => {
+                if (orderHelper.status(order).isPaid()) {
                     return showOrderResume();
                 }
                 s.validateForm(() => {
@@ -36,8 +36,8 @@
             };
             s.validateForm = function(cb) {
                 $U.ifThenMessage([
-                    [s.isAgency() && !order.landLordEmail, '==', true, appText.VALIDATE_DELEGATED_LANDLORD_EMAIL],
-                    [s.isAgency() && !order.landLordFullName, '==', true, appText.VALIDATE_DELEGATED_LANDLORD_NOM],
+                    [orderHelper.isAgency(order) && !order.landLordEmail, '==', true, appText.VALIDATE_DELEGATED_LANDLORD_EMAIL],
+                    [orderHelper.isAgency(order) && !order.landLordFullName, '==', true, appText.VALIDATE_DELEGATED_LANDLORD_NOM],
                     [!order.keysAddress, '==', true, appText.VALIDATE_ORDER_KEYS_ADDRESS],
                     [!order.keysTimeFrom, '==', true, appText.VALIDATE_ORDER_KEYS_ADDRESS_DATE_FROM],
                     [!order.keysTimeTo, '==', true, appText.VALIDATE_ORDER_KEYS_ADDRESS_DATE_TO],
@@ -50,7 +50,7 @@
                     }
                 }, cb);
             }
-            s.sendPaymentLink = () => {
+            s.delegate = () => {
                 s.validateForm(() => {
                     backendApi.Order.update(order);
                     s.openConfirm({
@@ -79,19 +79,39 @@
                     });
                 });
             };
-            s.showDelegateOrderElements = ()=> !orderHelper.isLandLord(order);
+            s.showDelegateOrderElements = () => !orderHelper.isLandLord(order);
 
 
             if (order._id) {
                 $log.debug('Populating order from cache');
-                orderHelper.populate(order).then((res) => order = res.result);
+
+                $log.debug('order', order);
+
+                orderHelper.populate(order).then((result) => {
+                    copyValues(result);
+                    var status = orderHelper.status(order);
+                    if (status.isPaid() || status.isOrdered() || status.isNotCreated()) {
+                        return showOrderResume();
+                    }
+                }).error((err)=>{
+                    $log.error('Payment screen population fail',err);
+                    appRouter.to(appRouter.URL().HOME);
+                }).on('validate',(m)=>{
+                    $log.warn('Payment screen population fail',m);
+                    appRouter.to(appRouter.URL().HOME);
+                });
             }
             else {
                 $log.debug('Creating from cache data');
+
+                $log.debug('order', order);
+
                 orderHelper.createFromBookingData().then(result => {
-                    $log.debug('Result:', result);
+                    $log.debug('saved to server', result);
+                    order._id = result._id;
                 }).error((err) => {
-                    $log.error(err);
+                    $log.error("Payment screen create order from booking data", err);
+                    appRouter.to(appRouter.URL().HOME);
                 }).on('available', (o) => {
                     $log.debug('Available for saving', o);
                     copyValues(o);
@@ -153,7 +173,7 @@
             s.__keysWhereSelect = (key, val) => {
                 order.keysWhere = val && val() || undefined;
             };
-            s.$watch('_order.keysWhere', function(val) {
+            s.$watch('order.keysWhere', function(val) {
                 if (val == undefined) {
                     r.dom(() => {
                         order.keysAddress = 'non disponible';
@@ -217,7 +237,7 @@
                 }
                 s.__keysTimeFromSelectKey = key;
             };
-            s.$watch('_order.keysTimeFrom', function(val) {
+            s.$watch('order.keysTimeFrom', function(val) {
                 if (!val) {
                     s.__keysTimeFromSelectLabel = appText.SELECT_UNSELECTED_LABEL;
                 }
@@ -232,7 +252,7 @@
                 }
 
             });
-            s.$watch('_order.start', function(val) {
+            s.$watch('order.start', function(val) {
                 s.__keysTimeFromItems = s.__keysTimeFromGetItems();
             });
 
@@ -266,7 +286,7 @@
                 order.keysTimeTo = val;
                 s.__keysTimeToSelectKey = key;
             };
-            s.$watch('_order.keysTimeTo', function(val) {
+            s.$watch('order.keysTimeTo', function(val) {
                 if (!val) {
                     s.__keysTimeToSelectLabel = appText.SELECT_UNSELECTED_LABEL;
                 }
@@ -281,10 +301,10 @@
                 }
 
             });
-            s.$watch('_order.keysTimeFrom', function(val) {
+            s.$watch('order.keysTimeFrom', function(val) {
                 s.__keysTimeToItems = s.__keysTimeToGetItems();
             });
-            s.$watch('_order.start', function(val) {
+            s.$watch('order.start', function(val) {
                 s.__keysTimeToItems = s.__keysTimeToGetItems();
             });
             //-------------------------------------------------------------------------

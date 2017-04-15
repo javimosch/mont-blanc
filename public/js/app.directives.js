@@ -499,11 +499,7 @@ angular.module('app').directive('activeRoute', function($rootScope) {
     };
 });
 
-<<<<<<< HEAD
 
-
-=======
->>>>>>> prod
 angular.module('app').directive('collapseNav', function($timeout, $rootScope) {
     return {
         restrict: 'AE',
@@ -1168,7 +1164,7 @@ angular.module('app').directive('modalCustom', function($rootScope, $timeout, $c
                         };
 
                         if (opt.backdrop != undefined && opt.backdrop != 'static') {
-                            r.dom(function() {
+                            $rootScope.dom(function() {
                                 $('.modal-backdrop').on('click', function() {
                                     $uibModalInstance.dismiss('cancel');
                                 });

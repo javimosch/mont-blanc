@@ -4,7 +4,10 @@ var Schema = mongoose.Schema;
 module.exports = {
     def: {
 
-        email: String,
+        email: {
+            type: String,
+            unique: true
+        },
         userType: {
             type: String,
             default: 'admin'

@@ -30,7 +30,7 @@
         };
         assignGlobalSettings(self);
         fetchDatabaseSettings(); //initial and unique fetch
-        $U.exposeGlobal('appSettings', self);
+        $U.exposeGlobal('as', self);
         return self;
 
 

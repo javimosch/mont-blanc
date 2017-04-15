@@ -173,10 +173,10 @@
                             <p style="font-style: italic;">En cliquant sur Confirmer & Payer vous acceptez nos <a href="https://www.diagnostical.fr/#/conditions-generales-utilisation" target="_blank">Conditions Générales d'Utilisation</a>.</p>
                         </div>
                         <div class="row margin-top-quarter">
-                            <button class="btn btn-xl bg-madison" on-click-scroll-top ng-click="payNOW()" ng-disabled="state.working() || !order._id">Confirmer & Payer</button>
+                            <button class="btn btn-xl bg-madison" on-click-scroll-top ng-click="pay()" ng-disabled="state.working() || !order._id">Confirmer & Payer</button>
                         </div>
                         <div class="row margin-top-half">
-                            <button class="btn btn-xl bg-madison" on-click-scroll-top ng-show="showDelegateOrderElements()" ng-click="sendPaymentLink()" ng-disabled="state.working() || !order._id">Déléguer au propriétaire</button>
+                            <button class="btn btn-xl bg-madison" on-click-scroll-top ng-show="showDelegateOrderElements()" ng-click="delegate()" ng-disabled="state.working() || !order._id">Déléguer au propriétaire</button>
                         </div>
                     </div>
                 </div>
