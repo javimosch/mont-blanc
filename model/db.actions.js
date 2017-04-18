@@ -166,11 +166,19 @@ exports.create = function(modelName, m) {
                     data = hook('preSave', data);
                     return Model.findOneAndUpdate(toRules({
                         _id: _id
-                    }), data).exec((err, r) => {
+                    }), {
+                        $set: data
+                    }).exec((err, r) => {
                         if (err) return rta(err, null);
-                        if (!r) return rta(modelName + '= ' + _id + ' do not belong to any item.', null);
-                        r = hook('afterSave', payload);
-                        return rta(err, r);
+                        
+                        //After update, retrieve the complete item.
+                        get({
+                            _id: _id
+                        }, (err, modelInstance) => {
+                            var res = hook('afterSave', modelInstance);
+                            return rta(err, res);
+                        });
+
                     });
                 }
                 matchData = matchData || {};
@@ -534,20 +542,36 @@ exports.create = function(modelName, m) {
         var payload = Object.assign({}, removePropertiesThatStartWith(data, '__'));
         check(data, ['_id'], (err, r) => {
             if (err) return cb && cb(err, null);
-            var _id = data._id;
-            delete data._id;
-            data = hook('preSave', data);
+            var modelId = payload._id;
+            delete payload._id;
+            payload = hook('preSave', payload);
+
+            //dbLogger().debug('UPDATE', modelId, payload);
+
             Model.update({
-                _id: _id
-            }, data, (err, r) => {
-                if(err){
-                    dbLogger().error(err,'Payload',data);
+                _id: modelId
+            }, {
+                $set: payload
+            }, (err, r) => {
+
+                //dbLogger().debug('UPDATE-RESULT', err, r);
+
+                if (err) {
+                    dbLogger().error(err, 'Request data', data);
                 }
                 if (!cb) return;
                 if (err) return cb(err, null);
-                r = hook('afterSave', payload);
-                log('update:rta=' + JSON.stringify(r));
-                return cb(null, r);
+
+                get({
+                    _id: modelId
+                }, (err, model) => {
+                    if (err) return cb(err, null);
+
+                    //dbLogger().debug('UPDATE-AFTER', modelId, model.isGuestAccount);
+
+                    model = hook('afterSave', model);
+                    return cb(null, model);
+                });
             });
         });
     }

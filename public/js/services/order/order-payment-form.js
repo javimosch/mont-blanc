@@ -93,8 +93,8 @@
                             }
                         });
 
-                        //isGuessAccount check default value
-                        data.isGuessAccount = clientLogged() ? '0' : '1';
+                        //isGuestAccount check default value
+                        data.isGuestAccount = clientLogged() ? '0' : '1';
 
 
                     },
@@ -102,7 +102,7 @@
                         return !clientLogged();
                     },
                     showPwdControls: () => {
-                        return data.isGuessAccount === '0' || !data.isGuessAccount;
+                        return data.isGuestAccount === '0' || !data.isGuestAccount;
                     },
                     onCardDateChange: function() {
                         this.response.cardDate = zeroFill(parseInt(this.data.cardDateMonth), 2).toString() + '/' + this.data.cardDateYear;

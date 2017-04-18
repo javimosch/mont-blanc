@@ -115,16 +115,21 @@
                 return r.session()._id == s.item._id;
             };
 
-            s.isAdmin = () => s.item.userType == 'admin';
+            s.isAdmin = () => s.item.userType === 'admin';
 
-            s.isClient = () => s.item.userType == 'client';
+            s.isClient = () => s.item.userType === 'client';
+            s.isClientLandlord = () => s.item.userType === 'client' && s.item.clientType === 'landlord';
 
             s.validate = () => {
                 $U.ifThenMessage([
                     [!s.item.userType, '==', true, "User type est nécessaire"],
                     [!s.item.firstName, '==', true, "Prénom est nécessaire"],
                     [!s.item.email, '==', true, "Email est nécessaire"],
-                    [!s.item.password, '==', true, "Password est nécessaire"],
+
+                    [s.isAdmin() && !s.item.password, '==', true, "Password est nécessaire"],
+                    [s.isClient() && !s.isClientLandlord() && !s.item.password, '==', true, "Password est nécessaire"],
+
+
                     [s.item.userType !== 'admin' && !s.item.clientType, '==', true, "clientType est nécessaire"],
 
                     [s.isClient() && s.item.discount == undefined, '==', true, "Discount est nécessaire"],
@@ -139,11 +144,11 @@
             s.showGuessAccountAlert = () => {
                 return localSession.isAdmin()
             };
-            s.showIfGuessAccount = ()=>{
-                return s.item.isGuessAccount;
+            s.showIfGuessAccount = () => {
+                return s.item.isGuestAccount;
             };
-            
-            
+
+
 
             s.save = function(silent) {
                 silent = silent || false;
@@ -173,12 +178,12 @@
                 function _save() {
 
                     if (s.item.userType == 'client' && s.item.clientType == 'landlord') {
-                        if (s.item.password != undefined && s.item.isGuessAccount) {
+                        if (s.item.password != undefined && s.item.isGuestAccount) {
                             backendApi.users.setAsNormalAccount({
                                 _id: s.item._id
                             });
                         }
-                        if (!s.item.password && !s.item.isGuessAccount) {
+                        if (!s.item.password && !s.item.isGuestAccount) {
                             backendApi.users.setAsGuestAccount({
                                 _id: s.item._id
                             });

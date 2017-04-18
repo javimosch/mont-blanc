@@ -2,7 +2,7 @@ var ctrl = require('../model/db.controller').create;
 var mongoose = require('../model/db').mongoose;
 var generatePassword = require("password-maker");
 //var User = mongoose.model('User');
-var promise = require('../model/utils').promise;
+var Promise = require('promise');
 var validate = require('../model/validator').validate;
 var handleMissingKeys = require('../model/validator').handleMissingKeys;
 var actions = require('../model/db.actions').create('User');
@@ -364,6 +364,32 @@ function createLandlordClient(data, cb) {
     ctrl('User').core.save(data, cb);
 }
 
+function fetchLandlordAccount(data, cb) {
+    if (!data.email) return cb(apiError.VALIDATE_FIELD_EMAIL);
+    if (data.isGuestAccount==undefined) return cb(apiError.VALIDATE_FIELD_IS_GUEST_ACCOUNT);
+
+    //Fetch account (if exists)
+    getByField('email', data.email).then(account => {
+        if (account) {
+            cb(null, account);
+        }
+        else {
+            createLandlordClient(data, cb);
+        }
+    }).catch(err => cb(err));
+}
+
+function getByField(fieldName, fieldValue) {
+    return new Promise((resolve, reject) => {
+        var data = {};
+        data[fieldName] = fieldValue;
+        ctrl('User').get(data, (err, res) => {
+            if (err) return reject(err);
+            resolve(res);
+        });
+    });
+}
+
 function createSystemUser(data, cb) {
     ctrl('User').core.save({
         email: data.email,
@@ -634,6 +660,7 @@ function passwordReset(data, cb) {
 
 module.exports = {
     createLandlordClient: createLandlordClient,
+    fetchLandlordAccount:fetchLandlordAccount,
     fetchBookingSystemUser: fetchBookingSystemUser,
     setAsNormalAccount: setAsNormalAccount,
     setAsGuestAccount: setAsGuestAccount,
@@ -674,7 +701,11 @@ function afterSave(data) {
         return data;
     }
 
+
+
     if (data.isSystemUser) return data;
+
+
 
     if (data && !data._id) {
         afterSaveLogger.setSaveData(data);
@@ -699,6 +730,8 @@ function afterSave(data) {
 
     }
 
+    afterSaveLogger.debug('AFTER-SAVE-DATA', data.notifications);
+
     //ADMIN#1 OK ctrl.user
     if (data.notifications && data.userType == 'admin' && !data.notifications.ADMIN_ADMIN_ACCOUNT_CREATED) {
         Notif.trigger(NOTIFICATION.ADMIN_ADMIN_ACCOUNT_CREATED, {
@@ -711,11 +744,12 @@ function afterSave(data) {
     }
 
     //ADMIN//#2 OK ctrl.user
-    if (data.notifications && data.userType == 'client' && !data.notifications.ADMIN_CLIENT_ACCOUNT_CREATED) {
+    if (data.notifications && data.userType == 'client' && data.notifications.ADMIN_CLIENT_ACCOUNT_CREATED !== true) {
         everyAdmin((err, _admin) => {
             if (err) return LogSave(JSON.stringify(err), 'error', err);
+            var _user = _.cloneDeep(data);
             Notif.trigger(NOTIFICATION.ADMIN_CLIENT_ACCOUNT_CREATED, {
-                _user: _.cloneDeep(data),
+                _user: _user,
                 _admin: _admin
             });
         });

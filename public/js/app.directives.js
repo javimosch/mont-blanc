@@ -32,24 +32,24 @@ angular.module('app').directive("bindHtmlCompile", ["$compile", function(compile
                 if (attrs.bindHtmlScope) {
                     f = s.$eval(attrs.bindHtmlScope);
                 }
-                
-                
-                
+
+
+
                 var compiled = compile(el.contents())(f);
                 //console.info(compiled);
                 el.html('').append(compiled);
-                
+
                 //default
-                el.css('display',"inherit");
-                
+                el.css('display', "inherit");
+
                 var key = window.btoa(window.encodeURIComponent(e.toString()));
-                $U.on('bind-html-compile-show-'+key,function(){
-                    el.css('display',"inherit");
+                $U.on('bind-html-compile-show-' + key, function() {
+                    el.css('display', "inherit");
                 });
-                $U.on('bind-html-compile-hide-'+key,function(){
-                    el.css('display',"none");
+                $U.on('bind-html-compile-hide-' + key, function() {
+                    el.css('display', "none");
                 });
-                
+
 
                 var first = el.find(':first-child');
                 var tag = first && first.get(0) && first.get(0).tagName.toUpperCase() || "NONE";
@@ -597,7 +597,7 @@ angular.module('app').directive('crudModal', function($rootScope, $timeout, $com
     };
 });
 
-angular.module('app').directive('address', function($rootScope, $timeout) {
+angular.module('app').directive('address', function($rootScope, $timeout, $log) {
     return {
         scope: {
             model: "=model",
@@ -613,20 +613,28 @@ angular.module('app').directive('address', function($rootScope, $timeout) {
         },
         restrict: 'AE',
         link: function(scope, elem, attrs) {
+
+            //$log.debug('Address: Linking', attrs.name, elem);
+
             if (!scope.model) {
                 throw Error("directive address require a valid model.");
             }
             $timeout(function() {
+
+                var options = {
+                    country: "FR"
+                };
+
+                //$log.debug('Address: Binding', options);
+
                 try {
-                    elem.geocomplete({
-                        country: "FR"
-                    }).bind("geocode:result", onResult);
+                    elem.geocomplete(options).bind("geocode:result", onResult);
                 }
                 catch (e) {
                     var msg = 'Google library issue, address autocomplete feature is temporaly disabled.';
                     console.warn(msg);
-                    return console.log('error details',e);
-                    
+                    return console.log('error details', e);
+
                     //return r.notify(, 'warning');
                 }
 
@@ -1120,20 +1128,20 @@ angular.module('app').directive('modalCustom', function($rootScope, $timeout, $c
                     controller: function($scope, $uibModalInstance) {
                         $rootScope._modalScope = $scope;
                         $scope.data = opt.data;
-                        
+
                         $scope.response = {}; //response payload
-                        
+
                         if (opt.helpers) {
                             for (var x in opt.helpers) {
-                                if(x == 'withScope'){
+                                if (x == 'withScope') {
                                     opt.helpers[x]($scope);
                                     continue;
                                 }
                                 $scope[x] = opt.helpers[x];
                             }
-                            
+
                         }
-                        
+
                         $scope.message = message;
 
                         $scope.messageEl = opt.messageEl || null;

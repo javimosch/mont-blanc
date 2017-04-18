@@ -24,7 +24,7 @@
                     <label>Mot de passe</label>
                 </div>
                 <div class="row  margin-top-half">
-                    <input type="password" ng-disabled="state.working()" ng-model="item.password" class="diags-input" placeholder="mot de passe">
+                    <input type="password" autocomplete="off" ng-disabled="state.working()" ng-model="item.password" class="diags-input" placeholder="mot de passe">
                 </div>
                 <div class="row  margin-top-half" ng-show="showGuessAccountAlert()">
                     <div class="alert alert-info form-alert" ng-show="showIfGuessAccount()">

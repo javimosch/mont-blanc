@@ -93,7 +93,7 @@ function trigger(name, data, cb) {
     }
 
     data.__notificationType = name;
-    triggerLogger.debug(name, 'Calling email handler for');
+    //triggerLogger.debug(name, 'Calling email handler for');
     return EmailHandler[name](data, cb);
 }
 

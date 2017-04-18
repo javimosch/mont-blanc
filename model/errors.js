@@ -12,5 +12,6 @@ module.exports = {
         detail: "Guest accounts do not have access to backoffice",
         code: 44
     },
-    VALIDATE_FIELD_EMAIL: createInvalidRequestErrorFor('email')
+    VALIDATE_FIELD_EMAIL: createInvalidRequestErrorFor('email'),
+    VALIDATE_FIELD_IS_GUEST_ACCOUNT: createInvalidRequestErrorFor('isGuestAccount')
 }

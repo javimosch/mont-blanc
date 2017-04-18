@@ -291,7 +291,7 @@ function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notif
 
     }
     else {
-        emailTriggerLogger.warn(type, 'Already sended');
+        emailTriggerLogger.warn(type, 'Already sended',notifItemType,notifItem);
         cb && cb('Already sended');
     }
 }

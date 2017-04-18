@@ -50,6 +50,11 @@ angular.module('app').service('LoginService', ['server', '$rootScope', '$log', '
                     resolve(MSG_PASSWORD_RESET_SUCCESS);
                 }
                 else {
+                    
+                    if(res.err && apiError(res.err).isEqual.GUESS_ACCOUNT_RESTRICTION){
+                        return emit('validate', res.err.message);
+                    }
+                    
                     emit('validate', MSG_ERROR_SERVER);
                 }
             }).error((res) => {

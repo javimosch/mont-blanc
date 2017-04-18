@@ -20,8 +20,8 @@
         backendApi.addController('users', 'User', {
             fetchBookingSystemUser: generateHandlerFor('fetchBookingSystemUser',true),
             createSystemUser: generateHandlerFor('createSystemUser'),
-            setAsGuestAccount: generateHandlerFor('setAsGuestAccount'),
-            setAsNormalAccount: generateHandlerFor('setAsNormalAccount'),
+            setAsGuestAccount: generateHandlerFor('setAsGuestAccount',true),
+            setAsNormalAccount: generateHandlerFor('setAsNormalAccount',true),
             sessionToggleGuestFeature: function(data, resolve, reject, emit) {
                 data = {};
                 var session = localSession.getData();

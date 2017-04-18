@@ -7,7 +7,7 @@
 
         const CONSTANT = {
             COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate', 'create'],
-            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order']
+            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange']
         };
 
         function getLemonwayMessage(res) {
@@ -95,11 +95,11 @@
                             resolve: (r) => resolve(r),
                             catch: (r) => err(r)
                         });
-                       // $log.debug('Reflexion promise', hash(c, a, p), data[hash(c, a, p)].length, ' are waiting');
+                        // $log.debug('Reflexion promise', hash(c, a, p), data[hash(c, a, p)].length, ' are waiting');
                     });
                 },
                 isArmed: (c, a, p) => {
-                    if(!p) return false;
+                    if (!p) return false;
                     return data[hash(c, a, p)] != undefined;
                 },
                 shouldArm: (c, a, p) => {
@@ -111,7 +111,7 @@
                     //delete p.__reflexion;
                 },
                 success: (c, a, p, res) => {
-                    if(!p || p.__is_reflection) return;
+                    if (!p || p.__is_reflection) return;
                     arrayofpromises(c, a, p).forEach(_p => {
                         _p.resolve(res);
                     });
@@ -119,7 +119,7 @@
                     delete data[hash(c, a, p)];
                 },
                 catch: (c, a, p, res) => {
-                    if(!p || p.__is_reflection) return;
+                    if (!p || p.__is_reflection) return;
                     arrayofpromises(c, a, p).forEach(_p => {
                         _p.catch(res);
                     });

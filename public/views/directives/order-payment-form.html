@@ -57,13 +57,21 @@
                 <label class="unselectable">Adresse de facturation</label>
             </div>
             <div class="row margin-top-quarter">
-                <input focus-on="billingAddress" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.billingAddress' ng-required="false">
+                <input 
+                type="text" 
+                name="billingAddress"
+                address
+                class="diags-input btn-stack"
+                model="response" 
+                field="billingAddress"
+                placeholder="Ex: 102 rue Réaumur 75002 Paris, France"
+                >
             </div>
             <div class="row margin-top-half" ng-show="showGuessAccountControls()">
                 <label class="unselectable">En tant qu'invité</label>
             </div>
             <div class="row margin-top-quarter" ng-show="showGuessAccountControls()">
-                <pretty-checkbox color="blue" value="'1'" label="false" ng-model="data.isGuessAccount"></pretty-checkbox>
+                <pretty-checkbox color="blue" value="'1'" label="false" ng-model="data.isGuestAccount"></pretty-checkbox>
             </div>
 
             <div class="row margin-top-half" ng-show="showGuessAccountControls() && showPwdControls()">

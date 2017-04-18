@@ -3,15 +3,15 @@
 /*global moment*/
 /*global $U*/
 (function() {
-    var app = angular.module('app').service('orderRdv', ['$rootScope', '$log', 'server','backendApi', function($rootScope, $log, db,backendApi) {
+    var app = angular.module('app').service('orderRdv', ['$rootScope', '$log', 'server', 'backendApi', function($rootScope, $log, db, backendApi) {
 
         var DIAG_NAME = {};
 
         function fetchDiagGuys(settings) {
             return $U.MyPromise(function(resolve, err, emit) {
                 var payload = {
-                    __cache:1000*60,
-                    __reflexion:'fetchDiagGuys',
+                    __cache: 1000 * 60,
+                    __reflexion: 'fetchDiagGuys',
                     userType: 'diag',
                     __rules: {
                         disabled: {
@@ -25,7 +25,7 @@
                         $eq: settings.department.toString()
                     };
                 }
-                
+
                 backendApi.User.getAll(payload).then((data) => {
                     data.result.forEach(function(d) {
                         DIAG_NAME[d._id] = d.firstName;
@@ -50,8 +50,10 @@
 
         function fetchOrdersFromTheSameDay(date) {
             //$log.debug('fetchOrdersFromTheSameDay', moment(date).dayOfYear());
-            return db.ctrl('Order', 'getAll', {
+            return backendApi.Order.getAll({
                 __select: 'start end _diag',
+                __cache: 1000 * 60,
+                __reflexion: 'fetchOrdersFromTheSameDay',
                 __rules: {
                     //start: {
                     //  $dayOfYear: moment(date).dayOfYear()
@@ -64,7 +66,9 @@
         }
 
         function fetchDiagsUnavailabilities() {
-            return db.ctrl('TimeRange', 'getAll', {
+            return backendApi.TimeRange.getAll({
+                __cache: 1000 * 60,
+                __reflexion: 'fetchDiagsUnavailabilities',
                 type: 'work-exception',
                 __select: '_user start end repeat weekday description'
             });
@@ -218,8 +222,8 @@
         }
 
 
-        function isFutureDate(m){
-            return !m.isSame(moment(),'day') || ( m.isSame(moment(),'day') && m.subtract(30,'minutes').isAfter(moment()));
+        function isFutureDate(m) {
+            return !m.isSame(moment(), 'day') || (m.isSame(moment(), 'day') && m.subtract(30, 'minutes').isAfter(moment()));
         }
 
 
@@ -275,7 +279,7 @@
                                 if (isFixedSlots(settings)) {
                                     //morning
 
-                                    
+
                                     var availableAtSlot1 = isDiagAvailableAtCursor(diagId, diagCollisions, moment(cursor).hour(9).minutes(0), settings) && slots.length < 4 && isFutureDate(moment(cursor).hour(9).minutes(0));
 
                                     if (availableAtSlot1) {

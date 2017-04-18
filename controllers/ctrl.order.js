@@ -239,16 +239,12 @@ function payUsingLW(data, callback) {
     else {
         if (decodedPayload.clientEmail) {
             
-            /*
-            return callback({
-                message:"debug isGuessAccount",
-                isGuessAccount:!decodedPayload.clientPassword
-            });*/
+           
             
-            ctrl('User').createLandlordClient({
+            ctrl('User').fetchLandlordAccount({
                 email: decodedPayload.clientEmail,
                 password: decodedPayload.clientPassword,
-                isGuessAccount: !decodedPayload.clientPassword
+                isGuestAccount: !decodedPayload.clientPassword
             }, (err, user) => {
                 if (err) return callback(err);
                 associateClient(user._id, data.orderId).then(withPreparedOrder);
