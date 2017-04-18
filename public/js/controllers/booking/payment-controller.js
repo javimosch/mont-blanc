@@ -85,7 +85,7 @@
             if (order._id) {
                 $log.debug('Populating order from cache');
 
-                $log.debug('order', order);
+                //$log.debug('order', order);
 
                 orderHelper.populate(order).then((result) => {
                     copyValues(result);
@@ -104,16 +104,16 @@
             else {
                 $log.debug('Creating from cache data');
 
-                $log.debug('order', order);
+                //$log.debug('order', order);
 
                 orderHelper.createFromBookingData().then(result => {
-                    $log.debug('saved to server', result);
+                    //$log.debug('saved to server', result);
                     order._id = result._id;
                 }).error((err) => {
                     $log.error("Payment screen create order from booking data", err);
                     appRouter.to(appRouter.URL().HOME);
                 }).on('available', (o) => {
-                    $log.debug('Available for saving', o);
+                    //$log.debug('Available for saving', o);
                     copyValues(o);
                 });
             }

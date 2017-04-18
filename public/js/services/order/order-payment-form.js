@@ -4,7 +4,7 @@
 /*global $U*/
 /*global $*/
 (function() {
-    var app = angular.module('app').service('orderPaymentForm', ['$rootScope', '$log', 'server', 'paymentApi', '$timeout', 'focus', function(r, $log, db, paymentApi, $timeout, focus) {
+    var app = angular.module('app').service('orderPaymentForm', ['$rootScope', '$log', 'server', 'paymentApi', '$timeout', 'focus', 'localSession', function(r, $log, db, paymentApi, $timeout, focus, localSession) {
 
         var isProcessing = false;
 
@@ -14,6 +14,12 @@
                 return new Array(width + (/\./.test(number) ? 2 : 1)).join('0') + number;
             }
             return number + ""; // always return a string
+        }
+        
+        function clientLogged(){
+            if(!localSession.isLogged()) return false;
+            var session = localSession.getData();
+            return session && session.userType == 'client';
         }
 
         function open(data, callback) {
@@ -26,10 +32,12 @@
                 helpers: {
                     withScope: function(modalScope) {
 
+                        $U.exposeGlobal('pp', modalScope);
+
                         function validCreditCardNumber() {
                             var rta = true;
                             var cardNumberElement = $('.cardNumber');
-                            if(cardNumberElement.length===0) return false;
+                            if (cardNumberElement.length === 0) return false;
                             var result = cardNumberElement.validateCreditCard({
                                 accept: ['visa', 'mastercard']
                             });
@@ -39,18 +47,18 @@
                             //$log.debug('validCreditCardNumber', rta);
                             return rta;
                         }
-                        
+
                         //$log.debug('BINDING!',modalScope);
-                        
+
                         //cardNumberMask: Copy real value to cardNumber
                         modalScope.$watch('data.cardNumberMask', (cardNumberMask) => {
-                            
+
                             //$log.debug('cardNumberMask', cardNumberMask);
-                            
+
                             if (!cardNumberMask) return;
-                            
+
                             modalScope.response.cardNumber = cardNumberMask.replace(/ /g, "");
-                            
+
                         });
 
                         modalScope.$watch('response.cardNumber', (cardNumber) => {
@@ -81,13 +89,20 @@
 
                         modalScope.$watch('response.cardCode', (cardCode) => {
                             if (cardCode && cardCode.toString().length == 3) {
-                                focus('payerButton');
+                                //focus('payerButton');
                             }
                         });
 
+                        //isGuessAccount check default value
+                        data.isGuessAccount = clientLogged() ? '0' : '1';
 
 
-
+                    },
+                    showGuessAccountControls: () => {
+                        return !clientLogged();
+                    },
+                    showPwdControls: () => {
+                        return data.isGuessAccount === '0' || !data.isGuessAccount;
                     },
                     onCardDateChange: function() {
                         this.response.cardDate = zeroFill(parseInt(this.data.cardDateMonth), 2).toString() + '/' + this.data.cardDateYear;
@@ -100,9 +115,12 @@
                         if (modalScope.response.cardDate == undefined) return false;
                         if (modalScope.response.cardCode == undefined) return false;
                         
-                        if(modalScope.response.cardDate.indexOf('NaN')!=-1) return false;
-                        if(modalScope.response.cardDate.indexOf('undefined')!=-1) return false;
-                        
+                        if (modalScope.response.creditCardOwner == undefined) return false;
+                        if (!clientLogged() && !modalScope.response.clientEmail) return false;
+
+                        if (modalScope.response.cardDate.indexOf('NaN') != -1) return false;
+                        if (modalScope.response.cardDate.indexOf('undefined') != -1) return false;
+
                         return true;
                     },
                     onCardTypeChange: function() {
@@ -138,7 +156,7 @@
         var self = {
             isProcessing: () => isProcessing,
             pay: function(order) {
-                return $U.MyPromise(function(resolve, err, emit) {
+                return $U.MyPromise(function(resolve, reject, emit) {
 
                     if (!order) return emit('validate', 'order required');
 
@@ -169,14 +187,20 @@
                                 }
                                 return formResponse;
                             }
-                            catch (err) {
+                            catch (_e) {
                                 return formResponse;
                             }
                         }
 
                         formResponse = fixCardDateYear(formResponse);
 
-
+                        if (!clientLogged() && !formResponse.clientEmail) {
+                            isProcessing = false;
+                            emit('validate', 'Email is required');
+                            return closeModal();
+                        }
+                        
+                        var clientId = clientLogged()?localSession.getData()._id:undefined;
 
                         var payload = {
                             wallet: order._client.wallet,
@@ -184,6 +208,13 @@
                             cardNumber: formResponse.cardNumber,
                             cardCode: formResponse.cardCode,
                             cardDate: formResponse.cardDate,
+
+                            clientId: clientId,
+                            creditCardOwner: formResponse.creditCardOwner,
+                            clientEmail: formResponse.clientEmail,
+                            clientPassword: formResponse.clientPassword,
+                            billingAddress: formResponse.billingAddress,
+
                             amountTot: parseFloat(order.price).toFixed(2).toString(),
                             amountCom: (parseFloat(order.price) - parseFloat(order.diagRemunerationHT)).toFixed(2).toString(),
                             comment: 'House Diagnostic by autoentrepreneur ' + order._diag.firstName + ' ' + order._diag.lastName + ' SIRET ' + order._diag.siret + ' through www.diagnostical.fr, Order #_INVOICE_NUMBER_'
@@ -209,7 +240,7 @@
                             closeModal();
                         }).error(function(res) {
                             isProcessing = false;
-                            err(res);
+                            reject(res);
                             closeModal();
                         }).on('validate', function(msg) {
                             isProcessing = false;

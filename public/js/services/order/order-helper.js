@@ -32,7 +32,7 @@
 
                 //We fetch the booking data from cache
                 var bookingData = self.getBookingDetails();
-                $log.debug('bookingData', bookingData);
+                //$log.debug('bookingData', bookingData);
 
                 //validations
                 if (!bookingData) return reject('booking data missing');
@@ -50,7 +50,7 @@
 
                 function withUser(_user) {
                     bookingData._client = _user;
-                    $log.debug('withUser', _user);
+                    //$log.debug('withUser', _user);
 
                     //Fetch _diag
                     backendApi.User.getById({
@@ -64,7 +64,7 @@
                     appSettings.syncAll().then((appSettings) => {
                         var remoteSettings = appSettings.databaseSettings;
                         var localData = appSettings.localData;
-                        $log.debug('appSettings', appSettings);
+                        //$log.debug('appSettings', appSettings);
 
                         //Set prices
                         orderPrice.set({

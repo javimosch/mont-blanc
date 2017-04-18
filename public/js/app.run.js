@@ -203,7 +203,7 @@ app.run(['$rootScope', '$location', '$window', '$log',
 
 app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(db, $timeout, r, appRouter, localData) {
     //console.info('app.common.root:run');
-    $U.exposeGlobal('r',r);
+    $U.exposeGlobal('r', r);
     r.getHashParams = getHashParams;
 
     r.debug = true;
@@ -307,12 +307,14 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(
 
     r.logged = function() {
         var ss = r.session();
-        return ss._id !== null && ss.email !== null && ss.password !== null;
+        return ss._id && ss.email && ss.password != undefined;
     };
 
-    
+
     r.__viewAs = (t) => {
-        r.session({userType:t});
+        r.session({
+            userType: t
+        });
         r.dom();
     }
     r.viewAsClient = () => {

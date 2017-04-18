@@ -413,6 +413,11 @@ html {
     font-size: 14px;
 }
 
+.form-alert {
+    padding: 5px;
+    text-align: left;
+}
+
 .diags-bg {
     background-color: #EDF5F9;
 }

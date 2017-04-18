@@ -5,13 +5,19 @@
             logout: () => {
                 r.logout();
             },
+            isAdmin: () => {
+                return self.isLogged() && self.getData().userType == 'admin';
+            },
+            isLogged: () => {
+                return r.logged();
+            },
             getData: () => {
                 return r.session() || {};
             },
             getMetadata: () => {
                 return r.sessionMetadata() || {};
             },
-            setMetadata:(newMetadata)=>{
+            setMetadata: (newMetadata) => {
                 return r.sessionMetadata(newMetadata) || {};
             },
             update: () => {
@@ -20,7 +26,7 @@
                 }).error($log.error).on('validate', $log.warn);
             }
         };
-        $U.exposeGlobal('ls',self);
+        $U.exposeGlobal('ls', self);
         return self;
     }]);
 })();

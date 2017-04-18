@@ -12,7 +12,7 @@
                 </ol>
             </div>
         </div>
-        <div class="row diags-row margin-bottom-two">
+        <form class="row diags-row margin-bottom-two" autocomplete="off">
             <div class="col-sm-12 col-md-4">
                 <div class="row margin-top-one">
                     <label>Adresse email</label>
@@ -25,6 +25,14 @@
                 </div>
                 <div class="row  margin-top-half">
                     <input type="password" ng-disabled="state.working()" ng-model="item.password" class="diags-input" placeholder="mot de passe">
+                </div>
+                <div class="row  margin-top-half" ng-show="showGuessAccountAlert()">
+                    <div class="alert alert-info form-alert" ng-show="showIfGuessAccount()">
+                        Fill password field to convert this account into a normal account.
+                    </div>
+                    <div class="alert alert-info form-alert" ng-show="!showIfGuessAccount()">
+                        Leave the password field blank to convert this account into a guess account.
+                    </div>
                 </div>
                 <div class="row margin-top-one">
                     <label>Prénom</label>
@@ -138,7 +146,7 @@
 
 
             </div>
-        </div>
+        </form>
         <div class="row diags-row margin-bottom-two">
             <div class="col-sm-12">
                 <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Enregistrer</button>

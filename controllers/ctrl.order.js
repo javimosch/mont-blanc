@@ -2,7 +2,7 @@ var mongoose = require('../model/db').mongoose;
 var atob = require('atob'); //decode
 var btoa = require('btoa'); //encode
 var moment = require('moment');
-var promise = require('../model/utils').promise;
+var Promise = require('promise');
 var _ = require('lodash');
 var generatePassword = require("password-maker");
 var validate = require('../model/validator').validate;
@@ -23,7 +23,7 @@ var Notif = require('./ctrl.notification');
 var NOTIFICATION = Notif.NOTIFICATION;
 
 var path = require('path');
-var htmlFromOrder = require(path.join(process.cwd(),'model/facades/invoice-facade')).htmlFromOrder;
+var htmlFromOrder = require(path.join(process.cwd(), 'model/facades/invoice-facade')).htmlFromOrder;
 
 var saveKeys = ['_client', '_diag', 'start', 'end', 'diags'
 
@@ -123,6 +123,29 @@ function moveToPrepaid(data, cb) {
 
 }
 
+
+function associateClient(clientId, orderId) {
+    return new Promise((resolve, reject) => {
+        ctrl('Order').update({
+            _id: orderId,
+            _client: clientId
+        }, (err, res) => {
+            if (err) return reject(err);
+
+            ctrl('Order').getById({
+                _id: orderId,
+                populate: {
+                    _client: "email"
+                }
+            }, (_err, order) => {
+                dbLogger.debug('Client ', order._client.email, 'associated to order', order._id, '(', order.address, ')');
+            })
+
+            resolve(res);
+        });
+    });
+}
+
 var processing_order_payment = {};
 
 function payUsingLW(data, callback) {
@@ -185,64 +208,93 @@ function payUsingLW(data, callback) {
     }
 
 
-    getNextInvoiceNumber({
-        _id: data.orderId
-    }, function(err, invoiceNumber) {
-        if (err) return cb(err);
-        decodedPayload.comment = decodedPayload.comment.replace('_INVOICE_NUMBER_', invoiceNumber);
+    /*
+    #373 new fields
+    clientId
+        associate client to order
+    clientEmail,password (if not clientId)
+        create a new client and associate client to order
+    creditCardOwner
+        associate to order (creditCardOwner)
+    billingAddress
+        associate to order (billingAddress)
+    */
 
-        //step 1 payment with card
-        ctrl('Lemonway').moneyInWithCardId(decodedPayload, function(err, LWRES) {
-            if (err) {
-                return cb(err);
-            }
+    if (decodedPayload.creditCardOwner) {
+        ctrl('Order').update({
+            _id: data.orderId,
+            creditCardOwner: decodedPayload.creditCardOwner,
+            billingAddress: decodedPayload.billingAddress,
+        }); //async
+    }
+    else {
+        return callback('credit card owner required');
+    }
 
-            if (LWRES && LWRES.TRANS && LWRES.TRANS.HPAY && LWRES.TRANS.HPAY.STATUS == '3') {}
-            else {
-                return cb({
-                    message: "Invalid response from Lemonway. Check the logs."
-                });
-            }
-
-
-
-
-            //step 2, moving the order to prepaid
-
-            moveToPrepaid({
-                _id: data.orderId,
-                walletTransId: LWRES.TRANS.HPAY.ID,
-                number: invoiceNumber
-            }, function(err, res) {
-                console.log('MOVE-TO-PREPAID RESULT', err, res);
-
-
-                paymentLogger.debug('P2P Lookup');
-                //step 3  p2p to diag wallet 
-                var p2pPayload = data.p2pDiag;
-                p2pPayload.message = "Order #" + invoiceNumber;
-                ctrl('Lemonway').sendPayment(p2pPayload, function(err, res) {
-
-                    if (err) {
-
-                    }
-                    else {
-
-                        //LogSave('P2P after card transaction success', 'info', res);
-                    }
-
-
-                    return cb(err, true);
-                });
-
-            });
-
-
-
-
-
+    if (decodedPayload.clientId) {
+        associateClient(decodedPayload.clientId, data.orderId).then(withPreparedOrder).catch(err => {
+            return callback(err);
         });
-    });
+    }
+    else {
+        if (decodedPayload.clientEmail) {
+            
+            /*
+            return callback({
+                message:"debug isGuessAccount",
+                isGuessAccount:!decodedPayload.clientPassword
+            });*/
+            
+            ctrl('User').createLandlordClient({
+                email: decodedPayload.clientEmail,
+                password: decodedPayload.clientPassword,
+                isGuessAccount: !decodedPayload.clientPassword
+            }, (err, user) => {
+                if (err) return callback(err);
+                associateClient(user._id, data.orderId).then(withPreparedOrder);
+            });
+        }
+        else {
+            return callback('clientId or clientEmail required');
+        }
+    }
+
+    function withPreparedOrder() {
+        getNextInvoiceNumber({
+            _id: data.orderId
+        }, function(err, invoiceNumber) {
+            if (err) return cb(err);
+            decodedPayload.comment = decodedPayload.comment.replace('_INVOICE_NUMBER_', invoiceNumber);
+            //step 1 payment with card
+            ctrl('Lemonway').moneyInWithCardId(decodedPayload, function(err, LWRES) {
+                if (err) {
+                    return cb(err);
+                }
+                if (LWRES && LWRES.TRANS && LWRES.TRANS.HPAY && LWRES.TRANS.HPAY.STATUS == '3') {}
+                else {
+                    return cb({
+                        message: "Invalid response from Lemonway. Check the logs."
+                    });
+                }
+                //step 2, moving the order to prepaid
+                moveToPrepaid({
+                    _id: data.orderId,
+                    walletTransId: LWRES.TRANS.HPAY.ID,
+                    number: invoiceNumber
+                }, function(_err, res) {
+                    paymentLogger.debug('P2P Lookup');
+                    //step 3  p2p to diag wallet 
+                    var p2pPayload = data.p2pDiag;
+                    p2pPayload.message = "Order #" + invoiceNumber;
+                    ctrl('Lemonway').sendPayment(p2pPayload, function(err, res) {
+                        return cb(err, true);
+                    });
+                });
+            });
+        });
+    }
+
+
 }
 
 
@@ -293,16 +345,16 @@ function attachHelpers(order) {
     return obj;
 }
 
-function attachHelpers(order){
+function attachHelpers(order) {
     obj = _.clone(order);
-    obj.isPaid = ()=> obj.status === 'prepaid';
+    obj.isPaid = () => obj.status === 'prepaid';
     return obj;
 }
 
 function save(data, cb, customRequiredKeys) {
-    
+
     //fix: set _diag _id
-    if(data._diag && data._diag._id){
+    if (data._diag && data._diag._id) {
         data._diag = data._diag._id;
     }
 
@@ -532,7 +584,7 @@ function saveWithEmail(data, cb) {
     ], (err, r) => {
         if (err) return cb(err, r);
         //
-        
+
         //This function checks if the client book a similar order recently and tries to retrieve it.
         orderExists(data, (err, r) => {
             if (err) return cb(err, r);

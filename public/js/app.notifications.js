@@ -227,6 +227,9 @@
                         label: "Subject",
                         name: 'subject'
                     }, {
+                        label: "Type",
+                        name: 'type'
+                    },  {
                         label: "Sended",
                         name: 'sended',
                         format: (v) => {
@@ -235,8 +238,8 @@
                     }, {
                         label: "Created",
                         name: 'createdAt',
-                        format: (v) => {
-                            return r.momentFormat(v, "DD-MM-YY HH:mm");
+                        format: (v,item) => {
+                            return r.momentFrenchDateTime(v,item.createdAt);
                         }
                     }],
                     records: {

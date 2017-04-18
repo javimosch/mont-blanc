@@ -3,13 +3,15 @@
 /*global moment*/
 /*global $U*/
 (function() {
-    var app = angular.module('app').service('orderRdv', ['$rootScope', '$log', 'server', function($rootScope, $log, db) {
+    var app = angular.module('app').service('orderRdv', ['$rootScope', '$log', 'server','backendApi', function($rootScope, $log, db,backendApi) {
 
         var DIAG_NAME = {};
 
         function fetchDiagGuys(settings) {
             return $U.MyPromise(function(resolve, err, emit) {
                 var payload = {
+                    __cache:1000*60,
+                    __reflexion:'fetchDiagGuys',
                     userType: 'diag',
                     __rules: {
                         disabled: {
@@ -23,7 +25,8 @@
                         $eq: settings.department.toString()
                     };
                 }
-                db.ctrl('User', 'getAll', payload).then((data) => {
+                
+                backendApi.User.getAll(payload).then((data) => {
                     data.result.forEach(function(d) {
                         DIAG_NAME[d._id] = d.firstName;
                     });

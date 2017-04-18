@@ -5,6 +5,20 @@ var getSchema = req('db').getSchema;
 var validate = req('validator').validate;
 var promise = req('utils').promise;
 
+
+var dbLoggerInstance = null;
+
+function dbLogger() {
+    if (!dbLoggerInstance) {
+        var ctrl = require('./db.controller').create;
+        dbLoggerInstance = ctrl('Log').createLogger({
+            name: "DB",
+            category: "WRAPPER"
+        });
+    }
+    return dbLoggerInstance;
+}
+
 var hookLogger;
 
 function hookDataLoggerLazyInitialization(hookData) {
@@ -31,7 +45,7 @@ var callHook = function(schemaName, hookName, dataOrHandler) {
         listeners: {}
     };
     var hookData = hooksData[schemaName];
-    
+
     //Lazy initialization and get of logger
     hookDataLoggerLazyInitialization(hookData);
     var hookLogger = hookData.logger;
@@ -75,7 +89,7 @@ exports.create = function(modelName, m) {
     var schema = getSchema(modelName);
 
 
-    
+
 
     var hook = (hookName, dataOrHandler) => {
         return callHook(modelName, hookName, dataOrHandler);
@@ -126,7 +140,7 @@ exports.create = function(modelName, m) {
     }
     //
     function createUpdate(data, cb, matchData, requiredKeys) {
-        var payload = Object.assign({},removePropertiesThatStartWith(data,'__'));
+        var payload = Object.assign({}, removePropertiesThatStartWith(data, '__'));
         //matchData, requiredKeys: req,res (if is being called directly)
         if (matchData && (matchData.body || matchData.params)) {
             matchData = null;
@@ -449,11 +463,11 @@ exports.create = function(modelName, m) {
     function handleError(action, data, msg) {
 
     }
-    
-    function removePropertiesThatStartWith(obj,str){
+
+    function removePropertiesThatStartWith(obj, str) {
         var newObj = {};
-        for(var x in obj){
-            if(x.indexOf(str)!==0){
+        for (var x in obj) {
+            if (x.indexOf(str) !== 0) {
                 newObj[x] = obj[x];
             }
         }
@@ -517,9 +531,7 @@ exports.create = function(modelName, m) {
     }
 
     function update(data, cb) {
-        //log('update=' + JSON.stringify(data));
-        //log('update:start');
-        var payload = Object.assign({},removePropertiesThatStartWith(data,'__'));
+        var payload = Object.assign({}, removePropertiesThatStartWith(data, '__'));
         check(data, ['_id'], (err, r) => {
             if (err) return cb && cb(err, null);
             var _id = data._id;
@@ -528,7 +540,9 @@ exports.create = function(modelName, m) {
             Model.update({
                 _id: _id
             }, data, (err, r) => {
-                log('update:ok=' + !err + ' ' + JSON.stringify(err));
+                if(err){
+                    dbLogger().error(err,'Payload',data);
+                }
                 if (!cb) return;
                 if (err) return cb(err, null);
                 r = hook('afterSave', payload);

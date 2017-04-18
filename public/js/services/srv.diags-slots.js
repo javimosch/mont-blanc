@@ -5,7 +5,7 @@
 /*global _*/
 (function() {
     var app = angular.module('srv.diagSlots', []);
-    angular.module('app').service('diagSlots', function($rootScope, server, orderPrice, $log, orderRdv) {
+    angular.module('app').service('diagSlots', function($rootScope, server, orderPrice, $log, orderRdv, backendApi) {
         var r = $rootScope,
             db = server;
 
@@ -16,7 +16,7 @@
                 //s.totalTime
 
                 var _settings = {
-                    daysPerPage:4
+                    daysPerPage: 4
                 };
                 $rootScope._diagSlotsSettings = _settings;
 
@@ -101,12 +101,14 @@
 
 
                                 //
-                                db.ctrl('User', 'get', {
+                                backendApi.User.get({
+                                    __cache: 1000 * 60,
+                                    __reflexion: 'user_get_' + r._diag,
                                     _id: r._diag,
                                     __select: "firstName lastName diagPriority isAutoentrepreneur"
                                 }).then(d => {
                                     if (d.ok && d.result) {
-                                        r.name = d.result.firstName.substring(0, 1) + '. ' + d.result.lastName.substring(0, 1)+'.';
+                                        r.name = d.result.firstName.substring(0, 1) + '. ' + d.result.lastName.substring(0, 1) + '.';
                                         if (d.result.diagPriority) {
                                             r.name += ' (' + d.result.diagPriority + ')';
                                         }
@@ -192,7 +194,7 @@
                     o.setDiag = function(_diag) {
                         if (_diag && _diag._id && _diag._id != _settings._diag) {
                             _settings.diagId = _diag && _diag._id || _diag || undefined;
-                            o.init(null,_settings);
+                            o.init(null, _settings);
                         }
                     };
                     o.updatePrices = function() {
@@ -230,7 +232,8 @@
                         if (scope.item && scope.item.postCode) {
                             //$log.debug('rdv-slots: parsing department',scope.item.postCode);
                             _settings.department = scope.item.postCode.substring(0, 2);
-                        }else{
+                        }
+                        else {
                             $log.warn('rdv-slots: Department missing');
                         }
 
@@ -262,21 +265,21 @@
                         }
                         o.request();
                     };
-                    o.isWorking = ()=> o._isWorking || false,
-                    o.request = function() {
-                        o._isWorking = true;
-                        var _localCursor = moment(cursor);
-                        var cbHell = $U.cbHell(_settings.daysPerPage, function() {
-                            o._isWorking = false;
-                            if (o.get()[0].date.isSame(moment(), 'day') && o.get()[0].slots.length == 0) {
-                                o.init(moment().add(1, 'days').toDate(), _settings);
+                    o.isWorking = () => o._isWorking || false,
+                        o.request = function() {
+                            o._isWorking = true;
+                            var _localCursor = moment(cursor);
+                            var cbHell = $U.cbHell(_settings.daysPerPage, function() {
+                                o._isWorking = false;
+                                if (o.get()[0].date.isSame(moment(), 'day') && o.get()[0].slots.length == 0) {
+                                    o.init(moment().add(1, 'days').toDate(), _settings);
+                                }
+                            });
+                            for (var x = 0; x < _settings.daysPerPage; x++) {
+                                asyncRequest(_localCursor._d, cbHell, x); //
+                                _localCursor = _localCursor.add(1, 'days');
                             }
-                        });
-                        for(var x=0;x<_settings.daysPerPage;x++){
-                            asyncRequest(_localCursor._d, cbHell, x); //
-                            _localCursor = _localCursor.add(1, 'days');
-                        }
-                    };
+                        };
                     return o;
                 }();
             }

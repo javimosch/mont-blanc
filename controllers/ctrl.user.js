@@ -340,13 +340,28 @@ function transformResponseLimitKeys(originalCallback, keys) {
 }
 
 function fetchBookingSystemUser(data, cb) {
+    var email = "bookingbot@noreply.fr"
     ctrl('User').core.save({
-        email: "bookingbot@noreply.fr",
+        email: email,
+        userType: 'client',
+        clientType: 'landlord',
         isSystemUser: true,
+        __match: {
+            email: email
+        }
+    }, transformResponseLimitKeys(cb, SYSTEM_USER_TRANSFORM_KEYS));
+}
+
+function createLandlordClient(data, cb) {
+    if (!data.email) return cb(apiError.VALIDATE_FIELD_EMAIL);
+    Object.assign(data, {
+        userType: 'client',
+        clientType: 'landlord',
         __match: {
             email: data.email
         }
-    }, transformResponseLimitKeys(cb, SYSTEM_USER_TRANSFORM_KEYS));
+    });
+    ctrl('User').core.save(data, cb);
 }
 
 function createSystemUser(data, cb) {
@@ -588,6 +603,10 @@ function passwordReset(data, cb) {
             if (err) return cb(err, _user);
             if (_user) {
 
+                if (_user.isGuestAccount) {
+                    return cb(apiError.GUESS_ACCOUNT_RESTRICTION);
+                }
+
                 _user.password = generatePassword(8);
                 _user.save();
                 LogSave("Password reset generated", 'info', {
@@ -614,6 +633,7 @@ function passwordReset(data, cb) {
 }
 
 module.exports = {
+    createLandlordClient: createLandlordClient,
     fetchBookingSystemUser: fetchBookingSystemUser,
     setAsNormalAccount: setAsNormalAccount,
     setAsGuestAccount: setAsGuestAccount,
