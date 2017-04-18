@@ -51,7 +51,7 @@
                 (vous recevrez le rapport en PDF à cette adresse)
             </div>
             <div class="row margin-top-quarter">
-                <input focus-on="clientEmail" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.clientEmail' ng-required="true">
+                <input ng-disabled="clientLogged()" focus-on="clientEmail" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.clientEmail' ng-required="true">
             </div>
             <div class="row margin-top-half">
                 <label class="unselectable">Adresse de facturation</label>

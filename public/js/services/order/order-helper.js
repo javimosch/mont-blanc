@@ -176,11 +176,13 @@
         };
 
         function getOrderDescriptionTitle(data) {
+            if(!data || !data.info) return "";
             if (data && data.info && data.info.buildingState == '1') return "Pack Vente: ";
             else return "Pack Location: ";
         }
 
         function getOrderDescriptionBody(data) {
+            if(!data || !data.info) return "";
             var rta = "";
             if (data && data.info && data.info.buildingType == '0') {
                 rta += "Maison";

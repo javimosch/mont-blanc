@@ -12,7 +12,7 @@
         });
 
         function warn(m) {
-            $rootScope.warningMessage(m);
+            $rootScope.warningMessage(m,99999);
         }
         var datepicker = {
             minDate: moment(), //.add(1, 'day'), //today is available with an increase in price.
@@ -31,8 +31,12 @@
         }
 
 
-        var param = (n, validate) => {
+        var param = (n, validate,isEncoded) => {
+            isEncoded = isEncoded || false;
             var val = $U.getParameterByName(n);
+            if(val!=undefined && isEncoded){
+                val = window.atob(val);
+            }
             if (!val) return undefined;
             if (!validate) {
                 return val;
@@ -42,11 +46,9 @@
                     return validate[v]
                 }); //valid vals
                 if (vals.length > 0 && !_.includes(vals, val)) {
-                    var msg = 'Parameter ' + diagDescription(n) + ' has the follow valid values:' + JSON.stringify(vals);
+                    var msg = 'Parameter ' + diagDescription(n) + ' has the follow valid values:' + JSON.stringify(vals)+'. Received: "'+val+'"';
                     console.warn(msg);
-                    warn(msg, 'warning', 0, true, {
-                        duration: 99999
-                    })
+                    warn(msg);
                     return undefined;
                 }
                 else {
@@ -122,7 +124,7 @@
                             '1': '1',
                             '2': '2'
                         }) || undefined,
-                        squareMeters: param('squareMeters', localData.squareMeters) || '90 - 110m²', // '- de 20m²',
+                        squareMeters: param('squareMeters', localData.squareMeters,true) || '90 - 110m²', // '- de 20m²',
                         // apartamentType: param('apartamentType', localData.apartamentType) || undefined,
                         constructionPermissionDate: param('cpd', localData.constructionPermissionDate) || 'Entre 1949 et le 01/07/1997', // 'Entre 1949 et le 01/07/1997',
                         gasInstallation: param('gasInstallation', localData.gasInstallation) || 'Oui, Plus de 15 ans', // 'Oui, Moins de 15 ans',

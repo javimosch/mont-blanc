@@ -102,8 +102,8 @@
                     },
                     hideTooltip: true,
                     buttons: [{
-                        label: "Refresh",
-                        show: false,
+                        label: "Rafraîchir",
+                        show: true,
                         type: () => "btn diags-btn bg-madison spacing-h-1",
                         click: () => update()
                     }],

@@ -165,30 +165,6 @@ app.controller('ctrl.booking', ['server',
                     });
                 }, 100)
             }
-
-            if (pathTo == r.URL.ACCOUNT_DETAILS) {
-                return true; //deprecated, this route belongs to another controller
-                /*
-                if (!s._user || !s._user.__subscribeMode) {
-                    console.warn('current _user is not in _subscribeMode');
-                    changeRoute(r.URL.HOME);
-                    return false;
-                }
-                else {
-                    delete s._user.__subscribeMode;
-                }
-                */
-            }
-
-            if (pathTo == r.URL.PAYMENT) {
-                //if ((s.__manualUrlChange || 0) + 5000 < new Date().getTime()) {
-                //resolvePaymentScreenAuth().then(resolvePaymentScreenOrder);
-                //}
-            }
-            else {
-                //$U.url.clear();
-            }
-
             return true;
         }
 

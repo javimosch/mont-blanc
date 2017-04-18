@@ -4,7 +4,7 @@
 /*global $U*/
 /*global $*/
 (function() {
-    var app = angular.module('app').service('orderPaymentForm', ['$rootScope', '$log', 'server', 'paymentApi', '$timeout', 'focus', 'localSession', function(r, $log, db, paymentApi, $timeout, focus, localSession) {
+    var app = angular.module('app').service('orderPaymentForm', ['$rootScope', '$log', 'server', 'paymentApi', '$timeout', 'focus', 'localSession', 'backendApi', function(r, $log, db, paymentApi, $timeout, focus, localSession, backendApi) {
 
         var isProcessing = false;
 
@@ -15,9 +15,9 @@
             }
             return number + ""; // always return a string
         }
-        
-        function clientLogged(){
-            if(!localSession.isLogged()) return false;
+
+        function clientLogged() {
+            if (!localSession.isLogged()) return false;
             var session = localSession.getData();
             return session && session.userType == 'client';
         }
@@ -96,6 +96,27 @@
                         //isGuestAccount check default value
                         data.isGuestAccount = clientLogged() ? '0' : '1';
 
+                        if (clientLogged()) {
+                            modalScope.response.clientEmail = localSession.getData().email;
+
+                            backendApi.Order.get({
+                                _client: localSession.getData()._id,
+                                __select: "billingAddress",
+                                __rules: {
+                                    status: {
+                                        $ne: "created"
+                                    }
+                                },
+                                __sort: "-createdAt"
+                            }).then((res) => {
+                                if (res && res.result && res.result.billingAddress) {
+                                    modalScope.response.billingAddress = res.result.billingAddress;
+                                }
+                            });
+
+                        }
+
+
 
                     },
                     showGuessAccountControls: () => {
@@ -107,6 +128,7 @@
                     onCardDateChange: function() {
                         this.response.cardDate = zeroFill(parseInt(this.data.cardDateMonth), 2).toString() + '/' + this.data.cardDateYear;
                     },
+                    clientLogged: () => clientLogged(),
                     isProcessing: () => isProcessing,
                     isFormValid: function() {
                         var modalScope = this;
@@ -114,7 +136,7 @@
                         if (modalScope.response.cardNumber == undefined) return false;
                         if (modalScope.response.cardDate == undefined) return false;
                         if (modalScope.response.cardCode == undefined) return false;
-                        
+
                         if (modalScope.response.creditCardOwner == undefined) return false;
                         if (!clientLogged() && !modalScope.response.clientEmail) return false;
 
@@ -199,8 +221,8 @@
                             emit('validate', 'Email is required');
                             return closeModal();
                         }
-                        
-                        var clientId = clientLogged()?localSession.getData()._id:undefined;
+
+                        var clientId = clientLogged() ? localSession.getData()._id : undefined;
 
                         var payload = {
                             wallet: order._client.wallet,

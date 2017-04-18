@@ -170,7 +170,7 @@ exports.create = function(modelName, m) {
                         $set: data
                     }).exec((err, r) => {
                         if (err) return rta(err, null);
-                        
+
                         //After update, retrieve the complete item.
                         get({
                             _id: _id
@@ -528,6 +528,14 @@ exports.create = function(modelName, m) {
         Model.find(toRules(data)).exec(cb);
     }
 
+    function findOne(data, cb) {
+        var query = Model.findOne(toRules(data));
+        if (data.__select) {
+            query = query.select(data.__select);
+        }
+        query.exec(cb);
+    }
+
 
     function _create(data, cb, requiredKeys) {
         //log('create=' + JSON.stringify(data));
@@ -598,6 +606,7 @@ exports.create = function(modelName, m) {
         removeAll: removeAll,
         toRules: toRules,
         find: find,
+        findOne: findOne,
         log: log
     };
     return rta;

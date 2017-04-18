@@ -6,7 +6,7 @@
     var app = angular.module('app').service('backendApi', function($rootScope, server, $log) {
 
         const CONSTANT = {
-            COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate', 'create'],
+            COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate', 'create','findOne'],
             COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange']
         };
 

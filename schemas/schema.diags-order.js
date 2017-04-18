@@ -22,7 +22,7 @@ module.exports = {
         info: {
             type: {},
             required: false,
-            default:{}
+            default: {}
         },
         obs: String,
         notifications: {
@@ -113,7 +113,7 @@ module.exports = {
             default: Date.now
         },
 
-        //keysWhere:{type:String},
+
         keysAddress: {
             type: String
         },
@@ -123,18 +123,22 @@ module.exports = {
         keysTimeTo: {
             type: Date
         },
-        
-        walletTransId:{
-            type:String
-        },
-        
-        number:{
-            type:String //Invoice number https://trello.com/c/XrlAbDJQ Spec#3 
-            //YYMM(THREE digits counter) for EACH diag
+
+        walletTransId: {
+            type: String
         },
 
-        _charge: {
-            type: String
-        } //stripe charge associated
+        number: {
+            type: String //Invoice number https://trello.com/c/XrlAbDJQ Spec#3 
+                //YYMM(THREE digits counter) for EACH diag
+        },
+
+        billingAddress: {
+            type: String,
+        },
+        creditCardOwner: {
+            type: String,
+        }
+
     }
 };

@@ -29,6 +29,14 @@ app.config(['$httpProvider', function($httpProvider) {
 
 app.run(['$rootScope', '$uibModalStack', '$log', setupUibModal]);
 
+app.run(function($rootScope) {
+    setTimeout(() => {
+        if ($rootScope.openConfirm) {
+            window._openConfirm = $rootScope.openConfirm;
+        }
+    }, 2000);
+});
+
 function setupUibModal($rootScope, $uibModalStack, $log) {
     $rootScope.$on('routeChangeStart', handleLocationChange)
 
@@ -391,20 +399,7 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(
         return url;
     };
 
-    /*
-    r.routeIs = (n) => r.__route && r.__route.toString().toLowerCase().indexOf(n && n.toLowerCase() || 'invalid') !== -1 || false;
-    r.__route = window.location.href.replace(window.location.origin + window.location.pathname, '');
-    r.__routeHashName = $U.url.hashName();
-    r.__routeHashNameBefore = $U.url.hashName();
-    setTimeout(function() {
-        $U.emitPreserve('route-change', r.__route.slice(2));
-    }, 500);
-    $U.onAnchorChange(() => {
-        r.__route = window.location.href.replace(window.location.origin + window.location.pathname, '');
-        $U.emit('route-exit:' + r.__routeHashName);
-        r.__routeHashName = $U.url.hashName();
-        $U.emitPreserve('route-change', r.__route.slice(2))
-    });*/
+
 
     r.routeIs = (n) => {
         return appRouter.currentPath == n;

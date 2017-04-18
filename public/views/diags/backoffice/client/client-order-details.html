@@ -74,7 +74,7 @@
             <label class="unselectable">Remise des clés</label>
         </div>
         <div class="row margin-top-quarter">
-            <input ng-disabled="true" class="diags-input" ng-value="item.keysAddress" placeholder="Adresse">
+            <input ng-disabled="isPaid()" class="diags-input" address model="item" field="keysAddress" placeholder="Adresse">
         </div>
         <div class="row margin-top-quarter">
             <input ng-disabled="true" class="diags-input" ng-value="momentFormat(item.keysTimeFrom,'HH[h]mm')" placeholder="Adresse">

@@ -1,7 +1,4 @@
-
-
-
-<ul class="form-tiny center-block" ng-show="item._id && !userIs('client') && logged()">
+<ul class="form-tiny center-block" ng-show="item.files &&  item._id && !userIs('client') && logged()">
     <li>
         Les diagnostics en PDF <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
     </li>
@@ -13,10 +10,7 @@
 
         <!--LABEL PDF FILENAME (IF UPLOADED)-->
         <p ng-show="pdfExists(diagCode)">
-            <span class="order-pdf-label link"
-            ng-click="pdfDownload(diagCode)"
-            ng-bind="item.files[diagCode].filename"></span>
-            &nbsp;
+            <span class="order-pdf-label link" ng-click="pdfDownload(diagCode)" ng-bind="item.files[diagCode].filename"></span> &nbsp;
             <!--DOWNLOAD-->
             <i ng-show="pdfExists(diagCode)" ng-disabled="!item._id || state.working() || !pdfExists(diagCode)" ng-click="!pdfExists(diagCode) || pdfDownload(diagCode)" class="fa fa-download file-button">&nbsp;</i>
             <!--DELETE-->
@@ -26,28 +20,29 @@
 
 
     </li>
-
+    <li ng-show="item.files.invoice" class="relative diplome">
+        <label ng-bind="'Facture pdf'"></label>
+        <p>
+            <span class="order-pdf-label link" ng-click="pdfDownload('invoice')" ng-bind="item.files['invoice'].filename"></span> &nbsp;
+            <i ng-show="pdfExists('invoice')" ng-disabled="!item._id || state.working() || !pdfExists('invoice')" ng-click="!pdfExists('invoice') || pdfDownload('invoice')" class="fa fa-download file-button">&nbsp;</i>
+        </p>
+    </li>
 </ul>
 
 
 
 
-<ul class="form-tiny center-block" ng-show="item._id && (userIs('client') || !logged())">
+<ul class="form-tiny center-block" ng-show="item.files && item._id && (userIs('client') || !logged())">
     <li>
         Les diagnostics en PDF <i class="fa fa-question" tooltip-placement="top" uib-tooltip="Files are streamed directly from database. Please, be patient."></i>
     </li>
-    <li ng-repeat="(diagCode,diagValue) in item.diags" ng-if="diagValue" 
-    ng-show="pdfExists(diagCode)"
-    class="relative diplome">
+    <li ng-repeat="(diagCode,diagValue) in item.diags" ng-if="diagValue" ng-show="pdfExists(diagCode)" class="relative diplome">
         <!--LABEL-->
         <label ng-bind="diagNameConvertion(diagCode)"></label>
 
         <!--LABEL PDF FILENAME (IF UPLOADED)-->
         <p>
-            <span class="order-pdf-label link"
-            ng-click="pdfDownload(diagCode)"
-            ng-bind="item.files[diagCode].filename"></span>
-            &nbsp;
+            <span class="order-pdf-label link" ng-click="pdfDownload(diagCode)" ng-bind="item.files[diagCode].filename"></span> &nbsp;
             <!--DOWNLOAD-->
             <i ng-show="pdfExists(diagCode)" ng-disabled="!item._id || state.working() || !pdfExists(diagCode)" ng-click="!pdfExists(diagCode) || pdfDownload(diagCode)" class="fa fa-download file-button">&nbsp;</i>
         </p>
@@ -55,8 +50,7 @@
     <li ng-show="item.files.invoice" class="relative diplome">
         <label ng-bind="'Facture pdf'"></label>
         <p>
-            <span class="order-pdf-label link" ng-click="pdfDownload('invoice')" ng-bind="item.files['invoice'].filename"></span>
-            &nbsp;
+            <span class="order-pdf-label link" ng-click="pdfDownload('invoice')" ng-bind="item.files['invoice'].filename"></span> &nbsp;
             <i ng-show="pdfExists('invoice')" ng-disabled="!item._id || state.working() || !pdfExists('invoice')" ng-click="!pdfExists('invoice') || pdfDownload('invoice')" class="fa fa-download file-button">&nbsp;</i>
         </p>
     </li>
