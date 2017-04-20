@@ -3,7 +3,7 @@
 /*global moment*/
 /*global $U*/
 (function() {
-    var app = angular.module('app').service('orderQuestion', function($rootScope, $log) {
+    var app = angular.module('app').service('orderQuestion', function($rootScope, $log, appSettings) {
 
         /*
         info scheme
@@ -31,7 +31,19 @@
             COMMERCIAL: 2
         };
 
+        var hasLocalData = false;
+
         function bindAnswersToDefaultDiags(s) {
+
+            if (!hasLocalData) {
+                return appSettings.syncAll().then(() => {
+                    hasLocalData=true;
+                    bindAnswersToDefaultDiags(s);
+                });
+            }else{
+                $log.debug(appSettings);
+            }
+
             //s mean scope
             //an scope has an item key (order)
             //scope has local data loaded (s.diags has available diags)
@@ -85,11 +97,14 @@
             }
 
             function departmentHasTermites() {
-                if (s.termitesDepartments && s.item.department && s.item.postCode != undefined) {
+                var departments = appSettings.localData.termitesDepartments;
+                if(!departments) $log.error('termitesDepartments are missings');
+                if (s.item.postCode != undefined) {
                     var code = s.item.postCode.substring(0, 2);
-                    return _.includes(s.termitesDepartments.map(v => (v.toString())), code);
+                    return _.includes(departments.map(v => (v.toString())), code);
                 }
                 else {
+                    $log.warn('departmentHasTermites no postCode');
                     return false;
                 }
             };
@@ -200,6 +215,8 @@
             }
 
             function checkTermitesUsingPostode() {
+                //$log.debug('departmentHasTermites', departmentHasTermites());
+                //$log.debug('isSelling', isSelling());
                 if (departmentHasTermites() && isSelling()) {
                     //toggleVisibility('termites', true);
                     s.item.diags.termites = true;

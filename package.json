@@ -19,7 +19,7 @@
     "deploy": "./tools/scripts/ssh_deploy_tag.sh",
     "build": "node ./tools/node_bundle.js",
     "heroku": "npm run start",
-    "push": "git push heroku master:master",
+    "push": "git push heroku master:master -f",
     "logs": "./tools/scripts/ssh_logs.sh",
     "remoteTags": "git ls-remote --tags prod"
   },
