@@ -15,10 +15,13 @@
                 return r.session() || {};
             },
             getMetadata: () => {
-                return r.sessionMetadata() || {};
+                var rta = r.sessionMetadata() || {};
+                //$log.info('getMetadata', _.clone(rta));
+                return rta;
             },
-            setMetadata: (newMetadata) => {
-                return r.sessionMetadata(newMetadata) || {};
+            setMetadata: (newMetadata,reset) => {
+                //$log.info('setMetadata', Object.keys(newMetadata));
+                return r.sessionMetadata(newMetadata,reset) || {};
             },
             update: () => {
                 backendApi.User.getById(r.session()).then(function(res) {

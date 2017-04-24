@@ -25,7 +25,7 @@ exports.configure = (app) => {
             }
             catch (err) {
                 Logger.setSaveData(err);
-                Logger.errorSave('Automated Task crash')
+                Logger.errorSave('Automated Task crash');
             }
         }
         setInterval(() => {

@@ -1,7 +1,7 @@
 /*global angular*/
 /*global expose*/
 /*global _*/
-/*global MyPromise*/
+
 /*global newId*/
 /*global $*/
 /*global $U*/
@@ -247,7 +247,7 @@ srv.service('$mongoosePaginate', ['server', function(db) {
         self.id = Date.now();
         self.working = false;
         self.ctrl = function(data, model, opt) {
-            var promise = MyPromise((resolve, err, emit) => {
+            var promise = $U.MyPromise((resolve, err, emit) => {
                 if (!model.pagination) {
                     err('model.pagination required.');
                     console.warn('$mongoosePaginate model.pagination required.');
@@ -329,7 +329,7 @@ srv.service('$mongoosePaginate', ['server', function(db) {
 srv.service('localdb', ['$http', function(http) {
 
     return function(settings) {
-        return MyPromise(function(resolve) {
+        return $U.MyPromise(function(resolve) {
             //handlers
             resolve({
                 localdb: true
@@ -627,7 +627,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '
 
     function login(data) {
         console.log('SEVICE LOGIN', data);
-        return MyPromise(function(resolve, error) {
+        return $U.MyPromise(function(resolve, error) {
             post('login', data, function(res) {
                 resolve(res);
             }, error);
@@ -635,7 +635,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '
     }
 
     function save(table, data) {
-        return MyPromise(function(resolve, error) {
+        return $U.MyPromise(function(resolve, error) {
             post('save/' + table, data, function(res) {
                 resolve(res);
             }, error);
@@ -643,7 +643,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '
     }
 
     function getSingle(table, data) {
-        return MyPromise(function(resolve, error) {
+        return $U.MyPromise(function(resolve, error) {
             post('get/' + table, data, function(res) {
                 resolve(res);
             }, error);
@@ -651,7 +651,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '
     }
 
     function getAll(table, data) {
-        return MyPromise(function(resolve, error) {
+        return $U.MyPromise(function(resolve, error) {
             get('getAll/' + table, data, function(res) {
                 resolve(res);
             }, error);
@@ -660,14 +660,14 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '
 
     function custom(controller, action, data, method) {
         if (method === 'get') {
-            return MyPromise(function(resolve, error) {
+            return $U.MyPromise(function(resolve, error) {
                 get(controller + '/' + action, data, function(res) {
                     resolve(res);
                 }, error);
             });
         }
         else {
-            return MyPromise(function(resolve, error) {
+            return $U.MyPromise(function(resolve, error) {
                 post(controller + '/' + action, data, function(res) {
                     resolve(res);
                 }, error);
@@ -677,7 +677,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '
 
 
     function ctrl(ctrl, action, data) {
-        return MyPromise(function(resolve, error) {
+        return $U.MyPromise(function(resolve, error) {
 
             post('ctrl/' + ctrl + '/' + action, data, function(res) {
                 //console.info('CTRL: ',res.data);
@@ -725,19 +725,12 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '
 
     var ws = {
         URL: () => URL,
-        getAvailableRanges: (order, opt) => diagsGetAvailableRanges(order, ctrl, opt),
-        // login: login,
-        // save: save,
-        // get: getSingle,
-        // getAll: getAll,
-
-        //custom: custom,
         http: function(ctrl, action, data) {
             return http.post(URL + '/' + 'ctrl/' + ctrl + '/' + action, data);
         },
         form: (relativeURL, data) => {
             if (!data.file) throw Error('form: file arg required');
-            return MyPromise((r, err) => {
+            return $U.MyPromise((r, err) => {
                 var file = data.file;
                 delete data.file;
                 var _log = logger(relativeURL, data);
@@ -761,7 +754,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '
         stackCtrl: stackCtrl,
         ctrl: ctrl,
         $get: (url, config) => {
-            return MyPromise(function(resolve, error) {
+            return $U.MyPromise(function(resolve, error) {
                 var _log = logger(url, {});
                 http.get(url, config).then((res) => {
                     _log({
@@ -779,7 +772,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '
             });
         },
         $post: (url, data, config) => {
-            return MyPromise(function(resolve, error) {
+            return $U.MyPromise(function(resolve, error) {
                 var _log = logger(url, data);
                 http.post(url, data, config).then((res) => {
                     _log({
@@ -797,7 +790,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '
             });
         },
         post: function(url, data) {
-            return MyPromise(function(resolve, error) {
+            return $U.MyPromise(function(resolve, error) {
                 post(url, data, function(res) {
                     resolve(res);
                 }, error);

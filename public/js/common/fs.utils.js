@@ -747,6 +747,24 @@ function exposeGlobal(name, val) {
     window.$g[name] = val;
 }
 
+function waitForProperties(cbArray, props, scope) {
+    scope = scope || window;
+    var i = setInterval(function() {
+        var rta = true;
+        props.forEach((v) => {
+            if (_.isUndefined(scope[v])) {
+                rta = false;
+            }
+        });
+        if (rta) {
+            clearInterval(i);
+            cbArray.forEach((cb) => {
+                cb();
+            });
+        }
+    }, 200);
+}
+
 if (typeof exports !== 'undefined') {
     exports.MyPromise = MyPromise;
     exports.getHashParams = getHashParams;
@@ -754,16 +772,11 @@ if (typeof exports !== 'undefined') {
     exports.ifThenMessage = ifThenMessage;
     exports.val = val;
     exports.numberBetween = numberBetween;
+    exports.waitForProperties = waitForProperties;
 }
 else {
-    window.val = val;
-    window.numberBetween = numberBetween;
-    window.MyPromise = MyPromise;
-    window.getHashParams = getHashParams;
-    window.getParameterByName = getParameterByName;
-    window.ifThenMessage = ifThenMessage;
-
     window.$U = {
+        waitForProperties:waitForProperties,
         exposeGlobal: exposeGlobal,
         dateRangeOverlaps: dateRangeOverlaps,
         readJSONSync: readJSONSync,

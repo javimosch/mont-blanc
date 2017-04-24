@@ -4,8 +4,7 @@
 /*global $D*/
 /*global _*/
 (function() {
-    var app = angular.module('srv.diagSlots', []);
-    angular.module('app').service('diagSlots', function($rootScope, server, orderPrice, $log, orderRdv, backendApi) {
+    angular.module('app').service('rdvSlotService', function($rootScope, server, orderPrice, $log, orderRdv, backendApi) {
         var r = $rootScope,
             db = server;
 
@@ -64,7 +63,7 @@
                             }).then(_resolve);
                         }
                         else {
-                            //db.getAvailableRanges(order, _settings).then(_resolve);
+                            
 
                             orderRdv.getAll({
                                 date: date,
@@ -234,7 +233,7 @@
                             _settings.department = scope.item.postCode.substring(0, 2);
                         }
                         else {
-                            $log.warn('rdv-slots: Department missing');
+                            $log.warn('rdv-slots: Department missing (scope.item.postCode)');
                         }
 
                         o.request();

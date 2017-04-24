@@ -367,7 +367,16 @@
 
 
         var self = {
-            getAll: getAll
+            getAll: function(settings) {
+                return $U.MyPromise(function(resolve, err, emit) {
+                    getAll(settings).then(res => {
+                        //$log.info(moment().format('HH:mm:ss'),_.clone(settings),_.clone(res));
+                        resolve(res);
+                    }).error(error=>{
+                        err(err);
+                    });
+                });
+            }
         };
         return self;
 

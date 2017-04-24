@@ -3,8 +3,8 @@
 /*global _*/
 /*global moment*/
 /*global $*/
-/*global getParameterByName*/
-/*global ifThenMessage*/
+
+
 /*global subTotal*/
 /*global openStripeModalPayOrder*/
 /*global $U*/
@@ -12,8 +12,8 @@
 /*global totalPrice*/
 /*global $D*/
 angular.module('app').controller('client-area-controller', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter',
-    function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter) {
+    '$timeout', '$scope', '$rootScope', '$uibModal', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter',
+    function(db, $timeout, s, r, $uibModal, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter) {
 
         s._user = r.sessionMetadata()._user || {};
         s.auth = {};
@@ -37,7 +37,7 @@ angular.module('app').controller('client-area-controller', ['server',
             r.route(url, delay);
         }
         s.validateAuthInput = function(cb) {
-            ifThenMessage([
+            $U.ifThenMessage([
                 [!s.auth.email, '==', true, appText.VALIDATE_CLIENT_EMAIL],
                 [!s.auth.pass, '==', true, appText.VALIDATE_CLIENT_PASS],
             ], (m) => {
@@ -123,7 +123,7 @@ angular.module('app').controller('client-area-controller', ['server',
                 }
                 else {
                     //validate fields
-                    ifThenMessage([
+                    $U.ifThenMessage([
                         [!s._user.email, '==', true, appText.VALIDATE_CLIENT_EMAIL],
                         [!s._user.password, '==', true, appText.VALIDATE_CLIENT_PASS],
                         [!s._user.cellPhone, '==', true, appText.VALIDATE_CLIENT_MOBILE_NUMBER],

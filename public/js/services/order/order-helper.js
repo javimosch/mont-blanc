@@ -3,7 +3,7 @@
     /*global _*/
     /*global $U*/
     /*global moment*/
-    angular.module('app').service('orderHelper', function(localSession, $log, orderPrice, backendApi, appSettings, $rootScope) {
+    angular.module('app').service('orderHelper', function(localSession, $log, orderPrice, backendApi, appSettings, $rootScope, appText, appRouter) {
         var PAID_STATUS_LIST = ['prepaid', 'completed'];
         var CLIENT_TYPES_COMPANY = ['agency', 'enterprise', 'other'];
         var CLIENT_TYPES = ['agency', 'enterprise', 'landlord', 'other'];
@@ -27,12 +27,43 @@
             return !_.includes(CLIENT_TYPES_COMPANY, o._client.clientType);
         }
         self.isAgency = (o) => !self.isLandLord(o);
-        self.createFromBookingData = () => {
+
+        function setPricesCalculationRequirements(data, remoteSettings, localData) {
+            orderPrice.set({
+                date: data.start,
+                diagIsAutoentrepreneur: data._diag && data._diag.isAutoentrepreneur,
+                buildingType: data.info.buildingType,
+                modifiersPercentages: remoteSettings.pricePercentageIncrease,
+                squareMetersPrice: remoteSettings.metadata.squareMetersPrice,
+                squareMeters: data.info.squareMeters,
+                clientDiscountPercentage: data._client.discount,
+                departmentMultipliers: remoteSettings.metadata.departmentMultipliers,
+                postCode: data.postCode,
+                basePrice: remoteSettings.metadata.prices.basePrice,
+                selectedDiags: data.diags,
+                availableDiags: localData.diags,
+
+                diagCommissionRate: data._diag && data._diag.commission,
+            });
+        }
+
+        self.createFromBookingData = (existingOrder) => {
             return $U.MyPromise(function(resolve, reject, emit) {
 
                 //We fetch the booking data from cache
                 var bookingData = self.getBookingDetails();
                 //$log.debug('bookingData', bookingData);
+
+                if (existingOrder && existingOrder._id) {
+                    var bookingDataCached = bookingData;
+                    bookingData = existingOrder;
+                    for (var x in bookingDataCached) {
+                        bookingData[x] = bookingDataCached[x];
+                    }
+                }
+                else {
+                    $log.warn('Existing order has no _id');
+                }
 
                 //validations
                 if (!bookingData) return reject('booking data missing');
@@ -67,22 +98,7 @@
                         //$log.debug('appSettings', appSettings);
 
                         //Set prices
-                        orderPrice.set({
-                            date: bookingData.start,
-                            diagIsAutoentrepreneur: bookingData._diag && bookingData._diag.isAutoentrepreneur,
-                            buildingType: bookingData.info.buildingType,
-                            modifiersPercentages: remoteSettings.pricePercentageIncrease,
-                            squareMetersPrice: remoteSettings.metadata.squareMetersPrice,
-                            squareMeters: bookingData.info.squareMeters,
-                            clientDiscountPercentage: bookingData._client.discount,
-                            departmentMultipliers: remoteSettings.metadata.departmentMultipliers,
-                            postCode: bookingData.postCode,
-                            basePrice: remoteSettings.metadata.prices.basePrice,
-                            selectedDiags: bookingData.diags,
-                            availableDiags: localData.diags,
-
-                            diagCommissionRate: bookingData._diag && bookingData._diag.commission,
-                        });
+                        setPricesCalculationRequirements(bookingData, remoteSettings, localData);
                         orderPrice.assignPrices(bookingData);
 
                         //Set order info description
@@ -133,6 +149,10 @@
             return x;
         };
 
+        self.updateFromBookingData = () => {
+            return self.createFromBookingData(self.getFromSession());
+        };
+
         self.populate = (data) => {
             return $U.MyPromise(function(resolve, err, emit) {
                 var payload = {
@@ -154,11 +174,19 @@
 
         self.getBookingDetails = () => {
             var m = localSession.getMetadata();
-            var data = m.booking && m.booking.item || m.params && m.params.item || {};
+            var data = (m && m.bookingDetails) || {};
+            //$log.info('Booking details are ', _.clone(data));
             return data;
         };
+        self.setBookingDetails = (details) => {
+            localSession.setMetadata({
+                bookingDetails: details
+            });
+        };
+
         self.getFromSession = () => {
-            return localSession.getMetadata()._order || localSession.getMetadata().params && localSession.getMetadata().params._order || {};
+            var m = localSession.getMetadata();
+            return m && m._order || {};
         };
 
         self.getDiagAccountDescription = (data) => {
@@ -175,14 +203,81 @@
             return m.substring(0, 1).toUpperCase() + m.slice(1);
         };
 
+        self.validateQuestions = validateQuestions;
+
+        self.validateMetadata = validateMetadata;
+
+        function validateMetadata(bookingDetails) {
+            return $U.MyPromise(function(resolve, reject, emit) {
+                //At welcome page, we reset order data (if there is an existing order, we keep it separately)
+                if (appRouter.currentPath == '') {
+                    $rootScope.sessionMetadata({
+                        _order: {}
+                    });
+                    return resolve();
+                }
+
+                //If form questions are not OK, booking data cache is reseted and url jumps to welcome page
+                self.validateQuestions(bookingDetails).then(() => {
+                    resolve();
+                }).error((error) => {
+                    reject(error);
+                });
+            });
+        }
+
+
+
+        function validateQuestions(data) {
+            return $U.MyPromise(function(resolve, reject, emit) {
+                $U.ifThenMessage([
+                    [data.info.buildingState, '==', undefined, appText.BOOKING_VALIDATE_OPERATION],
+                    [data.info.buildingType, '==', undefined, appText.BOOKING_VALIDATE_BUILDING_TYPE],
+                    [data.info.squareMeters, '==', undefined, appText.BOOKING_VALIDATE_BUILDING_SIZE],
+                    [data.info.constructionPermissionDate, '==', undefined, appText.BOOKING_VALIDATE_CONSTRUCTION_DATE],
+                    [data.info.gasInstallation, '==', undefined, appText.BOOKING_VALIDATE_GAZ],
+                    [data.info.electricityInstallation, '==', undefined, appText.BOOKING_VALIDATE_ELECTRICITY],
+                    [data.address, '==', undefined, appText.BOOKING_VALIDATE_ADDRESS],
+                    [data.postCode, '==', 'France', appText.BOOKING_VALIDATE_ADDRESS_PRECISION],
+                    [data.postCode, '==', 'Francia', appText.BOOKING_VALIDATE_ADDRESS_PRECISION]
+                ], (m) => {
+                    reject({
+                        message: m[0]
+                    });
+                }, () => {
+                    validateAddressDepartment(data.postCode, resolve, reject);
+                });
+            });
+        }
+
+        function validateAddressDepartment(postCode, resolve, reject) {
+            var code = postCode.substring(0, 2);
+            backendApi.User.custom('departmentCoveredBy', {
+                department: code.toString()
+            }).then(res => {
+                if (!res.ok) {
+                    return resolve && resolve(); //ignores validation
+                }
+                if (res.result == true) {
+                    resolve && resolve();
+                }
+                else {
+                    reject && reject({
+                        addressDepartmentCovered: res.result
+                    });
+                }
+            })
+
+        };
+
         function getOrderDescriptionTitle(data) {
-            if(!data || !data.info) return "";
+            if (!data || !data.info) return "";
             if (data && data.info && data.info.buildingState == '1') return "Pack Vente: ";
             else return "Pack Location: ";
         }
 
         function getOrderDescriptionBody(data) {
-            if(!data || !data.info) return "";
+            if (!data || !data.info) return "";
             var rta = "";
             if (data && data.info && data.info.buildingType == '0') {
                 rta += "Maison";

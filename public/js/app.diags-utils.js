@@ -724,6 +724,10 @@ function totalPrice(showRounded, model, diags, squareMetersPrice, basePrice, opt
 };
 
 function OrderTotalTime(selectedDiags, diags) {
+    if(!diags){
+        console.warn('OrderTotalTime expects diags list (localData)');
+        return 0;
+    }
     var total = 0;
     if (!selectedDiags) return 0;
     Object.keys(selectedDiags).forEach(function(mkey) {

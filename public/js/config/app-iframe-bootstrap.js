@@ -11,7 +11,6 @@
         'ngSanitize',
         'srv.crud',
         'srv.diagPrice',
-        'srv.diagSlots',
         'app-settings-service',
         'local-data',
         'app.directives',

@@ -3,7 +3,7 @@
 /*global moment*/
 /*global $U*/
 (function() {
-    var app = angular.module('app').service('orderQuestion', function($rootScope, $log, appSettings) {
+    var app = angular.module('app').service('orderQuestion', function($rootScope, $log, appSettings, orderBooking) {
 
         /*
         info scheme
@@ -33,14 +33,15 @@
 
         var hasLocalData = false;
 
-        function bindAnswersToDefaultDiags(s) {
+        function bindAnswersToDefaultDiags(ctrlScope) {
 
             if (!hasLocalData) {
                 return appSettings.syncAll().then(() => {
-                    hasLocalData=true;
-                    bindAnswersToDefaultDiags(s);
+                    hasLocalData = true;
+                    bindAnswersToDefaultDiags(ctrlScope);
                 });
-            }else{
+            }
+            else {
                 $log.debug(appSettings);
             }
 
@@ -50,22 +51,22 @@
             //an item should store questions answers in .info key (ex item.info.buildingType)
 
 
-            s.diags.forEach(function(val, key) {
-                s.item.diags[val.name] = (val.mandatory) ? true : false;
+            ctrlScope.diags.forEach(function(val, key) {
+                ctrlScope.item.diags[val.name] = (val.mandatory) ? true : false;
             });
 
-            s.$watch('item.info.constructionPermissionDate', onQuestionAnswersChange);
-            s.$watch('item.info.buildingState', onQuestionAnswersChange);
-            s.$watch('item.info.gasInstallation', onQuestionAnswersChange);
-            s.$watch('item.address', onQuestionAnswersChange);
-            s.$watch('item.info.electricityInstallation', onQuestionAnswersChange);
-            s.$watch('item.info.buildingType', onQuestionAnswersChange);
-            s.$watch('item.info.buildingState', onQuestionAnswersChange);
+            ctrlScope.$watch('item.info.constructionPermissionDate', onQuestionAnswersChange);
+            ctrlScope.$watch('item.info.buildingState', onQuestionAnswersChange);
+            ctrlScope.$watch('item.info.gasInstallation', onQuestionAnswersChange);
+            ctrlScope.$watch('item.address', onQuestionAnswersChange);
+            ctrlScope.$watch('item.info.electricityInstallation', onQuestionAnswersChange);
+            ctrlScope.$watch('item.info.buildingType', onQuestionAnswersChange);
+            ctrlScope.$watch('item.info.buildingState', onQuestionAnswersChange);
 
             function onQuestionAnswersChange() {
                 if (!dataRootExists()) return;
                 if (!questionHasAValue('buildingType')) return;
-                var buildingType = s.item.info.buildingType;
+                var buildingType = ctrlScope.item.info.buildingType;
                 if (buildingType == BUILDING_TYPE.COMMERCIAL) {
                     if (isSelling()) {
                         moveToMandatory(['dta', 'loiCarrez', 'dpe', 'ernt', 'termites']);
@@ -94,13 +95,15 @@
                     checkGazInstallationAnswer();
                     checkElectricityAnswer();
                 }
+
+                orderBooking.saveCardsSettings(ctrlScope.diags);
             }
 
             function departmentHasTermites() {
                 var departments = appSettings.localData.termitesDepartments;
-                if(!departments) $log.error('termitesDepartments are missings');
-                if (s.item.postCode != undefined) {
-                    var code = s.item.postCode.substring(0, 2);
+                if (!departments) $log.error('termitesDepartments are missings');
+                if (ctrlScope.item.postCode != undefined) {
+                    var code = ctrlScope.item.postCode.substring(0, 2);
                     return _.includes(departments.map(v => (v.toString())), code);
                 }
                 else {
@@ -130,7 +133,7 @@
             }
 
             function setMandatory(n, val) {
-                s.diags.forEach((diag) => {
+                ctrlScope.diags.forEach((diag) => {
                     if ((n && diag.name == n) || !n) {
                         diag.mandatory = val;
                     }
@@ -138,30 +141,30 @@
             }
 
             function toggleVisibility(n, val) {
-                s.diags.forEach((diag) => {
+                ctrlScope.diags.forEach((diag) => {
                     if ((n && diag.name == n) || !n) {
                         diag.show = val;
                         if (diag.show == false) {
-                            s.item.diags[diag.name] = false;
+                            ctrlScope.item.diags[diag.name] = false;
                         }
                     }
                 });
             };
 
             function dataRootExists() {
-                return s.item && s.item.info;
+                return ctrlScope.item && ctrlScope.item.info;
             }
 
             function getAnswer(key) {
-                return s.item.info[key];
+                return ctrlScope.item.info[key];
             }
 
             function questionHasAValue(propertyName) {
-                return dataRootExists() && s.item.info[propertyName];
+                return dataRootExists() && ctrlScope.item.info[propertyName];
             }
 
             function isTruth(propertyName) {
-                return questionHasAValue(propertyName) && s.item.info[propertyName] == true;
+                return questionHasAValue(propertyName) && ctrlScope.item.info[propertyName] == true;
             }
 
             function isSelling() {
@@ -174,8 +177,8 @@
             }
 
             function selectDiagType(diagName, bool) {
-                if (!s.item) return;
-                s.item.diags[diagName] = bool;
+                if (!ctrlScope.item) return;
+                ctrlScope.item.diags[diagName] = bool;
             }
 
             function setMandatoryTruthAndSelect(diagName) {
@@ -186,30 +189,30 @@
             }
 
             function checkConstructionDateAnswerForPlomp() {
-                if (s.item.info.constructionPermissionDate === 'Avant le 01/01/1949') {
-                    var buildingType = s.item.info.buildingType;
+                if (ctrlScope.item.info.constructionPermissionDate === 'Avant le 01/01/1949') {
+                    var buildingType = ctrlScope.item.info.buildingType;
                     if (buildingType != BUILDING_TYPE.COMMERCIAL) {
-                        s.item.diags.crep = true;
+                        ctrlScope.item.diags.crep = true;
                         setMandatory('crep', true);
                     }
                     toggleVisibility('crep', true);
                 }
                 else {
-                    s.item.diags.crep = false; //
+                    ctrlScope.item.diags.crep = false; //
                     toggleVisibility('crep', true);
                     setMandatory('crep', false);
                 }
             }
 
             function checkConstructionDateAnswerForAmiante() {
-                if (_.includes(['Avant le 01/01/1949', 'Entre 1949 et le 01/07/1997'], s.item.info.constructionPermissionDate)) {
+                if (_.includes(['Avant le 01/01/1949', 'Entre 1949 et le 01/07/1997'], ctrlScope.item.info.constructionPermissionDate)) {
                     toggleVisibility('dta', true);
-                    s.item.diags.dta = true; //mandatory
+                    ctrlScope.item.diags.dta = true; //mandatory
                     setMandatory('dta', true);
                 }
                 else {
                     toggleVisibility('dta', true);
-                    s.item.diags.dta = false;
+                    ctrlScope.item.diags.dta = false;
                     setMandatory('dta', false);
                 }
             }
@@ -219,29 +222,29 @@
                 //$log.debug('isSelling', isSelling());
                 if (departmentHasTermites() && isSelling()) {
                     //toggleVisibility('termites', true);
-                    s.item.diags.termites = true;
+                    ctrlScope.item.diags.termites = true;
                     setMandatory('termites', true);
                 }
                 else {
                     toggleVisibility('termites', false);
-                    s.item.diags.termites = false;
+                    ctrlScope.item.diags.termites = false;
                     setMandatory('termites', false);
                 }
             }
 
 
             function checkGazInstallationAnswer() {
-                if (_.includes(['Oui, Plus de 15 ans', 'Oui, Moins de 15 ans'], s.item.info.gasInstallation)) {
+                if (_.includes(['Oui, Plus de 15 ans', 'Oui, Moins de 15 ans'], ctrlScope.item.info.gasInstallation)) {
                     toggleVisibility('gaz', true);
-                    if (isSelling() && s.item.info.gasInstallation === 'Oui, Plus de 15 ans') {
-                        var buildingType = s.item.info.buildingType;
+                    if (isSelling() && ctrlScope.item.info.gasInstallation === 'Oui, Plus de 15 ans') {
+                        var buildingType = ctrlScope.item.info.buildingType;
                         if (buildingType != BUILDING_TYPE.COMMERCIAL) {
-                            s.item.diags.gaz = true;
+                            ctrlScope.item.diags.gaz = true;
                             setMandatory('gaz', true);
                         }
                     }
                     else {
-                        s.item.diags.gaz = false;
+                        ctrlScope.item.diags.gaz = false;
                         setMandatory('gaz', false);
                     }
                 }
@@ -253,18 +256,18 @@
 
 
             function checkElectricityAnswer() {
-                if (_.includes(['Plus de 15 ans', 'Moins de 15 ans'], s.item.info.electricityInstallation)) {
+                if (_.includes(['Plus de 15 ans', 'Moins de 15 ans'], ctrlScope.item.info.electricityInstallation)) {
                     toggleVisibility('electricity', true);
-                    if (isSelling() && s.item.info.electricityInstallation === 'Plus de 15 ans') {
-                        var buildingType = s.item.info.buildingType;
+                    if (isSelling() && ctrlScope.item.info.electricityInstallation === 'Plus de 15 ans') {
+                        var buildingType = ctrlScope.item.info.buildingType;
                         if (buildingType != BUILDING_TYPE.COMMERCIAL) {
-                            s.item.diags.electricity = true;
+                            ctrlScope.item.diags.electricity = true;
                             setMandatory('electricity', true);
                         }
 
                     }
                     else {
-                        s.item.diags.electricity = false;
+                        ctrlScope.item.diags.electricity = false;
                         setMandatory('electricity', false);
                     }
                 }

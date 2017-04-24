@@ -10,7 +10,7 @@
 		}
 
 		function handle(controller, action, payload) {
-			return MyPromise(function(resolve, err, emit) {
+			return $U.MyPromise(function(resolve, err, emit) {
 				server.ctrl(controller, action, payload).then(function(res) {
 					if (res.ok != undefined && res.ok == false) {
 						if (res.err && res.err.Code) {

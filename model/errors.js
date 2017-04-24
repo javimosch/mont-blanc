@@ -3,7 +3,7 @@ function createInvalidRequestErrorFor(field) {
         message: "La propriété " + field + " est requise dans le request",
         detail: "The follow field is required in the payload: " + field,
         code: 45
-    }
+    };
 }
 
 module.exports = {
@@ -14,4 +14,4 @@ module.exports = {
     },
     VALIDATE_FIELD_EMAIL: createInvalidRequestErrorFor('email'),
     VALIDATE_FIELD_IS_GUEST_ACCOUNT: createInvalidRequestErrorFor('isGuestAccount')
-}
+};

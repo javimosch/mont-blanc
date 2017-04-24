@@ -1,7 +1,7 @@
 /*global $U*/
 /*global angular*/
 /*global $*/
-/*global getHashParams*/
+
 /*global moment*/
 /*global _*/
 /*global localStorageDB*/
@@ -212,7 +212,7 @@ app.run(['$rootScope', '$location', '$window', '$log',
 app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(db, $timeout, r, appRouter, localData) {
     //console.info('app.common.root:run');
     $U.exposeGlobal('r', r);
-    r.getHashParams = getHashParams;
+    r.getHashParams = $U.getHashParams;
 
     r.debug = true;
 
@@ -306,16 +306,16 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(
     //
 
     /*Metadata is only persistent in booking pages except first page*/
-    if (appRouter.currentPath == '') {
-        r.sessionMetadata({
-            booking: {}
-        });
-    }
+    //if (appRouter.currentPath == '') {
+        //r.sessionMetadata({
+            //booking: {}
+        //});
+    //}
 
 
     r.logged = function() {
         var ss = r.session();
-        return ss._id && ss.email && ss.password != undefined;
+        return (ss._id && ss.email && ss.password != undefined) || false;
     };
 
 

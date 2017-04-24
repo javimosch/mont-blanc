@@ -20,13 +20,18 @@ angular.module('app').directive('compileHtml', ['$compile', function($compile) {
     };
 }]);
 
-angular.module('app').directive("bindHtmlCompile", ["$compile", function(compile) {
+angular.module('app').directive("bindHtmlCompile", ["$compile",'$log', function(compile, $log) {
     return {
         restrict: "A",
         link: function(s, el, attrs) {
             s.$watch(function() {
                 return s.$eval(attrs.bindHtmlCompile)
             }, function(e) {
+
+                if (!e || typeof e !== 'string') {
+                    return $log.warn('bindHtmlCompile require argument.');
+                }
+
                 el.html(e && e.toString());
                 var f = s;
                 if (attrs.bindHtmlScope) {

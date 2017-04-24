@@ -3,8 +3,8 @@
 /*global _*/
 /*global moment*/
 /*global $*/
-/*global getParameterByName*/
-/*global ifThenMessage*/
+
+
 /*global subTotal*/
 /*global openStripeModalPayOrder*/
 /*global $U*/
@@ -13,8 +13,8 @@
 /*global $D*/
 (function() {
     angular.module('app').controller('booking-iframe-controller', ['server',
-        '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'orderQueryParams', 'orderHelper',
-        function(db, $timeout, s, r, $uibModal, diagSlots, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, orderQueryParams, orderHelper) {
+        '$timeout', '$scope', '$rootScope', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'orderQueryParams', 'orderHelper',
+        function(db, $timeout, s, r, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, orderQueryParams, orderHelper) {
 
             s.warningMsg = (msg, delay) => {
                 r.warningMessage(msg, delay);
@@ -169,7 +169,7 @@
             s.validateQuestions = validateQuestions;
 
             function validateQuestions(cb, err) {
-                ifThenMessage([
+                $U.ifThenMessage([
                     [s.item.info.buildingState, '==', undefined, MESSAGES.ANSWER_SELL_OR_RENT],
                     [s.item.info.buildingType, '==', undefined, MESSAGES.ANSWER_APPARTAMENT_OR_MAISON],
                     [s.item.info.squareMeters, '==', undefined, "Répondre Superficie"],

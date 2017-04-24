@@ -66,7 +66,7 @@
             _settings: settings,
             set: function(_settings) {
                 Object.assign(settings, _settings);
-                //$log.debug('orderPrice setting is now ', settings);
+                //$log.debug('orderPrice setting is now ', _.clone(settings));
             },
             getDayModifierPercentage: function(percentages, date) {
                 if (isTodaySaturday(date)) {
@@ -251,6 +251,7 @@
                 //$log.debug('prices are set',object);
             }
         };
+        $U.exposeGlobal('op',self);
         return self;
     });
 })();

@@ -13,14 +13,14 @@ angular.module('app').directive('toggleClick', function($rootScope, $timeout, $c
             }
 
             el.on('click', () => {
-                val(dataValue);
+                setVal(dataValue);
             });
 
             //first time
-            $rootScope.$emit(attrs.toggleValue + '-changed', val());
+            $rootScope.$emit(attrs.toggleValue + '-changed', setVal());
 
 
-            function val(value) {
+            function setVal(value) {
                 var ss = scope;
                 var split = attrs.toggleValue.split('.');
                 var last = split[split.length - 1];

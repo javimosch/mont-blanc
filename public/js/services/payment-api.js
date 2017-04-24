@@ -9,14 +9,14 @@
 		}
 		var self = {
 			payOrder: function(data) {
-				return MyPromise(function(resolve, err, emit) {
+				return $U.MyPromise(function(resolve, err, emit) {
 					return backendApi.payOrder(data).then(function(res) {
 						resolve(res.ok, res);
 					}).error(err).on('validate', (msg) => emit('validate', msg));
 				});
 			},
 			moneyInWithCardId: function(data) {
-				return MyPromise(function(resolve, err, emit) {
+				return $U.MyPromise(function(resolve, err, emit) {
 					lemonwayApi.moneyInWithCardId(data).then(function(res) {
 							if (res.ok && res.result) {
 								if (res.result.TRANS.HPAY.STATUS == '3') {
@@ -36,7 +36,7 @@
 				});
 			},
 			registerUserWallet: function(user) {
-				return MyPromise(function(resolve, err, emit) {
+				return $U.MyPromise(function(resolve, err, emit) {
 
 					if (user._wallet) {
 						return emit('validate', 'User already has a wallet');

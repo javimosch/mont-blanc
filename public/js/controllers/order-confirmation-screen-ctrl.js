@@ -2,8 +2,8 @@
 /*global $D*/
 /*global $U*/
 angular.module('app').controller('orderConfirmation', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal', 'diagSlots', '$log',
-    function(db, $timeout, s, r, $uibModal, diagSlots, $log) {
+    '$timeout', '$scope', '$rootScope', '$uibModal', '$log',
+    function(db, $timeout, s, r, $uibModal, $log) {
 
         createProperties();
         if (hasValidProperties()) {

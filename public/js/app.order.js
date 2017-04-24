@@ -10,8 +10,8 @@
 
     app.controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'diagSlots', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi', 'localData',
-        function(db, s, r, params, diagSlots, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData) {
+        'server', '$scope', '$rootScope', '$routeParams', 'rdvSlotService', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi', 'localData',
+        function(db, s, r, params, rdvSlotService, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData) {
             r.setCurrentCtrl(s);
 
 
@@ -279,7 +279,7 @@
                     return "/img/icons/icon_"+k+'.png';
                 };
 
-                s.diagSlots = diagSlots(s, s.item);
+                s.diagSlots = rdvSlotService(s, s.item);
 
                 s.__rdvInit = false;
 
