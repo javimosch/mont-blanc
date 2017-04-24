@@ -8,18 +8,18 @@ srv.config(['$routeProvider', '$locationProvider',
 
         /*BOOKING*/
         when('/', {
-            templateUrl: 'views/diags/booking/booking-1-home.html'
+            templateUrl: 'views/booking/booking-welcome.html'
         }).
         when('/home', {
-            templateUrl: '/views/diags/booking/booking-1-home.html'
+            templateUrl: '/views/booking/booking-welcome.html'
         }).
 
 
         when('/choix-diagnostics', {
-            templateUrl: 'views/diags/booking/booking-2-diags-selection.html'
+            templateUrl: 'views/booking/booking-cards-selection.html'
         }).
         when('/rendez-vous', {
-            templateUrl: 'views/diags/booking/booking-3-date-selection.html'
+            templateUrl: 'views/booking/booking-rdv.html'
         }).
         when('/connexion', {
             templateUrl: 'views/diags/booking/booking-4-connection.html'
@@ -46,7 +46,7 @@ srv.config(['$routeProvider', '$locationProvider',
             templateUrl: 'views/diags/booking/booking-5-inscription.html'
         }).
         when('/payment', {
-            templateUrl: 'views/diags/booking/booking-6-payment.html'
+            templateUrl: 'views/booking/booking-payment.html'
         }).
         when('/order-confirm', {
             templateUrl: 'views/diags/booking/order-confirmation-screen.html'
