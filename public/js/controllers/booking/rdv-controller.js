@@ -21,7 +21,7 @@
                 Object.assign($scope, appSettings.localData); //patch scope with local data
                 $scope.settings = appSettings.databaseSettings; //patch scope with remote settings
                 
-                $log.info('rdv slots start with booking data',_.clone($scope.item));
+                //$log.info('rdv slots start with booking data',_.clone($scope.item));
                 
                 //Initialize slots
                 $scope.diagSlots.init(undefined, {

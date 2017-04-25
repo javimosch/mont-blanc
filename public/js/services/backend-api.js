@@ -58,7 +58,7 @@
                 else {
                     var cacheItem = getValue(_hash);
                     if (!cacheItem && _cache[_hash]) {
-                        $log.debug('Cache ', _hash, 'is expired ');
+                        //$log.debug('Cache ', _hash, 'is expired ');
                         delete _cache[_hash];
                     }
                     if (cacheItem) {

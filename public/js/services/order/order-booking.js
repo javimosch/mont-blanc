@@ -17,7 +17,7 @@
 
         self.navigate = (url, bookingDetails, params) => {
             //function changeRoutePreserveBookingDetails(url, bookingDetails, delay, params) {
-            $log.info('navigate to ', url);
+            //$log.info('navigate to ', url);
             self.resume();
             appRouter.params(params);
             orderHelper.setBookingDetails(bookingDetails);

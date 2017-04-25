@@ -417,7 +417,7 @@ srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '
     $.ajax("/serverURL").then(function(r) {
         URL = r.URL; //updates serverURL from express (node env serverURL);
         $U.emitPreserve('server-up');
-        $log.info('serverURL', URL);
+        //$log.info('serverURL', URL);
     });
 
     $.ajax("/serverRawURL").then(function(r) {

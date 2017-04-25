@@ -60,8 +60,7 @@ function numberBetween(n, min, max) {
 }
 
 function expose(path, v) {
-    if (window.r && window.r.isDevEnv && !window.r.isDevEnv()) return;
-    setVal(window, path, v);
+    exposeGlobal(path, v);
 }
 
 function setVal(obj, propertyPath, _v) {
@@ -776,7 +775,7 @@ if (typeof exports !== 'undefined') {
 }
 else {
     window.$U = {
-        waitForProperties:waitForProperties,
+        waitForProperties: waitForProperties,
         exposeGlobal: exposeGlobal,
         dateRangeOverlaps: dateRangeOverlaps,
         readJSONSync: readJSONSync,
