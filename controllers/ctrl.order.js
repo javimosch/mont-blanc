@@ -625,9 +625,10 @@ function saveWithEmail(data, cb) {
 }
 
 function afterSave(data) {
+    
 
-    if (!data._id) {
-        dbLogger.setSaveData(data);
+    if (!data || !data._id) {
+        dbLogger.setSaveData(data || {});
         dbLogger.errorSave('afterSave expects order data field (_id)');
     }
 
