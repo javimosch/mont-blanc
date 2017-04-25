@@ -13,28 +13,49 @@ module.exports = {
     name: name,
     interval: 1000 * 60 * 30, //each 30 minutes
     handler: handler,
-    runAtStartup: false,
+    runAtStartup: true,
     runAtStartup: 1000,
 };
 
+
+var _logger;
+
+function Logger() {
+    if (_logger) return _logger;
+    _logger = ctrl('Log').createLogger({
+        name: "AUTOMATED-TASK",
+        category: "CLEAN-ORDERS"
+    });
+    return _logger;
+}
+
 function handler(data, cb) {
-    //console.log('remove-unpaid-orders', 'start');
+    Logger().debug('remove-unpaid-orders', 'start');
     //
     var Order = ctrl('Order');
     Order.getAll({
-        status: "created"
+        status: "created",
+        __populate: {
+            _client: "email"
+        }
     }, (err, orders) => {
-        //console.log('bs debug task orders get-all success', !err);
-        if (err) return LogSave(name + " error", err);
+        if (err) return Logger().error(err);
+        //Logger().debug('get-all success', orders && orders.length);
         orders.forEach(_order => {
-           // console.log('bs debug task order id', _order._id);
-            if (Date.now() - new Date(_order.createdAt) > 1000 * 60 * 60 * 48) {
-                //console.log('bs debug task order remove');
+            //Logger().debug('order id', _order._id, _order._client.email);
+
+            var ownerIsBot = _order._client.email.indexOf('bookingbot') !== -1;
+            var normalCondition = Date.now() - new Date(_order.createdAt) > 1000 * 60 * 60 * 48;
+            var bookingWithBotCondition = Date.now() - new Date(_order.createdAt) > 1000 * 60 * 5;
+            var deleteCondition = ownerIsBot ? bookingWithBotCondition : normalCondition;
+
+            if (deleteCondition) {
+                //Logger().debug('order remove');
                 Order.remove(_order, (err) => {
-                    //console.log('bs debug task order remove success', !err);
+                    //Logger().debug('remove success', !err);
                     if (err) return LogSave(name + " error", err);
 
-                    LogSave('Unpaid order removed.', _order, 'info');
+                    Logger().debug('Unpaid order removed.', _order.address, ownerIsBot ? "(Booking bot)" : "");
                 });
             }
         })
