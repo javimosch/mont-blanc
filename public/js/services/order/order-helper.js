@@ -34,7 +34,7 @@
                 diagIsAutoentrepreneur: data._diag && data._diag.isAutoentrepreneur,
                 buildingType: data.info.buildingType,
                 modifiersPercentages: remoteSettings.pricePercentageIncrease,
-                squareMetersPrice: remoteSettings.metadata.squareMetersPrice,
+                squareMetersPrice: localData.squareMetersPrice,//remoteSettings.metadata.squareMetersPrice,
                 squareMeters: data.info.squareMeters,
                 clientDiscountPercentage: data._client.discount,
                 departmentMultipliers: remoteSettings.metadata.departmentMultipliers,
