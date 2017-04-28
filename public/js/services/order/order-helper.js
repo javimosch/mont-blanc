@@ -62,7 +62,7 @@
                     }
                 }
                 else {
-                    $log.warn('Existing order has no _id');
+                    $log.warn('Invalid cached order. Using booking cache');
                 }
 
                 //validations
@@ -188,6 +188,11 @@
             var m = localSession.getMetadata();
             return m && m._order || {};
         };
+        self.clearCache = ()=>{
+            localSession.setMetadata({
+                _order: {}
+            });  
+        };
 
         self.getDiagAccountDescription = (data) => {
             if (!data || !data._diag || !data._diag.firstName) return '';
@@ -211,9 +216,9 @@
             return $U.MyPromise(function(resolve, reject, emit) {
                 //At welcome page, we reset order data (if there is an existing order, we keep it separately)
                 if (appRouter.currentPath == '') {
-                    $rootScope.sessionMetadata({
+                    /*$rootScope.sessionMetadata({
                         _order: {}
-                    });
+                    });*/
                     return resolve();
                 }
 

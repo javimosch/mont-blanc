@@ -1,0 +1,10 @@
+<div class="modal-header">
+    <h3 class="modal-title" ng-bind="data.title||'Confirmation'"></h3>
+</div>
+<div class="modal-body">
+    Votre commande n'est pas finalisée. Souhaitez-vous annuler ou confirmer le RDV
+</div>
+<div class="modal-footer">
+    <button class="btn diags-btn bg-azure-radiance" type="button" ng-click="resolve(false)">Annuler</button>
+    <button class="btn diags-btn bg-azure-radiance" type="button" ng-click="resolve(true)">Confirmer</button>
+</div>

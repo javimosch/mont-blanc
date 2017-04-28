@@ -372,6 +372,9 @@ function save(data, cb, customRequiredKeys) {
         actions.createUpdate(data, (err, r) => {
             if (err) return cb(err, r);
             cb(err, r);
+            
+            if(!r) return dbLogger.warn('Save createUpdate returns null for order data',data);
+            
             ////
             ///Notifications (async)
             actions.log('save:orderPopulate=' + r._id);
@@ -629,7 +632,8 @@ function afterSave(data) {
 
     if (!data || !data._id) {
         dbLogger.setSaveData(data || {});
-        dbLogger.errorSave('afterSave expects order data field (_id)');
+        dbLogger.error('afterSave expects order data field (_id)');
+        return data;
     }
 
     ctrl('Order').get({

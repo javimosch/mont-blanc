@@ -20,7 +20,7 @@ angular.module('app').directive('compileHtml', ['$compile', function($compile) {
     };
 }]);
 
-angular.module('app').directive("bindHtmlCompile", ["$compile",'$log', function(compile, $log) {
+angular.module('app').directive("bindHtmlCompile", ["$compile", '$log', function(compile, $log) {
     return {
         restrict: "A",
         link: function(s, el, attrs) {
@@ -1119,80 +1119,90 @@ angular.module('app').directive('modalCustom', function($rootScope, $timeout, $c
         link: function(s, elem, attrs) {
             //if (!attrs.templateUrl) throw Error('modalCustom attr templateUrl required.');
             s.open = function(opt, confirmCallback) {
-                opt = opt || {};
-                var message = '';
-                if (typeof opt === 'string') {
-                    message = opt;
-                }
-                else {
-                    message = opt.message || '';
-                }
-                var uibModalOptions = {
-                    animation: true,
-                    templateUrl: opt.templateUrl || attrs.templateUrl,
-                    controller: function($scope, $uibModalInstance) {
-                        $rootScope._modalScope = $scope;
-                        $scope.data = opt.data;
+                return $U.MyPromise(function(resolve, err, emit) {
 
-                        $scope.response = {}; //response payload
+                    opt = opt || {};
+                    var message = '';
+                    if (typeof opt === 'string') {
+                        message = opt;
+                    }
+                    else {
+                        message = opt.message || '';
+                    }
+                    var uibModalOptions = {
+                        animation: true,
+                        templateUrl: opt.templateUrl || attrs.templateUrl,
+                        controller: function($scope, $uibModalInstance) {
+                            $rootScope._modalScope = $scope;
+                            $scope.data = opt.data;
 
-                        if (opt.helpers) {
-                            for (var x in opt.helpers) {
-                                if (x == 'withScope') {
-                                    opt.helpers[x]($scope);
-                                    continue;
+                            $scope.response = {}; //response payload
+
+                            if (opt.helpers) {
+                                for (var x in opt.helpers) {
+                                    if (x == 'withScope') {
+                                        opt.helpers[x]($scope);
+                                        continue;
+                                    }
+                                    $scope[x] = opt.helpers[x];
                                 }
-                                $scope[x] = opt.helpers[x];
+
                             }
 
-                        }
+                            $scope.message = message;
 
-                        $scope.message = message;
+                            $scope.messageEl = opt.messageEl || null;
 
-                        $scope.messageEl = opt.messageEl || null;
+                            $scope.resolve = function(res){
+                                if (!opt.remainOpen) {
+                                    $uibModalInstance.close();
+                                }
+                                resolve.call($scope,res);
+                            };
 
+                            $scope.yes = function() {
 
-                        $scope.yes = function() {
+                                if (!opt.remainOpen) {
+                                    $uibModalInstance.close();
+                                }
 
-                            if (!opt.remainOpen) {
-                                $uibModalInstance.close();
+                                if (confirmCallback) {
+                                    if (opt.remainOpen == true) {
+
+                                        var closeFn = () => {
+                                            $uibModalInstance.close();
+                                        };
+
+                                        confirmCallback($scope.response, closeFn);
+                                    }
+                                    else {
+                                        confirmCallback($scope.response);
+                                    }
+                                }
+                            };
+                            $scope.cancel = function() {
+                                $uibModalInstance.dismiss('cancel');
+                            };
+
+                            if (opt.backdrop != undefined && opt.backdrop != 'static') {
+                                $rootScope.dom(function() {
+                                    $('.modal-backdrop').on('click', function() {
+                                        $uibModalInstance.dismiss('cancel');
+                                    });
+                                }, 1000);
                             }
 
-                            if (confirmCallback) {
-                                if (opt.remainOpen == true) {
+                            $U.expose('modalCustom', $scope);
+                        },
+                    };
+                    if (opt.backdrop != undefined) uibModalOptions.backdrop = opt.backdrop;
+                    if (opt.windowTopClass) uibModalOptions.windowTopClass = opt.windowTopClass;
 
-                                    var closeFn = () => {
-                                        $uibModalInstance.close();
-                                    };
-
-                                    confirmCallback($scope.response, closeFn);
-                                }
-                                else {
-                                    confirmCallback($scope.response);
-                                }
-                            }
-                        };
-                        $scope.cancel = function() {
-                            $uibModalInstance.dismiss('cancel');
-                        };
-
-                        if (opt.backdrop != undefined && opt.backdrop != 'static') {
-                            $rootScope.dom(function() {
-                                $('.modal-backdrop').on('click', function() {
-                                    $uibModalInstance.dismiss('cancel');
-                                });
-                            }, 1000);
-                        }
-
-                        $U.expose('modalCustom', $scope);
-                    },
-                };
-                if (opt.backdrop != undefined) uibModalOptions.backdrop = opt.backdrop;
-                if (opt.windowTopClass) uibModalOptions.windowTopClass = opt.windowTopClass;
-
-                var modalInstance = $uibModal.open(uibModalOptions);
+                    var modalInstance = $uibModal.open(uibModalOptions);
 
 
+
+                });
             };
         }
     };
