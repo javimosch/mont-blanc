@@ -2,18 +2,18 @@
     /*global angular*/
     angular.module('app').run(function(backendApi, $rootScope, $log, localSession, orderHelper, appRouter) {
         appRouter.onChange((currentPath, nextPath) => {
-            $log.info('resume-booking', 'routing', currentPath, nextPath);
+           // $log.info('resume-booking', 'routing', currentPath, nextPath);
 
             var paymentRoute = 'payment';
             if (nextPath !== paymentRoute) {
                 //There is a valid order in cache ?
                 var order = orderHelper.getFromSession();
                 if (order && order._id) {
-                    $log.info('There is a valid order in cache');
+                    //$log.info('There is a valid order in cache');
 
 
                     $rootScope.openModal({
-                        backdrop: true, //disables close on click
+                        backdrop: 'static', //disables close on click
                         templateUrl: 'views/modals/resume-booking-modal.html',
                     }).then((resume) => {
                         if(resume){
@@ -29,14 +29,14 @@
 
                 }
                 else {
-                    $log.info('There is not a valid order', order);
+                   // $log.info('There is not a valid order', order);
                 }
             }
             else {
-                $log.info('resume-booking', 'route not satisfied', currentPath, nextPath);
+               // $log.info('resume-booking', 'route not satisfied', currentPath, nextPath);
             }
 
-            $log.info('resume-booking', 'Check end');
+            //$log.info('resume-booking', 'Check end');
 
         });
     });

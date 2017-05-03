@@ -1108,7 +1108,7 @@ angular.module('app').directive('myAlerts', function($rootScope, $timeout, $comp
     };
 });
 
-angular.module('app').directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal) {
+angular.module('app').directive('modalCustom', function($rootScope, $timeout, $compile, $uibModal, $log) {
     return {
         restrict: 'AE',
         replace: true,
@@ -1153,11 +1153,11 @@ angular.module('app').directive('modalCustom', function($rootScope, $timeout, $c
 
                             $scope.messageEl = opt.messageEl || null;
 
-                            $scope.resolve = function(res){
+                            $scope.resolve = function(res) {
                                 if (!opt.remainOpen) {
                                     $uibModalInstance.close();
                                 }
-                                resolve.call($scope,res);
+                                resolve.call($scope, res);
                             };
 
                             $scope.yes = function() {
@@ -1192,12 +1192,19 @@ angular.module('app').directive('modalCustom', function($rootScope, $timeout, $c
                                 }, 1000);
                             }
 
-                            $U.expose('modalCustom', $scope);
+                            $U.exposeGlobal('cm', $scope);
                         },
                     };
                     if (opt.backdrop != undefined) uibModalOptions.backdrop = opt.backdrop;
                     if (opt.windowTopClass) uibModalOptions.windowTopClass = opt.windowTopClass;
 
+                    if (opt.backdrop === 'static') {
+                        uibModalOptions.keyboard = false;
+                        uibModalOptions.closeByEscape = false;
+                    }
+
+
+                    $log.info('uibModalOptions', _.clone(uibModalOptions));
                     var modalInstance = $uibModal.open(uibModalOptions);
 
 
