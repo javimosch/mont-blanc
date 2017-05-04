@@ -14,6 +14,8 @@
 angular.module('app').controller('client-area-controller', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter',
     function(db, $timeout, s, r, $uibModal, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter) {
+        
+        $U.exposeGlobal('s',s);
 
         s._user = r.sessionMetadata()._user || {};
         s.auth = {};
@@ -30,12 +32,51 @@ angular.module('app').controller('client-area-controller', ['server',
             });
         };
 
+
+        s.isClientLandlord = () => s._user.userType === 'client' && s._user.clientType === 'landlord';
+        s.showInputFirstName = () => {
+            if (s.isClientLandlord() && s._user.legalStatus === '1') {
+                return false; //indivision
+            }
+            else {
+                return true;
+            }
+        };
+        s.showInputSiret = s.showInputCompayName = () => {
+            if (s.isClientLandlord() && s._user.legalStatus !== '0') {
+                return false; //Indivision, physic
+            }
+            else {
+                return true;
+            }
+        };
+        s.addressPlaceholder = () => {
+            if (s.isClientLandlord() && s._user.legalStatus == '2') {
+                return "Adresse résidence principale"; //physic
+            }
+            else {
+                return "Votre adresse";
+            }
+        };
+
         function changeRoute(url, delay) {
             r.sessionMetadata({
                 _user: s._user
             }, true);
             r.route(url, delay);
         }
+        
+        s.selectMoralAuthority = ()=>{
+            if(!s._user.email) return s.warningMsg(appText.VALIDATE_CLIENT_EMAIL);
+            if(!s._user.password) return s.warningMsg(appText.VALIDATE_CLIENT_PASS);
+            if(!s._user.legalStatus) return s.warningMsg(appText.VALIDATE_CLIENT_LEGAL_STATUS);
+            
+            changeRoute(r.URL.ACCOUNT_DETAILS);
+        };
+        s.backToMoralAuthority = ()=>{
+            changeRoute('client-account-choice');
+        };
+        
         s.validateAuthInput = function(cb) {
             $U.ifThenMessage([
                 [!s.auth.email, '==', true, appText.VALIDATE_CLIENT_EMAIL],
@@ -50,7 +91,13 @@ angular.module('app').controller('client-area-controller', ['server',
             }, cb);
 
         }
-        s.subscribeMode = (clientType) => s.subscribe(clientType, r.URL.ACCOUNT_DETAILS);
+        s.subscribeMode = (clientType) => {
+            var nextRoute = r.URL.ACCOUNT_DETAILS;
+            if(clientType === 'landlord'){
+                nextRoute = 'client-account-choice';
+            }
+            s.subscribe(clientType, nextRoute);
+        }
         s.subscribe = (clientType, nextRoute, useAuthCredentials) => {
             useAuthCredentials = useAuthCredentials == undefined ? true : useAuthCredentials;
             if (useAuthCredentials) {
@@ -82,6 +129,7 @@ angular.module('app').controller('client-area-controller', ['server',
                     s._user.email = s.auth.email;
                     s._user.password = s.auth.pass;
                 }
+                s._user.userType = "client";
                 s._user.clientType = clientType;
                 s._user.__subscribeMode = true;
                 changeRoute(nextRoute);

@@ -34,10 +34,10 @@
                         Leave the password field blank to convert this account into a guess account.
                     </div>
                 </div>
-                <div class="row margin-top-one">
+                <div class="row margin-top-one" ng-show="showInputFirstName()">
                     <label>Prénom</label>
                 </div>
-                <div class="row  margin-top-half">
+                <div class="row  margin-top-half" ng-show="showInputFirstName()">
                     <input ng-disabled="state.working()" ng-model="item.firstName" class="diags-input" placeholder="prénom">
                 </div>
                 <div class="row margin-top-one">
@@ -83,7 +83,7 @@
                     <label>Adresse</label>
                 </div>
                 <div class="row  margin-top-half">
-                    <input ng-disabled="state.working()" type="text" data-address model="item" field="address" placeholder="Street Address" city="city" department="department" region="region" country="country" post-code="postCode" class="diags-input fullwidth max-w-500">
+                    <input ng-disabled="state.working()" type="text" data-address model="item" field="address" placeholder="{[{addressPlaceholder()}]}" city="city" department="department" region="region" country="country" post-code="postCode" class="diags-input fullwidth max-w-500">
                 </div>
                 <div class="row margin-top-one">
                     <label>Ville</label>
@@ -110,17 +110,17 @@
                     <input ng-disabled="state.working()" ng-model="item.country" class="diags-input" placeholder="Pays">
                 </div>
 
-                <div class="row margin-top-one">
+                <div class="row margin-top-one" ng-show="showInputCompayName()">
                     <label>Raison sociale</label>
                 </div>
-                <div class="row  margin-top-half">
+                <div class="row  margin-top-half" ng-show="showInputCompayName()">
                     <input ng-disabled="state.working()" ng-model="item.companyName" class="diags-input" placeholder="Raison sociale">
                 </div>
 
-                <div class="row margin-top-one">
+                <div class="row margin-top-one" ng-show="showInputSiret()">
                     <label>Siret</label>
                 </div>
-                <div class="row  margin-top-half">
+                <div class="row  margin-top-half" ng-show="showInputSiret()">
                     <input ng-disabled="state.working()" ng-model="item.siret" class="diags-input" placeholder="Siret">
                 </div>
                 <div class="row margin-top-one">
@@ -140,6 +140,17 @@
                     <option value='enterprise'>Enterprise</option>
                     <option value='other'>Other</option>
                     <!--agency', 'enterprise', 'landlord', 'other'-->
+                </select>
+                </div>
+
+                <div class="row margin-top-one" ng-show="userIs('admin')">
+                    <label>Moral authority</label>
+                </div>
+                <div class="row  margin-top-half" ng-show="isClientLandlord()">
+                    <select ng-disabled="state.working() || !isClientLandlord()" ng-model="item.legalStatus" class="max-w-150 diags-input">
+                    <option value='0'>Personne Moral</option>
+                    <option value='1'>Indivision</option>
+                    <option value='2'>Personne physique</option>
                 </select>
                 </div>
 

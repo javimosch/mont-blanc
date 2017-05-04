@@ -1,0 +1,62 @@
+<!--COMPILE_WITH_HANDLEBARS-->
+<div class="diags-bg" ng-controller="client-area-controller">
+    <div class="diags-content container diags-selection padding-none">
+        <div class="row diags-bg-block-40 hidden-xs"></div>
+
+        <div class="row diag-row margin-top-two">
+            <div class="col-xs-12 col-sm-12 col-md-6  min-md-padding-none margin-top-one">
+                <div class="row-fluid diags-form-wrapper">
+                    <div class="diags-form">
+                        <div class="row">
+                            <i class="fa fa-chevron-right fnt-18"><span class="title margin-left-quarter">Inscription</span></i>
+                        </div>
+                        <div class="row margin-top-quarter min-md-padding-top-one-and-half">
+                            <p class="label">Vos coordonnées</p>
+                        </div>
+
+                        <div class="row margin-top-one">
+                            <input ng-model="_user.email" class="diags-input" placeholder="Adresse email">
+                        </div>
+                        <div class="row margin-top-half">
+                            <input ng-model="_user.password" type="password" class="diags-input" placeholder="Mot de passe">
+                        </div>
+                        <div class="row margin-top-one">
+                            <div class="padding-none col-xs-12 col-sm-12">
+                                <pretty-radio color="blue" value="'0'" ng-change="onCardTypeChange()" ng-model="_user.legalStatus" label="'Personne Moral'"></pretty-radio>
+                            </div>
+                            <div class="padding-none col-xs-12 col-sm-12">
+                                <pretty-radio color="blue" value="'1'" ng-change="onCardTypeChange()" ng-model="_user.legalStatus" label="'Indivision'"></pretty-radio>
+                            </div>
+                            <div class="padding-none col-xs-12 col-sm-12">
+                                <pretty-radio color="blue" value="'2'" ng-change="onCardTypeChange()" ng-model="_user.legalStatus" label="'Personne physique'"></pretty-radio>
+                            </div>
+                        </div>
+                        <div class="row margin-top-one">
+                            <button ng-click="selectMoralAuthority()" class="btn btn-xl bg-madison">Continuer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row diag-row margin-top-three padding-bottom-two">
+            <div class="col-md-12 ">
+                <div ng-include="'/views/diags/booking/partials/booking-diags-icons.html'" includeReplace></div>
+            </div>
+        </div>
+        <div class="row diag-row margin-top-one padding-bottom-two">
+            <div class="col-md-12 ">
+                <p class="stripe-message">
+                    <span class="fnt-30 text-top">*</span>
+                    <span class="">
+                        <out class="inline-childs-divs" dynamic-block code="BOOKING_STRIPE_TEXT">
+                                        {{{text.BOOKING_STRIPE_TEXT}}}
+                        </out>
+                    </span>
+                </p>
+            </div>
+        </div>
+        <div class="row diags-bg-block-40 hidden-xs"></div>
+    </div>
+</div>

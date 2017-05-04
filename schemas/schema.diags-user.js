@@ -71,6 +71,10 @@ module.exports = {
         },
 
         //CLIENT
+        legalStatus: {
+            type: String, //(0 morale,1 indivision,2 physic)
+            default: '0'
+        },
         clientType: {
             type: String
         }, //(landlord / agency / Foncière)

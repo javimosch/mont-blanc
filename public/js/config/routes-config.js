@@ -36,6 +36,9 @@ srv.config(['$routeProvider', '$locationProvider',
             templateUrl: 'views/diags/booking/booking-espace-diagnostiqueur.html'
         }).
 
+        when('/client-account-choice', {
+            templateUrl: 'views/client-account-choice.html'
+        }).
         when('/account-details', {
             templateUrl: 'views/diags/booking/booking-inscription-details.html'
         }).
@@ -231,7 +234,7 @@ srv.config(['$routeProvider', '$locationProvider',
 
                 if (page.template) {
                     html = window.decodeURIComponent(page.template).replace('__HTML__', window.decodeURIComponent(page.content));
-                   // console.log('DEBUG ', page.url, html.length, page.template.length);
+                    // console.log('DEBUG ', page.url, html.length, page.template.length);
                 }
                 else {
                     html = window.decodeURIComponent(page.content);

@@ -34,6 +34,7 @@
             /*CLIENT*/
             VALIDATE_CLIENT_EMAIL: 'Email c&#39;est obligatoire.',
             VALIDATE_CLIENT_PASS: "Password c&#39;est obligatoire.",
+            VALIDATE_CLIENT_LEGAL_STATUS: 'Autorité morale c&#39;est obligatoire.',
             VALIDATE_CLIENT_MOBILE_NUMBER: "Mobile c&#39;est obligatoire",
             VALIDATE_CLIENT_ADDRESS: "Adresse c&#39;est obligatoire",
             VALIDATE_CLIENT_SIRET: 'Siret c&#39;est obligatoire.',

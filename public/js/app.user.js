@@ -106,6 +106,31 @@
             };
 
 
+            s.showInputFirstName = () => {
+                if (s.isClientLandlord() && s.item.legalStatus === '1') {
+                    return false;//indivision
+                }
+                else {
+                    return true;
+                }
+            };
+            s.showInputSiret = s.showInputCompayName = () => {
+                if (s.isClientLandlord() && s.item.legalStatus !== '0') {
+                    return false;//Indivision, physic
+                }
+                else {
+                    return true;
+                }
+            };
+            s.addressPlaceholder = () => {
+                if (s.isClientLandlord() && s.item.legalStatus == '2') {
+                    return "Adresse résidence principale";//physic
+                }
+                else {
+                    return "Adresse";
+                }
+            };
+
 
             s.cancel = function() {
                 s.back();
