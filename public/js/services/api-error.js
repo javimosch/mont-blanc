@@ -12,6 +12,12 @@
             for(var name in errors){
                 props.isEqual[name]= errors[name].code == error.code;
             }
+            props.isKnown = function(){
+              for(var x in errors){
+                  if(errors[x].code == error.code) return true;
+              }
+              return false;
+            };
             return props;
         };
 

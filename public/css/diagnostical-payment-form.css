@@ -10,7 +10,24 @@
     margin-right:0px!important;
 }
 
+.order-quote-form-modal {
+    max-width: 500px;
+    margin: 0 auto;
+    overflow-x: hidden!important;
+    overflow-y: auto;
+}
+
+.order-quote-form-modal .row{
+    margin-left:0px!important;
+    margin-right:0px!important;
+}
+
 .payment-form__title {
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.quote-form__title {
     text-align: center;
     font-size: 1.5em;
 }

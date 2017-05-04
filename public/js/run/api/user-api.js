@@ -13,7 +13,8 @@
                             return resolve(res);
                         }
                     }).error(reject)
-                    .on('validate', (m) => emit('validate', m));
+                    .on('validate', (m) => emit('validate', m))
+                    .on('validate:error', (m) => emit('validate:error', m));
             };
         }
 
@@ -41,7 +42,8 @@
                         resolve(res);
                         localSession.update();
                     }).error(reject)
-                    .on('validate', (m) => emit('validate', m));
+                    .on('validate', (m) => emit('validate', m))
+                    .on('validate:error', (m) => emit('validate:error', m));
             },
         });
 

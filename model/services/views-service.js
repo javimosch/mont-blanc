@@ -115,10 +115,10 @@ module.exports = {
             }).then((html) => {
                 if (html.indexOf('<!--COMPILE_WITH_HANDLEBARS-->') !== -1) {
                     try {
-                        compilerLogger.log('Compiling view file ', fileName,html.length);
+                        //compilerLogger.log('Compiling view file ', fileName,html.length);
                         var compiledHTML = Handlebars.compile(html)(context);
                         compiledHTML = minifyResponse(compiledHTML);
-                        compilerLogger.log('Compiled view file ', fileName,compiledHTML.length);
+                        //compilerLogger.log('Compiled view file ', fileName,compiledHTML.length);
                         resolve(compiledHTML);
                     }
                     catch (err) {

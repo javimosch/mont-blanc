@@ -47,6 +47,7 @@ var NOTIFICATION = {
     CLIENT_ORDER_CREATED: 'CLIENT_ORDER_CREATED',
     CLIENT_ORDER_PAYMENT_SUCCESS: 'CLIENT_ORDER_PAYMENT_SUCCESS',
     CLIENT_ORDER_DELEGATED: 'CLIENT_ORDER_DELEGATED',
+    CLIENT_ORDER_QUOTATION:'CLIENT_ORDER_QUOTATION',
 
     DIAG_DIAG_ACCOUNT_ACTIVATED: 'DIAG_DIAG_ACCOUNT_ACTIVATED',
     DIAG_DIAG_ACCOUNT_CREATED: 'DIAG_DIAG_ACCOUNT_CREATED',
@@ -80,7 +81,7 @@ function LogSave(msg, type, data) {
 }
 
 function trigger(name, data, cb) {
-    triggerLogger.debug(name, 'Start');
+    //triggerLogger.debug(name, 'Start');
     if (!name) return cb && cb("name required");
     if (!NOTIFICATION[name]) {
         dbLogger.warnSave('Not found', name);

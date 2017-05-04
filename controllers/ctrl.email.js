@@ -59,6 +59,7 @@ var EXPORT_ACTIONS = {
     CLIENT_CLIENT_NEW_ACCOUNT: CLIENT_CLIENT_NEW_ACCOUNT,
     CLIENT_ORDER_DELEGATED: CLIENT_ORDER_DELEGATED,
     CLIENT_ORDER_PAYMENT_SUCCESS: CLIENT_ORDER_PAYMENT_SUCCESS,
+    CLIENT_ORDER_QUOTATION: CLIENT_ORDER_QUOTATION,
 
     DIAG_DIAG_ACCOUNT_ACTIVATED: DIAG_DIAG_ACCOUNT_ACTIVATED,
     DIAG_DIAG_ACCOUNT_CREATED: DIAG_DIAG_ACCOUNT_CREATED,
@@ -151,34 +152,44 @@ function saveNotificationAndSendEmail(opt, resCb) {
             _send(_notification);
         });
     }
+
     function _handleError(err) {
         emailTriggerLogger.setSaveData({
-            code:ERROR.DATABASE_ISSUE_CODE,
-            message:ERROR.DATABASE_ISSUE,
-            detail:err
+            code: ERROR.DATABASE_ISSUE_CODE,
+            message: ERROR.DATABASE_ISSUE,
+            detail: err
         });
         emailTriggerLogger.errorSave(ERROR.DATABASE_ISSUE);
         resCb && resCb(err);
         opt.cb && opt.cb(err);
     }
+
     function _send(_notification) {
         data.type = _notification.type;
-        MailFacade.send(data).then(res=>{
+        MailFacade.send(data).then(res => {
             _updateSendStatus(_notification);
             opt.cb && opt.cb(null, res);
-            resCb && resCb(null, res); 
-        }).catch((err)=>{
+            resCb && resCb(null, res);
+        }).catch((err) => {
             opt.cb && opt.cb(err, null);
-            resCb && resCb(null, null); 
+            resCb && resCb(null, null);
         });
     }
+
     function _updateSendStatus(_notification) {
         _notification.sended = true;
         _notification.sendedDate = Date.now();
-        Notification.update(_notification, (err, n) => {
+        Notification.update({
+            _id: _notification._id,
+            sended: _notification.sended,
+            sendedDate: _notification.sendedDate
+        }, (err, n) => {
             if (err) {
-                dbLogger.setSaveData(_notification)
-                return dbLogger.errorSave('Save error');
+                dbLogger.setSaveData({
+                    detail: err,
+                    data: _notification
+                })
+                return dbLogger.errorSave('Update: ', err.substring(0, 20));
             }
         });
     }
@@ -240,16 +251,34 @@ function generateInvoiceAttachmentIfNecessary(data, t, cb) {
 
 
 function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notifItemType, moreOptions) {
+
+    if (!notifItem) {
+        var error = {
+            desription: "Email controller -> DIAGS_CUSTOM_NOTIFICATION",
+            message: "The notification item is invalid",
+            notificationItem: notifItem,
+            type: type,
+            data: data
+        };
+        if (cb) cb(error);
+        emailTriggerLogger.setSaveData(error);
+        emailTriggerLogger.errorSave(error.desription);
+        return;
+    }
+
     notifItem.notifications = notifItem.notifications || {};
     if (notifItem.notifications[type] !== true || (data.forceSend != undefined && data.forceSend == true)) {
 
 
 
         var next = function() {
-            emailTriggerLogger.debug(type, 'Calling custom fn (templating)');
+            //emailTriggerLogger.debug(type, 'Calling custom fn (templating)');
             return DIAGS_CUSTOM_EMAIL(data, (err, r) => {
                 notifItem.notifications[type] = true;
-                ctrl(notifItemType).update(notifItem);
+                ctrl(notifItemType).update({
+                    _id: notifItem._id,
+                    notifications: notifItem.notifications
+                });
                 if (cb) cb(err, r);
             }, subject, type, to, NOTIFICATION[type], moreOptions);
         };
@@ -291,7 +320,7 @@ function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notif
 
     }
     else {
-        emailTriggerLogger.warn(type, 'Already sended',notifItemType,notifItem);
+        emailTriggerLogger.warn(type, 'Already sended', notifItemType, notifItem);
         cb && cb('Already sended');
     }
 }
@@ -493,10 +522,10 @@ function ADMIN_ORDER_CREATED_SUCCESS(data, cb) {
 
 
     if (data._order.notifications.ADMIN_ORDER_CREATED_SUCCESS !== true) {
-        emailTriggerLogger.debug('ADMIN_ORDER_CREATED_SUCCESS', 'Collecting month revenue');
+        //emailTriggerLogger.debug('ADMIN_ORDER_CREATED_SUCCESS', 'Collecting month revenue');
         statsActions.currentMonthTotalRevenueHT({}, (_err, _currentMonthTotalRevenueHT) => {
             data._order.currentMonthTotalRevenueHT = _currentMonthTotalRevenueHT;
-            emailTriggerLogger.debug('ADMIN_ORDER_CREATED_SUCCESS', 'Calling custom sending fn');
+            //emailTriggerLogger.debug('ADMIN_ORDER_CREATED_SUCCESS', 'Calling custom sending fn');
             DIAGS_CUSTOM_NOTIFICATION(
                 NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, data, cb, subject, data._user.email, data._order, 'Order');
         });
@@ -539,6 +568,13 @@ function CLIENT_ORDER_DELEGATED(data, cb) {
     //});
 }
 
+
+
+function CLIENT_ORDER_QUOTATION(data, cb) {
+    //requires: _user _order
+    DIAGS_CUSTOM_NOTIFICATION(
+        NOTIFICATION.CLIENT_ORDER_QUOTATION, data, cb, 'devis Diagnostical', data._user.email, data._order, 'Order');
+}
 
 //CLIENT//#3 OK ctrl.order
 function CLIENT_ORDER_PAYMENT_SUCCESS(data, cb) {

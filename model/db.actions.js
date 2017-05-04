@@ -5,6 +5,8 @@ var getSchema = req('db').getSchema;
 var validate = req('validator').validate;
 var promise = req('utils').promise;
 
+var Promise = require('promise');
+
 
 var dbLoggerInstance = null;
 
@@ -62,6 +64,12 @@ var callHook = function(schemaName, hookName, dataOrHandler) {
     else {
         //Data is used to call listeners 
         var _data = dataOrHandler;
+
+        if (!_data) {
+            hookLogger.warn('Skip', schemaName, hookName, 'Empty data');
+            return _data;
+        }
+
         if (listeners.length > 0) {
             var handler;
             for (var x in listeners) {
@@ -114,11 +122,19 @@ exports.create = function(modelName, m) {
 
 
     function existsById(_id, cb) {
-        log('existsById=' + _id);
-        Model.count(toRules({
-            _id: _id
-        }), (err, r) => {
-            cb(err, r && r > 0);
+        return new Promise((resolve, reject) => {
+            Model.count(toRules({
+                _id: _id
+            }), (err, r) => {
+                var response = r && r > 0;
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(response);
+                }
+                if (cb) cb(err, response);
+            });
         });
     }
     //
@@ -370,6 +386,9 @@ exports.create = function(modelName, m) {
             //log error
             if (!rta.ok) {
                 resultLogger.setSaveData(rta);
+                if (err._id) {
+                    resultLogger.warn('The follow error contains an _id, did you try to resolve that as a response?');
+                }
                 resultLogger.warn(modelName, err);
             }
 
@@ -565,7 +584,10 @@ exports.create = function(modelName, m) {
                 //dbLogger().debug('UPDATE-RESULT', err, r);
 
                 if (err) {
-                    dbLogger().error(err, 'Request data', data);
+                    dbLogger().error('Update', modelName, modelId, 'Error:', err, 'Payload', Object.keys(payload));
+                    if (Object.keys(err).length === 0) {
+                        err = "Model returns an empty error";
+                    }
                 }
                 if (!cb) return;
                 if (err) return cb(err, null);

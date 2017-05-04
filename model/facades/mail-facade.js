@@ -17,7 +17,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             Logger.debug('Sending ', params.type);
             if (isMailingDisabled) {
-                Logger.debug('Email is on the way (fake action) ');
+                Logger.debug(params.type,params.from,params.to,params.subject,'FAKE');
                 return resolve();
             }
             sendEmailWithMailgun(params, (err, res) => {
@@ -30,7 +30,7 @@ module.exports = {
                     reject(err);
                 }
                 else {
-                    Logger.debug(params.type, 'Email is on the way');
+                    Logger.debug(params.type,params.from,params.to,params.subject);
                     resolve(res);
                 }
             });

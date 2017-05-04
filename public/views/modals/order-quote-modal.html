@@ -1,0 +1,36 @@
+<form name="quoteForm" novalidate>
+    <div class="modal-header" style="padding:5px!important;">
+        <h3 class="modal-title quote-form__titlee">Devis de la commande</h3>
+    </div>
+    <div class="row margin-top-none">
+        <div class="col-xs-12 col-sm-12">
+            <div class="row margin-top-half">
+                <label class="unselectable">Nom Prénom</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input ng-disabled="clientLogged()" focus-on="fullName" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.fullName' ng-required="false">
+            </div>
+            <div class="row margin-top-half">
+                <label class="unselectable">Email *</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input ng-disabled="clientLogged()" focus-on="email" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.email' ng-required="true">
+            </div>
+             <div class="row margin-top-half">
+                <label class="unselectable">Mobile</label>
+            </div>
+            <div class="row margin-top-quarter">
+                <input ng-disabled="clientLogged()" focus-on="mobile" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.phone' ng-required="false">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12">
+            <div class="row  margin-bottom-one">
+                <div class="padding-none col-xs-12 col-sm-12 margin-top-half">
+                    <button focus-on="payerButton" ng-disabled="!isFormValid()" class="center-block btn diags-btn bg-azure-radiance" type="button" ng-click="yes()">Envoyer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -91,7 +91,7 @@ function replaceDiagnosticalData(data) {
         Object.assign(replaceData, {
             '$CLIENT_EMAIL': _client.email,
             '$CLIENT_COMPANY_NAME': _client.companyName,
-            '$CLIENT_FIRSTNAME': _client.lastName,
+            '$CLIENT_FIRSTNAME': _client.firstName,
             '$CLIENT_LASTNAME': _client.lastName,
             '$CLIENT_PHONE': _client.cellPhone,
             '$CLIENT_ADDRESS': _client.address,

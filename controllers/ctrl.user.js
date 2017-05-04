@@ -19,7 +19,9 @@ var NOTIFICATION = Notif.NOTIFICATION;
 
 var path = require('path');
 var apiError = require(path.join(process.cwd(), 'model/errors'));
+var Response = require(path.join(process.cwd(), 'model/facades/response-facade'));
 
+var BOOKING_BOT_EMAIL = "bookingbot@noreply.fr";
 
 var dbLogger = ctrl('Log').createLogger({
     name: "USER",
@@ -340,7 +342,7 @@ function transformResponseLimitKeys(originalCallback, keys) {
 }
 
 function fetchBookingSystemUser(data, cb) {
-    var email = "bookingbot@noreply.fr"
+    var email = BOOKING_BOT_EMAIL;
     ctrl('User').core.save({
         email: email,
         userType: 'client',
@@ -364,19 +366,31 @@ function createLandlordClient(data, cb) {
     ctrl('User').core.save(data, cb);
 }
 
-function fetchLandlordAccount(data, cb) {
-    if (!data.email) return cb(apiError.VALIDATE_FIELD_EMAIL);
-    if (data.isGuestAccount==undefined) return cb(apiError.VALIDATE_FIELD_IS_GUEST_ACCOUNT);
 
-    //Fetch account (if exists)
-    getByField('email', data.email).then(account => {
-        if (account) {
-            cb(null, account);
-        }
-        else {
-            createLandlordClient(data, cb);
-        }
-    }).catch(err => cb(err));
+
+function fetchLandlordAccount(data, cb) {
+    return new Promise((resolve, reject) => {
+        if (!data.email) return Response.error(apiError.VALIDATE_FIELD_EMAIL, cb, reject);
+        if (data.isGuestAccount == undefined) return Response.error(apiError.VALIDATE_FIELD_IS_GUEST_ACCOUNT, cb, reject);
+        //Fetch account (if exists)
+
+        dbLogger.debug('fetchLandlordAccount:valid');
+
+        getByField('email', data.email).then(account => {
+            if (account) {
+                dbLogger.debug('fetchLandlordAccount:resolve');
+                Response.json(account);
+            }
+            else {
+                dbLogger.debug('fetchLandlordAccount:create');
+                createLandlordClient(data, (err, user) => {
+                    if (err) return Response.error(err, cb, reject);
+                    dbLogger.debug('fetchLandlordAccount:resolve');
+                    Response.json(user);
+                });
+            }
+        }).catch(err => Response.error(err, cb, reject));
+    });
 }
 
 function getByField(fieldName, fieldValue) {
@@ -660,7 +674,7 @@ function passwordReset(data, cb) {
 
 module.exports = {
     createLandlordClient: createLandlordClient,
-    fetchLandlordAccount:fetchLandlordAccount,
+    fetchLandlordAccount: fetchLandlordAccount,
     fetchBookingSystemUser: fetchBookingSystemUser,
     setAsNormalAccount: setAsNormalAccount,
     setAsGuestAccount: setAsGuestAccount,

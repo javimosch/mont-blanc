@@ -3,10 +3,10 @@
 /*global moment*/
 /*global $U*/
 (function() {
-    var app = angular.module('app').service('backendApi', function($rootScope, server, $log) {
+    var app = angular.module('app').service('backendApi', function($rootScope, server, $log, apiError) {
 
         const CONSTANT = {
-            COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate', 'create','findOne'],
+            COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate', 'create', 'findOne'],
             COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange']
         };
 
@@ -15,7 +15,7 @@
         }
 
         function getGenericMessage(res) {
-            return (res.err && (res.err.message || res.err.msg) || JSON.stringify(err)) + '  (BACKEND)';
+            return (res.err && (res.err.message || res.err.msg) || JSON.stringify(res)) + '  (BACKEND)';
         }
 
         var Cache = (function() {
@@ -163,6 +163,16 @@
                         return emit('validate', getLemonwayMessage(res));
                     }
                     if (res.err) {
+                        if (res.err.code && apiError(res.err).isKnown()) {
+                            var apiErrorInstance = apiError(res.err);
+                            apiErrorInstance.genericMessage = getGenericMessage(res);
+                            emit('validate:error', apiErrorInstance);
+
+                            $log.warn('Known response error', apiErrorInstance);
+                        }
+                        else {
+                            $log.warn('Unknown response error');
+                        }
                         emit('validate', getGenericMessage(res));
                     }
                     err(res);
@@ -177,6 +187,15 @@
                             return emit('validate', getLemonwayMessage(res));
                         }
                         if (res.err) {
+                            if (res.err.code && apiError(res.err).isKnown()) {
+                                var apiErrorInstance = apiError(res.err);
+                                apiErrorInstance.genericMessage = getGenericMessage(res);
+                                emit('validate:error', apiErrorInstance);
+                                $log.warn('Known response error', apiErrorInstance);
+                            }
+                            else {
+                                $log.warn('Unknown response error');
+                            }
                             return emit('validate', getGenericMessage(res));
                         }
                         err(res);

@@ -31,7 +31,13 @@ module.exports = {
 
         var API_ERRORS = require(path.join(process.cwd(), 'model/errors'));
         app.get('/api/errors', function(req, res) {
-            res.json(API_ERRORS);
+            var json = {};
+            for (var x in API_ERRORS) {
+                if (typeof API_ERRORS[x] != 'function') {
+                    json[x] = API_ERRORS[x];
+                }
+            }
+            res.json(json);
         });
 
         configureRoutes(app);

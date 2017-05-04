@@ -1,3 +1,4 @@
+var path = require('path');
 var mongoose = require('../model/db').mongoose;
 var atob = require('atob'); //decode
 var btoa = require('btoa'); //encode
@@ -21,8 +22,11 @@ var stripe = payment.stripe;
 var email = require('./ctrl.email');
 var Notif = require('./ctrl.notification');
 var NOTIFICATION = Notif.NOTIFICATION;
+var apiError = require(path.join(process.cwd(), 'model/errors'));
+var ResponseFacade = require(path.join(process.cwd(), 'model/facades/response-facade'));
 
-var path = require('path');
+var Resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
+
 var htmlFromOrder = require(path.join(process.cwd(), 'model/facades/invoice-facade')).htmlFromOrder;
 
 var saveKeys = ['_client', '_diag', 'start', 'end', 'diags'
@@ -37,6 +41,10 @@ var paymentLogger = ctrl('Log').createLogger({
 var dbLogger = ctrl('Log').createLogger({
     name: "ORDER",
     category: "DB"
+});
+var notificationLogger = ctrl('Log').createLogger({
+    name: "ORDER",
+    category: "NOTIFICATION"
 });
 
 function LogSave(msg, type, data) {
@@ -126,22 +134,40 @@ function moveToPrepaid(data, cb) {
 
 function associateClient(clientId, orderId) {
     return new Promise((resolve, reject) => {
+
+        if (!clientId) return reject("clientId required");
+        if (!orderId) return reject("orderId required");
+
+        //dbLogger.debug('associateClient:valid');
+
         ctrl('Order').update({
             _id: orderId,
             _client: clientId
         }, (err, res) => {
             if (err) return reject(err);
+            if (!res) return reject("associateClient failed" + ' clientId ' + clientId + ' orderId ' + orderId);
+
+           // dbLogger.debug('associateClient:update:ok');
 
             ctrl('Order').getById({
                 _id: orderId,
-                populate: {
+                __populate: {
                     _client: "email"
                 }
             }, (_err, order) => {
-                dbLogger.debug('Client ', order._client.email, 'associated to order', order._id, '(', order.address, ')');
-            })
+                if (_err) return reject(_err);
+                if (!order) return reject("associateClient: order do not exist");
+                if (!order._client) return reject("associateClient: order _client do not exist");
+                if (!order._client.email) return reject("associateClient: order _client.email do not exist");
 
-            resolve(res);
+                dbLogger.debug('Client ', order._client.email, 'associated to order', order._id, '(', order.address, ')');
+
+                //dbLogger.debug('associateClient:update:resolved');
+
+                resolve(order);
+            });
+
+
         });
     });
 }
@@ -238,9 +264,9 @@ function payUsingLW(data, callback) {
     }
     else {
         if (decodedPayload.clientEmail) {
-            
-           
-            
+
+
+
             ctrl('User').fetchLandlordAccount({
                 email: decodedPayload.clientEmail,
                 password: decodedPayload.clientPassword,
@@ -331,6 +357,99 @@ function confirm(data, cb) {
     });
 }
 
+
+
+
+function sendQuote(data, cb) {
+    var userCtrl = ctrl('User');
+    var orderCtrl = ctrl('Order');
+    var notificationCtrl = ctrl('Notification');
+    if (!data.order) return cb(apiError.VALIDATE_FIELD_ORDER);
+    if (!data.email) return cb(apiError.VALIDATE_FIELD_EMAIL);
+    if (!data.order || !data.order._id) return cb(apiError.VALIDATE_FIELD_VALID_ORDER);
+
+    //We check if the order is ok in database
+    orderCtrl.existsById(data.order._id)
+        .then(exists => {
+            if (exists) {
+                withOrder();
+            }
+            else {
+                cb(apiError.DATABASE_OBJECT_MISMATCH('order', 'sendQuote'));
+            }
+        }).catch(cb);
+
+    function withOrder() {
+        notificationLogger.debug('SendQuote:valid');
+        var userId = data.order._client && data.order._client._id || data.order._client;
+        userCtrl.get({
+            _id: userId
+        }, (err, _user) => {
+            if (err) return cb(err);
+            if (_user.isSystemUser) {
+                notificationLogger.debug('SendQuote:user:get');
+                userCtrl.get({
+                    email: data.email
+                }, (err, user) => {
+                    if (err) return cb(err);
+                    if (user) {
+                        notificationLogger.debug('SendQuote:associateClient');
+                        return associateClient(user._id, data.order._id)
+                            .then(order => withUser(user, order))
+                            .catch(cb);
+                    }
+                    else {
+                        notificationLogger.debug('SendQuote:user:saving-new');
+                        var userPayload = {
+                            firstName: data.fullName,
+                            email: data.email,
+                            cellPhone: data.phone,
+                            isGuestAccount: true,
+                        };
+                        userCtrl.fetchLandlordAccount(userPayload)
+                            .then((user) => {
+                                notificationLogger.debug('SendQuote:associateClient');
+                                associateClient(user._id, data.order._id)
+                                    .then(order => withUser(user, order))
+                                    .catch(cb);
+                            })
+                            .catch(cb);
+                    }
+                })
+            }
+            else {
+                withUser(_user, data.order);
+            }
+        });
+    }
+
+    function withUser(user, order) {
+
+        setTimeout(() => {
+            notificationLogger.debug('SendQuote:withUser');
+
+            if (!Resolver.validatorFacade().validMongooseObject(order)) {
+                return ResponseFacade.errorWithInvalidVariable('order', 'SendQuote.withUser', cb);
+            }
+            if (!Resolver.validatorFacade().validMongooseObject(user)) {
+                return ResponseFacade.errorWithInvalidVariable('user', 'SendQuote.withUser', cb);
+            }
+
+            notificationLogger.debug('SendQuote:notification');
+
+            Notif.trigger(NOTIFICATION.CLIENT_ORDER_QUOTATION, {
+                _order: order,
+                _user: user,
+                _client:user
+            }, (err, res) => {
+                if (err) return cb(err);
+                notificationLogger.debug('SendQuote:notification:success', res);
+                return cb(null, res);
+            });
+        }, 2000);
+    }
+}
+
 function create(data, cb) {
     actions.create(data, cb, saveKeys);
 }
@@ -372,9 +491,9 @@ function save(data, cb, customRequiredKeys) {
         actions.createUpdate(data, (err, r) => {
             if (err) return cb(err, r);
             cb(err, r);
-            
-            if(!r) return dbLogger.warn('Save createUpdate returns null for order data',data);
-            
+
+            if (!r) return dbLogger.warn('Save createUpdate returns null for order data', data);
+
             ////
             ///Notifications (async)
             actions.log('save:orderPopulate=' + r._id);
@@ -488,7 +607,7 @@ function save(data, cb, customRequiredKeys) {
 
 
 
-function everyAdmin(cb) {
+function everyAdmin(cb, delay) {
     UserAction.getAll({
         userType: 'admin'
     }, (_err, _admins) => {
@@ -500,7 +619,9 @@ function everyAdmin(cb) {
             return;
         }
         _admins.forEach((_admin) => {
-            cb(_admin);
+            setTimeout(() => {
+                cb(_admin);
+            }, delay || 0)
         });
     });
 }
@@ -628,7 +749,7 @@ function saveWithEmail(data, cb) {
 }
 
 function afterSave(data) {
-    
+
 
     if (!data || !data._id) {
         dbLogger.setSaveData(data || {});
@@ -648,6 +769,7 @@ function afterSave(data) {
             dbLogger.errorSave('Error when fetching order afterSave');
             return;
         }
+
         _order.notifications = _order.notifications || {};
         if (!_order.notifications.ADMIN_ORDER_CREATED_SUCCESS && !_order._client.isSystemUser) {
             dbLogger.debug('Notifying admins', 'ADMIN_ORDER_CREATED_SUCCESS');
@@ -656,7 +778,7 @@ function afterSave(data) {
                     _order: _order,
                     _user: _admin
                 });
-            });
+            }, 2000);
         }
     });
 
@@ -677,6 +799,7 @@ function preSave(data) {
 
 module.exports = {
     //custom
+    sendQuote: sendQuote,
     payUsingLW: payUsingLW,
     getNextInvoiceNumber: getNextInvoiceNumber,
     save: save,

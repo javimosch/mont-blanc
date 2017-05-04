@@ -11,7 +11,7 @@ var LogSave = (msg, data, type) => ctrl('Log').save({
 });
 module.exports = {
     name: name,
-    interval: 1000 * 60 * 5, //each 30 minutes
+    interval: 1000 * 60 * 5, //each 5 minutes
     handler: handler,
     runAtStartup: true,
     runAtStartup: 1000,
@@ -30,7 +30,7 @@ function Logger() {
 }
 
 function handler(data, cb) {
-    Logger().debug('remove-unpaid-orders', 'start');
+    //Logger().debug('remove-unpaid-orders', 'start');
     //
     var Order = ctrl('Order');
     Order.getAll({
@@ -46,6 +46,7 @@ function handler(data, cb) {
 
             var ownerIsBot = _order._client.email.indexOf('bookingbot') !== -1;
             var normalCondition = Date.now() - new Date(_order.createdAt) > 1000 * 60 * 60 * 48;
+            
             var bookingWithBotCondition = Date.now() - new Date(_order.createdAt) > 1000 * 60 * 5;
             var deleteCondition = ownerIsBot ? bookingWithBotCondition : normalCondition;
 

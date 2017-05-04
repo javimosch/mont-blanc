@@ -4,8 +4,8 @@
     /*global $U*/
     /*global moment*/
     angular.module('app').controller('payment-controller', ['server',
-        '$timeout', '$scope', '$rootScope', '$uibModal', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'appSettings', 'orderHelper', 'localSession', 'backendApi',
-        function(db, $timeout, $scope, $rootScope, $uibModal, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, appSettings, orderHelper, localSession, backendApi) {
+        '$timeout', '$scope', '$rootScope', '$uibModal', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'appSettings', 'orderHelper', 'localSession', 'backendApi', 'orderQuoteForm', 'apiError', 'orderBooking',
+        function(db, $timeout, $scope, $rootScope, $uibModal, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, appSettings, orderHelper, localSession, backendApi, orderQuoteForm, apiError, orderBooking) {
 
             $U.exposeGlobal('ps', $scope);
 
@@ -20,6 +20,27 @@
             $scope._user = localSession.getData();
             $scope.orderDateFormatted = () => orderHelper.getDateFormatted(order);
             $scope.orderDiagFormatted = () => orderHelper.getDiagAccountDescription(order);
+            $scope.quote = () => {
+                orderQuoteForm.open(order).then((res) => {
+                    $log.info("Devis envoyé par mail");
+                    orderHelper.clearCache();
+                    appRouter.to(appRouter.URL().HOME);
+                }).on('validate', (msg) => {
+
+                }).on('validate:error', (error) => {
+                    if (error.isEqual.DATABASE_OBJECT_MISMATCH_ERROR) {
+                        $rootScope.infoMessage("Mise à jour des données de réservation, réessayer après la recharge");
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    }
+                    else {
+                        $rootScope.warningMessage(error.genericMessage);
+                    }
+                }).error((err) => {
+                    $log.error(err);
+                });
+            };
             $scope.pay = (success) => {
                 if (orderHelper.status(order).isPaid()) {
                     return showOrderResume();
@@ -33,6 +54,8 @@
                         return $rootScope.errorMessage('', 10000);
                     }).on('validate', function(msg) {
                         return $rootScope.warningMessage(msg, 10000);
+                    }).on('processing', function(msg) {
+                        return $rootScope.infoMessage(msg, 10000);
                     });
                 });
             };
@@ -91,6 +114,9 @@
                 //$log.debug('order', order);
 
                 orderHelper.populate(order).then((result) => {
+                    if (!result) {
+                        return createFromCache();
+                    }
                     copyValues(result);
                     var status = orderHelper.status(order);
                     if (status.isPaid() || status.isOrdered() || status.isNotCreated()) {
@@ -119,6 +145,10 @@
                 });
             }
             else {
+                createFromCache();
+            }
+
+            function createFromCache() {
                 $log.debug('Creating from cache data');
 
                 //$log.debug('order', order);

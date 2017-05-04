@@ -1204,7 +1204,7 @@ angular.module('app').directive('modalCustom', function($rootScope, $timeout, $c
                     }
 
 
-                    $log.info('uibModalOptions', _.clone(uibModalOptions));
+                    //$log.info('uibModalOptions', _.clone(uibModalOptions));
                     var modalInstance = $uibModal.open(uibModalOptions);
 
 
