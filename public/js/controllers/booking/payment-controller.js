@@ -157,7 +157,8 @@
                     //$log.debug('saved to server', result);
                     order._id = result._id;
                 }).error((err) => {
-                    $log.error("Payment screen create order from booking data", err);
+                    $log.error("Can't create the order:", err);
+                    orderHelper.clearCache();
                     appRouter.to(appRouter.URL().HOME);
                 }).on('available', (o) => {
                     //$log.debug('Available for saving', o);
