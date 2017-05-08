@@ -24,6 +24,9 @@ function json(response, apiCallback, promiseResolve) {
     if (promiseResolve) {
         promiseResolve(response);
     }
+    if(!apiCallback && !promiseResolve){
+        logger.error('apiCallback or promiseResolve required');
+    }
 }
 
 function errorWithInvalidVariable(varName, path, cb, reject) {

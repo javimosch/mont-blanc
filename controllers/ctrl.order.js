@@ -380,26 +380,26 @@ function sendQuote(data, cb) {
         }).catch(cb);
 
     function withOrder() {
-        notificationLogger.debug('SendQuote:valid');
+       // notificationLogger.debug('SendQuote:valid');
         var userId = data.order._client && data.order._client._id || data.order._client;
         userCtrl.get({
             _id: userId
         }, (err, _user) => {
             if (err) return cb(err);
             if (_user.isSystemUser) {
-                notificationLogger.debug('SendQuote:user:get');
+               // notificationLogger.debug('SendQuote:user:get');
                 userCtrl.get({
                     email: data.email
                 }, (err, user) => {
                     if (err) return cb(err);
                     if (user) {
-                        notificationLogger.debug('SendQuote:associateClient');
+                      //  notificationLogger.debug('SendQuote:associateClient');
                         return associateClient(user._id, data.order._id)
                             .then(order => withUser(user, order))
                             .catch(cb);
                     }
                     else {
-                        notificationLogger.debug('SendQuote:user:saving-new');
+                       // notificationLogger.debug('SendQuote:user:saving-new');
                         var userPayload = {
                             firstName: data.fullName,
                             email: data.email,
@@ -408,7 +408,7 @@ function sendQuote(data, cb) {
                         };
                         userCtrl.fetchLandlordAccount(userPayload)
                             .then((user) => {
-                                notificationLogger.debug('SendQuote:associateClient');
+                              //  notificationLogger.debug('SendQuote:associateClient');
                                 associateClient(user._id, data.order._id)
                                     .then(order => withUser(user, order))
                                     .catch(cb);
@@ -426,7 +426,7 @@ function sendQuote(data, cb) {
     function withUser(user, order) {
 
         setTimeout(() => {
-            notificationLogger.debug('SendQuote:withUser');
+           // notificationLogger.debug('SendQuote:withUser');
 
             if (!Resolver.validatorFacade().validMongooseObject(order)) {
                 return ResponseFacade.errorWithInvalidVariable('order', 'SendQuote.withUser', cb);
@@ -435,7 +435,7 @@ function sendQuote(data, cb) {
                 return ResponseFacade.errorWithInvalidVariable('user', 'SendQuote.withUser', cb);
             }
 
-            notificationLogger.debug('SendQuote:notification');
+            //notificationLogger.debug('SendQuote:notification');
 
             Notif.trigger(NOTIFICATION.CLIENT_ORDER_QUOTATION, {
                 _order: order,
@@ -443,7 +443,7 @@ function sendQuote(data, cb) {
                 _client:user
             }, (err, res) => {
                 if (err) return cb(err);
-                notificationLogger.debug('SendQuote:notification:success', res);
+               // notificationLogger.debug('SendQuote:notification:success', res);
                 return cb(null, res);
             });
         }, 2000);

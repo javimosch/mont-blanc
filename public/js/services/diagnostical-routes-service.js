@@ -35,6 +35,9 @@
             }, {
                 name: "notifications",
                 description: "view notifications (emails) saved to database"
+            }, {
+                name: "clients",
+                description: "Admin can view all clients"
             }];
         };
 

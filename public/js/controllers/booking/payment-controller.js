@@ -22,7 +22,7 @@
             $scope.orderDiagFormatted = () => orderHelper.getDiagAccountDescription(order);
             $scope.quote = () => {
                 orderQuoteForm.open(order).then((res) => {
-                    $log.info("Devis envoyé par mail");
+                    $rootScope.infoMessage("Devis envoyé par mail");
                     orderHelper.clearCache();
                     appRouter.to(appRouter.URL().HOME);
                 }).on('validate', (msg) => {
