@@ -1,11 +1,12 @@
 (function() {
     /*global angular*/
-    angular.module('app').run(function(backendApi, $rootScope, $log, localSession, orderHelper, appRouter) {
+    angular.module('app').run(function(backendApi, $rootScope, $log, localSession, orderHelper, appRouter,diagnosticalRoutes) {
         appRouter.onChange((currentPath, nextPath) => {
            // $log.info('resume-booking', 'routing', currentPath, nextPath);
 
             var paymentRoute = 'payment';
-            if (nextPath !== paymentRoute) {
+            
+            if (nextPath !== paymentRoute && !diagnosticalRoutes.isBackofficeRoute(nextPath)) {
                 //There is a valid order in cache ?
                 var order = orderHelper.getFromSession();
                 if (order && order._id) {
