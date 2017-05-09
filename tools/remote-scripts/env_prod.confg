@@ -1,0 +1,11 @@
+PORT=8080
+PROD=1
+PROTOCOL=https
+serverRawURL=http://62.210.97.81:8080
+serverURL=https://diagnostical.fr
+disableMailing=0
+dbURI=mongodb://root:Gisele@localhost:27017/diagnostical
+adminURL=https://diagnostical.fr/admin#
+LEMON_LOGIN=
+LEMON_PASS=
+LEMON_DIRECTKIT_URL=
