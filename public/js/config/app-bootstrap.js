@@ -30,7 +30,7 @@
 
         'app.admin',
         'app.routes',
-        'app.login',
+        'login-feature-module',
         'app.user',
         'app.order',
         'app.client',
