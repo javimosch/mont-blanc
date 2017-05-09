@@ -3,7 +3,7 @@
     /*global $U*/
     /*global _*/
     /*global $D*/
-    angular.module('app').controller('diag-account-controller', [
+    angular.module('diag-account-feature-module').controller('diag-account-controller', [
 
         'server', '$scope', '$rootScope', '$routeParams', 'paymentApi', '$log',
         function(db, s, r, params, paymentApi, $log) {

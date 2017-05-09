@@ -1,8 +1,7 @@
-/*global angular*/
-/*global moment*/
 (() => {
-    var app = angular.module('app.diag.balance', []);
-    angular.module('app').directive('diagBalance', function(
+    /*global angular*/
+    /*global moment*/
+    angular.module('diag-account-feature-module').directive('diagBalance', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',
@@ -92,8 +91,8 @@
                                 return data;
                             }
                         },
-                        yearChange:()=>{
-                            s.model.filter.fields.created=null;
+                        yearChange: () => {
+                            s.model.filter.fields.created = null;
                             s.model.filter.filter();
                         }
                     },

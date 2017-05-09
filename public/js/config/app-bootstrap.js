@@ -32,12 +32,9 @@
         'app.routes',
         'app.login',
         'app.user',
-        'app.diag',
-        'app.diag.complete',
-        'app.diag.balance',
         'app.order',
         'app.client',
-        'app.diag',
+        'diag-account-feature-module',
         'app.calendar',
         'app.notifications',
         'app.client.payments',
@@ -53,6 +50,8 @@
         uibPaginationConfig.previousText = 'Précédent';
         uibPaginationConfig.lastText = 'Dernier';
     });
+    
+    
 
     //diags
     moment.locale('fr');

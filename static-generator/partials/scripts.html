@@ -9,6 +9,9 @@
 <!-- BOOTSTRAPER -->
 <script src="/js/config/app-bootstrap.js"></script>
 
+<!-- APPLICATION MODULES -->
+<script src="/js/config/diag-account-feature-module.js"></script>
+
 <!-- CONFIG -->
 <script src="/js/config/routes-config.js"></script>
 <script src="/js/config/change-curly-braces-config.js"></script>
@@ -64,11 +67,23 @@
 <script src="/js/directives/logs-list-directive.js"></script>
 <script src="/js/directives/on-click-scroll-top.js"></script>
 
+<script src="/js/directives/tables/diag-dashboard-tables.js"></script>
+<script src="/js/directives/tables/diag-accounts-table.js"></script>
+<script src="/js/directives/tables/diag-account-balance-table.js"></script>
+<script src="/js/directives/tables/diag-exceptions-table.js"></script>
+
+
+
+<script src="/js/directives/tables/client-tables.js"></script>
+<script src="/js/directives/tables/client-payment-table.js"></script>
+
 <!-- FILTERS -->
 <script src="/js/filters/no-fraction-filter.js"></script>
 
 <!-- CONTROLLERS -->
 <script src="/js/controllers/diag-account-controller.js"></script>
+<script src="/js/controllers/diag-exception-controller.js"></script>
+
 <script src="/js/controllers/logs-controller.js"></script>
 <script type="text/javascript" src="/js/diags/ctrls/diags_ctrl_settings.js"></script>
 <script type="text/javascript" src="/js/controllers/settings/settings-invoice.js"></script>
@@ -99,14 +114,10 @@
 <script src="/js/app.diag.js"></script>
 <script src="/js/app.diag.inscription.js"></script>
 
-<script src="/js/directives/tables/diag-tables.js"></script>
 
 
-<script src="/js/directives/tables/diag-balance-table.js"></script>
-<script src="/js/diretives/tables/client-tables.js"></script>
-<script src="/js/app.diag.js"></script>
 <script src="/js/app.order.js"></script>
-<script src="/js/diretives/tables/client-payment-table.js"></script>
+
 <!--/BUNDLE_JS_1-->
 
 {{#if PROD}}
