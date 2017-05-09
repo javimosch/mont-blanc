@@ -217,7 +217,8 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(
     r.debug = true;
 
     r.config = {};
-
+    
+    //This should not be sync !
     var env = window.env;
     r.config = $U.readJSONSync(window.env.CONFIG_JSON_PATH);
     env.$set(r.config);
