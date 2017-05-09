@@ -36,9 +36,7 @@
         'app.client',
         'diag-account-feature-module',
         'app.calendar',
-        'app.notifications',
         'app.client.payments',
-        'app.directives',
         'app.services',
         'app.tools',
         'app-router'

@@ -1,82 +1,12 @@
-/*global angular*/
-/*global $U*/
-(() => {
+(function() {
+    /*global angular*/
+    /*global $U*/
     //QUICK CRUD
     var vars = {
         TITLE: '', //Notifications
         TPL_CRUD: 'views/directives/directive.fast-crud.html',
-        //TPL_CRUD_TFOOT : 'views/partials/partial.diag.balance.footer.html',
-        //TPL_CRUD_BUTTONS : 'views/partials/partial.diag.balance.buttons.html'
-        TPL_CRUD_EDIT: 'views/diags/backoffice/notification/notification.edit.html'
     };
-    var app = angular.module('app.notifications', []);
-
-    app.controller('notificationEdit', ['$rootScope', '$scope', 'server', 'crud', '$routeParams', function(r, s, db, crud, params) {
-        r.setCurrentCtrl(s);
-
-        s.send = () => {
-            var item = s.item;
-            r.openConfirm('Confirm sending to ' + item.to + '?', () => {
-                //html from to subject
-                db.ctrl('Email', 'send', {
-                    _user: item._user,
-                    _notification: item._id,
-                    html: item.contents,
-                    to: item.to,
-                    subject: item.subject,
-                    __notificationType:item.type
-                }).then(d => {
-                    console.info(d);
-                    r.infoMessage('Copy send to ' + item.to);
-                    s.init();
-                });
-            });
-        };
-
-        crud.create({
-            name: 'Notification',
-            routeParams: params,
-            scope: s,
-            defaults: {
-                data: {
-                    message: 'Write your message'
-                }
-            },
-            save: {
-                after: {
-                    goBack: true
-                }
-            },
-            routes: {
-                back: 'notifications'
-            },
-            modals: {
-                confirm: r.openConfirm,
-                delete: {
-                    description: () => 'Delete item ' + s.item.type + ' ' + r.momentDateTime(s.item.created)
-                }
-            },
-            events: {
-                after: {
-                    save: [
-                        () => {
-                            //console.log('saved!');
-                        }
-                    ]
-                }
-            },
-            validate: {
-                options: (s) => {
-                    return [
-                        [s.item.message, '==', false, 'Message required']
-                    ];
-                }
-            }
-        }).init();
-    }]);
-
-
-    angular.module('app').directive('sectionNotifications', function(
+    angular.module('notifications-feature-module').directive('sectionNotifications', function(
         $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server, $mongoosePaginate) {
         return {
             restrict: 'AE',
@@ -95,9 +25,9 @@
                 ]);
 
                 $U.expose('s', s);
-                
+
                 r.routeParams({
-                    prevRoute:'notifications'
+                    prevRoute: 'notifications'
                 });
 
                 function update(items, cb) {
@@ -184,8 +114,8 @@
                         });
 
                     },
-                    buttonsTpl: vars.TPL_CRUD_BUTTONS,
-                    tfoot: vars.TPL_CRUD_TFOOT,
+                    //buttonsTpl: vars.TPL_CRUD_BUTTONS,
+                    //tfoot: vars.TPL_CRUD_TFOOT,
                     click: (item, index) => {
                         s.item = item;
 
@@ -193,19 +123,6 @@
                             item: item,
                         });
                         r.route('notifications/edit/' + item._id);
-
-                        /*
-                        s.open({
-                            title: 'Notification Details',
-                            data: modalData,
-                            evts: {
-                                'init': []
-                            },
-                            item: item,
-                            templateUrl: vars.TPL_CRUD_EDIT,
-                            callback: (item) => {}
-                        });
-                        */
                     },
                     buttons: [{
                         label: "Rafraîchir",
@@ -229,7 +146,7 @@
                     }, {
                         label: "Type",
                         name: 'type'
-                    },  {
+                    }, {
                         label: "Sended",
                         name: 'sended',
                         format: (v) => {
@@ -238,8 +155,8 @@
                     }, {
                         label: "Created",
                         name: 'createdAt',
-                        format: (v,item) => {
-                            return r.momentFrenchDateTime(v,item.createdAt);
+                        format: (v, item) => {
+                            return r.momentFrenchDateTime(v, item.createdAt);
                         }
                     }],
                     records: {
