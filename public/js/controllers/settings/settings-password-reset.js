@@ -1,42 +1,46 @@
-angular.module('app').controller('settings-password-reset', ['server', '$scope', '$rootScope', '$routeParams', '$log',
-    function(db, s, r, params, $log) {
-        window.s = s;
-        s.getUsers = function(val) {
-            return db.http('User', 'getAll', {
-                //userType: 'client',
-                __regexp: {
-                    email: val
-                }
-            }).then(function(res) {
-                return res.data.result;
-            });
-        };
+(function() {
+    /*global angular*/
+    angular.module('settings-feature-module').controller('settings-password-reset', ['server', '$scope', '$rootScope', '$routeParams', '$log',
+        function(db, s, r, params, $log) {
+            window.s = s;
+            s.getUsers = function(val) {
+                return db.http('User', 'getAll', {
+                    //userType: 'client',
+                    __regexp: {
+                        email: val
+                    }
+                }).then(function(res) {
+                    return res.data.result;
+                });
+            };
 
-        function getEmail() {
-            return s.data && s.data._user && s.data._user.email;
-        }
-        s.resetPassword = (confirmed) => {
-            confirmed = confirmed || false;
-            if (!getEmail()) {
-                return r.warningMessage("Email required");
+            function getEmail() {
+                return s.data && s.data._user && s.data._user.email;
             }
-
-            if (!confirmed && r.openConfirm('Reset ' + getEmail() + ' account password ?')) {
-                return r.dom(function() {
-                    s.resetPassword(true);
-                }, 1000);
-            }
-
-            db.ctrl('User', 'passwordReset', {
-                email: getEmail()
-            }).then((res) => {
-                if (res.ok) {
-                    r.message('Un nouveau mot de passe a été envoyé par e-mail', 'info', undefined, undefined, {
-                        duration: 10000
-                    })
-                    r.dom();
+            s.resetPassword = (confirmed) => {
+                confirmed = confirmed || false;
+                if (!getEmail()) {
+                    return r.warningMessage("Email required");
                 }
-            });
+
+                if (!confirmed && r.openConfirm('Reset ' + getEmail() + ' account password ?')) {
+                    return r.dom(function() {
+                        s.resetPassword(true);
+                    }, 1000);
+                }
+
+                db.ctrl('User', 'passwordReset', {
+                    email: getEmail()
+                }).then((res) => {
+                    if (res.ok) {
+                        r.message('Un nouveau mot de passe a été envoyé par e-mail', 'info', undefined, undefined, {
+                            duration: 10000
+                        });
+                        r.dom();
+                    }
+                });
+            };
         }
-    }
-]);
+    ]);
+
+})();

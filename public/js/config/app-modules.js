@@ -38,3 +38,12 @@ angular.module('tools-feature-module',[]);
 /*
 termites-tool-controller
 */
+
+angular.module('settings-feature-module',[]);
+/*
+settings-controller
+settings-invoice
+settings-password-reset
+settings-htmls
+settings-pages
+*/

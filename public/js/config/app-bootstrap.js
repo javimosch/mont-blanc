@@ -24,21 +24,20 @@
         'app-settings-service',
         'local-data',
 
-        "diags_ctrl_settings",
-        'diags_ctrl_tools',
         'header-controller',
+        
+        'settings-feature-module',
+        'login-feature-module',
+        'order-feature-module',
+        'diag-account-feature-module',
+        'tools-feature-module',
 
         'app.admin',
         'app.routes',
-        'login-feature-module',
-        'app.user',
-        'order-feature-module',
         'app.client',
-        'diag-account-feature-module',
         'app.calendar',
         'app.client.payments',
         'app.services',
-        'tools-feature-module',
         'app-router'
     ]);
 
