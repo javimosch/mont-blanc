@@ -33,6 +33,7 @@
         'diag-account-feature-module',
         'tools-feature-module',
         'user-feature-module',
+        'notifications-feature-module',
 
         'app.admin',
         'app.routes',
