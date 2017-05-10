@@ -1,9 +1,6 @@
-/*global angular*/
-/*global _*/
-/*global $U*/
-/*global moment*/
 (function() {
-    angular.module('app.user', []).controller('adminUsersEdit', [
+    /*global angular, _, $U, moment*/
+    angular.module('user-feature-module').controller('adminUsersEdit', [
 
         'server', '$scope', '$rootScope', '$routeParams', 'tpl', 'paymentApi', '$log', 'localSession', 'backendApi',
         function(db, s, r, params, tpl, paymentApi, $log, localSession, backendApi) {
@@ -19,7 +16,7 @@
                 }).on('validate', function(msg) {
                     r.warningMessage(msg);
                 });
-            }
+            };
 
 
             r.toggleNavbar(true);
@@ -108,7 +105,7 @@
 
             s.showInputFirstName = () => {
                 if (s.isClientLandlord() && s.item.legalStatus === '1') {
-                    return false;//indivision
+                    return false; //indivision
                 }
                 else {
                     return true;
@@ -116,7 +113,7 @@
             };
             s.showInputSiret = s.showInputCompayName = () => {
                 if (s.isClientLandlord() && s.item.legalStatus !== '0') {
-                    return false;//Indivision, physic
+                    return false; //Indivision, physic
                 }
                 else {
                     return true;
@@ -124,7 +121,7 @@
             };
             s.addressPlaceholder = () => {
                 if (s.isClientLandlord() && s.item.legalStatus == '2') {
-                    return "Adresse résidence principale";//physic
+                    return "Adresse résidence principale"; //physic
                 }
                 else {
                     return "Adresse";
@@ -167,7 +164,7 @@
             };
 
             s.showGuessAccountAlert = () => {
-                return localSession.isAdmin()
+                return localSession.isAdmin();
             };
             s.showIfGuessAccount = () => {
                 return s.item.isGuestAccount;
@@ -182,7 +179,7 @@
                     userType: s.item.userType,
                     clientType: s.item.clientType
                 }).then(function(data) {
-                    var result = data.result;
+
 
                     if (data.result.length > 0) {
                         var _item = data.result[0];
@@ -306,7 +303,7 @@
 
             function userHasRelatedOrders(cb) {
                 var time = (d) => moment(d).format('HH:mm');
-                var descr = (_order) => _order.address + ' (' + time(_order.start) + ' - ' + time(_order.end) + ')'
+                var descr = (_order) => _order.address + ' (' + time(_order.start) + ' - ' + time(_order.end) + ')';
                 return $U.MyPromise((resolve, error, emit) => {
                     if (s.item.userType === 'admin') {
                         return emit('no'); //admin has no orders associated.
@@ -315,10 +312,10 @@
                         __select: "start end address" //we only need those 3 fields to build the description.
                     };
                     if (s.item.userType === 'client') {
-                        rules['_client'] = s.item._id
+                        rules['_client'] = s.item._id;
                     }
                     if (s.item.userType === 'diag') {
-                        rules['_diag'] = s.item._id
+                        rules['_diag'] = s.item._id;
                     }
                     db.ctrl('Order', 'getAll', rules).then(data => {
                         if (data.ok && data.result && data.result.length > 0) {

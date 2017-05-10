@@ -10,7 +10,10 @@ diag-account-balance-table
 diag-dashboard-tables
 */
 
-
+angular.module('user-feature-module',[]);
+/*
+user-controller
+*/
 
 angular.module('login-feature-module',[]);
 /*
