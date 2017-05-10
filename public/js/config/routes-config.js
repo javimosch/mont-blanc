@@ -95,22 +95,22 @@ srv.config(['$routeProvider', '$locationProvider',
         }).
 
         when('/settings', {
-            templateUrl: 'views/diags/backoffice/settings/diags-settings.html'
+            templateUrl: 'views/settings/settings.html'
         }).
 
         when('/settings-invoice', {
-            templateUrl: 'views/diags/backoffice/settings/diags-settings-invoice.html'
+            templateUrl: 'views/settings/settings-invoice.html'
         }).
 
         when('/settings-password-reset', {
-            templateUrl: 'views/settings-password-reset.html'
+            templateUrl: 'views/settings/settings-password-reset.html'
         }).
 
         when('/settings-htmls/:id', {
-            templateUrl: 'views/settings-htmls.html'
+            templateUrl: 'views/settings/settings-htmls.html'
         }).
         when('/settings-pages/:id', {
-            templateUrl: 'views/settings-pages.html'
+            templateUrl: 'views/settings/settings-pages.html'
         }).
         when('/database-files/:id', {
             templateUrl: 'views/database-files.html'
@@ -118,25 +118,22 @@ srv.config(['$routeProvider', '$locationProvider',
 
 
         when('/settings-database', {
-            templateUrl: 'views/diags/backoffice/settings/diags-settings-database.html'
+            templateUrl: 'views/settings/settings-database.html'
         }).
 
         when('/settings-database-text', {
-            templateUrl: 'views/diags/backoffice/settings/diags-settings-database-text.html'
+            templateUrl: 'views/settings/settings-database-text.html'
         }).
 
         when('/settings-exportation', {
-            templateUrl: 'views/diags/backoffice/settings/diags-settings-exportation.html'
+            templateUrl: 'views/settings/settings-exportation.html'
         }).
 
         when('/settings-exportation-orders', {
-            templateUrl: 'views/diags/backoffice/settings/diags-settings-exportation-orders.html'
+            templateUrl: 'views/settings/settings-exportation-orders.html'
         }).
 
-        when('/settings-exportation-texts', {
-            templateUrl: 'views/diags/backoffice/settings/diags-settings-exportation-texts.html'
-        }).
-
+        
 
 
 
@@ -169,10 +166,10 @@ srv.config(['$routeProvider', '$locationProvider',
         }).
 
         when('/texts', {
-            templateUrl: 'views/diags/backoffice/text/text-list.html'
+            templateUrl: 'views/text/text-list.html'
         }).
         when('/texts/edit/:id', {
-            templateUrl: 'views/diags/backoffice/text/text-edit.html'
+            templateUrl: 'views/text/text-edit.html'
         }).
 
         when('/clients', {
