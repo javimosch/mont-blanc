@@ -14,8 +14,9 @@
         'ngSanitize',
 
         
-        'mwl.calendar',
         'mwl-calendar-config',
+        'mwl.calendar',
+        
         'ui.bootstrap',
         'ui.bootstrap.datetimepicker',
 
