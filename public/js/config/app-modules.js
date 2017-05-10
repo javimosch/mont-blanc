@@ -28,5 +28,10 @@ notification-table
 angular.module('order-feature-module',[]);
 /*
 order-controller
-notification-table
+orders-table
+*/
+
+angular.module('tools-feature-module',[]);
+/*
+termites-tool-controller
 */

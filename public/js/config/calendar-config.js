@@ -1,5 +1,5 @@
 /*global angular*/
-angular.module('app.run-calendar', ['mwl.calendar'])
+angular.module('mwl-calendar-config', ['mwl.calendar'])
 .config(function(calendarConfig) {
     //    console.log(calendarConfig); //view all available config
     //calendarConfig.templates.calendarMonthView = 'path/to/custom/template.html'; //change the month view template to a custom template

@@ -1,14 +1,14 @@
-/*global $U*/
-/*global $D*/
-/*global moment*/
-/*global _*/
-/*global $*/
-/*global app*/
-/*global Quill*/
-/*global tinymce*/
-/*global CKEDITOR*/
 (function() {
-
+    /*global angular*/
+    /*global $U*/
+    /*global $D*/
+    /*global moment*/
+    /*global _*/
+    /*global $*/
+    /*global app*/
+    /*global Quill*/
+    /*global tinymce*/
+    /*global CKEDITOR*/
 
     function updateCategorySelectData(s, db, cb) {
         s.categories = [];
@@ -30,7 +30,7 @@
 
 
 
-    app.controller('ctrl-text-edit', ['server', '$scope', '$rootScope', '$routeParams',
+    angular.module('app').controller('ctrl-text-edit', ['server', '$scope', '$rootScope', '$routeParams',
         function(db, s, r, params) {
             //
             $U.expose('s', s);
@@ -42,12 +42,12 @@
                 updatedByHuman: true
             };
 
-           
+
             updateCategorySelectData(s, db);
 
-           
-                check(); //checks when the wysing lib is ready and init the components.    
-            
+
+            check(); //checks when the wysing lib is ready and init the components.    
+
 
             //
             s.read = function() {
@@ -72,9 +72,9 @@
                 if (!s.item._category) return r.warningMessage('Page Section required');
                 //
                 s.item.updatedByHuman = true;
-               
-                    s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
-                
+
+                s.item.content = window.encodeURIComponent(tinymce.activeEditor.getContent());
+
 
                 db.ctrl('Text', 'save', s.item).then(function() {
                     r.route('texts');
@@ -105,9 +105,9 @@
             //
 
             function setData(decodedData) {
-                
-                    tinymce.activeEditor.setContent(decodedData);
-                
+
+                tinymce.activeEditor.setContent(decodedData);
+
             }
 
 
@@ -143,9 +143,9 @@
 
             function init() {
 
-                
-                    initTinyMCE();
-                
+
+                initTinyMCE();
+
 
 
 
@@ -199,7 +199,7 @@
                         __populate: {
                             '_category': 'code',
                         },
-                       // __rules: {
+                        // __rules: {
                         //    _category: {
                         //        $in: s.model.categories.map(c => c._id)
                         //    }

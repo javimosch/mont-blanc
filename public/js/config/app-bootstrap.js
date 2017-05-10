@@ -13,8 +13,9 @@
         'ngRoute',
         'ngSanitize',
 
-        'app.run-calendar',
+        
         'mwl.calendar',
+        'mwl-calendar-config',
         'ui.bootstrap',
         'ui.bootstrap.datetimepicker',
 
@@ -38,7 +39,7 @@
         'app.calendar',
         'app.client.payments',
         'app.services',
-        'app.tools',
+        'tools-feature-module',
         'app-router'
     ]);
 

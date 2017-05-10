@@ -1,6 +1,7 @@
 (function() {
-    var app = angular.module('app.tools', []);
-    app.controller('termitesChecker', ['server', '$scope', '$rootScope', 'localData', (db, s, r, localData) => {
+    /*global angular, _*/
+    angular.module('tools-feature-module')
+    .controller('termitesChecker', ['server', '$scope', '$rootScope', 'localData', (db, s, r, localData) => {
         s.item = [];
         s.check = () => {
             if (!s.item.address) return r.notify('Address required', 'warning');
