@@ -32,7 +32,7 @@
         'app.routes',
         'login-feature-module',
         'app.user',
-        'app.order',
+        'order-feature-module',
         'app.client',
         'diag-account-feature-module',
         'app.calendar',

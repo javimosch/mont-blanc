@@ -24,3 +24,9 @@ angular.module('notifications-feature-module',[]);
 notification-controller
 notification-table
 */
+
+angular.module('order-feature-module',[]);
+/*
+order-controller
+notification-table
+*/
