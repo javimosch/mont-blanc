@@ -16,6 +16,13 @@
                     $rootScope.openModal({
                         backdrop: 'static', //disables close on click
                         templateUrl: 'views/modals/resume-booking-modal.html',
+                        helpers:{
+                            withScope:function(scope){
+                                scope.orderDateHour=()=>{
+                                  return $rootScope.momentDateTimeWords(order.start,'le');
+                                };
+                            }
+                        }
                     }).then((resume) => {
                         if(resume){
                             appRouter.to($rootScope.URL.PAYMENT);

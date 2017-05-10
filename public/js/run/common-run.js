@@ -243,7 +243,7 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(
     r.momentTime = (d) => moment(d).format('HH[h]mm');
     r.momentFrenchDateTime = (d) => moment(d).format('DD/MM/YYYY [à] HH[h]mm');
     r.momentDateTime = (d) => r.momentFrenchDateTime(d); // moment(d).format('DD-MM-YY HH[h]mm');
-    r.momentDateTimeWords = (d) => moment(d).format('[Le] dddd DD MMMM YY [à] HH[h]mm');
+    r.momentDateTimeWords = (d,article) => moment(d).format('['+(article||'Le')+'] dddd DD MMMM YY [à] HH[h]mm');
     r.momentDateTimeWords2 = (d) => moment(d).format('dddd DD MMMM YY [à] HH[h]mm');
 
     r.dom = function(cb, timeout) {
