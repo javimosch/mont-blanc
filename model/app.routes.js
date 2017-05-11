@@ -16,10 +16,11 @@ dbController.register('File');
 dbController.register('Email');
 dbController.register('Pdf');
 dbController.register('Lemonway');
+dbController.register('Deploy', null, false);
 var NOTIFICATION = dbController.create("Notification").NOTIFICATION;
 var Log = dbController.create("Log");
 var File = dbController.create('File');
-    //
+//
 
 //
 exports.configure = function(app) {
@@ -35,7 +36,8 @@ exports.configure = function(app) {
             console.log('Available for', controller, JSON.stringify(Object.keys(actions)));
             res.set('Content-Type', 'text/html');
             res.send(new Buffer(msg));
-        } else {
+        }
+        else {
             return actions[action](data, actions.result(res), req, res);
         }
     });
@@ -61,21 +63,21 @@ exports.configure = function(app) {
         }
         //
         if (actions[action]) {
-            if (strIn(action,['get','getAll','getById','paginate','find'])) {
-            } else {
-            }
+            if (strIn(action, ['get', 'getAll', 'getById', 'paginate', 'find'])) {}
+            else {}
             actions[action](data, actions.result(res), req, res);
-        } else {
+        }
+        else {
             console.log('routes:ctrl:model-calling', action);
             actions.model[action](actions.toRules(data), actions.result(res), req, res);
         }
 
         //console.log('routes:ctrl:end');
     });
-    
-    function strIn(str,arr){
-        for(var x in arr){
-            if(str==arr[x]) return true;
+
+    function strIn(str, arr) {
+        for (var x in arr) {
+            if (str == arr[x]) return true;
         }
         return false;
     }
