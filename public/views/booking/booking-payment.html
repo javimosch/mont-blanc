@@ -175,6 +175,10 @@
                         <div class="row margin-top-quarter">
                             <button class="btn btn-xl bg-madison" on-click-scroll-top ng-click="pay()" ng-disabled="state.working() || !order._id">Confirmer & Payer</button>
                         </div>
+                        <div class="row margin-top-quarter">
+                            <button class="btn btn-xl bg-madison" on-click-scroll-top ng-click="payWithCheque()" ng-disabled="state.working() || !order._id">Confirmez le RDV et payez par chèque</button>
+                        </div>
+                        
                         <div class="row margin-top-half">
                             <button class="btn btn-xl bg-madison" on-click-scroll-top ng-show="showDelegateOrderElements()" ng-click="delegate()" ng-disabled="state.working() || !order._id">Déléguer au propriétaire</button>
                         </div>

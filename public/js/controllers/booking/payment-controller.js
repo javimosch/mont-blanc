@@ -41,7 +41,10 @@
                     $log.error(err);
                 });
             };
-            $scope.pay = (success) => {
+            $scope.payWithCheque = () => {
+
+            };
+            $scope.pay = () => {
                 if (orderHelper.status(order).isPaid()) {
                     return showOrderResume();
                 }
