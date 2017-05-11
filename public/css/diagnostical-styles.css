@@ -426,8 +426,23 @@ html {
 }
 
 
+/*
+BACKOFFICE / SETTINGS
+*/
+
 .table-striped tr:first-child td {
     border: 0px;
+}
+
+.settings__list-item:hover {
+    background-color: powderblue!important;
+}
+
+.settings__list-item__label {
+    line-height: 45px;
+    font-size: 20px!important;
+    min-width: 300px!important;
+    margin: 0px;
 }
 
 .diags-bg {

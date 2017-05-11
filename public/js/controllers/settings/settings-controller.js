@@ -77,7 +77,7 @@
                     'Logs': 'logs',
                     "Tools": 'tools',
                     //"General prices": "prices",
-                    "Prices (General, Modifiers, Test tool)": "price-modifiers",
+                    "Prices": "price-modifiers",
                     "Documentation": "documentation",
                     "Database": "settings-database",
                     "Extract Data": "settings-exportation",
