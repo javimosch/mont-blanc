@@ -1,5 +1,7 @@
 module.exports = {
 
+    SOCKETS_PORT:8081,
+
     PROD:  process.env.PROD && process.env.PROD.toString() == '1' || false,
     PORT: process.env.PORT || 3000,
 

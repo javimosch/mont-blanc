@@ -1,5 +1,9 @@
+var resolver = require('../model/facades/resolver-facade');
 module.exports = {
     test: (data, cb) => {
-        cb(null, 'Test went ok');
+
+        return resolver.ctrl('sockets').start(data, cb);
+
+        //cb(null, 'Test went ok');
     }
 };

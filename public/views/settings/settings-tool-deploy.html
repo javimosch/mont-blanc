@@ -1,3 +1,11 @@
+<script type="text/javascript">
+    /*global $*/
+    if (typeof window.io == 'undefined') {
+        $.getScript("/js/vendor/socket.io.min.js", function() {
+        });
+    }
+</script>
+
 <div class="container-fluid backoffice-wrapper">
     <div class="container" ng-controller="settings-deploy-controller">
         <div class="row-fluid">

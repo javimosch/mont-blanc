@@ -358,59 +358,9 @@ exports.create = function(modelName, m) {
         });
     }
 
-    var resultLogger;
+    
 
-    function result(res, options) {
-
-        var ctrl = require('./db.controller').create;
-        resultLogger = resultLogger || ctrl('Log').createLogger({
-            name: "DB",
-            category: "RESULT"
-        });
-        return function(err, r) {
-
-            //||                (Object.keys(err || {}).length === 0 && err !== undefined)
-            if (typeof err == 'string') {
-                err = {
-                    message: err.toString()
-                };
-            }
-
-            var rta = {
-                ok: err === undefined || err === null,
-                //message: (err) ? 'Error' : 'Success',
-                err: err || null,
-                result: (r !== null) ? r : ((r === false) ? false : null)
-            };
-
-            //log error
-            if (!rta.ok) {
-                resultLogger.setSaveData(rta);
-                if (err._id) {
-                    resultLogger.warn('The follow error contains an _id, did you try to resolve that as a response?');
-                }
-                resultLogger.warn(modelName, err);
-            }
-
-            //when result contains something like {ok,message,result}
-            if (rta.result && rta.result.result) {
-                if (rta.result.message) {
-                    rta.message = rta.result.message;
-                    rta.result = rta.result.result;
-                }
-            }
-
-            //log('result=', JSON.stringify(rta));
-            //log('result= ' + (rta.ok == true) + (err ? ' Error: ' + JSON.stringify(err) : ''));
-            //
-            if (options && options.__res) {
-                options.__res(res, rta);
-            }
-            else {
-                res.json(rta);
-            }
-        };
-    }
+    
 
     function getById(data, cb) {
         //log('getById=' + JSON.stringify(data._id));
@@ -621,7 +571,6 @@ exports.create = function(modelName, m) {
         update: update,
         remove: remove,
         removeWhen: removeWhen,
-        result: result,
         get: get,
         getById: getById,
         check: check,
