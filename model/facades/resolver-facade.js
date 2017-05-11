@@ -10,7 +10,8 @@ var self = {
     orderFacade: () => require(path.join(process.cwd(), 'model/facades/order-facade')),
     mailFacade: () => require(path.join(process.cwd(), 'model/facades/mail-facade')),
     responseFacade: () => require(path.join(process.cwd(), 'model/facades/response-facade')),
-    validatorFacade: () => require(path.join(process.cwd(), 'model/facades/validator-facade'))
+    validatorFacade: () => require(path.join(process.cwd(), 'model/facades/validator-facade')),
+    serverFacade: () => require(path.join(process.cwd(), 'model/facades/server-facade'))
 };
 
 self.sockets = () => self.ctrl('sockets');

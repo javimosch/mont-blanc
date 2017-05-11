@@ -1,6 +1,7 @@
 require('dotenv').config();
 var express = require('express');
 var path = require("path");
+var resolver = require(path.join(process.cwd(),'model/facades/resolver-facade'));
 var app = express();
 var https = require('https');
 var http = require('http');
@@ -21,9 +22,13 @@ require('./model/routes/views-route').bind(app);
 require('./model/routes/static-routes').bind(app, express);
 //static generator (generator, angular route, etc)
 require('./model/services/static-generator/sg-index').configure(app).then(() => {
-	app.listen(PORT, function() {
+	var server = http.createServer(app);
+	resolver.serverFacade().set(server);
+	resolver.sockets().configure(server);
+	server.listen(PORT, function() {
 		console.log('Production? ' + (PROD ? 'Oui!' : 'Non!'));
 		console.log('ServerURL', process.env.serverURL || 'http://localhost:5000');
 		console.log('Diagnostical listening on port ' + PORT + '!');
 	});
+	
 });

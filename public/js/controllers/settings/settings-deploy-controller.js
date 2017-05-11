@@ -3,12 +3,17 @@
     angular.module('settings-feature-module')
         .controller('settings-deploy-controller', ['$rootScope', 'backendApi', '$scope', '$log', '$http', 'snippets', '$timeout', function($rootScope, backendApi, $scope, $log, $http, snippets, $timeout) {
             snippets.exposeGlobal('s', $scope);
-            backendApi.sockets.custom('start', {}).then(connect);
+            
+            
+            //backendApi.sockets.custom('start', {}).then(connect);
+            
+            connect('');
 
             function connect(port) {
                 if (typeof io === 'undefined' || !io) return setTimeout(() => connect(port), 1000);
 
-                var url = window.location.origin + ':8081';
+                var url = window.location.origin + (port != '' ? ':' + port : '');
+                $log.info('Socket connecting to ',url);
                 var socket = io(url);
                 socket.on('connect', function() {
                     $log.info('socket connected');
@@ -35,13 +40,13 @@
                 });
                 socket.on('reconnect_attempt', function(attempNumber) {
                     if (attempNumber === 1) {
-                        $log.info('Restarting sockets server...');
-                        backendApi.sockets.custom('start', {}).then($log.info);
+                        //$log.info('Restarting sockets server...');
+                        //backendApi.sockets.custom('start', {}).then($log.info);
                     }
                 });
                 socket.on('reconnect_error', function(err) {
-                    $log.info('Restarting sockets server...');
-                    backendApi.sockets.custom('start', {}).then($log.info);
+                    //$log.info('Restarting sockets server...');
+                    //backendApi.sockets.custom('start', {}).then($log.info);
                 });
                 socket.on('reconnect_failed', function(err) {
                     $log.warn('reconnect_failed', err);
@@ -103,7 +108,7 @@
 
             $scope.checkStatus = () => {
                 withPassword((password) => {
-                    $rootScope.infoMessage('Server status OK will display at least one row in the process table.');
+                    $rootScope.infoMessage('Server status OK will display at least one row with a column status equal to online',10000);
                     backendApi.ssh.custom("serverStatus", {
                         password: password
                     }).then($log.info).on('validate', msg => {
