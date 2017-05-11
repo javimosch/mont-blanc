@@ -133,7 +133,6 @@
     .nav li {
         background-color: transparent!important;
     }
-    
     .navbar-nav .diags-pill-info {
         margin: 0px 0px 0px 10px!important;
     }
@@ -178,7 +177,9 @@
     .navbar-nav {
         padding-top: 0px;
     }
-    
+    .navbar-right .dropdown-menu {
+        top: 55px;
+    }
 }
 
 .nowrap {
