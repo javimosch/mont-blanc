@@ -194,13 +194,13 @@ srv.config(['$routeProvider', '$locationProvider',
 
 
         when('/tools', {
-            templateUrl: 'views/diags/backoffice/tools.html'
+            templateUrl: 'views/settings/settings-tools.html'
         }).
         when('/tools/termites-check', {
-            templateUrl: 'views/diags/backoffice/tools.termites-check.html'
+            templateUrl: 'views/settings/settings-tool-termites-check.html'
         }).
-        when('/tools/datetime-picker-testing', {
-            templateUrl: 'views/diags/backoffice/tools/tools.datetimepicker-test.html'
+        when('/tools/deploy', {
+            templateUrl: 'views/settings/settings-tool-deploy.html'
         }).
 
 
