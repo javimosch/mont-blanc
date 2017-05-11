@@ -13,15 +13,18 @@
                 <ol class="breadcrumb">
                     <li><a class="link" ng-click="route('dashboard')">Dashboard</a></li>
                     <li><a class="link" ng-click="route('settings')">Settings</a></li>
-                    <li>Deploy</li>
+                    <li>Deployment</li>
                 </ol>
             </div>
         </div>
         <out class="form-tiny">
             <div class="row margin-top-one">
                 <div class="col-sm-12">
-                    <h2>Deploy</h2>
-                    <button ng-click="test()">Test</button>
+                    <h2>Diagnostical.com</h2>
+                    <h3 ng-bind="currentVersion()"></h3>
+                    
+                    <button ng-click="test()">Test SSH Command</button>
+                    <button ng-click="stop()">Stop Command</button>
                 </div>
             </div>
         </out>

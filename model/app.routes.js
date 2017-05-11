@@ -18,6 +18,7 @@ dbController.register('Pdf');
 dbController.register('Lemonway');
 dbController.register('deploy', null, false);
 dbController.register('sockets', null, false);
+dbController.register('ssh', null, false);
 var NOTIFICATION = dbController.create("Notification").NOTIFICATION;
 var Log = dbController.create("Log");
 var File = dbController.create('File');

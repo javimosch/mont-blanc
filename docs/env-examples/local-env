@@ -11,7 +11,7 @@ LEMON_PASS=adminmb
 LEMON_DIRECTKIT_URL=https://sandbox-api.lemonway.fr/mb/diagnostical/dev/directkitjson2/service.asmx/
 QUOTAGUARDSTATIC_URL=http://quotaguard8108:2a5442445979@eu-west-static-01.quotaguard.com:9293
 DEBUG_PDF_GENERATION=1
-
+GITLAB_API_KEY=-adJvZ4vx4pHPnDbf1g1
 
 
 

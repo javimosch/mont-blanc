@@ -1,4 +1,3 @@
-var server = require('http').createServer();
 var resolver = require('../model/facades/resolver-facade');
 var logger = resolver.ctrl('Log').createLogger({
     name: "SOCKETS",
@@ -15,11 +14,11 @@ module.exports = {
 }
 
 function emitToChannel(data, cb) {
-    resolver.promise((resolve, reject) => {
-        if (!data.channelName) return resolver.responseFacade().json('channelName required', null, cb, resolve);
+    return resolver.promise((resolve, reject) => {
+        if (!data.channelName) return resolver.responseFacade().error('channelName required', cb, reject);
         if (!status.channels[data.channelName]) {
             logger.debug('emitToChannel', data.channelName, 'the channel do not exist');
-            resolver.responseFacade().json(null, 0, cb, resolve);
+            resolver.responseFacade().json(0, cb, resolve);
         }
         else {
             var counter = 0;
@@ -30,15 +29,16 @@ function emitToChannel(data, cb) {
                 }
             });
             logger.debug('emitToChannel', data.channelName, counter, 'times!');
-            resolver.responseFacade().json(null, counter, cb, resolve);
+            resolver.responseFacade().json(counter, cb, resolve);
         }
     });
-
 }
 
 function subscribeToChannel(id, name) {
     status.channels[name] = status.channels[name] || [];
     status.channels[name].push(id);
+    
+    logger.debug('subscribeToChannel',status.channels);
 }
 
 function onConnect(client) {
@@ -63,14 +63,15 @@ function start(data, cb) {
     if (!PORT) {
         return cb('SOCKETS_PORT server variable required');
     }
+    logger.debug('starting...');
     var io = require('socket.io')();
-    io.on('connection', function(client) {});
     io.on('connection', function(client) {
         onConnect(client);
         logger.debug(client.id, 'new connection');
 
         client.on('subscribeToChannel', function(data) {
-            logger.debug(client.id, 'registerToChannel', data);
+            //logger.debug(client.id, 'subscribeToChannel', data);
+            subscribeToChannel(client.id,data.name);
         });
         client.on('disconnect', function() {
             logger.debug(client.id, 'disconnect');

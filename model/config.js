@@ -1,8 +1,14 @@
 module.exports = {
 
-    SOCKETS_PORT:8081,
+    SOCKETS_PORT: 8081,
 
-    PROD:  process.env.PROD && process.env.PROD.toString() == '1' || false,
+    SSH_HOST: process.env.SSH_HOST || '62.210.97.81',
+    SSH_USER: process.env.SSH_USER || 'root',
+    SSH_PWD: process.env.SSH_PWD,
+
+    GITLAB_API_KEY: process.env.GITLAB_API_KEY,
+
+    PROD: process.env.PROD && process.env.PROD.toString() == '1' || false,
     PORT: process.env.PORT || 3000,
 
     serverURL: process.env.serverURL || 'https://www.diagnostical.fr',
@@ -14,6 +20,6 @@ module.exports = {
     ERROR: {
         DATABASE_ISSUE: "Database Issue (Code:200)"
     },
-    
+
     DEBUG_PDF_GENERATION: process.env.DEBUG_PDF_GENERATION && process.env.DEBUG_PDF_GENERATION.toString() == '1' || false,
 };
