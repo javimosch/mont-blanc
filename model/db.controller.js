@@ -36,9 +36,10 @@ function create(name, hasModel) {
     var actions = {};
 
     if (hasModel) {
-        Object.assign(actions, createDbActions(name));
+        var coreActions = createDbActions(name);
+        Object.assign(actions, coreActions);
+        actions.core = coreActions;
     }
-
 
     Object.assign(actions, specialActions);
 
