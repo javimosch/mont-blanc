@@ -1,4 +1,4 @@
-/*STEP 3: RDV SLOT*/
+/*RDV*/
 
 .loading-icon-wrapper {
     position: absolute;
@@ -18,4 +18,11 @@
 
 .loading-icon {
     vertical-align: middle;
+}
+
+
+/*PAYMENT*/
+
+.payment-view__cheque-button {
+    height: 100px!important;
 }
