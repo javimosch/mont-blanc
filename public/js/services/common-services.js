@@ -403,19 +403,8 @@
         };
     }]);
     srv.service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '$timeout', function(http, localdb, r, fileUpload, $log, $timeout) {
-        //var URL = 'http://ujkk558c0c9a.javoche.koding.io:3434';
-        var URL = 'http://localhost:5000';
 
-        /*
-            $.ajax({
-                url: '/data.json',
-                async: false,
-                dataType: 'json',
-                success: function(r) {
-                    //URL = r.config.backendURL; //updates serverURL from express (node env serverURL);
-                    //console.info('server-url-(data.json):' + URL);
-                }
-            });*/
+        var URL = 'http://localhost:5000';
 
         $.ajax("/serverURL").then(function(r) {
             URL = r.URL; //updates serverURL from express (node env serverURL);

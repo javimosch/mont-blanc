@@ -39,7 +39,6 @@
         'app.routes',
         'app.client',
         'app.calendar',
-        'app.client.payments',
         'app.services',
         'app-router'
     ]);

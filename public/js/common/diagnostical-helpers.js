@@ -4,7 +4,6 @@
 /*global _*/
 
 var $D = {
-    openStripeModalPayOrder: openStripeModalPayOrder,
     rangeCollide: rangeCollide,
     diagNameConvertion: diagNameConvertion,
     getInvoiceHTMLContent: getInvoiceHTMLContent,
@@ -214,45 +213,6 @@ function diagNameConvertion(key) {
     return key;
 }
 
-function openStripeModalPayOrder(order, cb, opt) {
-    opt = opt || {
-        config: {
-            companyName: "Unknown"
-        }
-    };
-    var handler = StripeCheckout.configure({
-        //key: 'pk_test_MDkxtBLcBpHwMCgkqX2dJHjO',
-        key: (r && r.isDevEnv()) ? 'pk_test_MDkxtBLcBpHwMCgkqX2dJHjO' : window.atob('cGtfbGl2ZV9ScldVOUlDcFl1cWxpQ05RWDhOQmhEZjE='),
-        image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
-        locale: 'auto',
-        token: function(token) {
-            //id email created
-            //console.info('TOKEN', token);
-
-            cb(token);
-
-        }
-    });
-
-    var payload = {
-        name: opt.config.companyName || "[r.config.companyName]",
-        description: 'Order payment',
-        //email: opt.email || order._client.email, //email need to be ingresed.
-        currency: "eur",
-        amount: order.price * 100,
-        //billingAddress:true,
-        zipCode: false,
-        allowRememberMe: false
-    };
-
-    if (opt.email) {
-        payload.email = opt.email;
-    }
-
-    // Open Checkout with further options
-    handler.open(payload);
-
-}
 
 function getInvoiceHTMLContent(db, item, r, cb) {
     db.ctrl('Category', "createUpdate", {

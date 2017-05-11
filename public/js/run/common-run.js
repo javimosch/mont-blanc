@@ -209,21 +209,24 @@ app.run(['$rootScope', '$location', '$window', '$log',
     }
 ]);
 
-app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(db, $timeout, r, appRouter, localData) {
+app.run(['server', '$timeout', '$rootScope', 'appRouter', 'appSettings', function(db, $timeout, r, appRouter, appSettings) {
     //console.info('app.common.root:run');
     $U.exposeGlobal('r', r);
     r.getHashParams = $U.getHashParams;
 
     r.debug = true;
 
-    r.config = {};
     
-    //This should not be sync !
-    var env = window.env;
-    r.config = $U.readJSONSync(window.env.CONFIG_JSON_PATH);
-    env.$set(r.config);
 
-    localData().then((data) => Object.assign(r.config, data.config || {}));
+    r.config = {};
+    var env = {
+        APP_NAME: "Diagnostical",
+        COMPANY_NAME: "SAS Immocal",
+        BACKEND_URL: "https://diags-javoche.c9users.io:8081",
+        STORE_SESSION_PREFIX: '_SESSION'
+    };
+
+    appSettings.syncAll();
 
 
     r.__cache = {};
@@ -243,7 +246,7 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(
     r.momentTime = (d) => moment(d).format('HH[h]mm');
     r.momentFrenchDateTime = (d) => moment(d).format('DD/MM/YYYY [à] HH[h]mm');
     r.momentDateTime = (d) => r.momentFrenchDateTime(d); // moment(d).format('DD-MM-YY HH[h]mm');
-    r.momentDateTimeWords = (d,article) => moment(d).format('['+(article||'Le')+'] dddd DD MMMM YY [à] HH[h]mm');
+    r.momentDateTimeWords = (d, article) => moment(d).format('[' + (article || 'Le') + '] dddd DD MMMM YY [à] HH[h]mm');
     r.momentDateTimeWords2 = (d) => moment(d).format('dddd DD MMMM YY [à] HH[h]mm');
 
     r.dom = function(cb, timeout) {
@@ -273,7 +276,7 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(
 
 
     r.session = function(data) {
-        var id = r.config.APP_NAME + '_' + window.location.hostname + env.STORE_SESSION_PREFIX;
+        var id = env.APP_NAME + '_' + window.location.hostname + env.STORE_SESSION_PREFIX;
         if (data) {
             $U.store.set(id, data);
             r._session = data;
@@ -286,7 +289,7 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(
         return r._session;
     };
     r.sessionMetadata = function(data, reset) {
-        var id = r.config.APP_NAME + '_' + window.location.hostname + env.STORE_SESSION_PREFIX + "_METADATA";
+        var id = env.APP_NAME + '_' + window.location.hostname + env.STORE_SESSION_PREFIX + "_METADATA";
         reset = (reset != undefined) ? reset : false;
         if (data) {
             if (reset) {
@@ -308,9 +311,9 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'localData', function(
 
     /*Metadata is only persistent in booking pages except first page*/
     //if (appRouter.currentPath == '') {
-        //r.sessionMetadata({
-            //booking: {}
-        //});
+    //r.sessionMetadata({
+    //booking: {}
+    //});
     //}
 
 

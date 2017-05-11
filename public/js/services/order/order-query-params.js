@@ -125,7 +125,6 @@
                             '2': '2'
                         }) || undefined,
                         squareMeters: param('squareMeters', localData.squareMeters, true) || '90 - 110m²', // '- de 20m²',
-                        // apartamentType: param('apartamentType', localData.apartamentType) || undefined,
                         constructionPermissionDate: param('cpd', localData.constructionPermissionDate) || 'Entre 1949 et le 01/07/1997', // 'Entre 1949 et le 01/07/1997',
                         gasInstallation: param('gasInstallation', localData.gasInstallation) || 'Oui, Plus de 15 ans', // 'Oui, Moins de 15 ans',
                         electricityInstallation: param('electricityInstallation', localData.electricityInstallation) || bookingData.info.electricityInstallation || 'Plus de 15 ans' // 'Plus de 15 ans',
