@@ -6,21 +6,33 @@ var logger = resolver.ctrl('Log').createLogger({
 });
 var status = {};
 module.exports = {
+    sendCommand: sendCommand,
     serverLogs: serverLogs,
+    serverStatus:serverStatus,
     stop: stop
 };
+
+function serverLogs(data, cb) {
+    return sendCommand({
+        command: "pm2 logs",
+        password: data.password
+    }).then(r => cb(null, r)).catch(cb);
+}
+
+function serverStatus(data, cb) {
+    return sendCommand({
+        command: "pm2 list",
+        password: data.password
+    }).then(r => cb(null, r)).catch(cb);
+}
+
+
 
 function getConnection(password) {
 
     if (!resolver.env().SSH_HOST || !resolver.env().SSH_USER || !password) { //|| !resolver.env().SSH_PWD
         return null;
     }
-
-    logger.debug('getConnection', {
-        host: resolver.env().SSH_HOST || '62.210.97.81',
-        user: resolver.env().SSH_USER || 'root',
-        pass: password //resolver.env().SSH_PWD
-    });
 
     return new SSH({
         host: resolver.env().SSH_HOST || '62.210.97.81',
@@ -29,12 +41,7 @@ function getConnection(password) {
     });
 }
 
-function serverLogs(data, cb) {
-    return sendCommand({
-        command: "pm2 logs",
-        password: data.password
-    }, cb);
-}
+
 
 function stop(data, cb) {
     return resolver.promise((resolve, reject) => {
@@ -49,6 +56,9 @@ function stop(data, cb) {
 }
 
 function sendCommand(data, cb) {
+    if (cb) {
+        return cb('Internal action');
+    }
     return resolver.promise((resolve, reject) => {
         var conn = getConnection(data.password);
         if (!conn) {
@@ -65,12 +75,19 @@ function sendCommand(data, cb) {
 
         conn.on('error', function(err) {
             logger.error(err);
+
+            resolver.sockets().emitToChannel({
+                channelName: 'console-output',
+                data: JSON.stringify(err)
+            }).then(logger.debug).catch(logger.error);
+
             conn.end();
         });
         conn.ready = function(arg) {
             logger.debug('ready', arg);
         };
-        conn.exec("ls -lrt", {
+        conn.exec(data.command, {
+            args: data.args || [],
             out: function(stdout) {
                 logger.debug('stdout', stdout);
                 resolver.sockets().emitToChannel({

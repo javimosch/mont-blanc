@@ -418,8 +418,16 @@ html {
     text-align: left;
 }
 
-.table-striped tr:first-child td{
-    border:0px;
+.deployment-tool__tag-description-text {
+    line-height: 40px;
+    font-size: 22px;
+    float: right;
+    font-weight: 600;
+}
+
+
+.table-striped tr:first-child td {
+    border: 0px;
 }
 
 .diags-bg {

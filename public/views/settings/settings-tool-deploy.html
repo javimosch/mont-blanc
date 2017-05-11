@@ -1,8 +1,7 @@
 <script type="text/javascript">
     /*global $*/
     if (typeof window.io == 'undefined') {
-        $.getScript("/js/vendor/socket.io.min.js", function() {
-        });
+        $.getScript("/js/vendor/socket.io.min.js", function() {});
     }
 </script>
 
@@ -21,10 +20,42 @@
             <div class="row margin-top-one">
                 <div class="col-sm-12">
                     <h2>Diagnostical.com</h2>
+
                     <h3 ng-bind="currentVersion()"></h3>
-                    
-                    <button ng-click="test()">Test SSH Command</button>
-                    <button ng-click="stop()">Stop Command</button>
+                    <div class="row">
+                        <div class="padding-none padding-top-one col-sm-12 col-lg-5">
+                            <select ng-disabled="!tags" class="diags-input" name="tagsSelect" id="tagsSelect" ng-model="selectedTag">
+                              <option ng-repeat="option in tags" value="{[{option.name}]}" ng-bind="tagsSelectLabel(option)"></option>
+                            </select>
+                        </div>
+                        <div class="padding-none padding-top-one col-sm-12 col-lg-7">
+                            <p class="deployment-tool__tag-description-text" ng-bind="tagDescription()"></p>
+                        </div>
+                    </div>
+
+
+
+                    <div class="padding-none padding-top-one col-sm-12">
+                        <button class="btn diags-btn bg-azure-radiance" ng-click="refreshTags()">Refresh tags</button>
+                        
+                        <button 
+                            class="btn diags-btn bg-azure-radiance" ng-click="deployTag()">Deploy now</button>
+                            
+                        <button 
+                            class="btn diags-btn bg-azure-radiance" ng-click="checkStatus()">Check status</button>
+                            
+                    </div>
+
+                    <div class="padding-none padding-top-one col-sm-12">
+                        <textarea class="textarea-medium" ng-bind="consoleOutput()" readonly no-resize>
+                            
+                        </textarea>
+                    </div>
+
+                    <div class="padding-none padding-top-halve col-sm-12" >
+                        <button class="btn diags-btn bg-azure-radiance" ng-click="clearConsole()">Clear console</button>
+                    </div>
+
                 </div>
             </div>
         </out>

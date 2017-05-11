@@ -82,9 +82,11 @@
 
 .backoffice-wrapper{
     background-color:#EDF5F9;
+    min-height: 720px;
 }
 .backoffice-wrapper > .container{
     background-color:white;
+    padding-bottom: 20px;
 }
 .backoffice-wrapper > .container > .row,.backoffice-wrapper > .container > .row-fluid{
     margin-left:-15px;

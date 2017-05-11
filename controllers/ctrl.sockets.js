@@ -28,7 +28,7 @@ function emitToChannel(data, cb) {
                     counter++;
                 }
             });
-            logger.debug('emitToChannel', data.channelName, counter, 'times!');
+           // logger.debug('emitToChannel', data.channelName, counter, 'times!');
             resolver.responseFacade().json(counter, cb, resolve);
         }
     });
@@ -38,7 +38,7 @@ function subscribeToChannel(id, name) {
     status.channels[name] = status.channels[name] || [];
     status.channels[name].push(id);
     
-    logger.debug('subscribeToChannel',status.channels);
+   // logger.debug('subscribeToChannel',status.channels);
 }
 
 function onConnect(client) {
@@ -63,7 +63,7 @@ function start(data, cb) {
     if (!PORT) {
         return cb('SOCKETS_PORT server variable required');
     }
-    logger.debug('starting...');
+    //logger.debug('starting...');
     var io = require('socket.io')();
     io.on('connection', function(client) {
         onConnect(client);
