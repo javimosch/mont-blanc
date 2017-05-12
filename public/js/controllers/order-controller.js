@@ -7,57 +7,67 @@
     angular.module('order-feature-module').controller('adminOrdersEdit', [
 
         'server', '$scope', '$rootScope', '$routeParams', 'rdvSlotService', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi', 'localData',
-        function(db, s, r, params, rdvSlotService, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData) {
-            r.setCurrentCtrl(s);
+        function(db, $scope, $rootScope, params, rdvSlotService, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData) {
+            $rootScope.setCurrentCtrl($scope);
 
 
-            s.orderQuestion = orderQuestion;
-            s.orderRdv = orderRdv;
-            s.orderPrice = orderPrice;
+            $scope.orderQuestion = orderQuestion;
+            $scope.orderRdv = orderRdv;
+            $scope.orderPrice = orderPrice;
 
-            s.toggleDiagType = function(key) {
-                if (s.item._id) return; //edition disabled
-                s.item.diags[key] = !s.item.diags[key];
+            $scope.toggleDiagType = function(key) {
+                if ($scope.item._id) return; //edition disabled
+                $scope.item.diags[key] = !$scope.item.diags[key];
+            };
+
+            $scope.getOrderStatus = () => {
+                if ($scope.item && $scope.item.status === 'prepaid' && $scope.item.paymentType === 'cheque' &&
+                    $rootScope.userIs('admin')) {
+                    return "cheque"
+                }
+                else {
+                    return $scope.item && $scope.item.status;
+                }
             };
 
             /*PDF LOGIC*/
-            s.pdf = {
+            $scope.pdf = {
                 file: null
             };
-            s.pdfDownload = (code) => {
-                window.open(db.URL() + '/File/get/' + s.item.files[code]._id, '_newtab');
+            $scope.pdfDownload = (code) => {
+                window.open(db.URL() + '/File/get/' + $scope.item.files[code]._id, '_newtab');
             };
-            s.pdfExists = (code) => s.item && s.item.files && s.item.files[code] !== undefined;
-            s.pdfDelete = (code) => {
-                if (!s.pdfExists(code)) return;
-                var name = s.item.files[code] && s.item.files[code].filename || "File";
+            $scope.pdfExists = (code) => $scope.item && $scope.item.files && $scope.item.files[code] !== undefined;
+            $scope.pdfDelete = (code) => {
+                if (!$scope.pdfExists(code)) return;
+                var name = $scope.item.files[code] && $scope.item.files[code].filename || "File";
                 r.openConfirm('Delete ' + name + ' ?', () => {
                     db.ctrl('File', 'remove', {
-                        _id: s.item.files[code]._id
+                        _id: $scope.item.files[code]._id
                     }).then((d) => {
                         if (d.ok) {
-                            delete s.item.files[code];
-                            s.pdfCheck();
+                            delete $scope.item.files[code];
+                            $scope.pdfCheck();
                         }
                     });
                 });
             };
-            s.pdfChange = (diagCode) => {
-                if (s.item && s.item.end && moment(s.item.end).isAfter(moment())) {
-                    s.pdf = {};
+            $scope.pdfChange = (diagCode) => {
+                if ($scope.item && $scope.item.end && moment($scope.item.end).isAfter(moment())) {
+                    $scope.pdf = {};
                     r.dom();
-                    return r.infoMessage("Ajouter après " + moment(s.item.end).format('dddd DD [de] MMMM YY'), 5000);
+                    return r.infoMessage("Ajouter après " + moment($scope.item.end).format('dddd DD [de] MMMM YY'), 5000);
                 }
                 else {
                     r.dom(function() {
-                        s.pdfSave(diagCode);
+                        $scope.pdfSave(diagCode);
                     }, 1000);
                 }
             };
-            s.pdfAllPdfUploaded = () => {
-                for (var x in s.item.diags) {
-                    if (s.item.diags[x] == true) {
-                        if (s.item.files && s.item.files[x] && s.item.files[x]._id) {
+            $scope.pdfAllPdfUploaded = () => {
+                for (var x in $scope.item.diags) {
+                    if ($scope.item.diags[x] == true) {
+                        if ($scope.item.files && $scope.item.files[x] && $scope.item.files[x]._id) {
 
                         }
                         else {
@@ -68,34 +78,34 @@
                 return true;
             };
 
-            s.moveDateBackward = () => {
-                s.item.start = moment().subtract(1, 'days');
-                s.item.end = moment().subtract(1, 'days').add(1, 'hour')
+            $scope.moveDateBackward = () => {
+                $scope.item.start = moment().subtract(1, 'days');
+                $scope.item.end = moment().subtract(1, 'days').add(1, 'hour')
                 r.dom();
             };
 
-            s.pdfSaveSuccess = () => {
-                if (s.item.status == 'prepaid' && s.pdfAllPdfUploaded()) {
+            $scope.pdfSaveSuccess = () => {
+                if ($scope.item.status == 'prepaid' && $scope.pdfAllPdfUploaded()) {
                     console.warn('every pdf was uploaded. Turning order to completed.');
-                    s.item.status = 'completed';
+                    $scope.item.status = 'completed';
                 }
             };
-            s.pdfSave = (code) => {
+            $scope.pdfSave = (code) => {
                 if (!code) {
                     return console.warn('pdfSave code required');
                 }
-                if (!s.pdf[code]) {
+                if (!$scope.pdf[code]) {
                     return r.warningMessage("Un fichier requis", 5000);
                 }
-                if (s.pdf[code].type !== 'application/pdf') {
+                if ($scope.pdf[code].type !== 'application/pdf') {
                     return r.warningMessage("Format pdf nécessaire", 5000);
                 }
-                if (s.pdf[code].size / 1024 > 10240) {
+                if ($scope.pdf[code].size / 1024 > 10240) {
                     return r.warningMessage("Limite 10mb pour le fichier pdf", 5000);
                 }
 
 
-                s.item.files = s.item.files || {};
+                $scope.item.files = $scope.item.files || {};
 
                 function _deletePrev(prevID) {
                     if (prevID) {
@@ -105,29 +115,29 @@
                         console.log('pdf delete prev', prevID);
                     }
                 }
-                var prevID = s.item.files[code] && s.item.files[code]._id;
+                var prevID = $scope.item.files[code] && $scope.item.files[code]._id;
 
                 _uploadNew(); //starts here
 
                 function _uploadNew() {
                     r.infoMessage('Patientez, le chargement est en cours', 99999);
                     db.form('File/save/', {
-                        name: s.pdf[code].name,
-                        file: s.pdf[code]
+                        name: $scope.pdf[code].name,
+                        file: $scope.pdf[code]
                     }).then((data) => {
                         //console.info('INFO', data);
                         if (data.ok) {
-                            s.item.files[code] = data.result;
+                            $scope.item.files[code] = data.result;
 
-                            s.pdfSaveSuccess();
+                            $scope.pdfSaveSuccess();
 
                             db.ctrl('Order', 'update', {
-                                _id: s.item._id,
-                                files: s.item.files,
-                                status: s.item.status
+                                _id: $scope.item._id,
+                                files: $scope.item.files,
+                                status: $scope.item.status
                             }).then(data => {
                                 _deletePrev(prevID);
-                                read(s.item._id);
+                                read($scope.item._id);
                                 r.infoMessage('File upload success.', 5000);
                             });
                         }
@@ -138,39 +148,39 @@
                 }
             };
 
-            s.pdfCheck = () => {
-                if (!s.item) return;
-                if (s.item && !s.item.files) return;
-                if (s.item && s.item.files && Object.keys(s.item.files).length == 0) return;
+            $scope.pdfCheck = () => {
+                if (!$scope.item) return;
+                if ($scope.item && !$scope.item.files) return;
+                if ($scope.item && $scope.item.files && Object.keys($scope.item.files).length == 0) return;
 
 
-                var cbHell = $U.cbHell(Object.keys(s.item.files).length, () => {
+                var cbHell = $U.cbHell(Object.keys($scope.item.files).length, () => {
                     db.ctrl('Order', 'update', {
-                        _id: s.item._id,
-                        files: s.item.files
+                        _id: $scope.item._id,
+                        files: $scope.item.files
                     });
                     console.log('pdf check complete');
                 });
 
                 var file = null;
-                for (var code in s.item.files) {
-                    file = s.item.files[code];
+                for (var code in $scope.item.files) {
+                    file = $scope.item.files[code];
                     if (!file) {
                         cbHell.next();
                     }
                     else {
                         if (!file._id) {
                             console.warn('checking file, _id expected. Code its ', code);
-                            delete s.item.files[code];
+                            delete $scope.item.files[code];
                             cbHell.next();
                         }
                         else {
                             db.ctrl('File', 'find', {
                                 _id: file._id
                             }).then(res => {
-                                var r = res.ok && res.result;
+                                var $rootScope = res.ok && res.result;
                                 if (!r) {
-                                    delete s.item.files[code];
+                                    delete $scope.item.files[code];
                                 }
                                 cbHell.next();
                             });
@@ -181,19 +191,19 @@
 
 
 
-            s.pdfReset = {};
-            s.item = {};
+            $scope.pdfReset = {};
+            $scope.item = {};
 
 
 
-            s.afterRead = [fetchTransaction];
+            $scope.afterRead = [fetchTransaction];
 
             function fetchTransaction() {
-                if (s.item && s.item.walletTransId) {}
+                if ($scope.item && $scope.item.walletTransId) {}
                 else {
                     return;
                 }
-                if (!s.item._client.wallet) return;
+                if (!$scope.item._client.wallet) return;
 
                 //lemonwayApi.getWalletTransHistory({})
 
@@ -204,9 +214,9 @@
 
                 if (window.location.href.indexOf('orders/view') !== -1) {
 
-                    s.afterRead.push(() => {
-                        if (!s.isPaid()) {
-                            s.pay(); //ASD
+                    $scope.afterRead.push(() => {
+                        if (!$scope.isPaid()) {
+                            $scope.pay(); //ASD
                         }
                     });
 
@@ -223,7 +233,7 @@
                     }
                 }
                 else {
-                    r.secureSection(s);
+                    r.secureSection($scope);
                 }
 
                 //
@@ -244,21 +254,21 @@
                     reset();
 
                     $log.debug('diag-cards-auto-select');
-                    $U.whenProperties(s, ['diags'], [setDefaultsDiags]);
+                    $U.whenProperties($scope, ['diags'], [setDefaultsDiags]);
                     bindAnswersToDefaultDiags();
                 }
             }
 
             function bindAnswersToDefaultDiags() {
-                if (!s.diags) return setTimeout(bindAnswersToDefaultDiags, 500);
-                orderQuestion.bindAnswersToDefaultDiags(s);
+                if (!$scope.diags) return setTimeout(bindAnswersToDefaultDiags, 500);
+                orderQuestion.bindAnswersToDefaultDiags($scope);
             }
 
             function autoPay() {
                 if (window.location.href.indexOf('orders/view') === -1) return;
-                if (s.pay && $U.getParameterByName('pay') === '1') {
-                    if (s.item && !_.includes(['prepaid', 'completed'], s.item.status)) {
-                        s.pay();
+                if ($scope.pay && $U.getParameterByName('pay') === '1') {
+                    if ($scope.item && !_.includes(['prepaid', 'completed'], $scope.item.status)) {
+                        $scope.pay();
                     }
                 }
             }
@@ -269,28 +279,28 @@
 
             function setHelpers() {
 
-                s.diagNameConvertion = diagNameConvertion;
+                $scope.diagNameConvertion = diagNameConvertion;
 
-                s.diagIcon = (k) => {
+                $scope.diagIcon = (k) => {
                     return "/img/icons/icon_" + k + '.png';
                 };
 
-                s.diagSlots = rdvSlotService(s, s.item);
+                $scope.diagSlots = rdvSlotService($scope, $scope.item);
 
-                s.__rdvInit = false;
+                $scope.__rdvInit = false;
 
-                s.__isSlotSelectionActivatedManually = false;
+                $scope.__isSlotSelectionActivatedManually = false;
 
                 function hasSlotSelectionActivatedManually() {
-                    return s.__isSlotSelectionActivatedManually == true;
+                    return $scope.__isSlotSelectionActivatedManually == true;
                 }
-                s.activateSlotSelectionManually = function(val) {
+                $scope.activateSlotSelectionManually = function(val) {
                     r.dom(function() {
-                        s.__isSlotSelectionActivatedManually = val != undefined && val || true;
+                        $scope.__isSlotSelectionActivatedManually = val != undefined && val || true;
                     });
                 };
-                s.isRDVSelectButtonActivated = function() {
-                    return s.item._id && r.userIs('admin') && !hasSlotSelectionActivatedManually() && !s.rdvConditions();
+                $scope.isRDVSelectButtonActivated = function() {
+                    return $scope.item._id && r.userIs('admin') && !hasSlotSelectionActivatedManually() && !$scope.rdvConditions();
                 };
 
                 function hasSlotSelectionActivatedManualyByAdmin() {
@@ -298,12 +308,12 @@
                 }
 
 
-                s.rdvConditions = () => {
-                    if (s.item._id && !hasSlotSelectionActivatedManualyByAdmin()) return false;
-                    if (!s.item.info) return false;
-                    var rta = s.item.info.squareMeters !== undefined && s.item._client !== undefined;
-                    if (rta && !s.__rdvInit) {
-                        s.__rdvInit = true;
+                $scope.rdvConditions = () => {
+                    if ($scope.item._id && !hasSlotSelectionActivatedManualyByAdmin()) return false;
+                    if (!$scope.item.info) return false;
+                    var rta = $scope.item.info.squareMeters !== undefined && $scope.item._client !== undefined;
+                    if (rta && !$scope.__rdvInit) {
+                        $scope.__rdvInit = true;
 
                         var settings = {
                             //department: s.item.
@@ -317,18 +327,18 @@
                             settings.maxSlots = 40;
                         }
 
-                        s.diagSlots.init(undefined, settings);
+                        $scope.diagSlots.init(undefined, settings);
                     }
                     return rta;
                 };
 
 
 
-                s.viewPDF = () => {
-                    $D.getInvoiceHTMLContent(db, s.item, r, function(html) {
+                $scope.viewPDF = () => {
+                    $D.getInvoiceHTMLContent(db, $scope.item, r, function(html) {
                         html =
                             window.encodeURIComponent(
-                                $D.OrderReplaceHTML(window.decodeURIComponent(html), s.item, r));
+                                $D.OrderReplaceHTML(window.decodeURIComponent(html), $scope.item, r));
 
                         r.ws.ctrl("Pdf", "view", {
                             html: html
@@ -344,170 +354,170 @@
                     });
                 };
 
-                s.delegate = () => {
-                    s.item.notifications = s.item.notifications || {};
+                $scope.delegate = () => {
+                    $scope.item.notifications = $scope.item.notifications || {};
                     ////LANDLORD//#1 OK app.order
-                    if (s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED) {
+                    if ($scope.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED) {
                         r.openConfirm({
                             message: "Already sended, send again?"
                         }, () => {
 
-                            s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED = false;
+                            $scope.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED = false;
                             db.ctrl('Order', 'update', {
-                                _id: s.item._id,
-                                notifications: s.item.notifications
+                                _id: $scope.item._id,
+                                notifications: $scope.item.notifications
                             }).then(res => {
-                                s.sendPaymentLink();
+                                $scope.sendPaymentLink();
                             })
 
 
                         });
                     }
                     else {
-                        s.sendPaymentLink();
+                        $scope.sendPaymentLink();
                     }
                 };
 
-                s.dateSlotSelected = function(rng) {
-                    return (s.item.start && (s.item.start == rng.start));
+                $scope.dateSlotSelected = function(rng) {
+                    return ($scope.item.start && ($scope.item.start == rng.start));
                 }
 
-                s.drawRange = function(rng) {
+                $scope.drawRange = function(rng) {
                     var rta = moment(rng.start).format("HH[h]mm");
                     rta += ' - ' + rng.price + ' €';
                     return rta;
                 };
 
 
-                s.hasUserSelectedAnRDVSlot = false;
+                $scope.hasUserSelectedAnRDVSlot = false;
 
-                s.unwrapRange = (range) => {
+                $scope.unwrapRange = (range) => {
                     //var data = JSON.parse(window.atob(range));
                     var data = range;
 
-                    s.item.start = data.start;
-                    s.item.end = data.end;
+                    $scope.item.start = data.start;
+                    $scope.item.end = data.end;
                     //
 
                     orderPrice.set({
-                        date: s.item.start,
-                        diagCommissionRate: s.item._diag && s.item._diag.commission,
-                        diagIsAutoentrepreneur: s.item._diag && s.item._diag.isAutoentrepreneur
+                        date: $scope.item.start,
+                        diagCommissionRate: $scope.item._diag && $scope.item._diag.commission,
+                        diagIsAutoentrepreneur: $scope.item._diag && $scope.item._diag.isAutoentrepreneur
                     });
                     var _newPriceQuote = orderPrice.getPriceTTC();
-                    if (s.item._id && _newPriceQuote !== undefined) {
-                        if (_newPriceQuote > s.item.price) {
-                            s.infoMsg("Original price will be keeped. New price " + _newPriceQuote + "EUR is higher and will be ignored.");
+                    if ($scope.item._id && _newPriceQuote !== undefined) {
+                        if (_newPriceQuote > $scope.item.price) {
+                            $scope.infoMsg("Original price will be keeped. New price " + _newPriceQuote + "EUR is higher and will be ignored.");
                             //$log.debug('Original price was keeped due to higher price in new price quote.');
-                            s.item.price = s.original.price;
+                            $scope.item.price = $scope.original.price;
                             return;
                         }
 
-                        if (s.item.status !== 'created') {
-                            if (_newPriceQuote < s.item.price) {
-                                s.infoMsg("Original price will be keeped. New price " + _newPriceQuote + "EUR is lower but will be ignored because the order is already paid.");
+                        if ($scope.item.status !== 'created') {
+                            if (_newPriceQuote < $scope.item.price) {
+                                $scope.infoMsg("Original price will be keeped. New price " + _newPriceQuote + "EUR is lower but will be ignored because the order is already paid.");
                                 //$log.debug('Original price was keeped due to lower price / order-paid rule.');
-                                s.item.price = s.original.price;
+                                $scope.item.price = $scope.original.price;
                                 return;
                             }
                         }
 
                     }
-                    s.applyTotalPrice();
-                    s.hasUserSelectedAnRDVSlot = true;
+                    $scope.applyTotalPrice();
+                    $scope.hasUserSelectedAnRDVSlot = true;
                 };
 
-                s.infoItemShow = function(item) {
+                $scope.infoItemShow = function(item) {
                     return typeof item == 'boolean';
                 };
 
-                s.canWriteAgency = () => {
-                    if (!s.item._id) {
+                $scope.canWriteAgency = () => {
+                    if (!$scope.item._id) {
                         return r.userIs('admin');
                     }
-                    return r.userIs(['admin']) || (r.session()._id == s.item._client._id && _.includes(['agency', 'other'], s.item._client.clientType));
+                    return r.userIs(['admin']) || (r.session()._id == $scope.item._client._id && _.includes(['agency', 'other'], $scope.item._client.clientType));
                 };
-                s.canWriteDiag = () => {
-                    if (!s.item._id) {
+                $scope.canWriteDiag = () => {
+                    if (!$scope.item._id) {
                         return false
                     }
-                    return r.userIs(['admin']) || r.sesison()._id == s.item._diag._id;
+                    return r.userIs(['admin']) || r.sesison()._id == $scope.item._diag._id;
                 };
 
-                s.isPaid = () => {
-                    return _.includes(['prepaid', 'completed'], s.item.status);
+                $scope.isPaid = () => {
+                    return _.includes(['prepaid', 'completed'], $scope.item.status);
                 };
 
-                s.isDiag = () => {
-                    if (!s.item._id) return false;
-                    return r.userIs('diag') && r.session()._id == s.item._diag._id;
+                $scope.isDiag = () => {
+                    if (!$scope.item._id) return false;
+                    return r.userIs('diag') && r.session()._id == $scope.item._diag._id;
                 };
 
-                s.isOwner = () => {
-                    if (!s.item || !s.item._client) return false;
-                    return s.item._client.clientType === 'landlord';
+                $scope.isOwner = () => {
+                    if (!$scope.item || !$scope.item._client) return false;
+                    return $scope.item._client.clientType === 'landlord';
                 };
 
-                s.successMsg = (msg) => {
+                $scope.successMsg = (msg) => {
                     r.message(msg, {
                         type: 'success',
                         duration: 10000
                     });
                 }
-                s.infoMsg = (msg) => {
+                $scope.infoMsg = (msg) => {
                     r.message(msg, {
                         duration: 5000,
                         type: 'info'
                     });
                 }
 
-                s.currentClientType = () =>
-                    s.item && s.item._client && '(' + s.item._client.clientType + ')' || '';
+                $scope.currentClientType = () =>
+                    $scope.item && $scope.item._client && '(' + $scope.item._client.clientType + ')' || '';
 
-                s.totalTime = () => $D.OrderTotalTime(s.item.diags, s.diags);
+                $scope.totalTime = () => $D.OrderTotalTime($scope.item.diags, $scope.diags);
 
                 var _totalTimeFormatedDate = moment();
-                s.totalTimeFormated = () => {
-                    if (!s.item.diags || !s.diags) return '';
-                    var t = $D.OrderTotalTime(s.item.diags, s.diags);
+                $scope.totalTimeFormated = () => {
+                    if (!$scope.item.diags || !$scope.diags) return '';
+                    var t = $D.OrderTotalTime($scope.item.diags, $scope.diags);
                     var m = _totalTimeFormatedDate.hours(t.hours).minutes(t.minutes).format('HH:mm');
                     return m;
                 };
 
-                s.orderDescription = () => {
-                    var d = $D.createOrderDescription(s.item);
-                    s.item.info.description = d;
+                $scope.orderDescription = () => {
+                    var d = $D.createOrderDescription($scope.item);
+                    $scope.item.info.description = d;
                     return d;
                 };
 
 
 
-                s.applyTotalPrice = () => {
+                $scope.applyTotalPrice = () => {
 
-                    if (_.includes(['prepaid', 'delivered', 'completed'], s.item.status)) {
+                    if (_.includes(['prepaid', 'delivered', 'completed'], $scope.item.status)) {
                         return;
                     }
 
-                    s.diagSlots.updatePrices();
+                    $scope.diagSlots.updatePrices();
 
                     orderPrice.set({
-                        date: s.item.start,
-                        diagCommissionRate: s.item._diag && s.item._diag.commission
+                        date: $scope.item.start,
+                        diagCommissionRate: $scope.item._diag && $scope.item._diag.commission
                     });
-                    orderPrice.assignPrices(s.item);
+                    orderPrice.assignPrices($scope.item);
                     r.dom();
                 };
 
-                s.type = r.session().userType;
-                s.is = (arr) => _.includes(arr, s.type);
+                $scope.type = r.session().userType;
+                $scope.is = (arr) => _.includes(arr, $scope.type);
 
-                window.s = s;
+                window.s = $scope;
             }
 
 
 
             function setDefaults() {
-                window.Object.assign(s.item, {
+                window.Object.assign($scope.item, {
                     email: '',
                     password: '',
                     status: 'created',
@@ -523,13 +533,13 @@
                         constructionPermissionDate: undefined
                     }
                 });
-                s.original = _.clone(s.item);
+                $scope.original = _.clone($scope.item);
             }
 
             function setDefaultsDiags() {
-                s.item.diags = s.item.diags || {};
-                s.diags.forEach(function(val, key) {
-                    s.item.diags[val.name] = (val.mandatory) ? true : false;
+                $scope.item.diags = $scope.item.diags || {};
+                $scope.diags.forEach(function(val, key) {
+                    $scope.item.diags[val.name] = (val.mandatory) ? true : false;
                 });
             }
 
@@ -537,106 +547,106 @@
             function setBindings() {
 
                 db.ctrl('Settings', 'getAll', {}).then(d => {
-                    if (d.ok && d.result.length > 0) s.settings = d.result[0];
+                    if (d.ok && d.result.length > 0) $scope.settings = d.result[0];
                 });
 
-                s.$watch('item.start', (v) => {
-                    s.item.date = v; //fallback for total price calculation.
+                $scope.$watch('item.start', (v) => {
+                    $scope.item.date = v; //fallback for total price calculation.
                 });
 
 
 
-                s.$watch('item._diag', (v) => {
-                    if (s.diagSlots) {
-                        s.diagSlots.setDiag(s.item._diag);
+                $scope.$watch('item._diag', (v) => {
+                    if ($scope.diagSlots) {
+                        $scope.diagSlots.setDiag($scope.item._diag);
                     }
                 });
 
                 localData().then(function(data) {
-                    Object.assign(s, data);
-                    s.diags.forEach((diag) => {
+                    Object.assign($scope, data);
+                    $scope.diags.forEach((diag) => {
                         diag.show = true;
                     });
                 });
                 //
 
-                s.CLIENT_TYPES = ['agency', 'enterprise', 'landlord', 'other'];
-                s.CLIENT_TYPES_COMPANY = ['agency', 'enterprise', 'other'];
+                $scope.CLIENT_TYPES = ['agency', 'enterprise', 'landlord', 'other'];
+                $scope.CLIENT_TYPES_COMPANY = ['agency', 'enterprise', 'other'];
 
                 //KEYS WHERE Version2 --------------------------------
-                s.isOrderClientLandLord = () => {
-                    if (!s.item || !s.item._client || !s.item._client.clientType) return true;
+                $scope.isOrderClientLandLord = () => {
+                    if (!$scope.item || !$scope.item._client || !$scope.item._client.clientType) return true;
                     //
-                    return !_.includes(s.CLIENT_TYPES_COMPANY, s.item._client.clientType);
+                    return !_.includes($scope.CLIENT_TYPES_COMPANY, $scope.item._client.clientType);
                 }
-                s.isOrderClientAgency = () => {
-                    return !s.isOrderClientLandLord();
+                $scope.isOrderClientAgency = () => {
+                    return !$scope.isOrderClientLandLord();
                 };
 
 
 
-                s.__keysWhereItems = {};
-                s.__keysWhereGetItems = () => {
-                    if (!s.item._client || !s.item._client.clientType) return {
+                $scope.__keysWhereItems = {};
+                $scope.__keysWhereGetItems = () => {
+                    if (!$scope.item._client || !$scope.item._client.clientType) return {
                         'Ou ?': () => '',
                     };
-                    if (s.isOrderClientLandLord()) {
+                    if ($scope.isOrderClientLandLord()) {
                         return {
                             'Ou ?': () => '',
-                            'Diag Address': () => s.item.address,
-                            'Client Address': () => s.item._client.address, //when landlord
+                            'Diag Address': () => $scope.item.address,
+                            'Client Address': () => $scope.item._client.address, //when landlord
                             'Other': () => 'other'
                         };
                     }
                     else {
                         return {
                             'Ou ?': () => '',
-                            'Diag Address': () => s.item.address,
-                            'Agency Address': () => s.item._client.address, //when not-landlord
-                            'Landlord Address': () => s.item.landLordAddress, //when not-landlord 
+                            'Diag Address': () => $scope.item.address,
+                            'Agency Address': () => $scope.item._client.address, //when not-landlord
+                            'Landlord Address': () => $scope.item.landLordAddress, //when not-landlord 
                             'Other': () => 'other'
                         };
                     }
                 };
 
                 function isEdition() {
-                    return s.item && s.item._id;
+                    return $scope.item && $scope.item._id;
                 }
 
-                s.$watch('item.diags', function(newV, oldV) {
-                    if (!_.isEqual(newV, oldV) && !s.item._id) {
-                        s.applyTotalPrice();
+                $scope.$watch('item.diags', function(newV, oldV) {
+                    if (!_.isEqual(newV, oldV) && !$scope.item._id) {
+                        $scope.applyTotalPrice();
                     }
                 }, true);
 
-                s.$watch('item.info.buildingType', function(newV, oldV) {
+                $scope.$watch('item.info.buildingType', function(newV, oldV) {
                     if (!isEdition()) {
-                        s.applyTotalPrice();
+                        $scope.applyTotalPrice();
                     }
                 }, true);
 
-                s.$watch('item', function(val) {
-                    s.__keysWhereItems = s.__keysWhereGetItems();
+                $scope.$watch('item', function(val) {
+                    $scope.__keysWhereItems = $scope.__keysWhereGetItems();
                 }, true);
-                s.__keysWhereSelectFirstItem = () => s.__keysWhereItems && Object.keys(s.__keysWhereItems)[0] || "Loading";
-                s.__keysWhereSelectLabel = () => s.__keysWhereSelectLabelVal || s.__keysWhereSelectFirstItem();
-                s.__keysWhereSelect = (key, val) => {
+                $scope.__keysWhereSelectFirstItem = () => $scope.__keysWhereItems && Object.keys($scope.__keysWhereItems)[0] || "Loading";
+                $scope.__keysWhereSelectLabel = () => $scope.__keysWhereSelectLabelVal || $scope.__keysWhereSelectFirstItem();
+                $scope.__keysWhereSelect = (key, val) => {
                     //$log.debug(val);
-                    s.item.keysWhere = val && val() || undefined;
+                    $scope.item.keysWhere = val && val() || undefined;
                 };
 
                 function watchKeysWhere() {
-                    s.$watch('item.keysWhere', function(val) {
-                        if (s.item._id) return;
+                    $scope.$watch('item.keysWhere', function(val) {
+                        if ($scope.item._id) return;
                         if (val == undefined) {
-                            return s.__keysWhereSelectLabelVal = 'Ou ?';
+                            return $scope.__keysWhereSelectLabelVal = 'Ou ?';
                         }
-                        Object.keys(s.__keysWhereItems).forEach(k => {
-                            if (s.__keysWhereItems[k]() == val) {
-                                s.__keysWhereSelectLabelVal = k;
+                        Object.keys($scope.__keysWhereItems).forEach(k => {
+                            if ($scope.__keysWhereItems[k]() == val) {
+                                $scope.__keysWhereSelectLabelVal = k;
                             }
                         });
-                        s.item.keysAddress = (val == 'other') ? '' : val;
+                        $scope.item.keysAddress = (val == 'other') ? '' : val;
                     });
                 }
 
@@ -644,97 +654,97 @@
                     watchKeysWhere();
                 }
                 else {
-                    s.afterRead.push(watchKeysWhere);
+                    $scope.afterRead.push(watchKeysWhere);
                 }
 
 
 
                 //KEYS TIME FROM ------------------------------------------------------------------------------------------------
-                s.__keysTimeFromItems = {};
-                s.__keysTimeFromGetItems = () => {
+                $scope.__keysTimeFromItems = {};
+                $scope.__keysTimeFromGetItems = () => {
                     var vals = {};
-                    if (!s.item) return vals;
-                    var m = moment(s.item.start).hours(8);
-                    while (m.isBefore(moment(s.item.start))) {
+                    if (!$scope.item) return vals;
+                    var m = moment($scope.item.start).hours(8);
+                    while (m.isBefore(moment($scope.item.start))) {
                         vals[r.momentTime(m)] = new Date(m.toString());
                         m = m.add(5, 'minutes');
                     };
-                    vals[r.momentTime(s.item.start)] = new Date(moment(s.item.start).toString());
+                    vals[r.momentTime($scope.item.start)] = new Date(moment($scope.item.start).toString());
                     return vals;
                 };
-                s.__keysTimeFromSelectFirstItem = () => s.__keysTimeFromItems && Object.keys(s.__keysTimeFromItems)[0] || "Loading";
-                s.__keysTimeFromSelectLabel = 'choisir';
-                s.__keysTimeFromSelect = (key, val) => {
-                    s.item.keysTimeFrom = val;
-                    if (dtAfter(s.item.keysTimeFrom, s.item.keysTimeTo)) {
-                        s.item.keysTimeTo = undefined;
+                $scope.__keysTimeFromSelectFirstItem = () => $scope.__keysTimeFromItems && Object.keys($scope.__keysTimeFromItems)[0] || "Loading";
+                $scope.__keysTimeFromSelectLabel = 'choisir';
+                $scope.__keysTimeFromSelect = (key, val) => {
+                    $scope.item.keysTimeFrom = val;
+                    if (dtAfter($scope.item.keysTimeFrom, $scope.item.keysTimeTo)) {
+                        $scope.item.keysTimeTo = undefined;
                     }
                 };
-                s.$watch('item.keysTimeFrom', function(val) {
+                $scope.$watch('item.keysTimeFrom', function(val) {
                     if (!val) {
-                        s.__keysTimeFromSelectLabel = 'choisir';
+                        $scope.__keysTimeFromSelectLabel = 'choisir';
                     }
                     else {
-                        if (s.item._id) {
-                            return s.__keysTimeFromSelectLabel = r.momentTime(s.item.keysTimeFrom);
+                        if ($scope.item._id) {
+                            return $scope.__keysTimeFromSelectLabel = r.momentTime($scope.item.keysTimeFrom);
                         }
-                        s.__keysTimeFromSelectLabel = 'choisir';
-                        _.each(s.__keysTimeFromItems, (v, k) => {
-                            if (v == val) s.__keysTimeFromSelectLabel = k;
+                        $scope.__keysTimeFromSelectLabel = 'choisir';
+                        _.each($scope.__keysTimeFromItems, (v, k) => {
+                            if (v == val) $scope.__keysTimeFromSelectLabel = k;
                         });
                     }
 
                 });
-                s.$watch('item.start', function(val) {
-                    s.__keysTimeFromItems = s.__keysTimeFromGetItems();
+                $scope.$watch('item.start', function(val) {
+                    $scope.__keysTimeFromItems = $scope.__keysTimeFromGetItems();
                 });
 
                 //KEYS TIME TO ------------------------------------------------------------------------------------------------
-                s.__keysTimeToItems = {};
-                s.__keysTimeToGetItems = () => {
+                $scope.__keysTimeToItems = {};
+                $scope.__keysTimeToGetItems = () => {
                     var vals = {};
-                    if (!s.item) return vals;
-                    var m = moment(s.item.start).hours(8).minutes(0);
+                    if (!$scope.item) return vals;
+                    var m = moment($scope.item.start).hours(8).minutes(0);
                     if (
-                        moment(s.item.keysTimeFrom).isAfter(m) &&
-                        moment(s.item.keysTimeFrom).isBefore(moment(s.item.start))
+                        moment($scope.item.keysTimeFrom).isAfter(m) &&
+                        moment($scope.item.keysTimeFrom).isBefore(moment($scope.item.start))
                     ) {
-                        m = m.hours(moment(s.item.keysTimeFrom).hours())
-                        m = m.minutes(moment(s.item.keysTimeFrom).minutes())
+                        m = m.hours(moment($scope.item.keysTimeFrom).hours())
+                        m = m.minutes(moment($scope.item.keysTimeFrom).minutes())
                     }
 
-                    while (m.isBefore(moment(s.item.start))) {
+                    while (m.isBefore(moment($scope.item.start))) {
                         vals[r.momentTime(m)] = new Date(m.toString());
                         m = m.add(5, 'minutes');
                     };
-                    vals[r.momentTime(s.item.start)] = new Date(moment(s.item.start).toString());
+                    vals[r.momentTime($scope.item.start)] = new Date(moment($scope.item.start).toString());
                     return vals;
                 };
-                s.__keysTimeToSelectFirstItem = () => s.__keysTimeToItems && Object.keys(s.__keysTimeToItems)[0] || "Loading";
-                s.__keysTimeToSelectLabel = 'choisir';
-                s.__keysTimeToSelect = (key, val) => {
-                    s.item.keysTimeTo = val;
+                $scope.__keysTimeToSelectFirstItem = () => $scope.__keysTimeToItems && Object.keys($scope.__keysTimeToItems)[0] || "Loading";
+                $scope.__keysTimeToSelectLabel = 'choisir';
+                $scope.__keysTimeToSelect = (key, val) => {
+                    $scope.item.keysTimeTo = val;
                 };
-                s.$watch('item.keysTimeTo', function(val) {
+                $scope.$watch('item.keysTimeTo', function(val) {
                     if (!val) {
-                        s.__keysTimeToSelectLabel = 'choisir';
+                        $scope.__keysTimeToSelectLabel = 'choisir';
                     }
                     else {
-                        if (s.item._id) {
-                            return s.__keysTimeToSelectLabel = r.momentTime(s.item.keysTimeTo);
+                        if ($scope.item._id) {
+                            return $scope.__keysTimeToSelectLabel = r.momentTime($scope.item.keysTimeTo);
                         }
-                        s.__keysTimeToSelectLabel = 'choisir';
-                        _.each(s.__keysTimeToItems, (v, k) => {
-                            if (v == val) s.__keysTimeToSelectLabel = k;
+                        $scope.__keysTimeToSelectLabel = 'choisir';
+                        _.each($scope.__keysTimeToItems, (v, k) => {
+                            if (v == val) $scope.__keysTimeToSelectLabel = k;
                         });
                     }
 
                 });
-                s.$watch('item.keysTimeFrom', function(val) {
-                    s.__keysTimeToItems = s.__keysTimeToGetItems();
+                $scope.$watch('item.keysTimeFrom', function(val) {
+                    $scope.__keysTimeToItems = $scope.__keysTimeToGetItems();
                 });
-                s.$watch('item.start', function(val) {
-                    s.__keysTimeToItems = s.__keysTimeToGetItems();
+                $scope.$watch('item.start', function(val) {
+                    $scope.__keysTimeToItems = $scope.__keysTimeToGetItems();
                 });
                 //-------------------------------------------------------------------------
 
@@ -750,15 +760,15 @@
 
 
                 //
-                s.datepicker = {
+                $scope.datepicker = {
                     minDate: moment().toDate(), //.add(1, 'day') //today!
                     maxDate: moment().add(60, 'day').toDate(),
                     initDate: new Date()
                 };
                 //
-                s.noResults = "No results found";
-                s.LoadingClients = "Loading Clients";
-                s.getClients = function(val) {
+                $scope.noResults = "No results found";
+                $scope.LoadingClients = "Loading Clients";
+                $scope.getClients = function(val) {
                     return db.http('User', 'getAll', {
                         userType: 'client',
                         __regexp: {
@@ -768,7 +778,7 @@
                         return res.data.result;
                     });
                 };
-                s.getDiags = function(val) {
+                $scope.getDiags = function(val) {
                     return db.http('User', 'getAll', {
                         userType: 'diag',
                         __rules: {
@@ -785,15 +795,15 @@
                 };
 
 
-                s.start = $D.createDateTimePickerData();
-                s.end = $D.createDateTimePickerData();
-                s.status = $D.createSelect({
-                    scope: s,
+                $scope.start = $D.createDateTimePickerData();
+                $scope.end = $D.createDateTimePickerData();
+                $scope.status = $D.createSelect({
+                    scope: $scope,
                     model: 'item.status',
                     label: '(Select an status)',
                     items: ['Ordered', 'Prepaid', 'Delivered', 'Completed'],
                     change: (selected) => {
-                        s.item.status = selected.toString().toLowerCase();
+                        $scope.item.status = selected.toString().toLowerCase();
                         r.dom();
                     }
                 });
@@ -802,11 +812,11 @@
             function setActions() {
 
 
-                s.sendPaymentLink = (cb) => {
+                $scope.sendPaymentLink = (cb) => {
 
                     $U.ifThenMessage([
-                        [!s.item.landLordEmail, '==', true, "Landlord Email required."],
-                        [!s.item.landLordFullName, '==', true, "Landlord Name required."],
+                        [!$scope.item.landLordEmail, '==', true, "Landlord Email required."],
+                        [!$scope.item.landLordFullName, '==', true, "Landlord Name required."],
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             r.warningMessage(m[0]());
@@ -820,25 +830,25 @@
 
                     function _sendPaymentLink() {
                         r.openConfirm({
-                            message: 'You want to send a payment link to ' + s.item.landLordEmail + ' ?',
+                            message: 'You want to send a payment link to ' + $scope.item.landLordEmail + ' ?',
                             templateUrl: 'views/directives/modal.yes-not-now.html'
                         }, () => {
-                            s.infoMsg("Sending email.");
+                            $scope.infoMsg("Sending email.");
 
-                            $D.getInvoiceHTMLContent(db, s.item, r, html => {
+                            $D.getInvoiceHTMLContent(db, $scope.item, r, html => {
                                 db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
-                                    _user: s.item._client,
-                                    _order: s.item,
+                                    _user: $scope.item._client,
+                                    _order: $scope.item,
                                     attachmentPDFHTML: html
                                 }).then(data => {
 
-                                    if (s.item.status == 'created') {
-                                        s.item.status = 'ordered';
-                                        db.ctrl('Order', 'update', s.item);
+                                    if ($scope.item.status == 'created') {
+                                        $scope.item.status = 'ordered';
+                                        db.ctrl('Order', 'update', $scope.item);
                                     }
 
 
-                                    s.infoMsg("Email sended.");
+                                    $scope.infoMsg("Email sended.");
                                     if (cb) cb();
                                 });
                             });
@@ -850,20 +860,20 @@
 
 
 
-                s.isPayButtonShown = function() {
+                $scope.isPayButtonShown = function() {
                     if (orderPaymentForm.isProcessing()) return false;
-                    if (s.item.revenueHT === undefined) return false;
-                    if (s.item.price === undefined) return false;
-                    return s.item._id && s.item.status !== 'prepaid' && s.item.status !== 'completed';
+                    if ($scope.item.revenueHT === undefined) return false;
+                    if ($scope.item.price === undefined) return false;
+                    return $scope.item._id && $scope.item.status !== 'prepaid' && $scope.item.status !== 'completed';
                 };
 
-                s.test = function() {
-                    s.item.status = 'created';
-                    s.pay();
+                $scope.test = function() {
+                    $scope.item.status = 'created';
+                    $scope.pay();
                 }
 
-                s.pay = () => {
-                    var order = s.item;
+                $scope.pay = () => {
+                    var order = $scope.item;
 
                     if (!order._client.wallet) {
                         return r.warningMessage('Configure Client Wallet ID first');
@@ -871,9 +881,9 @@
 
 
 
-                    orderPaymentForm.pay(s.item).then(function() {
-                        s.successMsg('Commande payée');
-                        s.item.status = 'prepaid';
+                    orderPaymentForm.pay($scope.item).then(function() {
+                        $scope.successMsg('Commande payée');
+                        $scope.item.status = 'prepaid';
                         r.dom(read, 5000);
                     }).error(function(res) {
                         return r.errorMessage('', 10000);
@@ -887,18 +897,18 @@
 
                 function emailOfPersonWhoPaid() {
                     var session = r.session();
-                    if (session && session._id == s.item._client._id) {
-                        return s.item._client.email;
+                    if (session && session._id == $scope.item._client._id) {
+                        return $scope.item._client.email;
                     }
                     else {
-                        return s.item.landLordEmail || s.item._client.email || '';
+                        return $scope.item.landLordEmail || $scope.item._client.email || '';
                     }
                 }
 
 
 
-                s.back = () => {
-                    if (s.is(['diag', 'client'])) {
+                $scope.back = () => {
+                    if ($scope.is(['diag', 'client'])) {
                         r.route('dashboard');
                     }
                     else {
@@ -911,44 +921,44 @@
 
                     }
                 }
-                s.cancel = function() {
-                    s.back();
+                $scope.cancel = function() {
+                    $scope.back();
                 };
 
 
 
-                s.mm = (d) => moment(d).minutes();
-                s.mmOK = (d) => _.includes([0, 30], s.mm(d));
+                $scope.mm = (d) => moment(d).minutes();
+                $scope.mmOK = (d) => _.includes([0, 30], $scope.mm(d));
 
-                s.validate = () => {
+                $scope.validate = () => {
                     $U.ifThenMessage([
-                        [typeof s.item._client, '!=', 'object', "Client required"],
-                        [typeof s.item._diag, '!=', 'object', "Diag Man required"],
-                        [_.isUndefined(s.item.address) || _.isNull(s.item.address) || s.item.address === '', '==', true, 'Address required'],
-                        [!s.item.start, '==', true, 'start date est requis'],
-                        [!s.item.end, '==', true, 'end date est requis'],
-                        [moment(s.item.start || null).isValid(), '==', false, "start date invalide"],
-                        [moment(s.item.end || null).isValid(), '==', false, "end date invalide"],
+                        [typeof $scope.item._client, '!=', 'object', "Client required"],
+                        [typeof $scope.item._diag, '!=', 'object', "Diag Man required"],
+                        [_.isUndefined($scope.item.address) || _.isNull($scope.item.address) || $scope.item.address === '', '==', true, 'Address required'],
+                        [!$scope.item.start, '==', true, 'start date est requis'],
+                        [!$scope.item.end, '==', true, 'end date est requis'],
+                        [moment($scope.item.start || null).isValid(), '==', false, "start date invalide"],
+                        [moment($scope.item.end || null).isValid(), '==', false, "end date invalide"],
 
-                        [s.isOrderClientAgency() && !s.item.landLordEmail, '==', true, "E-mail du propriétaire requis"],
-                        [s.isOrderClientAgency() && !s.item.landLordFullName, '==', true, "Nom du propriétaire requis"],
-                        [!s.item.keysAddress, '==', true, 'Clés Adresse requise'],
-                        [!s.item.keysTimeFrom, '==', true, 'Clés Temps "De" requis'],
-                        [!s.item.keysTimeTo, '==', true, 'Clés Temps "To" requis'],
+                        [$scope.isOrderClientAgency() && !$scope.item.landLordEmail, '==', true, "E-mail du propriétaire requis"],
+                        [$scope.isOrderClientAgency() && !$scope.item.landLordFullName, '==', true, "Nom du propriétaire requis"],
+                        [!$scope.item.keysAddress, '==', true, 'Clés Adresse requise'],
+                        [!$scope.item.keysTimeFrom, '==', true, 'Clés Temps "De" requis'],
+                        [!$scope.item.keysTimeTo, '==', true, 'Clés Temps "To" requis'],
 
                         //[s.mmOK(s.item.start), '==', false, "start date minutes need to be 0 or 30."],
                         //[s.mmOK(s.item.end), '==', false, "End date minutes need to be 0 or 30."],
 
-                        [moment(s.item.end).isValid() && moment(s.item.start).isValid() && !moment(s.item.end).isSame(moment(s.item.start), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
-                        [moment(s.item.end).isValid() && moment(s.item.end).isBefore(moment(s.item.start), 'hour'), '==', true, 'End date cannot be lower than Start date'],
+                        [moment($scope.item.end).isValid() && moment($scope.item.start).isValid() && !moment($scope.item.end).isSame(moment($scope.item.start), 'day'), '==', true, 'Start / End dates need to be in the same day.'],
+                        [moment($scope.item.end).isValid() && moment($scope.item.end).isBefore(moment($scope.item.start), 'hour'), '==', true, 'End date cannot be lower than Start date'],
 
                         //  [s.keysWhereTime.invalidKeysTime(), '==', true, s.keysWhereTime.invalidKeysTimeMessage],
 
                         //[s.item.fastDiagComm.toString(),'==','','Comission required'],
-                        [isNaN(s.item.fastDiagComm), '==', true, 'Comission need to be a number'],
+                        [isNaN($scope.item.fastDiagComm), '==', true, 'Comission need to be a number'],
                         //[s.item.price.toString(),'==','','Price required'],
-                        [isNaN(s.item.price), '==', true, 'Price need to be a number'],
-                        [s.item.status, '==', '', 'Status required']
+                        [isNaN($scope.item.price), '==', true, 'Price need to be a number'],
+                        [$scope.item.status, '==', '', 'Status required']
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             r.warningMessage(m[0]());
@@ -956,20 +966,20 @@
                         else {
                             r.warningMessage(m[0]);
                         }
-                    }, s.save);
+                    }, $scope.save);
                 };
 
 
 
                 function reEnableNotifications() {
-                    s.item.notifications = s.item.notifications || {};
+                    $scope.item.notifications = $scope.item.notifications || {};
                     $log.debug('diag change, notifications re-sended.');
-                    s.item.notifications.ADMIN_ORDER_PAYMENT_SUCCESS = false;
-                    s.item.notifications.ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS = false;
-                    s.item.notifications.CLIENT_ORDER_PAYMENT_SUCCESS = false;
-                    s.item.notifications.DIAG_NEW_RDV = false;
-                    if (s.item.notifications.LANDLORD_ORDER_PAYMENT_SUCCESS !== undefined) {
-                        s.item.notifications.LANDLORD_ORDER_PAYMENT_SUCCESS = false;
+                    $scope.item.notifications.ADMIN_ORDER_PAYMENT_SUCCESS = false;
+                    $scope.item.notifications.ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS = false;
+                    $scope.item.notifications.CLIENT_ORDER_PAYMENT_SUCCESS = false;
+                    $scope.item.notifications.DIAG_NEW_RDV = false;
+                    if ($scope.item.notifications.LANDLORD_ORDER_PAYMENT_SUCCESS !== undefined) {
+                        $scope.item.notifications.LANDLORD_ORDER_PAYMENT_SUCCESS = false;
                     }
                 }
 
@@ -991,19 +1001,19 @@
                     });
                 }
 
-                s.save = function(opt) {
+                $scope.save = function(opt) {
 
 
                     //on diag change, notifications are re-sended
                     if (!opt || opt && opt.assignDiagFeature !== true) {
-                        if (s.prevItem && s.prevItem._diag && s.prevItem._diag.email && s.item._diag && s.item._diag.email && s.prevItem._diag.email != s.item._diag.email) {
+                        if ($scope.prevItem && $scope.prevItem._diag && $scope.prevItem._diag.email && $scope.item._diag && $scope.item._diag.email && $scope.prevItem._diag.email != $scope.item._diag.email) {
 
-                            if (s.isPaid()) return displayWarning('You change the diag account but the order is already paid. Unable to assign a new diag account.');
+                            if ($scope.isPaid()) return displayWarning('You change the diag account but the order is already paid. Unable to assign a new diag account.');
 
-                            var msg = "Manually assign of diagnostiqueur " + s.item._diag.firstName + ' ' + s.item._diag.lastName + ' will trigger notifications again. Please confirm. ';
+                            var msg = "Manually assign of diagnostiqueur " + $scope.item._diag.firstName + ' ' + $scope.item._diag.lastName + ' will trigger notifications again. Please confirm. ';
                             r.openConfirm(msg, () => {
                                 reEnableNotifications();
-                                s.save(Object.assign(opt || {}, {
+                                $scope.save(Object.assign(opt || {}, {
                                     assignDiagFeature: true
                                 }));
                             });
@@ -1012,13 +1022,13 @@
                     }
 
                     if (!opt || opt.assignNewRDVSlot !== true) {
-                        if (s.item._id && s.hasUserSelectedAnRDVSlot) {
+                        if ($scope.item._id && $scope.hasUserSelectedAnRDVSlot) {
 
-                            if (s.isPaid()) return displayWarning('You change the rdv slot but the order is already paid. Unable to assign a new rdv slot.');
+                            if ($scope.isPaid()) return displayWarning('You change the rdv slot but the order is already paid. Unable to assign a new rdv slot.');
 
                             r.openConfirm('Manually assign of RDV slot may change diagnostiqueur, date and price and will trigger notifications again. Please Confirm. ', () => {
                                 reEnableNotifications();
-                                s.save(Object.assign(opt || {}, {
+                                $scope.save(Object.assign(opt || {}, {
                                     assignNewRDVSlot: true
                                 }));
                             });
@@ -1027,29 +1037,29 @@
 
                     }
 
-                    db.ctrl('Order', 'save', s.item).then(function(res) {
+                    db.ctrl('Order', 'save', $scope.item).then(function(res) {
 
                         if (res.ok) {
 
-                            if (s.item.notifications && s.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED == true) {
+                            if ($scope.item.notifications && $scope.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED == true) {
                                 r.infoMessage('Changes saved');
-                                s.back();
+                                $scope.back();
                             }
                             else {
-                                s.item._id = res.result._id;
+                                $scope.item._id = res.result._id;
 
-                                if (s.isOrderClientLandLord()) {
-                                    s.back();
+                                if ($scope.isOrderClientLandLord()) {
+                                    $scope.back();
                                 }
                                 else {
-                                    s.sendPaymentLink(() => {
-                                        s.back();
+                                    $scope.sendPaymentLink(() => {
+                                        $scope.back();
                                     });
                                 }
 
                                 r.infoMessage('Changes saved');
 
-                                s.activateSlotSelectionManually(false);
+                                $scope.activateSlotSelectionManually(false);
 
                             }
 
@@ -1061,28 +1071,28 @@
                         }
                     }).error(handleError);
                 };
-                s.downloadFile = () => {
-                    if (!s.item.pdfId) {
+                $scope.downloadFile = () => {
+                    if (!$scope.item.pdfId) {
                         return r.warningMessage("File required", 5000);
                     }
                     else {
-                        window.open(db.URL() + '/File/get/' + s.item.pdfId, '_newtab');
+                        window.open(db.URL() + '/File/get/' + $scope.item.pdfId, '_newtab');
                     }
                 };
 
-                s.deletePDF = () => {
-                    if (!s.pdfFileInfo) {
+                $scope.deletePDF = () => {
+                    if (!$scope.pdfFileInfo) {
                         return console.warn('s.pdfFileInfo expected.');
                     }
-                    r.openConfirm('Delete ' + s.pdfFileInfo.filename + ' ?', () => {
+                    r.openConfirm('Delete ' + $scope.pdfFileInfo.filename + ' ?', () => {
                         db.ctrl('File', 'remove', {
-                            _id: s.pdfFileInfo._id
+                            _id: $scope.pdfFileInfo._id
                         }).then((d) => {
                             if (d.ok) {
-                                s.item.pdfId = null;
+                                $scope.item.pdfId = null;
                                 db.ctrl('Order', 'update', {
-                                    _id: s.item._id,
-                                    pdfId: s.item.pdfId
+                                    _id: $scope.item._id,
+                                    pdfId: $scope.item.pdfId
                                 });
                                 r.dom();
                             }
@@ -1092,10 +1102,10 @@
 
 
 
-                s.delete = function() {
+                $scope.delete = function() {
 
-                    if (!_.includes(['ordered', 'created'], s.item.status)) {
-                        s.okModal({
+                    if (!_.includes(['ordered', 'created'], $scope.item.status)) {
+                        $scope.okModal({
                             message: "You can't delete an Order with the follow status: delivered, prepaid or completed.",
                             data: {
                                 title: 'Delete Info'
@@ -1105,17 +1115,17 @@
                     }
 
                     var time = (d) => moment(d).format('HH:mm');
-                    var descr = s.item.address + ' (' + time(s.item.start) + ' - ' + time(s.item.end) + ')';
+                    var descr = $scope.item.address + ' (' + time($scope.item.start) + ' - ' + time($scope.item.end) + ')';
                     r.openConfirm('Delete Order ' + descr + ' ?', function() {
                         // s.message('deleting . . .', 'info');
 
                         db.ctrl('Order', 'remove', {
-                            _id: s.item._id
+                            _id: $scope.item._id
                         }).then(function(data) {
 
                             if (data.ok) {
                                 //s.message('deleted', 'info');
-                                s.back();
+                                $scope.back();
                             }
                             else {
                                 handleError(data);
@@ -1126,23 +1136,23 @@
             }
 
             function handleError(er) {
-                s.warningMessage("Problème technique. S&#39il vous plaît réessayer plus tard");
+                $scope.warningMessage("Problème technique. S&#39il vous plaît réessayer plus tard");
             }
 
             function reset() {
-                s.item = _.clone(s.original);
+                $scope.item = _.clone($scope.original);
             }
 
             function _readFile() {
 
-                if (s.item.pdfId) {
+                if ($scope.item.pdfId) {
                     console.info('_readFile');
                     db.ctrl('File', 'find', {
-                        _id: s.item.pdfId
+                        _id: $scope.item.pdfId
                     }).then(data => {
                         console.info(data);
                         if (data.ok) {
-                            s.pdfFileInfo = (data.result.length && data.result.length > 0 && data.result[0]) || data.result;
+                            $scope.pdfFileInfo = (data.result.length && data.result.length > 0 && data.result[0]) || data.result;
                         }
                     });
                 }
@@ -1151,14 +1161,14 @@
 
             function read(id) {
                 if (r.params && r.params.item && r.params.item._diag) {
-                    s.item = r.params.item; //partial loading
+                    $scope.item = r.params.item; //partial loading
                     delete r.params.item;
                 }
 
                 //s.message('loading . . .', 'info');
 
                 db.ctrl('Order', 'get', {
-                    _id: id || params.id || s.item._id,
+                    _id: id || params.id || $scope.item._id,
                     __populate: {
                         '_client': 'email clientType address discount firstName lastName siret wallet',
                         '_diag': 'email address commission firstName lastName siret wallet tva_intra_comm isAutoentrepreneur'
@@ -1171,20 +1181,20 @@
                             end: new Date(data.result.end)
                         });
 
-                        s.prevItem = s.prevItem || null;
-                        s.prevItem = _.clone(s.item);
-                        s.item = data.result;
+                        $scope.prevItem = $scope.prevItem || null;
+                        $scope.prevItem = _.clone($scope.item);
+                        $scope.item = data.result;
 
-                        if (!s.prevItem || Object.keys(s.prevItem).length == 0) s.prevItem = s.item;
+                        if (!$scope.prevItem || Object.keys($scope.prevItem).length == 0) $scope.prevItem = $scope.item;
 
-                        s.original = _.clone(s.item);
+                        $scope.original = _.clone($scope.item);
 
-                        if (s.afterRead && s.afterRead.forEach) {
-                            s.afterRead.forEach(cb => cb());
+                        if ($scope.afterRead && $scope.afterRead.forEach) {
+                            $scope.afterRead.forEach(cb => cb());
                         }
 
                         autoPay();
-                        s.pdfCheck();
+                        $scope.pdfCheck();
                     }
                     else {
                         handleError(data);
@@ -1198,6 +1208,6 @@
 
 
 
-   
+
 
 })();
