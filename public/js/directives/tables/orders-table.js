@@ -121,7 +121,12 @@
                         name: 'price'
                     }, {
                         label: 'Statut',
-                        name: 'status'
+                        name: 'status',
+                        format:(v,item)=>{
+                            if(item.status == 'prepaid' && item.paymentType === 'cheque'){
+                                return 'cheque';
+                            }
+                        }
                     }, {
                         label: 'Created',
                         name: 'createdAt',
