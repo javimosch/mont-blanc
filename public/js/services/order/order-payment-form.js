@@ -280,7 +280,7 @@
                                 isProcessing = false;
                                 emit('validate', msg);
                                 closeModal();
-                            });
+                            }).on('validate:error',(err)=>emit('validate:error',err));
                         }
 
                         function payUsingCard() {
@@ -330,7 +330,7 @@
                                 isProcessing = false;
                                 emit('validate', msg);
                                 closeModal();
-                            });
+                            }).on('validate:error',(err)=>emit('validate:error',err));
                         }
 
 

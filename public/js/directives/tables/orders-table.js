@@ -31,7 +31,7 @@
 
                 function update(items, cb) {
                     var data = {
-                        __select: "_client _diag address start end price status created createdAt",
+                        __select: "_client _diag address start end price status created createdAt paymentType",
                         __populate: {
                             '_client': 'email',
                             '_diag': 'email'

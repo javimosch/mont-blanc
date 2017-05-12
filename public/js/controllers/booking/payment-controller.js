@@ -42,7 +42,7 @@
                 });
             };
             $scope.payWithCheque = () => {
-                order.paymentType="cheque";
+                order.paymentType = "cheque";
                 $scope.pay();
             };
             $scope.pay = () => {
@@ -52,15 +52,24 @@
                 $scope.validateForm(() => {
                     db.ctrl('Order', 'update', order);
                     orderPaymentForm.pay(order).then(function() {
-                        $rootScope.infoMessage(appText.ORDER_PAID_SUCCESS, 10000);
-                        showOrderResume();
-                    }).error(function(res) {
-                        return $rootScope.errorMessage('', 10000);
-                    }).on('validate', function(msg) {
-                        return $rootScope.warningMessage(msg, 10000);
-                    }).on('processing', function(msg) {
-                        return $rootScope.infoMessage(msg, 10000);
-                    });
+                            $rootScope.infoMessage(appText.ORDER_PAID_SUCCESS, 10000);
+                            showOrderResume();
+                        })
+                        .error(() => $rootScope.errorMessage('', 10000))
+                        .on('validate', function(msg, apiError) {
+
+                            if (apiError.isEqual.ORDER_NOT_FOUND) {
+                                $rootScope.infoMessage("Mise à jour des données de réservation, réessayer après la recharge");
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1500);
+                                return;
+                            }
+
+                            return $rootScope.warningMessage(msg, 10000);
+                        }).on('processing', function(msg) {
+                            return $rootScope.infoMessage(msg, 10000);
+                        });
                 });
             };
             $scope.validateForm = function(cb) {
@@ -180,6 +189,7 @@
                 $rootScope.sessionMetadata({
                     booking: {}
                 });
+                orderHelper.clearCache(); 
                 $rootScope.routeParams({
                     _order: order,
                     _client: localSession.getData()

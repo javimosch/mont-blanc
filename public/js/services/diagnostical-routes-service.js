@@ -41,6 +41,8 @@
             }, {
                 name: "orders/edit/:id",
                 description: "Order details"
+            },{
+                name:"clients/edit/:id"
             }];
         };
 

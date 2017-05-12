@@ -1,5 +1,5 @@
 var path = require('path');
-var req         = (n) => require(process.cwd()+'/controllers/'+n);
+var req = (n) => require(process.cwd() + '/controllers/' + n);
 require('es6-promise').polyfill();
 var mongoose = require('mongoose');
 var mongoosePaginate = require('mongoose-paginate');
@@ -57,9 +57,9 @@ configureGridFS(mongoose);
 var models = {};
 var schemas = {};
 
-exports.getModel  = (n) => models[n];
+exports.getModel = (n) => models[n];
 exports.getSchema = (n) => schemas[n];
-exports.mongoose  = mongoose;
+exports.mongoose = mongoose;
 
 function model(n, def) {
     if (!def) console.log('WARN:' + n + ' def required');
@@ -86,6 +86,13 @@ function model(n, def) {
         }
         next();
     });
+/*
+    schema.pre('find', function(next, done) {
+        console.log(n,' PARALLEL PRE FIND HOOK ! :) ');
+        next();
+        //setTimeout(done, 100);
+    });
+*/
     models[n] = mongoose.model(n, schema);
     schemas[n] = schema;
 }

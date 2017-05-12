@@ -25,7 +25,9 @@ module.exports = {
     VALIDATE_FIELD_USER: createInvalidRequestErrorFor('user'),
     VALIDATE_FIELD_VALID_ORDER: createInvalidRequestErrorFor('order, order._id'),
 
-
+    ORDER_NOT_FOUND: {
+        code: 500
+    },
     INVALID_VARIABLE_AT_PATH_ERROR: {
         code: 70
     },
@@ -40,7 +42,7 @@ module.exports = {
             detail: path
         };
     },
-    DATABASE_OBJECT_MISMATCH: function (variableName, path) {
+    DATABASE_OBJECT_MISMATCH: function(variableName, path) {
         return {
             code: 71,
             message: "An object do not exist in database",

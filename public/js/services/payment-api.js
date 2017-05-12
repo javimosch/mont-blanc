@@ -12,7 +12,7 @@
 				return $U.MyPromise(function(resolve, err, emit) {
 					return backendApi.payOrder(data).then(function(res) {
 						resolve(res.ok, res);
-					}).error(err).on('validate', (msg) => emit('validate', msg));
+					}).error(err).on('validate', (msg) => emit('validate', msg)).on('validate:error',(err)=>emit('validate-error',err));
 				});
 			},
 			moneyInWithCardId: function(data) {
@@ -32,7 +32,7 @@
 						})
 						.error(err)
 						.on('lemonway-error', (msg) => emit('validate', msg))
-						.on('validate', (msg) => emit('validate', msg));
+						.on('validate', (msg) => emit('validate', msg)).on('validate:error',(err)=>emit('validate-error',err));
 				});
 			},
 			registerUserWallet: function(user) {
@@ -88,7 +88,7 @@
 								err(res);
 							}
 						}).error(err).on('lemonway-error', (msg) => emit('validate', msg))
-						.on('validate', (msg) => emit('validate', msg));
+						.on('validate', (msg) => emit('validate', msg)).on('validate:error',(err)=>emit('validate-error',err));
 				});
 			}
 		};

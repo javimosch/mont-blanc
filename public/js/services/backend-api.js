@@ -7,7 +7,7 @@
 
         const CONSTANT = {
             COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate', 'create', 'findOne'],
-            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange', 'deploy', 'sockets', 'ssh','gitlab']
+            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange', 'deploy', 'sockets', 'ssh', 'gitlab']
         };
 
         function getLemonwayMessage(res) {
@@ -163,19 +163,21 @@
                         return emit('validate', getLemonwayMessage(res));
                     }
                     if (res.err) {
+                        var apiErrorInstance = apiError(res.err);
+                        apiErrorInstance.genericMessage = getGenericMessage(res);
                         if (res.err.code && apiError(res.err).isKnown()) {
-                            var apiErrorInstance = apiError(res.err);
-                            apiErrorInstance.genericMessage = getGenericMessage(res);
                             emit('validate:error', apiErrorInstance);
-
                             $log.warn('Known response error', apiErrorInstance);
+                            return emit('validate', getGenericMessage(res), apiErrorInstance);
                         }
                         else {
-                            $log.warn('Unknown response error');
+                            $log.warn('Unknown response error', res.err);
+                            err(res);
                         }
-                        emit('validate', getGenericMessage(res));
                     }
-                    err(res);
+                    else {
+                        err(res);
+                    }
                 }
 
                 function onSuccess(res) {
@@ -187,18 +189,21 @@
                             return emit('validate', getLemonwayMessage(res));
                         }
                         if (res.err) {
+                            var apiErrorInstance = apiError(res.err);
+                            apiErrorInstance.genericMessage = getGenericMessage(res);
                             if (res.err.code && apiError(res.err).isKnown()) {
-                                var apiErrorInstance = apiError(res.err);
-                                apiErrorInstance.genericMessage = getGenericMessage(res);
                                 emit('validate:error', apiErrorInstance);
                                 $log.warn('Known response error', apiErrorInstance);
+                                return emit('validate', getGenericMessage(res), apiErrorInstance);
                             }
                             else {
-                                $log.warn('Unknown response error');
+                                $log.warn('Unknown response error', res.err);
+                                err(res);
                             }
-                            return emit('validate', getGenericMessage(res));
                         }
-                        err(res);
+                        else {
+                            err(res);
+                        }
                     }
                     else {
                         if (Cache.validDuration(cachePayload)) {

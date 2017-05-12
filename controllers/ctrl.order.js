@@ -47,6 +47,10 @@ var notificationLogger = ctrl('Log').createLogger({
     category: "NOTIFICATION"
 });
 
+
+
+
+
 function LogSave(msg, type, data) {
     dbLogger.setSaveData(data);
     if (type == 'error') {
@@ -172,7 +176,22 @@ function associateClient(clientId, orderId) {
     });
 }
 
-
+function validateTechnicalWallet(data, secretData, success, error) {
+    return ctrl('Lemonway').getWalletDetails({
+        wallet: "IMMOCAL"
+    }, function(err, res) {
+        if (err) return error(err);
+        if (res.WALLET) {
+            data.masterWallet = res.WALLET.ID;
+            success();
+        }
+        else {
+            paymentLogger.warn('MASTER WALLET not found: IMMOCAL');
+            data.masterWallet = secretData.wallet; //We use the client wallet (deprecated)
+            success();
+        }
+    })
+}
 
 var PaymentProcessor = (() => {
     var queue = {};
@@ -189,13 +208,14 @@ var PaymentProcessor = (() => {
                 return originalCallback(err, res);
             };
         },
-        isAllowed: (data) => data.__allowPayment,
+        isAllowed: (data) => data.__allowPayment === true,
         allowPayment: (data, allowHandler, disallowHandler, errorHandler) => {
             return ctrl('Order').get({
                 _id: data.orderId,
                 __select: "status"
             }, function(err, _order) {
                 if (err) return errorHandler(err);
+                if (!_order) return errorHandler(apiError.ORDER_NOT_FOUND);
                 if (_.includes(['created', 'ordered'], _order.status)) {
                     data.__allowPayment = true;
                     return allowHandler();
@@ -209,31 +229,7 @@ var PaymentProcessor = (() => {
     }
 })();
 
-function setTechnicalWallet(data, secretData, success, error) {
-    //263 master-wallet-for-payments (IMMOCAL, technical wallet)
-    if (!data.masterWallet) {
-        return ctrl('Lemonway').getWalletDetails({
-            wallet: "IMMOCAL"
-        }, function(err, res) {
-            if (err) return error(err);
-            if (res.WALLET) {
-                data.masterWallet = res.WALLET.ID;
-                setTechnicalWallet(data, secretData, success, error);
-            }
-            else {
-                //If there is not an IMMOCAL wallet (rare), we pay with client wallet as normal.
-                paymentLogger.warn('MASTER WALLET not found: IMMOCAL');
-                data.masterWallet = secretData.wallet;
-                setTechnicalWallet(data, secretData, success, error);
-            }
-        })
-    }
-    else {
-        secretData.wallet = data.masterWallet; //we use this wallet for the client payment move.
-        data.p2pDiag.debitWallet = data.masterWallet; //we use this wallet for the diag p2p movement.
-        success();
-    }
-}
+
 
 var PaymentHelper = (() => {
     return {
@@ -290,17 +286,18 @@ function payUsingCheque(data, routeCallback) {
     //VALIDATIONS
     if (!data.orderId) return routeCallback('orderId field required');
     if (!data.clientEmail) return routeCallback('clientId or clientEmail required');
+    if (!PaymentProcessor.isAllowed(data)) {
+        return PaymentProcessor.allowPayment(data, () => payUsingCheque(data, routeCallback), () => routeCallback('La commande est déjà confirmée.'), err => routeCallback(err));
+    }
+    paymentLogger.debug('Cheque validations ok');
     //QUEUE
     if (PaymentProcessor.inQueue(data)) {
-        return routeCallback('Order payment is already being processed.');
+        return routeCallback('La commande est déjà en cours de traitement.');
     }
     PaymentProcessor.addToQueue(data);
     var cb = PaymentProcessor.createCallback(data, routeCallback);
-    if (!PaymentProcessor.isAllowed(data)) {
-        return PaymentProcessor.allowPayment(data, () => payUsingCheque(data, cb), cb('Order already paid.'), err => cb(err));
-    }
+    paymentLogger.debug('Cheque to queue');
     //OK
-    paymentLogger.debug('Cheque payment allowed');
     PaymentHelper.updateDetailsAsync(data.orderId, null, data.billingAddress);
     PaymentHelper.associateClient(data.orderId, data).then(() => {
         paymentLogger.debug('Cheque client associated');
@@ -315,6 +312,7 @@ function payUsingCheque(data, routeCallback) {
                 paymentType: 'cheque'
             }, function(_err, res) {
                 paymentLogger.debug('Cheque to prepaid');
+                return cb(err, true);
             });
 
         });
@@ -330,7 +328,20 @@ function payUsingCard(data, routeCallback) {
     if (!secretData.creditCardOwner) return routeCallback('credit card owner required');
     if (!secretData.clientEmail) return routeCallback('clientId or clientEmail required');
     if (!data.masterWallet) {
-        return setTechnicalWallet(data, secretData, () => payUsingCard(data, routeCallback), err => routeCallback(err));
+        return validateTechnicalWallet(data, secretData, () => payUsingCard(data, routeCallback), err => routeCallback(err));
+    }
+    else {
+        secretData.wallet = data.masterWallet; //we use this wallet for the client payment move.
+        data.p2pDiag.debitWallet = data.masterWallet; //we use this wallet for the diag p2p movement.
+    }
+    if (!secretData.wallet) {
+        return routeCallback('Tecnical wallet for charge');
+    }
+    if (!data.p2pDiag.debitWallet) {
+        return routeCallback('Tecnical wallet for debit required');
+    }
+    if (!PaymentProcessor.isAllowed(data)) {
+        return PaymentProcessor.allowPayment(data, () => payUsingCard(data, routeCallback), () => routeCallback('Order already paid.'), err => routeCallback(err));
     }
     //QUEUE
     if (PaymentProcessor.inQueue(data)) {
@@ -338,9 +349,7 @@ function payUsingCard(data, routeCallback) {
     }
     PaymentProcessor.addToQueue(data);
     var cb = PaymentProcessor.createCallback(data, routeCallback);
-    if (!PaymentProcessor.isAllowed(data)) {
-        return PaymentProcessor.allowPayment(data, () => payUsingCard(data, cb), cb('Order already paid.'), err => cb(err));
-    }
+
     //OK
     PaymentHelper.updateDetailsAsync(data.orderId, secretData.creditCardOwner, secretData.billingAddress);
     PaymentHelper.associateClient(data.orderId, secretData).then(() => {

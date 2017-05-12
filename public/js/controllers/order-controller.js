@@ -1101,10 +1101,18 @@
                 };
 
 
+                function canDelete(){
+                    if (!_.includes(['ordered', 'created'], $scope.item.status)) {
+                        if($scope.item.paymentType === 'cheque') return true;
+                        return false;
+                    }
+                    return true;
+                }
+
 
                 $scope.delete = function() {
 
-                    if (!_.includes(['ordered', 'created'], $scope.item.status)) {
+                    if (!canDelete()) {
                         $scope.okModal({
                             message: "You can't delete an Order with the follow status: delivered, prepaid or completed.",
                             data: {

@@ -379,14 +379,22 @@ function fetchLandlordAccount(data, cb) {
         getByField('email', data.email).then(account => {
             if (account) {
                 dbLogger.debug('fetchLandlordAccount:resolve');
-                Response.json(account,cb,resolve);
+
+                account.update({
+                    $set: {
+                        cellPhone: data.cellPhone || account.cellPhone, //update if any
+                        firstName: account.firstName || data.firstName //update if any (priority given to existing value)
+                    }
+                });
+
+                Response.json(account, cb, resolve);
             }
             else {
                 dbLogger.debug('fetchLandlordAccount:create');
                 createLandlordClient(data, (err, user) => {
                     if (err) return Response.error(err, cb, reject);
                     dbLogger.debug('fetchLandlordAccount:resolve');
-                    Response.json(user,cb,resolve);
+                    Response.json(user, cb, resolve);
                 });
             }
         }).catch(err => Response.error(err, cb, reject));

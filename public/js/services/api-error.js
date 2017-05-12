@@ -3,7 +3,7 @@
     angular.module('app').service('apiError', function($rootScope, server, $log, $http) {
         var errors = {};
         
-        var self = function(error) {
+        function ApiError(error){
             if(!error.code){
                 $log.warn('apiError constructor requires an error with code property.');
             }
@@ -18,7 +18,14 @@
               }
               return false;
             };
+            props.prototype.toString = function(){
+                return error.message || error.msg || JSON.stringify(error);
+            }
             return props;
+        }
+        
+        var self = function(error) {
+            return new ApiError(error);
         };
 
         $http({
