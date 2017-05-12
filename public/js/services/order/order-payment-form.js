@@ -149,7 +149,8 @@
                         if (data.paymentType === 'cheque') {
                             if (!clientLogged() && !modalScope.response.clientName) return false;
                             if (!clientLogged() && !modalScope.response.clientEmail) return false;
-                            return true
+                            if (!modalScope.response.clientPhone) return false;
+                            return true;
                         }
 
                         if (modalScope.response.cardType == undefined) return false;
@@ -250,17 +251,17 @@
                         var clientId = clientLogged() ? localSession.getData()._id : undefined;
 
                         if (order.paymentType == 'card') {
-                            return payWithCreditCard();
+                            return payUsingCard();
                         }
                         if (order.paymentType == 'cheque') {
-                            return payWithCheque();
+                            return payUsingCheque();
                         }
 
                         reject("Invalid payment type "+order.paymentType);
                         closeModal();
 
-                        function payWithCheque() {
-                            backendApi.Order.custom('payWithCheque', {
+                        function payUsingCheque() {
+                            backendApi.Order.custom('payUsingCheque', {
                                 orderId: order._id,
                                 clientId: clientId,
                                 clientEmail: formResponse.clientEmail,
@@ -282,7 +283,7 @@
                             });
                         }
 
-                        function payWithCreditCard() {
+                        function payUsingCard() {
                             var payload = {
                                 wallet: order._client.wallet,
                                 cardType: formResponse.cardType,

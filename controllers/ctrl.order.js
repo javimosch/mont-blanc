@@ -297,7 +297,7 @@ function payUsingCheque(data, routeCallback) {
     PaymentProcessor.addToQueue(data);
     var cb = PaymentProcessor.createCallback(data, routeCallback);
     if (!PaymentProcessor.isAllowed(data)) {
-        return PaymentProcessor.allowPayment(data, () => payUsingCard(data, cb), cb('Order already paid.'), err => cb(err));
+        return PaymentProcessor.allowPayment(data, () => payUsingCheque(data, cb), cb('Order already paid.'), err => cb(err));
     }
     //OK
     paymentLogger.debug('Cheque payment allowed');

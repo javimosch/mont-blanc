@@ -41,7 +41,7 @@
             $scope.pdfDelete = (code) => {
                 if (!$scope.pdfExists(code)) return;
                 var name = $scope.item.files[code] && $scope.item.files[code].filename || "File";
-                r.openConfirm('Delete ' + name + ' ?', () => {
+                $rootScope.openConfirm('Delete ' + name + ' ?', () => {
                     db.ctrl('File', 'remove', {
                         _id: $scope.item.files[code]._id
                     }).then((d) => {
@@ -55,11 +55,11 @@
             $scope.pdfChange = (diagCode) => {
                 if ($scope.item && $scope.item.end && moment($scope.item.end).isAfter(moment())) {
                     $scope.pdf = {};
-                    r.dom();
-                    return r.infoMessage("Ajouter après " + moment($scope.item.end).format('dddd DD [de] MMMM YY'), 5000);
+                    $rootScope.dom();
+                    return $rootScope.infoMessage("Ajouter après " + moment($scope.item.end).format('dddd DD [de] MMMM YY'), 5000);
                 }
                 else {
-                    r.dom(function() {
+                    $rootScope.dom(function() {
                         $scope.pdfSave(diagCode);
                     }, 1000);
                 }
@@ -81,7 +81,7 @@
             $scope.moveDateBackward = () => {
                 $scope.item.start = moment().subtract(1, 'days');
                 $scope.item.end = moment().subtract(1, 'days').add(1, 'hour')
-                r.dom();
+                $rootScope.dom();
             };
 
             $scope.pdfSaveSuccess = () => {
@@ -95,13 +95,13 @@
                     return console.warn('pdfSave code required');
                 }
                 if (!$scope.pdf[code]) {
-                    return r.warningMessage("Un fichier requis", 5000);
+                    return $rootScope.warningMessage("Un fichier requis", 5000);
                 }
                 if ($scope.pdf[code].type !== 'application/pdf') {
-                    return r.warningMessage("Format pdf nécessaire", 5000);
+                    return $rootScope.warningMessage("Format pdf nécessaire", 5000);
                 }
                 if ($scope.pdf[code].size / 1024 > 10240) {
-                    return r.warningMessage("Limite 10mb pour le fichier pdf", 5000);
+                    return $rootScope.warningMessage("Limite 10mb pour le fichier pdf", 5000);
                 }
 
 
@@ -120,7 +120,7 @@
                 _uploadNew(); //starts here
 
                 function _uploadNew() {
-                    r.infoMessage('Patientez, le chargement est en cours', 99999);
+                    $rootScope.infoMessage('Patientez, le chargement est en cours', 99999);
                     db.form('File/save/', {
                         name: $scope.pdf[code].name,
                         file: $scope.pdf[code]
@@ -138,11 +138,11 @@
                             }).then(data => {
                                 _deletePrev(prevID);
                                 read($scope.item._id);
-                                r.infoMessage('File upload success.', 5000);
+                                $rootScope.infoMessage('File upload success.', 5000);
                             });
                         }
                         else {
-                            r.warningMessage('Upload fail, try later.', 9999);
+                            $rootScope.warningMessage('Upload fail, try later.', 9999);
                         }
                     });
                 }
@@ -210,7 +210,7 @@
             }
 
             function init() {
-                r.toggleNavbar(true);
+                $rootScope.toggleNavbar(true);
 
                 if (window.location.href.indexOf('orders/view') !== -1) {
 
@@ -221,25 +221,25 @@
                     });
 
                     //no login needed
-                    if (r.params && r.params.prevRoute) {
+                    if ($rootScope.params && $rootScope.params.prevRoute) {
 
                     }
                     else {
-                        r.toggleNavbar(true);
-                        r.__hideNavMenu = true;
+                        $rootScope.toggleNavbar(true);
+                        $rootScope.__hideNavMenu = true;
                         $U.once('route-exit:' + $U.url.hashName(), function(url) {
-                            r.__hideNavMenu = false;
+                            $rootScope.__hideNavMenu = false;
                         });
                     }
                 }
                 else {
-                    r.secureSection($scope);
+                    $rootScope.secureSection($scope);
                 }
 
                 //
 
                 //
-                r.dom();
+                $rootScope.dom();
                 //
                 setHelpers();
                 setDefaults();
@@ -248,7 +248,7 @@
 
                 //
                 if (params && params.id && params.id.toString() !== '-1') {
-                    r.dom(read, 0);
+                    $rootScope.dom(read, 0);
                 }
                 else {
                     reset();
@@ -295,16 +295,16 @@
                     return $scope.__isSlotSelectionActivatedManually == true;
                 }
                 $scope.activateSlotSelectionManually = function(val) {
-                    r.dom(function() {
+                    $rootScope.dom(function() {
                         $scope.__isSlotSelectionActivatedManually = val != undefined && val || true;
                     });
                 };
                 $scope.isRDVSelectButtonActivated = function() {
-                    return $scope.item._id && r.userIs('admin') && !hasSlotSelectionActivatedManually() && !$scope.rdvConditions();
+                    return $scope.item._id && $rootScope.userIs('admin') && !hasSlotSelectionActivatedManually() && !$scope.rdvConditions();
                 };
 
                 function hasSlotSelectionActivatedManualyByAdmin() {
-                    return r.userIs('admin') && hasSlotSelectionActivatedManually();
+                    return $rootScope.userIs('admin') && hasSlotSelectionActivatedManually();
                 }
 
 
@@ -340,7 +340,7 @@
                             window.encodeURIComponent(
                                 $D.OrderReplaceHTML(window.decodeURIComponent(html), $scope.item, r));
 
-                        r.ws.ctrl("Pdf", "view", {
+                        $rootScope.ws.ctrl("Pdf", "view", {
                             html: html
                         }).then(res => {
                             if (res.ok) {
@@ -348,7 +348,7 @@
                                 win.focus();
                             }
                             else {
-                                r.warningMessage('Server Issue, try later.');
+                                $rootScope.warningMessage('Server Issue, try late$rootScope.');
                             }
                         });
                     });
@@ -358,7 +358,7 @@
                     $scope.item.notifications = $scope.item.notifications || {};
                     ////LANDLORD//#1 OK app.order
                     if ($scope.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED) {
-                        r.openConfirm({
+                        $rootScope.openConfirm({
                             message: "Already sended, send again?"
                         }, () => {
 
@@ -433,15 +433,15 @@
 
                 $scope.canWriteAgency = () => {
                     if (!$scope.item._id) {
-                        return r.userIs('admin');
+                        return $rootScope.userIs('admin');
                     }
-                    return r.userIs(['admin']) || (r.session()._id == $scope.item._client._id && _.includes(['agency', 'other'], $scope.item._client.clientType));
+                    return $rootScope.userIs(['admin']) || ($rootScope.session()._id == $scope.item._client._id && _.includes(['agency', 'other'], $scope.item._client.clientType));
                 };
                 $scope.canWriteDiag = () => {
                     if (!$scope.item._id) {
                         return false
                     }
-                    return r.userIs(['admin']) || r.sesison()._id == $scope.item._diag._id;
+                    return $rootScope.userIs(['admin']) || $rootScope.sesison()._id == $scope.item._diag._id;
                 };
 
                 $scope.isPaid = () => {
@@ -450,7 +450,7 @@
 
                 $scope.isDiag = () => {
                     if (!$scope.item._id) return false;
-                    return r.userIs('diag') && r.session()._id == $scope.item._diag._id;
+                    return $rootScope.userIs('diag') && $rootScope.session()._id == $scope.item._diag._id;
                 };
 
                 $scope.isOwner = () => {
@@ -459,13 +459,13 @@
                 };
 
                 $scope.successMsg = (msg) => {
-                    r.message(msg, {
+                    $rootScope.message(msg, {
                         type: 'success',
                         duration: 10000
                     });
                 }
                 $scope.infoMsg = (msg) => {
-                    r.message(msg, {
+                    $rootScope.message(msg, {
                         duration: 5000,
                         type: 'info'
                     });
@@ -505,10 +505,10 @@
                         diagCommissionRate: $scope.item._diag && $scope.item._diag.commission
                     });
                     orderPrice.assignPrices($scope.item);
-                    r.dom();
+                    $rootScope.dom();
                 };
 
-                $scope.type = r.session().userType;
+                $scope.type = $rootScope.session().userType;
                 $scope.is = (arr) => _.includes(arr, $scope.type);
 
                 window.s = $scope;
@@ -666,10 +666,10 @@
                     if (!$scope.item) return vals;
                     var m = moment($scope.item.start).hours(8);
                     while (m.isBefore(moment($scope.item.start))) {
-                        vals[r.momentTime(m)] = new Date(m.toString());
+                        vals[$rootScope.momentTime(m)] = new Date(m.toString());
                         m = m.add(5, 'minutes');
                     };
-                    vals[r.momentTime($scope.item.start)] = new Date(moment($scope.item.start).toString());
+                    vals[$rootScope.momentTime($scope.item.start)] = new Date(moment($scope.item.start).toString());
                     return vals;
                 };
                 $scope.__keysTimeFromSelectFirstItem = () => $scope.__keysTimeFromItems && Object.keys($scope.__keysTimeFromItems)[0] || "Loading";
@@ -686,7 +686,7 @@
                     }
                     else {
                         if ($scope.item._id) {
-                            return $scope.__keysTimeFromSelectLabel = r.momentTime($scope.item.keysTimeFrom);
+                            return $scope.__keysTimeFromSelectLabel = $rootScope.momentTime($scope.item.keysTimeFrom);
                         }
                         $scope.__keysTimeFromSelectLabel = 'choisir';
                         _.each($scope.__keysTimeFromItems, (v, k) => {
@@ -714,10 +714,10 @@
                     }
 
                     while (m.isBefore(moment($scope.item.start))) {
-                        vals[r.momentTime(m)] = new Date(m.toString());
+                        vals[$rootScope.momentTime(m)] = new Date(m.toString());
                         m = m.add(5, 'minutes');
                     };
-                    vals[r.momentTime($scope.item.start)] = new Date(moment($scope.item.start).toString());
+                    vals[$rootScope.momentTime($scope.item.start)] = new Date(moment($scope.item.start).toString());
                     return vals;
                 };
                 $scope.__keysTimeToSelectFirstItem = () => $scope.__keysTimeToItems && Object.keys($scope.__keysTimeToItems)[0] || "Loading";
@@ -731,7 +731,7 @@
                     }
                     else {
                         if ($scope.item._id) {
-                            return $scope.__keysTimeToSelectLabel = r.momentTime($scope.item.keysTimeTo);
+                            return $scope.__keysTimeToSelectLabel = $rootScope.momentTime($scope.item.keysTimeTo);
                         }
                         $scope.__keysTimeToSelectLabel = 'choisir';
                         _.each($scope.__keysTimeToItems, (v, k) => {
@@ -804,7 +804,7 @@
                     items: ['Ordered', 'Prepaid', 'Delivered', 'Completed'],
                     change: (selected) => {
                         $scope.item.status = selected.toString().toLowerCase();
-                        r.dom();
+                        $rootScope.dom();
                     }
                 });
             }
@@ -819,23 +819,23 @@
                         [!$scope.item.landLordFullName, '==', true, "Landlord Name required."],
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
-                            r.warningMessage(m[0]());
+                            $rootScope.warningMessage(m[0]());
                         }
                         else {
-                            r.warningMessage(m[0]);
+                            $rootScope.warningMessage(m[0]);
                         }
                     }, _sendPaymentLink);
 
 
 
                     function _sendPaymentLink() {
-                        r.openConfirm({
+                        $rootScope.openConfirm({
                             message: 'You want to send a payment link to ' + $scope.item.landLordEmail + ' ?',
                             templateUrl: 'views/directives/modal.yes-not-now.html'
                         }, () => {
                             $scope.infoMsg("Sending email.");
 
-                            $D.getInvoiceHTMLContent(db, $scope.item, r, html => {
+                            $D.getInvoiceHTMLContent(db, $scope.item, $rootScope, html => {
                                 db.ctrl('Notification', 'LANDLORD_ORDER_PAYMENT_DELEGATED', {
                                     _user: $scope.item._client,
                                     _order: $scope.item,
@@ -876,7 +876,7 @@
                     var order = $scope.item;
 
                     if (!order._client.wallet) {
-                        return r.warningMessage('Configure Client Wallet ID first');
+                        return $rootScope.warningMessage('Configure Client Wallet ID first');
                     }
 
 
@@ -884,11 +884,11 @@
                     orderPaymentForm.pay($scope.item).then(function() {
                         $scope.successMsg('Commande payée');
                         $scope.item.status = 'prepaid';
-                        r.dom(read, 5000);
+                        $rootScope.dom(read, 5000);
                     }).error(function(res) {
-                        return r.errorMessage('', 10000);
+                        return $rootScope.errorMessage('', 10000);
                     }).on('validate', function(msg) {
-                        return r.warningMessage(msg, 10000);
+                        return $rootScope.warningMessage(msg, 10000);
                     });
 
 
@@ -896,7 +896,7 @@
 
 
                 function emailOfPersonWhoPaid() {
-                    var session = r.session();
+                    var session = $rootScope.session();
                     if (session && session._id == $scope.item._client._id) {
                         return $scope.item._client.email;
                     }
@@ -909,14 +909,14 @@
 
                 $scope.back = () => {
                     if ($scope.is(['diag', 'client'])) {
-                        r.route('dashboard');
+                        $rootScope.route('dashboard');
                     }
                     else {
-                        if (r.params && r.params.prevRoute) {
-                            return r.route(r.params.prevRoute);
+                        if ($rootScope.params && $rootScope.params.prevRoute) {
+                            return $rootScope.route($rootScope.params.prevRoute);
                         }
                         else {
-                            r.route('orders');
+                            $rootScope.route('orders');
                         }
 
                     }
@@ -961,10 +961,10 @@
                         [$scope.item.status, '==', '', 'Status required']
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
-                            r.warningMessage(m[0]());
+                            $rootScope.warningMessage(m[0]());
                         }
                         else {
-                            r.warningMessage(m[0]);
+                            $rootScope.warningMessage(m[0]);
                         }
                     }, $scope.save);
                 };
@@ -984,7 +984,7 @@
                 }
 
                 function displayWarning(msg) {
-                    r.okModal({
+                    $rootScope.okModal({
                         data: {
                             title: 'Warning'
                         },
@@ -993,7 +993,7 @@
                 }
 
                 function displayWarning(msg) {
-                    r.okModal({
+                    $rootScope.okModal({
                         data: {
                             title: 'Warning'
                         },
@@ -1011,7 +1011,7 @@
                             if ($scope.isPaid()) return displayWarning('You change the diag account but the order is already paid. Unable to assign a new diag account.');
 
                             var msg = "Manually assign of diagnostiqueur " + $scope.item._diag.firstName + ' ' + $scope.item._diag.lastName + ' will trigger notifications again. Please confirm. ';
-                            r.openConfirm(msg, () => {
+                            $rootScope.openConfirm(msg, () => {
                                 reEnableNotifications();
                                 $scope.save(Object.assign(opt || {}, {
                                     assignDiagFeature: true
@@ -1026,7 +1026,7 @@
 
                             if ($scope.isPaid()) return displayWarning('You change the rdv slot but the order is already paid. Unable to assign a new rdv slot.');
 
-                            r.openConfirm('Manually assign of RDV slot may change diagnostiqueur, date and price and will trigger notifications again. Please Confirm. ', () => {
+                            $rootScope.openConfirm('Manually assign of RDV slot may change diagnostiqueur, date and price and will trigger notifications again. Please Confirm. ', () => {
                                 reEnableNotifications();
                                 $scope.save(Object.assign(opt || {}, {
                                     assignNewRDVSlot: true
@@ -1042,7 +1042,7 @@
                         if (res.ok) {
 
                             if ($scope.item.notifications && $scope.item.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED == true) {
-                                r.infoMessage('Changes saved');
+                                $rootScope.infoMessage('Changes saved');
                                 $scope.back();
                             }
                             else {
@@ -1057,7 +1057,7 @@
                                     });
                                 }
 
-                                r.infoMessage('Changes saved');
+                                $rootScope.infoMessage('Changes saved');
 
                                 $scope.activateSlotSelectionManually(false);
 
@@ -1073,7 +1073,7 @@
                 };
                 $scope.downloadFile = () => {
                     if (!$scope.item.pdfId) {
-                        return r.warningMessage("File required", 5000);
+                        return $rootScope.warningMessage("File required", 5000);
                     }
                     else {
                         window.open(db.URL() + '/File/get/' + $scope.item.pdfId, '_newtab');
@@ -1084,7 +1084,7 @@
                     if (!$scope.pdfFileInfo) {
                         return console.warn('s.pdfFileInfo expected.');
                     }
-                    r.openConfirm('Delete ' + $scope.pdfFileInfo.filename + ' ?', () => {
+                    $rootScope.openConfirm('Delete ' + $scope.pdfFileInfo.filename + ' ?', () => {
                         db.ctrl('File', 'remove', {
                             _id: $scope.pdfFileInfo._id
                         }).then((d) => {
@@ -1094,7 +1094,7 @@
                                     _id: $scope.item._id,
                                     pdfId: $scope.item.pdfId
                                 });
-                                r.dom();
+                                $rootScope.dom();
                             }
                         });
                     });
@@ -1116,7 +1116,7 @@
 
                     var time = (d) => moment(d).format('HH:mm');
                     var descr = $scope.item.address + ' (' + time($scope.item.start) + ' - ' + time($scope.item.end) + ')';
-                    r.openConfirm('Delete Order ' + descr + ' ?', function() {
+                    $rootScope.openConfirm('Delete Order ' + descr + ' ?', function() {
                         // s.message('deleting . . .', 'info');
 
                         db.ctrl('Order', 'remove', {
@@ -1160,9 +1160,9 @@
 
 
             function read(id) {
-                if (r.params && r.params.item && r.params.item._diag) {
-                    $scope.item = r.params.item; //partial loading
-                    delete r.params.item;
+                if ($rootScope.params && $rootScope.params.item && $rootScope.params.item._diag) {
+                    $scope.item = $rootScope.params.item; //partial loading
+                    delete $rootScope.params.item;
                 }
 
                 //s.message('loading . . .', 'info');

@@ -38,6 +38,9 @@
             }, {
                 name: "clients",
                 description: "Admin can view all clients"
+            }, {
+                name: "orders/edit/:id",
+                description: "Order details"
             }];
         };
 
