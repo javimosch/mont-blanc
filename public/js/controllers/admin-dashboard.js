@@ -27,23 +27,6 @@
                     var ws = server;
                     var n = attrs.name;
 
-                    r.logger.addControlledErrors(['StripeConnectionError']);
-
-                    ws.ctrl('Payment', 'balance').then((data) => {
-                        //console.log('adminBalance:data',data);
-                        if (!data.ok) return r.notify(data.err && data.err.message || 'Server error when connecting with Stripe.');
-                        var b = {};
-                        var out = data.result;
-                        b.available = _.sumBy(out.available, function(o) {
-                            return o.amount;
-                        }) / 100; //eur
-                        b.pending = _.sumBy(out.pending, function(o) {
-                            return o.amount;
-                        }) / 100; //eur
-                        b.livemode = out.livemode;
-                        s.b = b;
-                    })
-
                     ws.ctrl('Stats', 'general').then((data) => {
                         s.g = data.result;
                     })

@@ -10,7 +10,6 @@ dbController.register('Stripe');
 dbController.register('Text');
 dbController.register('User');
 dbController.register('Order');
-dbController.register('Payment');
 dbController.register('Stats');
 dbController.register('File');
 dbController.register('Email');

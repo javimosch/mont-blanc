@@ -17,23 +17,18 @@ var actions = require('../model/db.actions').create('Order');
 var UserAction = require('./ctrl.user');
 var utils = require('../model/utils');
 //var PaymentAction = require('./handlers/payment').actions;
-var payment = require('./ctrl.payment');
-var stripe = payment.stripe;
+
 var email = require('./ctrl.email');
 var Notif = require('./ctrl.notification');
 var NOTIFICATION = Notif.NOTIFICATION;
 var apiError = require(path.join(process.cwd(), 'model/errors'));
 var ResponseFacade = require(path.join(process.cwd(), 'model/facades/response-facade'));
-
 var Resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
-
 var htmlFromOrder = require(path.join(process.cwd(), 'model/facades/invoice-facade')).htmlFromOrder;
-
 var saveKeys = ['_client', '_diag', 'start', 'end', 'diags'
 
     , 'address', 'price' //, 'time'
 ];
-
 var paymentLogger = ctrl('Log').createLogger({
     name: "ORDER",
     category: "PAYMENT"
@@ -49,27 +44,218 @@ var notificationLogger = ctrl('Log').createLogger({
 
 
 
-
-
-function LogSave(msg, type, data) {
-    dbLogger.setSaveData(data);
-    if (type == 'error') {
-        dbLogger.errorSave(msg)
+/*ACTIONS*/
+module.exports = {
+    sendQuote: sendQuote,
+    payUsingCheque: payUsingCheque,
+    payUsingCard: payUsingCard,
+    save: save,
+    populate: orderPopulate, //DEPRECATED?
+    _configure: (hook) => { //DEPRECATED?
+        hook('preSave', preSave);
+        hook('afterSave', afterSave);
     }
-    if (type == 'warning') {
-        dbLogger.warnSave(msg)
+};
+
+
+/*ACTIONS ARE HERE*/
+function sendQuote(data, cb) {
+    var userCtrl = ctrl('User');
+    var orderCtrl = ctrl('Order');
+    var notificationCtrl = ctrl('Notification');
+    if (!data.order) return cb(apiError.VALIDATE_FIELD_ORDER);
+    if (!data.email) return cb(apiError.VALIDATE_FIELD_EMAIL);
+    if (!data.order || !data.order._id) return cb(apiError.VALIDATE_FIELD_VALID_ORDER);
+
+    //We check if the order is ok in database
+    orderCtrl.existsById(data.order._id)
+        .then(exists => {
+            if (exists) {
+                withOrder();
+            }
+            else {
+                cb(apiError.DATABASE_OBJECT_MISMATCH('order', 'sendQuote'));
+            }
+        }).catch(cb);
+
+    function withOrder() {
+        // notificationLogger.debug('SendQuote:valid');
+        var userId = data.order._client && data.order._client._id || data.order._client;
+        userCtrl.get({
+            _id: userId
+        }, (err, _user) => {
+            if (err) return cb(err);
+            if (_user.isSystemUser) {
+                // notificationLogger.debug('SendQuote:user:get');
+                userCtrl.get({
+                    email: data.email
+                }, (err, user) => {
+                    if (err) return cb(err);
+                    if (user) {
+                        //  notificationLogger.debug('SendQuote:associateClient');
+                        return associateClient(user._id, data.order._id)
+                            .then(order => withUser(user, order))
+                            .catch(cb);
+                    }
+                    else {
+                        // notificationLogger.debug('SendQuote:user:saving-new');
+                        var userPayload = {
+                            firstName: data.fullName,
+                            email: data.email,
+                            cellPhone: data.phone,
+                            isGuestAccount: true,
+                        };
+                        userCtrl.fetchLandlordAccount(userPayload)
+                            .then((user) => {
+                                //  notificationLogger.debug('SendQuote:associateClient');
+                                associateClient(user._id, data.order._id)
+                                    .then(order => withUser(user, order))
+                                    .catch(cb);
+                            })
+                            .catch(cb);
+                    }
+                })
+            }
+            else {
+                withUser(_user, data.order);
+            }
+        });
+    }
+
+    function withUser(user, order) {
+
+        setTimeout(() => {
+            // notificationLogger.debug('SendQuote:withUser');
+
+            if (!Resolver.validatorFacade().validMongooseObject(order)) {
+                return ResponseFacade.errorWithInvalidVariable('order', 'SendQuote.withUser', cb);
+            }
+            if (!Resolver.validatorFacade().validMongooseObject(user)) {
+                return ResponseFacade.errorWithInvalidVariable('user', 'SendQuote.withUser', cb);
+            }
+
+            //notificationLogger.debug('SendQuote:notification');
+
+            Notif.trigger(NOTIFICATION.CLIENT_ORDER_QUOTATION, {
+                _order: order,
+                _user: user,
+                _client: user
+            }, (err, res) => {
+                if (err) return cb(err);
+                // notificationLogger.debug('SendQuote:notification:success', res);
+                return cb(null, res);
+            });
+        }, 2000);
+    }
+}
+
+function payUsingCheque(data, routeCallback) {
+    //VALIDATIONS
+    if (!data.orderId) return routeCallback('orderId field required');
+    if (!data.clientEmail) return routeCallback('clientId or clientEmail required');
+    if (!PaymentProcessor.isAllowed(data)) {
+        return PaymentProcessor.allowPayment(data, () => payUsingCheque(data, routeCallback), () => routeCallback('La commande est déjà confirmée.'), err => routeCallback(err));
+    }
+    paymentLogger.debug('Cheque validations ok');
+    //QUEUE
+    if (PaymentProcessor.inQueue(data)) {
+        return routeCallback('La commande est déjà en cours de traitement.');
+    }
+    PaymentProcessor.addToQueue(data);
+    var cb = PaymentProcessor.createCallback(data, routeCallback);
+    paymentLogger.debug('Cheque to queue');
+    //OK
+    PaymentHelper.updateDetailsAsync(data.orderId, null, data.billingAddress);
+    PaymentHelper.associateClient(data.orderId, data).then(() => {
+        paymentLogger.debug('Cheque client associated');
+        getNextInvoiceNumber({
+            _id: data.orderId
+        }, function(err, invoiceNumber) {
+            if (err) return cb(err);
+            paymentLogger.debug('Cheque invoice number', invoiceNumber);
+            moveToPrepaid({
+                _id: data.orderId,
+                number: invoiceNumber,
+                paymentType: 'cheque'
+            }, function(_err, res) {
+                paymentLogger.debug('Cheque to prepaid');
+                return cb(err, true);
+            });
+
+        });
+    });
+}
+
+function payUsingCard(data, routeCallback) {
+    //VALIDATIONS
+    if (!data.orderId) return routeCallback('orderId field required');
+    if (!data.p2pDiag) return routeCallback('p2pDiag field required');
+    if (!data.secret) return routeCallback('secret field required');
+    var secretData = decodePayload(data.secret);
+    if (!secretData.creditCardOwner) return routeCallback('credit card owner required');
+    if (!secretData.clientEmail) return routeCallback('clientId or clientEmail required');
+    if (!data.masterWallet) {
+        return validateTechnicalWallet(data, secretData, () => payUsingCard(data, routeCallback), err => routeCallback(err));
     }
     else {
-        dbLogger.debug(msg)
+        secretData.wallet = data.masterWallet; //we use this wallet for the client payment move.
+        data.p2pDiag.debitWallet = data.masterWallet; //we use this wallet for the diag p2p movement.
     }
+    if (!secretData.wallet) {
+        return routeCallback('Tecnical wallet for charge');
+    }
+    if (!data.p2pDiag.debitWallet) {
+        return routeCallback('Tecnical wallet for debit required');
+    }
+    if (!PaymentProcessor.isAllowed(data)) {
+        return PaymentProcessor.allowPayment(data, () => payUsingCard(data, routeCallback), () => routeCallback('Order already paid.'), err => routeCallback(err));
+    }
+    //QUEUE
+    if (PaymentProcessor.inQueue(data)) {
+        return routeCallback('Order payment is already being processed.');
+    }
+    PaymentProcessor.addToQueue(data);
+    var cb = PaymentProcessor.createCallback(data, routeCallback);
+
+    //OK
+    PaymentHelper.updateDetailsAsync(data.orderId, secretData.creditCardOwner, secretData.billingAddress);
+    PaymentHelper.associateClient(data.orderId, secretData).then(() => {
+        getNextInvoiceNumber({
+            _id: data.orderId
+        }, function(err, invoiceNumber) {
+            if (err) return cb(err);
+            secretData.comment = secretData.comment.replace('_INVOICE_NUMBER_', invoiceNumber);
+            //step 1 payment with card
+            ctrl('Lemonway').moneyInWithCardId(secretData, function(err, LWRES) {
+                if (err) {
+                    return cb(err);
+                }
+                if (LWRES && LWRES.TRANS && LWRES.TRANS.HPAY && LWRES.TRANS.HPAY.STATUS == '3') {}
+                else {
+                    return cb({
+                        message: "Invalid response from Lemonway. Check the logs."
+                    });
+                }
+                //step 2, moving the order to prepaid
+                moveToPrepaid({
+                    _id: data.orderId,
+                    walletTransId: LWRES.TRANS.HPAY.ID,
+                    number: invoiceNumber
+                }, function(_err, res) {
+                    paymentLogger.debug('P2P Lookup');
+                    //step 3  p2p to diag wallet 
+                    var p2pPayload = data.p2pDiag;
+                    p2pPayload.message = "Order #" + invoiceNumber;
+                    ctrl('Lemonway').sendPayment(p2pPayload, function(err, res) {
+                        return cb(err, true);
+                    });
+                });
+            });
+        });
+    }).catch(cb);
 }
 
-function decodePayload(secret) {
-    //encoding / decoding of data.secret:
-    //var a = btoa(JSON.stringify({a:1})) + btoa('secret')   <--- encoding
-    //var b = JSON.parse(atob(a.substring(0,a.indexOf(btoa('secret'))))) <--- decoding
-    return JSON.parse(atob(secret.substring(0, secret.indexOf(btoa('secret')))));
-}
+/*HELPER METHODS*/
 
 function getNextInvoiceNumber(data, cb) {
     function zeroFill(number, width) {
@@ -108,6 +294,31 @@ function getNextInvoiceNumber(data, cb) {
 
     });
 }
+
+
+
+
+function LogSave(msg, type, data) {
+    dbLogger.setSaveData(data);
+    if (type == 'error') {
+        dbLogger.errorSave(msg)
+    }
+    if (type == 'warning') {
+        dbLogger.warnSave(msg)
+    }
+    else {
+        dbLogger.debug(msg)
+    }
+}
+
+function decodePayload(secret) {
+    //encoding / decoding of data.secret:
+    //var a = btoa(JSON.stringify({a:1})) + btoa('secret')   <--- encoding
+    //var b = JSON.parse(atob(a.substring(0,a.indexOf(btoa('secret'))))) <--- decoding
+    return JSON.parse(atob(secret.substring(0, secret.indexOf(btoa('secret')))));
+}
+
+
 
 function moveToPrepaid(data, cb) {
     var requiredKeys = ['_id', 'status', 'walletTransId', 'paidAt', 'number'];
@@ -282,242 +493,13 @@ var PaymentHelper = (() => {
     }
 })();
 
-function payUsingCheque(data, routeCallback) {
-    //VALIDATIONS
-    if (!data.orderId) return routeCallback('orderId field required');
-    if (!data.clientEmail) return routeCallback('clientId or clientEmail required');
-    if (!PaymentProcessor.isAllowed(data)) {
-        return PaymentProcessor.allowPayment(data, () => payUsingCheque(data, routeCallback), () => routeCallback('La commande est déjà confirmée.'), err => routeCallback(err));
-    }
-    paymentLogger.debug('Cheque validations ok');
-    //QUEUE
-    if (PaymentProcessor.inQueue(data)) {
-        return routeCallback('La commande est déjà en cours de traitement.');
-    }
-    PaymentProcessor.addToQueue(data);
-    var cb = PaymentProcessor.createCallback(data, routeCallback);
-    paymentLogger.debug('Cheque to queue');
-    //OK
-    PaymentHelper.updateDetailsAsync(data.orderId, null, data.billingAddress);
-    PaymentHelper.associateClient(data.orderId, data).then(() => {
-        paymentLogger.debug('Cheque client associated');
-        getNextInvoiceNumber({
-            _id: data.orderId
-        }, function(err, invoiceNumber) {
-            if (err) return cb(err);
-            paymentLogger.debug('Cheque invoice number', invoiceNumber);
-            moveToPrepaid({
-                _id: data.orderId,
-                number: invoiceNumber,
-                paymentType: 'cheque'
-            }, function(_err, res) {
-                paymentLogger.debug('Cheque to prepaid');
-                return cb(err, true);
-            });
-
-        });
-    });
-}
-
-function payUsingCard(data, routeCallback) {
-    //VALIDATIONS
-    if (!data.orderId) return routeCallback('orderId field required');
-    if (!data.p2pDiag) return routeCallback('p2pDiag field required');
-    if (!data.secret) return routeCallback('secret field required');
-    var secretData = decodePayload(data.secret);
-    if (!secretData.creditCardOwner) return routeCallback('credit card owner required');
-    if (!secretData.clientEmail) return routeCallback('clientId or clientEmail required');
-    if (!data.masterWallet) {
-        return validateTechnicalWallet(data, secretData, () => payUsingCard(data, routeCallback), err => routeCallback(err));
-    }
-    else {
-        secretData.wallet = data.masterWallet; //we use this wallet for the client payment move.
-        data.p2pDiag.debitWallet = data.masterWallet; //we use this wallet for the diag p2p movement.
-    }
-    if (!secretData.wallet) {
-        return routeCallback('Tecnical wallet for charge');
-    }
-    if (!data.p2pDiag.debitWallet) {
-        return routeCallback('Tecnical wallet for debit required');
-    }
-    if (!PaymentProcessor.isAllowed(data)) {
-        return PaymentProcessor.allowPayment(data, () => payUsingCard(data, routeCallback), () => routeCallback('Order already paid.'), err => routeCallback(err));
-    }
-    //QUEUE
-    if (PaymentProcessor.inQueue(data)) {
-        return routeCallback('Order payment is already being processed.');
-    }
-    PaymentProcessor.addToQueue(data);
-    var cb = PaymentProcessor.createCallback(data, routeCallback);
-
-    //OK
-    PaymentHelper.updateDetailsAsync(data.orderId, secretData.creditCardOwner, secretData.billingAddress);
-    PaymentHelper.associateClient(data.orderId, secretData).then(() => {
-        getNextInvoiceNumber({
-            _id: data.orderId
-        }, function(err, invoiceNumber) {
-            if (err) return cb(err);
-            secretData.comment = secretData.comment.replace('_INVOICE_NUMBER_', invoiceNumber);
-            //step 1 payment with card
-            ctrl('Lemonway').moneyInWithCardId(secretData, function(err, LWRES) {
-                if (err) {
-                    return cb(err);
-                }
-                if (LWRES && LWRES.TRANS && LWRES.TRANS.HPAY && LWRES.TRANS.HPAY.STATUS == '3') {}
-                else {
-                    return cb({
-                        message: "Invalid response from Lemonway. Check the logs."
-                    });
-                }
-                //step 2, moving the order to prepaid
-                moveToPrepaid({
-                    _id: data.orderId,
-                    walletTransId: LWRES.TRANS.HPAY.ID,
-                    number: invoiceNumber
-                }, function(_err, res) {
-                    paymentLogger.debug('P2P Lookup');
-                    //step 3  p2p to diag wallet 
-                    var p2pPayload = data.p2pDiag;
-                    p2pPayload.message = "Order #" + invoiceNumber;
-                    ctrl('Lemonway').sendPayment(p2pPayload, function(err, res) {
-                        return cb(err, true);
-                    });
-                });
-            });
-        });
-    }).catch(cb);
-}
-
-
-//Deprecated ?
-function confirm(data, cb) {
-    actions.log('confirm=' + JSON.stringify(data));
-    actions.getById(data, (err, _order) => {
-        if (err) return cb(err, _order);
-        if (_order.status == 'created') {
-            _order.status = 'ordered';
-            _order.save();
-            User.getAll({
-                userType: 'admin'
-            }, (err, _admins) => {
-                if (err) return cb(err, _admins);
-                _admins.forEach(_admin => {
-
-                    Notif.ORDER_CONFIRMED_FOR_INVOICE_END_OF_THE_MONTH({
-                        _user: _admin,
-                        _order: _order
-                    }, (_err, r) => {
-                        if (r.ok) {
-                            cb({
-                                ok: true,
-                                message: 'Order confirmed and admins notified by email.'
-                            });
-                        }
-                    })
-                });
-            });
-        }
-        else {
-            cb(null, {
-                ok: true,
-                message: 'Order already confirmed. (ordered)'
-            });
-        }
-    });
-}
 
 
 
 
-function sendQuote(data, cb) {
-    var userCtrl = ctrl('User');
-    var orderCtrl = ctrl('Order');
-    var notificationCtrl = ctrl('Notification');
-    if (!data.order) return cb(apiError.VALIDATE_FIELD_ORDER);
-    if (!data.email) return cb(apiError.VALIDATE_FIELD_EMAIL);
-    if (!data.order || !data.order._id) return cb(apiError.VALIDATE_FIELD_VALID_ORDER);
 
-    //We check if the order is ok in database
-    orderCtrl.existsById(data.order._id)
-        .then(exists => {
-            if (exists) {
-                withOrder();
-            }
-            else {
-                cb(apiError.DATABASE_OBJECT_MISMATCH('order', 'sendQuote'));
-            }
-        }).catch(cb);
 
-    function withOrder() {
-        // notificationLogger.debug('SendQuote:valid');
-        var userId = data.order._client && data.order._client._id || data.order._client;
-        userCtrl.get({
-            _id: userId
-        }, (err, _user) => {
-            if (err) return cb(err);
-            if (_user.isSystemUser) {
-                // notificationLogger.debug('SendQuote:user:get');
-                userCtrl.get({
-                    email: data.email
-                }, (err, user) => {
-                    if (err) return cb(err);
-                    if (user) {
-                        //  notificationLogger.debug('SendQuote:associateClient');
-                        return associateClient(user._id, data.order._id)
-                            .then(order => withUser(user, order))
-                            .catch(cb);
-                    }
-                    else {
-                        // notificationLogger.debug('SendQuote:user:saving-new');
-                        var userPayload = {
-                            firstName: data.fullName,
-                            email: data.email,
-                            cellPhone: data.phone,
-                            isGuestAccount: true,
-                        };
-                        userCtrl.fetchLandlordAccount(userPayload)
-                            .then((user) => {
-                                //  notificationLogger.debug('SendQuote:associateClient');
-                                associateClient(user._id, data.order._id)
-                                    .then(order => withUser(user, order))
-                                    .catch(cb);
-                            })
-                            .catch(cb);
-                    }
-                })
-            }
-            else {
-                withUser(_user, data.order);
-            }
-        });
-    }
 
-    function withUser(user, order) {
-
-        setTimeout(() => {
-            // notificationLogger.debug('SendQuote:withUser');
-
-            if (!Resolver.validatorFacade().validMongooseObject(order)) {
-                return ResponseFacade.errorWithInvalidVariable('order', 'SendQuote.withUser', cb);
-            }
-            if (!Resolver.validatorFacade().validMongooseObject(user)) {
-                return ResponseFacade.errorWithInvalidVariable('user', 'SendQuote.withUser', cb);
-            }
-
-            //notificationLogger.debug('SendQuote:notification');
-
-            Notif.trigger(NOTIFICATION.CLIENT_ORDER_QUOTATION, {
-                _order: order,
-                _user: user,
-                _client: user
-            }, (err, res) => {
-                if (err) return cb(err);
-                // notificationLogger.debug('SendQuote:notification:success', res);
-                return cb(null, res);
-            });
-        }, 2000);
-    }
-}
 
 function create(data, cb) {
     actions.create(data, cb, saveKeys);
@@ -866,34 +848,4 @@ function preSave(data) {
     return data;
 }
 
-module.exports = {
-    //custom
-    sendQuote: sendQuote,
-    payUsingCheque: payUsingCheque,
-    payUsingCard: payUsingCard,
-    getNextInvoiceNumber: getNextInvoiceNumber,
-    save: save,
-    saveWithEmail: saveWithEmail,
-    // pay: pay,
-    // syncStripe: syncStripe,
-    confirm: confirm,
-    populate: orderPopulate,
-    //heredado
-    existsById: actions.existsById,
-    existsByField: actions.existsByField,
-    createUpdate: actions.createUpdate,
-    getAll: actions.getAll,
-    remove: actions.remove,
-    result: actions.result,
-    get: actions.get,
-    check: actions.check,
-    removeAll: actions.removeAll,
-    toRules: actions.toRules,
-    find: actions.find,
-    create: create,
-    log: actions.log,
-    _configure: (hook) => {
-        hook('preSave', preSave);
-        hook('afterSave', afterSave);
-    }
-};
+

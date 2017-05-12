@@ -102,7 +102,6 @@ model('File', {});
 model('Email', {});
 model('Stripe', {});
 model('Settings', require('../schemas/schema.diags-settings').def);
-model('Payment', require('../schemas/schema.diags-payment').def);
 model('Pdf', require('../schemas/schema.pdf').def);
 model('Category', require('../schemas/schema.category').def);
 model('Text', require('../schemas/schema.text').def);
