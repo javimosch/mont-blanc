@@ -99,6 +99,10 @@
                         if (clientLogged()) {
                             modalScope.response.clientEmail = localSession.getData().email;
 
+                            if (data.paymentType !== 'card') {
+                                modalScope.response.clientPhone = localSession.getData().cellPhone;
+                            }
+
                             backendApi.Order.get({
                                 _client: localSession.getData()._id,
                                 __select: "billingAddress",
@@ -119,6 +123,15 @@
 
 
                     },
+                    withCard: () => data.paymentType === 'card',
+                    payButtonLabel: () => {
+                        if (data.paymentType === 'card') {
+                            return "Payer";
+                        }
+                        if (data.paymentType === 'cheque') {
+                            return "Confirmer le RDV<br/>et payer par chèque<br/>le diagnostiqueur";
+                        };
+                    },
                     showGuessAccountControls: () => {
                         return !clientLogged();
                     },
@@ -132,6 +145,13 @@
                     isProcessing: () => isProcessing,
                     isFormValid: function() {
                         var modalScope = this;
+
+                        if (data.paymentType === 'cheque') {
+                            if (!clientLogged() && !modalScope.response.clientName) return false;
+                            if (!clientLogged() && !modalScope.response.clientEmail) return false;
+                            return true
+                        }
+
                         if (modalScope.response.cardType == undefined) return false;
                         if (modalScope.response.cardNumber == undefined) return false;
                         if (modalScope.response.cardDate == undefined) return false;
@@ -178,6 +198,9 @@
         var self = {
             isProcessing: () => isProcessing,
             pay: function(order) {
+
+                order.paymentType = order.paymentType || 'card';
+
                 return $U.MyPromise(function(resolve, reject, emit) {
 
                     if (!order) return emit('validate', 'order required');
@@ -194,12 +217,14 @@
                     //if (!order._client.wallet) return emit('validate', 'order _client wallet required');//wallet is replaced with masterWallet (IMMOCAL) see: #206
 
                     open({
-                        amount: parseFloat(order.price).toFixed(2).toString()
+                        amount: parseFloat(order.price).toFixed(2).toString(),
+                        paymentType: order.paymentType
                     }, function(formResponse, closeModal) {
 
                         //return $log.debug(formResponse);
 
                         function fixCardDateYear(formResponse) {
+                            if (!formResponse.cardDate) return formResponse;
                             try {
                                 var split = formResponse.cardDate.split('/');
                                 var year = split[1];
@@ -224,51 +249,90 @@
 
                         var clientId = clientLogged() ? localSession.getData()._id : undefined;
 
-                        var payload = {
-                            wallet: order._client.wallet,
-                            cardType: formResponse.cardType,
-                            cardNumber: formResponse.cardNumber,
-                            cardCode: formResponse.cardCode,
-                            cardDate: formResponse.cardDate,
+                        if (order.paymentType == 'card') {
+                            return payWithCreditCard();
+                        }
+                        if (order.paymentType == 'cheque') {
+                            return payWithCheque();
+                        }
 
-                            clientId: clientId,
-                            creditCardOwner: formResponse.creditCardOwner,
-                            clientEmail: formResponse.clientEmail,
-                            clientPassword: formResponse.clientPassword,
-                            billingAddress: formResponse.billingAddress,
+                        reject("Invalid payment type "+order.paymentType);
+                        closeModal();
 
-                            amountTot: parseFloat(order.price).toFixed(2).toString(),
-                            amountCom: (parseFloat(order.price) - parseFloat(order.diagRemunerationHT)).toFixed(2).toString(),
-                            comment: 'House Diagnostic by autoentrepreneur ' + order._diag.firstName + ' ' + order._diag.lastName + ' SIRET ' + order._diag.siret + ' through www.diagnostical.fr, Order #_INVOICE_NUMBER_'
-                                //comment: "House Inspection by www.houseinspectors.fr, ORDER 24577 for client prop@fake.com (TEST)",
-                        };
-                        payload = {
-                            orderId: order._id,
-                            secret: window.btoa(JSON.stringify(payload)) + window.btoa('secret'),
-                            p2pDiag: {
-                                debitWallet: order._client.wallet,
-                                creditWallet: order._diag.wallet,
-                                amount: parseFloat(order.diagRemunerationHT).toFixed(2),
-                                message: '',
-                                privateData: JSON.stringify({
-                                    orderId: order._id
-                                })
-                            },
-                        };
-                        isProcessing = true;
-                        paymentApi.payOrder(payload).then(function() {
-                            isProcessing = false;
-                            resolve(true);
-                            closeModal();
-                        }).error(function(res) {
-                            isProcessing = false;
-                            reject(res);
-                            closeModal();
-                        }).on('validate', function(msg) {
-                            isProcessing = false;
-                            emit('validate', msg);
-                            closeModal();
-                        });
+                        function payWithCheque() {
+                            backendApi.Order.custom('payWithCheque', {
+                                orderId: order._id,
+                                clientId: clientId,
+                                clientEmail: formResponse.clientEmail,
+                                clientName: formResponse.clientName,
+                                clientPhone: formResponse.clientPhone,
+                                clientPassword: formResponse.clientPassword
+                            }).then(function() {
+                                isProcessing = false;
+                                resolve(true);
+                                closeModal();
+                            }).error(function(res) {
+                                isProcessing = false;
+                                reject(res);
+                                closeModal();
+                            }).on('validate', function(msg) {
+                                isProcessing = false;
+                                emit('validate', msg);
+                                closeModal();
+                            });
+                        }
+
+                        function payWithCreditCard() {
+                            var payload = {
+                                wallet: order._client.wallet,
+                                cardType: formResponse.cardType,
+                                cardNumber: formResponse.cardNumber,
+                                cardCode: formResponse.cardCode,
+                                cardDate: formResponse.cardDate,
+
+                                clientId: clientId,
+                                creditCardOwner: formResponse.creditCardOwner,
+                                clientEmail: formResponse.clientEmail,
+                                clientName: formResponse.clientName,
+                                clientPhone: formResponse.clientPhone,
+                                clientPassword: formResponse.clientPassword,
+                                billingAddress: formResponse.billingAddress,
+
+                                amountTot: parseFloat(order.price).toFixed(2).toString(),
+                                amountCom: (parseFloat(order.price) - parseFloat(order.diagRemunerationHT)).toFixed(2).toString(),
+                                comment: 'House Diagnostic by autoentrepreneur ' + order._diag.firstName + ' ' + order._diag.lastName + ' SIRET ' + order._diag.siret + ' through www.diagnostical.fr, Order #_INVOICE_NUMBER_'
+                                    //comment: "House Inspection by www.houseinspectors.fr, ORDER 24577 for client prop@fake.com (TEST)",
+                            };
+                            payload = {
+                                orderId: order._id,
+                                secret: window.btoa(JSON.stringify(payload)) + window.btoa('secret'),
+                                p2pDiag: {
+                                    debitWallet: order._client.wallet,
+                                    creditWallet: order._diag.wallet,
+                                    amount: parseFloat(order.diagRemunerationHT).toFixed(2),
+                                    message: '',
+                                    privateData: JSON.stringify({
+                                        orderId: order._id
+                                    })
+                                },
+                            };
+                            isProcessing = true;
+                            paymentApi.payOrder(payload).then(function() {
+                                isProcessing = false;
+                                resolve(true);
+                                closeModal();
+                            }).error(function(res) {
+                                isProcessing = false;
+                                reject(res);
+                                closeModal();
+                            }).on('validate', function(msg) {
+                                isProcessing = false;
+                                emit('validate', msg);
+                                closeModal();
+                            });
+                        }
+
+
                     });
 
                 });

@@ -268,7 +268,7 @@
                 self[controllerName] = createActions(collectionName);
             },
             payOrder: function(data) {
-                return handle('order', 'payUsingLW', data);
+                return handle('order', 'payUsingCard', data);
             }
         };
 

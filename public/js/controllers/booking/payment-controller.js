@@ -42,7 +42,8 @@
                 });
             };
             $scope.payWithCheque = () => {
-
+                order.paymentType="cheque";
+                $scope.pay();
             };
             $scope.pay = () => {
                 if (orderHelper.status(order).isPaid()) {

@@ -138,6 +138,11 @@ module.exports = {
         },
         creditCardOwner: {
             type: String,
+        },
+        
+        paymentType:{
+            type:String,
+            default:'card'
         }
 
     }
