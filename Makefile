@@ -1,7 +1,7 @@
 
 REPORTER ?= dot
 BIN = ./node_modules/.bin
-TESTS = $(wildcard test/.test.js)
+TESTS = $(wildcard test/-test.js)
 LIB = $(wildcard lib/.js)
 
 # test commands 
@@ -14,15 +14,12 @@ lint:
 	#./node_modules/.bin/jshint --config ./.jshintrc ./controllers/*.js
 
 test:
-	echo "Testing"\
-	make clean && \
-	make lint && \
-	./node_modules/mocha/bin/mocha \
-	--colors \
-	--reporter $(REPORTER) \
+	echo "Mocha will test files in test/*-test.js"
+	./node_modules/mocha/bin/mocha --timeout 30000 --colors $(TESTS)
+	#make clean && \
+	##make lint && \
+	#--reporter $(REPORTER) \
 	#test/handlebars-async.test.js
-	$(TESTS)
-
 install link:
 	@npm $@
 

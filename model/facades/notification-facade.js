@@ -22,7 +22,7 @@ function attachNotification(doc, notification) {
                 }
             });
             var payload = {};
-            payload['notifications.' + notification.type] = true;
+            //payload['notifications.' + notification.type] = true;//deprecated
             payload['notifications.' + notification.type + "_" + notification.to] = true;
             yield doc.update({
                 $set: payload

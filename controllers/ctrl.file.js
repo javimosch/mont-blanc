@@ -1,41 +1,24 @@
 var req = (n) => require(process.cwd() + '/model/' + n);
 var atob = require('atob'); //decode
 var btoa = require('btoa'); //encode
-var ctrl = null;
-var Grid = require('gridfs-stream');
 var fs = require('fs');
 var path = require("path");
+var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
 var generatePassword = require("password-maker");
-//var inspect = require('util').inspect;
 var utils = require(process.cwd() + '/model/utils');
 var modelName = 'file';
-var conn, gfs, mongoose, actions; //Schema
 var Promise = require('promise');
 var mime = require('mime-types');
-var configure = (m) => {
-    mongoose = m;
-    Grid.mongo = mongoose.mongo;
-    conn = mongoose.connection;
-    // Schema = mongoose.Schema;
-    gfs = Grid(conn.db);
-};
 
-
-var dbLogger = null;
-
-var configureActions = () => {
-    actions = req('db.actions').create('File', mongoose);
-    ctrl = req('db.controller').create;
-
-    dbLogger = ctrl('Log').createLogger({
-        name: "FILE",
-        category: "DB"
-    });
+var dbLogger = resolver.ctrl('Log').createLogger({
+    name: "FILE",
+    category: "DB"
+});
+var actions = {
+    log: dbLogger.debug
 };
 
 module.exports = {
-    configureActions: configureActions,
-    configure: configure,
     exists: exists,
     read: read,
     find: find,
@@ -57,7 +40,7 @@ function moveFromFileSytemToDatabase(absolutePath, fileName, mimetype) {
         mimetype = mimetype || mime.contentType(path.extname(absolutePath));
         createReadStream(absolutePath).then(stream => {
             //dbLogger.debug(fileName, mimetype);
-            stream.pipe(gfs.createWriteStream({
+            stream.pipe(resolver.gfs().createWriteStream({
                 filename: fileName,
                 mode: 'w',
                 chunkSize: 1024,
@@ -88,7 +71,7 @@ function createReadStream(path) {
 function dbToHD(data, cb) {
     actions.log('dbToHD:start=' + JSON.stringify(data));
     var fs_write_stream = fs.createWriteStream(data.path);
-    var readstream = gfs.createReadStream({
+    var readstream = resolver.gfs().createReadStream({
         _id: data._id
     });
 
@@ -205,7 +188,7 @@ function fetchAll(data, cb) {
     var diagAccounts;
     var orders;
 
-    ctrl('User').getAll({
+    resolver.ctrl('User').getAll({
         userType: 'diag',
         __select: "diplomes diplomesInfo email"
     }, (err, _users) => {
@@ -215,7 +198,7 @@ function fetchAll(data, cb) {
     });
 
     function fetchOrders() {
-        ctrl('Order').getAll({
+        resolver.ctrl('Order').getAll({
             __rules: {
                 files: {
                     $ne: undefined
@@ -232,7 +215,7 @@ function fetchAll(data, cb) {
     function fetchFiles() {
 
         //"docs":[],"total":0,"limit":10,"page":1,"pages":1}
-        ctrl('File').find({}, (err, result) => {
+        resolver.ctrl('File').find({}, (err, result) => {
             if (err) return cb(err);
             var docs = result;
             var rta = [];
@@ -298,9 +281,9 @@ function fetchAll(data, cb) {
 }
 
 function getAll(data, cb) {
-    ctrl('File').find({}, (err, files) => {
+    resolver.ctrl('File').find({}, (err, files) => {
         if (err) return cb(err);
-        ctrl('User').getAll({
+        resolver.ctrl('User').getAll({
             userType: 'diag',
             __rules: {
                 pdfId: {
@@ -309,7 +292,7 @@ function getAll(data, cb) {
             }
         }, (err, _diags) => {
             if (err) return cb(err);
-            ctrl('Order').getAll({
+            resolver.ctrl('Order').getAll({
                 __rules: {
                     status: {
                         $in: ['delivered', 'completed']
@@ -352,7 +335,7 @@ function getAll(data, cb) {
 function read(data, cb) {
     actions.log('read:start=' + JSON.stringify(data));
     var fs_write_stream = fs.createWriteStream('file_' + data.name + '_' + generatePassword(8) + '_.txt');
-    var readstream = gfs.createReadStream({
+    var readstream = resolver.gfs().createReadStream({
         filename: data.name
     });
     readstream.pipe(fs_write_stream);
@@ -372,7 +355,7 @@ function get(data, cb) {
 
     find(data, (err, file) => {
         if (err) {
-            ctrl('Log').save({
+            resolver.ctrl('Log').save({
                 message: 'File get error',
                 type: 'error',
                 data: {
@@ -392,7 +375,7 @@ function get(data, cb) {
                 });
             }
 
-            var readstream = gfs.createReadStream({
+            var readstream = resolver.gfs().createReadStream({
                 _id: mongoose.Types.ObjectId(data._id)
             });
             readstream.on('error', function(err) {
@@ -408,7 +391,7 @@ function get(data, cb) {
 
 function _streamToDb(data, cb) {
     actions.log('save:_streamToDb=' + JSON.stringify(Object.keys(data)));
-    data.file.pipe(gfs.createWriteStream({
+    data.file.pipe(resolver.gfs().createWriteStream({
         filename: data.name,
         mode: 'w',
         chunkSize: 1024,
@@ -471,7 +454,7 @@ function exists(data, cb) {
     var options = {
         filename: data.name
     }; //can be done via _id as well
-    gfs.exist(options, function(err, found) {
+    resolver.gfs().exist(options, function(err, found) {
         if (err) return cb(err, null);
         actions.log('exists:rta=' + found);
         cb(null, (found ? true : false));
@@ -491,7 +474,7 @@ function find(data, cb) {
     }
 
     if (opt._id) {
-        gfs.findOne({
+        resolver.gfs().findOne({
             _id: opt._id
         }, function(err, file) {
             if (err) return cb(err, null);
@@ -500,7 +483,7 @@ function find(data, cb) {
         });
     }
     else {
-        gfs.files.find(opt).toArray(function(err, files) {
+        resolver.gfs().files.find(opt).toArray(function(err, files) {
             if (err) return cb(err, null);
             var ff = files.map((f) => ({
                 _id: f._id,
@@ -522,7 +505,7 @@ function remove(data, cb) {
     else return cb({
         message: '_id or name required!'
     });
-    gfs.remove(opt, (err) => {
+    resolver.gfs().remove(opt, (err) => {
         if (err) return cb(err, null);
         actions.log('remove:rta=' + JSON.stringify(true));
         cb(null, true);

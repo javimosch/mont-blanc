@@ -16,6 +16,10 @@ var dbLogger = ctrl('Log').createLogger({
     name: "TEXTS",
     category: "DB"
 });
+var middlewareLogger = ctrl('Log').createLogger({
+    name: "TEXTS",
+    category: "MIDDLEWARE"
+});
 
 module.exports = {
     reportNotFound: reportNotFound,
@@ -23,11 +27,9 @@ module.exports = {
     importAll: _importAll,
     save:save,
     configureSchema: (schema) => {
-
         schema.post('find', function(result) {
-            console.log('TEXTS HOOK ',result.length);
+            middlewareLogger.debugTerminal('POST/FIND COUNT',result.length);
         });
-        
         return schema;
     }
 };

@@ -64,11 +64,11 @@ var _actions = {
     init: (_EmailHandler) => EmailHandler = _EmailHandler,
     configureSchema: (schema) => {
         schema.pre('save', function(next) {
-            dbLogger.debugTerminal('PRE/SAVE');
+            //dbLogger.debugTerminal('PRE/SAVE');
             next();
         });
         schema.post('save', function() {
-            dbLogger.debugTerminal('POST/SAVE');
+            //dbLogger.debugTerminal('POST/SAVE');
         });
         schema.post('remove', function() {
             dbLogger.debugTerminal('POST/REMOVE');

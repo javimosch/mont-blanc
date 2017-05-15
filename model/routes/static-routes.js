@@ -1,13 +1,18 @@
 var sander = require('sander');
 var path = require("path");
+var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
+var logger = resolver.loggerFacade({
+    name:"ROUTES",
+    category:"STATIC"
+});
 module.exports = {
     bind: (app, express) => {
         if (sander.existsSync(path.join(process.cwd(), 'resources'))) {
-            console.log('DEBUG RES -> RESOURCES ON');
+            logger.debugTerminal('Resource folder ON');
             app.use("/res", express.static(path.join(process.cwd(), 'resources')));
         }
         else {
-            console.log('DEBUG RES -> RESOURCES OFF');
+            logger.debugTerminal('Resource folder OFF');
         }
 
         var setStatic = (name, _path, app, express) => {

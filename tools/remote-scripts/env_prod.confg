@@ -9,3 +9,4 @@ adminURL=https://diagnostical.fr/admin#
 LEMON_LOGIN=
 LEMON_PASS=
 LEMON_DIRECTKIT_URL=
+FILE_LOGGING_LEVEL=WARN

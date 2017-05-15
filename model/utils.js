@@ -94,7 +94,7 @@ function adminUrl(join, serverURL) {
     if (!serverURL && !process.env.serverURL) {
         dbLogger.warnSave('Enviromental serverURL required');
     }
-    dbLogger.debugTerminal('adminUrl resolves ', rta);
+    //dbLogger.debugTerminal('adminUrl resolves ', rta);
     return rta;
 }
 exports.adminUrl = adminUrl;

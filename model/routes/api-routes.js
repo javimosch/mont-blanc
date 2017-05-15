@@ -1,10 +1,9 @@
 var path = require("path");
+var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
 var config = require(path.join(process.cwd(), 'model/config'));
 var fs = require('fs');
 require(path.join(process.cwd(), 'model/db'));
 var ensureDirectory = require(path.join(process.cwd(), 'model/utils')).ensureDirectory;
-var configureProgrammedTasks = require(path.join(process.cwd(), 'model/tasks')).configure;
-
 var configureRoutes = require(path.join(process.cwd(), 'model/app.routes')).configure;
 module.exports = {
     bind: (app) => {
@@ -42,6 +41,12 @@ module.exports = {
 
         configureRoutes(app);
         ensureDirectory(process.cwd() + '/public/temp');
-        configureProgrammedTasks(app);
+
+
+        resolver.co(function*() {
+            yield resolver.db().waitConnection();
+            //var configureProgrammedTasks = require(path.join(process.cwd(), 'model/tasks')).configure;
+            //configureProgrammedTasks(app);
+        }).catch(console.error);
     }
 }

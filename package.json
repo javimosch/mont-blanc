@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "test": "make test",
+    "testDev": "nodemon test/mocha.js --watch test --watch model --watch .env --watch controllers",
     "test2": "echo \"Error: no test specified\" && exit 1",
     "test3": "./node_modules/.bin/mocha --recursive -R xunit test/ > test-reports.xml && exit 0",
     "start": "node --max_old_space_size=512 app.js",
@@ -48,6 +49,7 @@
     "del": "^2.2.2",
     "dotenv": "^2.0.0",
     "es6-promise": "^3.0.2",
+    "execute-shell-promise": "^1.0.1",
     "expect": "^1.20.2",
     "express": "^4.13.4",
     "express-busboy": "^2.4.5",
@@ -111,6 +113,7 @@
     "stripe": "^4.4.0",
     "through": "^2.3.8",
     "through2": "^2.0.1",
+    "timeout-as-promise": "^1.0.0",
     "urldecode": "^1.0.1",
     "urlencode": "^1.1.0",
     "urlencode2": "^1.0.1",

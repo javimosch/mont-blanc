@@ -561,10 +561,8 @@ function createClientIfNew(data, cb) {
 }
 
 function login(data, cb) {
-    console.log('USER:login=' + JSON.stringify(data));
     ctrl('User').model.findOne(ctrl('User').toRules({
         email: data.email,
-        //password: data.password
     })).exec((err, _user) => {
         if (!err && _user && _user.isGuestAccount) {
             return cb(apiError.GUESS_ACCOUNT_RESTRICTION);
@@ -624,9 +622,14 @@ module.exports = {
 
         schema.pre('remove', function(next) {
             //Remove notifications associated to this user
+            middlewareLogger.debugTerminal('PRE/remove');
+
+            middlewareLogger.debugTerminal('Removing notifications associated to user');
             this.model('Notifications').remove({
                 _user: this._id
-            }, next);
+            }).then(middlewareLogger.debugTerminal);
+
+            next();
         });
 
         schema.post('update', function() {

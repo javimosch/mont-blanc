@@ -1,4 +1,10 @@
 "use strict";
+var path = require('path');
+var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
+var logger = resolver.loggerFacade({
+    name: "GENERATOR",
+    category: "TPL"
+});
 var farmhash = require('farmhash');
 var CleanCSS = require('clean-css');
 var babel = require("babel-core");
@@ -12,7 +18,6 @@ var readDirFiles = require('read-dir-files');
 var mkdirp = require('mkdirp');
 var fs = require('fs');
 var sgData = require('./sg-data');
-var path = require('path');
 var COMMON_PATH = process.cwd() + '/static-generator/partials';
 var SRC_STATIC_FOLDER = process.cwd() + '/static-generator/static';
 var SRC_PARTIALS_FOLDER = process.cwd() + '/static-generator/partials';
@@ -405,15 +410,15 @@ function bundleJS(_raw) {
         comments: false
     };
     _raw = babel.transform(_raw, settings).code;
-    
+
     bundleJS_cache[hash] = _raw;
-    
+
     return _raw;
 }
 
 function buildTemplates() {
 
-    console.log('DEBUG: build static with data', Object.keys(sgData()));
+    logger.debugTerminal('Handlebar data keys', Object.keys(sgData()));
 
     return new Promise((resolve, error) => {
 
@@ -483,15 +488,19 @@ function buildTemplates() {
                 //console.log('COMPILE-DEBUG: formatContentHandler start', path);
                 var rta = raw;
                 handleNewFileTransform(raw, path).then((rta) => {
-                    console.log('COMPILE-RESOLVE:', path);
+                    logger.debugTerminal('Handling',path);
                     _resolve(rta);
                 }).error(err => {
-                    console.log('COMPILE-ERROR', err);
+                    logger.errorTerminal(err);
                 });
                 //console.log('COMPILE-DEBUG: formatContentHandler end', path);
             }
         }).then((res) => {
-            console.log('COMPILE-DEBUG:', 'FINISH', (res.ok ? 'success' : 'with errors'), 'at', new Date());
+            if(res.ok){
+                logger.debugTerminal("Finish");
+            }else{
+                logger.warnTerminal("Finish with errors");
+            }
             emit('build-success');
             resolve();
         })

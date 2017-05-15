@@ -6,10 +6,7 @@ var validate = req('validator').validate;
 var promise = req('utils').promise;
 var path = require('path');
 var Promise = require('promise');
-var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
-
 var dbLoggerInstance = null;
-
 function dbLogger() {
     if (!dbLoggerInstance) {
         var ctrl = require('./db.controller').create;
@@ -22,6 +19,8 @@ function dbLogger() {
 }
 
 exports.create = function(modelName, m) {
+    var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
+    
     if (ActionsCache.has(modelName)) {
         return ActionsCache.get(modelName);
     }

@@ -12,11 +12,14 @@ module.exports = {
     addNotification: addNotification
 };
 
+
 function createHash(type, data) {
     var order = data._order || null;
     var user = data._user || null;
+    var admin = data._admin || null;
     var id = (order ? order._id : "");
     id += (id === '' ? '' : '_') + (user ? user._id : "");
+    id += (id === '' ? '' : '_') + (admin ? admin._id : "");
     return id + '_' + type;
 }
 
@@ -55,14 +58,14 @@ function addNotification(type, data) {
         //Legacy validation: flag present in the attachDocument
         if (attachDocument.notifications) {
             if (attachDocument.notifications[type]) {
-                logger.warn('Already processed, flag present was legacy');
+                logger.debugTerminal('Already processed, flag present was legacy');
                 return resolve(RESPONSE_ALREADY_PROCESSED());
             }
 
             if (data.to) {
                 var legacyImprovedHashKey = type + "_" + data.to;
                 if (attachDocument.notifications[legacyImprovedHashKey]) {
-                    logger.warn('Already processed, flag present was legacy improved');
+                    logger.debugTerminal('Already processed, flag present was legacy improved');
                     return resolve(RESPONSE_ALREADY_PROCESSED());
                 }
             }

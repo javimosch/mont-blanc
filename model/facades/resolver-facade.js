@@ -1,9 +1,12 @@
 var path = require('path');
 var Promise = require('promise');
 var co = require('co');
+var delay = require('timeout-as-promise');
 
 var self = {
+    delay: (milliseconds) => delay(milliseconds),
     mongoose: () => require('mongoose'),
+    gfs: () => self.db().state().gfs,
     promise: (handler) => new Promise(handler),
     Promise: Promise,
     http: () => require('request'),

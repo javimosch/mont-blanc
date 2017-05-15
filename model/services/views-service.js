@@ -12,14 +12,20 @@ const db = low(path.join(process.cwd(), 'cache/views.json'), {
 });
 var ignoreMinify = [];
 var initialized = false;
-//console.log('views-service-start');
+var logger = ctrl('Log').createLogger({
+    name: "VIEWS",
+    category: "COMPILER"
+});
+var dbLogger = ctrl('Log').createLogger({
+    name: "VIEWS",
+    category: "DB"
+});
 db.defaults({
     context: {
         text: {}
     }
 }).write().then(() => {
-
-    console.log('views-service-fetch');
+    logger.debugTerminal('Initial fetch');
     ctrl('Text').getAll({
         __select: "content code"
     }, function(err, _texts) {
@@ -40,19 +46,6 @@ db.defaults({
     });
 });
 
-//ctrl('Text').get({})
-
-var compilerLogger = ctrl('Log').createLogger({
-    name: "VIEWS",
-    category: "COMPILER"
-});
-
-var dbLogger = ctrl('Log').createLogger({
-    name: "VIEWS",
-    category: "DB"
-});
-
-
 function updateText(code, content) {
     return db.set('context.text.' + code, content).write();
 }
@@ -60,7 +53,6 @@ function updateText(code, content) {
 function getContext() {
     return db.read().getState().context;
 }
-
 
 function minifyResponse(html) {
     var originalHtml = html;
@@ -74,11 +66,11 @@ function minifyResponse(html) {
         });
     }
     catch (err) {
-        compilerLogger.setSaveData({
-            error:err,
-            html:originalHtml
+        logger.setSaveData({
+            error: err,
+            html: originalHtml
         });
-        compilerLogger.warnSave('minification was not possible.');
+        logger.warnSave('minification was not possible.');
     }
     return html;
 }
@@ -99,11 +91,11 @@ module.exports = {
     },
     update: (code, content) => {
         updateText(code, content);
-        compilerLogger.setSaveData({
+        logger.setSaveData({
             code: code,
             content: decodeURIComponent(content)
         });
-        compilerLogger.debug(code, 'text block update');
+        logger.debugTerminal(code, 'text block update');
     },
     compile: function(fullPath) {
         return new Promise(function(resolve, err) {
@@ -122,14 +114,14 @@ module.exports = {
                         resolve(compiledHTML);
                     }
                     catch (err) {
-                        compilerLogger.setSaveData(err);
-                        compilerLogger.errorSave('File ', fileName);
+                        logger.setSaveData(err);
+                        logger.errorSave('File ', fileName);
                         html = minifyResponse(html);
                         resolve(html);
                     }
                 }
                 else {
-                   // console.log('views-service response 1', fullPath, html.length);
+                    // console.log('views-service response 1', fullPath, html.length);
                     html = minifyResponse(html);
                     //console.log('views-service response 2', fullPath, html.length);
                     resolve(html);

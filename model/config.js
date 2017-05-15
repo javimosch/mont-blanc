@@ -1,4 +1,8 @@
 module.exports = {
+    
+    FILE_LOGGING_LEVEL:process.env.FILE_LOGGING_LEVEL || "DEBUG",
+    
+    DB_URI: process.env.dbURI,
 
     SOCKETS_PORT: 8081,
 

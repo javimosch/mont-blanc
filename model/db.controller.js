@@ -1,20 +1,34 @@
 var path = require('path');
 var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
-var req = (n) => require(process.cwd() + '/model/' + n);
-var createDbActions = req('db.actions').create;
-var actions = {};
-var cwd = () => process.cwd();
 var controllers = {};
+var createDbActions = require(path.join(process.cwd(), '/model/db.actions')).create;
+var actions = {};
 var resultLogger;
 module.exports = {
     register: register,
     create: create
 };
+//---------------------------------------------
+register('Order');
+register('Category');
+register('Notification');
+register('Stripe');
+register('Text');
+register('User');
+register('Stats');
+register('File');
+register('Email');
+register('Pdf');
+register('Lemonway');
+register('deploy', null, false);
+register('sockets', null, false);
+register('ssh', null, false);
+register('gitlab', null, false);
 
-function register(name, path, hasModel) {
+function register(name, ctrlPath, hasModel) {
     hasModel = hasModel === undefined ? true : hasModel;
-    path = path || 'controllers/ctrl.' + name.toLowerCase();
-    actions[name] = require(cwd() + '/' + path);
+    ctrlPath = ctrlPath || 'controllers/ctrl.' + name.toLowerCase();
+    actions[name] = require(path.join(process.cwd(), ctrlPath));
     var obj = create(name, hasModel);
 }
 
@@ -24,7 +38,7 @@ function create(name, hasModel) {
     var controllerPath = 'controllers/ctrl.' + name.toLowerCase();
     var specialActions = {};
     try {
-        specialActions = require(cwd() + '/' + controllerPath);
+        specialActions = require(path.join(process.cwd(), controllerPath));
     }
     catch (e) {
         specialActions = {};
@@ -118,5 +132,5 @@ function resultAction(modelName) {
                 res.json(rta);
             }
         };
-    }
+    };
 }
