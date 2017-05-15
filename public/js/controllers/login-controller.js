@@ -81,12 +81,7 @@
         else {
             s.show = true;
         }
-    }]);
-
-
-
-
-    app.controller('adminLoginExternal', ['server', '$scope', '$rootScope', 'LoginService', function(db, s, r, LoginService) {
+    }]).controller('adminLoginExternal', ['server', '$scope', '$rootScope', 'LoginService', function(db, s, r, LoginService) {
 
         s.login = function() {
             LoginService.login(r._login.email, r._login.password, r._login.rememberPass).then(() => {

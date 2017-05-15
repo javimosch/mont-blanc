@@ -56,12 +56,14 @@ configureGridFS(mongoose);
 
 var models = {};
 var schemas = {};
-
-exports.getModel = (n) => models[n];
+exports.model = models; //accessor
+exports.getModel = (n) => models[n.toLowerCase()];
 exports.getSchema = (n) => schemas[n];
 exports.mongoose = mongoose;
+exports.registerModel = registerModel;
+exports.createSchema = createSchema;
 
-function model(n, def) {
+function createSchema(n, def) {
     if (!def) console.log('WARN:' + n + ' def required');
     if (!def.createdAt) {
         def.createdAt = {
@@ -86,35 +88,34 @@ function model(n, def) {
         }
         next();
     });
-/*
-    schema.pre('find', function(next, done) {
-        console.log(n,' PARALLEL PRE FIND HOOK ! :) ');
-        next();
-        //setTimeout(done, 100);
-    });
-*/
-    models[n] = mongoose.model(n, schema);
+    return schema;
+}
+
+function registerModel(modelName, schema) {
+    models[modelName.toLowerCase()] = mongoose.model(modelName, schema);
+    schemas[modelName] = schema;
+}
+
+function createModel(n, def) {
+    var schema = createSchema(n, def);
+    registerModel(n, def);
     schemas[n] = schema;
 }
 
-model('Stats', {});
-model('File', {});
-model('Email', {});
-model('Stripe', {});
-model('Settings', require('../schemas/schema.diags-settings').def);
-model('Pdf', require('../schemas/schema.pdf').def);
-model('Category', require('../schemas/schema.category').def);
-model('Text', require('../schemas/schema.text').def);
-model('Notification', require('../schemas/schema.notification').def);
-model('Log', require('../schemas/schema.log').def);
-model('StripeTransaction', require('../schemas/schema.diags-stripe-transaction').def);
-model('Balance', require('../schemas/schema.balance').def);
-model('BalanceItem', require('../schemas/schema.balance-item').def);
-model('TimeRange', require('../schemas/schema.time-range').def);
-model('User', require('../schemas/schema.diags-user').def);
-model('Order', require('../schemas/schema.diags-order').def);
-model('htmls', require('../schemas/schema.htmls').def);
-model('pages', require('../schemas/schema.pages').def);
+createModel('Stats', {});
+createModel('File', {});
+createModel('Email', {});
+createModel('Stripe', {});
+createModel('Settings', require('../schemas/schema.diags-settings').def);
+createModel('Pdf', require('../schemas/schema.pdf').def);
+createModel('Category', require('../schemas/schema.category').def);
+createModel('Log', require('../schemas/schema.log').def);
+createModel('StripeTransaction', require('../schemas/schema.diags-stripe-transaction').def);
+createModel('Balance', require('../schemas/schema.balance').def);
+createModel('BalanceItem', require('../schemas/schema.balance-item').def);
+createModel('TimeRange', require('../schemas/schema.time-range').def);
+createModel('htmls', require('../schemas/schema.htmls').def);
+createModel('pages', require('../schemas/schema.pages').def);
 
 
 configureGridFSActions();

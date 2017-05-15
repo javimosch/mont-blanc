@@ -25,6 +25,10 @@ module.exports = {
             default: {}
         },
         obs: String,
+        _notifications: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Notification'
+        }],
         notifications: {
             type: {},
             default: {}
@@ -139,10 +143,10 @@ module.exports = {
         creditCardOwner: {
             type: String,
         },
-        
-        paymentType:{
-            type:String,
-            default:'card'
+
+        paymentType: {
+            type: String,
+            default: 'card'
         }
 
     }

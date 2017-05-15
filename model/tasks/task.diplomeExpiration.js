@@ -1,23 +1,19 @@
+var ctrl = require('../db.controller').create;
 var name = 'task:diplomeExpirationCheck';
 var _ = require('lodash');
 var moment = require('moment');
-var User = require('../db.actions').create('User');
-var Order = require('../db.actions').create('Order');
-var Log = require('../db.controller').create('Log');
-var Email = require('../../controllers/ctrl.email');
-var Notif = require('../../controllers/ctrl.notification');
-var NOTIFICATION = Notif.NOTIFICATION;
+var NOTIFICATION = ctrl('Notification').NOTIFICATION;
 var log = (m) => {
     console.log(name + ': ' + m);
     return name + ': ' + m;
 }
-var dblog = (msg, type) => Log.save({
+var dblog = (msg, type) => ctrl('Log').save({
     message: msg,
     type: type
 });
 
 
-var Logger = Log.createLogger({
+var Logger = ctrl('Log').createLogger({
     name: "AUTOMATED-TASK",
     category: "DIPLOME-EXPIRATION"
 });
@@ -32,7 +28,7 @@ module.exports = {
 
 function handler(data, cb) {
     // log('retrieve diags in progress');
-    User.getAll({
+    ctrl('User').getAll({
         userType: 'diag'
     }, (err, r) => {
         if (err) return dblog(log('Fail to retreive diags.'));
@@ -83,7 +79,7 @@ function handler(data, cb) {
                                     Logger.debugSave(diag.email+' file expiration notified to admins.');
                                     
                                     //console.log('DIAG ', diag.email, ' DIPLOMA', filename, 'SENDING NOW');
-                                    User.getAll({
+                                    ctrl('User').getAll({
                                         userType: 'admin'
                                     }, (err, admins) => {
                                         if (err) {
@@ -107,7 +103,7 @@ function handler(data, cb) {
 
 function sendEmail(_admin, _diag, _info, _diplomeId) {
 
-    Notif.trigger(NOTIFICATION.ADMIN_DIPLOME_EXPIRATION, {
+    ctrl('Notification').trigger(NOTIFICATION.ADMIN_DIPLOME_EXPIRATION, {
         _admin: _admin,
         _diag: _diag,
         _info: _info,
@@ -123,7 +119,7 @@ function sendEmail(_admin, _diag, _info, _diplomeId) {
         _info.expirationDateNotificationSended = true;
         _diag.diplomesInfo[_diplomeId] = _info;
         //
-        User.update(_diag, (_err, r) => {
+        ctrl('User').update(_diag, (_err, r) => {
             if (_err) {
                 Logger.setSaveData(_err);
                 Logger.errorSave('Try to update the diploma flag after sending notification ', _err);

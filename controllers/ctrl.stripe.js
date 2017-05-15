@@ -1,8 +1,4 @@
-var Stripe = require('../model/db.actions').create('Stripe');
-var User = require('../model/db.actions').create('User');
-var Log = require('../model/db.actions').create('Log');
-
-var Notification = require('../model/db.actions').create('Notification');
+var ctrl = require('../model/db.controller').create;
 var getFile = require('../model/utils').getFile;
 var moment = require('moment');
 var S = require('string');
@@ -17,7 +13,7 @@ var actions = {
     }
 };
 var infolog = function(msg, data) {
-    Log.save({
+    ctrl('Log').save({
         message: msg,
         type: "info",
         data: data || {}

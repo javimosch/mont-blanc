@@ -28,6 +28,10 @@ module.exports = {
     ORDER_NOT_FOUND: {
         code: 500
     },
+    EMAIL_NOT_FOUND: {
+        message: "Le compte n&#39;existe pas",
+        code: 600
+    },
     INVALID_VARIABLE_AT_PATH_ERROR: {
         code: 70
     },

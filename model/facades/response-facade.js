@@ -25,7 +25,7 @@ function json(response, apiCallback, promiseResolve) {
         promiseResolve(response);
     }
     if(!apiCallback && !promiseResolve){
-        logger.error('apiCallback or promiseResolve required');
+        logger.warn('apiCallback or promiseResolve required');
     }
 }
 

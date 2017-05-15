@@ -1,9 +1,6 @@
-var Notification = require('../model/db.actions').create('Notification');
-
-var User = require('../model/db.actions').create('User');
-var Order = require('../model/db.actions').create('Order');
-var Log = require('../model/db.actions').create('Log');
-
+var path = require("path");
+var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
+var ctrl = require('../model/db.controller').create;
 var EmailHandler = null; // require('../helpers/handlers.email').actions;
 var moment = require('moment');
 var S = require('string');
@@ -16,7 +13,7 @@ var actions = {
     }
 };
 
-var ctrl = require('../model/db.controller').create;
+
 var triggerLogger = ctrl('Log').createLogger({
     name: "NOTIFICATION",
     category: "TRIGGER"
@@ -47,7 +44,7 @@ var NOTIFICATION = {
     CLIENT_ORDER_CREATED: 'CLIENT_ORDER_CREATED',
     CLIENT_ORDER_PAYMENT_SUCCESS: 'CLIENT_ORDER_PAYMENT_SUCCESS',
     CLIENT_ORDER_DELEGATED: 'CLIENT_ORDER_DELEGATED',
-    CLIENT_ORDER_QUOTATION:'CLIENT_ORDER_QUOTATION',
+    CLIENT_ORDER_QUOTATION: 'CLIENT_ORDER_QUOTATION',
 
     DIAG_DIAG_ACCOUNT_ACTIVATED: 'DIAG_DIAG_ACCOUNT_ACTIVATED',
     DIAG_DIAG_ACCOUNT_CREATED: 'DIAG_DIAG_ACCOUNT_CREATED',
@@ -64,7 +61,48 @@ var _actions = {
     trigger: trigger,
     save: save,
     NOTIFICATION: NOTIFICATION,
-    init: (_EmailHandler) => EmailHandler = _EmailHandler
+    init: (_EmailHandler) => EmailHandler = _EmailHandler,
+    configureSchema: (schema) => {
+        schema.pre('save', function(next) {
+            dbLogger.debugTerminal('PRE/SAVE');
+            next();
+        });
+        schema.post('save', function() {
+            dbLogger.debugTerminal('POST/SAVE');
+        });
+        schema.post('remove', function() {
+            dbLogger.debugTerminal('POST/REMOVE');
+        });
+        schema.pre('remove', function(next) {
+
+            dbLogger.debugTerminal('PRE/REMOVE Cleaning references..', this._id);
+
+            //References in orders are removed
+            this.model('Order').update({}, {
+                    "$pull": {
+                        "_notifications": this._id
+                    }
+                }, {
+                    "multi": true
+                },
+                next
+            );
+            //References in users are removed
+            this.model('User').update({}, {
+                    "$pull": {
+                        "_notifications": this._id
+                    }
+                }, {
+                    "multi": true
+                },
+                next
+            );
+        });
+        return schema;
+    },
+    deleteAll: (data, cb) => {
+        return resolver.db().model.notification.remove({}).then((r) => cb(null, r)).catch(cb);
+    }
 };
 Object.keys(NOTIFICATION).forEach(KEY => {
     _actions[KEY] = (data, cb) => trigger(KEY, data, cb);
@@ -73,7 +111,7 @@ Object.keys(NOTIFICATION).forEach(KEY => {
 module.exports = _actions;
 
 function LogSave(msg, type, data) {
-    Log.save({
+    ctrl('Log').save({
         message: msg,
         type: type || 'error',
         data: data
@@ -81,21 +119,22 @@ function LogSave(msg, type, data) {
 }
 
 function trigger(name, data, cb) {
-    //triggerLogger.debug(name, 'Start');
-    if (!name) return cb && cb("name required");
-    if (!NOTIFICATION[name]) {
-        dbLogger.warnSave('Not found', name);
-        return cb && cb("Notification " + name + ' not found');
-    }
-
-    if (data._user && !data._user._id) {
-        triggerLogger.setSaveData(data._user);
-        return triggerLogger.errorSave('Associated User do not have field (_id)');
-    }
-
-    data.__notificationType = name;
-    //triggerLogger.debug(name, 'Calling email handler for');
-    return EmailHandler[name](data, cb);
+    return resolver.promise((resolve, reject) => {
+        if (!name) return resolver.responseFacade().error('name required', cb, reject);
+        if (!NOTIFICATION[name]) {
+            dbLogger.warnSave('Not found', name);
+            return resolver.responseFacade().error("Notification " + name + ' not found', cb, reject);
+        }
+        if (data._user && !data._user._id) {
+            triggerLogger.setSaveData(data._user);
+            return triggerLogger.errorSave('Associated User do not have field (_id)');
+        }
+        data.__notificationType = name;
+        return EmailHandler[name](data, (err, res) => {
+            if (err) return resolver.responseFacade().error(err, cb, reject);
+            resolver.responseFacade().json(res, cb, resolve);
+        });
+    });
 }
 
 
@@ -104,7 +143,7 @@ function save(data, cb) {
     var _user = data._user;
 
     if (!_user._id || !_user.email) {
-        return User.get({
+        return ctrl('User').get({
             _id: _user,
             __select: '_id email'
         }, (err, _user) => {
@@ -142,7 +181,7 @@ function save(data, cb) {
         contents: data.html || data.contents || ''
     };
     if (data._id) payload._id = data._id;
-    Notification.save(payload, (err, _notification) => {
+    ctrl('Notification').save(payload, (err, _notification) => {
         if (err) {
             dbLogger.setSaveData({
                 err: err,

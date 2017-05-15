@@ -4,9 +4,9 @@ var getModel = req('db').getModel;
 var getSchema = req('db').getSchema;
 var validate = req('validator').validate;
 var promise = req('utils').promise;
-
+var path = require('path');
 var Promise = require('promise');
-
+var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
 
 var dbLoggerInstance = null;
 
@@ -21,87 +21,17 @@ function dbLogger() {
     return dbLoggerInstance;
 }
 
-var hookLogger;
-
-function hookDataLoggerLazyInitialization(hookData) {
-    var ctrl = require('./db.controller').create;
-    hookData.logger = hookData.logger || ctrl('Log').createLogger({
-        name: "DB-Hook",
-        category: hookData.schema
-    });
-    if (hookData.schema == 'Log' || hookData.schema == 'logs') {
-        hookData.logger.debugSave = hookData.logger.debug;
-        hookData.logger.errorSave = hookData.logger.error;
-        hookData.logger.warnSave = hookData.logger.warnSave;
-        //This way, we prevent Maximum call stack size exceeded
-    }
-}
-
-var hooksData = {}; //Store all the hooks data here
-var callHook = function(schemaName, hookName, dataOrHandler) {
-
-    //Initialize an object to store hook listeners and logger (hook data)
-    hooksData[schemaName] = hooksData[schemaName] || {
-        schema: schemaName,
-        logger: null,
-        listeners: {}
-    };
-    var hookData = hooksData[schemaName];
-
-    //Lazy initialization and get of logger
-    hookDataLoggerLazyInitialization(hookData);
-    var hookLogger = hookData.logger;
-
-    //Get the hook listeners from the current schema and hook type (preSave, afterSave, etc)
-    hookData.listeners[hookName] = hookData.listeners[hookName] || [];
-    var listeners = hookData.listeners[hookName];
-
-    if (typeof dataOrHandler === 'function') {
-        //Handlers are stored
-        listeners.push(dataOrHandler);
-        //hookLogger.debug('Register', hookName, '(', listeners.length, ')');
-    }
-    else {
-        //Data is used to call listeners 
-        var _data = dataOrHandler;
-
-        if (!_data) {
-            hookLogger.warn('Skip', schemaName, hookName, 'Empty data');
-            return _data;
-        }
-
-        if (listeners.length > 0) {
-            var handler;
-            for (var x in listeners) {
-                handler = listeners[x];
-                _data = handler(_data);
-            }
-
-            //hookLogger.debug('Trigger', hookName, '(', listeners.length, ' times)');
-
-            return _data;
-        }
-        else {
-            return _data;
-        }
-    }
-};
-
-
-
-
 exports.create = function(modelName, m) {
+    if (ActionsCache.has(modelName)) {
+        return ActionsCache.get(modelName);
+    }
     if (!mongoose) mongoose = m;
-    var Model = getModel(modelName);
+    var Model = getModel(modelName) || null;
+
+    //console.log('DB.ACTIONS MODEL', modelName, Model != null)
 
     var schema = getSchema(modelName);
 
-
-
-
-    var hook = (hookName, dataOrHandler) => {
-        return callHook(modelName, hookName, dataOrHandler);
-    };
 
     function log(x) {
         console.log(''); //enter
@@ -179,22 +109,16 @@ exports.create = function(modelName, m) {
                     data.updatedAt = new Date();
                     var _id = data._id;
                     delete data._id;
-                    data = hook('preSave', data);
+
                     return Model.findOneAndUpdate(toRules({
                         _id: _id
                     }), {
                         $set: data
+                    }, {
+                        new: true
                     }).exec((err, r) => {
                         if (err) return rta(err, null);
-
-                        //After update, retrieve the complete item.
-                        get({
-                            _id: _id
-                        }, (err, modelInstance) => {
-                            var res = hook('afterSave', modelInstance);
-                            return rta(err, res);
-                        });
-
+                        return rta(err, r);
                     });
                 }
                 matchData = matchData || {};
@@ -223,19 +147,15 @@ exports.create = function(modelName, m) {
                             for (var x in data) {
                                 r[x] = data[x];
                             }
-                            data = hook('preSave', data);
                             return r.save((err, r) => {
-                                r = hook('afterSave', r);
                                 emit('updated', err, r);
                                 return rta(err, r);
                             });
                         }
                         else {
                             log('createUpdate:match:not-found:creating');
-                            data = hook('preSave', data);
                             _create(data, (err, r) => {
                                 if (err) return rta(err, null);
-                                r = hook('afterSave', r);
                                 emit('created', err, r);
                                 return rta(err, r);
                             }, requiredKeys);
@@ -244,10 +164,10 @@ exports.create = function(modelName, m) {
                 }
                 else {
                     log('createUpdate:creating', data);
-                    data = hook('preSave', data);
+
                     _create(data, (err, r) => {
                         if (err) return rta(err, null);
-                        r = hook('afterSave', r);
+
                         emit('created', err, r);
                         return rta(err, r);
                     }, requiredKeys);
@@ -346,21 +266,17 @@ exports.create = function(modelName, m) {
     }
 
     function remove(data, cb) {
-        data = {
-            _id: data._id
-        };
-        log('remove=' + JSON.stringify(data));
-        check(data, ['_id'], (err, r) => {
-            if (err) return cb(err, null);
-            Model.remove(toRules(data)).exec((err, r) => {
-                cb(err, r);
-            });
+        Model.find(toRules(data)).exec((err, docs) => {
+            if (err) return cb(err);
+            var arr = [];
+            docs.forEach(doc => arr.push(doc.remove()));
+            resolver.Promise.all(arr).then(r => cb(null, true)).catch(cb);
         });
     }
 
-    
 
-    
+
+
 
     function getById(data, cb) {
         //log('getById=' + JSON.stringify(data._id));
@@ -381,7 +297,7 @@ exports.create = function(modelName, m) {
     }
 
     function get(data, cb) {
-        log('get=' + JSON.stringify(data));
+        //log('get=' + JSON.stringify(data));
         //check(data, ['_id'], (err, r) => {
         //  if (err) return cb(err, r);
         var query = Model.findOne(toRules(data));
@@ -408,16 +324,10 @@ exports.create = function(modelName, m) {
     }
 
     function removeWhen(data, cb) {
-        log('removeWhen=' + JSON.stringify(data));
-        Model.remove(toRules(data), (err, r) => {
-            if (err) return cb(err, r);
-            cb(err, r);
-        });
+        return remove(data, cb);
     }
 
     function removeAll(data, cb, requiredKeys) {
-        log('removeAll=' + JSON.stringify(data));
-        //check(data, ['ids'], (err, r) => {
         check(data, requiredKeys || ['ids'], (err, r) => {
             if (err) return cb(err, null);
             _removeIds();
@@ -430,9 +340,11 @@ exports.create = function(modelName, m) {
                     $all: data.ids
                 }
             } : {};
-            Model.remove(rules, (err, r) => {
-                if (err) return cb(err, r);
-                cb(err, r);
+            Model.find(rules).exec((err, docs) => {
+                if (err) return cb(err);
+                var arr = [];
+                docs.forEach(doc => arr.push(doc.remove()));
+                resolver.Promise.all(arr).then(r => cb(null, true)).catch(cb);
             });
         }
     }
@@ -475,7 +387,7 @@ exports.create = function(modelName, m) {
                 if (x.toString().toLowerCase() == '_id') {
 
                     var isValid = mongoose.Types.ObjectId.isValid(data[x]);
-                    console.log('_ID ', data[x], 'isValid:', isValid);
+                    //console.log('_ID ', data[x], 'isValid:', isValid);
 
                     data[x] = mongoose.Types.ObjectId(data[x]);
                 }
@@ -487,7 +399,7 @@ exports.create = function(modelName, m) {
         if (data.__rules) {
             rules = Object.assign(rules, data.__rules);
         }
-        log('toRules:' + JSON.stringify(rules));
+        //log('toRules:' + JSON.stringify(rules));
         return rules;
     }
 
@@ -521,7 +433,7 @@ exports.create = function(modelName, m) {
             if (err) return cb && cb(err, null);
             var modelId = payload._id;
             delete payload._id;
-            payload = hook('preSave', payload);
+
 
             //dbLogger().debug('UPDATE', modelId, payload);
 
@@ -549,7 +461,7 @@ exports.create = function(modelName, m) {
 
                     //dbLogger().debug('UPDATE-AFTER', modelId, model.isGuestAccount);
 
-                    model = hook('afterSave', model);
+
                     return cb(null, model);
                 });
             });
@@ -559,7 +471,6 @@ exports.create = function(modelName, m) {
     var rta = {
         schema: schema,
         model: Model,
-        _hook: hook,
         paginate: paginate,
         existsById: existsById,
         existsByField: existsByField,
@@ -580,7 +491,16 @@ exports.create = function(modelName, m) {
         findOne: findOne,
         log: log
     };
+    ActionsCache.set(modelName, rta);
     return rta;
 };
 
-console.log('db.actions end', JSON.stringify(Object.keys(module.exports)));
+
+var ActionsCache = (function() {
+    var cache = {};
+    return {
+        set: (name, data) => cache[name] = data,
+        get: (name) => cache[name],
+        has: (name) => typeof cache[name] !== 'undefined'
+    };
+})();

@@ -8,22 +8,12 @@ var _ = require('lodash');
 var generatePassword = require("password-maker");
 var validate = require('../model/validator').validate;
 var handleMissingKeys = require('../model/validator').handleMissingKeys;
-//var ClientActions = require('./handlers.client').actions;
 var ctrl = require('../model/db.controller').create;
-var Order = mongoose.model('Order');
-var Log = require('../model/db.actions').create('Log');
-var User = require('../model/db.actions').create('User');
-var actions = require('../model/db.actions').create('Order');
-var UserAction = require('./ctrl.user');
 var utils = require('../model/utils');
-//var PaymentAction = require('./handlers/payment').actions;
-
-var email = require('./ctrl.email');
-var Notif = require('./ctrl.notification');
-var NOTIFICATION = Notif.NOTIFICATION;
+var NOTIFICATION = ctrl('Notification').NOTIFICATION;
 var apiError = require(path.join(process.cwd(), 'model/errors'));
 var ResponseFacade = require(path.join(process.cwd(), 'model/facades/response-facade'));
-var Resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
+var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
 var htmlFromOrder = require(path.join(process.cwd(), 'model/facades/invoice-facade')).htmlFromOrder;
 var saveKeys = ['_client', '_diag', 'start', 'end', 'diags'
 
@@ -42,6 +32,11 @@ var notificationLogger = ctrl('Log').createLogger({
     category: "NOTIFICATION"
 });
 
+var middlewareLogger = ctrl('Log').createLogger({
+    name: "ORDER",
+    category: "MIDDLEWARE"
+});
+
 
 
 /*ACTIONS*/
@@ -51,9 +46,46 @@ module.exports = {
     payUsingCard: payUsingCard,
     save: save,
     populate: orderPopulate, //DEPRECATED?
-    _configure: (hook) => { //DEPRECATED?
-        hook('preSave', preSave);
-        hook('afterSave', afterSave);
+    configureSchema: (schema) => {
+
+        schema.pre('save', function(next) {
+            middlewareLogger.debugTerminal('PRE/save');
+            if (this.status == 'delivered' || this.status == 'completed' && this.deliveredAt === null) {
+                this.update({}, {
+                    $set: {
+                        deliveredAt: new Date()
+                    }
+                });
+            }
+            next();
+        });
+        schema.pre('findOneAndUpdate', function(next) {
+            middlewareLogger.debugTerminal('PRE/findOneAndUpdate');
+            next();
+        });
+        schema.post('save', function(doc) {
+            middlewareLogger.debugTerminal('POST/SAVE', this._id, doc._id);
+            postSave.apply(doc);
+        });
+        schema.post('create', function(doc) {
+            middlewareLogger.debugTerminal('POST/SAVE', this._id, doc._id);
+            postSave.apply(this);
+        });
+        schema.post('update', function(operation) {
+            middlewareLogger.debugTerminal('POST/UPDATE', operation.result);
+        });
+        schema.post('findOneAndUpdate', function(doc) {
+            middlewareLogger.debugTerminal('POST/findOneAndUpdate', doc._id);
+            postSave.apply(doc);
+        });
+        schema.post('find', function(result) {
+            middlewareLogger.debugTerminal('POST/find', result.length);
+        });
+        schema.post('findOne', function(result) {
+            middlewareLogger.debugTerminal('POST/findOne', result && result._id || 'null');
+        });
+
+        return schema;
     }
 };
 
@@ -127,16 +159,16 @@ function sendQuote(data, cb) {
         setTimeout(() => {
             // notificationLogger.debug('SendQuote:withUser');
 
-            if (!Resolver.validatorFacade().validMongooseObject(order)) {
+            if (!resolver.validatorFacade().validMongooseObject(order)) {
                 return ResponseFacade.errorWithInvalidVariable('order', 'SendQuote.withUser', cb);
             }
-            if (!Resolver.validatorFacade().validMongooseObject(user)) {
+            if (!resolver.validatorFacade().validMongooseObject(user)) {
                 return ResponseFacade.errorWithInvalidVariable('user', 'SendQuote.withUser', cb);
             }
 
             //notificationLogger.debug('SendQuote:notification');
 
-            Notif.trigger(NOTIFICATION.CLIENT_ORDER_QUOTATION, {
+            ctrl('Notification').trigger(NOTIFICATION.CLIENT_ORDER_QUOTATION, {
                 _order: order,
                 _user: user,
                 _client: user
@@ -502,7 +534,7 @@ var PaymentHelper = (() => {
 
 
 function create(data, cb) {
-    actions.create(data, cb, saveKeys);
+    ctrl('Order').create(data, cb, saveKeys);
 }
 
 function attachHelpers(order) {
@@ -526,7 +558,7 @@ function save(data, cb, customRequiredKeys) {
 
     var prevStatus = '';
     if (data._id) {
-        actions.getById(data, (err, _order) => {
+        ctrl('Order').getById(data, (err, _order) => {
             if (!err && _order) prevStatus = _order.status;
             _saveNext();
         });
@@ -539,7 +571,7 @@ function save(data, cb, customRequiredKeys) {
 
     function _saveNext() {
 
-        actions.createUpdate(data, (err, r) => {
+        ctrl('Order').createUpdate(data, (err, r) => {
             if (err) return cb(err, r);
             cb(err, r);
 
@@ -547,22 +579,22 @@ function save(data, cb, customRequiredKeys) {
 
             ////
             ///Notifications (async)
-            actions.log('save:orderPopulate=' + r._id);
+            ctrl('Order').log('save:orderPopulate=' + r._id);
             orderPopulate(r, _order => {
-                actions.log('save:orderPopulate:rta=' + _order._id);
+                ctrl('Order').log('save:orderPopulate:rta=' + _order._id);
 
-                actions.log('save:prevStatus=' + prevStatus);
-                actions.log('save:currentStatus=' + _order.status);
+                ctrl('Order').log('save:prevStatus=' + prevStatus);
+                ctrl('Order').log('save:currentStatus=' + _order.status);
 
                 _order.notification = _order.notifications || {};
 
                 //on status change
                 if (prevStatus == 'created' && _order.status == 'prepaid') { //PREPAID DURING BOOKING
-                    sendNotificationToEachAdmin(_order);
+                    // sendNotificationToEachAdmin(_order);
                     sendDiagRDVNotification(_order);
                 }
                 if (prevStatus == 'ordered' && _order.status == 'prepaid') { //PAID AFTER DELEGATION
-                    sendNotificationToEachAdmin(_order);
+                    // sendNotificationToEachAdmin(_order);
                     sendDiagConfirmedNotification(_order);
                 }
                 if (prevStatus !== 'prepaid' && _order.status === 'prepaid') {
@@ -580,17 +612,12 @@ function save(data, cb, customRequiredKeys) {
 
     function sendNotificationToEachAdmin(_order) {
         //ADMIN_ORDER_PAYMENT_SUCCESS //ADMIN//#8
-        everyAdmin(_admin => {
-            Notif.trigger(NOTIFICATION.ADMIN_ORDER_PAYMENT_SUCCESS, {
-                _user: _admin,
-                _order: _order
-            });
-        });
+
     }
 
     function sendDiagRDVNotification(_order) {
         //DIAG_NEW_RDV //DIAG//#2 OK ctrl.order
-        Notif.trigger(NOTIFICATION.DIAG_NEW_RDV, {
+        ctrl('Notification').trigger(NOTIFICATION.DIAG_NEW_RDV, {
             _user: _order._diag,
             _order: _order
         });
@@ -598,10 +625,10 @@ function save(data, cb, customRequiredKeys) {
 
     function sendDiagConfirmedNotification(_order) {
         //DIAG_RDV_CONFIRMED //DIAG//#3
-        UserAction.get({
+        ctrl('User').get({
             _id: _order._diag._id || _order._diag
         }, (_err, _diag) => {
-            Notif.trigger(NOTIFICATION.DIAG_RDV_CONFIRMED, {
+            ctrl('Notification').trigger(NOTIFICATION.DIAG_RDV_CONFIRMED, {
                 _user: _diag,
                 _order: _order
             });
@@ -609,7 +636,7 @@ function save(data, cb, customRequiredKeys) {
     }
 
     function sendClientNotifications(_order) {
-        UserAction.get({
+        ctrl('User').get({
             _id: _order._client._id || _order._client
         }, (_err, _client) => {
 
@@ -629,7 +656,7 @@ function save(data, cb, customRequiredKeys) {
                 if (_order.notifications && _order.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED) {
                     //LANDLORD_ORDER_PAYMENT_SUCCESS //LANDLORD//#2
                     if (_order.landLordEmail) {
-                        Notif.trigger(NOTIFICATION.LANDLORD_ORDER_PAYMENT_SUCCESS, {
+                        ctrl('Notification').trigger(NOTIFICATION.LANDLORD_ORDER_PAYMENT_SUCCESS, {
                             _user: _client,
                             _order: _order,
                             attachmentPDFHTML: html
@@ -638,7 +665,7 @@ function save(data, cb, customRequiredKeys) {
                 }
                 else {
                     //CLIENT_ORDER_PAYMENT_SUCCESS //CLIENT//#3
-                    Notif.trigger(NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, {
+                    ctrl('Notification').trigger(NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, {
                         _user: _client,
                         _order: _order,
                         attachmentPDFHTML: html
@@ -659,7 +686,7 @@ function save(data, cb, customRequiredKeys) {
 
 
 function everyAdmin(cb, delay) {
-    UserAction.getAll({
+    ctrl('User').getAll({
         userType: 'admin'
     }, (_err, _admins) => {
         if (_err) {
@@ -678,7 +705,7 @@ function everyAdmin(cb, delay) {
 }
 
 function orderPopulate(data, cb) {
-    actions.get({
+    ctrl('Order').get({
         _id: data._id,
         __populate: {
             _client: 'email firstName lastName companyName cellPhone',
@@ -688,20 +715,20 @@ function orderPopulate(data, cb) {
 };
 
 function orderDiag(_order, cb) {
-    UserAction.get({
+    ctrl('User').get({
         _id: _order._diag._id || _order._diag
     }, (_err, _diag) => cb(_diag));
 }
 
 function orderClient(_order, cb) {
-    UserAction.get({
+    ctrl('User').get({
         _id: _order._client._id || _order._client
     }, (_err, _client) => cb(_client));
 }
 
 function orderExists(data, cb) {
     //Si existe un order match user:email, address, start, end, price.
-    actions.getAll({
+    ctrl('Order').getAll({
         __populate: {
             '_client': 'email'
         },
@@ -748,8 +775,8 @@ function orderExists(data, cb) {
 //Save and order
 //If data has _client, use that client. If not, data requires email and clientType to search or crate a new user on the fly.
 function saveWithEmail(data, cb) {
-    actions.log('saveWithEmail=' + JSON.stringify(data));
-    actions.check(data, ['_diag', 'start', 'end'
+    ctrl('Order').log('saveWithEmail=' + JSON.stringify(data));
+    ctrl('Order').check(data, ['_diag', 'start', 'end'
 
         , 'diags', 'address', 'price'
     ], (err, r) => {
@@ -765,26 +792,26 @@ function saveWithEmail(data, cb) {
             }
             else {
                 //Legacy fallback
-                actions.check(data, ['email', 'clientType'], (err, r) => {
+                ctrl('Order').check(data, ['email', 'clientType'], (err, r) => {
                     if (err) return cb(err, r);
                     _setUserUsingEmailAndClientType();
                 });
             }
 
             function _setUserUsingEmailAndClientType() {
-                UserAction.get({
+                ctrl('User').get({
                     email: data.email,
                     userType: 'client',
                     clientType: data.clientType,
                 }, (err, r) => {
                     if (err) return cb(err, r);
-                    actions.log('saveWithEmail=user:get:return' + JSON.stringify(r));
+                    ctrl('Order').log('saveWithEmail=user:get:return' + JSON.stringify(r));
                     if (r) {
                         data._client = r._id;
                         return save(data, cb);
                     }
                     else {
-                        UserAction.createClientIfNew({
+                        ctrl('User').createClientIfNew({
                             email: data.email
                         }, (err, r) => {
                             if (err) return cb(err, r);
@@ -799,53 +826,29 @@ function saveWithEmail(data, cb) {
     });
 }
 
-function afterSave(data) {
-
-
-    if (!data || !data._id) {
-        dbLogger.setSaveData(data || {});
-        dbLogger.error('afterSave expects order data field (_id)');
-        return data;
-    }
-
-    ctrl('Order').get({
-        _id: data._id,
-        __populate: {
-            _diag: "firstName lastName",
-            _client: "firstName lastName cellPhone fixedTel companyName isSystemUser"
-        }
-    }, (err, _order) => {
-        if (err) {
-            dbLogger.setSaveData(err);
-            dbLogger.errorSave('Error when fetching order afterSave');
-            return;
-        }
-
-        _order.notifications = _order.notifications || {};
-        if (!_order.notifications.ADMIN_ORDER_CREATED_SUCCESS && !_order._client.isSystemUser) {
-            dbLogger.debug('Notifying admins', 'ADMIN_ORDER_CREATED_SUCCESS');
+function postSave() {
+    var doc = this;
+    resolver.co(function*() {
+        doc = yield doc.populate("_client").populate("_diag").execPopulate();
+        if (!doc._client.isSystemUser) {
             everyAdmin((_admin) => {
-                Notif.trigger(NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, {
-                    _order: _order,
-                    _user: _admin
-                });
+                resolver.getFacade('diagnostical/notification').addNotification(NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, {
+                    _order: doc,
+                    _user: _admin,
+                    to: _admin.email,
+                    attachDocument: doc
+                }).then(notificationLogger.debugTerminal).catch(notificationLogger.error);
             }, 2000);
         }
-    });
-
-    return data;
+        if (_.includes(['prepaid', 'delegated', 'completed'], doc.status)) {
+            everyAdmin(_admin => {
+                resolver.getFacade('diagnostical/notification').addNotification(NOTIFICATION.ADMIN_ORDER_PAYMENT_SUCCESS, {
+                    _user: _admin,
+                    _order: doc,
+                    to: _admin.email,
+                    attachDocument: doc
+                }).then(notificationLogger.debugTerminal).catch(notificationLogger.error);
+            });
+        }
+    }).then(notificationLogger.debugTerminal).catch(notificationLogger.error);
 }
-
-function preSave(data) {
-
-
-    var now = new Date();
-    if (data.status == 'delivered' || data.status == 'completed' && data.deliveredAt === null) {
-        data.deliveredAt = now;
-    }
-
-
-    return data;
-}
-
-

@@ -18,6 +18,7 @@ require('./model/middlewares/request-parsers-middlewares').bind(app);
 //routes
 require('./model/routes/app-details-route').bind(app);
 require('./model/routes/api-routes').bind(app);
+require('./model/routes/test-routes').bind(app, express);
 require('./model/routes/views-route').bind(app);
 require('./model/routes/static-routes').bind(app, express);
 //static generator (generator, angular route, etc)

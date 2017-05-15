@@ -26,6 +26,8 @@ module.exports = {
             ref: 'Order'
         }],
 
+
+
         //google address
         address: String,
         city: String,
@@ -59,6 +61,11 @@ module.exports = {
             type: Boolean,
             default: false
         },
+
+        _notifications: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Notification'
+        }],
         notifications: {
             type: {},
             default: {}

@@ -15,9 +15,9 @@ module.exports = {
      */
     send: (params) => {
         return new Promise((resolve, reject) => {
-            Logger.debug('Sending ', params.type);
+            //Logger.debug('Sending ', params.type);
             if (isMailingDisabled) {
-                Logger.debug(params.type,params.from,params.to,params.subject,'FAKE');
+                Logger.debug(params.type,params.to,'FAKE');
                 return resolve();
             }
             sendEmailWithMailgun(params, (err, res) => {
@@ -30,7 +30,7 @@ module.exports = {
                     reject(err);
                 }
                 else {
-                    Logger.debug(params.type,params.from,params.to,params.subject);
+                    Logger.debug(params.type,params.to);
                     resolve(res);
                 }
             });

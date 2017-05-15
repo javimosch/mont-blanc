@@ -1,8 +1,5 @@
 var path = require('path');
 var ctrl = require('../model/db.controller').create;
-var Order = require('../model/db.actions').create('Order');
-var User = require('../model/db.actions').create('User');
-var Log = require('../model/db.actions').create('Log');
 var statsActions = require('./ctrl.stats');
 var template = require('../utils/template');
 var ERROR = require(path.join(process.cwd(), 'model/config')).ERROR;
@@ -89,9 +86,7 @@ module.exports = EXPORT_ACTIONS;
 
 
 require('../controllers/ctrl.notification').init(EXPORT_ACTIONS);
-var Notification = require('../model/db.actions').create('Notification');
-var NotificationHandler = require('../controllers/ctrl.notification');
-var NOTIFICATION = NotificationHandler.NOTIFICATION;
+var NOTIFICATION = ctrl('Notification').NOTIFICATION;
 
 
 function saveNotificationAndSendEmail(opt, resCb) {
@@ -123,34 +118,47 @@ function saveNotificationAndSendEmail(opt, resCb) {
         html: html,
         from: opt.from || EMAIL_FROM,
         to: opt.to || process.env.emailTo,
-        subject: opt.subject
+        subject: opt.subject,
+        sended: false,
     };
+    data.contents = data.html || data.contents || '';
     var logData = _.clone(data);
     delete logData.html;
-    emailTriggerLogger.setSaveData(logData);
-    emailTriggerLogger.debugSave('Notification', data.type || 'undefined');
+    emailTriggerLogger.withData(logData).debugSave('Notification', data.type || 'undefined', 'queued!');
     data.metadata = {}
     if (data.attachment) {
         data.metadata.attachment = data.attachment;
     }
     if (opt._notification) {
         emailTriggerLogger.debug(opt.__notificationType, 'Fetching notification');
-        Notification.getById({
+
+        ctrl('Notification').model.update({
             _id: opt._notification
-        }, (err, _notification) => {
-            if (err) return _handleError(err);
-            if (!_notification) return _handleError(ERROR.DATABASE_ISSUE);
-            _send(_notification);
-        });
+        }, {
+            $set: {
+                sended: false
+            }
+        }).exec();
+        _handleQueue(opt._notification, _notification);
     }
     else {
-        //emailTriggerLogger.debug(opt.__notificationType, 'Saving notification');
-        data._user = opt._user;
-        NotificationHandler.save(data, (err, _notification) => {
+        data._user = opt._user && opt._user._id || opt._user;
+        //emailTriggerLogger.debugTerminal('Creating notification..');
+        ctrl('Notification').model.create(data, (err, _notification) => {
             if (err) return _handleError(err);
-            if (!_notification) return _handleError(ERROR.DATABASE_ISSUE);
-            _send(_notification);
+            _handleQueue(_notification._id, _notification);
         });
+    }
+
+    function _handleQueue(notification_id, _notification) {
+        var res = {
+            ok: true,
+            message: "queued",
+            _notification: notification_id,
+            doc: _notification
+        };
+        opt.cb && opt.cb(null, res);
+        resCb && resCb(null, res);
     }
 
     function _handleError(err) {
@@ -162,36 +170,6 @@ function saveNotificationAndSendEmail(opt, resCb) {
         emailTriggerLogger.errorSave(ERROR.DATABASE_ISSUE);
         resCb && resCb(err);
         opt.cb && opt.cb(err);
-    }
-
-    function _send(_notification) {
-        data.type = _notification.type;
-        MailFacade.send(data).then(res => {
-            _updateSendStatus(_notification);
-            opt.cb && opt.cb(null, res);
-            resCb && resCb(null, res);
-        }).catch((err) => {
-            opt.cb && opt.cb(err, null);
-            resCb && resCb(null, null);
-        });
-    }
-
-    function _updateSendStatus(_notification) {
-        _notification.sended = true;
-        _notification.sendedDate = Date.now();
-        Notification.update({
-            _id: _notification._id,
-            sended: _notification.sended,
-            sendedDate: _notification.sendedDate
-        }, (err, n) => {
-            if (err) {
-                dbLogger.setSaveData({
-                    detail: err,
-                    data: _notification
-                })
-                return dbLogger.errorSave('Update: ', err.substring(0, 20));
-            }
-        });
     }
 }
 
@@ -251,78 +229,7 @@ function generateInvoiceAttachmentIfNecessary(data, t, cb) {
 
 
 function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notifItemType, moreOptions) {
-
-    if (!notifItem) {
-        var error = {
-            desription: "Email controller -> DIAGS_CUSTOM_NOTIFICATION",
-            message: "The notification item is invalid",
-            notificationItem: notifItem,
-            type: type,
-            data: data
-        };
-        if (cb) cb(error);
-        emailTriggerLogger.setSaveData(error);
-        emailTriggerLogger.errorSave(error.desription);
-        return;
-    }
-
-    notifItem.notifications = notifItem.notifications || {};
-    if (notifItem.notifications[type] !== true || (data.forceSend != undefined && data.forceSend == true)) {
-
-
-
-        var next = function() {
-            //emailTriggerLogger.debug(type, 'Calling custom fn (templating)');
-            return DIAGS_CUSTOM_EMAIL(data, (err, r) => {
-                notifItem.notifications[type] = true;
-                ctrl(notifItemType).update({
-                    _id: notifItem._id,
-                    notifications: notifItem.notifications
-                });
-                if (cb) cb(err, r);
-            }, subject, type, to, NOTIFICATION[type], moreOptions);
-        };
-
-        //check: if there is no forceSend and there is a notification item in notifications collection, we skip the email.
-        if (!data.forceSend && data._user && data._user._id) {
-
-            if (notifItemType !== 'User') {
-                return next();
-            }
-
-            emailTriggerLogger.debug(type, 'Fetching an existing notification... (This validation apply only to notifications that belong to users)');
-
-            return ctrl('Notification').get({
-                _user: data._user._id,
-                type: type,
-                sended: true
-            }, (err, _notification) => {
-                if (err) return;
-                if (_notification) {
-
-                    emailTriggerLogger.warn(type, 'Existing notification found, email skipped.');
-                    /*
-                    emailTriggerLogger.setSaveData({
-                        item_found:_notification
-                    });
-                    emailTriggerLogger.warnSave('Duplicate prevented for',type);
-                    */
-                }
-                else {
-                    next();
-                }
-            });
-        }
-        else {
-            next();
-        }
-
-
-    }
-    else {
-        emailTriggerLogger.warn(type, 'Already sended', notifItemType, notifItem);
-        cb && cb('Already sended');
-    }
+    return DIAGS_CUSTOM_EMAIL(data, cb, subject, type, to, NOTIFICATION[type], moreOptions);
 }
 
 
@@ -452,7 +359,7 @@ function ADMIN_DIPLOME_EXPIRATION(data, cb) {
 function ADMIN_NEW_CONTACT_FORM_MESSAGE(data, cb) {
     emailTriggerLogger.debug('ADMIN_NEW_CONTACT_FORM_MESSAGE=' + JSON.stringify(data));
     cb(null, "Send in progress"); //async op
-    User.getAll({
+    ctrl('User').getAll({
         userType: 'admin'
     }, function(err, admins) {
         if (err) {
@@ -513,26 +420,12 @@ function ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS(data, cb) {
 
 //ADMIN//#8 OK ctrl.order
 function ADMIN_ORDER_CREATED_SUCCESS(data, cb) {
-    //requires: _user _order
     var subject = 'Paiement créée: ' + data._order.address + '/' + dateTime(data._order.start);
-
-    if (!data._order.notifications) {
-        emailTriggerLogger.warn('ADMIN_ORDER_CREATED_SUCCESS', 'order do not have notification object.');
-    }
-
-
-    if (data._order.notifications.ADMIN_ORDER_CREATED_SUCCESS !== true) {
-        //emailTriggerLogger.debug('ADMIN_ORDER_CREATED_SUCCESS', 'Collecting month revenue');
-        statsActions.currentMonthTotalRevenueHT({}, (_err, _currentMonthTotalRevenueHT) => {
-            data._order.currentMonthTotalRevenueHT = _currentMonthTotalRevenueHT;
-            //emailTriggerLogger.debug('ADMIN_ORDER_CREATED_SUCCESS', 'Calling custom sending fn');
-            DIAGS_CUSTOM_NOTIFICATION(
-                NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, data, cb, subject, data._user.email, data._order, 'Order');
-        });
-    }
-    else {
-        emailTriggerLogger.warn('ADMIN_ORDER_CREATED_SUCCESS', 'Already checked as sended, we skip this one.');
-    }
+    statsActions.currentMonthTotalRevenueHT({}, (_err, _currentMonthTotalRevenueHT) => {
+        data._order.currentMonthTotalRevenueHT = _currentMonthTotalRevenueHT;
+        DIAGS_CUSTOM_NOTIFICATION(
+            NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, data, cb, subject, data._user.email, data._order, 'Order');
+    });
 }
 
 
@@ -695,7 +588,7 @@ function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type, moreOp
 
 
 function LogSave(msg, type, data) {
-    Log.save({
+    ctrl('Log').save({
         category: 'mailing',
         message: msg,
         type: type,

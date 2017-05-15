@@ -53,6 +53,10 @@
                         if (res.err && apiError(res.err).isEqual.GUESS_ACCOUNT_RESTRICTION) {
                             return emit('validate', res.err.message);
                         }
+                        
+                        if (res.err && apiError(res.err).isEqual.EMAIL_NOT_FOUND) {
+                            return emit('validate', res.err.message);
+                        }
 
                         emit('validate', MSG_ERROR_SERVER);
                     }

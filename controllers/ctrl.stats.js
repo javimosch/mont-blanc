@@ -5,9 +5,7 @@ var _ = require('lodash');
 var generatePassword = require("password-maker");
 var validate = require('../model/validator').validate;
 var handleMissingKeys = require('../model/validator').handleMissingKeys;
-var User = require('../model/db.actions').create('User');
-var Order = require('../model/db.actions').create('Order');
-var Log = require('../model/db.actions').create('Log');
+var ctrl = require('../model/db.controller').create;
 var modelName = 'stats';
 var actions = {
     log: (m) => {
@@ -26,7 +24,7 @@ function cbHell(quantity, cb) {
 }
 
 function LogSave(msg, type,data) {
-    Log.save({
+    ctrl('Log').save({
         message: msg,
         type: type || 'error',
         data:data
@@ -35,7 +33,7 @@ function LogSave(msg, type,data) {
 
 function currentMonthTotalRevenueHT(data, cb) {
     actions.log('currentMonthTotalRevenueHT:start');
-    Order.getAll({
+    ctrl('Order').getAll({
         __rules: {
             createdAt: {
                 $gte: moment().startOf('month').toDate(),
@@ -65,17 +63,17 @@ function general(data, cb) {
     var rta = {};
 
     function _users() {
-        User.model.count({
+        ctrl('User').model.count({
             userType: 'client'
         }, (err, nroClients) => {
             if (err) cb(null, rta);
             rta.nroClients = nroClients;
-            User.model.count({
+            ctrl('User').model.count({
                 userType: 'diag'
             }, (err, nroDiags) => {
                 if (err) cb(null, rta);
                 rta.nroDiags = nroDiags;
-                User.model.count({
+                ctrl('User').model.count({
                     userType: 'client',
                     clientType: 'landlord'
                 }, (err, nro) => {
@@ -95,7 +93,7 @@ function general(data, cb) {
             cb(null, rta);
         });
 
-        Order.model.count({
+        ctrl('Order').model.count({
             status: 'created'
         }, (err, nro) => {
             if (err) cb(null, rta);
@@ -103,7 +101,7 @@ function general(data, cb) {
             _handler.next();
         });
 
-        Order.model.count({
+        ctrl('Order').model.count({
             status: 'ordered'
         }, (err, nro) => {
             if (err) cb(null, rta);
@@ -111,7 +109,7 @@ function general(data, cb) {
             _handler.next();
         });
 
-        Order.model.count({
+        ctrl('Order').model.count({
             status: 'prepaid'
         }, (err, nro) => {
             if (err) cb(null, rta);
@@ -119,7 +117,7 @@ function general(data, cb) {
             _handler.next();
         });
 
-        Order.model.count({
+        ctrl('Order').model.count({
             status: 'delivered'
         }, (err, nro) => {
             if (err) cb(null, rta);
@@ -127,7 +125,7 @@ function general(data, cb) {
             _handler.next();
         });
 
-        Order.model.count({
+        ctrl('Order').model.count({
             status: 'completed'
         }, (err, nro) => {
             if (err) cb(null, rta);

@@ -6,6 +6,7 @@ var tasks = [
     req('task-remove-expired-work-execeptions'),
     req('check-and-send-unsended-notifications-task'),
     req('completed-order-notifications-task'),
+    req('sync-guest-account-task')
 ];
 var selectController = require('./db.controller').create;
 var Logger = null;

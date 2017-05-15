@@ -1,3 +1,5 @@
+var path = require('path');
+var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
 var req = (n) => require(process.cwd() + '/model/' + n);
 var createDbActions = req('db.actions').create;
 var actions = {};
@@ -14,19 +16,15 @@ function register(name, path, hasModel) {
     path = path || 'controllers/ctrl.' + name.toLowerCase();
     actions[name] = require(cwd() + '/' + path);
     var obj = create(name, hasModel);
-    if (obj._configure && !obj._configuredFlag) {
-        obj._configuredFlag = true;
-        obj._configure(obj._hook);
-    }
 }
 
 function create(name, hasModel) {
     hasModel = hasModel === undefined ? true : hasModel;
     if (controllers[name]) return controllers[name];
-    var path = path || 'controllers/ctrl.' + name.toLowerCase();
+    var controllerPath = 'controllers/ctrl.' + name.toLowerCase();
     var specialActions = {};
     try {
-        specialActions = require(cwd() + '/' + path);
+        specialActions = require(cwd() + '/' + controllerPath);
     }
     catch (e) {
         specialActions = {};
@@ -35,11 +33,29 @@ function create(name, hasModel) {
 
     var actions = {};
 
+    if (specialActions.configureSchema) {
+
+        //console.log('db.controller', 'configureSchema', name);
+
+        var schemaDef = require(path.join(process.cwd(), 'schemas/' + name.toLowerCase() + "-schema")).def;
+        var schema = specialActions.configureSchema(resolver.db().createSchema(name, schemaDef)) || null;
+        if (!schema) {
+            console.log('controller', name, 'configureSchema must return the schema');
+            process.exit(1);
+        }
+        //console.log('DB.CONTROLLER REGISTER MODEL ',name,schema!=null)
+        resolver.db().registerModel(name, schema);
+        delete specialActions.configureSchema;
+    }
+
     if (hasModel) {
         var coreActions = createDbActions(name);
         Object.assign(actions, coreActions);
         actions.core = coreActions;
     }
+
+
+
 
     Object.assign(actions, specialActions);
 

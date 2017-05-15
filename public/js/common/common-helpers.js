@@ -364,13 +364,14 @@ function MyPromise(cb) {
     };
     var emit = function() {
         var args = Array.prototype.slice.call(arguments);
-        if(args.length<2) return console.error('emit require at least the event name and an extra parameter');
+        if(args.length<1) return console.error('emit require at least the event name');
         var n = args[0];
         args.splice(0,1);
         _scope.evt[n] = _scope.evt[n] || {};
         if (_scope.evt[n].cb !== undefined) {
             _scope.evt[n].cb.apply(_scope.evt[n].cb,args);
         }
+        _scope.evt[n].args = args;
     };
     cb(resolve, error, emit);
 
@@ -392,8 +393,8 @@ function MyPromise(cb) {
         on: function(n, cb) {
             _scope.evt[n] = _scope.evt[n] || {};
             _scope.evt[n].cb = cb;
-            if (_scope.evt[n].res !== undefined) {
-                _scope.evt[n].cb(_scope.evt[n].res.err, _scope.evt[n].res.r);
+            if (_scope.evt[n].args !== undefined) {
+                _scope.evt[n].cb.apply(_scope.evt[n].cb,_scope.evt[n].args);
             }
             return rta;
         }

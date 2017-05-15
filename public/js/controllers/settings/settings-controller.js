@@ -48,9 +48,16 @@
                             title: "Delete Confirmation"
                         }
                     }, () => {
-                        db.ctrl(t, 'removeWhen', {}).then((res) => {
+
+                        var action = 'removeWhen';
+                        if (t.toLowerCase() === 'notification') action = 'deleteAll';
+
+                        db.ctrl(t, action, {}).then((res) => {
                             if (res.ok) {
-                                r.okModal('All the objects of type ' + t + ' were deleted from the database.');
+                                r.infoMessage('All the objects of type ' + t + ' were deleted from the database.');
+                            }
+                            else {
+                                r.warningMessage('Something went wrong.');
                             }
                         })
                     });
