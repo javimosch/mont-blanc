@@ -31,7 +31,7 @@ module.exports = {
     model: models,
     getModel: (n) => {
         if (!models[n.toLowerCase()]) {
-            state.logger.warn("getModel ", n, 'returns null/undefined');
+            state.logger.warnTerminal("getModel ", n, 'returns null/undefined');
         }
         return models[n.toLowerCase()]
     },
@@ -149,7 +149,7 @@ function connectMongoose() {
 
 
 function createSchema(n, def) {
-    if (!def) console.log('WARN:' + n + ' def required');
+    if (!def) state.logger.error("Schema definition required",def);
     if (!def.createdAt) {
         def.createdAt = {
             type: Date,

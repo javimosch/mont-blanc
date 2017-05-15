@@ -6,10 +6,12 @@ var tasks = [
     req('task-remove-expired-work-execeptions'),
     req('check-and-send-unsended-notifications-task'),
     req('completed-order-notifications-task'),
-    req('sync-guest-account-task')
+    req('sync-guest-account-task'),
+    req('remove-orphan-notifications')
 ];
 var selectController = require('./db.controller').create;
 var Logger = null;
+
 function loggerLazyInitialization() {
     if (Logger) return Logger;
     Logger = selectController('Log').createLogger({
@@ -35,9 +37,10 @@ exports.configure = (app) => {
 
 
         if (t.runAtStartup) {
-            if (t.runAtStartupDelay!==undefined) {
+            if (t.runAtStartupDelay !== undefined) {
                 setTimeout(loop, t.runAtStartupDelay);
-            }else{
+            }
+            else {
                 loop();
             }
         }

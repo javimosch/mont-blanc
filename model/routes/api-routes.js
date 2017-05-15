@@ -45,8 +45,8 @@ module.exports = {
 
         resolver.co(function*() {
             yield resolver.db().waitConnection();
-            //var configureProgrammedTasks = require(path.join(process.cwd(), 'model/tasks')).configure;
-            //configureProgrammedTasks(app);
+            var configureProgrammedTasks = require(path.join(process.cwd(), 'model/tasks')).configure;
+            configureProgrammedTasks(app);
         }).catch(console.error);
     }
 }
