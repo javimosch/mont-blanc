@@ -1,3 +1,5 @@
+var path = require('path');
+var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
 var ctrl = require('../db.controller').create;
 var name = 'task:diplomeExpirationCheck';
 var _ = require('lodash');
@@ -58,7 +60,7 @@ function handler(data, cb) {
                         if (_.isUndefined(info.expirationDate)) {
                             // log(diag.email + ' ' + filename + ' expirationDate field required.');
                             Logger.setSaveData(info);
-                            Logger.warnSave(diag.email+' has a file without date.');
+                            Logger.warnSave(diag.email + ' has a file without date.');
                         }
                         else {
 
@@ -74,10 +76,10 @@ function handler(data, cb) {
 
                                 }
                                 else {
-                                    
+
                                     Logger.setSaveData(info);
-                                    Logger.debugSave(diag.email+' file expiration notified to admins.');
-                                    
+                                    Logger.debugSave(diag.email + ' file expiration notified to admins.');
+
                                     //console.log('DIAG ', diag.email, ' DIPLOMA', filename, 'SENDING NOW');
                                     ctrl('User').getAll({
                                         userType: 'admin'
@@ -102,31 +104,29 @@ function handler(data, cb) {
 }
 
 function sendEmail(_admin, _diag, _info, _diplomeId) {
-
-    ctrl('Notification').trigger(NOTIFICATION.ADMIN_DIPLOME_EXPIRATION, {
+    resolver.getFacade('diagnostical/notification').addNotification(NOTIFICATION.ADMIN_DIPLOME_EXPIRATION, {
         _admin: _admin,
         _diag: _diag,
         _info: _info,
         filename: _info.filename,
+        to: _admin.email,
+        attachDocument: _diag,
+        forceSend: true
+    }).then((r) => updateUserDiplomes(_diag, _info));
 
-    }, (_err, r) => {
-        if (_err) {
-            Logger.errorSave('Try to send the notification to an admin ', _err);
-            //returndblog(log('Fail when sending alert email to ' + _admin.email));
-        }
-        //dblog(log('Email sended to ' + _admin.email), 'success');
-        //
-        _info.expirationDateNotificationSended = true;
-        _diag.diplomesInfo[_diplomeId] = _info;
-        //
-        ctrl('User').update(_diag, (_err, r) => {
-            if (_err) {
-                Logger.setSaveData(_err);
-                Logger.errorSave('Try to update the diploma flag after sending notification ', _err);
-                //return dblog(log('Fail when updating expirationDateNotificationSended on ' + _diag.email));
-            }
-
-        });
-    })
-
+    function updateUserDiplomes(doc, _info) {
+        return resolver.coWrap(function*(val) {
+            _info.expirationDateNotificationSended = true;
+            var setPayload = {};
+            setPayload[
+                "diplomesInfo." + _diplomeId
+            ] = _info;
+            yield resolver.db().model.user.update({
+                _id: doc._id,
+            }, {
+                $set: setPayload
+            });
+            return yield Promise.resolve(val);
+        })();
+    }
 }

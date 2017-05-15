@@ -12,6 +12,7 @@ var self = {
     http: () => require('request'),
     _: () => require('lodash'),
     co: (handler) => co(handler),
+    coWrap: (handler) => co.wrap(handler),
     db: () => require(path.join(process.cwd(), 'model/db')),
     ctrl: (name) => require(path.join(process.cwd(), 'model/db.controller')).create(name),
     env: () => require(path.join(process.cwd(), 'model/config')),
