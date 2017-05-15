@@ -15,6 +15,7 @@ var apiError = require(path.join(process.cwd(), 'model/errors'));
 var ResponseFacade = require(path.join(process.cwd(), 'model/facades/response-facade'));
 var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
 var htmlFromOrder = require(path.join(process.cwd(), 'model/facades/invoice-facade')).htmlFromOrder;
+var notificationFacade = resolver.getFacade('diagnostical/notification');
 var saveKeys = ['_client', '_diag', 'start', 'end', 'diags'
 
     , 'address', 'price' //, 'time'
@@ -168,15 +169,13 @@ function sendQuote(data, cb) {
 
             //notificationLogger.debug('SendQuote:notification');
 
-            ctrl('Notification').trigger(NOTIFICATION.CLIENT_ORDER_QUOTATION, {
+            notificationFacade.addNotification(NOTIFICATION.CLIENT_ORDER_QUOTATION, {
                 _order: order,
                 _user: user,
-                _client: user
-            }, (err, res) => {
-                if (err) return cb(err);
-                // notificationLogger.debug('SendQuote:notification:success', res);
-                return cb(null, res);
-            });
+                _client: user,
+                to: user.email,
+                attachDocument: order
+            }).then(r => cb(null, r)).catch(cb);
         }, 2000);
     }
 }
@@ -617,21 +616,24 @@ function save(data, cb, customRequiredKeys) {
 
     function sendDiagRDVNotification(_order) {
         //DIAG_NEW_RDV //DIAG//#2 OK ctrl.order
-        ctrl('Notification').trigger(NOTIFICATION.DIAG_NEW_RDV, {
+        notificationFacade.addNotification(NOTIFICATION.DIAG_NEW_RDV, {
             _user: _order._diag,
-            _order: _order
-        });
+            _order: _order,
+            to: _order._diag.email,
+            attachDocument: _order
+        }).catch(notificationLogger.error);
     }
 
     function sendDiagConfirmedNotification(_order) {
-        //DIAG_RDV_CONFIRMED //DIAG//#3
         ctrl('User').get({
             _id: _order._diag._id || _order._diag
         }, (_err, _diag) => {
-            ctrl('Notification').trigger(NOTIFICATION.DIAG_RDV_CONFIRMED, {
+            notificationFacade.addNotification(NOTIFICATION.DIAG_RDV_CONFIRMED, {
                 _user: _diag,
-                _order: _order
-            });
+                _order: _order,
+                to: _diag.email,
+                attachDocument: _order
+            }).catch(notificationLogger.error);
         });
     }
 
@@ -656,20 +658,24 @@ function save(data, cb, customRequiredKeys) {
                 if (_order.notifications && _order.notifications.LANDLORD_ORDER_PAYMENT_DELEGATED) {
                     //LANDLORD_ORDER_PAYMENT_SUCCESS //LANDLORD//#2
                     if (_order.landLordEmail) {
-                        ctrl('Notification').trigger(NOTIFICATION.LANDLORD_ORDER_PAYMENT_SUCCESS, {
+                        notificationFacade.addNotification(NOTIFICATION.LANDLORD_ORDER_PAYMENT_SUCCESS, {
                             _user: _client,
                             _order: _order,
-                            attachmentPDFHTML: html
-                        });
+                            attachmentPDFHTML: html,
+                            to: _client.email,
+                            attachDocument: _order
+                        }).catch(notificationLogger.error);
                     }
                 }
                 else {
                     //CLIENT_ORDER_PAYMENT_SUCCESS //CLIENT//#3
-                    ctrl('Notification').trigger(NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, {
+                    notificationFacade.addNotification(NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, {
                         _user: _client,
                         _order: _order,
-                        attachmentPDFHTML: html
-                    });
+                        attachmentPDFHTML: html,
+                        to: _client.email,
+                        attachDocument: _order
+                    }).catch(notificationLogger.error);
                 }
 
             });
@@ -832,7 +838,7 @@ function postSave() {
         doc = yield doc.populate("_client").populate("_diag").execPopulate();
         if (!doc._client.isSystemUser) {
             everyAdmin((_admin) => {
-                resolver.getFacade('diagnostical/notification').addNotification(NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, {
+                notificationFacade.addNotification(NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, {
                     _order: doc,
                     _user: _admin,
                     to: _admin.email,
@@ -842,7 +848,7 @@ function postSave() {
         }
         if (_.includes(['prepaid', 'delegated', 'completed'], doc.status)) {
             everyAdmin(_admin => {
-                resolver.getFacade('diagnostical/notification').addNotification(NOTIFICATION.ADMIN_ORDER_PAYMENT_SUCCESS, {
+                notificationFacade.addNotification(NOTIFICATION.ADMIN_ORDER_PAYMENT_SUCCESS, {
                     _user: _admin,
                     _order: doc,
                     to: _admin.email,

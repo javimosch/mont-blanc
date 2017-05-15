@@ -62,6 +62,12 @@ var _actions = {
     save: save,
     NOTIFICATION: NOTIFICATION,
     init: (_EmailHandler) => EmailHandler = _EmailHandler,
+    add: function(data, cb) {
+        if (!data.to) return cb("to required");
+        if (!data.attachDocument) return cb("attachDocument required");
+        resolver.getFacade('diagnostical/notification')
+            .addNotification(data.type, data).then(r => cb(null, r)).catch(cb);
+    },
     configureSchema: (schema) => {
         schema.pre('save', function(next) {
             //dbLogger.debugTerminal('PRE/SAVE');
