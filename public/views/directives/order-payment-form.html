@@ -60,12 +60,6 @@
             <div class="row margin-top-quarter">
                 <input ng-disabled="clientLogged()" focus-on="clientEmail" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.clientEmail' ng-required="true">
             </div>
-            <div class="row margin-top-half" ng-if="!withCard()">
-                <label class="unselectable">Mobile  *</label>
-            </div>
-            <div class="row margin-top-quarter" ng-if="!withCard()">
-                <input focus-on="clientPhone" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.clientPhone' ng-required="true">
-            </div>
             <div class="row margin-top-half">
                 <label class="unselectable">Adresse de facturation</label>
             </div>
@@ -79,6 +73,12 @@
                 field="billingAddress"
                 placeholder="Ex: 102 rue Réaumur 75002 Paris, France"
                 >
+            </div>
+             <div class="row margin-top-half" ng-if="!withCard()">
+                <label class="unselectable">Téléphone mobile  *</label>
+            </div>
+            <div class="row margin-top-quarter" ng-if="!withCard()">
+                <input focus-on="clientPhone" class="diags-input btn-stack" placeholder="0612131415" type="text" ng-model='response.clientPhone' ng-required="true">
             </div>
             <div class="row margin-top-half" ng-show="showGuessAccountControls()">
                 <label class="unselectable">En tant qu'invité</label>
