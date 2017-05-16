@@ -1,4 +1,7 @@
-require('dotenv').config();
+require('dotenv').config({
+    silent: true,
+    path: process.cwd() + '/.env'
+});
 var path = require("path");
 var co = require('co');
 
