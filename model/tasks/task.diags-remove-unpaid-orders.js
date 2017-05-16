@@ -46,13 +46,15 @@ function handler(data, cb) {
 
             var ownerIsBot = _order._client.email.indexOf('bookingbot') !== -1;
             var normalCondition = Date.now() - new Date(_order.createdAt) > 1000 * 60 * 60 * 48;
-            
+
             var bookingWithBotCondition = Date.now() - new Date(_order.createdAt) > 1000 * 60 * 5;
             var deleteCondition = ownerIsBot ? bookingWithBotCondition : normalCondition;
 
             if (deleteCondition) {
                 //Logger().debug('order remove');
-                Order.remove(_order, (err) => {
+                Order.remove({
+                    _id: _order._id
+                }, (err) => {
                     //Logger().debug('remove success', !err);
                     if (err) return LogSave(name + " error", err);
 
