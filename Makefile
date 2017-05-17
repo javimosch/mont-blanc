@@ -14,8 +14,9 @@ lint:
 	#./node_modules/.bin/jshint --config ./.jshintrc ./controllers/*.js
 
 test:
-	echo "Mocha will test files in test/*-test.js"
-	./node_modules/mocha/bin/mocha --timeout 30000 --colors $(TESTS)
+	echo "Tests are disabled"
+	#echo "Mocha will test files in test/*-test.js"
+	#./node_modules/mocha/bin/mocha --timeout 30000 --colors $(TESTS)
 	#make clean && \
 	##make lint && \
 	#--reporter $(REPORTER) \

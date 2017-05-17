@@ -49,6 +49,17 @@ module.exports = {
     populate: orderPopulate, //DEPRECATED?
     configureSchema: (schema) => {
 
+
+        schema.pre('remove', function(next) {
+            middlewareLogger.debugTerminal('PRE/remove');
+            this.model('Notification').remove({
+                _id: {
+                    $in: this._notifications
+                }
+            }).then(middlewareLogger.debugTerminal);
+            next();
+        });
+
         schema.pre('save', function(next) {
             middlewareLogger.debugTerminal('PRE/save');
             if (this.status == 'delivered' || this.status == 'completed' && this.deliveredAt === null) {

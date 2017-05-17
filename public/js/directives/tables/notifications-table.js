@@ -134,18 +134,14 @@
                         click: () => s.model.filter.clear && s.model.filter.clear()
                     }],
                     columns: [{
-                        label: 'User',
-                        name: 'to',
-                        format: (x, item) => item._user && item._user.email || ''
-                    }, {
-                        label: 'To',
-                        name: 'to'
+                        label: "Type",
+                        name: 'type'
                     }, {
                         label: "Subject",
                         name: 'subject'
                     }, {
-                        label: "Type",
-                        name: 'type'
+                        label: 'To',
+                        name: 'to'
                     }, {
                         label: "Sended",
                         name: 'sended',

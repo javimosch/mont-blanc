@@ -625,9 +625,16 @@ module.exports = {
             middlewareLogger.debugTerminal('PRE/remove');
 
             middlewareLogger.debugTerminal('Removing notifications associated to user');
-            this.model('Notifications').remove({
+            this.model('Notification').remove({
                 _user: this._id
             }).then(middlewareLogger.debugTerminal);
+
+            this.model('Notification').remove({
+                _id: {
+                    $in: this._notifications
+                }
+            }).then(middlewareLogger.debugTerminal);
+
 
             next();
         });
