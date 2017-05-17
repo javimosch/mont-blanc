@@ -39,7 +39,7 @@
                 }
                 $rootScope.dom();
 
-            });
+            }).error($log.error);
 
 
             function atLeastOneDiagSelected() {

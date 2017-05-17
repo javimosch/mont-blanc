@@ -13,7 +13,6 @@
         'srv.diagPrice',
         'app-settings-service',
         'local-data',
-        'app.directives',
         'app.services',
         'app-router'
     ]).service('$routeParams', [function() {

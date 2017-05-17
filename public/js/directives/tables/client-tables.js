@@ -201,6 +201,10 @@
                     }, {
                         label: "Siret",
                         name: "siret"
+                    },{
+                        label: "Guest Account?",
+                        name: "fixedTel",
+                        format: (v, item) => item.isGuestAccount?"Yes":""
                     }, {
                         label: "Created At",
                         name: "createdAt",

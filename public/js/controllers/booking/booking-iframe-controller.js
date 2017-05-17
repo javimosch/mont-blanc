@@ -259,7 +259,7 @@
             function loadDefaults() {
                 s.item.info = s.item.info || {};
                 s.item = Object.assign(s.item, orderQueryParams.getData(s.item));
-                s.diagSlots = diagSlots(s, s.item);
+                //s.diagSlots = diagSlots(s, s.item);
                 r.dom(function() {
                     try {
                         $("input[type=range]").val(orderHelper.getSquareMetersSelectedIndex(s.item));
