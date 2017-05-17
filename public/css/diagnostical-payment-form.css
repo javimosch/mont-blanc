@@ -1,3 +1,14 @@
+.payment-form__cardNumber {
+    margin-top: 0.5em;
+}
+
+.payment-form__password {
+    margin-top: 0.5em;
+}
+.payment-form__total{
+    margin-top: 0.5em;
+}
+
 .order-payment-form-modal {
     max-width: 500px;
     margin: 0 auto;
@@ -5,9 +16,30 @@
     overflow-y: auto;
 }
 
-.order-payment-form-modal .row{
-    margin-left:0px!important;
-    margin-right:0px!important;
+@media screen and (min-width: 768px) {
+    .order-payment-form-modal {
+        max-width: 500px;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .payment-form__total{
+        margin-top:2em;
+    }
+    .payment-form__password {
+        margin-top: 1.6em!important;
+    }
+    .payment-form__cardNumber {
+        margin-top: 3em;
+    }
+    .order-payment-form-modal {
+        max-width: 1200px;
+    }
+}
+
+.order-payment-form-modal .row {
+    margin-left: 0px!important;
+    margin-right: 0px!important;
 }
 
 .order-quote-form-modal {
@@ -17,9 +49,9 @@
     overflow-y: auto;
 }
 
-.order-quote-form-modal .row{
-    margin-left:0px!important;
-    margin-right:0px!important;
+.order-quote-form-modal .row {
+    margin-left: 0px!important;
+    margin-right: 0px!important;
 }
 
 .payment-form__title {
@@ -66,6 +98,6 @@
 
 .payment-form__lw-icon {
     width: 100px;
-    margin: 0 auto;
+    margin: 20px auto;
     display: block;
 }

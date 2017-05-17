@@ -499,7 +499,7 @@ var PaymentHelper = (() => {
             clientData.clientId:        CARD OR CHEQUE : OPTIONAL
             clientData.clientEmail:     CARD OR CHEQUE : REQUIRED
             clientData.clientName:      CHEQUE
-            clientData.clientPhone:     CHEQUE
+            clientData.clientPhone:     CARD OR CHEQUE : OPTIONAL
             clientData.clientPassword:  OPTIONAL
             */
             return new Promise((resolve, reject) => {

@@ -3,7 +3,7 @@
         <h3 class="modal-title payment-form__title">Payer la commande</h3>
     </div>
     <div class="row margin-top-none">
-        <div class="col-xs-12 col-sm-12">
+        <div class="col-xs-12 col-sm-12 col-md-6">
             <div class="row margin-top-half" ng-if="withCard()">
                 <label class="unselectable">Carte de paiement</label>
             </div>
@@ -18,7 +18,7 @@
                     <pretty-radio color="blue" value="'2'" ng-change="onCardTypeChange()" ng-model="response.cardType" label="'MasterCard'"></pretty-radio>
                 </div>
             </div>
-            <div class="row margin-top-half" ng-if="withCard()">
+            <div class="row payment-form__cardNumber" ng-if="withCard()">
                 <label class="unselectable">Numéro de carte</label>
             </div>
             <div class="row margin-top-quarter" ng-if="withCard()">
@@ -45,17 +45,22 @@
             <div class="row margin-top-quarter" ng-if="withCard()">
                 <input focus-on="creditCardOwner" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.creditCardOwner' ng-required="true">
             </div>
-            
+
             <div class="row margin-top-half" ng-if="!withCard()&&!clientLogged()">
                 <label class="unselectable">Nom  *</label>
             </div>
             <div class="row margin-top-quarter" ng-if="!withCard()">
                 <input focus-on="clientName" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.clientName' ng-required="true">
             </div>
-            <div class="row margin-top-half">
+           
+
+
+
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6">
+             <div class="row margin-top-half">
                 <label class="unselectable">Email *</label>
-                <br>
-                (vous recevrez le rapport en PDF à cette adresse)
+                <br> (vous recevrez le rapport en PDF à cette adresse)
             </div>
             <div class="row margin-top-quarter">
                 <input ng-disabled="clientLogged()" focus-on="clientEmail" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.clientEmail' ng-required="true">
@@ -64,20 +69,12 @@
                 <label class="unselectable">Adresse de facturation</label>
             </div>
             <div class="row margin-top-quarter">
-                <input 
-                type="text" 
-                name="billingAddress"
-                address
-                class="diags-input btn-stack"
-                model="response" 
-                field="billingAddress"
-                placeholder="Ex: 102 rue Réaumur 75002 Paris, France"
-                >
+                <input type="text" name="billingAddress" address class="diags-input btn-stack" model="response" field="billingAddress" placeholder="Ex: 102 rue Réaumur 75002 Paris, France">
             </div>
-             <div class="row margin-top-half" ng-if="!withCard()">
+            <div class="row margin-top-half">
                 <label class="unselectable">Téléphone mobile  *</label>
             </div>
-            <div class="row margin-top-quarter" ng-if="!withCard()">
+            <div class="row margin-top-quarter">
                 <input focus-on="clientPhone" class="diags-input btn-stack" placeholder="0612131415" type="text" ng-model='response.clientPhone' ng-required="true">
             </div>
             <div class="row margin-top-half" ng-show="showGuessAccountControls()">
@@ -87,15 +84,19 @@
                 <pretty-checkbox color="blue" value="'1'" label="false" ng-model="data.isGuestAccount"></pretty-checkbox>
             </div>
 
-            <div class="row margin-top-half" ng-show="showGuessAccountControls() && showPwdControls()">
+            <div class="row payment-form__password" ng-show="showGuessAccountControls() && showPwdControls()">
                 <label class="unselectable">Password</label>
             </div>
             <div class="row margin-top-quarter" ng-show="showGuessAccountControls() && showPwdControls()">
                 <input focus-on="clientPassword" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.clientPassword' ng-required="false">
             </div>
+        </div>
 
 
-            <div class="row margin-top-half">
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12">
+            <div class="row payment-form__total">
                 <p class="unselectable payment-form__amount-label">Total</p>
             </div>
             <div class="row">
@@ -103,7 +104,6 @@
 
             </div>
         </div>
-
     </div>
     <div class="row  ng-scope">
         <div class="col-xs-12 col-sm-12">

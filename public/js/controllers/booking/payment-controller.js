@@ -58,7 +58,7 @@
                         .error(() => $rootScope.errorMessage('', 10000))
                         .on('validate', function(msg, apiError) {
 
-                            if (apiError.isEqual.ORDER_NOT_FOUND) {
+                            if (apiError&&apiError.isEqual.ORDER_NOT_FOUND) {
                                 $rootScope.infoMessage("Mise à jour des données de réservation, réessayer après la recharge");
                                 setTimeout(() => {
                                     window.location.reload();
