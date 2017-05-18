@@ -62,11 +62,13 @@ var EXPORT_ACTIONS = {
     CLIENT_ORDER_DELEGATED: CLIENT_ORDER_DELEGATED,
 
     CLIENT_ORDER_PAYMENT_SUCCESS: CLIENT_ORDER_PAYMENT_SUCCESS, //ctrl.order
+    CLIENT_ORDER_PAYMENT_SUCCESS_CHEQUE: CLIENT_ORDER_PAYMENT_SUCCESS_CHEQUE, //ctrl.order
     CLIENT_ORDER_QUOTATION: CLIENT_ORDER_QUOTATION, //ctrl.order
 
     DIAG_DIAG_ACCOUNT_ACTIVATED: DIAG_DIAG_ACCOUNT_ACTIVATED, //ctrl.user
     DIAG_DIAG_ACCOUNT_CREATED: DIAG_DIAG_ACCOUNT_CREATED, //ctrl.user
     DIAG_NEW_RDV: DIAG_NEW_RDV, //ctrl.order
+    DIAG_NEW_RDV_CHEQUE: DIAG_NEW_RDV_CHEQUE, //ctrl.order
     DIAG_RDV_CONFIRMED: DIAG_RDV_CONFIRMED, //ctrl.order
 
     LANDLORD_ORDER_PAYMENT_DELEGATED: LANDLORD_ORDER_PAYMENT_DELEGATED, //booking->payment
@@ -77,7 +79,7 @@ var EXPORT_ACTIONS = {
     sendDiagnosticalCustomEmail: (params, callback) => {
         if (callback) return callback('Not available');
         return new Promise((resolve, reject) => {
-            DIAGS_CUSTOM_NOTIFICATION(
+            addNotification(
                 params.type, params.data, (err, res) => {
                     if (err) return reject(err);
                     resolve(res);
@@ -95,7 +97,7 @@ require('../controllers/ctrl.notification').init(EXPORT_ACTIONS);
 var NOTIFICATION = ctrl('Notification').NOTIFICATION;
 
 
-function saveNotificationAndSendEmail(opt, resCb) {
+function addNotificationInternal(opt, resCb) {
     var html = opt.html || template(opt.templateName, opt.templateReplace);
     if (opt.subject) {
         if (process.env.companyName) {
@@ -234,8 +236,18 @@ function generateInvoiceAttachmentIfNecessary(data, t, cb) {
 
 
 
-function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notifItemType, moreOptions) {
-    return DIAGS_CUSTOM_EMAIL(data, cb, subject, type, to, NOTIFICATION[type], moreOptions);
+function addNotification(type, data, cb, subject, to, notifItem, notifItemType, moreOptions) {
+    addNotificationInternal({
+        attachment: data.attachment || null,
+        __notificationType: type,
+        _user: data._user,
+        from: moreOptions && moreOptions.from || undefined,
+        to: to,
+        subject: subject,
+        templateName: type,
+        templateReplace: replaceDiagnosticalData(data),
+        cb: cb
+    });
 }
 
 
@@ -243,7 +255,7 @@ function DIAGS_CUSTOM_NOTIFICATION(type, data, cb, subject, to, notifItem, notif
 //ADMIN//#1 OK ctrl.user
 function ADMIN_ADMIN_ACCOUNT_CREATED(data, cb) {
     //requires: _user 
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.ADMIN_ADMIN_ACCOUNT_CREATED, data, cb, "Your Admin Account is ready", data._user.email, data._user, 'User');
 }
 
@@ -252,7 +264,7 @@ function ADMIN_ADMIN_ACCOUNT_CREATED(data, cb) {
 //ADMIN//#2 OK ctrl.user
 function ADMIN_CLIENT_ACCOUNT_CREATED(data, cb) {
     //requires: _user _admin
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.ADMIN_CLIENT_ACCOUNT_CREATED, data, cb, "Nouveau client", data._admin.email, data._user, 'User');
 }
 
@@ -260,7 +272,7 @@ function ADMIN_CLIENT_ACCOUNT_CREATED(data, cb) {
 //ADMIN//#3 OK ctrl.user
 function ADMIN_DIAG_ACCOUNT_CREATED(data, cb) {
     //requires: _user _admin
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.ADMIN_DIAG_ACCOUNT_CREATED, data, cb, "Nouveau Diagnostiqueur", data._admin.email, data._user, 'User');
 }
 
@@ -329,7 +341,7 @@ function ALL_ADMINS_ASYNC_CUSTOM(type, opt) {
             cb: () => {}
         };
         Object.assign(sendPayload, opt.sendPayload(data));
-        saveNotificationAndSendEmail(sendPayload, () => {});
+        addNotificationInternal(sendPayload, () => {});
     }
 }
 
@@ -341,7 +353,7 @@ function ADMIN_DIPLOME_EXPIRATION(data, cb) {
     emailTriggerLogger.debug('ADMIN_DIPLOME_EXPIRATION=' + JSON.stringify(data));
     //data = {_admin,_diag,}
     //vars: ADMIN_NAME DIAG_NAME DIAG_DIPLOME_FILENAME DIAG_EDIT_URL
-    saveNotificationAndSendEmail({
+    addNotificationInternal({
         __notificationType: data.__notificationType,
         _user: data._diag,
         to: data._admin.email,
@@ -382,7 +394,7 @@ function ADMIN_NEW_CONTACT_FORM_MESSAGE(data, cb) {
 //ADMIN//#5 OK app.booking
 function ADMIN_NEW_CONTACT_FORM_MESSAGE_SINGLE(data, cb) {
     emailTriggerLogger.debug('ADMIN_NEW_CONTACT_FORM_MESSAGE_SINGLE=' + JSON.stringify(data));
-    saveNotificationAndSendEmail({
+    addNotificationInternal({
         __notificationType: NOTIFICATION.ADMIN_NEW_CONTACT_FORM_MESSAGE,
         _user: data._user,
         to: data._user.email,
@@ -404,7 +416,7 @@ function ADMIN_NEW_CONTACT_FORM_MESSAGE_SINGLE(data, cb) {
 function ADMIN_ORDER_PAYMENT_DELEGATED(data, cb) {
     //requires: _user _order
     var subject = dateTime(data._order.start) + '/' + data._order.address + " Paiement Délégué";
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.ADMIN_ORDER_PAYMENT_DELEGATED, data, cb, subject, data._user.email, data._order, 'Order');
 }
 
@@ -415,7 +427,7 @@ function ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS(data, cb) {
     if (data._order.notifications.ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS !== true) {
         statsActions.currentMonthTotalRevenueHT({}, (_err, _currentMonthTotalRevenueHT) => {
             data._order.currentMonthTotalRevenueHT = _currentMonthTotalRevenueHT;
-            DIAGS_CUSTOM_NOTIFICATION(
+            addNotification(
                 NOTIFICATION.ADMIN_ORDER_PAYMENT_PREPAID_SUCCESS, data, cb, 'Nouvelle commande prépayée', data._user.email, data._order, 'Order');
         });
     }
@@ -426,7 +438,7 @@ function ADMIN_ORDER_CREATED_SUCCESS(data, cb) {
     var subject = 'Paiement créée: ' + data._order.address + '/' + dateTime(data._order.start);
     statsActions.currentMonthTotalRevenueHT({}, (_err, _currentMonthTotalRevenueHT) => {
         data._order.currentMonthTotalRevenueHT = _currentMonthTotalRevenueHT;
-        DIAGS_CUSTOM_NOTIFICATION(
+        addNotification(
             NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, data, cb, subject, data._user.email, data._order, 'Order');
     });
 }
@@ -435,11 +447,17 @@ function ADMIN_ORDER_CREATED_SUCCESS(data, cb) {
 //ADMIN//#8 OK ctrl.order
 function ADMIN_ORDER_PAYMENT_SUCCESS(data, cb) {
     //requires: _user _order
-    var subject = 'Paiement confirmé: ' + data._order.address + '/' + dateTime(data._order.start);
+
+    var prefix = "Paiement confirmé: ";
+    if (data._order.paymentType === 'cheque') {
+        prefix = "RDB Chèque: ";
+    }
+
+    var subject = prefix + data._order.address + '/' + dateTime(data._order.start);
     if (data._order.notifications.ADMIN_ORDER_PAYMENT_SUCCESS !== true) {
         statsActions.currentMonthTotalRevenueHT({}, (_err, _currentMonthTotalRevenueHT) => {
             data._order.currentMonthTotalRevenueHT = _currentMonthTotalRevenueHT;
-            DIAGS_CUSTOM_NOTIFICATION(
+            addNotification(
                 NOTIFICATION.ADMIN_ORDER_PAYMENT_SUCCESS, data, cb, subject, data._user.email, data._order, 'Order');
         });
     }
@@ -449,7 +467,7 @@ function ADMIN_ORDER_PAYMENT_SUCCESS(data, cb) {
 //CLIENT//#1 OK ctrl.user
 function CLIENT_CLIENT_NEW_ACCOUNT(data, cb) {
     //requires: _user
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.CLIENT_CLIENT_NEW_ACCOUNT, data, cb, 'Bienvenue sur Diagnostical', data._user.email, data._user, 'User');
 }
 
@@ -459,7 +477,7 @@ function CLIENT_ORDER_DELEGATED(data, cb) {
     //generateInvoiceAttachmentIfNecessary(data, NOTIFICATION.CLIENT_ORDER_DELEGATED, (data) => {
     //requires: _user _order
     var subject = 'RDV en attente de paiement: ' + data._order.address + '/' + dateTime(data._order.start);
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.CLIENT_ORDER_DELEGATED, data, cb, subject, data._user.email, data._order, 'Order');
     //});
 }
@@ -468,7 +486,7 @@ function CLIENT_ORDER_DELEGATED(data, cb) {
 
 function CLIENT_ORDER_QUOTATION(data, cb) {
     //requires: _user _order
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.CLIENT_ORDER_QUOTATION, data, cb, 'devis Diagnostical', data._user.email, data._order, 'Order');
 }
 
@@ -478,14 +496,21 @@ function CLIENT_ORDER_PAYMENT_SUCCESS(data, cb) {
     //generateInvoiceAttachmentIfNecessary(data, NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, (data) => {
     //requires: _user _order
     console.log('DEBUG CLIENT_ORDER_PAYMENT_SUCCESS data 2', data !== undefined);
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, data, cb, 'Rendez-vous confirmé', data._user.email, data._order, 'Order');
     //});
 }
 
+function CLIENT_ORDER_PAYMENT_SUCCESS_CHEQUE(data, cb) {
+    addNotification(
+        NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS_CHEQUE, data, cb, 'Rendez-vous confirmé', data._user.email, data._order, 'Order');
+}
+
+
+
 
 function DIAG_DIAG_ACCOUNT_ACTIVATED(data, cb) {
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.DIAG_DIAG_ACCOUNT_ACTIVATED, data, cb, "Votre compte diagnostiqueur sur Diagnostical est activé !", data._user.email, data._user, 'User', {
             from: 'romain@diagnostical.fr (Romain de Diagnostical)'
         });
@@ -502,7 +527,7 @@ function DIAG_DIAG_ACCOUNT_CREATED(data, cb) {
     //fileName: fileName
     //};
 
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.DIAG_DIAG_ACCOUNT_CREATED, data, cb, "Plus qu’une étape pour démarrer sur Diagnostical", data._user.email, data._user, 'User', {
             from: 'pierre@diagnostical.fr (Pierre de Diagnostical)'
         });
@@ -513,9 +538,17 @@ function DIAG_NEW_RDV(data, cb) {
     //requires: _user _order
     data._order.address = removeCountryFromString(data._order.address);
     var subject = 'Nouveau RDV : ' + data._order.address + ' - ' + dateTime(data._order.start);
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.DIAG_NEW_RDV, data, cb, subject, data._user.email, data._order, 'Order');
 }
+
+function DIAG_NEW_RDV_CHEQUE(data, cb) {
+    data._order.address = removeCountryFromString(data._order.address);
+    var subject = 'Nouveau RDV : ' + data._order.address + ' - ' + dateTime(data._order.start);
+    addNotification(
+        NOTIFICATION.DIAG_NEW_RDV_CHEQUE, data, cb, subject, data._user.email, data._order, 'Order');
+}
+
 
 
 //DIAG//#3 OK ctrl.order
@@ -523,7 +556,7 @@ function DIAG_RDV_CONFIRMED(data, cb) {
     //requires: _user _order
     data._order.address = removeCountryFromString(data._order.address);
     var subject = 'RDV confirmé: ' + data._order.address + ' - ' + dateTime(data._order.start);
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.DIAG_RDV_CONFIRMED, data, cb, subject, data._user.email, data._order, 'Order');
 }
 
@@ -542,7 +575,7 @@ function LANDLORD_ORDER_PAYMENT_DELEGATED(data, cb) {
     });
     //requires: _user _order
     var subject = 'Diagnostic Réservé en attente de paiement';
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.LANDLORD_ORDER_PAYMENT_DELEGATED, data, cb, subject, data._order.landLordEmail, data._order, 'Order');
     //});
 }
@@ -551,7 +584,7 @@ function LANDLORD_ORDER_PAYMENT_DELEGATED(data, cb) {
 //LANDLORD//#2 OK ctrl.order
 function LANDLORD_ORDER_PAYMENT_SUCCESS(data, cb) {
     //requires: _user _order
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.LANDLORD_ORDER_PAYMENT_SUCCESS, data, cb, 'Rendez-vous confirmé', data._order.landLordEmail, data._order, 'Order');
 }
 
@@ -559,7 +592,7 @@ function LANDLORD_ORDER_PAYMENT_SUCCESS(data, cb) {
 //USER//#1 OK front->app.login
 function USER_PASSWORD_RESET(data, cb) {
     //requires: _user
-    DIAGS_CUSTOM_NOTIFICATION(
+    addNotification(
         NOTIFICATION.USER_PASSWORD_RESET, data, cb, "Password reset", data._user.email, data._user, 'User');
 }
 
@@ -571,19 +604,7 @@ function removeCountryFromString(string) {
     return string;
 }
 
-function DIAGS_CUSTOM_EMAIL(data, cb, _subject, templateName, _to, _type, moreOptions) {
-    saveNotificationAndSendEmail({
-        attachment: data.attachment || null,
-        __notificationType: _type,
-        _user: data._user,
-        from: moreOptions && moreOptions.from || undefined,
-        to: _to,
-        subject: _subject,
-        templateName: templateName,
-        templateReplace: replaceDiagnosticalData(data),
-        cb: cb
-    });
-}
+
 
 
 

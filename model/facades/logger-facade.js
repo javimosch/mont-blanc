@@ -155,7 +155,7 @@ function create(data, cb) {
             log(Array.prototype.slice.call(arguments), 'DEBUG');
         },
         infoSave: function() {
-            log(Array.prototype.slice.call(arguments), 'DEBUG', true);
+            log(Array.prototype.slice.call(arguments), 'DEBUG', true,false);
         },
         warnTerminal: function() {
             log(Array.prototype.slice.call(arguments), 'WARN', false, false);

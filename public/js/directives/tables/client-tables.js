@@ -201,16 +201,20 @@
                     }, {
                         label: "Siret",
                         name: "siret"
-                    },{
+                    }, {
                         label: "Guest Account?",
                         name: "fixedTel",
-                        format: (v, item) => item.isGuestAccount?"Yes":""
+                        format: (v, item) => item.isGuestAccount ? "Yes" : ""
                     }, {
                         label: "Created At",
                         name: "createdAt",
                         format: (v, item) => r.momentDateTime(v)
                     }],
-                    items: []
+                    items: [],
+                    records: {
+                        label: 'Records',
+                        show: true
+                    }
                 };
 
             }

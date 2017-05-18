@@ -61,6 +61,14 @@ function addNotification(type, data) {
                 logger.debugTerminal('Already processed, flag present was legacy');
                 return resolve(RESPONSE_ALREADY_PROCESSED());
             }
+            else {
+
+                //Bug fix: misspelled type alredy in prod. (Wrong: DIAGS_)
+                if ((type === 'DIAG_DIAG_ACCOUNT_ACTIVATED' && attachDocument.notifications['DIAGS_DIAG_ACCOUNT_ACTIVATED']) || (type === 'DIAG_DIAG_ACCOUNT_CREATED' && attachDocument.notifications['DIAGS_DIAG_ACCOUNT_CREATED'])) {
+                    logger.debugTerminal('Already processed, flag present was legacy');
+                    return resolve(RESPONSE_ALREADY_PROCESSED());
+                }
+            }
 
             if (data.to) {
                 var legacyImprovedHashKey = type + "_" + data.to;

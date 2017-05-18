@@ -382,7 +382,7 @@ function fetchLandlordAccount(data, cb) {
                         cellPhone: data.cellPhone || account.cellPhone, //update if any
                         firstName: account.firstName || data.firstName //update if any (priority given to existing value)
                     }
-                });
+                }).exec();
 
                 Response.json(account, cb, resolve);
             }

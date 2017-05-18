@@ -118,7 +118,7 @@
                         }, {
                             label: "Activated",
                             name: "commission",
-                            format: (v, item) => !item.disabled
+                            format: (v, item) => item.disabled?"":"Yes"
                         }, {
                             label: "Wallet ID",
                             name: "wallet",

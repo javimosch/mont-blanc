@@ -198,29 +198,29 @@ function payUsingCheque(data, routeCallback) {
     if (!PaymentProcessor.isAllowed(data)) {
         return PaymentProcessor.allowPayment(data, () => payUsingCheque(data, routeCallback), () => routeCallback('La commande est déjà confirmée.'), err => routeCallback(err));
     }
-    paymentLogger.debug('Cheque validations ok');
+    //paymentLogger.debug('Cheque validations ok');
     //QUEUE
     if (PaymentProcessor.inQueue(data)) {
         return routeCallback('La commande est déjà en cours de traitement.');
     }
     PaymentProcessor.addToQueue(data);
     var cb = PaymentProcessor.createCallback(data, routeCallback);
-    paymentLogger.debug('Cheque to queue');
+    //paymentLogger.debug('Cheque to queue');
     //OK
     PaymentHelper.updateDetailsAsync(data.orderId, null, data.billingAddress);
     PaymentHelper.associateClient(data.orderId, data).then(() => {
-        paymentLogger.debug('Cheque client associated');
+        //paymentLogger.debug('Cheque client associated');
         getNextInvoiceNumber({
             _id: data.orderId
         }, function(err, invoiceNumber) {
             if (err) return cb(err);
-            paymentLogger.debug('Cheque invoice number', invoiceNumber);
+            //paymentLogger.debug('Cheque invoice number', invoiceNumber);
             moveToPrepaid({
                 _id: data.orderId,
                 number: invoiceNumber,
                 paymentType: 'cheque'
             }, function(_err, res) {
-                paymentLogger.debug('Cheque to prepaid');
+                //paymentLogger.debug('Cheque to prepaid');
                 return cb(err, true);
             });
 
@@ -378,11 +378,11 @@ function moveToPrepaid(data, cb) {
     }
     save(payload, function(err, order) {
         if (err) {
-            LogSave('Order moving to prepaid error', 'error', err);
+            dbLogger.withData(err).errorSave("Order moving to prepaid error'");
             return cb(err);
         }
         else {
-            LogSave('Order moved to prepaid', 'info', payload);
+            dbLogger.withData(payload).infoSave('Order moved to prepaid');
             return cb(null, payload);
         }
     }, requiredKeys);
@@ -417,7 +417,7 @@ function associateClient(clientId, orderId) {
                 if (!order._client) return reject("associateClient: order _client do not exist");
                 if (!order._client.email) return reject("associateClient: order _client.email do not exist");
 
-                dbLogger.debug('Client ', order._client.email, 'associated to order', order._id, '(', order.address, ')');
+                //dbLogger.debug('Client ', order._client.email, 'associated to order', order._id, '(', order.address, ')');
 
                 //dbLogger.debug('associateClient:update:resolved');
 
@@ -596,19 +596,17 @@ function save(data, cb, customRequiredKeys) {
                 ctrl('Order').log('save:prevStatus=' + prevStatus);
                 ctrl('Order').log('save:currentStatus=' + _order.status);
 
-                _order.notification = _order.notifications || {};
+                _order.notifications = _order.notifications || {};
 
                 //on status change
                 if (prevStatus == 'created' && _order.status == 'prepaid') { //PREPAID DURING BOOKING
-                    // sendNotificationToEachAdmin(_order);
                     sendDiagRDVNotification(_order);
                 }
                 if (prevStatus == 'ordered' && _order.status == 'prepaid') { //PAID AFTER DELEGATION
-                    // sendNotificationToEachAdmin(_order);
                     sendDiagConfirmedNotification(_order);
                 }
                 if (prevStatus !== 'prepaid' && _order.status === 'prepaid') {
-                    sendClientNotifications(_order);
+                    sendPrepaidClientNotifications(_order);
                 }
 
 
@@ -626,13 +624,18 @@ function save(data, cb, customRequiredKeys) {
     }
 
     function sendDiagRDVNotification(_order) {
-        //DIAG_NEW_RDV //DIAG//#2 OK ctrl.order
-        notificationFacade.addNotification(NOTIFICATION.DIAG_NEW_RDV, {
+        var data = {
             _user: _order._diag,
             _order: _order,
             to: _order._diag.email,
             attachDocument: _order
-        }).catch(notificationLogger.error);
+        };
+        if (_order.paymentType === 'cheque') {
+            notificationFacade.addNotification(NOTIFICATION.DIAG_NEW_RDV_CHEQUE, data).catch(notificationLogger.error);
+        }
+        else {
+            notificationFacade.addNotification(NOTIFICATION.DIAG_NEW_RDV, data).catch(notificationLogger.error);
+        }
     }
 
     function sendDiagConfirmedNotification(_order) {
@@ -648,7 +651,7 @@ function save(data, cb, customRequiredKeys) {
         });
     }
 
-    function sendClientNotifications(_order) {
+    function sendPrepaidClientNotifications(_order) {
         ctrl('User').get({
             _id: _order._client._id || _order._client
         }, (_err, _client) => {
@@ -679,14 +682,22 @@ function save(data, cb, customRequiredKeys) {
                     }
                 }
                 else {
-                    //CLIENT_ORDER_PAYMENT_SUCCESS //CLIENT//#3
-                    notificationFacade.addNotification(NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, {
+
+                    var data = {
                         _user: _client,
                         _order: _order,
                         attachmentPDFHTML: html,
                         to: _client.email,
                         attachDocument: _order
-                    }).catch(notificationLogger.error);
+                    };
+                    if (_order.paymentType === 'cheque') {
+                        notificationFacade.addNotification(NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS_CHEQUE, data).catch(notificationLogger.error);
+                    }
+                    else {
+                        notificationFacade.addNotification(NOTIFICATION.CLIENT_ORDER_PAYMENT_SUCCESS, data).catch(notificationLogger.error);
+                    }
+
+
                 }
 
             });
