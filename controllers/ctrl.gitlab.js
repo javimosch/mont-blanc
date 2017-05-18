@@ -21,7 +21,7 @@ function getTags(data, cb) {
         //logger.debug('Requesting tags....');
 
         var URL = 'https://gitlab.com/api/v4/projects/' + data.projectId + '/repository/tags?private_token=' + API_KEY;
-
+        logger.debugTerminal('querying gitlab...', URL);
         resolver.http().get({
             url: URL,
             json: true
@@ -32,12 +32,17 @@ function getTags(data, cb) {
             }
 
             if (data) {
+                logger.debugTerminal('gitlab says', data);
+
                 data = resolver._().map(data, obj => {
                     return {
                         name: obj.name,
                         description: obj.release && obj.release.description || obj.message || ""
                     }
                 });
+            }
+            else {
+                logger.debugTerminal('gitlab says', res.body);
             }
 
             //logger.debug('getTags response', data);
