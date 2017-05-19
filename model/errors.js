@@ -26,6 +26,7 @@ module.exports = {
     VALIDATE_FIELD_VALID_ORDER: createInvalidRequestErrorFor('order, order._id'),
 
     ORDER_NOT_FOUND: {
+        message:"Order not found",
         code: 500
     },
     EMAIL_NOT_FOUND: {
@@ -33,6 +34,7 @@ module.exports = {
         code: 600
     },
     INVALID_VARIABLE_AT_PATH_ERROR: {
+        message:"Invalid variable at path",
         code: 70
     },
     DATABASE_OBJECT_MISMATCH_ERROR: {

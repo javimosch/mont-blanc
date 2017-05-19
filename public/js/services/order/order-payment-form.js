@@ -195,6 +195,17 @@
         }
 
 
+        function getPrice(order) {
+            var price = parseFloat(order.price);
+            var rta = parseFloat(order.price).toFixed(2).toString();
+            $log.info('Price is',rta);
+            if (order.paymentType === 'cheque') {
+                rta = parseFloat(price + (price * 5 / 100)).toFixed(2).toString();
+                $log.info('Price was increased by %5',rta);
+            }
+            return rta;
+        }
+
 
         var self = {
             isProcessing: () => isProcessing,
@@ -218,7 +229,7 @@
                     //if (!order._client.wallet) return emit('validate', 'order _client wallet required');//wallet is replaced with masterWallet (IMMOCAL) see: #206
 
                     open({
-                        amount: parseFloat(order.price).toFixed(2).toString(),
+                        amount: getPrice(order),
                         paymentType: order.paymentType
                     }, function(formResponse, closeModal) {
 
@@ -257,12 +268,13 @@
                             return payUsingCheque();
                         }
 
-                        reject("Invalid payment type "+order.paymentType);
+                        reject("Invalid payment type " + order.paymentType);
                         closeModal();
 
                         function payUsingCheque() {
                             backendApi.Order.custom('payUsingCheque', {
                                 orderId: order._id,
+                                price:getPrice(order),
                                 clientId: clientId,
                                 clientEmail: formResponse.clientEmail,
                                 clientName: formResponse.clientName,
@@ -270,17 +282,18 @@
                                 clientPassword: formResponse.clientPassword
                             }).then(function() {
                                 isProcessing = false;
+                                order.price = getPrice(order); //cheque price assigned
                                 resolve(true);
                                 closeModal();
                             }).error(function(res) {
                                 isProcessing = false;
                                 reject(res);
                                 closeModal();
-                            }).on('validate', function(msg) {
+                            }).on('validate', function(msg,apiError) {
                                 isProcessing = false;
-                                emit('validate', msg);
+                                emit('validate', msg,apiError);
                                 closeModal();
-                            }).on('validate:error',(err)=>emit('validate:error',err));
+                            }).on('validate:error', (err) => emit('validate:error', err));
                         }
 
                         function payUsingCard() {
@@ -330,7 +343,7 @@
                                 isProcessing = false;
                                 emit('validate', msg);
                                 closeModal();
-                            }).on('validate:error',(err)=>emit('validate:error',err));
+                            }).on('validate:error', (err) => emit('validate:error', err));
                         }
 
 

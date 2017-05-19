@@ -214,10 +214,12 @@ function payUsingCheque(data, routeCallback) {
             _id: data.orderId
         }, function(err, invoiceNumber) {
             if (err) return cb(err);
+            
             //paymentLogger.debug('Cheque invoice number', invoiceNumber);
             moveToPrepaid({
                 _id: data.orderId,
                 number: invoiceNumber,
+                price:data.price,
                 paymentType: 'cheque'
             }, function(_err, res) {
                 //paymentLogger.debug('Cheque to prepaid');
@@ -375,6 +377,7 @@ function moveToPrepaid(data, cb) {
         requiredKeys.splice(requiredKeys.indexOf('walletTransId'), 1);
         requiredKeys.push('paymentType');
         payload.paymentType = 'cheque';
+        payload.price = data.price; //+5%
     }
     save(payload, function(err, order) {
         if (err) {
