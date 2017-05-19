@@ -235,6 +235,11 @@
                 if (s.item.diplomesInfo[_id]) {
                     s.item.diplomesInfo[_id].expirationDateNotificationSended = false;
                     s.item.diplomesInfo[_id].expirationDateNotificationEnabled = false;
+                    s.item.diplomesInfo[_id].expirationDate = s.diplomesData[_id].info.expirationDate;
+                    db.ctrl('User', 'update', {
+                        _id: s.item._id,
+                        diplomesInfo: s.item.diplomesInfo
+                    });
                 }
             };
             s.diplomesExpirationDateNotificationEnabled = (_id) => {
@@ -261,7 +266,7 @@
                     _id: s.item._id,
                     diplomesInfo: s.item.diplomesInfo
                 }).then(d => {
-                    r.notify('Expiration Date Notification Enabled', 'info');
+                    r.infoMessage('Expiration Date Notification Enabled', 15000);
                 });
             };
 
@@ -278,27 +283,30 @@
                     infoToDelete.forEach(k => {
                         delete s.item.diplomesInfo[k];
                     });
+
+                    $log.info('diplomesUpdate: info to delete', _.clone(infoToDelete));
+
                     db.ctrl('User', 'update', {
                         _id: s.item._id,
                         diplomesInfo: s.item.diplomesInfo
                     });
 
-                    $log.debug('diplomesUpdate');
+                    $log.info('diplomesUpdate: looping diplomes');
 
                     s.item.diplomes.forEach((_id, k) => {
 
-                        $log.debug('File find', _id);
+                        $log.info('diplomesUpdate: fetching file', _id);
                         db.ctrl('File', 'find', {
                             _id: _id
                         }).then(data => {
-
-                            $log.debug('File find', data);
-
                             var file = data.result;
                             if (data.ok && file) {
+
+                                $log.info('diplomesUpdate: file', _id);
+
                                 s.item.diplomesInfo = s.item.diplomesInfo || {};
                                 if (!s.item.diplomesInfo[_id]) {
-                                    //
+                                    $log.info('diplomesUpdate: file lack info, creating', _id);
                                     s.item.diplomesInfo[_id] = {
                                         //obtentionDate: data.info.obtentionDate,
                                         //expirationDate: data.info.expirationDate,
@@ -310,15 +318,18 @@
                                         _id: s.item._id,
                                         diplomesInfo: s.item.diplomesInfo
                                     });
-                                    //
-                                    console.info('diplome-info-created', _id);
                                 }
                                 else {
+                                    $log.info('diplomesUpdate: file has info, updating name', _id);
                                     s.item.diplomesInfo[_id].filename = file.filename;
                                 }
-                                //file = Object.assign(file, s.item.diplomesInfo && s.item.diplomesInfo[file._id] || {});
 
-                                s.diplomesData[file._id] = s.diplomesDataCreate(file);
+                                //copy diplomesInfo values to file
+                                for (var x in s.item.diplomesInfo[_id]) {
+                                    file[x] = s.item.diplomesInfo[_id][x];
+                                }
+
+                                s.diplomesData[_id] = s.diplomesDataCreate(file);
                             }
                             else {
                                 //if is unable to fetch the diplome, we assume that was removed from the db, so we delete the reference.
@@ -416,12 +427,23 @@
                         formatYear: 'yy',
                         startingDay: 1
                     },
-                    info: info || {
+                    info: {
                         filename: 'Sélectionnez le fichier',
                     }
                 };
-                o.info.obtentionDate = isFinite(new Date(o.info.obtentionDate)) && new Date(o.info.obtentionDate) || new Date();
-                o.info.expirationDate = isFinite(new Date(o.info.expirationDate)) && new Date(o.info.expirationDate) || new Date();
+
+                if (info) {
+                    o.info.obtentionDate = isFinite(new Date(info.obtentionDate)) && new Date(info.obtentionDate);
+                    o.info.expirationDate = isFinite(new Date(info.expirationDate)) && new Date(info.expirationDate);
+                    $log.info('diplomesDataCreate: from existing info',info);
+                }
+                else {
+                    o.info.obtentionDate = new Date();
+                    o.info.expirationDate = new Date();
+                    $log.info('diplomesDataCreate: from scratch');
+                }
+
+
                 return o;
             };
 
