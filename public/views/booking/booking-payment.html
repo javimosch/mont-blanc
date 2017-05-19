@@ -173,17 +173,17 @@
                             <p style="font-style: italic;">En cliquant sur Confirmer & Payer vous acceptez nos <a href="https://www.diagnostical.fr/#/conditions-generales-utilisation" target="_blank">Conditions Générales d'Utilisation</a>.</p>
                         </div>
                         <div class="row margin-top-quarter">
-                            <button class="btn btn-xl bg-madison" on-click-scroll-top ng-click="pay()" ng-disabled="state.working() || !order._id">Confirmer & Payer</button>
+                            <button class="btn btn-xl bg-madison payment-view__cheque-button" on-click-scroll-top ng-click="pay()" ng-disabled="state.working() || !order._id">Confirmer & Payer<br/> par carte bleue</button>
                         </div>
                         <div class="row margin-top-half">
-                            <button class="btn btn-xl bg-madison payment-view__cheque-button" on-click-scroll-top ng-click="payWithCheque()" ng-disabled="state.working() || !order._id">Confirmez le RDV<br/>et payez par chèque</button>
+                            <button class="btn btn-xl bg-madison payment-view__cheque-button" on-click-scroll-top ng-click="payWithCheque()" ng-disabled="state.working() || !order._id">Confirmer & payer<br/> par chèque (Prix +5%)</button>
                         </div>
                         
                         <div class="row margin-top-half">
                             <button class="btn btn-xl bg-madison" on-click-scroll-top ng-show="showDelegateOrderElements()" ng-click="delegate()" ng-disabled="state.working() || !order._id">Déléguer au propriétaire</button>
                         </div>
                         <div class="row margin-top-half">
-                            <button class="btn btn-xl bg-madison" on-click-scroll-top ng-click="quote()" ng-disabled="state.working() || !order._id">Devis par mail</button>
+                            <button class="btn btn-xl bg-madison payment-view__cheque-button" on-click-scroll-top ng-click="quote()" ng-disabled="state.working() || !order._id">Recevoir le devis<br/> par mail</button>
                         </div>
                     </div>
                 </div>
