@@ -3,7 +3,7 @@
         <h3 class="modal-title payment-form__title">Payer la commande</h3>
     </div>
     <div class="row margin-top-none">
-        <div class="col-xs-12 col-sm-12 col-md-6" ng-if="withCard()">
+        <div class="col-xs-12 col-sm-12 col-md-12" ng-if="withCard()">
             <div class="row margin-top-half" ng-if="withCard()">
                 <label class="unselectable">Carte de paiement</label>
             </div>
@@ -47,7 +47,10 @@
             </div>
 
         </div>
-        <div class="{[{!withCard()?'col-xs-12 col-sm-12 col-md-6 col-md-offset-3':'col-xs-12 col-sm-12 col-md-6'}]}">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+        <!-- 
+            class="!withCard()?'col-xs-12 col-sm-12 col-md-6 col-md-offset-3':'col-xs-12 col-sm-12 col-md-6'"
+          -->
             <div class="row margin-top-half" ng-if="!withCard()&&!clientLogged()">
                 <label class="unselectable">Nom  *</label>
             </div>

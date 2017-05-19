@@ -16,12 +16,14 @@
     overflow-y: auto;
 }
 
+
 @media screen and (min-width: 768px) {
     .order-payment-form-modal {
         max-width: 500px;
     }
 }
 
+/*
 @media screen and (min-width: 992px) {
     .payment-form__total{
         margin-top:2em;
@@ -35,7 +37,7 @@
     .order-payment-form-modal {
         max-width: 1200px;
     }
-}
+}*/
 
 .order-payment-form-modal .row {
     margin-left: 0px!important;
