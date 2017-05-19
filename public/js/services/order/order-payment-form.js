@@ -198,10 +198,8 @@
         function getPrice(order) {
             var price = parseFloat(order.price);
             var rta = parseFloat(order.price).toFixed(2).toString();
-            $log.info('Price is',rta);
             if (order.paymentType === 'cheque') {
                 rta = parseFloat(price + (price * 5 / 100)).toFixed(2).toString();
-                $log.info('Price was increased by %5',rta);
             }
             return rta;
         }

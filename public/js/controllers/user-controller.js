@@ -200,15 +200,11 @@
                 function _save() {
 
                     if (s.item.userType == 'client' && s.item.clientType == 'landlord') {
-                        if (s.item.password != undefined && s.item.isGuestAccount) {
-                            backendApi.users.setAsNormalAccount({
-                                _id: s.item._id
-                            });
-                        }
-                        if (!s.item.password && !s.item.isGuestAccount) {
-                            backendApi.users.setAsGuestAccount({
-                                _id: s.item._id
-                            });
+                        
+                        if(!s.item.password){
+                            s.item.isGuestAccount=true;
+                        }else{
+                            s.item.isGuestAccount=false;
                         }
                     }
 
