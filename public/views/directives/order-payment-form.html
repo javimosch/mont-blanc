@@ -54,8 +54,8 @@
             <div class="row margin-top-half" ng-if="!withCard()&&!clientLogged()">
                 <label class="unselectable">Nom  *</label>
             </div>
-            <div class="row margin-top-quarter" ng-if="!withCard()">
-                <input focus-on="clientName" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.clientName' ng-required="true">
+            <div class="row margin-top-quarter" ng-if="!withCard()&&!clientLogged()">
+                <input focus-on="clientName" class="diags-input btn-stack" placeholder="" type="text" ng-model='response.clientName' ng-required="false">
             </div>
              <div class="row margin-top-half">
                 <label class="unselectable">Email *</label>

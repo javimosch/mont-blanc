@@ -10,7 +10,9 @@
             //Expose controller for debugging
             $U.exposeGlobal('ccc', $scope);
 
-            $scope.item = {};
+            $scope.item = {
+                diags:{}
+            };
 
             appSettings.syncAll().then(() => {
                 Object.assign($scope, appSettings.localData);
