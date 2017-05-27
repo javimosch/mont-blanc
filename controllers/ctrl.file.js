@@ -1,3 +1,4 @@
+var mongoose = require('mongoose');
 var req = (n) => require(process.cwd() + '/model/' + n);
 var atob = require('atob'); //decode
 var btoa = require('btoa'); //encode
