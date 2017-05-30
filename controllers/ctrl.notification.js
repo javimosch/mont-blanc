@@ -107,9 +107,6 @@ var _actions = {
             );
         });
         return schema;
-    },
-    deleteAll: (data, cb) => {
-        return resolver.db().model.notification.remove({}).then((r) => cb(null, r)).catch(cb);
     }
 };
 Object.keys(NOTIFICATION).forEach(KEY => {

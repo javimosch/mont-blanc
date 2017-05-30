@@ -325,6 +325,10 @@ exports.create = function(modelName, m) {
     function removeWhen(data, cb) {
         return remove(data, cb);
     }
+    
+    function deleteAll(data, cb) {
+        return remove({}, cb);
+    }
 
     function removeAll(data, cb, requiredKeys) {
         check(data, requiredKeys || ['ids'], (err, r) => {
@@ -481,6 +485,7 @@ exports.create = function(modelName, m) {
         update: update,
         remove: remove,
         removeWhen: removeWhen,
+        deleteAll:deleteAll,
         get: get,
         getById: getById,
         check: check,

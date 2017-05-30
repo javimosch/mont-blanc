@@ -56,7 +56,7 @@ module.exports = {
                 _id: {
                     $in: this._notifications
                 }
-            }).then(middlewareLogger.debugTerminal);
+            }).exec().catch(middlewareLogger.errorTerminal);
             next();
         });
 
@@ -214,12 +214,12 @@ function payUsingCheque(data, routeCallback) {
             _id: data.orderId
         }, function(err, invoiceNumber) {
             if (err) return cb(err);
-            
+
             //paymentLogger.debug('Cheque invoice number', invoiceNumber);
             moveToPrepaid({
                 _id: data.orderId,
                 number: invoiceNumber,
-                price:data.price,
+                price: data.price,
                 paymentType: 'cheque'
             }, function(_err, res) {
                 //paymentLogger.debug('Cheque to prepaid');
@@ -859,9 +859,13 @@ function saveWithEmail(data, cb) {
 
 function postSave() {
     var doc = this;
+
+    if (!doc) return middlewareLogger.errorSave('Document expected');
+    var wasCreated = Date.now() - (new Date(doc.createdAt).getTime()) < 1000;
+
     resolver.co(function*() {
         doc = yield doc.populate("_client").populate("_diag").execPopulate();
-        if (!doc._client.isSystemUser) {
+        if (!doc._client.isSystemUser && wasCreated) {
             everyAdmin((_admin) => {
                 notificationFacade.addNotification(NOTIFICATION.ADMIN_ORDER_CREATED_SUCCESS, {
                     _order: doc,

@@ -627,13 +627,13 @@ module.exports = {
             middlewareLogger.debugTerminal('Removing notifications associated to user');
             this.model('Notification').remove({
                 _user: this._id
-            }).then(middlewareLogger.debugTerminal);
+            }).exec().catch(middlewareLogger.errorTerminal);
 
             this.model('Notification').remove({
                 _id: {
                     $in: this._notifications
                 }
-            }).then(middlewareLogger.debugTerminal);
+            }).exec().catch(middlewareLogger.errorTerminal);
 
 
             next();
@@ -697,6 +697,16 @@ function getClientAccountCreatedNotificationType(userType) {
 
 function postSave() {
     var doc = this;
+
+    if (!doc) return middlewareLogger.errorSave('Document expected');
+    if (doc.isSystemUser) return;
+
+    if (Date.now() - (new Date(doc.createdAt).getTime()) > 1000) {
+        //Document was already in db, created notifications skip
+        //return middlewareLogger.debugTerminal('Notifications skip. Creation difference is', Date.now() - (new Date(doc.createdAt).getTime()));
+        return;
+    }
+
     resolver.co(function*() {
         //admin, diag, client, account created (admins)
         everyAdmin((errr, _admin) => {
