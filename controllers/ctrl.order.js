@@ -885,5 +885,14 @@ function postSave() {
                 }).then(notificationLogger.debugTerminal).catch(notificationLogger.error);
             });
         }
+        notificationLogger.debugTerminal('Status is ',doc.status);
+        if (doc.status === 'completed') {
+            notificationFacade.addNotification('CLIENT_COMPLETED_ORDER', {
+                _user: doc._client,
+                _order: doc,
+                to: doc._client.email,
+                attachDocument: doc
+            }).then(notificationLogger.debugTerminal).catch(notificationLogger.error);
+        }
     }).then(notificationLogger.debugTerminal).catch(notificationLogger.error);
 }

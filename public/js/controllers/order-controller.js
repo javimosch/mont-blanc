@@ -86,8 +86,9 @@
 
             $scope.pdfSaveSuccess = () => {
                 if ($scope.item.status == 'prepaid' && $scope.pdfAllPdfUploaded()) {
-                    console.warn('every pdf was uploaded. Turning order to completed.');
+                    $log.info('every pdf was uploaded. Turning order to completed.');
                     $scope.item.status = 'completed';
+                    $scope.save();
                 }
             };
             $scope.pdfSave = (code) => {
@@ -178,8 +179,8 @@
                             db.ctrl('File', 'find', {
                                 _id: file._id
                             }).then(res => {
-                                var $rootScope = res.ok && res.result;
-                                if (!r) {
+                                var findResult = res.ok && res.result;
+                                if (!findResult) {
                                     delete $scope.item.files[code];
                                 }
                                 cbHell.next();

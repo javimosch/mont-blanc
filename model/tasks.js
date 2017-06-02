@@ -5,7 +5,7 @@ var tasks = [
     req('task.diags-remove-unpaid-orders'),
     req('task-remove-expired-work-execeptions'),
     req('check-and-send-unsended-notifications-task'),
-    req('completed-order-notifications-task'),
+    //req('completed-order-notifications-task'),
     req('sync-guest-account-task'),
     req('remove-orphan-notifications')
 ];

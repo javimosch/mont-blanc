@@ -58,23 +58,22 @@ function addNotification(type, data) {
         //Legacy validation: flag present in the attachDocument
         if (attachDocument.notifications) {
             if (attachDocument.notifications[type]) {
-                logger.debugTerminal('Already processed, flag present was legacy');
-                return resolve(RESPONSE_ALREADY_PROCESSED());
+                return resolve(RESPONSE_ALREADY_PROCESSED_LEGACY(type));
             }
             else {
 
                 //Bug fix: misspelled type alredy in prod. (Wrong: DIAGS_)
                 if ((type === 'DIAG_DIAG_ACCOUNT_ACTIVATED' && attachDocument.notifications['DIAGS_DIAG_ACCOUNT_ACTIVATED']) || (type === 'DIAG_DIAG_ACCOUNT_CREATED' && attachDocument.notifications['DIAGS_DIAG_ACCOUNT_CREATED'])) {
-                    logger.debugTerminal('Already processed, flag present was legacy');
-                    return resolve(RESPONSE_ALREADY_PROCESSED());
+                    return resolve(RESPONSE_ALREADY_PROCESSED_LEGACY(type));
                 }
             }
 
             if (data.to) {
-                var legacyImprovedHashKey = type + "_" + data.to;
+                var cut = data.to.indexOf('.') == -1 ? undefined : data.to.indexOf('.');
+                var legacyImprovedHashKey = type + "_" + data.to.substring(0, cut);
                 if (attachDocument.notifications[legacyImprovedHashKey]) {
                     logger.debugTerminal('Already processed, flag present was legacy improved');
-                    return resolve(RESPONSE_ALREADY_PROCESSED());
+                    return resolve(RESPONSE_ALREADY_PROCESSED(type));
                 }
             }
         }
@@ -95,8 +94,8 @@ function addNotification(type, data) {
             }
         }).execPopulate().then(doc => {
             if (doc._notifications.length !== 0) {
-                //logger.debug('validation halt: reference in _notifications', data.to, type);
-                return resolve(RESPONSE_ALREADY_PROCESSED());
+                logger.debugTerminal('validation halt: reference in _notifications', data.to, type);
+                return resolve(RESPONSE_ALREADY_PROCESSED(type));
             }
             else {
                 return withValidatedNotification();
@@ -156,8 +155,17 @@ function RESPONSE_ERROR(msg) {
     };
 }
 
-function RESPONSE_ALREADY_PROCESSED() {
+function RESPONSE_ALREADY_PROCESSED(type) {
+    logger.debugTerminal('Already processed:', type);
     return {
-        message: "Already processed"
+        message: "Already processed (" + type + ")"
+    };
+}
+
+
+function RESPONSE_ALREADY_PROCESSED_LEGACY(type) {
+    logger.debugTerminal('Already processed, flag present was legacy:', type);
+    return {
+        message: "Already processed (" + type + ")"
     };
 }

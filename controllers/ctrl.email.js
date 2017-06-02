@@ -64,6 +64,8 @@ var EXPORT_ACTIONS = {
     CLIENT_ORDER_PAYMENT_SUCCESS: CLIENT_ORDER_PAYMENT_SUCCESS, //ctrl.order
     CLIENT_ORDER_PAYMENT_SUCCESS_CHEQUE: CLIENT_ORDER_PAYMENT_SUCCESS_CHEQUE, //ctrl.order
     CLIENT_ORDER_QUOTATION: CLIENT_ORDER_QUOTATION, //ctrl.order
+    
+    CLIENT_COMPLETED_ORDER:CLIENT_COMPLETED_ORDER, //ctrl.order
 
     DIAG_DIAG_ACCOUNT_ACTIVATED: DIAG_DIAG_ACCOUNT_ACTIVATED, //ctrl.user
     DIAG_DIAG_ACCOUNT_CREATED: DIAG_DIAG_ACCOUNT_CREATED, //ctrl.user
@@ -483,6 +485,13 @@ function CLIENT_ORDER_DELEGATED(data, cb) {
 }
 
 
+function CLIENT_COMPLETED_ORDER(data,cb){
+    //requires: _user _order
+    addNotification(
+        NOTIFICATION.CLIENT_COMPLETED_ORDER, data, cb, 'Votre diagnostic est disponible en téléchargement !', data._user.email, data._order, 'Order',{
+            from:EMAIL_FROM_ALTERNATIVE
+        });
+}
 
 function CLIENT_ORDER_QUOTATION(data, cb) {
     //requires: _user _order
