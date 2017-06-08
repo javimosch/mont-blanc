@@ -29,7 +29,7 @@ module.exports = {
             setStatic(folder, 'public', app, express);
         });
 
-        var publicFiles = ['app.bundle.js', 'app.bundle.booking.js', 'config.json', 'data.json', 'sitemap.xml', 'preprod.html'];
+        var publicFiles = ['app.bundle.js', 'app.bundle.booking.js', 'config.json', 'data.json', 'sitemap.xml', 'preprod.html','26D4AD87308CB9A1ED87F81FE9DDD388.txt'];
         publicFiles.forEach(fileName => {
             exposeFile(fileName, 'public', app);
         })
