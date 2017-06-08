@@ -27,6 +27,8 @@
                     isFormValid: function() {
                         var modalScope = this;
                         if (!modalScope.response.email) return false;
+                        if (!modalScope.response.fullName) return false;
+                        if (!modalScope.response.mobile) return false;
                         return true;
                     }
                 }
