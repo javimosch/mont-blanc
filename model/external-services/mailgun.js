@@ -5,6 +5,8 @@ var Logger = selectController('Log').createLogger({
     name: "EXTERNAL-SERVICES",
     category: "MAILGUN"
 });
+var path = require('path');
+var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
 var mime = require('mime-types');
 var fs = require('fs');
 var mailgun = require('mailgun-js')({
@@ -15,10 +17,24 @@ var getFile = require(process.cwd() + '/model/utils').getFile;
 var mailcomposer = require('mailcomposer');
 exports.send = send;
 
+var logger = selectController('Log').createLogger({
+    name: "EXTERNAL",
+    category: "MAILGUN"
+});
+
 function send(options, cb) {
     if (!options.html && options.templateUrl) {
         options.html = getFile(options.html);
     }
+
+    if (!options.html && options.contents) {
+        options.html = options.contents;
+    }
+
+    if (!options.body && !options.html) {
+        logger.withData(options).errorSave('body or html field required.');
+    }
+
     var _options = {
         from: options.from,
         to: options.to,
