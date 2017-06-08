@@ -1,7 +1,6 @@
 var path = require('path');
 var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
 module.exports = {
-    name: "sync-guest-account-task",
     interval: 1000 * 60 * 60 * 24, //each day
     handler: handler,
     runAtStartup: true,
@@ -11,7 +10,7 @@ module.exports = {
 function handler() {
     var logger = resolver.loggerFacade({
         name: "TASKS",
-        category: "sync-guest-account-flag"
+        category: "SYNC-GA"
     });
     resolver.co(function*() {
         var response = yield resolver.db().model.user.update({

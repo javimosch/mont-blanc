@@ -1,7 +1,7 @@
 var req = (n) => require(process.cwd() + '/model/tasks/' + n);
 var tasks = [
     req('task.diplomeExpiration'),
-    req('task.deleteTemporalFiles'),
+    req('delete-temporal-files-task'),
     req('task.diags-remove-unpaid-orders'),
     req('task-remove-expired-work-execeptions'),
     req('check-and-send-unsended-notifications-task'),

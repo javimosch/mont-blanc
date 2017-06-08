@@ -118,7 +118,7 @@ function create(data, cb) {
         if (VERBOSE_LEVEL == 'ERROR' && level == 'WARN') return;
         var originalArgs = _.clone(args);
 
-        args.unshift(createSpaces((CAT_PREFIX || '') + "", 10));
+        args.unshift(createSpaces(((CAT_PREFIX && CAT_PREFIX.toUpperCase()) || '') + "", 10));
         args.unshift(createSpaces((LOG_PREFIX || 'OTHER') + "", 10));
         args.unshift('' + moment().format('HH:mm DDMMYY') + "");
         args.unshift(createSpaces("[" + level.toUpperCase() + "]",8));

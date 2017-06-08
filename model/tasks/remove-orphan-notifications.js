@@ -1,7 +1,6 @@
 var path = require('path');
 var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
 var state = module.exports = {
-    name: "remove-orphan-notifications",
     interval: 1000 * 60 * 60 * 24, //each day
     handler: handler,
     runAtStartup: true,
@@ -11,7 +10,7 @@ var state = module.exports = {
 function handler() {
     var logger = resolver.loggerFacade({
         name: "TASKS",
-        category: state.name
+        category: 'ORPHAN-N'
     });
     resolver.co(function*() {
         var docs = yield resolver.db().model.notification.find({}).select('_id').exec();
