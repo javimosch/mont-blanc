@@ -633,12 +633,11 @@
                 $scope.__keysWhereSelectLabel = () => $scope.__keysWhereSelectLabelVal || $scope.__keysWhereSelectFirstItem();
                 $scope.__keysWhereSelect = (key, val) => {
                     //$log.debug(val);
-                    $scope.item.keysWhere = val && val() || undefined;
+                    $scope.item.keysWhere = val ? val() : undefined;
                 };
 
                 function watchKeysWhere() {
                     $scope.$watch('item.keysWhere', function(val) {
-                        if ($scope.item._id) return;
                         if (val == undefined) {
                             return $scope.__keysWhereSelectLabelVal = 'Ou ?';
                         }
@@ -1102,9 +1101,9 @@
                 };
 
 
-                function canDelete(){
+                function canDelete() {
                     if (!_.includes(['ordered', 'created'], $scope.item.status)) {
-                        if($scope.item.paymentType === 'cheque') return true;
+                        if ($scope.item.paymentType === 'cheque') return true;
                         return false;
                     }
                     return true;
