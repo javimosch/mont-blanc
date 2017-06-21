@@ -19,6 +19,8 @@
         
         'ui.bootstrap',
         'ui.bootstrap.datetimepicker',
+        
+        'betterSelect',
 
         'srv.crud',
         'srv.diagPrice',

@@ -1,5 +1,5 @@
 <!--COMPILE_WITH_HANDLEBARS-->
-<div class="diags-bg" ng-controller="payment-controller"> 
+<div class="diags-bg" ng-controller="payment-controller">
     <div class="diags-content container diags-selection padding-none">
         <div class="row diags-bg-block-40 hidden-xs"></div>
         <div class="row diag-row padding-top-one">
@@ -51,7 +51,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row margin-top-half diags-botticelli-wrapper ">
                             <div class="col-xs-12 padding-none margin-none">
                                 <div class="row padding-none margin-none relative">
@@ -64,8 +64,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                       
+
+
                         <div class="row margin-top-half">
                             <div class="row padding-none light-14">
                                 Liste de Diagnostics :
@@ -117,18 +117,7 @@
                             </p>
                         </div>
                         <div class="row margin-top-one">
-                            <!-- KEYS WHERE -->
-                            <div class="dropdown with-caret">
-                                <button class="btn btn-default diags-input dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    <span>{[{__keysWhereSelectLabel()}]}</span>
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu diags-select" aria-labelledby="dropdownMenu1">
-                                    <li ng-repeat="(k,v) in __keysWhereItems">
-                                        <a class="link" ng-click="__keysWhereSelect(k,v)">{[{k}]}</a>
-                                    </li>
-                                </ul>
-                            </div>
+                            <bselect options="keysWhereOptions" placeholder="Ou?"></bselect>
                         </div>
                         <div class="row margin-top-half">
                             <input ng-disabled="order.keysWhere!=='other'" data-address model="order" field="keysAddress" class="diags-input" placeholder="Adresse">
@@ -178,7 +167,7 @@
                         <div class="row margin-top-half">
                             <button class="btn btn-xl bg-madison payment-view__cheque-button" on-click-scroll-top ng-click="payWithCheque()" ng-disabled="state.working() || !order._id">Confirmer & payer<br/> par chèque (Prix +5%)</button>
                         </div>
-                        
+
                         <div class="row margin-top-half">
                             <button class="btn btn-xl bg-madison" on-click-scroll-top ng-show="showDelegateOrderElements()" ng-click="delegate()" ng-disabled="state.working() || !order._id">Déléguer au propriétaire</button>
                         </div>
@@ -199,7 +188,7 @@
         <div class="row diag-row margin-top-one padding-bottom-two">
             <div class="col-md-12 ">
                 <p class="stripe-message">
-                    <span class="fnt-30 text-top">*</span> 
+                    <span class="fnt-30 text-top">*</span>
                     <span class="">
                         <out class="inline-childs-divs" dynamic-block code="BOOKING_STRIPE_TEXT">
                                         {{{text.BOOKING_STRIPE_TEXT}}}

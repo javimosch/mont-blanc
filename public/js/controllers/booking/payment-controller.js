@@ -58,7 +58,7 @@
                         .error(() => $rootScope.errorMessage('', 10000))
                         .on('validate', function(msg, apiError) {
 
-                            if (apiError&&apiError.isEqual.ORDER_NOT_FOUND) {
+                            if (apiError && apiError.isEqual.ORDER_NOT_FOUND) {
                                 $rootScope.infoMessage("Mise à jour des données de réservation, réessayer après la recharge");
                                 setTimeout(() => {
                                     window.location.reload();
@@ -189,91 +189,66 @@
                 $rootScope.sessionMetadata({
                     booking: {}
                 });
-                orderHelper.clearCache(); 
+                orderHelper.clearCache();
                 $rootScope.routeParams({
                     _order: order,
                     _client: localSession.getData()
                 });
                 $rootScope.route('order-confirm');
-            };
+            }
 
 
 
 
-
-            //KEYS WHERE Version2 --------------------------------
-            $scope.__keysWhereItems = {};
-            $scope.__keysWhereGetItems = () => {
-                if (!$scope._user || !$scope._user.clientType) return {
-                    'Ou ?': () => '',
-                    'Sur Place': () => order.address,
-                    'Other': () => 'other'
-                };
-                if (orderHelper.isLandLord(order)) {
-                    return {
-                        'Ou ?': () => '',
-                        'Sur Place': () => order.address,
-                        'Votre adresse': () => $scope._user.address, //when landlord
-                        'Other': () => 'other'
-                    };
-                }
-                else {
-                    return {
-                        'Ou ?': () => '',
-                        'Sur Place': () => order.address,
-                        'Votre adresse': () => $scope._user.address, //when not-landlord
-                        'Résidence Principal': () => order.landLordAddress, //when not-landlord 
-                        'Other': () => 'other'
-                    };
-                }
-            };
-            $scope.$watch('_user', function(val) {
-                $scope.__keysWhereItems = $scope.__keysWhereGetItems();
-            }, true);
-            $scope.__keysWhereSelectFirstItem = () => $scope.__keysWhereItems && Object.keys($scope.__keysWhereItems)[0] || "Loading";
-            $scope.__keysWhereSelectLabel = () => $scope.__keysWhereSelectLabelVal || $scope.__keysWhereSelectFirstItem();
-            $scope.__keysWhereSelect = (key, val) => {
-                order.keysWhere = val && val() || undefined;
-            };
-            $scope.$watch('order.keysWhere', function(val) {
-                if (val == undefined) {
+            $scope.keysWhereOptions = {
+                default: 1,
+                items: [{
+                    label: "Sur Place",
+                    value: 1
+                }, {
+                    label: 'Votre adresse',
+                    value: 3,
+                    show: () => !(!$scope._user || !$scope._user.clientType)
+                }, {
+                    label: 'Résidence Principal',
+                    value: 4,
+                    show: () => !orderHelper.isLandLord(order) && !(!$scope._user || !$scope._user.clientType)
+                }, {
+                    label: 'Other',
+                    value: 2
+                }],
+                change: function(selectedValue) {
+                    $log.info('CHANGE!', selectedValue);
                     $rootScope.dom(() => {
-                        order.keysAddress = 'non disponible';
-                    });
-                    $rootScope.dom(() => {
-                        order.keysAddress = undefined;
-                    }, 2000);
-                    //
-                    return $scope.__keysWhereSelectLabelVal = 'Ou ?';
+                        order.keysAddress = (function(selectedValue) {
+                            switch (selectedValue) {
+                                case 1: //sur place
+                                    return order.address;
+                                case 2: //other
+                                    return '';
+                                case 3: //votre addrese
+                                    return $scope._user.address;
+                                case 4: //residence
+                                    return order.landLordAddress;
+                            }
+                        })(selectedValue);
+                        if ($scope.keysWhere == 1) {
+                            $scope.__keysTimeFromSelect($rootScope.momentTime(order.start), new Date(moment(order.start).toString()));
+                            $scope.__keysTimeToSelect($rootScope.momentTime(order.start), new Date(moment(order.start).toString()));
+                        }
+                        else {
+                            var m = moment(order.start).hours(8);
+                            $scope.__keysTimeFromSelect($rootScope.momentTime(m), new Date(m.toString()));
+                            m = moment(order.start).subtract(30, 'minutes');
+                            $scope.__keysTimeToSelect($rootScope.momentTime(m), new Date(m.toString()));
+                        }
+                    }, 200);
                 }
-                Object.keys($scope.__keysWhereItems).forEach(k => {
-                    if ($scope.__keysWhereItems[k]() == val) {
-                        $scope.__keysWhereSelectLabelVal = k;
-                    }
-                });
-                order.keysAddress = (val == 'other') ? '' : val;
+            };
 
 
-                $rootScope.dom(() => {
-                    //auto set from
-                    if ($scope.__keysWhereSelectLabel() == "Sur Place") {
-                        $scope.__keysTimeFromSelect($rootScope.momentTime(order.start), new Date(moment(order.start).toString()));
-                    }
-                    else {
-                        var m = moment(order.start).hours(8);
-                        $scope.__keysTimeFromSelect($rootScope.momentTime(m), new Date(m.toString()));
-                    }
-                    //auto set to
-                    if ($scope.__keysWhereSelectLabel() == "Sur Place") {
-                        $scope.__keysTimeToSelect($rootScope.momentTime(order.start), new Date(moment(order.start).toString()));
-                    }
-                    else {
-                        var m = moment(order.start).subtract(30, 'minutes');
-                        $scope.__keysTimeToSelect($rootScope.momentTime(m), new Date(m.toString()));
-                    }
-                }, 200);
 
-            });
+
 
             //KEYS TIME FROM ------------------------------------------------------------------------------------------------
             $scope.__keysTimeFromItems = {};

@@ -720,6 +720,8 @@
                         $timeout(function() {
                             if (scope.model[scope.field] !== '') {
                                 elem.geocomplete("find", scope.model[scope.field]);
+                            }else{
+                                elem.val('');
                             }
                             scope.$apply();
                         });
