@@ -218,7 +218,6 @@
                     value: 2
                 }],
                 change: function(selectedValue) {
-                    $log.info('CHANGE!', selectedValue);
                     $rootScope.dom(() => {
                         order.keysAddress = (function(selectedValue) {
                             switch (selectedValue) {
