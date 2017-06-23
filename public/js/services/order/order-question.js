@@ -236,7 +236,8 @@
             function checkGazInstallationAnswer() {
                 if (_.includes(['Oui, Plus de 15 ans', 'Oui, Moins de 15 ans'], ctrlScope.item.info.gasInstallation)) {
                     toggleVisibility('gaz', true);
-                    if (isSelling() && ctrlScope.item.info.gasInstallation === 'Oui, Plus de 15 ans') {
+                    //isSelling() && 
+                    if (ctrlScope.item.info.gasInstallation === 'Oui, Plus de 15 ans') {
                         var buildingType = ctrlScope.item.info.buildingType;
                         if (buildingType != BUILDING_TYPE.COMMERCIAL) {
                             ctrlScope.item.diags.gaz = true;
@@ -258,7 +259,8 @@
             function checkElectricityAnswer() {
                 if (_.includes(['Plus de 15 ans', 'Moins de 15 ans'], ctrlScope.item.info.electricityInstallation)) {
                     toggleVisibility('electricity', true);
-                    if (isSelling() && ctrlScope.item.info.electricityInstallation === 'Plus de 15 ans') {
+                    //isSelling() && 
+                    if (ctrlScope.item.info.electricityInstallation === 'Plus de 15 ans') {
                         var buildingType = ctrlScope.item.info.buildingType;
                         if (buildingType != BUILDING_TYPE.COMMERCIAL) {
                             ctrlScope.item.diags.electricity = true;
