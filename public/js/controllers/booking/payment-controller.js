@@ -219,28 +219,32 @@
                 }],
                 change: function(selectedValue) {
                     $rootScope.dom(() => {
-                        order.keysAddress = (function(selectedValue) {
-                            switch (selectedValue) {
-                                case 1: //sur place
-                                    return order.address;
-                                case 2: //other
-                                    return '';
-                                case 3: //votre addrese
-                                    return $scope._user.address;
-                                case 4: //residence
-                                    return order.landLordAddress;
-                            }
-                        })(selectedValue);
-                        if ($scope.keysWhere == 1) {
-                            $scope.__keysTimeFromSelect($rootScope.momentTime(order.start), new Date(moment(order.start).toString()));
-                            $scope.__keysTimeToSelect($rootScope.momentTime(order.start), new Date(moment(order.start).toString()));
-                        }
-                        else {
+                        if (!$scope.keysWhere === 1) {
                             var m = moment(order.start).hours(8);
                             $scope.__keysTimeFromSelect($rootScope.momentTime(m), new Date(m.toString()));
                             m = moment(order.start).subtract(30, 'minutes');
                             $scope.__keysTimeToSelect($rootScope.momentTime(m), new Date(m.toString()));
                         }
+                        switch (selectedValue) {
+                            case 1: //sur place
+                                order.keysAddress = order.address;
+                                $scope.__keysTimeFromSelect($rootScope.momentTime(order.start), new Date(moment(order.start).toString()));
+                                $scope.__keysTimeToSelect($rootScope.momentTime(order.start), new Date(moment(order.start).toString()));
+                                break;
+                            case 2: //other
+                                order.keysAddress = '';
+                                break;
+                            case 3: //votre addrese
+                                order.keysAddress = $scope._user.address;
+                                break;
+                            case 4: //residence
+                                order.keysAddress = order.landLordAddress;
+                                break;
+                            default:
+                                order.keysAddress = '';
+                                break;
+                        }
+
                     }, 200);
                 }
             };
