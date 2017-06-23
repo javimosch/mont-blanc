@@ -28,7 +28,7 @@
                         var modalScope = this;
                         if (!modalScope.response.email) return false;
                         if (!modalScope.response.fullName) return false;
-                        if (!modalScope.response.mobile) return false;
+                        if (!modalScope.response.phone) return false;
                         return true;
                     }
                 }
