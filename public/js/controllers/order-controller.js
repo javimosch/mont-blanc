@@ -6,8 +6,8 @@
     /*global $D*/
     angular.module('order-feature-module').controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'rdvSlotService', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi', 'localData',
-        function(db, $scope, $rootScope, params, rdvSlotService, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData) {
+        'server', '$scope', '$rootScope', '$routeParams', 'rdvSlotService', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi', 'localData','orderHelper',
+        function(db, $scope, $rootScope, params, rdvSlotService, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData,orderHelper) {
             $rootScope.setCurrentCtrl($scope);
 
 
@@ -486,9 +486,8 @@
                 };
 
                 $scope.orderDescription = () => {
-                    var d = $D.createOrderDescription($scope.item);
-                    $scope.item.info.description = d;
-                    return d;
+                    $scope.item.info.description = orderHelper.getDescription($scope.item);
+                    return $scope.item.info.description;
                 };
 
 
