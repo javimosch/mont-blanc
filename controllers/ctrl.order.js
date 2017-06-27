@@ -1,15 +1,14 @@
 var path = require('path');
-var mongoose = require('../model/db').mongoose;
 var atob = require('atob'); //decode
 var btoa = require('btoa'); //encode
 var moment = require('moment');
 var Promise = require('promise');
 var _ = require('lodash');
-var generatePassword = require("password-maker");
-var validate = require('../model/validator').validate;
-var handleMissingKeys = require('../model/validator').handleMissingKeys;
+//var generatePassword = require("password-maker");
+//var validate = require('../model/validator').validate;
+//var handleMissingKeys = require('../model/validator').handleMissingKeys;
 var ctrl = require('../model/db.controller').create;
-var utils = require('../model/utils');
+//var utils = require('../model/utils');
 var NOTIFICATION = ctrl('Notification').NOTIFICATION;
 var apiError = require(path.join(process.cwd(), 'model/errors'));
 var ResponseFacade = require(path.join(process.cwd(), 'model/facades/response-facade'));
@@ -87,7 +86,7 @@ module.exports = {
             middlewareLogger.debugTerminal('POST/UPDATE', operation.result);
         });
         schema.post('findOneAndUpdate', function(doc) {
-            if(!doc)return;
+            if (!doc) return;
             middlewareLogger.debugTerminal('POST/findOneAndUpdate', doc._id);
             postSave.apply(doc);
         });
@@ -197,8 +196,21 @@ function payUsingCheque(data, routeCallback) {
     if (!data.orderId) return routeCallback('orderId field required');
     if (!data.clientEmail) return routeCallback('clientId or clientEmail required');
     if (!PaymentProcessor.isAllowed(data)) {
-        return PaymentProcessor.allowPayment(data, () => payUsingCheque(data, routeCallback), () => routeCallback('La commande est déjà confirmée.'), err => routeCallback(err));
+
     }
+
+    if (!PaymentProcessor.isAllowed(data)) {
+        if (data.coupon && data.clientEmail) {
+            return resolver.controllers().user.validateCoupon({
+                _id: data.coupon,
+                email: data.clientEmail
+            }).then(() => payUsingChequeAllowPayment(data, routeCallback)).catch(err => routeCallback(err.stack ? err + " STACK:" + err.stack : err));
+        }
+        else {
+            return payUsingChequeAllowPayment(data, routeCallback);
+        }
+    }
+
     //paymentLogger.debug('Cheque validations ok');
     //QUEUE
     if (PaymentProcessor.inQueue(data)) {
@@ -221,7 +233,8 @@ function payUsingCheque(data, routeCallback) {
                 _id: data.orderId,
                 number: invoiceNumber,
                 price: data.price,
-                paymentType: 'cheque'
+                paymentType: 'cheque',
+                coupon: data.coupon
             }, function(_err, res) {
                 //paymentLogger.debug('Cheque to prepaid');
                 return cb(err, true);
@@ -229,6 +242,14 @@ function payUsingCheque(data, routeCallback) {
 
         });
     });
+}
+
+function payUsingChequeAllowPayment(data, routeCallback) {
+    return PaymentProcessor.allowPayment(data, () => payUsingCheque(data, routeCallback), () => routeCallback('La commande est déjà confirmée.'), err => routeCallback(err));
+}
+
+function payUsingCardAllowPayment(data, routeCallback) {
+    return PaymentProcessor.allowPayment(data, () => payUsingCard(data, routeCallback), () => routeCallback('Order already paid.'), err => routeCallback(err));
 }
 
 function payUsingCard(data, routeCallback) {
@@ -253,8 +274,17 @@ function payUsingCard(data, routeCallback) {
         return routeCallback('Tecnical wallet for debit required');
     }
     if (!PaymentProcessor.isAllowed(data)) {
-        return PaymentProcessor.allowPayment(data, () => payUsingCard(data, routeCallback), () => routeCallback('Order already paid.'), err => routeCallback(err));
+        if (data.coupon && secretData.clientEmail) {
+            return resolver.controllers().user.validateCoupon({
+                _id: data.coupon,
+                email: data.clientEmail
+            }).then(() => payUsingCardAllowPayment(data, routeCallback)).catch(routeCallback);
+        }
+        else {
+            return payUsingCardAllowPayment(data, routeCallback);
+        }
     }
+
     //QUEUE
     if (PaymentProcessor.inQueue(data)) {
         return routeCallback('Order payment is already being processed.');
@@ -285,7 +315,8 @@ function payUsingCard(data, routeCallback) {
                 moveToPrepaid({
                     _id: data.orderId,
                     walletTransId: LWRES.TRANS.HPAY.ID,
-                    number: invoiceNumber
+                    number: invoiceNumber,
+                    coupon: data.coupon
                 }, function(_err, res) {
                     paymentLogger.debug('P2P Lookup');
                     //step 3  p2p to diag wallet 
@@ -380,14 +411,32 @@ function moveToPrepaid(data, cb) {
         payload.paymentType = 'cheque';
         payload.price = data.price; //+5%
     }
+    if (data.coupon) {
+        payload._coupon = data.coupon;
+    }
     save(payload, function(err, order) {
         if (err) {
             dbLogger.withData(err).errorSave("Order moving to prepaid error'");
             return cb(err);
         }
         else {
-            dbLogger.withData(payload).infoSave('Order moved to prepaid');
-            return cb(null, payload);
+
+            //if coupon was used, we link the order
+            if (data.coupon) {
+                resolver.controllers().coupons.useCoupon({
+                    _id: data.coupon,
+                    orderId: data._id
+                }).then(() => {
+                    dbLogger.withData(payload).infoSave('Order moved to prepaid (coupon)');
+                    return cb(null, payload);
+                }).catch(err => cb(err.stack ? err + " STACK:" + err.stack : err));
+            }
+            else {
+                dbLogger.withData(payload).infoSave('Order moved to prepaid');
+                return cb(null, payload);
+            }
+
+
         }
     }, requiredKeys);
 }
@@ -886,7 +935,7 @@ function postSave() {
                 }).then(notificationLogger.debugTerminal).catch(notificationLogger.error);
             });
         }
-        notificationLogger.debugTerminal('Status is ',doc.status);
+        notificationLogger.debugTerminal('Status is ', doc.status);
         if (doc.status === 'completed') {
             notificationFacade.addNotification('CLIENT_COMPLETED_ORDER', {
                 _user: doc._client,

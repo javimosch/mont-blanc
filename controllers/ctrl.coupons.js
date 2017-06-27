@@ -44,6 +44,22 @@ module.exports = {
         });
         cb(null, codes[0]);
     },
+    useCoupon: (data, cb) => {
+        return resolver.coWrap(function*() {
+            if (!data.orderId) throw Error('orderId required');
+            if (!data._id) throw Error('_id (couponId) required');
+            logger.debug('Updating coupong to used', data._id, data.orderId);
+            yield resolver.controllers().coupons.model.update({
+                _id: data._id
+            }, {
+                $set: {
+                    _order: data.orderId,
+                    used: true
+                }
+            });
+            return resolver.Promise.resolve(true);
+        })();
+    },
     configureSchema: (schema) => {
         return schema;
     }

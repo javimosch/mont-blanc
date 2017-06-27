@@ -22,10 +22,10 @@
                     <label>Code</label>
                 </div>
                 <div class="row  margin-top-half">
-                    <input ng-disabled="state.working()" ng-model="item.code" class="diags-input" placeholder="" ng-required="true">
+                    <input ng-disabled="state.working() || item._id" ng-model="item.code" class="diags-input" placeholder="" ng-required="true">
 
                 </div>
-                <div class="row  margin-top-quarter">
+                <div class="row  margin-top-quarter" ng-show="!item._id">
                     <button class="btn diags-btn btn-sm bg-azure-radiance" ng-disabled="state.working()" ng-click="generateCode()">Generate</button>
                 </div>
 
@@ -54,10 +54,10 @@
                 </div>
 
                 <!--ORDER-->
-                <div class="row margin-top-one" ng-show="getOrder()">
+                <div class="row margin-top-one" ng-show="getOrderLink()">
                     <label>Order</label>
                 </div>
-                <div class="row  margin-top-half" ng-show="getOrder()" ng-bind="getOrder()">
+                <div class="row  margin-top-half" ng-show="getOrderLink()" bind-html-compile="getOrderLink()">
                 </div>
 
                 <div class="row margin-top-one dev-block" ng-if="isDevEnv()">

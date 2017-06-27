@@ -158,7 +158,7 @@
 
             </div>
         </form>
-        <div class="row diags-row margin-bottom-two">
+        <div class="row diags-row margin-bottom-two" ng-if="userIs('admin')">
             <coupons-table user-id="item._id"></coupons-table>
         </div>
         <div class="row diags-row margin-bottom-two">

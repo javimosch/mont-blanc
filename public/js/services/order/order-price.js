@@ -207,7 +207,7 @@
             getPriceTTCWithDiscountCoupon: function(k) {
                 var rta = this.getPriceTTCBeforeDiscountCoupon(k);
                 if (settings.couponDiscount && rta > 0) {
-                    return rta + (rta * settings.couponDiscount) / 100;
+                    return rta - ((rta * settings.couponDiscount) / 100);
                 }
                 return rta;
             },

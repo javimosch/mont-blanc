@@ -45,6 +45,8 @@
                 name: "clients/edit/:id"
             }, {
                 name: "logs/edit/:id"
+            }, {
+                name: "coupons/edit/:id"
             }];
         };
 

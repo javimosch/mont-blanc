@@ -15,6 +15,7 @@ var self = {
     coWrap: (handler) => co.wrap(handler),
     db: () => require(path.join(process.cwd(), 'model/db')),
     ctrl: (name) => require(path.join(process.cwd(), 'model/db.controller')).create(name),
+    controllers: () => require(path.join(process.cwd(), 'model/db.controller')).controllers,
     env: () => require(path.join(process.cwd(), 'model/config')),
     orderFacade: () => require(path.join(process.cwd(), 'model/facades/order-facade')),
     mailFacade: () => require(path.join(process.cwd(), 'model/facades/mail-facade')),

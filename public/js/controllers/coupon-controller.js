@@ -16,14 +16,19 @@
         }
 
         function fetch() {
-            backendApi.coupons.fetchById($scope.item._id).on('validate', handleValidation).then(handleSuccess).catch(handleError).then(res => $scope.item = res.result);
+            backendApi.coupons.get({
+                _id:$routeParams.id.toString(),
+                __populate:{
+                    _order:"info"
+                }
+            }).on('validate', handleValidation).then(handleSuccess).catch(handleError).then(res => $scope.item = res.result);
         }
 
         function setDefaults() {
             $scope.item._user = localSession.getMetadata().selectedClient._id;
         }
 
-        $scope.getOrderLink = () => $scope.item._order ? "<a class='btn diags-btn btn-sm bg-tomato' href='orders/edit/" + $scope.item._order + "'>Link</a>" : false;
+        $scope.getOrderLink = () => $scope.item._order && $scope.item._order._id ? "<a class='' href='orders/edit/" + $scope.item._order._id + "'>"+$rootScope.momentDateTime($scope.item._order.start)+' '+$scope.item._order.info.description+"</a>" : false;
         $scope.getUsed = () => $scope.item.used ? "Yes" : "No";
         $scope.getOwnerEmail = () => localSession.getMetadata().selectedClient && localSession.getMetadata().selectedClient.email;
         $scope.item = {};

@@ -299,6 +299,13 @@
             <div class="row margin-top-quarter">
                 <input ng-disabled="true" type="text" class="diags-input" ng-value="item.vatPrice">
             </div>
+            
+            <div class="row margin-top-one" ng-show="showDiscountCoupon()">
+                <label class="unselectable">Discount coupon</label>
+            </div>
+            <div class="row margin-top-quarter" ng-show="showDiscountCoupon()">
+                <a ng-href="coupons/edit/{[{item._coupon._id}]}" ng-bind="item._coupon.description+' ('+item._coupon.discount+'%)'"></a>
+            </div>
 
 
         </div>

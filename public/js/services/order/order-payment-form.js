@@ -271,6 +271,7 @@
 
                         function payUsingCheque() {
                             backendApi.Order.custom('payUsingCheque', {
+                                coupon:order._coupon,
                                 orderId: order._id,
                                 price:getPrice(order),
                                 clientId: clientId,
@@ -296,6 +297,7 @@
 
                         function payUsingCard() {
                             var payload = {
+                                coupon:order._coupon,
                                 wallet: order._client.wallet,
                                 cardType: formResponse.cardType,
                                 cardNumber: formResponse.cardNumber,

@@ -20,17 +20,17 @@
                     backendApi.coupons.findByCode($scope.couponCode.toUpperCase()).on('validate', $log.warn).catch($log.error).then(res => {
                         $scope.coupon = res.result && res.result[0];
                         if (!$scope.coupon) return;
-
                         $scope.order.couponDiscount = $scope.coupon.discount;
+                        $scope.order._coupon = $scope.coupon._id;
                         createFromCache($scope.order); //this will regenerate the order with new price
-
                     });
                 }
                 else {
-                    $scope.order.couponDiscount = undefined;
-                    createFromCache($scope.order); //this will regenerate the order with new price
+                    if ($scope.order.couponDiscount !== undefined) {
+                        $scope.order.couponDiscount = undefined;
+                        createFromCache($scope.order); //this will regenerate the order with new price
+                    }
                 }
-                $log.info($scope.couponCode, $scope.couponCode.length);
             });
 
 
@@ -83,6 +83,10 @@
                                     window.location.reload();
                                 }, 1500);
                                 return;
+                            }
+                            
+                            if(apiError && apiError.isEqual.COUPON_ALREADY_USED){
+                                return $rootScope.infoMessage(apiError.genericMessage.replace('(BACKEND)',''));
                             }
 
                             return $rootScope.warningMessage(msg, 10000);
