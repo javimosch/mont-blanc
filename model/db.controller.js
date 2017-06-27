@@ -26,6 +26,7 @@ register('deploy', null, false);
 register('sockets', null, false);
 register('ssh', null, false);
 register('gitlab', null, false);
+register('reports', null, false);
 
 
 function camelize(str) {
@@ -34,15 +35,15 @@ function camelize(str) {
     }).replace(/\s+/g, '');
 }
 
-function register(name, ctrlPath, hasModel) {
-    hasModel = hasModel === undefined ? true : hasModel;
+function register(name, ctrlPath, isMongoCollection) {
+    isMongoCollection = isMongoCollection === undefined ? true : isMongoCollection;
     ctrlPath = ctrlPath || 'controllers/ctrl.' + name.toLowerCase();
-    controllers[camelize(name)] = create(name, hasModel); //require(path.join(process.cwd(), ctrlPath));
+    controllers[camelize(name)] = create(name, isMongoCollection); //require(path.join(process.cwd(), ctrlPath));
     //var obj = create(name, hasModel);
 }
 
-function create(name, hasModel) {
-    hasModel = hasModel === undefined ? true : hasModel;
+function create(name, isMongoCollection) {
+    isMongoCollection = isMongoCollection === undefined ? true : isMongoCollection;
     if (controllers[name]) return controllers[name];
     var controllerPath = 'controllers/ctrl.' + name.toLowerCase();
     var specialActions = {};
@@ -56,22 +57,23 @@ function create(name, hasModel) {
 
     var actions = {};
 
-    if (specialActions.configureSchema) {
 
-        //console.log('db.controller', 'configureSchema', name);
 
-        var schemaDef = require(path.join(process.cwd(), 'schemas/' + name.toLowerCase() + "-schema")).def;
-        var schema = specialActions.configureSchema(resolver.db().createSchema(name, schemaDef)) || null;
-        if (!schema) {
-            console.log('controller', name, 'configureSchema must return the schema');
-            process.exit(1);
+    if (isMongoCollection) {
+
+        if (specialActions.configureSchema) {
+            //console.log('db.controller', 'configureSchema', name);
+            var schemaDef = require(path.join(process.cwd(), 'schemas/' + name.toLowerCase() + "-schema")).def;
+            var schema = specialActions.configureSchema(resolver.db().createSchema(name, schemaDef)) || null;
+            if (!schema) {
+                console.log('controller', name, 'configureSchema must return the schema');
+                process.exit(1);
+            }
+            //console.log('DB.CONTROLLER REGISTER MODEL ',name,schema!=null)
+            resolver.db().registerModel(name, schema);
+            delete specialActions.configureSchema;
         }
-        //console.log('DB.CONTROLLER REGISTER MODEL ',name,schema!=null)
-        resolver.db().registerModel(name, schema);
-        delete specialActions.configureSchema;
-    }
 
-    if (hasModel) {
         var coreActions = createDbActions(name);
         Object.assign(actions, coreActions);
         actions.core = coreActions;

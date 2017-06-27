@@ -79,7 +79,7 @@
             };
 
 
-            $scope.showDiscountCoupon = ()=>$scope.item && $scope.item._coupon._id;
+            $scope.showDiscountCoupon = ()=>$scope.item && $scope.item._coupon && $scope.item._coupon._id;
 
             $scope.moveDateBackward = () => {
                 $scope.item.start = moment().subtract(1, 'days');
@@ -489,6 +489,7 @@
                 };
 
                 $scope.orderDescription = () => {
+                    if(!$scope.item || !$scope.item.info) return '';
                     $scope.item.info.description = orderHelper.getDescription($scope.item);
                     return $scope.item.info.description;
                 };
