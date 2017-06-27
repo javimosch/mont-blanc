@@ -178,6 +178,10 @@ srv.config(['$routeProvider', '$locationProvider',
         when('/clients/edit/:id', {
             templateUrl: 'views/diags/backoffice/client/client.edit.html'
         }).
+        
+        when('/coupons/edit/:id', {
+            templateUrl: 'views/coupons/coupon-edit.html'
+        }).
 
 
 

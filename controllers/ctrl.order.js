@@ -87,6 +87,7 @@ module.exports = {
             middlewareLogger.debugTerminal('POST/UPDATE', operation.result);
         });
         schema.post('findOneAndUpdate', function(doc) {
+            if(!doc)return;
             middlewareLogger.debugTerminal('POST/findOneAndUpdate', doc._id);
             postSave.apply(doc);
         });

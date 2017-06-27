@@ -159,6 +159,9 @@
             </div>
         </form>
         <div class="row diags-row margin-bottom-two">
+            <coupons-table user-id="item._id"></coupons-table>
+        </div>
+        <div class="row diags-row margin-bottom-two">
             <div class="col-sm-12">
                 <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="validate()">Enregistrer</button>
                 <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="cancel()">Annuler</button>

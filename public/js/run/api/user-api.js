@@ -23,6 +23,7 @@
             createSystemUser: generateHandlerFor('createSystemUser'),
             setAsGuestAccount: generateHandlerFor('setAsGuestAccount',true),
             setAsNormalAccount: generateHandlerFor('setAsNormalAccount',true),
+            saveCoupon:(data)=>backendApi.coupons.save(data),
             sessionToggleGuestFeature: function(data, resolve, reject, emit) {
                 data = {};
                 var session = localSession.getData();

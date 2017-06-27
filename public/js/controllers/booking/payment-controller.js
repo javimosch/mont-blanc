@@ -13,6 +13,25 @@
 
             var order = orderHelper.getFromSession();
 
+            $scope.couponCode = '';
+            $scope.coupon = null;
+            $scope.$watch('couponCode', () => {
+                if ($scope.couponCode.length === 5) {
+                    backendApi.coupons.findByCode($scope.couponCode.toUpperCase()).on('validate', $log.warn).catch($log.error).then(res => {
+                        $scope.coupon = res.result && res.result[0];
+                        if (!$scope.coupon) return;
+
+                        $scope.order.couponDiscount = $scope.coupon.discount;
+                        createFromCache($scope.order); //this will regenerate the order with new price
+
+                    });
+                }
+                else {
+                    $scope.order.couponDiscount = undefined;
+                    createFromCache($scope.order); //this will regenerate the order with new price
+                }
+                $log.info($scope.couponCode, $scope.couponCode.length);
+            });
 
 
             //BINDINGS
@@ -161,12 +180,12 @@
                 createFromCache();
             }
 
-            function createFromCache() {
+            function createFromCache(data) {
                 $log.debug('Creating from cache data');
 
                 //$log.debug('order', order);
 
-                orderHelper.createFromBookingData().then(result => {
+                orderHelper.createFromBookingData(data).then(result => {
                     //$log.debug('saved to server', result);
                     order._id = result._id;
                 }).error((err) => {

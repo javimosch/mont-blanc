@@ -200,11 +200,12 @@
                 function _save() {
 
                     if (s.item.userType == 'client' && s.item.clientType == 'landlord') {
-                        
-                        if(!s.item.password){
-                            s.item.isGuestAccount=true;
-                        }else{
-                            s.item.isGuestAccount=false;
+
+                        if (!s.item.password) {
+                            s.item.isGuestAccount = true;
+                        }
+                        else {
+                            s.item.isGuestAccount = false;
                         }
                     }
 
@@ -286,6 +287,16 @@
                     _id: params.id
                 }).then(function(res) {
                     s.item = res.result;
+
+                    localSession.setMetadata({
+                        selectedClient: {
+                            _id: s.item._id,
+                            email: s.item.email,
+                            firstName: s.item.firstName,
+                            lastName: s.item.lastName
+                        }
+                    });
+
                     if (!res.ok) {
                         s.message('not found, maybe it was deleted!', 'warning', 5000);
                     }

@@ -156,6 +156,9 @@
                             <textarea ng-disabled="false" type="text" class="diags-input fullwidth min-height-100 no-resize" ng-model="order.obs" placeholder="Informations Complémentaires"></textarea>
                         </div>
                         <div class="row margin-top-half">
+                            <input class="diags-input" ng-disabled="state.working()"ng-model="couponCode" placeholder="coupon de réduction">
+                        </div>
+                        <div class="row margin-top-half">
                             <span class="avenir-medium fnt-24 azure-radiance">Prix : {[{order.price}]} € TTC</span>
                         </div>
                         <div class="row margin-top-one">

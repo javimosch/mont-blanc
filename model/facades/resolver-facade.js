@@ -24,7 +24,8 @@ var self = {
     loggerFacade: (options) => require(path.join(process.cwd(), 'model/facades/logger-facade'))(options),
     getFacade: (relativePath) => {
         return require(path.join(process.cwd(), 'model/facades/' + relativePath + '-facade'));
-    }
+    },
+    apiError: () => require(path.join(process.cwd(), 'model/errors'))
 };
 
 self.sockets = () => self.ctrl('sockets');

@@ -15,6 +15,7 @@ register('Notification');
 register('Stripe');
 register('Text');
 register('User');
+register('coupons');
 register('Stats');
 register('File');
 register('Email');

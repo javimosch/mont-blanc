@@ -1,0 +1,80 @@
+<div class="container-fluid backoffice-wrapper" ng-if="userIs('admin')" ng-controller="coupon-controller">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 padding-none">
+                <ol class="breadcrumb">
+                    <li><a class="link" ng-click="route('dashboard')">Tableau de bord</a></li>
+                    <li><a class="link" ng-click="route('clients')">Clients</a></li>
+                    <li>
+                        <a class="link" ng-click="goBack()" ng-bind="getOwnerEmail()"></a>
+                    </li>
+                    <li ng-show="!item._id" ng-bind="'New discount coupon'">
+                        <li ng-show="item._id" ng-bind="'Discount coupon ' + item.code">
+                        </li>
+                </ol>
+            </div>
+        </div>
+        <form name="form" class="row diags-row margin-bottom-two" autocomplete="off">
+            <div class="col-sm-12 col-md-4">
+
+                <!--CODE-->
+                <div class="row margin-top-one">
+                    <label>Code</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="state.working()" ng-model="item.code" class="diags-input" placeholder="" ng-required="true">
+
+                </div>
+                <div class="row  margin-top-quarter">
+                    <button class="btn diags-btn btn-sm bg-azure-radiance" ng-disabled="state.working()" ng-click="generateCode()">Generate</button>
+                </div>
+
+                <!--DESCRIPTION-->
+                <div class="row margin-top-one">
+                    <label>Description</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="state.working()" ng-model="item.description" class="diags-input" placeholder="" ng-required="true">
+                </div>
+
+                <!--DISCOUNT-->
+                <div class="row margin-top-one">
+                    <label>Discount (%)</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="state.working()" ng-model="item.discount" class="diags-input" placeholder="0 to 100" ng-required="true">
+                </div>
+
+                <!--USED-->
+                <div class="row margin-top-one">
+                    <label>Used</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="true" ng-value="getUsed()" class="diags-input" ng-required="false">
+                </div>
+
+                <!--ORDER-->
+                <div class="row margin-top-one" ng-show="getOrder()">
+                    <label>Order</label>
+                </div>
+                <div class="row  margin-top-half" ng-show="getOrder()" ng-bind="getOrder()">
+                </div>
+
+                <div class="row margin-top-one dev-block" ng-if="isDevEnv()">
+                    <p>This block will appear only in preprod</p>
+                    {[{item | json }]}
+                </div>
+
+            </div>
+        </form>
+        <div class="row diags-row margin-bottom-two">
+            <div class="col-sm-12">
+                <button ng-disabled="state.working() || form.$invalid" class="btn diags-btn bg-azure-radiance" ng-click="form.$valid && save()">Enregistrer</button>
+                <button ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance" ng-click="goBack()">Annuler</button>
+                <button ng-show="item._id" ng-disabled="state.working()" class="btn diags-btn bg-azure-radiance " ng-click="remove()">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>

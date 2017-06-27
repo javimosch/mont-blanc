@@ -7,7 +7,7 @@
 
         const CONSTANT = {
             COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate', 'create', 'findOne'],
-            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange', 'deploy', 'sockets', 'ssh', 'gitlab']
+            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange', 'deploy', 'sockets', 'ssh', 'gitlab', 'coupons']
         };
 
         function getLemonwayMessage(res) {
@@ -252,6 +252,24 @@
 
             self.custom = (actionName, data) => {
                 return handle(collectionName, actionName, data);
+            };
+
+            self.removeById = (_id) => {
+                return handle(collectionName, 'remove', {
+                    _id: _id
+                });
+            };
+
+            self.fetchById = (_id) => {
+                return handle(collectionName, 'get', {
+                    _id: _id
+                });
+            };
+
+            self.findByCode = (code) => {
+                return handle(collectionName, 'findByCode', {
+                    code: code
+                });
             };
 
             return self;

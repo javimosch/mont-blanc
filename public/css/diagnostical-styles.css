@@ -426,6 +426,12 @@ html {
 }
 
 
+/*DEBUGGING*/
+.dev-block{
+    border: 5px dashed lightgoldenrodyellow;
+    padding: 10px;
+}
+
 /*
 BACKOFFICE / SETTINGS
 */

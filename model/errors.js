@@ -24,10 +24,17 @@ module.exports = {
     VALIDATE_FIELD_ORDER: createInvalidRequestErrorFor('order'),
     VALIDATE_FIELD_USER: createInvalidRequestErrorFor('user'),
     VALIDATE_FIELD_VALID_ORDER: createInvalidRequestErrorFor('order, order._id'),
+    
+    DESCRIPTION_REQUIRED:createInvalidRequestErrorFor('description'),
+    CODE_REQUIRED:createInvalidRequestErrorFor('code'),
 
     ORDER_NOT_FOUND: {
         message:"Order not found",
         code: 500
+    },
+    USER_REQUIRED:{
+        message:'userId or _user requis',
+        code:5100
     },
     EMAIL_NOT_FOUND: {
         message: "Le compte n&#39;existe pas",
