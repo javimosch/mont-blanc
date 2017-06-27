@@ -427,10 +427,12 @@ html {
 
 
 /*DEBUGGING*/
-.dev-block{
+
+.dev-block {
     border: 5px dashed lightgoldenrodyellow;
     padding: 10px;
 }
+
 
 /*
 BACKOFFICE / SETTINGS
@@ -1792,6 +1794,16 @@ label.minimal {
     right: 10px;
     top: 5px;
     position: absolute;
+}
+
+.coupon__wrapper{
+    position:relative;
+}
+.coupon__apply-btn {
+    position: absolute;
+    right: 0px;
+    font-size: 14px!important;
+    height: 47.99px;
 }
 
 .diags-form .btn,
