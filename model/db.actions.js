@@ -27,7 +27,7 @@ exports.create = function(modelName, m) {
     if (!mongoose) mongoose = m;
     var Model = getModel(modelName) || null;
 
-    //console.log('DB.ACTIONS MODEL', modelName, Model != null)
+    //console.log('DB.ACTIONS MODEL', modelName, Model != null,typeof Model.create);
 
     var schema = getSchema(modelName);
 

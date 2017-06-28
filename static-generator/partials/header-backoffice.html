@@ -1,4 +1,4 @@
-<div class="container-fluid bg-white  hidden remove-hidden" >
+<div class="container-fluid bg-white  hidden remove-hidden">
     <div class="container" ng-show="navShow">
         <nav class="diags-navbar-2 navbar navbar-default">
             <div class="container-fluid">
@@ -9,7 +9,8 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                    <a class="navbar-brand unselectable" href="/">Diagnosti<span class="cal">cal</span></a>
+                    <a ng-cloak ng-hide="brandUrl()" class="navbar-brand unselectable" href="/">Diagnosti<span class="cal">cal</span></a>
+                    <img ng-cloak ng-show="brandUrl()" class="client-brand-logo" src="{[{brandUrl()}]}" />
                 </div>
                 <div class="collapse navbar-collapse" id="ex2" ng-cloak ng-show="!__hideNavMenu">
                     <ul class="nav navbar-nav navbar-right unselectable inline-table" ng-show="!__hideNavMenu">

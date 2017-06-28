@@ -3,11 +3,11 @@
 /*global moment*/
 /*global $U*/
 (function() {
-    var app = angular.module('app').service('backendApi', function($rootScope, server, $log, apiError) {
+    var app = angular.module('app').service('backendApi', function($rootScope, server, $log, apiError, $http) {
 
         const CONSTANT = {
             COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate', 'create', 'findOne'],
-            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange', 'deploy', 'sockets', 'ssh', 'gitlab']
+            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange', 'deploy', 'sockets', 'ssh', 'gitlab', 'user', 'order']
         };
 
         function getLemonwayMessage(res) {
@@ -129,7 +129,43 @@
             return self;
         })();
 
-        function handle(controller, action, payload) {
+
+        function singleFilePost(opt, success, err) {
+            var fd = new FormData();
+            Object.keys(opt.data).forEach((key) => {
+                fd.append(key, opt.data[key]);
+            });
+            fd.append('file', opt.file);
+            $http.post(opt.url, fd, {
+                    transformRequest: angular.identity,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                })
+                .success(success)
+                .error(err);
+        }
+
+
+        function handleMultipartSingleFilePost(controller, action, payload) {
+            $log.info('handleMultipartSingleFilePost', payload);
+            return $U.MyPromise((r, err) => {
+                if (!payload.file) return err("file required");
+                var file = payload.file;
+                delete payload.file;
+                singleFilePost({
+                    url: server.URL() + '/ctrl/' + controller + '/' + action,
+                    file: file,
+                    data: payload
+                }, res => {
+                    r(res);
+                }, res => {
+                    err(res);
+                });
+            });
+        }
+
+        function handlePost(controller, action, payload) {
             return $U.MyPromise(function(resolve, err, emit) {
 
                 //If payload contains __cache (duration in milliseconds, number)
@@ -220,7 +256,8 @@
         function getActionScope(collectionName) {
             if (!customActionScopes[collectionName]) {
                 customActionScopes[collectionName] = {
-                    action: (action, payload) => handle(collectionName, action, payload)
+                    action: (action, payload) => handlePost(collectionName, action, payload),
+                    multipartSingleFile: (action, payload) => handleMultipartSingleFilePost(collectionName, action, payload)
                 };
             }
             return customActionScopes[collectionName];
@@ -235,7 +272,7 @@
             for (var x in actions) {
                 (function(collectionName, actionName) {
                     self[actionName] = (data) => {
-                        return handle(collectionName, actionName, data);
+                        return handlePost(collectionName, actionName, data);
                     };
                 })(collectionName, actions[x]);
             }
@@ -251,7 +288,7 @@
             }
 
             self.custom = (actionName, data) => {
-                return handle(collectionName, actionName, data);
+                return handlePost(collectionName, actionName, data);
             };
 
             return self;
@@ -272,8 +309,17 @@
                 }
                 self[controllerName] = createActions(collectionName);
             },
+            generateMultipartSingleFileAction: (actionName) => {
+                return function(data, resolve, reject, emit) {
+                    return this.multipartSingleFile(actionName, data)
+                        .then((res) => {
+                            resolve(res);
+                        }).error(reject)
+                        .on('validate', (m) => emit('validate', m))
+                }
+            },
             payOrder: function(data) {
-                return handle('order', 'payUsingCard', data);
+                return handlePost('order', 'payUsingCard', data);
             }
         };
 

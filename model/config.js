@@ -5,6 +5,8 @@ module.exports = {
     DB_URI: process.env.dbURI,
 
     SOCKETS_PORT: 8081,
+    
+    RESOURCES_PATH: process.env.RESOURCES_PATH, //EX: /var/staticPermanentFolder
 
     SSH_HOST: process.env.SSH_HOST || '62.210.97.81',
     SSH_USER: process.env.SSH_USER || 'root',

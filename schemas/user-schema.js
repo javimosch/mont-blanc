@@ -3,7 +3,11 @@ var Schema = mongoose.Schema;
 
 module.exports = {
     def: {
-
+        _logo: {
+            type: Schema.Types.ObjectId,
+            ref: 'uploads',
+            required: false
+        },
         email: {
             type: String,
             unique: true

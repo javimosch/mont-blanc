@@ -114,7 +114,7 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', function(db, $timeout,
         else {
             _s.show = true;
             //async update of the current user.
-            db.ctrl('User', 'getById', r.session()).then(function(d) {
+            db.ctrl('User', 'getProfileData', r.session()).then(function(d) {
                 if (d.ok && d.result) r.session(d.result);
             });
         }

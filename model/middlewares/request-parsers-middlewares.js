@@ -6,7 +6,7 @@ module.exports = {
         app.use(function(req, res, next) {
             if (req.busboy) {
                 req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {
-                    console.log('field', key, value, keyTruncated, valueTruncated);
+                    console.log('busboy','field', key, value, keyTruncated, valueTruncated);
                 });
             }
             next();

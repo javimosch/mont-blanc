@@ -24,7 +24,8 @@ var self = {
     loggerFacade: (options) => require(path.join(process.cwd(), 'model/facades/logger-facade'))(options),
     getFacade: (relativePath) => {
         return require(path.join(process.cwd(), 'model/facades/' + relativePath + '-facade'));
-    }
+    },
+    resourcesPath: () => self.env().RESOURCES_PATH || path.join(process.cwd(), 'resources')
 };
 
 self.sockets = () => self.ctrl('sockets');

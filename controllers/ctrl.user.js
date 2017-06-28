@@ -560,6 +560,19 @@ function createClientIfNew(data, cb) {
     });
 }
 
+function getProfileData(data, cb) {
+    resolver.co(function*() {
+        if (!data._id) return cb("_id required");
+        var doc = yield resolver.db().model.user.findById(data._id);
+        yield doc.populate('_logo').execPopulate();
+        var rta = doc.toJSON();
+        Object.assign(rta, {
+            brandUrl: rta._logo !== undefined ? ("/res/image/" + rta._logo.fileName) : undefined
+        });
+        cb(null, rta);
+    }).catch(err => cb(err.stack || err));
+}
+
 function login(data, cb) {
     ctrl('User').model.findOne(ctrl('User').toRules({
         email: data.email,
@@ -569,8 +582,11 @@ function login(data, cb) {
         }
         if (_user.password != data.password) {
             _user = null;
+            return cb(null, _user);
         }
-        cb(err, _user);
+        else {
+            getProfileData(_user, cb);
+        }
     });
 }
 
@@ -604,6 +620,7 @@ function passwordReset(data, cb) {
 }
 
 module.exports = {
+    getProfileData: getProfileData,
     createLandlordClient: createLandlordClient,
     fetchLandlordAccount: fetchLandlordAccount,
     fetchBookingSystemUser: fetchBookingSystemUser,

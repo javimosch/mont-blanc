@@ -2,14 +2,14 @@ var sander = require('sander');
 var path = require("path");
 var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
 var logger = resolver.loggerFacade({
-    name:"ROUTES",
-    category:"STATIC"
+    name: "ROUTES",
+    category: "STATIC"
 });
 module.exports = {
     bind: (app, express) => {
-        if (sander.existsSync(path.join(process.cwd(), 'resources'))) {
-            logger.debugTerminal('Resource folder ON');
-            app.use("/res", express.static(path.join(process.cwd(), 'resources')));
+        if (sander.existsSync(resolver.resourcesPath())) {
+            logger.debugTerminal('Resource folder ON', resolver.resourcesPath());
+            app.use("/res", express.static(resolver.resourcesPath()));
         }
         else {
             logger.debugTerminal('Resource folder OFF');
@@ -29,7 +29,7 @@ module.exports = {
             setStatic(folder, 'public', app, express);
         });
 
-        var publicFiles = ['app.bundle.js', 'app.bundle.booking.js', 'config.json', 'data.json', 'sitemap.xml', 'preprod.html','26D4AD87308CB9A1ED87F81FE9DDD388.txt'];
+        var publicFiles = ['app.bundle.js', 'app.bundle.booking.js', 'config.json', 'data.json', 'sitemap.xml', 'preprod.html', '26D4AD87308CB9A1ED87F81FE9DDD388.txt'];
         publicFiles.forEach(fileName => {
             exposeFile(fileName, 'public', app);
         })

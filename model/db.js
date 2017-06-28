@@ -181,6 +181,7 @@ function registerModel(modelName, schema) {
     if(!models[modelName.toLowerCase()].paginate){
         state.logger.warn(modelName,'Paginate plugin','not working');
     }
+    //state.logger.debugTerminal('Registering model',modelName.toLowerCase());
 }
 
 function createModel(n, def) {

@@ -340,7 +340,7 @@
             });
         };
     }]);
-    srv.directive('fileModel', ['$parse', "$rootScope", function($parse, $rootScope) {
+    srv.directive('fileModel', ['$parse', "$rootScope",'$timeout', function($parse, $rootScope,$timeout) {
         return {
             restrict: 'A',
             scope: {
@@ -373,7 +373,7 @@
                                 scope.model[scope.field || 'file'] = element[0].files[0];
                             }
                             if (attrs.fileModelChange) {
-                                scope.$parent.$eval(attrs.fileModelChange);
+                                $timeout(()=>scope.$parent.$eval(attrs.fileModelChange),200);
                             }
 
                         }

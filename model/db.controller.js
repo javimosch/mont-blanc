@@ -20,6 +20,7 @@ register('File');
 register('Email');
 register('Pdf');
 register('Lemonway');
+register('uploads');
 register('deploy', null, false);
 register('sockets', null, false);
 register('ssh', null, false);
