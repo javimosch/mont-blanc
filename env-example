@@ -1,0 +1,16 @@
+PORT=8080
+PROD=0
+serverRawURL=http://62.210.97.81:8080
+serverURL=https://mont-blanc-javoche.c9users.io/
+disableMailing=1
+dbURI=mongodb://root:root@ds011472.mlab.com:11472/diagscloud9
+adminURL=https://mont-blanc-javoche.c9users.io/admin#
+PROTOCOL=http
+LEMON_LOGIN=adminmb
+LEMON_PASS=adminmb
+LEMON_DIRECTKIT_URL=https://sandbox-api.lemonway.fr/mb/diagnostical/dev/directkitjson2/service.asmx/
+QUOTAGUARDSTATIC_URL=http://quotaguard8108:2a5442445979@eu-west-static-01.quotaguard.com:9293
+DEBUG_PDF_GENERATION=1
+GITLAB_API_KEY=-adJvZ4vx4pHPnDbf1g1
+USE_MAIL_TO=1
+RESOURCES_PATH=/home/ubuntu/workspace/res

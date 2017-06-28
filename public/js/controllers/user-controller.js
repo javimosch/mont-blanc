@@ -226,7 +226,6 @@
 
                 function _save() {
 
-<<<<<<< HEAD
                     if ($scope.item.userType == 'client' && $scope.item.clientType == 'landlord') {
 
                         if (!$scope.item.password) {
@@ -234,15 +233,6 @@
                         }
                         else {
                             $scope.item.isGuestAccount = false;
-=======
-                    if (s.item.userType == 'client' && s.item.clientType == 'landlord') {
-
-                        if (!s.item.password) {
-                            s.item.isGuestAccount = true;
-                        }
-                        else {
-                            s.item.isGuestAccount = false;
->>>>>>> 241
                         }
                     }
 
