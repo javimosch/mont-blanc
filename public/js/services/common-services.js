@@ -236,7 +236,7 @@
         expose('tpl', this);
     });
 
-    srv.service('$mongoosePaginate', ['server', function(db) {
+    srv.service('$mongoosePaginate', ['server', '$log',function(db,$log) {
         function omitKeys(o, keys) {
             var obj = {};
             for (var x in o) {
@@ -285,12 +285,14 @@
                         var numberOfPages = r.result.pages;
                         //                    console.info(model.pagination.currentPage,model.pagination,numberOfPages);
 
-                        if (model.pagination) {
+                        if (model.pagination && model.pagination.update) {
                             model.pagination.update({
                                 itemsLength: r.result.docs.length,
                                 numPages: numberOfPages,
                                 total: r.result.total
                             });
+                        }else{
+                            $log.warn('model.pagination.update undefined');
                         }
                         r.result = r.result.docs;
                         if (opt && opt.autoResolve) {

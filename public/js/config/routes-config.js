@@ -105,6 +105,13 @@ srv.config(['$routeProvider', '$locationProvider',
         when('/settings-password-reset', {
             templateUrl: 'views/settings/settings-password-reset.html'
         }).
+        
+        when('/reports', {
+            templateUrl: 'views/settings/settings-reports.html'
+        }).
+        when('/report/monthly-revenue-with-coupons', {
+            templateUrl: 'views/reports/monthly-revenue-with-coupons.html'
+        }).
 
         when('/settings-htmls/:id', {
             templateUrl: 'views/settings/settings-htmls.html'
@@ -177,6 +184,10 @@ srv.config(['$routeProvider', '$locationProvider',
         }).
         when('/clients/edit/:id', {
             templateUrl: 'views/diags/backoffice/client/client.edit.html'
+        }).
+        
+        when('/coupons/edit/:id', {
+            templateUrl: 'views/coupons/coupon-edit.html'
         }).
 
 

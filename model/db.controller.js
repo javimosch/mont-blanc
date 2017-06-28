@@ -2,11 +2,12 @@ var path = require('path');
 var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
 var controllers = {};
 var createDbActions = require(path.join(process.cwd(), '/model/db.actions')).create;
-var actions = {};
+var controllers = {};
 var resultLogger;
 module.exports = {
     register: register,
-    create: create
+    create: create,
+    controllers: controllers
 };
 //---------------------------------------------
 register('Order');
@@ -15,6 +16,7 @@ register('Notification');
 register('Stripe');
 register('Text');
 register('User');
+register('coupons');
 register('Stats');
 register('File');
 register('Email');
@@ -25,16 +27,24 @@ register('deploy', null, false);
 register('sockets', null, false);
 register('ssh', null, false);
 register('gitlab', null, false);
+register('reports', null, false);
 
-function register(name, ctrlPath, hasModel) {
-    hasModel = hasModel === undefined ? true : hasModel;
-    ctrlPath = ctrlPath || 'controllers/ctrl.' + name.toLowerCase();
-    actions[name] = require(path.join(process.cwd(), ctrlPath));
-    var obj = create(name, hasModel);
+
+function camelize(str) {
+    return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
+        return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
+    }).replace(/\s+/g, '');
 }
 
-function create(name, hasModel) {
-    hasModel = hasModel === undefined ? true : hasModel;
+function register(name, ctrlPath, isMongoCollection) {
+    isMongoCollection = isMongoCollection === undefined ? true : isMongoCollection;
+    ctrlPath = ctrlPath || 'controllers/ctrl.' + name.toLowerCase();
+    controllers[camelize(name)] = create(name, isMongoCollection); //require(path.join(process.cwd(), ctrlPath));
+    //var obj = create(name, hasModel);
+}
+
+function create(name, isMongoCollection) {
+    isMongoCollection = isMongoCollection === undefined ? true : isMongoCollection;
     if (controllers[name]) return controllers[name];
     var controllerPath = 'controllers/ctrl.' + name.toLowerCase();
     var specialActions = {};
@@ -48,22 +58,23 @@ function create(name, hasModel) {
 
     var actions = {};
 
-    if (specialActions.configureSchema) {
 
-        //console.log('db.controller', 'configureSchema', name);
 
-        var schemaDef = require(path.join(process.cwd(), 'schemas/' + name.toLowerCase() + "-schema")).def;
-        var schema = specialActions.configureSchema(resolver.db().createSchema(name, schemaDef)) || null;
-        if (!schema) {
-            console.log('controller', name, 'configureSchema must return the schema');
-            process.exit(1);
+    if (isMongoCollection) {
+
+        if (specialActions.configureSchema) {
+            //console.log('db.controller', 'configureSchema', name);
+            var schemaDef = require(path.join(process.cwd(), 'schemas/' + name.toLowerCase() + "-schema")).def;
+            var schema = specialActions.configureSchema(resolver.db().createSchema(name, schemaDef)) || null;
+            if (!schema) {
+                console.log('controller', name, 'configureSchema must return the schema');
+                process.exit(1);
+            }
+            //console.log('DB.CONTROLLER REGISTER MODEL ',name,schema!=null)
+            resolver.db().registerModel(name, schema);
+            delete specialActions.configureSchema;
         }
-        //console.log('DB.CONTROLLER REGISTER MODEL ',name,schema!=null)
-        resolver.db().registerModel(name, schema);
-        delete specialActions.configureSchema;
-    }
 
-    if (hasModel) {
         var coreActions = createDbActions(name);
         Object.assign(actions, coreActions);
         actions.core = coreActions;
@@ -87,8 +98,8 @@ function resultAction(modelName) {
     return function(res, options) {
         var ctrl = require('./db.controller').create;
         resultLogger = resultLogger || ctrl('Log').createLogger({
-            name: "DB",
-            category: "RESULT"
+            name: "CONTROLLER",
+            category: "RESPONSE"
         });
         return function(err, r) {
 
@@ -102,7 +113,7 @@ function resultAction(modelName) {
             var rta = {
                 ok: err === undefined || err === null,
                 //message: (err) ? 'Error' : 'Success',
-                err: err || null,
+                err: err !== undefined ? err : null,
                 result: (r !== null) ? r : ((r === false) ? false : null)
             };
 

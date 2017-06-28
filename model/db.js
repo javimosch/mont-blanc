@@ -180,6 +180,8 @@ function registerModel(modelName, schema) {
     models[modelName.toLowerCase()] = mongoose.model(modelName, schema);
     if(!models[modelName.toLowerCase()].paginate){
         state.logger.warn(modelName,'Paginate plugin','not working');
+    }else{
+        //state.logger.debugTerminal(modelName.toLowerCase(),'registered');
     }
     //state.logger.debugTerminal('Registering model',modelName.toLowerCase());
 }

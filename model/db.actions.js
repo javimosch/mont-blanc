@@ -470,6 +470,12 @@ exports.create = function(modelName, m) {
             });
         });
     }
+    
+    function findByCode(data,cb){
+        return getAll({
+            code:data.code
+        },cb);
+    }
 
     var rta = {
         schema: schema,
@@ -493,6 +499,7 @@ exports.create = function(modelName, m) {
         toRules: toRules,
         find: find,
         findOne: findOne,
+        findByCode:findByCode,
         log: log
     };
     ActionsCache.set(modelName, rta);

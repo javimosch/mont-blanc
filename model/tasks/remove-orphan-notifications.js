@@ -35,5 +35,5 @@ function handler() {
             }).catch(logger.error);
         });
         return orphans.length;
-    }).then(logger.debug).catch(logger.error);
+    }).then((n) => n > 0 ? logger.debug(n, 'Found') : null).catch(logger.error);
 }

@@ -13,6 +13,32 @@
 
             var order = orderHelper.getFromSession();
 
+            /*COUPON*/
+            var couponCodeIsDirty = false;
+            $scope.couponCode = '';
+            $scope.coupon = null;
+            $scope.showCouponApplyButton = () => couponCodeIsDirty;
+            $scope.applyCoupon = (event) => {
+                if (event && event.which !== 13) {
+                    return;
+                }
+                couponCodeIsDirty = false;
+                backendApi.coupons.findByCode($scope.couponCode.toUpperCase()).on('validate', $log.warn).catch($log.error).then(res => {
+                    $scope.coupon = res.result && res.result[0];
+                    if (!$scope.coupon) return;
+                    $scope.order.couponDiscount = $scope.coupon.discount;
+                    $scope.order._coupon = $scope.coupon._id;
+                    createFromCache($scope.order); //this will regenerate the order with new price
+                });
+            };
+            $scope.$watch('couponCode', () => {
+                if ($scope.order.couponDiscount !== undefined) {
+                    $scope.order.couponDiscount = undefined;
+                    createFromCache($scope.order); //this will regenerate the order with new price
+                }
+                if ($scope.couponCode) couponCodeIsDirty = true;
+                else couponCodeIsDirty = false;
+            });
 
 
             //BINDINGS
@@ -64,6 +90,10 @@
                                     window.location.reload();
                                 }, 1500);
                                 return;
+                            }
+
+                            if (apiError && apiError.isEqual.COUPON_ALREADY_USED) {
+                                return $rootScope.infoMessage(apiError.genericMessage.replace('(BACKEND)', ''));
                             }
 
                             return $rootScope.warningMessage(msg, 10000);
@@ -161,12 +191,12 @@
                 createFromCache();
             }
 
-            function createFromCache() {
+            function createFromCache(data) {
                 $log.debug('Creating from cache data');
 
                 //$log.debug('order', order);
 
-                orderHelper.createFromBookingData().then(result => {
+                orderHelper.createFromBookingData(data).then(result => {
                     //$log.debug('saved to server', result);
                     order._id = result._id;
                 }).error((err) => {

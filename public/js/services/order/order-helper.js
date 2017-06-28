@@ -42,7 +42,7 @@
                 basePrice: remoteSettings.metadata.prices.basePrice,
                 selectedDiags: data.diags,
                 availableDiags: localData.diags,
-
+                couponDiscount:data.couponDiscount,
                 diagCommissionRate: data._diag && data._diag.commission,
             });
         }

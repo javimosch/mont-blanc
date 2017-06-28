@@ -28,6 +28,11 @@ var pdwRecoverLogger = ctrl('Log').createLogger({
     name: "USER",
     category: "pwd-recover"
 });
+var couponsLogger = ctrl('Log').createLogger({
+    name: "USER",
+    category: "coupons"
+});
+
 
 function everyAdmin(cb) {
     ctrl('User').getAll({
@@ -371,11 +376,11 @@ function fetchLandlordAccount(data, cb) {
         if (data.isGuestAccount == undefined) return Response.error(apiError.VALIDATE_FIELD_IS_GUEST_ACCOUNT, cb, reject);
         //Fetch account (if exists)
 
-        dbLogger.debug('fetchLandlordAccount:valid');
+        //dbLogger.debug('fetchLandlordAccount:valid');
 
         getByField('email', data.email).then(account => {
             if (account) {
-                dbLogger.debug('fetchLandlordAccount:resolve');
+                //dbLogger.debug('fetchLandlordAccount:resolve');
 
                 account.update({
                     $set: {
@@ -619,8 +624,40 @@ function passwordReset(data, cb) {
     });
 }
 
+function validateCoupon(data) {
+    //Check the coupon _id is valid, belongs to user and is not used.
+    return resolver.coWrap(function*() {
+        if (!data._id) return resolver.Promise.reject(resolver.apiError().ID_REQUIRED);
+        if (!data.email) return resolver.Promise.reject(resolver.apiError().VALIDATE_FIELD_EMAIL);
+
+        var user = yield resolver.controllers().user.model.findOne({
+            email: data.email
+        }).exec();
+        if (!user) return resolver.Promise.reject(resolver.apiError().fn.COUPON_CANNOT_BE_USED('User do not exits '+data.email));
+        var doc = yield resolver.controllers().coupons.model.findById(data._id).exec();
+        if (doc) {
+            if (doc._user.equals(user._id)) {
+                if (doc.used) {
+                    return resolver.Promise.reject(resolver.apiError().COUPON_ALREADY_USED);
+                }
+                else {
+                    return resolver.Promise.resolve(true);
+                }
+            }
+            else {
+                couponsLogger.warn('User do not match',doc._user,user._id);
+                return resolver.Promise.reject(resolver.apiError().fn.COUPON_CANNOT_BE_USED('User do not match'));
+            }
+        }
+        else {
+            return resolver.Promise.reject(resolver.apiError().fn.COUPON_CANNOT_BE_USED('Coupon do not exists'));
+        }
+    })();
+}
+
 module.exports = {
     getProfileData: getProfileData,
+    validateCoupon: validateCoupon,
     createLandlordClient: createLandlordClient,
     fetchLandlordAccount: fetchLandlordAccount,
     fetchBookingSystemUser: fetchBookingSystemUser,

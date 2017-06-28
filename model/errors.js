@@ -25,22 +25,46 @@ module.exports = {
     VALIDATE_FIELD_USER: createInvalidRequestErrorFor('user'),
     VALIDATE_FIELD_VALID_ORDER: createInvalidRequestErrorFor('order, order._id'),
 
+    ID_REQUIRED: createInvalidRequestErrorFor('_id'),
+    DESCRIPTION_REQUIRED: createInvalidRequestErrorFor('description'),
+    CODE_REQUIRED: createInvalidRequestErrorFor('code'),
+
     ORDER_NOT_FOUND: {
-        message:"Order not found",
+        message: "Order not found",
         code: 500
+    },
+    USER_REQUIRED: {
+        message: 'userId or _user requis',
+        code: 5100
     },
     EMAIL_NOT_FOUND: {
         message: "Le compte n&#39;existe pas",
         code: 600
     },
     INVALID_VARIABLE_AT_PATH_ERROR: {
-        message:"Invalid variable at path",
+        message: "Invalid variable at path",
         code: 70
     },
     DATABASE_OBJECT_MISMATCH_ERROR: {
         code: 71
     },
-
+    COUPON_ALREADY_USED:{
+        code:6301,
+        message:"Le coupon de réduction a déjà été utilisé"
+    },
+    COUPON_CANNOT_BE_USED:{
+        code:6300,
+        message:"Le coupon de réduction ne peut pas être utilisé"
+    },
+    fn: {
+        COUPON_CANNOT_BE_USED: function(detail) {
+            return {
+                code: 6300,
+                message: "Le coupon de réduction ne peut pas être utilisé",
+                detail: detail
+            };
+        },
+    },
     INVALID_VARIABLE_AT_PATH: function(variableName, path) {
         return {
             code: 70,

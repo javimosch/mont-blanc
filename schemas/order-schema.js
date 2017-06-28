@@ -11,6 +11,11 @@ module.exports = {
             type: Schema.Types.ObjectId,
             ref: 'User'
         },
+        _coupon: {
+            type: Schema.Types.ObjectId,
+            ref: 'coupons',
+            required:false
+        },
         diags: {
             type: {},
             required: true

@@ -135,7 +135,7 @@
                         return 0;
                 }
             },
-            getSelectedDiagsPrice:function(){
+            getSelectedDiagsPrice: function() {
                 return getBasePrice(settings.selectedDiags, settings.availableDiags);
             },
             getPriceBase: function() {
@@ -178,7 +178,7 @@
                 }
             },
             getPriceHT: function(k) {
-                if(settings.diagIsAutoentrepreneur){
+                if (settings.diagIsAutoentrepreneur) {
                     return this.getPriceTTC(k);
                 }
                 return (this.getPriceTTC(k) / (1 + this.getRatioModifierFor('vat') / 100)).toFixed(2);
@@ -191,19 +191,29 @@
                 var vatRate = this.getRatioModifierFor('vat');
                 return (this.getPriceWithCommercial(k) * (1 + vatRate / 100)).toFixed(2);
             },
-            getPriceTTC: function(k) {
+            getPriceTTCBeforeDiscountCoupon: function(k) {
                 var rta = 0;
                 if (settings.diagIsAutoentrepreneur) {
-                    rta = tenthDown10(this.getPriceWithCommercial(k));
+                    rta = this.getPriceWithCommercial(k);
                 }
                 else {
-                    rta = tenthDown10(this.getPriceWithVAT(k));
+                    rta = this.getPriceWithVAT(k);
                 }
                 if (isNaN(rta)) {
-                    //$log.warn('priceTTC NaN !');
                     return 0;
                 }
                 return rta;
+            },
+            getPriceTTCWithDiscountCoupon: function(k) {
+                var rta = this.getPriceTTCBeforeDiscountCoupon(k);
+                if (settings.couponDiscount && rta > 0) {
+                    return rta - ((rta * settings.couponDiscount) / 100);
+                }
+                return rta;
+            },
+            /*This should be the final client price*/
+            getPriceTTC: function(k) {
+                return tenthDown10(this.getPriceTTCWithDiscountCoupon(k));
             },
             getPriceRemunerationHT: function() {
                 //Diag man remuneration
@@ -224,7 +234,7 @@
             },
             //Helper function to assign prices in an existing order.
             assignPrices: function(object) {
-                
+
                 /*
                 $log.debug('prices settings',settings);
                 $log.debug('getSelectedDiagsPrice',this.getSelectedDiagsPrice());
@@ -241,7 +251,7 @@
                 $log.debug('getPriceRevenueHT',this.getPriceRevenueHT());
                 $log.debug('getPriceRevenueTTC',this.getPriceRevenueTTC());
                 */
-                
+
                 object.price = this.getPriceTTC();
                 object.priceHT = this.getPriceHT();
                 object.revenueHT = this.getPriceRevenueHT();
@@ -251,7 +261,7 @@
                 //$log.debug('prices are set',object);
             }
         };
-        $U.exposeGlobal('op',self);
+        $U.exposeGlobal('op', self);
         return self;
     });
 })();

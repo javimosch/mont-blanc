@@ -121,6 +121,7 @@
     "urldecode": "^1.0.1",
     "urlencode": "^1.1.0",
     "urlencode2": "^1.0.1",
+    "voucher-code-generator": "^1.1.1",
     "watch": "^0.17.1",
     "xunit-file": "0.0.9"
   },

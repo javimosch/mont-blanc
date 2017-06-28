@@ -78,6 +78,9 @@
                 return true;
             };
 
+
+            $scope.showDiscountCoupon = ()=>$scope.item && $scope.item._coupon && $scope.item._coupon._id;
+
             $scope.moveDateBackward = () => {
                 $scope.item.start = moment().subtract(1, 'days');
                 $scope.item.end = moment().subtract(1, 'days').add(1, 'hour')
@@ -486,6 +489,7 @@
                 };
 
                 $scope.orderDescription = () => {
+                    if(!$scope.item || !$scope.item.info) return '';
                     $scope.item.info.description = orderHelper.getDescription($scope.item);
                     return $scope.item.info.description;
                 };
@@ -1178,7 +1182,8 @@
                     _id: id || params.id || $scope.item._id,
                     __populate: {
                         '_client': 'email clientType address discount firstName lastName siret wallet',
-                        '_diag': 'email address commission firstName lastName siret wallet tva_intra_comm isAutoentrepreneur'
+                        '_diag': 'email address commission firstName lastName siret wallet tva_intra_comm isAutoentrepreneur',
+                        '_coupon':"discount description"
                     }
                 }).then(function(data) {
 

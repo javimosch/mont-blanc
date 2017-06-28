@@ -11,15 +11,20 @@
         <div class="row margin-top-two">
             <div class="col-sm-12">
                 <table class="table table-striped table-condensed link questions">
-                    <tr class="link" ng-click="route('tools/termites-check')">
+                    <tr class="link  settings__list-item" ng-click="route('tools/termites-check')">
                         <td class="link">
-                            <label class="link minimal">Termites Check</label>
+                            <label class="link settings__list-item__label">Termites Check</label>
                         </td>
 
                     </tr>
-                    <tr class="link" ng-click="route('tools/deploy')">
+                    <tr class="link  settings__list-item" ng-click="route('tools/deploy')">
                         <td class="link">
-                            <label class="link minimal">Server deployment</label>
+                            <label class="link settings__list-item__label">Server deployment</label>
+                        </td>
+                    </tr>
+                    <tr class="link  settings__list-item" ng-click="route('settings-password-reset')">
+                        <td class="link">
+                            <label class="link settings__list-item__label">Password reset</label>
                         </td>
                     </tr>
                 </table>

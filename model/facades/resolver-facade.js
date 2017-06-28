@@ -15,6 +15,7 @@ var self = {
     coWrap: (handler) => co.wrap(handler),
     db: () => require(path.join(process.cwd(), 'model/db')),
     ctrl: (name) => require(path.join(process.cwd(), 'model/db.controller')).create(name),
+    controllers: () => require(path.join(process.cwd(), 'model/db.controller')).controllers,
     env: () => require(path.join(process.cwd(), 'model/config')),
     orderFacade: () => require(path.join(process.cwd(), 'model/facades/order-facade')),
     mailFacade: () => require(path.join(process.cwd(), 'model/facades/mail-facade')),
@@ -25,7 +26,8 @@ var self = {
     getFacade: (relativePath) => {
         return require(path.join(process.cwd(), 'model/facades/' + relativePath + '-facade'));
     },
-    resourcesPath: () => self.env().RESOURCES_PATH || path.join(process.cwd(), 'resources')
+    resourcesPath: () => self.env().RESOURCES_PATH || path.join(process.cwd(), 'resources'),
+    apiError: () => require(path.join(process.cwd(), 'model/errors'))
 };
 
 self.sockets = () => self.ctrl('sockets');

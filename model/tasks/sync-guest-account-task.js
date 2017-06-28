@@ -28,5 +28,5 @@ function handler() {
             multi: true
         }).exec();
         return response.nModified;
-    }).then(logger.debug).catch(logger.error);
+    }).then((n) => n > 0 ? logger.debug(n) : null).catch(logger.error);
 }

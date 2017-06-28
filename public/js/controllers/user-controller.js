@@ -226,6 +226,7 @@
 
                 function _save() {
 
+<<<<<<< HEAD
                     if ($scope.item.userType == 'client' && $scope.item.clientType == 'landlord') {
 
                         if (!$scope.item.password) {
@@ -233,6 +234,15 @@
                         }
                         else {
                             $scope.item.isGuestAccount = false;
+=======
+                    if (s.item.userType == 'client' && s.item.clientType == 'landlord') {
+
+                        if (!s.item.password) {
+                            s.item.isGuestAccount = true;
+                        }
+                        else {
+                            s.item.isGuestAccount = false;
+>>>>>>> 241
                         }
                     }
 
@@ -317,6 +327,16 @@
                     }
                 }).then(function(res) {
                     $scope.item = res.result;
+
+                    localSession.setMetadata({
+                        selectedClient: {
+                            _id: s.item._id,
+                            email: s.item.email,
+                            firstName: s.item.firstName,
+                            lastName: s.item.lastName
+                        }
+                    });
+
                     if (!res.ok) {
                         $scope.message('not found, maybe it was deleted!', 'warning', 5000);
                     }
