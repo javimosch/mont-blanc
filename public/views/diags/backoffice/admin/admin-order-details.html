@@ -224,7 +224,7 @@
                 <label class="unselectable">Observations</label>
             </div>
             <div class="row margin-top-quarter">
-                <textarea ng-disabled="state.working()" class="diags-input fullwidth min-height-100 no-resize" ng-bind="item._diag|json"></textarea>
+                <textarea ng-disabled="state.working()" class="diags-input fullwidth min-height-100 no-resize" ng-model="item.obs"></textarea>
             </div>
             <div class="row margin-top-one">
                 <div ng-include="'/views/diags/backoffice/partials/order-details-pdf-files.html'" includeReplace></div>
