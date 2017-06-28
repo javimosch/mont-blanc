@@ -255,19 +255,19 @@
             };
 
             self.removeById = (_id) => {
-                return handle(collectionName, 'remove', {
+                return handlePost(collectionName, 'remove', {
                     _id: _id
                 });
             };
 
             self.fetchById = (_id) => {
-                return handle(collectionName, 'get', {
+                return handlePost(collectionName, 'get', {
                     _id: _id
                 });
             };
 
             self.findByCode = (code) => {
-                return handle(collectionName, 'findByCode', {
+                return handlePost(collectionName, 'findByCode', {
                     code: code
                 });
             };
