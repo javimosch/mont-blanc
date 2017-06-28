@@ -6,8 +6,8 @@
     /*global $D*/
     angular.module('order-feature-module').controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'rdvSlotService', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi', 'localData','orderHelper',
-        function(db, $scope, $rootScope, params, rdvSlotService, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData,orderHelper) {
+        'server', '$scope', '$rootScope', '$routeParams', 'rdvSlotService', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi', 'localData', 'orderHelper', 'appRouter',
+        function(db, $scope, $rootScope, params, rdvSlotService, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData, orderHelper, appRouter) {
             $rootScope.setCurrentCtrl($scope);
 
 
@@ -79,7 +79,7 @@
             };
 
 
-            $scope.showDiscountCoupon = ()=>$scope.item && $scope.item._coupon && $scope.item._coupon._id;
+            $scope.showDiscountCoupon = () => $scope.item && $scope.item._coupon && $scope.item._coupon._id;
 
             $scope.moveDateBackward = () => {
                 $scope.item.start = moment().subtract(1, 'days');
@@ -489,7 +489,7 @@
                 };
 
                 $scope.orderDescription = () => {
-                    if(!$scope.item || !$scope.item.info) return '';
+                    if (!$scope.item || !$scope.item.info) return '';
                     $scope.item.info.description = orderHelper.getDescription($scope.item);
                     return $scope.item.info.description;
                 };
@@ -875,14 +875,16 @@
                     $scope.pay();
                 }
 
-                $scope.pay = () => {
+                $scope.payWithCheque = () => {
+                    $scope.pay('cheque');
+                };
+                $scope.pay = (type) => {
+                    $scope.item.paymentType = type || undefined;
                     var order = $scope.item;
 
                     if (!order._client.wallet) {
                         return $rootScope.warningMessage('Configure Client Wallet ID first');
                     }
-
-
 
                     orderPaymentForm.pay($scope.item).then(function() {
                         $scope.successMsg('Commande payée');
@@ -1052,7 +1054,8 @@
                                 $scope.item._id = res.result._id;
 
                                 if ($scope.isOrderClientLandLord()) {
-                                    $scope.back();
+                                    //$scope.back();
+                                    appRouter.to('orders/edit/' + $scope.item._id);
                                 }
                                 else {
                                     $scope.sendPaymentLink(() => {
@@ -1183,7 +1186,7 @@
                     __populate: {
                         '_client': 'email clientType address discount firstName lastName siret wallet',
                         '_diag': 'email address commission firstName lastName siret wallet tva_intra_comm isAutoentrepreneur',
-                        '_coupon':"discount description"
+                        '_coupon': "discount description"
                     }
                 }).then(function(data) {
 
