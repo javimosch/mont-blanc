@@ -561,6 +561,8 @@
 
 
                 $scope.$watch('item._diag', (v) => {
+                    if(typeof v === 'string') return;
+                    $log.info('DIAG CHANGE',v);
                     if ($scope.diagSlots) {
                         $scope.diagSlots.setDiag($scope.item._diag);
                     }

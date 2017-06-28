@@ -44,8 +44,11 @@
 
                 function requestSlots(date) {
                     return $U.MyPromise(function(resolve, error, evt) {
-                        if (!isFinite(new Date(date))) return; //invalid
-                        var time = $D.OrderTotalTime(item.diags, scope.diags)
+                        if (!isFinite(new Date(date))) {
+                            $log.warn('RDV: Requesting slots for an invalid date');
+                            return; //invalid
+                        }
+                        var time = $D.OrderTotalTime(item.diags, scope.diags);
                         var order = {
                             day: date,
                             time: time
@@ -63,7 +66,7 @@
                             }).then(_resolve);
                         }
                         else {
-                            
+
 
                             orderRdv.getAll({
                                 date: date,
@@ -192,8 +195,12 @@
                     o.settings = () => _settings;
                     o.setDiag = function(_diag) {
                         if (_diag && _diag._id && _diag._id != _settings._diag) {
-                            _settings.diagId = _diag && _diag._id || _diag || undefined;
-                            o.init(null, _settings);
+                            $log.info('setDiag: rdv update');
+                            _settings.diagId = _diag._id;
+                            o.init(undefined, _settings);
+                        }
+                        else {
+                            $log.warn('setDiag: criteria do not meet to update rdv');
                         }
                     };
                     o.updatePrices = function() {
