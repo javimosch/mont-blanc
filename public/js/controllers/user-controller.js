@@ -320,10 +320,10 @@
 
                     localSession.setMetadata({
                         selectedClient: {
-                            _id: s.item._id,
-                            email: s.item.email,
-                            firstName: s.item.firstName,
-                            lastName: s.item.lastName
+                            _id: $scope.item._id,
+                            email: $scope.item.email,
+                            firstName: $scope.item.firstName,
+                            lastName: $scope.item.lastName
                         }
                     });
 
