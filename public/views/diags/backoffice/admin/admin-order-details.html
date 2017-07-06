@@ -142,7 +142,7 @@
                 <table class="table table-striped table-condensed unselectable">
                     <tr ng-repeat="(k,o) in item.diags" class="unselectable">
                         <td>
-                            <img class="img-responsive" ng-src="{[{diagIcon(k)}]}"/>
+                            <img class="img-responsive" ng-src="{[{diagIcon(k)}]}" />
                         </td>
                         <td style="vertical-align: inherit;" ng-class="{'diag-no-selected':!o,link:true}" ng-click="toggleDiagType(k)">
                             {[{diagNameConvertion(k)}]}
@@ -175,7 +175,15 @@
                 <label class="unselectable">Prix TTC</label>
             </div>
             <div class="row margin-top-quarter">
-                <input ng-disabled="true" type="text" class="diags-input" ng-model="item.price">
+                <input ng-show="!showManualPriceInput()" ng-disabled="true" type="text" class="diags-input" ng-value="item.price">
+
+
+                <form name="manualPriceForm" class="apply-button-wrapper" ng-show="showManualPriceInput()" >
+                    <input name="priceInput" ng-disabled="false" type="text" ng-keyup="applyManualPrice($event,true)" class="diags-input" ng-value="item.price">
+                    <button ng-show="showPriceApplyButton()" ng-click="applyManualPrice($event)" class="apply-btn btn btn-sm bg-madison">Appliquer</button>
+                </form>
+
+
             </div>
             <div class="row margin-top-one">
                 <label class="unselectable">PriceHT</label>
@@ -299,7 +307,7 @@
             <div class="row margin-top-quarter">
                 <input ng-disabled="true" type="text" class="diags-input" ng-value="item.vatPrice">
             </div>
-            
+
             <div class="row margin-top-one" ng-show="showDiscountCoupon()">
                 <label class="unselectable">Discount coupon</label>
             </div>

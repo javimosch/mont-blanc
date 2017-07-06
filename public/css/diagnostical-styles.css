@@ -1795,11 +1795,21 @@ label.minimal {
     top: 5px;
     position: absolute;
 }
-
+.apply-button-wrapper{
+    position:relative;
+    display:initial;
+}
+.apply-btn{
+    position: absolute;
+    right: 0px;
+    font-size: 14px!important;
+    height: 47.99px;
+    color:white;
+}
 .coupon__wrapper{
     position:relative;
 }
-.coupon__apply-btn {
+.coupon__apply-btn{
     position: absolute;
     right: 0px;
     font-size: 14px!important;

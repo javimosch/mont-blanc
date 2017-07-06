@@ -10,7 +10,24 @@
         function(db, $scope, $rootScope, params, rdvSlotService, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData, orderHelper, appRouter) {
             $rootScope.setCurrentCtrl($scope);
 
-            $rootScope.$on('rdv-slots-update',()=>$rootScope.dom());
+            $rootScope.$on('rdv-slots-update', () => $rootScope.dom());
+
+            var priceInputIsDirty = false;
+            $scope.showManualPriceInput = () => $scope.item._id && $scope.item.status === 'created';
+            $scope.showPriceApplyButton = () => priceInputIsDirty;
+            $scope.applyManualPrice = (evt, enter) => {
+                var newPrice = evt.target.value ? evt.target.value : evt.target.form[0].value;
+                priceInputIsDirty = true;
+                if (enter ? evt.which === 13 : true) {
+                    orderPrice.set({
+                        diagCommissionRate: $scope.item._diag && $scope.item._diag.commission,
+                        diagIsAutoentrepreneur: $scope.item._diag && $scope.item._diag.isAutoentrepreneur
+                    });
+                    orderPrice.fixedPriceTTC = parseFloat(newPrice);
+                    orderPrice.assignPrices($scope.item);
+                    priceInputIsDirty = false;
+                }
+            };
 
             $scope.orderQuestion = orderQuestion;
             $scope.orderRdv = orderRdv;
@@ -562,8 +579,8 @@
 
 
                 $scope.$watch('item._diag', (v) => {
-                    if(typeof v === 'string') return;
-                    $log.info('DIAG CHANGE',v);
+                    if (typeof v === 'string') return;
+                    $log.info('DIAG CHANGE', v);
                     if ($scope.diagSlots) {
                         $scope.diagSlots.setDiag($scope.item._diag);
                     }

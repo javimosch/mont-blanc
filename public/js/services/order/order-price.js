@@ -63,9 +63,11 @@
 
 
         var self = {
+            fixedPriceTTC:null,
             _settings: settings,
             set: function(_settings) {
                 Object.assign(settings, _settings);
+                self.fixedPriceTTC = null;
                 //$log.debug('orderPrice setting is now ', _.clone(settings));
             },
             getDayModifierPercentage: function(percentages, date) {
@@ -213,6 +215,7 @@
             },
             /*This should be the final client price*/
             getPriceTTC: function(k) {
+                if(self.fixedPriceTTC) return self.fixedPriceTTC;
                 return tenthDown10(this.getPriceTTCWithDiscountCoupon(k));
             },
             getPriceRemunerationHT: function() {
