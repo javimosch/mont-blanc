@@ -123,6 +123,8 @@
 
                                         cbHell.next();
                                     }
+                                }).catch(()=>{
+                                    cbHell.next();
                                 });
                             });
 
@@ -146,25 +148,14 @@
                             var maxSlots = (_settings.maxSlots != undefined && _settings.maxSlots || 4);
                             if (d && d.length > maxSlots) {
                                 $log.warn('RDV slots exceed maximum', maxSlots || 4);
-                                /*
-                                try {
-                                    db.ctrl('Log', "create", {
-                                        message: "booking-warning: date slot request retrieve " + d.length + ' slots.',
-                                        data: d
-                                    });
-                                } catch (e) {}
-*/
                                 while (d.length > maxSlots) {
                                     d.pop();
                                 };
-                                //console.warn('slots-more-than-four-resolve',d)
                             }
                             else {
 
                             }
-
                             _data[dataPosition] = new DaySlot(_newDate, d);
-                            //                    console.log('slots-days-request-end-for', _localCursor, 'at', dataPosition);
                             cbHell.next();
                         });
                     }
@@ -280,6 +271,7 @@
                                 if (o.get()[0].date.isSame(moment(), 'day') && o.get()[0].slots.length == 0) {
                                     o.init(moment().add(1, 'days').toDate(), _settings);
                                 }
+                                $rootScope.$broadcast('rdv-slots-update');
                             });
                             for (var x = 0; x < _settings.daysPerPage; x++) {
                                 asyncRequest(_localCursor._d, cbHell, x); //

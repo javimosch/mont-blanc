@@ -10,6 +10,7 @@
         function(db, $scope, $rootScope, params, rdvSlotService, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData, orderHelper, appRouter) {
             $rootScope.setCurrentCtrl($scope);
 
+            $rootScope.$on('rdv-slots-update',()=>$rootScope.dom());
 
             $scope.orderQuestion = orderQuestion;
             $scope.orderRdv = orderRdv;
