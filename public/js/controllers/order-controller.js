@@ -6,8 +6,8 @@
     /*global $D*/
     angular.module('order-feature-module').controller('adminOrdersEdit', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'rdvSlotService', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi', 'localData', 'orderHelper', 'appRouter',
-        function(db, $scope, $rootScope, params, rdvSlotService, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData, orderHelper, appRouter) {
+        'server', '$scope', '$rootScope', '$routeParams', 'rdvSlotService', '$log', 'orderPrice', 'orderQuestion', 'orderRdv', 'orderPaymentForm', 'lemonwayApi', 'localData', 'orderHelper', 'appRouter', 'backendApi',
+        function(db, $scope, $rootScope, params, rdvSlotService, $log, orderPrice, orderQuestion, orderRdv, orderPaymentForm, lemonwayApi, localData, orderHelper, appRouter, backendApi) {
             $rootScope.setCurrentCtrl($scope);
 
             $rootScope.$on('rdv-slots-update', () => $rootScope.dom());
@@ -355,26 +355,20 @@
                 };
 
 
-
-                $scope.viewPDF = () => {
-                    $D.getInvoiceHTMLContent(db, $scope.item, r, function(html) {
-                        html =
-                            window.encodeURIComponent(
-                                $D.OrderReplaceHTML(window.decodeURIComponent(html), $scope.item, r));
-
-                        $rootScope.ws.ctrl("Pdf", "view", {
-                            html: html
-                        }).then(res => {
-                            if (res.ok) {
-                                var win = window.open(res.result, '_blank');
-                                win.focus();
-                            }
-                            else {
-                                $rootScope.warningMessage('Server Issue, try late$rootScope.');
-                            }
-                        });
-                    });
+                $scope.generateInvoiceLabel = () => {
+                    if ($scope.item && $scope.item.files && $scope.item.files.invoice) {
+                        return 'Re-Generate Invoice';
+                    }
+                    else {
+                        return 'Generate Invoice';
+                    }
                 };
+                $scope.generateInvoice = () => {
+                    backendApi.order.generateInvoice({
+                        _id: $scope.item._id
+                    }).then(() => $scope.refresh());
+                };
+
 
                 $scope.delegate = () => {
                     $scope.item.notifications = $scope.item.notifications || {};
@@ -466,8 +460,16 @@
                     return $rootScope.userIs(['admin']) || $rootScope.sesison()._id == $scope.item._diag._id;
                 };
 
+                $scope.refresh = () => {
+                    if ($scope.item && $scope.item._id) {
+                        appRouter.to('orders/edit/' + $scope.item._id + '?r=' + Date.now());
+                    }
+                };
                 $scope.isPaid = () => {
                     return _.includes(['prepaid', 'completed'], $scope.item.status);
+                };
+                $scope.isCompleted = () => {
+                    return _.includes(['completed'], $scope.item.status);
                 };
 
                 $scope.isDiag = () => {

@@ -27,7 +27,8 @@ var self = {
         return require(path.join(process.cwd(), 'model/facades/' + relativePath + '-facade'));
     },
     resourcesPath: () => self.env().RESOURCES_PATH || path.join(process.cwd(), 'resources'),
-    apiError: () => require(path.join(process.cwd(), 'model/errors'))
+    apiError: () => require(path.join(process.cwd(), 'model/errors')),
+    errorHandler:(h) => (e) => h(e.stack && (e + ' STACK: ' + e.stack) || e)
 };
 
 self.sockets = () => self.ctrl('sockets');

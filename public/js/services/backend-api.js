@@ -6,8 +6,8 @@
     var app = angular.module('app').service('backendApi', function($rootScope, server, $log, apiError, $http) {
 
         const CONSTANT = {
-            COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate', 'create', 'findOne'],
-            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange', 'deploy', 'sockets', 'ssh', 'gitlab', 'coupons','reports','user', 'order']
+            COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate', 'create', 'findOne', 'generateInvoice'],
+            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange', 'deploy', 'sockets', 'ssh', 'gitlab', 'coupons', 'reports', 'user', 'order']
         };
 
         function getLemonwayMessage(res) {

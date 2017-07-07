@@ -28,6 +28,10 @@
         </p>
     </li>
 </ul>
+<div class="row margin-top-one" ng-show="isCompleted() && userIs('admin')">
+    <div ng-hide="item.files.invoice" class="alert alert-info text-left padding-quarter" role="alert">Invoice should be generated automatically after order completion. It may take up to two minutes.</div>
+    <button class="btn btn-sm diags-btn bg-azure-radiance" ng-disabled="state.working()" ng-click="!state.working() && generateInvoice()" ng-bind="generateInvoiceLabel()">Generate Invoice</button>
+</div>
 
 
 

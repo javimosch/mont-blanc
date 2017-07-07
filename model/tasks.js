@@ -5,7 +5,7 @@ var tasks = [
     req('task.diags-remove-unpaid-orders'),
     req('task-remove-expired-work-execeptions'),
     req('check-and-send-unsended-notifications-task'),
-    //req('completed-order-notifications-task'),
+    req('completed-order-notifications-task'),
     req('sync-guest-account-task'),
     req('remove-orphan-notifications')
 ];
@@ -24,6 +24,9 @@ exports.configure = (app) => {
     tasks.forEach((t) => {
         function loop() {
             try {
+                if(t.log && t.name){
+                    Logger.debug(t.name,'Starting...');
+                }
                 t.handler(t, app);
             }
             catch (err) {

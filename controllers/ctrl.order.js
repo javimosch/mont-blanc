@@ -46,6 +46,7 @@ module.exports = {
     payUsingCard: payUsingCard,
     save: save,
     populate: orderPopulate, //DEPRECATED?
+    generateInvoice:generateInvoice,
     configureSchema: (schema) => {
 
 
@@ -103,6 +104,12 @@ module.exports = {
 
 
 /*ACTIONS ARE HERE*/
+
+function generateInvoice(data, cb) {
+    if (!data._id) return cb(apiError.ID_REQUIRED);
+    resolver.getFacade('order').assignInvoiceFile(data._id).then(r => cb(null, r)).catch(cb);
+}
+
 function sendQuote(data, cb) {
     var userCtrl = ctrl('User');
     var orderCtrl = ctrl('Order');
