@@ -103,7 +103,7 @@
                             return res.data.result;
                         });
                     },
-
+/*
                     remove: (item, index) => {
                         var rule = {
                             _id: item._id
@@ -113,7 +113,7 @@
                             update();
                         });
 
-                    },
+                    },*/
                     //buttonsTpl: vars.TPL_CRUD_BUTTONS,
                     //tfoot: vars.TPL_CRUD_TFOOT,
                     click: (item, index) => {
