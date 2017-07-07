@@ -69,8 +69,9 @@ function addNotification(type, data) {
             }
 
             if (data.to) {
-                var cut = data.to.indexOf('.') == -1 ? undefined : data.to.indexOf('.');
-                var legacyImprovedHashKey = type + "_" + data.to.substring(0, cut);
+                
+                var legacyImprovedHashKey = type+'_'+data.to.replace(new RegExp("\\.", 'g'), '_dot_');
+
                 if (attachDocument.notifications[legacyImprovedHashKey]) {
                     logger.debugTerminal('Already processed, flag present was legacy improved');
                     return resolve(RESPONSE_ALREADY_PROCESSED(type));
