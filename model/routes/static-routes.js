@@ -14,6 +14,8 @@ module.exports = {
         else {
             logger.debugTerminal('Resource folder OFF');
         }
+        
+        app.use("/npm", express.static(path.join(process.cwd(),'node_modules')));
 
         var setStatic = (name, _path, app, express) => {
             app.use("/" + name, express.static(path.join(process.cwd(), _path, name)));

@@ -1,13 +1,13 @@
 (function() {
     /*global angular, $U, $D, PDFObject,ace, html_beautify, tinymce, $*/
     angular.module('settings-feature-module').controller('settings-invoice', ['server', '$scope', '$rootScope', '$routeParams', '$log',
-        function(db, s, r, params, $log) {
+        function(db, $scope, $rootScope, params, $log) {
             //
-            $U.expose('s', s);
+            $U.exposeGlobal('s', $scope);
 
 
             //
-            s.item = {
+            $scope.item = {
                 code: '',
                 description: '',
                 content: '',
@@ -16,7 +16,7 @@
             //
             check(); //checks when the wysing lib is ready and init the components.
 
-            s.variables = {
+            $scope.variables = {
                 "{{LOGO}}": "Diagnostical Logo",
                 "{{ORDER_DESCRIPTION}}": "Ex: Pack Vent: ...",
                 "{{ADDRESS}}": "Diag Address",
@@ -57,15 +57,15 @@
                 return key.toUpperCase().indexOf('PRICE') != -1 || key.toUpperCase().indexOf('HT') != -1;
             }
 
-            Object.keys(s.variables).forEach(function(key) {
+            Object.keys($scope.variables).forEach(function(key) {
                 if (isNumber(key)) {
-                    s.variables[key.toUpperCase().replace('}}', '_FORMAT}}')] = s.variables[key] + "(two decimals, separated with comma)";
-                    delete s.variables[key];
+                    $scope.variables[key.toUpperCase().replace('}}', '_FORMAT}}')] = $scope.variables[key] + "(two decimals, separated with comma)";
+                    delete $scope.variables[key];
                 }
             });
 
-            s.orderId = '';
-            s.fetchOrder = function() {
+            $scope.orderId = '';
+            $scope.fetchOrder = function() {
                 var payload = {
                     status: 'prepaid',
                     __populate: {
@@ -73,8 +73,8 @@
                         _diag: "email firstName lastName address siret companyName tva_intra_comm isAutoentrepreneur"
                     }
                 };
-                if (s.orderId) {
-                    payload._id = s.orderId;
+                if ($scope.orderId) {
+                    payload._id = $scope.orderId;
                 }
                 db.ctrl('Order', 'get', payload).then(res => {
                     if (res.ok) {
@@ -82,19 +82,19 @@
                             $log.warn('Random prepaid order not found.');
                         }
                         $log.debug('random prepaid order is Order #' + res.result.number);
-                        s.randomOrder = res.result;
+                        $scope.randomOrder = res.result;
                     }
                     else {
-                        r.warningMessage('Problem fetching random order.');
+                        $rootScope.warningMessage('Problem fetching random order.');
                     }
                 });
             };
-            s.fetchOrder();
+            $scope.fetchOrder();
 
             function getContent() {
 
-                if (s.editor && s.editor.getValue) {
-                    return s.editor.getValue() || '';
+                if ($scope.editor && $scope.editor.getValue) {
+                    return $scope.editor.getValue() || '';
                 }
 
                 return tinymce.activeEditor.getContent({
@@ -104,8 +104,8 @@
 
             function setContent(html) {
 
-                if (s.editor && s.editor.getValue) {
-                    return s.editor.setValue(html || '');
+                if ($scope.editor && $scope.editor.getValue) {
+                    return $scope.editor.setValue(html || '');
                 }
 
                 tinymce.activeEditor.setContent(html, {
@@ -113,53 +113,53 @@
                 });
             }
 
-            s.beautify = function() {
+            $scope.beautify = function() {
                 var beautify = ace.require("ace/ext/beautify"); // get reference to extension
-                beautify.beautify(s.editor.session);
+                beautify.beautify($scope.editor.session);
             };
 
             var _is_preview_pdf = false,
                 _is_preview_html = false;
-            s.isPreviewPDF = () => _is_preview_pdf;
-            s.isPreviewHTML = () => _is_preview_html;
-            s.closePreviewHTML = () => {
+            $scope.isPreviewPDF = () => _is_preview_pdf;
+            $scope.isPreviewHTML = () => _is_preview_html;
+            $scope.closePreviewHTML = () => {
                 _is_preview_html = false;
-                r.dom(function() {
+                $rootScope.dom(function() {
                     $('#previewHTML').empty();
                 });
             };
-            s.closePreviewPDF = () => {
+            $scope.closePreviewPDF = () => {
                 _is_preview_pdf = false;
-                r.dom(function() {
+                $rootScope.dom(function() {
                     $('#previewPDF').empty();
                 });
             };
 
 
             //
-            s.previewPDF = () => {
+            $scope.previewPDF = () => {
                 _is_preview_pdf = true;
 
-                if (!s.randomOrder) {
-                    return r.warningMessage('At least one Order saved in DB is required.');
+                if (!$scope.randomOrder) {
+                    return $rootScope.warningMessage('At least one Order saved in DB is required.');
                 }
 
-                s.item.content = window.encodeURIComponent(getContent());
-                var html = $D.OrderReplaceHTML(window.decodeURIComponent(s.item.content), s.randomOrder, r);
+                $scope.item.content = window.encodeURIComponent(getContent());
+                var html = $D.OrderReplaceHTML(window.decodeURIComponent($scope.item.content), $scope.randomOrder, $rootScope);
 
                 //return $log.debug(html);
 
-                s.previewHTML(html);
+                $scope.previewHTML(html);
 
                 html = window.encodeURIComponent(html);
 
 
 
-                r.ws.ctrl("Pdf", "view", {
+                $rootScope.ws.ctrl("Pdf", "view", {
                     html: html
                 }).then(res => {
                     if (res.ok) {
-                        s.save();
+                        $scope.save();
 
                         if (PDFObject) {
 
@@ -178,12 +178,12 @@
 
                     }
                     else {
-                        r.warningMessage('Server Issue, try later.');
+                        $rootScope.warningMessage('Server Issue, try later.');
                     }
                 });
             };
             //
-            s.read = function() {
+            $scope.read = function() {
 
                 db.ctrl('Category', "createUpdate", {
                     code: "DIAGS_SETTINGS",
@@ -199,9 +199,9 @@
                         }).then(function(res) {
                             if (res.ok) {
                                 if (res.result) {
-                                    s.item = res.result;
+                                    $scope.item = res.result;
 
-                                    var decodedHtml = window.decodeURIComponent(s.item.content);
+                                    var decodedHtml = window.decodeURIComponent($scope.item.content);
 
                                     setContent(decodedHtml);
                                 }
@@ -214,15 +214,15 @@
                                         __match: ['code']
                                     }).then(function(res) {
                                         if (res.ok && res.result) {
-                                            s.item = res.result;
-                                            var decodedHtml = window.decodeURIComponent(s.item.content);
+                                            $scope.item = res.result;
+                                            var decodedHtml = window.decodeURIComponent($scope.item.content);
                                             setContent(decodedHtml);
                                         }
                                     });
                                 }
                             }
                             else {
-                                r.warningMessage('Server issue while reading item. Try later.');
+                                $rootScope.warningMessage('Server issue while reading item. Try later.');
                             }
                         });
                         //
@@ -232,41 +232,43 @@
 
             };
             //
-            s.save = function() {
-                if (!s.item.code) return r.warningMessage('Code required');
-                if (!s.item.description) return r.warningMessage('Description required');
-                if (!s.item._category) return r.warningMessage('Page Section required');
+            $scope.save = function() {
+                if (!$scope.item.code) return $rootScope.warningMessage('Code required');
+                if (!$scope.item.description) return $rootScope.warningMessage('Description required');
+                if (!$scope.item._category) return $rootScope.warningMessage('Page Section required');
                 //
-                s.item.updatedByHuman = true;
-                s.item.content = window.encodeURIComponent(getContent());
-                db.ctrl('Text', 'save', s.item).then(function() {
+                $scope.item.updatedByHuman = true;
+                $scope.item.content = window.encodeURIComponent(getContent());
+                db.ctrl('Text', 'save', $scope.item).then(function() {
                     //r.route('texts');
-                    r.infoMessage("Changes saved", 5000);
+                    $rootScope.infoMessage("Changes saved", 5000);
                 });
             };
 
             function check() {
                 if (typeof window.ace !== 'undefined') {
-                    r.dom(init);
+                    $rootScope.dom(init);
                 }
-                else setTimeout(check, 100);
+                else {
+                    setTimeout(check, 500);
+                }
             }
 
 
-            s.toggleFullscreen = function() {
-                s.editor.container.webkitRequestFullscreen();
+            $scope.toggleFullscreen = function() {
+                $scope.editor.container.webkitRequestFullscreen();
             };
-            s.formatCode = function() {
-                s.editor.session.setValue(html_beautify(s.editor.session.getValue()));
+            $scope.formatCode = function() {
+                $scope.editor.session.setValue(html_beautify($scope.editor.session.getValue()));
             };
-            s.previewHTML = function(html) {
+            $scope.previewHTML = function(html) {
                 _is_preview_html = true;
 
-                if (!html && !s.randomOrder) {
-                    return r.warningMessage('At least one Order saved in DB is required.');
+                if (!html && !$scope.randomOrder) {
+                    return $rootScope.warningMessage('At least one Order saved in DB is required.');
                 }
 
-                r.dom(function() {
+                $rootScope.dom(function() {
                     if (!html) {
                         html = '';
                         try {
@@ -275,56 +277,84 @@
                         catch (err) {
                             html = getContent();
                         }
-                        html = $D.OrderReplaceHTML(html, s.randomOrder, r);
+                        html = $D.OrderReplaceHTML(html, $scope.randomOrder, $rootScope);
                     }
                     $('#previewHTML').empty().append($.parseHTML(html));
                 });
             };
 
 
+            $scope.initAce = initAce();
+
             function initAce() {
-                s.editor = ace.edit("editor");
-                //-s.editor.setTheme("ace/theme/monokai");
-                s.editor.getSession().setMode("ace/mode/html");
 
-                s.editor.setTheme("ace/theme/merbivore");
-                s.editor.setOptions({
-                    enableBasicAutocompletion: true,
-                    enableSnippets: true
-                });
+                //if (typeof window.ace == 'undefined') return setTimeout(initAce, 500);
+                //if(!window.aceOK) return setTimeout(initAce, 500);
 
-                s.editor.getSession().setUseWrapMode(true);
-                s.editor.commands.addCommand({
-                    name: "fullscreen",
-                    bindKey: "ctrl-shift-f",
-                    exec: function(env, args, request) {
-                        s.toggleFullscreen();
-                    }
-                });
-                s.editor.commands.addCommand({
-                    name: "showKeyboardShortcuts",
-                    bindKey: {
-                        win: "Ctrl-Alt-h",
-                        mac: "Command-Alt-h"
-                    },
-                    exec: function(editor) {
-                        ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
-                            module.init(editor);
-                            editor.showKeyboardShortcuts();
-                        });
-                    }
-                });
-                waitBeautify(function() {
-                    s.editor.commands.addCommand({
-                        name: "beautify",
-                        bindKey: "ctrl-alt-f",
-                        exec: function(env, args, request) {
-                            s.formatCode();
-                        }
-                    });
-                    $log.debug('Beautify added (CTRL + K)');
-                });
+                if ($scope.aceInitialized) return;
+                $scope.aceInitialized = true;
 
+                console.log('Initializing ace');
+
+                var ace = window.ace;
+
+                $rootScope.dom(function() {
+
+                    $scope.editor = ace.edit("diagnostical-invoice-editor");
+                    var editor = $scope.editor;
+                    var CodeMode = ace.require("ace/mode/html").Mode;
+                    editor.session.setMode(new CodeMode());
+                    editor.setTheme("ace/theme/twilight");
+
+                    //-s.editor.setTheme("ace/theme/monokai");
+                    //$scope.editor.getSession().setMode("ace/mode/html");
+
+                    //$scope.editor.setTheme("ace/theme/monokai");
+
+                    /*
+
+                                        $scope.editor.setOptions({
+                                            //enableBasicAutocompletion: true,
+                                            //enableSnippets: true
+                                        });
+
+
+                                        $scope.editor.getSession().setUseWrapMode(true);
+                                        $scope.editor.commands.addCommand({
+                                            name: "fullscreen",
+                                            bindKey: "ctrl-shift-f",
+                                            exec: function(env, args, request) {
+                                                $scope.toggleFullscreen();
+                                            }
+                                        });
+                                        $scope.editor.commands.addCommand({
+                                            name: "showKeyboardShortcuts",
+                                            bindKey: {
+                                                win: "Ctrl-Alt-h",
+                                                mac: "Command-Alt-h"
+                                            },
+                                            exec: function(editor) {
+                                                ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
+                                                    module.init(editor);
+                                                    editor.showKeyboardShortcuts();
+                                                });
+                                            }
+                                        });
+                                        waitBeautify(function() {
+                                            $scope.editor.commands.addCommand({
+                                                name: "beautify",
+                                                bindKey: "ctrl-alt-f",
+                                                exec: function(env, args, request) {
+                                                    $scope.formatCode();
+                                                }
+                                            });
+                                            $log.debug('Beautify added (CTRL + K)');
+                                        });*/
+
+
+                    $rootScope.dom($scope.read, 0);
+
+                });
 
 
             }
@@ -342,7 +372,7 @@
 
             function init() {
                 initAce();
-                r.dom(s.read, 0);
+
             }
         }
     ]);

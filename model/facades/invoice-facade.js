@@ -112,7 +112,10 @@ function formatTomomentFrenchDateTime(date) {
 }
 
 function OrderReplaceHTML(html, _order) {
-    _order["LOGO"] = "<img src='" + serverURL + '/img/logo.jpg' + "'>";
+    //serverURL + '/img/logo.jpg'
+    //http://via.placeholder.com/224x39
+    //'<img src="' + serverURL  + '/img/logo.jpg">';
+    _order["LOGO"] = '<img src="' + serverURL  + '/img/logo.jpg" alt="logo">';
     _order['ORDER_DESCRIPTION'] = _order.info.description;
     _order['CLIENT_FULLNAME'] = _order._client.firstName + ' ' + (_order._client.lastName || '');
     _order['CLIENT_FIRSTNAME'] = _order._client.firstName;
