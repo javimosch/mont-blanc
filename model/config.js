@@ -18,6 +18,7 @@ module.exports = {
     PORT: process.env.PORT || 3000,
 
     serverURL: process.env.serverURL || 'https://www.diagnostical.fr',
+    serverRawURL: process.env.serverRawURL || 'http://62.210.97.81:8080',
     isMailingDisabled: process.env.disableMailing === '1',
 
     MAILGUN_DOMAIN: process.env.MAILGUN_DOMAIN || 'diagnostical.fr',

@@ -170,7 +170,9 @@
 
                             //if client is https and url is http, convert url to https
                             if (window.location.origin.indexOf('https') !== -1) {
-                                res.result = res.result.replace('http', 'https');
+                                if (res.result.indexOf('https') == -1) {
+                                    res.result = res.result.replace('http', 'https');
+                                }
                             }
 
                             PDFObject.embed(res.result, "#previewPDF");

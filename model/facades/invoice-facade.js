@@ -8,6 +8,7 @@ var Logger = selectController('Log').createLogger({
     category: ""
 });
 const serverURL = require(path.join(process.cwd(), 'model/config')).serverURL;
+const serverRawURL = require(path.join(process.cwd(), 'model/config')).serverRawURL;
 var encodeURIComponent = require(path.join(process.cwd(), 'model/utils')).encodeURIComponent;
 
 var Promise = require('promise');
@@ -25,7 +26,7 @@ module.exports = {
     fromOrderToDatabase: fromOrderToDatabase
 }
 
-function fromOrderToDatabase(_order,dbFileName) {
+function fromOrderToDatabase(_order, dbFileName) {
     var fileName = shortid.generate();
     return new Promise((resolve, reject) => {
         htmlFromOrder(_order, (err, html) => {
@@ -37,10 +38,10 @@ function fromOrderToDatabase(_order,dbFileName) {
             //Logger.debug('Lengh of html', html.length);
             pdfFromHtml(html, fileName).then((res) => {
                 //Logger.debug('Pdf compiled at', res.localPath);
-                selectController('File').moveFromFileSytemToDatabase(res.localPath,dbFileName).then(file=>{
+                selectController('File').moveFromFileSytemToDatabase(res.localPath, dbFileName).then(file => {
                     Logger.debug('Moved to database', file);
                     resolve(file);
-                }).catch(err=>{
+                }).catch(err => {
                     reject(err);
                 });
             }).catch((err) => {
@@ -112,10 +113,9 @@ function formatTomomentFrenchDateTime(date) {
 }
 
 function OrderReplaceHTML(html, _order) {
-    //serverURL + '/img/logo.jpg'
-    //http://via.placeholder.com/224x39
-    //'<img src="' + serverURL  + '/img/logo.jpg">';
-    _order["LOGO"] = '<img src="' + serverURL  + '/img/logo.jpg" alt="logo">';
+    var logoUrl = '<img src="' + serverRawURL + '/img/logo.jpg" alt="logo">';
+    _order["LOGO"] = logoUrl;
+    Logger.debug('Invoice Logo url is ', logoUrl);
     _order['ORDER_DESCRIPTION'] = _order.info.description;
     _order['CLIENT_FULLNAME'] = _order._client.firstName + ' ' + (_order._client.lastName || '');
     _order['CLIENT_FIRSTNAME'] = _order._client.firstName;
@@ -163,7 +163,7 @@ function OrderReplaceHTML(html, _order) {
             _order[key] = _order[key].replace(', France', '');
             _order[key] = _order[key].replace(', Francia', '');
         }
-        
+
         _order[key.toUpperCase()] = _order[key];
     }
 
