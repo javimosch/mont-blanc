@@ -17,7 +17,10 @@ module.exports = {
             default: 'admin'
         }, //admin client diag
         password: String,
-        firstName: String,
+        firstName: {
+            type:String,
+            required:true
+        },
         lastName: String,
 
         fixedTel: String,

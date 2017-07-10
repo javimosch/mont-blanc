@@ -340,13 +340,14 @@ function transformResponseLimitKeys(originalCallback, keys) {
             result = transformedResult;
         }
         return originalCallback(err, result);
-    }
+    };
 }
 
 function fetchBookingSystemUser(data, cb) {
     var email = BOOKING_BOT_EMAIL;
     ctrl('User').core.save({
         email: email,
+        firstName:email,
         userType: 'client',
         clientType: 'landlord',
         isSystemUser: true,
