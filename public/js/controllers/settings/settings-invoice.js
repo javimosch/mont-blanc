@@ -67,7 +67,12 @@
             $scope.orderId = '';
             $scope.fetchOrder = function() {
                 var payload = {
-                    status: 'prepaid',
+                    //status: 'prepaid',
+                    __rules: {
+                        status: {
+                            $in: ['prepaid', 'completed']
+                        }
+                    },
                     __populate: {
                         _client: "email firstName lastName address siret companyName",
                         _diag: "email firstName lastName address siret companyName tva_intra_comm isAutoentrepreneur"
