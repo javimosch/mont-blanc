@@ -1,4 +1,4 @@
-<div container-fluid class="diags-style">
+<div container-fluid class="bo-dashboard">
     <div class="row">
         <div class="col-md-6">
             <li class="list-group-item list-group-item-success">
@@ -56,6 +56,11 @@
                     <h4>{[{g.nroOrdersCompleted}]}</h4>
                 </li>
             </ul>
+            <div class="jumbotron">
+                <h2>Diagnostical</h2>
+                <h3>currentVersion</h3>
+                <div ng-bind="appDetails.version"></div>
+            </div>
         </div>
     </div>
 </div>

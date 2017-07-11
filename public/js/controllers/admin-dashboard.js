@@ -13,8 +13,7 @@
                 r.toggleNavbar(true);
                 r.secureSection(s);
             }
-        ]).directive('adminBalance', function(
-            $rootScope, $timeout, $compile, $uibModal, $templateRequest, $sce, server) {
+        ]).directive('adminBalance', function(server, $http, snippets, $window) {
             return {
                 restrict: 'AE',
                 replace: true,
@@ -22,15 +21,19 @@
                     //model: "=model"
                 },
                 templateUrl: 'views/diags/backoffice/partials/admin-balance.html',
-                link: function(s, elem, attrs) {
-                    var r = $rootScope;
-                    var ws = server;
-                    var n = attrs.name;
+                link: function($scope, elem, attrs) {
+                    server.ctrl('Stats', 'general').then((data) => {
+                        $scope.g = data.result;
+                    });
 
-                    ws.ctrl('Stats', 'general').then((data) => {
-                        s.g = data.result;
-                    })
+                    function fetchAppDetails() {
+                        $http.get($window.location.origin + "/appDetails").then(o => $scope.appDetails = o.data).catch(() => {
+                            setTimeout(fetchAppDetails, 10000);
+                        });
+                    }
+                    fetchAppDetails();
 
+                    snippets.exposeGlobal('s', $scope);
                 }
             };
         }).directive('adminTurnover', function(
