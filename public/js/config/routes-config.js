@@ -120,7 +120,7 @@ srv.config(['$routeProvider', '$locationProvider',
             templateUrl: 'views/settings/settings-pages.html'
         }).
         when('/database-files/:id', {
-            templateUrl: 'views/database-files.html'
+            templateUrl: 'views/settings/settings-database-files.html'
         }).
 
 

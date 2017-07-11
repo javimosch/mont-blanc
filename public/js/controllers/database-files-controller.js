@@ -100,14 +100,14 @@ angular.module('app').controller('database-files', ['server', '$scope', '$rootSc
                     });
                 },
                 filter: {
-                    template: 'pagesFilter',
+                    template: 'dbFilesFilter',
                     update: update,
                     rules: {
-                        code: 'contains'
+                        filename: 'contains'
                     }
                 },
                 pagination: {
-                    itemsPerPage: 100
+                    itemsPerPage: 10
                 },
                 paginate: (cb) => {
                     update(null, cb)

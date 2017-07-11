@@ -176,6 +176,8 @@ angular.module('app').controller('client-area-controller', ['server',
                         [!s._user.password, '==', true, appText.VALIDATE_CLIENT_PASS],
                         [!s._user.cellPhone, '==', true, appText.VALIDATE_CLIENT_MOBILE_NUMBER],
                         [!s._user.address, '==', true, appText.VALIDATE_CLIENT_ADDRESS],
+                        [!s._user.firstName, '==', true, appText.VALIDATE_CLIENT_FULLNAME],
+                        [!s._user.lastName, '==', true, appText.VALIDATE_CLIENT_FULLNAME],
                     ], (m) => {
                         if (typeof m[0] !== 'string') {
                             s.warningMsg(m[0]())

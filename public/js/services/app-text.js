@@ -38,6 +38,7 @@
             VALIDATE_CLIENT_MOBILE_NUMBER: "Mobile c&#39;est obligatoire",
             VALIDATE_CLIENT_ADDRESS: "Adresse c&#39;est obligatoire",
             VALIDATE_CLIENT_SIRET: 'Siret c&#39;est obligatoire.',
+            VALIDATE_CLIENT_FULLNAME: 'Nom c&#39;est obligatoire.',
 
             DUPLICATED_EMAIL_ADDRESS: 'This email address belongs to an existing member.',
             CLIENT_ACCOUNT_CREATED: 'Le compte a été créé . Vérifiez votre email .',

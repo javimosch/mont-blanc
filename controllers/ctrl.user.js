@@ -490,7 +490,7 @@ function create(data, cb) {
     _preCreateWallet(data, cb, __create);
 
     function __create(data, cb) {
-        ctrl('User').create(data, cb, ['email', 'userType', 'password']);
+        ctrl('User').model.create(data, cb);
     }
 }
 
