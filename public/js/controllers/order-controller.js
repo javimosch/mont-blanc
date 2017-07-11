@@ -321,6 +321,7 @@
                         $scope.__isSlotSelectionActivatedManually = val != undefined && val || true;
                     });
                 };
+                $scope.showRDVBlock = () => !$scope.isCompleted();
                 $scope.isRDVSelectButtonActivated = function() {
                     return $scope.item._id && $rootScope.userIs('admin') && !hasSlotSelectionActivatedManually() && !$scope.rdvConditions();
                 };
@@ -333,6 +334,8 @@
                 $scope.rdvConditions = () => {
                     if ($scope.item._id && !hasSlotSelectionActivatedManualyByAdmin()) return false;
                     if (!$scope.item.info) return false;
+                    if ($scope.isCompleted()) return false;
+
                     var rta = $scope.item.info.squareMeters !== undefined && $scope.item._client !== undefined;
                     if (rta && !$scope.__rdvInit) {
                         $scope.__rdvInit = true;
@@ -580,9 +583,30 @@
 
 
 
+                var prevDiag = null;
                 $scope.$watch('item._diag', (v) => {
                     if (typeof v === 'string') return;
-                    $log.info('DIAG CHANGE', v);
+                    if ($scope.isCompleted()) {
+
+                        var diag = v;
+                        if (!prevDiag || prevDiag._id == diag._id) {
+                            $log.log('Revenues recalc skip');
+                        }
+                        else {
+                            prevDiag = diag;
+                            $log.log('Revenues recalc');
+
+                            var recalc = orderPrice.recalculateRevenues($scope.item.priceHT, $scope.item.vatRate, diag.commission);
+
+                            $scope.item.revenueHT = recalc.revenueHT;
+                            $scope.item.diagRemunerationHT = recalc.diagRemunerationHT;
+
+                        }
+                        if (!prevDiag) prevDiag = diag;
+                        return;
+
+
+                    }
                     if ($scope.diagSlots) {
                         $scope.diagSlots.setDiag($scope.item._diag);
                     }
@@ -1035,16 +1059,28 @@
                     if (!opt || opt && opt.assignDiagFeature !== true) {
                         if ($scope.prevItem && $scope.prevItem._diag && $scope.prevItem._diag.email && $scope.item._diag && $scope.item._diag.email && $scope.prevItem._diag.email != $scope.item._diag.email) {
 
-                            if ($scope.isPaid()) return displayWarning('You change the diag account but the order is already paid. Unable to assign a new diag account.');
+                            if ($scope.isPaid()) {
+                                //return displayWarning('You change the diag account but the order is already paid. Unable to assign a new diag account.');
 
-                            var msg = "Manually assign of diagnostiqueur " + $scope.item._diag.firstName + ' ' + $scope.item._diag.lastName + ' will trigger notifications again. Please confirm. ';
-                            $rootScope.openConfirm(msg, () => {
-                                reEnableNotifications();
-                                $scope.save(Object.assign(opt || {}, {
-                                    assignDiagFeature: true
-                                }));
-                            });
-                            return;
+                                var msg = "Manually assign of diagnostiqueur " + $scope.item._diag.firstName + ' ' + $scope.item._diag.lastName + ' will override revenueHT and Reversement Diag'
+                                $rootScope.openConfirm(msg, () => {
+                                    $scope.save(Object.assign(opt || {}, {
+                                        assignDiagFeature: true
+                                    }));
+                                });
+
+
+                            }
+                            else {
+                                var msg = "Manually assign of diagnostiqueur " + $scope.item._diag.firstName + ' ' + $scope.item._diag.lastName + ' will trigger notifications again. Please confirm. ';
+                                $rootScope.openConfirm(msg, () => {
+                                    reEnableNotifications();
+                                    $scope.save(Object.assign(opt || {}, {
+                                        assignDiagFeature: true
+                                    }));
+                                });
+                                return;
+                            }
                         }
                     }
 
@@ -1224,7 +1260,7 @@
 
                         if (!$scope.prevItem || Object.keys($scope.prevItem).length == 0) $scope.prevItem = $scope.item;
 
-                        $scope.original = _.clone($scope.item);
+                        $scope.original = _.cloneDeep($scope.item);
 
                         if ($scope.afterRead && $scope.afterRead.forEach) {
                             $scope.afterRead.forEach(cb => cb());

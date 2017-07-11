@@ -285,11 +285,10 @@
                     </ul>
                 </div>
             </div>
-            <div class="row margin-top-half" ng-show="!item._id || userIs('admin')">
-                <!--  -->
+            <div class="row margin-top-half" ng-show="showRDVBlock()">
                 <label class="unselectable">RDV</label>
             </div>
-            <div class="row margin-top-quarter">
+            <div class="row margin-top-quarter" ng-show="showRDVBlock()">
                 <out ng-show="!rdvConditions()">
                     <div ng-show="!item.info.squareMeters" class="alert alert-info" role="alert">Answer question size.</div>
                     <div ng-show="!item._client" class="alert alert-info" role="alert">Choice a client.</div>

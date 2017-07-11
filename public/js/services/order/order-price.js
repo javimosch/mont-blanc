@@ -63,7 +63,7 @@
 
 
         var self = {
-            fixedPriceTTC:null,
+            fixedPriceTTC: null,
             _settings: settings,
             set: function(_settings) {
                 Object.assign(settings, _settings);
@@ -215,25 +215,36 @@
             },
             /*This should be the final client price*/
             getPriceTTC: function(k) {
-                if(self.fixedPriceTTC) return self.fixedPriceTTC;
+                if (self.fixedPriceTTC) return self.fixedPriceTTC;
                 return tenthDown10(this.getPriceTTCWithDiscountCoupon(k));
             },
-            getPriceRemunerationHT: function() {
-                //Diag man remuneration
+            getPriceRemunerationHT: function(priceTTC, revenueTTC) {
+                priceTTC = priceTTC || this.getPriceTTC();
+                revenueTTC = revenueTTC || this.getPriceRevenueTTC();
                 if (!settings.diagCommissionRate) {
-                    //$log.error('orderPrice settings.diagCommissionRate is required');
                     return 0;
                 }
-                //return (this.getPriceHT() * (settings.diagCommissionRate || 1) / 100).toFixed(2)
-                return (this.getPriceTTC() - this.getPriceRevenueTTC()).toFixed(2);
+                return (priceTTC - revenueTTC).toFixed(2);
             },
-            getPriceRevenueHT: function() {
-                //Diagnostical revenue
-                //return (this.getPriceHT() - this.getPriceRemunerationHT()).toFixed(2);
-                return (this.getPriceHT() * (settings.diagCommissionRate && (100 - settings.diagCommissionRate) || 1) / 100).toFixed(2)
+            getPriceRevenueHT: function(priceHT) {
+                priceHT = priceHT || this.getPriceHT();
+                return (priceHT * (settings.diagCommissionRate && (100 - settings.diagCommissionRate) || 1) / 100).toFixed(2);
             },
-            getPriceRevenueTTC: function() {
-                return (parseFloat(this.getPriceRevenueHT()) * (1 + (this.getRatioModifierFor('vat') / 100))).toFixed(2);
+            getPriceRevenueTTC: function(revenueHT) {
+                revenueHT = revenueHT || this.getPriceRevenueHT();
+                return (parseFloat(revenueHT) * (1 + (this.getRatioModifierFor('vat') / 100))).toFixed(2);
+            },
+
+            recalculateRevenues: function(priceHT, vatRate, diagAccountCommission) {
+                vatRate = (1 + parseFloat(vatRate || 20) / 100); //1.20
+                var revenueRate = (100 - (diagAccountCommission || 1)) / 100; //0.5 0.7 etc
+                var revenueHT = priceHT * revenueRate;
+                var revenueTTC = revenueHT * vatRate;
+                var revenueDiagHT = (Math.round(priceHT * vatRate)) - revenueTTC;
+                return {
+                    diagRemunerationHT: revenueDiagHT.toFixed(2),
+                    revenueHT: revenueHT.toFixed(2)
+                };
             },
             //Helper function to assign prices in an existing order.
             assignPrices: function(object) {
