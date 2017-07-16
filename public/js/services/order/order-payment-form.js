@@ -34,40 +34,50 @@
 
                         $U.exposeGlobal('pp', modalScope);
 
-                        function validCreditCardNumber() {
-                            var rta = true;
-                            var cardNumberElement = $('.cardNumber');
-                            if (cardNumberElement.length === 0) return false;
-                            var result = cardNumberElement.validateCreditCard({
+                        modalScope.cardNumberWarningLabel = () => {
+                            return modalScope.response.cardTypeString + ' non valide.';
+                        };
+                        modalScope.showCardNumberWarning = () => {
+                            var el = $('.cardNumber');
+                            
+                            if(!modalScope.response.cardTypeString){
+                                return false;//valid (disable validation for CB)
+                            }
+
+                            if (el.val().length !== 16) return false; //valid (wait for 16 chars)
+
+                            modalScope.cardNumberWarning = el.validateCreditCard({
                                 accept: ['visa', 'mastercard']
                             });
-                            if (result.card_type && modalScope.response.cardTypeString && modalScope.response.cardTypeString.toLowerCase() == result.card_type.name && !result.valid && modalScope.response.cardNumber.length == 16) {
-                                return false;
+
+                            if (modalScope.cardNumberWarning.valid) {
+                                var card_type = modalScope.cardNumberWarning && modalScope.cardNumberWarning.card_type;
+                                if (card_type && modalScope.response.cardTypeString) {
+                                    if (modalScope.response.cardTypeString.toLowerCase() == modalScope.cardNumberWarning.card_type.name) {
+                                        return false; //valid (valid card type and number)
+                                    }
+                                }
                             }
-                            //$log.debug('validCreditCardNumber', rta);
-                            return rta;
-                        }
 
-                        //$log.debug('BINDING!',modalScope);
+                            return true; //invalid (other cases)
+                        };
 
-                        //cardNumberMask: Copy real value to cardNumber
+
                         modalScope.$watch('data.cardNumberMask', (cardNumberMask) => {
-
-                            //$log.debug('cardNumberMask', cardNumberMask);
-
-                            if (!cardNumberMask) return;
-
-                            modalScope.response.cardNumber = cardNumberMask.replace(/ /g, "");
-
+                            if (!cardNumberMask) {
+                                modalScope.response.cardNumber = '';
+                            }
+                            else {
+                                modalScope.response.cardNumber = cardNumberMask.replace(/ /g, "");
+                            }
                         });
 
                         modalScope.$watch('response.cardNumber', (cardNumber) => {
-                            //Validate card number
-                            modalScope.data.invalidCardNumber = !validCreditCardNumber();
-                            //Switch focus to card date
-                            if (cardNumber && cardNumber.toString().length == 16 && !modalScope.data.invalidCardNumber) {
-                                focus('cardDateMonth')
-                            }
+                            setTimeout(function() {
+                                if (cardNumber && cardNumber.toString().length == 16 && !modalScope.showCardNumberWarning()) {
+                                    focus('cardDateMonth')
+                                }
+                            }, 500);
                         });
 
 
@@ -172,7 +182,6 @@
                             switch (modalScope.response.cardType) {
                                 case '0':
                                     modalScope.response.cardTypeString = '';
-                                    modalScope.data.invalidCardNumber = false;
                                     break;
                                 case '1':
                                     modalScope.response.cardTypeString = 'Visa';
@@ -182,7 +191,6 @@
                                     break;
                                 default:
                                     modalScope.response.cardTypeString = '';
-                                    modalScope.data.invalidCardNumber = false;
                                     break;
                             }
                             focus('cardNumber');
@@ -271,9 +279,9 @@
 
                         function payUsingCheque() {
                             backendApi.Order.custom('payUsingCheque', {
-                                coupon:order._coupon,
+                                coupon: order._coupon,
                                 orderId: order._id,
-                                price:getPrice(order),
+                                price: getPrice(order),
                                 clientId: clientId,
                                 clientEmail: formResponse.clientEmail,
                                 clientName: formResponse.clientName,
@@ -288,16 +296,16 @@
                                 isProcessing = false;
                                 reject(res);
                                 closeModal();
-                            }).on('validate', function(msg,apiError) {
+                            }).on('validate', function(msg, apiError) {
                                 isProcessing = false;
-                                emit('validate', msg,apiError);
+                                emit('validate', msg, apiError);
                                 closeModal();
                             }).on('validate:error', (err) => emit('validate:error', err));
                         }
 
                         function payUsingCard() {
                             var payload = {
-                                coupon:order._coupon,
+                                coupon: order._coupon,
                                 wallet: order._client.wallet,
                                 cardType: formResponse.cardType,
                                 cardNumber: formResponse.cardNumber,

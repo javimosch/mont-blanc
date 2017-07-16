@@ -46,11 +46,6 @@ module.exports = {
         country: String,
         postCode: String,
 
-        stripeCustomer: {
-            type: String,
-            default: null
-        },
-
         //DIAG
         priority: {
             type: Number
