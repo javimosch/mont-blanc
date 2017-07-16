@@ -46,7 +46,7 @@ module.exports = {
     payUsingCard: payUsingCard,
     save: save,
     populate: orderPopulate, //DEPRECATED?
-    generateInvoice:generateInvoice,
+    generateInvoice: generateInvoice,
     configureSchema: (schema) => {
 
 
@@ -267,6 +267,8 @@ function payUsingCard(data, routeCallback) {
     var secretData = decodePayload(data.secret);
     if (!secretData.creditCardOwner) return routeCallback('credit card owner required');
     if (!secretData.clientEmail) return routeCallback('clientId or clientEmail required');
+
+
     if (!data.masterWallet) {
         return validateTechnicalWallet(data, secretData, () => payUsingCard(data, routeCallback), err => routeCallback(err));
     }
@@ -274,12 +276,16 @@ function payUsingCard(data, routeCallback) {
         secretData.wallet = data.masterWallet; //we use this wallet for the client payment move.
         data.p2pDiag.debitWallet = data.masterWallet; //we use this wallet for the diag p2p movement.
     }
+
+
     if (!secretData.wallet) {
         return routeCallback('Tecnical wallet for charge');
     }
     if (!data.p2pDiag.debitWallet) {
         return routeCallback('Tecnical wallet for debit required');
     }
+
+
     if (!PaymentProcessor.isAllowed(data)) {
         if (data.coupon && secretData.clientEmail) {
             return resolver.controllers().user.validateCoupon({
@@ -561,6 +567,7 @@ var PaymentHelper = (() => {
             clientData.clientName:      CHEQUE
             clientData.clientPhone:     CARD OR CHEQUE : OPTIONAL
             clientData.clientPassword:  OPTIONAL
+            clientData.creditCardOwner: CARD
             */
             return new Promise((resolve, reject) => {
                 if (!orderId) reject('orderId required for client association');
@@ -579,13 +586,21 @@ var PaymentHelper = (() => {
                     });
                 }
                 else {
-                    ctrl('User').fetchLandlordAccount({
-                        firstName: clientData.clientName || '',
+                    var fn = clientData.clientName || clientData.creditCardOwner || '';
+                    var firstName = fn.indexOf(' ') ? fn.split(' ')[0] : fn;
+                    var lastName = fn.indexOf(' ') ? fn.split(' ')[1] : undefined;
+                    var payload = {
+                        firstName: firstName,
+                        lastName: lastName,
                         cellPhone: clientData.clientPhone,
                         email: clientData.clientEmail,
                         password: clientData.clientPassword,
                         isGuestAccount: !clientData.clientPassword
-                    }, (err, user) => {
+                    };
+
+                    paymentLogger.debug('fetchLandlordAccount', payload);
+
+                    ctrl('User').fetchLandlordAccount(payload, (err, user) => {
                         if (err) return reject(err);
                         associateClient(user._id, orderId).then(resolve);
                     });
