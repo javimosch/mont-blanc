@@ -14,8 +14,8 @@
 angular.module('app').controller('client-area-controller', ['server',
     '$timeout', '$scope', '$rootScope', '$uibModal', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter',
     function(db, $timeout, s, r, $uibModal, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter) {
-        
-        $U.exposeGlobal('s',s);
+
+        $U.exposeGlobal('s', s);
 
         s._user = r.sessionMetadata()._user || {};
         s.auth = {};
@@ -65,18 +65,18 @@ angular.module('app').controller('client-area-controller', ['server',
             }, true);
             r.route(url, delay);
         }
-        
-        s.selectMoralAuthority = ()=>{
-            if(!s._user.email) return s.warningMsg(appText.VALIDATE_CLIENT_EMAIL);
-            if(!s._user.password) return s.warningMsg(appText.VALIDATE_CLIENT_PASS);
-            if(!s._user.legalStatus) return s.warningMsg(appText.VALIDATE_CLIENT_LEGAL_STATUS);
-            
+
+        s.selectMoralAuthority = () => {
+            if (!s._user.email) return s.warningMsg(appText.VALIDATE_CLIENT_EMAIL);
+            if (!s._user.password) return s.warningMsg(appText.VALIDATE_CLIENT_PASS);
+            if (!s._user.legalStatus) return s.warningMsg(appText.VALIDATE_CLIENT_LEGAL_STATUS);
+
             changeRoute(r.URL.ACCOUNT_DETAILS);
         };
-        s.backToMoralAuthority = ()=>{
+        s.backToMoralAuthority = () => {
             changeRoute('client-account-choice');
         };
-        
+
         s.validateAuthInput = function(cb) {
             $U.ifThenMessage([
                 [!s.auth.email, '==', true, appText.VALIDATE_CLIENT_EMAIL],
@@ -93,7 +93,7 @@ angular.module('app').controller('client-area-controller', ['server',
         }
         s.subscribeMode = (clientType) => {
             var nextRoute = r.URL.ACCOUNT_DETAILS;
-            if(clientType === 'landlord'){
+            if (clientType === 'landlord') {
                 nextRoute = 'client-account-choice';
             }
             s.subscribe(clientType, nextRoute);
@@ -176,7 +176,7 @@ angular.module('app').controller('client-area-controller', ['server',
                         [!s._user.password, '==', true, appText.VALIDATE_CLIENT_PASS],
                         [!s._user.cellPhone, '==', true, appText.VALIDATE_CLIENT_MOBILE_NUMBER],
                         [!s._user.address, '==', true, appText.VALIDATE_CLIENT_ADDRESS],
-                        [!s._user.firstName, '==', true, appText.VALIDATE_CLIENT_FULLNAME],
+                        [s.showInputFirstName() && !s._user.firstName, '==', true, appText.VALIDATE_CLIENT_FULLNAME],
                         [!s._user.lastName, '==', true, appText.VALIDATE_CLIENT_FULLNAME],
                     ], (m) => {
                         if (typeof m[0] !== 'string') {

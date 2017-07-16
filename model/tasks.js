@@ -25,7 +25,7 @@ exports.configure = (app) => {
         function loop() {
             try {
                 if(t.log && t.name){
-                    Logger.debug(t.name,'Starting...');
+                    Logger.debugTerminal(t.name,'Starting...');
                 }
                 t.handler(t, app);
             }

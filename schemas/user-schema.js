@@ -19,7 +19,7 @@ module.exports = {
         password: String,
         firstName: {
             type:String,
-            required:true
+            required:false
         },
         lastName: String,
 

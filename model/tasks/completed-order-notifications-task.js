@@ -89,7 +89,7 @@ function completedNotification(_order) {
 
             OrderFacade.hasNotification(_order._id, type).then(hasNotification => {
                 if (hasNotification) {
-                    return logger.debug("Notification already exist in order", type);
+                    return logger.debugTerminal("Notification already exist in order", type);
                 }
                 var payload = {
                     _user: _order._client._id,
