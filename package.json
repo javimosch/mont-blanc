@@ -1,13 +1,15 @@
 {
   "name": "diagnostical",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "description": "Fullstack Application (Angular / NodeJs / Mongo)",
   "main": "index.js",
   "author": "Javier Arancibia (arancibiajav@gmail.com)",
-  "maintainers": [{
-    "name": "javimosch",
-    "email": "arancibiajav@gmail.com"
-  }],
+  "maintainers": [
+    {
+      "name": "javimosch",
+      "email": "arancibiajav@gmail.com"
+    }
+  ],
   "scripts": {
     "test": "make test",
     "testDev": "nodemon test/mocha.js --watch test --watch model --watch .env --watch controllers",
