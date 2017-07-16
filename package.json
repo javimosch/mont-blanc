@@ -4,12 +4,10 @@
   "description": "Fullstack Application (Angular / NodeJs / Mongo)",
   "main": "index.js",
   "author": "Javier Arancibia (arancibiajav@gmail.com)",
-  "maintainers": [
-    {
-      "name": "javimosch",
-      "email": "arancibiajav@gmail.com"
-    }
-  ],
+  "maintainers": [{
+    "name": "javimosch",
+    "email": "arancibiajav@gmail.com"
+  }],
   "scripts": {
     "test": "make test",
     "testDev": "nodemon test/mocha.js --watch test --watch model --watch .env --watch controllers",
@@ -30,6 +28,7 @@
     "npm": ">= 5.0.0"
   },
   "dependencies": {
+    "semver": "^5.3.0",
     "ace-builds": "^1.2.8",
     "angular": "^1.5.0",
     "angular-bootstrap-calendar": "^0.18.8",
@@ -129,7 +128,6 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "jshint": "^2.9.4",
-    "mocha": "^2.5.3",
-    "semver": "^5.3.0"
+    "mocha": "^2.5.3"
   }
 }
