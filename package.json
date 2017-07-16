@@ -1,6 +1,6 @@
 {
   "name": "diagnostical",
-  "version": "1.9.7",
+  "version": "1.9.8",
   "description": "Fullstack Application (Angular / NodeJs / Mongo)",
   "main": "index.js",
   "author": "Javier Arancibia (arancibiajav@gmail.com)",
