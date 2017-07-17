@@ -264,7 +264,10 @@ function payUsingCard(data, routeCallback) {
     if (!data.orderId) return routeCallback('orderId field required');
     if (!data.p2pDiag) return routeCallback('p2pDiag field required');
     if (!data.secret) return routeCallback('secret field required');
-    var secretData = decodePayload(data.secret);
+    
+    //var secretData = decodePayload(data.secret);
+    var secretData = data.secret;
+    
     if (!secretData.creditCardOwner) return routeCallback('credit card owner required');
     if (!secretData.clientEmail) return routeCallback('clientId or clientEmail required');
 

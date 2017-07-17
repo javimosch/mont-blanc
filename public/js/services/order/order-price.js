@@ -235,13 +235,34 @@
                 return (parseFloat(revenueHT) * (1 + (this.getRatioModifierFor('vat') / 100))).toFixed(2);
             },
 
-            recalculateRevenues: function(priceHT, vatRate, diagAccountCommission) {
+            recalculateRevenuesWithNewDiagAccount: function(order, diagAccount) {
+                var vatRate = order.vatRate; //ex: 20
                 vatRate = (1 + parseFloat(vatRate || 20) / 100); //1.20
-                var revenueRate = (100 - (diagAccountCommission || 1)) / 100; //0.5 0.7 etc
-                var revenueHT = priceHT * revenueRate;
-                var revenueTTC = revenueHT * vatRate;
-                var revenueDiagHT = (Math.round(priceHT * vatRate)) - revenueTTC;
+                revenueRate = (100 - (diagAccount.commission || 1)) / 100; //0.5 0.7 etc
+                var revenueHT, revenueTTC, revenueDiagHT, revenueRate, priceHT;
+                priceHT = order.priceHT;
+                var vatPrice = order.vatPrice;
+                if (diagAccount.isAutoentrepreneur) {
+                    if (order.price == order.priceHT && order.vatPrice == 0) {}
+                    else {
+                        //last calculation was done with VAT, with do not need VAT!
+                        priceHT = order.price;
+                        vatPrice = 0;
+                    }
+                }
+                else {
+                    if (order.price == order.priceHT && order.vatPrice == 0) {
+                        //last calculation was done without VAT, we need VAT!
+                        priceHT = order.price / vatRate; //ex 48 / 1.2 = 40 (we remove vat to get ht)
+                        vatPrice = order.price - priceHT;
+                    }
+                }
+                revenueHT = priceHT * revenueRate;
+                revenueTTC = revenueHT * vatRate;
+                revenueDiagHT = (Math.round(priceHT * vatRate)) - revenueTTC;
                 return {
+                    vatPrice:vatPrice,
+                    priceHT: priceHT,
                     diagRemunerationHT: revenueDiagHT.toFixed(2),
                     revenueHT: revenueHT.toFixed(2)
                 };

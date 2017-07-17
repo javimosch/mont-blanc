@@ -327,7 +327,7 @@
                             };
                             payload = {
                                 orderId: order._id,
-                                secret: window.btoa(JSON.stringify(payload)) + window.btoa('secret'),
+                                secret: payload,//window.btoa(JSON.stringify(payload)) + window.btoa('secret'),
                                 p2pDiag: {
                                     debitWallet: order._client.wallet,
                                     creditWallet: order._diag.wallet,

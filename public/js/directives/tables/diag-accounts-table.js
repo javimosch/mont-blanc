@@ -28,7 +28,7 @@
                     function update() {
                         db.ctrl('User', 'getAll', {
                             userType: 'diag',
-                            __select: "priority firstName email lastName fixedTel cellPhone commission wallet departments disabled"
+                            __select: "priority firstName email lastName fixedTel cellPhone commission wallet departments disabled isAutoentrepreneur"
                         }).then((res) => {
                             res.result = _.orderBy(res.result, ['priority'], ['asc']);
 
@@ -82,9 +82,15 @@
                             label: 'Priorité',
                             name: 'priority'
                         }, {
-                            label: "Description",
+                            label: "FullName",
                             name: "firstName",
-                            format: (x, o) => o.firstName + ((o.lastName) ? ', ' + o.lastName : '')
+                            format: (x, o) => {
+                                var rta = o.firstName + ((o.lastName) ? ', ' + o.lastName : '');
+                                if (o.isAutoentrepreneur) {
+                                    rta+= ' (Autoentrepreneur)';
+                                }
+                                return rta;
+                            }
                         }, {
                             label: "Email",
                             name: 'email'
@@ -118,7 +124,7 @@
                         }, {
                             label: "Activated",
                             name: "commission",
-                            format: (v, item) => item.disabled?"":"Yes"
+                            format: (v, item) => item.disabled ? "" : "Yes"
                         }, {
                             label: "Wallet ID",
                             name: "wallet",

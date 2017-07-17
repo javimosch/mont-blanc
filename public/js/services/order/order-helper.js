@@ -34,7 +34,7 @@
                 diagIsAutoentrepreneur: data._diag && data._diag.isAutoentrepreneur,
                 buildingType: data.info.buildingType,
                 modifiersPercentages: remoteSettings.pricePercentageIncrease,
-                squareMetersPrice: localData.squareMetersPrice,//remoteSettings.metadata.squareMetersPrice,
+                squareMetersPrice: localData.squareMetersPrice, //remoteSettings.metadata.squareMetersPrice,
                 squareMeters: data.info.squareMeters,
                 clientDiscountPercentage: data._client.discount,
                 departmentMultipliers: remoteSettings.metadata.departmentMultipliers,
@@ -42,10 +42,21 @@
                 basePrice: remoteSettings.metadata.prices.basePrice,
                 selectedDiags: data.diags,
                 availableDiags: localData.diags,
-                couponDiscount:data.couponDiscount,
+                couponDiscount: data.couponDiscount,
                 diagCommissionRate: data._diag && data._diag.commission,
             });
         }
+
+        self.preparePriceCalculation = (data) => {
+            return $U.MyPromise(function(resolve, reject, emit) {
+                appSettings.syncAll().then((appSettings) => {
+                    var remoteSettings = appSettings.databaseSettings;
+                    var localData = appSettings.localData;
+                    setPricesCalculationRequirements(data, remoteSettings, localData);
+                    resolve(orderPrice);
+                });
+            });
+        };
 
         self.createFromBookingData = (existingOrder) => {
             return $U.MyPromise(function(resolve, reject, emit) {
@@ -188,10 +199,10 @@
             var m = localSession.getMetadata();
             return m && m._order || {};
         };
-        self.clearCache = ()=>{
+        self.clearCache = () => {
             localSession.setMetadata({
                 _order: {}
-            });  
+            });
         };
 
         self.getDiagAccountDescription = (data) => {
