@@ -596,10 +596,16 @@
                             prevDiag = diag;
                             $log.log('Revenues recalc');
 
-                            var recalc = orderPrice.recalculateRevenues($scope.item.priceHT, $scope.item.vatRate, diag.commission);
 
-                            $scope.item.revenueHT = recalc.revenueHT;
-                            $scope.item.diagRemunerationHT = recalc.diagRemunerationHT;
+                            orderHelper.preparePriceCalculation($scope.item).then(() => {
+                                var recalc = orderPrice.recalculateRevenuesWithNewDiagAccount($scope.item,diag);
+                                $scope.item.vatPrice = recalc.vatPrice;
+                                $scope.item.priceHT = recalc.priceHT;
+                                $scope.item.revenueHT = recalc.revenueHT;
+                                $scope.item.diagRemunerationHT = recalc.diagRemunerationHT;
+                            });
+
+
 
                         }
                         if (!prevDiag) prevDiag = diag;
