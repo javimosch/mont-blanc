@@ -261,7 +261,7 @@ function payUsingCardAllowPayment(data, routeCallback) {
 
 function payUsingCard(data, routeCallback) {
     //VALIDATIONS
-    if (!data.orderId) return routeCallback('orderId field required');
+    if (!data.orderId) return routeCallback('orderId field required (1)');
     if (!data.p2pDiag) return routeCallback('p2pDiag field required');
     if (!data.secret) return routeCallback('secret field required');
     
@@ -279,6 +279,8 @@ function payUsingCard(data, routeCallback) {
         secretData.wallet = data.masterWallet; //we use this wallet for the client payment move.
         data.p2pDiag.debitWallet = data.masterWallet; //we use this wallet for the diag p2p movement.
     }
+    
+    if (!data.orderId) return routeCallback('orderId field required (2)');
 
 
     if (!secretData.wallet) {
@@ -300,6 +302,8 @@ function payUsingCard(data, routeCallback) {
             return payUsingCardAllowPayment(data, routeCallback);
         }
     }
+    
+    if (!data.orderId) return routeCallback('orderId field required (3)');
 
     //QUEUE
     if (PaymentProcessor.inQueue(data)) {
@@ -310,6 +314,9 @@ function payUsingCard(data, routeCallback) {
 
     //OK
     PaymentHelper.updateDetailsAsync(data.orderId, secretData.creditCardOwner, secretData.billingAddress);
+    
+    if (!data.orderId) return routeCallback('orderId field required (4)');
+    
     PaymentHelper.associateClient(data.orderId, secretData).then(() => {
         getNextInvoiceNumber({
             _id: data.orderId
@@ -462,7 +469,7 @@ function associateClient(clientId, orderId) {
     return new Promise((resolve, reject) => {
 
         if (!clientId) return reject("clientId required");
-        if (!orderId) return reject("orderId required");
+        if (!orderId) return reject(apiError.ORDER_ID_REQUIRED);
 
         //dbLogger.debug('associateClient:valid');
 
@@ -584,7 +591,7 @@ var PaymentHelper = (() => {
                         });
                     }
 
-                    associateClient(clientData.clientId, clientData.orderId).then(resolve).catch(err => {
+                    associateClient(clientData.clientId, orderId).then(resolve).catch(err => {
                         return reject(err);
                     });
                 }
