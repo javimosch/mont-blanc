@@ -33,6 +33,10 @@ module.exports = {
         message: "Order not found",
         code: 500
     },
+    ORDER_ID_REQUIRED: {
+        message: 'orderId requis',
+        code: 5101
+    },
     USER_REQUIRED: {
         message: 'userId or _user requis',
         code: 5100
