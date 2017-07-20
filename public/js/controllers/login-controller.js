@@ -1,7 +1,7 @@
 (function() {
     /*global angular*/
     /*global $U*/
-    angular.module('login-feature-module').controller('adminLogin', ['server', '$scope', '$rootScope', 'LoginService', function(db, s, r, LoginService) {
+    angular.module('login-feature-module').controller('adminLogin', ['server', '$scope', '$rootScope', 'LoginService', 'Analytics', function(db, s, r, LoginService, Analytics) {
         //console.info('app.admin.login:adminLogin');
         r.__hideNavMenu = true;
         r.navShow = true;
@@ -11,11 +11,19 @@
             r.__hideNavMenu = false;
         });
 
+        Analytics.trackView('login');
+
+        function onLoginSuccess(user) {
+            Analytics.syncUser(user);
+            Analytics.incrementUserProperty('login_success_counter');
+            r.route('dashboard');
+        }
+
 
         s.login = function(silent) {
             silent = silent !== undefined ? silent : false;
-            LoginService.login(r._login.email, r._login.password, r._login.rememberPass).then(() => {
-                r.route('dashboard');
+            LoginService.login(r._login.email, r._login.password, r._login.rememberPass).then((user) => {
+                onLoginSuccess(user);
                 r.__hideNavMenu = false;
             }).on('validate', msg => {
                 if (!silent) {
@@ -35,6 +43,7 @@
         };
 
         s.resetPassword = function() {
+            Analytics.trackEvent("click_login_recover_password_link");
             LoginService.resetPassword(r._login.email).then((msg) => {
                 r.infoMessage(msg, 10000);
             }).on('validate', msg => {
@@ -66,8 +75,8 @@
 
 
         if (LoginService.isLogged()) {
-            LoginService.updateSession().then(() => {
-                r.route('dashboard');
+            LoginService.updateSession().then((user) => {
+                onLoginSuccess(user);
             }).on('validate', msg => {
                 //r.warningMessage(msg);
                 s.show = true;

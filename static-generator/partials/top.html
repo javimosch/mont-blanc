@@ -34,10 +34,11 @@
     <script async src="/js/vendor/vendor.selectivizr-min.js"></script>
     -->
     <base id="baseHref" href="/">
+    {{>mixpanel}}
+    {{>amplitude}}
 </head>
 
 <body class="diags-style modal-scrollfix ">
-
 {{#if iframe}}
     {{>booking-iframe}}
 {{else}}

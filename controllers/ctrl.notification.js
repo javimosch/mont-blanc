@@ -14,6 +14,10 @@ var actions = {
 };
 
 
+var webhookLogger = ctrl('Log').createLogger({
+    name: "NOTIFICATION",
+    category: "WEBHOOK"
+});
 var triggerLogger = ctrl('Log').createLogger({
     name: "NOTIFICATION",
     category: "TRIGGER"
@@ -43,15 +47,15 @@ var NOTIFICATION = {
     CLIENT_CLIENT_NEW_ACCOUNT: 'CLIENT_CLIENT_NEW_ACCOUNT',
     CLIENT_ORDER_CREATED: 'CLIENT_ORDER_CREATED',
     CLIENT_ORDER_PAYMENT_SUCCESS: 'CLIENT_ORDER_PAYMENT_SUCCESS',
-    CLIENT_ORDER_PAYMENT_SUCCESS_CHEQUE:'CLIENT_ORDER_PAYMENT_SUCCESS_CHEQUE',
+    CLIENT_ORDER_PAYMENT_SUCCESS_CHEQUE: 'CLIENT_ORDER_PAYMENT_SUCCESS_CHEQUE',
     CLIENT_ORDER_DELEGATED: 'CLIENT_ORDER_DELEGATED',
     CLIENT_ORDER_QUOTATION: 'CLIENT_ORDER_QUOTATION',
-    CLIENT_COMPLETED_ORDER:'CLIENT_COMPLETED_ORDER',
+    CLIENT_COMPLETED_ORDER: 'CLIENT_COMPLETED_ORDER',
 
     DIAG_DIAG_ACCOUNT_ACTIVATED: 'DIAG_DIAG_ACCOUNT_ACTIVATED',
     DIAG_DIAG_ACCOUNT_CREATED: 'DIAG_DIAG_ACCOUNT_CREATED',
     DIAG_NEW_RDV: 'DIAG_NEW_RDV',
-    DIAG_NEW_RDV_CHEQUE:'DIAG_NEW_RDV_CHEQUE',
+    DIAG_NEW_RDV_CHEQUE: 'DIAG_NEW_RDV_CHEQUE',
     DIAG_RDV_CONFIRMED: 'DIAG_RDV_CONFIRMED',
 
     LANDLORD_ORDER_PAYMENT_DELEGATED: 'LANDLORD_ORDER_PAYMENT_DELEGATED',
@@ -70,6 +74,10 @@ var _actions = {
         if (!data.attachDocument) return cb("attachDocument required");
         resolver.getFacade('diagnostical/notification')
             .addNotification(data.type, data).then(r => cb(null, r)).catch(cb);
+    },
+    mixpanelwebhook: (data, cb) => {
+        webhookLogger.debug('Received',data);
+        cb(null,true);
     },
     configureSchema: (schema) => {
         schema.pre('save', function(next) {

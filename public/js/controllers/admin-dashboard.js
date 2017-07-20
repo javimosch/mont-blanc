@@ -6,10 +6,11 @@
     angular.module('app.admin', [])
         .controller('adminDashboard', [
 
-            'server', '$scope', '$rootScope', 'localData',
-            function(db, s, r, localData) {
+            'server', '$scope', '$rootScope', 'localData', 'Analytics',
+            function(db, s, r, localData, Analytics) {
                 //        console.info('app.admin.login:adminDashboard');
                 //
+                Analytics.trackView('dashboard');
                 r.toggleNavbar(true);
                 r.secureSection(s);
             }

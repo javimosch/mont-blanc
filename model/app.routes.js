@@ -37,6 +37,9 @@ exports.configure = function(app) {
         var controller = req.params.controller;
         var action = req.params.action;
         var data = req.body;
+        
+        //logger.debug('POST Detected',controller,action,data);
+        
         var actions = dbController.create(controller);
         if (!actions[action] && (!actions.model || !actions.model[action])) {
             var cb = actions.result(res);

@@ -11,12 +11,13 @@
     }
   ],
   "scripts": {
+    "now-start": "node app.js",
     "test": "make test",
     "testDev": "nodemon test/mocha.js --watch test --watch model --watch .env --watch controllers",
     "test2": "echo \"Error: no test specified\" && exit 1",
     "test3": "./node_modules/.bin/mocha --recursive -R xunit test/ > test-reports.xml && exit 0",
     "start": "node --max_old_space_size=512 app.js",
-    "local": "nodemon 'app.js' --watch .env --watch model --watch controllers --watch schemas --watch templates --watch app.js --watch api.js --watch public/js --watch tools/static-generator",
+    "local": "./node_modules/nodemon/bin/nodemon.js 'app.js' --watch .env --watch model --watch controllers --watch schemas --watch templates --watch app.js --watch api.js --watch public/js --watch tools/static-generator",
     "deploy": "./tools/scripts/ssh_deploy_tag.sh",
     "build": "node ./tools/node_bundle.js",
     "heroku": "npm run start",
@@ -30,8 +31,6 @@
     "npm": ">= 5.0.0"
   },
   "dependencies": {
-    "semver": "^5.3.0",
-    "ace-builds": "^1.2.8",
     "angular": "^1.5.0",
     "angular-bootstrap-calendar": "^0.18.8",
     "angular-route": "^1.5.0",
@@ -94,6 +93,7 @@
     "mongoose": "~4.4.3",
     "mongoose-paginate": "^5.0.0",
     "natural-filename-generator": "^1.0.0",
+    "nodemon": "^1.11.0",
     "password-maker": "^1.1.2",
     "path": "^0.12.7",
     "promise": "^7.1.1",
@@ -105,6 +105,7 @@
     "remove-html-comments": "^1.0.2",
     "request": "^2.69.0",
     "sander": "^0.6.0",
+    "semver": "^5.3.0",
     "serve": "^1.4.0",
     "shift-codegen": "^4.0.3",
     "shift-parser": "^4.1.1",

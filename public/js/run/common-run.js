@@ -209,14 +209,14 @@ app.run(['$rootScope', '$location', '$window', '$log',
     }
 ]);
 
-app.run(['server', '$timeout', '$rootScope', 'appRouter', 'appSettings', function(db, $timeout, r, appRouter, appSettings) {
+app.run(['server', '$timeout', '$rootScope', 'appRouter', 'appSettings', function(db, $timeout, r, appRouter, appSettings, Analytics) {
     //console.info('app.common.root:run');
     $U.exposeGlobal('r', r);
     r.getHashParams = $U.getHashParams;
 
     r.debug = true;
 
-    
+
 
     r.config = {};
     var env = {
@@ -359,6 +359,7 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'appSettings', functio
             password: null
         });
         $U.url.clear();
+        r.$emit('click_logout');
         r.route('login');
     };
 

@@ -1,6 +1,6 @@
 (function() {
     angular.module('app').service('localSession', ['$rootScope', '$log', 'backendApi', function(r, $log, backendApi) {
-        /*global angular*/
+        /*global angular $U*/
         var self = {
             logout: () => {
                 r.logout();
@@ -19,14 +19,17 @@
                 //$log.info('getMetadata', _.clone(rta));
                 return rta;
             },
-            setMetadata: (newMetadata,reset) => {
+            setMetadata: (newMetadata, reset) => {
                 //$log.info('setMetadata', Object.keys(newMetadata));
-                return r.sessionMetadata(newMetadata,reset) || {};
+                return r.sessionMetadata(newMetadata, reset) || {};
             },
             update: () => {
-                backendApi.User.getById(r.session()).then(function(res) {
-                    r.session(res.result);
-                }).error($log.error).on('validate', $log.warn);
+                return $U.MyPromise(function(resolve, error) {
+                    backendApi.User.getById(r.session()).then(function(res) {
+                        r.session(res.result);
+                        resolve(res.result);
+                    }).error($log.error).on('validate', $log.warn);
+                });
             }
         };
         $U.exposeGlobal('ls', self);

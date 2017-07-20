@@ -21,7 +21,7 @@
                 }).then(function(res) {
                     if (res.ok && res.result != null) {
                         r.session(res.result);
-                        resolve();
+                        resolve(res.result);
                     }
                     else {
 
@@ -78,7 +78,7 @@
                 }).then(res => {
                     if (res.ok && res.result) {
                         r.session(res.result);
-                        resolve();
+                        resolve(res.result);
                     }
                     else {
                         return emit('session-lost');
