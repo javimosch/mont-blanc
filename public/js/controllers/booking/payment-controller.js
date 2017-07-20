@@ -4,8 +4,16 @@
     /*global $U*/
     /*global moment*/
     angular.module('app').controller('payment-controller', ['server',
-        '$timeout', '$scope', '$rootScope', '$uibModal', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'appSettings', 'orderHelper', 'localSession', 'backendApi', 'orderQuoteForm', 'apiError', 'orderBooking',
-        function(db, $timeout, $scope, $rootScope, $uibModal, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, appSettings, orderHelper, localSession, backendApi, orderQuoteForm, apiError, orderBooking) {
+        '$timeout', '$scope', '$rootScope', '$uibModal', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'appSettings', 'orderHelper', 'localSession', 'backendApi', 'orderQuoteForm', 'apiError', 'orderBooking', 'Analytics',
+        function(db, $timeout, $scope, $rootScope, $uibModal, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, appSettings, orderHelper, localSession, backendApi, orderQuoteForm, apiError, orderBooking, Analytics) {
+
+            (function() {
+                var session = localSession.getData();
+                if (session._id && session.userType === 'admin' && Analytics.userId && Analytics.userId == session._id) {
+                    Analytics.unsetUser();
+                }
+            })();
+
 
             $U.exposeGlobal('ps', $scope);
 
@@ -41,18 +49,57 @@
             });
 
 
+            function analyticEvent(param) {
+                return Object.assign({
+                    orderId: $scope.order._id,
+                    address: $scope.order.address,
+                    start: moment($scope.start).format("DD/MM/YYYY hh[h]mm"),
+                    diagEmail: $scope.order._diag.email,
+                }, param || {});
+            }
+
+            var clientIdentifiedAfterPayment = false;
+
+            function tryToSetAnalyticUser(event, params) {
+                var payload = {};
+                if ($scope._user && $scope._user._id && $scope._user.userType == 'client') {
+                    payload._id = $scope._user._id;
+                }
+                else {
+                    if (params && params.clientEmail && !clientIdentifiedAfterPayment) {
+                        payload.email = params.clientEmail;
+                    }
+                }
+                if (Object.keys(payload).length > 0) {
+                    backendApi.user.get(payload).then(r => {
+                        if (r.result && r.result._id) {
+                            clientIdentifiedAfterPayment = true;
+                            Analytics.syncUser(r.result, true);
+                        }
+                    });
+                }
+            }
+
+            $rootScope.$on('booking_payment_form_response', tryToSetAnalyticUser);
+
+
             //BINDINGS
             $scope.order = order;
             $scope._user = localSession.getData();
+            tryToSetAnalyticUser();
             $scope.orderDateFormatted = () => orderHelper.getDateFormatted(order);
             $scope.orderDiagFormatted = () => orderHelper.getDiagAccountDescription(order);
             $scope.quote = () => {
                 orderQuoteForm.open(order).then((res) => {
+
+                    Analytics.trackEvent('booking_payment_devis_envoye_par_mail', analyticEvent());
+
+
                     $rootScope.infoMessage("Devis envoyé par mail");
                     orderHelper.clearCache();
                     appRouter.to(appRouter.URL().HOME);
                 }).on('validate', (msg) => {
-
+                    tryToSetAnalyticUser();
                 }).on('validate:error', (error) => {
                     if (error.isEqual.DATABASE_OBJECT_MISMATCH_ERROR) {
                         $rootScope.infoMessage("Mise à jour des données de réservation, réessayer après la recharge");
@@ -61,8 +108,16 @@
                         }, 1500);
                     }
                     else {
+
+                        Analytics.trackEvent('booking_payment_devis_send_error', analyticEvent({
+                            errorMessage: error.genericMessage,
+                            detail: error.detail || 'None',
+                            code: error.code || 'Unkown'
+                        }));
+
                         $rootScope.warningMessage(error.genericMessage);
                     }
+                    tryToSetAnalyticUser();
                 }).error((err) => {
                     $log.error(err);
                 });
@@ -75,15 +130,20 @@
                 if (orderHelper.status(order).isPaid()) {
                     return showOrderResume();
                 }
+
+                Analytics.trackEvent('booking_payment_' + order.paymentType + '_begin', analyticEvent());
+
                 $scope.validateForm(() => {
                     db.ctrl('Order', 'update', order);
                     orderPaymentForm.pay(order).then(function() {
                             $rootScope.infoMessage(appText.ORDER_PAID_SUCCESS, 10000);
+                            Analytics.trackEvent('booking_payment_' + order.paymentType + '_success', analyticEvent());
+                            tryToSetAnalyticUser();
                             showOrderResume();
                         })
                         .error(() => $rootScope.errorMessage('', 10000))
                         .on('validate', function(msg, apiError) {
-
+                            tryToSetAnalyticUser();
                             if (apiError && apiError.isEqual.ORDER_NOT_FOUND) {
                                 $rootScope.infoMessage("Mise à jour des données de réservation, réessayer après la recharge");
                                 setTimeout(() => {
@@ -91,6 +151,12 @@
                                 }, 1500);
                                 return;
                             }
+
+                            Analytics.trackEvent('booking_payment_' + order.paymentType + '_fail', analyticEvent({
+                                errorMessage: apiError.genericMessage.replace('(BACKEND)', ''),
+                                detail: apiError.detail || 'None',
+                                code: apiError.code || 'Unkown'
+                            }));
 
                             if (apiError && apiError.isEqual.COUPON_ALREADY_USED) {
                                 return $rootScope.infoMessage(apiError.genericMessage.replace('(BACKEND)', ''));
@@ -134,9 +200,17 @@
                             //attachmentPDFHTML: html
                         }).then(data => {
                             if (!data.ok) {
+
+                                Analytics.trackEvent('booking_payment_delegated_fail', analyticEvent({
+                                    errorMetadata: JSON.stringify(data.error)
+                                }));
+
                                 return $rootScope.warningMessage(appText.ORDER_DELEGATED_EMAIL_FAIL, 10000);
                             }
                             $rootScope.infoMessage(appText.ORDER_DELEGATED_SUCCESS, 10000);
+
+                            Analytics.trackEvent('booking_payment_delegated_success', analyticEvent());
+
                             order.status = 'ordered';
                             db.ctrl('Order', 'update', {
                                 _id: order._id,

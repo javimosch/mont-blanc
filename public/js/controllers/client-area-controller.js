@@ -12,8 +12,8 @@
 /*global totalPrice*/
 /*global $D*/
 angular.module('app').controller('client-area-controller', ['server',
-    '$timeout', '$scope', '$rootScope', '$uibModal', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter',
-    function(db, $timeout, s, r, $uibModal, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter) {
+    '$timeout', '$scope', '$rootScope', '$uibModal', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'Analytics',
+    function(db, $timeout, s, r, $uibModal, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, Analytics) {
 
         $U.exposeGlobal('s', s);
 

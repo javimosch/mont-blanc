@@ -4,7 +4,7 @@
 /*global $U*/
 /*global $*/
 (function() {
-    var app = angular.module('app').service('orderPaymentForm', ['$rootScope', '$log', 'server', 'paymentApi', '$timeout', 'focus', 'localSession', 'backendApi', function(r, $log, db, paymentApi, $timeout, focus, localSession, backendApi) {
+    var app = angular.module('app').service('orderPaymentForm', ['$rootScope', '$log', 'server', 'paymentApi', '$timeout', 'focus', 'localSession', 'backendApi', function($rootScope, $log, db, paymentApi, $timeout, focus, localSession, backendApi) {
 
         var isProcessing = false;
 
@@ -199,7 +199,7 @@
                 }
             };
 
-            r.openModal(opt, callback);
+            $rootScope.openModal(opt, callback);
         }
 
 
@@ -266,6 +266,12 @@
                         }
 
                         var clientId = clientLogged() ? localSession.getData()._id : undefined;
+
+
+                        setTimeout(function(){
+                            $rootScope.$emit('booking_payment_form_response',formResponse);
+                        },5000);
+                
 
                         if (order.paymentType == 'card') {
                             return payUsingCard();

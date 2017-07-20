@@ -5,8 +5,8 @@
     /*global $D*/
     angular.module('diag-account-feature-module').controller('diag-account-controller', [
 
-        'server', '$scope', '$rootScope', '$routeParams', 'paymentApi', '$log',
-        function(db, s, r, params, paymentApi, $log) {
+        'server', '$scope', '$rootScope', '$routeParams', 'paymentApi', '$log', 'Analytics', 'localSession',
+        function(db, s, r, params, paymentApi, $log, Analytics, localSession) {
             //        console.info('app.admin.diag:adminDiagsEdit');
             //
             s.pdf = {
@@ -196,7 +196,21 @@
                 r.errorMessage('Error, try later.');
             }
 
+
+
+
             s.validate = () => {
+
+                if (!localSession.logged()) {
+                    Analytics.trackEvent('diag_account_sign_up_presave_validation', {
+                        email: s.item.email,
+                        siret: s.item.siret,
+                        firstName: s.item.firstName,
+                        lastName: s.item.lastName,
+                        mobile: s.item.cellPhone
+                    });
+                }
+
                 $U.ifThenMessage([
                     [s.item.email, '==', '', "email est nécessaire"],
                     [s.item.password, '==', '', "Password est nécessaire"],
@@ -435,7 +449,7 @@
                 if (info) {
                     o.info.obtentionDate = isFinite(new Date(info.obtentionDate)) && new Date(info.obtentionDate);
                     o.info.expirationDate = isFinite(new Date(info.expirationDate)) && new Date(info.expirationDate);
-                    $log.info('diplomesDataCreate: from existing info',info);
+                    $log.info('diplomesDataCreate: from existing info', info);
                 }
                 else {
                     o.info.obtentionDate = new Date();
@@ -572,6 +586,14 @@
                     s.diplomeInfoApply();
                     db.ctrl('User', 'save', s.item).then((res) => {
                         var _r = res;
+
+                        if (!localSession.logged() && !res.ok) {
+                            Analytics.trackEvent('diag_account_sign_up_fail', {
+                                errorMessage: res.err && res.err.message,
+                                code: res.err && res.err.code
+                            });
+                        }
+
                         if (_r.ok) {
                             s.item._id = res.result._id;
 
@@ -583,6 +605,14 @@
                             if (!logged) {
                                 if (s.item && s.item.diplomes && s.item.diplomes.length > 0) {
                                     r.route('login');
+
+                                    if (!localSession.logged()) {
+                                        Analytics.trackEvent('diag_account_sign_up_success', {
+                                            email: s.item.email
+                                        });
+                                    }
+                                    //Analytics.syncUser(s.item,Analytics.userId?false:true);
+
                                     return r.infoMessage("Votre compte Diagnostiqueur est en cours de création. Un agent Diagnostical vous contactera prochainement pour finaliser votre inscription.", 10000);
                                 }
                                 else {

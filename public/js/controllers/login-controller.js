@@ -90,50 +90,55 @@
         else {
             s.show = true;
         }
-    }]).controller('adminLoginExternal', ['server', '$scope', '$rootScope', 'LoginService', function(db, s, r, LoginService) {
+    }]).controller('adminLoginExternal', ['server', '$scope', '$rootScope', 'LoginService', 'Analytics','appRouter', function(server, $scope, $rootScope, LoginService, Analytics,appRouter) {
 
-        s.login = function() {
-            LoginService.login(r._login.email, r._login.password, r._login.rememberPass).then(() => {
-                s.redirect();
+        $scope.handleDiagAccountSignUpButtonClick = () => {
+            Analytics.trackEvent('diag_account_sign_up_button_click');
+            appRouter.to('/' + $rootScope.URL.DIAG_SIGN_UP);
+        };
+
+        $scope.login = function() {
+            LoginService.login($rootScope._login.email, $rootScope._login.password, $rootScope._login.rememberPass).then(() => {
+                $scope.redirect();
             }).on('validate', msg => {
-                r.warningMessage(msg);
+                $rootScope.warningMessage(msg);
             }).error(msg => {
-                r.errorMessage(msg);
+                $rootScope.errorMessage(msg);
             });
         };
 
-        s.resetPassword = function() {
-            LoginService.resetPassword(r._login.email).then((msg) => {
-                r.infoMessage(msg, 10000);
+        $scope.resetPassword = function() {
+            LoginService.resetPassword($rootScope._login.email).then((msg) => {
+                $rootScope.infoMessage(msg, 10000);
             }).on('validate', msg => {
-                r.warningMessage(msg);
+                $rootScope.warningMessage(msg);
             }).error(msg => {
-                r.errorMessage(msg);
+                $rootScope.errorMessage(msg);
             });
         };
 
 
-        s.redirect = function() {
-            var path = '/login?email=' + r._login.email + '&k=' + window.btoa(r._login.password || 'dummy');
-            r.route(path);
+        $scope.redirect = function() {
+            var path = '/login?email=' + $rootScope._login.email + '&k=' + window.btoa($rootScope._login.password || 'dummy');
+            $rootScope.route(path);
         };
 
 
         if (LoginService.isLogged()) {
             LoginService.updateSession().then(() => {
-                s.redirect();
+                $scope.redirect();
             }).on('validate', msg => {
                 //r.warningMessage(msg);
-                s.show = true;
+                $scope.show = true;
             }).error(msg => {
                 //r.errorMessage(msg);
-                s.show = true;
+                $scope.show = true;
             }).on('session-lost', () => {
-                s.show = true;
+                $scope.show = true;
             });
         }
         else {
-            s.show = true;
+            $scope.show = true;
         }
     }]);
 })();

@@ -13,8 +13,15 @@
 /*global $D*/
 var app = angular.module('app');
 app.controller('ctrl.booking', ['server',
-    '$timeout', '$scope', '$rootScope', 'orderPrice', '$log', 'orderQuestion', 'appText', 'appRouter', 'localData', 'appSettings', 'orderHelper', 'orderQueryParams','orderBooking',
-    function(db, $timeout, $scope, $rootScope, orderPrice, $log, orderQuestion, appText, appRouter, localData, appSettings, orderHelper, orderQueryParams,orderBooking) {
+    '$timeout', '$scope', '$rootScope', 'orderPrice', '$log', 'orderQuestion', 'appText', 'appRouter', 'localData', 'appSettings', 'orderHelper', 'orderQueryParams', 'orderBooking', 'Analytics', 'localSession',
+    function(db, $timeout, $scope, $rootScope, orderPrice, $log, orderQuestion, appText, appRouter, localData, appSettings, orderHelper, orderQueryParams, orderBooking, Analytics, localSession) {
+
+        (function() {
+            var session = localSession.getData();
+            if (session._id && session.userType === 'admin' && Analytics.userId && Analytics.userId == session._id) {
+                Analytics.unsetUser();
+            }
+        })();
 
         //We expose this scope to $g.bc
         $U.exposeGlobal('bc', $scope);
@@ -74,12 +81,27 @@ app.controller('ctrl.booking', ['server',
         $scope.proceedToDiagsSelection = function() {
 
             orderHelper.validateQuestions($scope.item).then(function() {
+
+                Analytics.trackEvent('booking_form_next_button', {
+                    address: $scope.item.address,
+                    postCode: $scope.item.postCode,
+                    department: $scope.item.postCode.substring(0, 2),
+                    metadata: JSON.stringify($scope.item.info)
+                });
+
                 orderBooking.navigate('choix-diagnostics', $scope.item, routeParams);
             }).error((error) => {
 
                 if (error && error.message) return $rootScope.warningMessage(error.message, 6000);
 
                 if (error.addressDepartmentCovered !== undefined && error.addressDepartmentCovered == false) {
+
+                    Analytics.trackEvent('department_not_covered', {
+                        address: $scope.item.address,
+                        postCode: $scope.item.postCode,
+                        department: $scope.item.postCode.substring(0, 2)
+                    });
+
                     var msg = "Votre département n'est pas encore couvert par Diagnostical.<br>";
                     msg += "Laissez-nous votre adresse e-mail pour être informé de l'ouverture du service dans votre département."
                     msg += "<div class='row margin-top-one' >";
@@ -111,6 +133,15 @@ app.controller('ctrl.booking', ['server',
                                         email: modal.scope.data.email,
                                         metadata: JSON.stringify($scope.item),
                                     });
+
+                                    Analytics.trackEvent('department_not_covered_alert_request', {
+                                        address: $scope.item.address,
+                                        postCode: $scope.item.postCode,
+                                        department: $scope.item.postCode.substring(0, 2),
+                                        email: modal.scope.data.email,
+                                        metadata: JSON.stringify($scope.item.info)
+                                    });
+
                                     modal.close();
                                     return $rootScope.infoMessage(appText.DEPARTEMENT_COVERED_EMAIL_SENDED)
                                 }

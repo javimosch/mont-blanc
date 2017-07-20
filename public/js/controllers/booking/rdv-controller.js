@@ -4,8 +4,17 @@
     /*global $U*/
     /*global moment*/
     angular.module('app').controller('rdv-controller', ['server',
-        '$timeout', '$scope', '$rootScope', 'rdvSlotService', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'appSettings', 'orderHelper', 'localSession', 'backendApi',
-        function(db, $timeout, $scope, $rootScope, rdvSlotService, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, appSettings, orderHelper, localSession, backendApi) {
+        '$timeout', '$scope', '$rootScope', 'rdvSlotService', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'appSettings', 'orderHelper', 'localSession', 'backendApi', 'Analytics',
+        function(db, $timeout, $scope, $rootScope, rdvSlotService, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, appSettings, orderHelper, localSession, backendApi, Analytics) {
+
+
+            (function() {
+                var session = localSession.getData();
+                if (session._id && session.userType === 'admin' && Analytics.userId && Analytics.userId == session._id) {
+                    Analytics.unsetUser();
+                }
+            })();
+
 
             //Expose controller for debugging
             $U.exposeGlobal('rc', $scope);
@@ -20,9 +29,9 @@
             appSettings.syncAll().then(() => {
                 Object.assign($scope, appSettings.localData); //patch scope with local data
                 $scope.settings = appSettings.databaseSettings; //patch scope with remote settings
-                
+
                 //$log.info('rdv slots start with booking data',_.clone($scope.item));
-                
+
                 //Initialize slots
                 $scope.diagSlots.init(undefined, {
                     daysPerPage: 8, //$(window).width()>1200?8:4,
@@ -51,22 +60,32 @@
                 $scope.item._diag = range._diag;
                 $scope.item.start = range.start;
                 $scope.item.end = range.end;
-                if ($scope.item._diag) {
-                    db.ctrl('User', 'get', {
-                        _id: $scope.item._diag,
-                        __select: "firstName lastName email"
-                    }).then(res => {
-                        $scope.item.__diag = res.result;
-                    });
-                }
-                else {
-                    $log.warn('item._diag should exists prior to route booking connexion view');
-                }
-                setTimeout(function() {
-                    validateDate($scope.item, function() {
-                        changeRoute($rootScope.URL.PAYMENT);
-                    });
-                }, 500);
+
+                db.ctrl('User', 'get', {
+                    _id: $scope.item._diag,
+                    __select: "firstName lastName email"
+                }).then(res => {
+                    $scope.item.__diag = res.result;
+
+                    setTimeout(function() {
+                        validateDate($scope.item, function() {
+
+                            Analytics.trackEvent('booking_rdv_next_button', {
+                                address: $scope.item.address,
+                                diagId: $scope.item.__diag._id,
+                                diagFirstName: $scope.item.__diag.firstName,
+                                diagLastName: $scope.item.__diag.lastName,
+                                diagEmail: $scope.item.__diag.email,
+                                start: moment($scope.item.start).format("DD/MM/YYYY hh[h]mm"),
+                                end: moment($scope.item.end).format("DD/MM/YYYY hh[h]mm")
+                            });
+
+                            changeRoute($rootScope.URL.PAYMENT);
+                        });
+                    }, 500);
+                });
+
+
             };
 
             //Slot content

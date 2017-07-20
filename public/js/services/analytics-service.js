@@ -2,7 +2,7 @@
     /*global angular mixpanel amplitude*/
     angular.module('app')
 
-    .service('Analytics', ['localSession', '$log', '$rootScope', function(localSession, $log, $rootScope) {
+    .service('Analytics', ['localSession', '$log', '$rootScope', 'snippets', function(localSession, $log, $rootScope, snippets) {
 
         const MIXPANEL_TRACK_VIEWS = false;
 
@@ -15,6 +15,7 @@
         }
 
         var self = {};
+        snippets.exposeGlobal('an', self);
         self.trackView = (name, params) => {
             params = params || {};
             Object.assign(params, {
@@ -41,11 +42,28 @@
                 amplitude.getInstance().identify(new amplitude.Identify().add(name, q || 1));
             }
         };
-        self.setUserId = (id) => {
-            if (isMixpanel()) mixpanel.identify(id);
+        self.unsetColdown = null;
+        self.unsetUser = () => {
+            if (isMixpanel()) {
+                mixpanel.reset();
+            }
+            self.unsetColdown = Date.now();
+            self.userId = null;
+            $log.log('(analytics) unset user');
+        };
+        self.setUserId = (id, isAlias) => {
+            if (isMixpanel()) {
+                if (isAlias) {
+                    mixpanel.alias(id);
+                }
+                else {
+                    mixpanel.identify(id);
+                }
+            }
             if (isAmplitude()) {
                 amplitude.setUserId(id);
             }
+            self.userId = id;
         };
         self.setUserProperty = (params, once) => {
             if (once) {
@@ -88,14 +106,26 @@
             amplitude.getInstance().identify(identify);
         }
 
-        self.syncUser = (user) => {
-            self.setUserId(user._id);
+        self.syncUser = (user,isAlias) => {
+            //isAlias means is the first time we identify the user and there is a 
+            //session on the way. We want to capture the events of the current session if possible.
+            if (self.unsetColdown) {
+                if (Date.now() - self.unsetColdown < 1000 * 5) {
+                    return $log.warn('(analytics) cannot sync user, unset coldown inside 5 sec');
+                }
+                else {
+                    self.unsetColdown = null;
+                }
+            }
+            self.setUserId(user._id,isAlias);
             self.setUserProperty({
-                $email: user.email
+                $email: user.email,
+                userType:user.userType
             }, true);
             self.setUserProperty({
                 $first_name: user.firstName,
-                $last_name: user.lastName
+                $last_name: user.lastName,
+                $phone: user.cellPhone
             });
         };
 
@@ -108,12 +138,13 @@
                 $log.warn('Analytics: amplitude disabled');
             }
 
-            $rootScope.$on('click_logout',()=>self.trackEvent('click_logout'));
+            $rootScope.$on('click_logout', () => self.unsetUser());
 
 
             if (localSession.isLogged()) {
                 localSession.update().then(user => {
                     if (!user) return;
+                    if (user.userType == 'admin') return;
                     self.syncUser(user);
                 })
             }
