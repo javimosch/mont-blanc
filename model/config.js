@@ -35,7 +35,9 @@ module.exports = {
     DEBUG_PDF_GENERATION: process.env.DEBUG_PDF_GENERATION && process.env.DEBUG_PDF_GENERATION.toString() == '1' || false,
 
     DISABLE_LEMONWAY: process.env.DISABLE_LEMONWAY && process.env.DISABLE_LEMONWAY.toString() == '1',
-    
+
     MIXPANEL_TOKEN: process.env.MIXPANEL_TOKEN,
-    AMPLITUDE_TOKEN: process.env.AMPLITUDE_TOKEN
+    AMPLITUDE_TOKEN: process.env.AMPLITUDE_TOKEN,
+
+    DISABLE_CORS: process.env.DISABLE_CORS && process.env.DISABLE_CORS.toString() == '1'
 };
