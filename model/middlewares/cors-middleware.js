@@ -20,13 +20,15 @@ module.exports = {
             res.header('Access-Control-Allow-Methods', 'OPTIONS,GET,POST,PUT,DELETE');
             res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-
-            if (!req.headers.origin) {
-                logger.warn('Anhautorized request', req.headers, req.url);
-                return res.send(401);
-            }else{
-                if(origin.indexOf(req.headers.origin)==-1){
+            if (req.method === 'POST') {
+                if (!req.headers.origin) {
                     logger.warn('Anhautorized request', req.headers, req.url);
+                    return res.send(401);
+                }
+                else {
+                    if (origin.indexOf(req.headers.origin) == -1) {
+                        logger.warn('Anhautorized request', req.headers, req.url);
+                    }
                 }
             }
 
