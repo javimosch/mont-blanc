@@ -32,7 +32,7 @@ function getTags(data, cb) {
             }
 
             if (data) {
-                logger.debugTerminal('gitlab says', data);
+                logger.debugTerminal('gitlab says', data.map(v=>v.name));
 
                 data = resolver._().map(data, obj => {
                     return {

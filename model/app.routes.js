@@ -40,18 +40,21 @@ exports.configure = function(app) {
         var data = req.body;
         if (resolver.env().PROD) {
             if (!data || !data.p) {
-                res.sendStatus(400);
+                errorHandler("Request data.p required", 400);
             }
             controller = atob(controller);
             action = atob(action);
             data = JSON.parse(atob(data.p));
         }
+        try {
+            var actions = dbController.create(controller);
+        }
+        catch (err) {
+            errorHandler(err, 400, "Invalid controller " + controller);
+        }
 
-        var actions = dbController.create(controller);
         if (!actions[action] && (!actions.model || !actions.model[action])) {
-            var cb = actions.result(res);
-            logger.warn('Invalid call', controller, action);
-            return cb('Invalid call ' + controller + ' ' + action);
+            errorHandler('Invalid action ' + action, 400);
         }
 
         var requestHandler, targetType, requireSession = false;
@@ -94,10 +97,16 @@ exports.configure = function(app) {
             }
         }
 
-        function errorHandler(err) {
-            logger.warn(resolver.errorParser(err));
-            if (err == 401) res.sendStatus(401);
-            else actions.result(res)(err);
+        function errorHandler(err, status, clientError) {
+            logger.error(resolver.errorParser(err));
+            status = status || 400;
+            if (err == 401) status = 400;
+            res.status(status).json({
+                status: status,
+                ok: false,
+                err: clientError ? clientError : err,
+                result: null
+            });
         }
 
     });

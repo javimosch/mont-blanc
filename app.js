@@ -20,6 +20,7 @@ co(function*() {
 	//enviroment variables
 	var PROD = config.PROD;
 	var PORT = config.PORT;
+	require('./model/routes/app-details-route').bind(app);//with CORS
 	//middlewares
 	logger.debugTerminal('Middlewares');
 	require('./model/middlewares/cache-middleware').bind(app);
@@ -28,7 +29,6 @@ co(function*() {
 	require('./model/middlewares/request-parsers-middlewares').bind(app);
 	//routes
 	logger.debugTerminal('Routes');
-	require('./model/routes/app-details-route').bind(app);
 	require('./model/routes/api-routes').bind(app);
 	require('./model/routes/test-routes').bind(app, express);
 	require('./model/routes/views-route').bind(app);

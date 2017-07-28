@@ -53,7 +53,8 @@ function create(name, isMongoCollection) {
     }
     catch (e) {
         specialActions = {};
-        console.log('db.controller.' + name + '.create', e);
+        //console.log('db.controller.' + name + '.create', e);
+        throw e;
     }
 
     var actions = {};
@@ -123,8 +124,8 @@ function resultAction(modelName) {
 
 
             var rta = {
+                status:200,
                 ok: err === undefined || err === null,
-                //message: (err) ? 'Error' : 'Success',
                 err: err !== undefined ? err : null,
                 result: result
             };

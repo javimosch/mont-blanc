@@ -19,6 +19,14 @@ module.exports = {
         }
         appDetailsFill();
         app.get('/appDetails', function(req, res) {
+
+            res.header("Access-Control-Allow-Origin", '*');
+            res.header('Access-Control-Allow-Methods', 'OPTIONS,GET,POST,PUT,DELETE');
+            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            if ('OPTIONS' == req.method) {
+                return res.send(200);
+            }
+
             res.json(appDetails);
         });
     }
