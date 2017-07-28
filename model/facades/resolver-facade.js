@@ -28,7 +28,15 @@ var self = {
     },
     resourcesPath: () => self.env().RESOURCES_PATH || path.join(process.cwd(), 'resources'),
     apiError: () => require(path.join(process.cwd(), 'model/errors')),
-    errorHandler:(h) => (e) => h(e.stack && (e + ' STACK: ' + e.stack) || e)
+    errorHandler:(h) => (e) => h(self.errorParser(e)),
+    errorParser:(e)=>e.stack && (e + ' STACK: ' + e.stack) || e,
+    handleCriticalError:(err)=>{
+        var logger = self.loggerFacade({
+            name:"GLOBAL"
+        });
+        self.errorHandler(logger.error);
+        throw Error(self.errorParser(err));
+    }
 };
 
 self.sockets = () => self.ctrl('sockets');

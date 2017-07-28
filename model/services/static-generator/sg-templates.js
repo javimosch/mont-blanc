@@ -265,12 +265,14 @@ function compileVendorCustom(opt) { //{{root}}
         //console.log('sectionRaw: ', sectionRaw);
         //}
 
-        var arr = sgUtilsParser.readTags(sectionRaw, tagName, tagAttributeName);
+        var readTagsResponse = sgUtilsParser.readTags(sectionRaw, tagName, tagAttributeName);
+        var arr = readTagsResponse.tags;
+        var inlineTags = readTagsResponse.inlineTags;
         //
         var _url = '/' + ext + '/' + outputFileName + '.' + ext;
         _url = _url.replaceAll('//', '/');
         //console.log('he script vendor url',_url);
-        var _replaceWith = replaceCb(_url);
+        var _replaceWith = inlineTags.join('') + replaceCb(_url);
         //console.log('he script vendor section',_replaceWith);
         //
         arr = arr.map(i => i = i.replace(sgData().root, '/'));

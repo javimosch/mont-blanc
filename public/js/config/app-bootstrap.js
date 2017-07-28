@@ -4,7 +4,7 @@
 (function() {
     var app = angular.module('app', [
         'app.run',
-        
+
         'focusOn',
 
         'credit-cards',
@@ -13,14 +13,16 @@
         'ngRoute',
         'ngSanitize',
 
-        
+
         'mwl-calendar-config',
         'mwl.calendar',
-        
+
         'ui.bootstrap',
         'ui.bootstrap.datetimepicker',
-        
+
         'betterSelect',
+        
+        'remote-config-constant',
 
         'srv.crud',
         'srv.diagPrice',
@@ -28,7 +30,7 @@
         'local-data',
 
         'header-controller',
-        
+
         'settings-feature-module',
         'login-feature-module',
         'order-feature-module',
@@ -44,40 +46,29 @@
         'app.services',
         'app-router'
     ]);
-
+    app.config(function() {
+        window.localforage.config({
+            //driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+            name: 'diagnostical',
+            //version: 1.0,
+            //size: 4980736, // Size of database, in bytes. WebSQL-only for now.
+            //storeName: 'keyvaluepairs', // Should be alphanumeric, with underscores.
+            //description: 'some description'
+        });
+    });
     app.run(function(uibPaginationConfig) {
         uibPaginationConfig.firstText = 'Premier';
         uibPaginationConfig.nextText = 'Suivant';
         uibPaginationConfig.previousText = 'Précédent';
         uibPaginationConfig.lastText = 'Dernier';
     });
-    
-    
-
-    //diags
     moment.locale('fr');
-
-
-    $.post('/ctrl/pages/getAll', {
-        __select: "content template url"
-    }, function(res) {
-        //console.log('DEBUG PAGES-FETCH', res);
-        if (res && res.ok && res.result) {
-            window.__pages = res.result;
+    angular.element(function() {
+        angular.bootstrap(document, ['app']);
+        if (window.__bootTimerStart) {
+            window.__bootTimerMilli = Date.now() - window.__bootTimerStart;
+            window.__bootTimerSeconds = window.__bootTimerMilli / 1000;
+            console.log('Load-time until angular bootstraping', window.__bootTimerSeconds, 'Seconds');
         }
-        else {
-            //console.log('WARN dynamic-routes could not be loaded.', res);
-        }
-        angular.element(function() {
-            angular.bootstrap(document, ['app']);
-            //console.log('DEBUG BOOTSTRAPING...');
-            if (window.__bootTimerStart) {
-                window.__bootTimerMilli = Date.now() - window.__bootTimerStart;
-                window.__bootTimerSeconds = window.__bootTimerMilli / 1000;
-                console.log('Load-time until angular bootstraping', window.__bootTimerSeconds, 'Seconds');
-            }
-        });
-    }, 'json');
-
-    expose('app', app);
+    });
 })();

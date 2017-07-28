@@ -28,7 +28,7 @@ register('sockets', null, false);
 register('ssh', null, false);
 register('gitlab', null, false);
 register('reports', null, false);
-
+register('sessions');
 
 function camelize(str) {
     return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
@@ -70,7 +70,7 @@ function create(name, isMongoCollection) {
                 console.log('controller', name, 'configureSchema must return the schema');
                 process.exit(1);
             }
-            //console.log('DB.CONTROLLER REGISTER MODEL ',name,schema!=null)
+            console.log('DB.CONTROLLER REGISTER MODEL ', name, schema != null)
             resolver.db().registerModel(name, schema);
             delete specialActions.configureSchema;
         }
@@ -110,11 +110,23 @@ function resultAction(modelName) {
                 };
             }
 
+            var result = (r !== null) ? r : ((r === false) ? false : null);
+
+            if (result && typeof result.length !== 'undefined') {
+                result = result.map(o => {
+                    if (typeof o.password !== 'undefined') {
+                        o.password = undefined;//Avoid sending password property
+                    }
+                    return o;
+                });
+            }
+
+
             var rta = {
                 ok: err === undefined || err === null,
                 //message: (err) ? 'Error' : 'Success',
                 err: err !== undefined ? err : null,
-                result: (r !== null) ? r : ((r === false) ? false : null)
+                result: result
             };
 
             //log error

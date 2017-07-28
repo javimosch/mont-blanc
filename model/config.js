@@ -39,5 +39,8 @@ module.exports = {
     MIXPANEL_TOKEN: process.env.MIXPANEL_TOKEN,
     AMPLITUDE_TOKEN: process.env.AMPLITUDE_TOKEN,
 
-    DISABLE_CORS: process.env.DISABLE_CORS && process.env.DISABLE_CORS.toString() == '1'
+    DISABLE_CORS: process.env.DISABLE_CORS && process.env.DISABLE_CORS.toString() == '1',
+    MONGODB_DEBUG: process.env.MONGODB_DEBUG && process.env.MONGODB_DEBUG.toString() == '1',
+
+    ENCRYPT_SECRET: process.env.ENCRYPT_SECRET || "secret_key_123"
 };

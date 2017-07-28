@@ -3,7 +3,7 @@ var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade')
 var state = module.exports = {
     interval: 1000 * 60 * 60 * 24, //each day
     handler: handler,
-    runAtStartup: true,
+    runAtStartup: false,
     runAtStartupDelay: 20000
 };
 

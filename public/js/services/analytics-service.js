@@ -77,6 +77,7 @@
         };
 
         function normalizeAmplitudeProperty(prop) {
+            if(!prop) return prop;
             prop = prop.replace('$', '');
             return prop;
         }

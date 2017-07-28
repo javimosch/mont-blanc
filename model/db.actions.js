@@ -7,6 +7,7 @@ var promise = req('utils').promise;
 var path = require('path');
 var Promise = require('promise');
 var dbLoggerInstance = null;
+
 function dbLogger() {
     if (!dbLoggerInstance) {
         var ctrl = require('./db.controller').create;
@@ -20,7 +21,7 @@ function dbLogger() {
 
 exports.create = function(modelName, m) {
     var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
-    
+
     if (ActionsCache.has(modelName)) {
         return ActionsCache.get(modelName);
     }
@@ -212,7 +213,7 @@ exports.create = function(modelName, m) {
         if (data.__sort) {
             query = query.sort(data.__sort);
         }
-        query.exec(cb);
+        return query.exec(cb);
     }
 
     function fillObject(object, data, propName, newPropName) {
@@ -296,9 +297,6 @@ exports.create = function(modelName, m) {
     }
 
     function get(data, cb) {
-        //log('get=' + JSON.stringify(data));
-        //check(data, ['_id'], (err, r) => {
-        //  if (err) return cb(err, r);
         var query = Model.findOne(toRules(data));
         if (data.__select) {
             query = query.select(data.__select);
@@ -306,11 +304,10 @@ exports.create = function(modelName, m) {
         if (data.__populate) {
             query = populate(query, data.__populate);
         }
-        query.exec((err, r) => {
+        return query.exec((err, r) => {
             if (err) return cb(err, r);
-            cb(null, r);
+            cb && cb(null, r);
         });
-        //});
     }
 
     function check(data, fields, cb) {
@@ -325,7 +322,7 @@ exports.create = function(modelName, m) {
     function removeWhen(data, cb) {
         return remove(data, cb);
     }
-    
+
     function deleteAll(data, cb) {
         return remove({}, cb);
     }
@@ -422,8 +419,6 @@ exports.create = function(modelName, m) {
 
 
     function _create(data, cb, requiredKeys) {
-        //log('create=' + JSON.stringify(data));
-        log('create');
         check(data, requiredKeys || [], (err, r) => {
             if (err) return cb(err, null);
             return Model.create(data, cb);
@@ -470,11 +465,11 @@ exports.create = function(modelName, m) {
             });
         });
     }
-    
-    function findByCode(data,cb){
+
+    function findByCode(data, cb) {
         return getAll({
-            code:data.code
-        },cb);
+            code: data.code
+        }, cb);
     }
 
     var rta = {
@@ -491,7 +486,7 @@ exports.create = function(modelName, m) {
         update: update,
         remove: remove,
         removeWhen: removeWhen,
-        deleteAll:deleteAll,
+        deleteAll: deleteAll,
         get: get,
         getById: getById,
         check: check,
@@ -499,7 +494,7 @@ exports.create = function(modelName, m) {
         toRules: toRules,
         find: find,
         findOne: findOne,
-        findByCode:findByCode,
+        findByCode: findByCode,
         log: log
     };
     ActionsCache.set(modelName, rta);

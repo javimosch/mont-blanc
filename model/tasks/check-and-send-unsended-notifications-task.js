@@ -41,7 +41,7 @@ function handler() {
             MailFacade.send(_notification).then(() => {
                 _notification.sended = true;
                 _notification.save().then(n => {
-                    Queue.remove(n._id);
+                    Queue.done(n._id);
                 });
             });
         });

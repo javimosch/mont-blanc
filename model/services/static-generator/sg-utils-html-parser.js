@@ -4,7 +4,7 @@
     ctx.hasSection = hasSection;
     ctx.replaceSection = replaceSection;
     ctx.getSection = getSection;
-    ctx.getSectionParameters= getSectionParameters;
+    ctx.getSectionParameters = getSectionParameters;
 
     function hasSection(sectionName, raw) {
         var openTag = '<!--$TAG'.replace('$TAG', sectionName);
@@ -15,12 +15,12 @@
     function replaceSection(sectionName, raw, html) {
         var openTag = '<!--$TAG'.replace('$TAG', sectionName);
         var closeTag = "<!--/$TAG-->".replace('$TAG', sectionName);
-        
-         if (sectionName.indexOf('BUNDLE_JS_5') != -1) {
+
+        if (sectionName.indexOf('BUNDLE_JS_5') != -1) {
             //console.log('html: ', html);
         }
 
-        
+
         return raw.substring(0, raw.indexOf(openTag)) + html +
             raw.substring(raw.indexOf(closeTag) + closeTag.length);
     }
@@ -32,11 +32,11 @@
         if (index === -1) return null;
         index = html.indexOf(closeTag)
         if (index === -1) return null;
-        html = html.substring(html.indexOf(openTag)+openTag.length);
-        return html.substring(html.indexOf('-->')+3, html.indexOf(closeTag));
+        html = html.substring(html.indexOf(openTag) + openTag.length);
+        return html.substring(html.indexOf('-->') + 3, html.indexOf(closeTag));
         //return html.substring(html.indexOf(openTag)+openTag.length, html.indexOf(closeTag));
     }
-    
+
     function getSectionParameters(sectionName, html) {
         var openTag = '<!--$TAG'.replace('$TAG', sectionName);
         var closeTag = "<!--/$TAG-->".replace('$TAG', sectionName);
@@ -45,14 +45,14 @@
         html = html.substring(index);
         var close = html.indexOf('-->');
         var paramStart = html.indexOf('{');
-        if(close != -1 && paramStart != -1){
-            if(paramStart < close){
+        if (close != -1 && paramStart != -1) {
+            if (paramStart < close) {
                 var paramEnd = html.indexOf('}');
-                if(paramEnd !== -1 && paramEnd < close){
-                    var params = html.substring(paramStart+1, paramEnd);
+                if (paramEnd !== -1 && paramEnd < close) {
+                    var params = html.substring(paramStart + 1, paramEnd);
                     var rta = {};
-                    params.split(',').forEach(function(paramStr){
-                       rta[paramStr.split(':')[0]]  = paramStr.split(':')[1];
+                    params.split(',').forEach(function(paramStr) {
+                        rta[paramStr.split(':')[0]] = paramStr.split(':')[1];
                     });
                     return rta;
                 }
@@ -60,14 +60,28 @@
         }
         return null;
     }
-    
-    function readTags(src,tagName,tagAttributeName) {
-        var arr = filterTag(tagName, src);
-        
-        arr = arr.map(v => (getAttribute(tagAttributeName, v)));
-        arr = arr.filter(v => v !== '');
-        //console.log('filterTag',tagName,JSON.stringify(arr));
-        return arr;
+
+    function readTags(src, tagName, tagAttributeName) {
+        var all = filterTag(tagName, src);
+
+        var inlineTags = all.filter(tag => tag.indexOf(tagAttributeName) === -1);
+        var tags = all.filter(tag => {
+            if (tag.indexOf(tagAttributeName) == -1) {
+                //console.log('TAG SKIP',tag,'attr',tagAttributeName);
+                return false;
+            }
+            else {
+                return true;
+            }
+        });
+
+        tags = tags.map(v => (getAttribute(tagAttributeName, v)));
+        tags = tags.filter(v => v !== '');
+
+        return {
+            tags: tags,
+            inlineTags: inlineTags
+        };
     }
 
     function readScriptTags(str) {
@@ -85,11 +99,11 @@
             if (str.charAt(x) == '<') {
                 var n = str.substring(x + 1, x + 1 + tagName.length);
                 var content = str.substring(x);
-                
-                var endIndex = (content.indexOf(tagName + '>')!==-1)?
-                    (content.indexOf(tagName + '>')+ tagName.length + 1)
-                    :content.indexOf('>') + 1;
-                    
+
+                var endIndex = (content.indexOf(tagName + '>') !== -1) ?
+                    (content.indexOf(tagName + '>') + tagName.length + 1) :
+                    content.indexOf('>') + 1;
+
                 content = content.substring(0, endIndex);
                 if (n == tagName) {
                     rta.push(

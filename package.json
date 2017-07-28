@@ -1,10 +1,6 @@
 {
   "name": "diagnostical",
-<<<<<<< HEAD
-  "version": "1.9.12",
-=======
   "version": "1.9.14",
->>>>>>> master
   "description": "Fullstack Application (Angular / NodeJs / Mongo)",
   "main": "index.js",
   "author": "Javier Arancibia (arancibiajav@gmail.com)",
@@ -21,6 +17,7 @@
     "test2": "echo \"Error: no test specified\" && exit 1",
     "test3": "./node_modules/.bin/mocha --recursive -R xunit test/ > test-reports.xml && exit 0",
     "start": "node --max_old_space_size=512 app.js",
+    "debug":"node app.js --trace-warnings",
     "local": "./node_modules/nodemon/bin/nodemon.js 'app.js' --watch .env --watch model --watch controllers --watch schemas --watch templates --watch app.js --watch api.js --watch public/js --watch tools/static-generator",
     "deploy": "./tools/scripts/ssh_deploy_tag.sh",
     "build": "node ./tools/node_bundle.js",
@@ -51,6 +48,7 @@
     "co": "^4.6.0",
     "connect-busboy": "0.0.2",
     "create-if-not-exist": "0.0.2",
+    "crypto-js": "^3.1.9-1",
     "del": "^2.2.2",
     "dotenv": "^2.0.0",
     "es6-promise": "^3.0.2",

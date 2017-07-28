@@ -16,9 +16,26 @@ function configure(app) {
 
     //fetch texts from db first
     if (!heData().text) {
+        
+        //Dynamic text blocks
         return require('../views-service').fetchContext().then(context => {
             heData(context);
-            return configure(app);
+            
+            //Dynamc pages
+            return resolver.db().model.pages.find().select("content template url").exec().then(pages => {
+                logger.debug('Pages fetch', pages && pages.length || 0);
+                heData({
+                    pages: JSON.stringify(pages.map((p) => {
+                        delete p._id;
+                        return {
+                            template: p.template,
+                            url: p.url,
+                            content: p.content
+                        };
+                    }))
+                });
+                return configure(app);
+            }).catch(resolver.handleCriticalError);
         });
     }
     else {}

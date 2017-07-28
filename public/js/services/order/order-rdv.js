@@ -12,13 +12,7 @@
                 var payload = {
                     __cache: 1000 * 60,
                     __reflexion: 'fetchDiagGuys',
-                    userType: 'diag',
-                    __rules: {
-                        disabled: {
-                            $ne: true
-                        }
-                    },
-                    __select: 'priority firstName'
+                    __rules:{}
                 };
                 if (settings.department) {
                     payload.__rules.departments = {
@@ -26,7 +20,7 @@
                     };
                 }
 
-                backendApi.User.getAll(payload).then((data) => {
+                backendApi.User.fetchDiagGuys(payload).then((data) => {
                     data.result.forEach(function(d) {
                         DIAG_NAME[d._id] = d.firstName;
                     });

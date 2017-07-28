@@ -20,7 +20,17 @@
 
 <script type="text/javascript" src="/js/polyfills/append-polyfill.js"></script>
 
-{{>scripts-vendors}} {{>scripts}} {{>scripts-fast-click}}
+{{>scripts-vendors}} 
+
+<script type="text/javascript">
+  
+  window.__pages = {{{pages}}};
+  
+</script>
+
+{{>scripts}} 
+
+{{>scripts-fast-click}}
 
 {{>scripts-intercom}}
 

@@ -7,7 +7,7 @@ var logger = resolver.loggerFacade({
 module.exports = {
     bind: (app) => {
         if (resolver.env().DISABLE_CORS) {
-            logger.debug('DISABLED');
+            logger.debugTerminal('DISABLED');
             //return;
         }
 
@@ -22,12 +22,12 @@ module.exports = {
 
             if (req.method === 'POST') {
                 if (!req.headers.origin) {
-                    logger.warn('Anhautorized request', req.headers, req.url);
+                    logger.warn('Anhautorized request', '(No origin present)', req.url);
                     return res.send(401);
                 }
                 else {
                     if (origin.indexOf(req.headers.origin) == -1) {
-                        logger.warn('Anhautorized request', req.headers, req.url);
+                        logger.warn('Anhautorized request', "(Origin mismatch)", req.url,'Provided:',req.headers.origin);
                     }
                 }
             }

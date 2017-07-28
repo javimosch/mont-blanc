@@ -20,6 +20,9 @@ var state = {
 if (!dbURI) {
     console.warn('dbURI env required');
 }
+if(config.MONGODB_DEBUG){
+    mongoose.set('debug', true);
+}
 module.exports = {
     state: () => state,
     disconnect: () => {

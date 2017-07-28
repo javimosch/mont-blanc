@@ -347,7 +347,7 @@ function fetchBookingSystemUser(data, cb) {
     var email = BOOKING_BOT_EMAIL;
     ctrl('User').core.save({
         email: email,
-        firstName:email,
+        firstName: email,
         userType: 'client',
         clientType: 'landlord',
         isSystemUser: true,
@@ -580,18 +580,24 @@ function getProfileData(data, cb) {
 }
 
 function login(data, cb) {
-    ctrl('User').model.findOne(ctrl('User').toRules({
+    resolver.controllers().user.model.findOne({
         email: data.email,
-    })).exec((err, _user) => {
+    }).exec((err, _user) => {
         if (!err && _user && _user.isGuestAccount) {
             return cb(apiError.GUESS_ACCOUNT_RESTRICTION);
         }
-        if (_user.password != data.password) {
+        if (!_user || _user.password != data.password) {
             _user = null;
             return cb(null, _user);
         }
         else {
-            getProfileData(_user, cb);
+            getProfileData(_user, (err, doc) => {
+                if (err) return cb(err);
+
+                resolver.getFacade('session').update(doc)
+                    .then((doc) => cb(null, doc))
+                    .catch(resolver.errorHandler(cb));
+            });
         }
     });
 }
@@ -634,7 +640,7 @@ function validateCoupon(data) {
         var user = yield resolver.controllers().user.model.findOne({
             email: data.email
         }).exec();
-        if (!user) return resolver.Promise.reject(resolver.apiError().fn.COUPON_CANNOT_BE_USED('User do not exits '+data.email));
+        if (!user) return resolver.Promise.reject(resolver.apiError().fn.COUPON_CANNOT_BE_USED('User do not exits ' + data.email));
         var doc = yield resolver.controllers().coupons.model.findById(data._id).exec();
         if (doc) {
             if (doc._user.equals(user._id)) {
@@ -646,7 +652,7 @@ function validateCoupon(data) {
                 }
             }
             else {
-                couponsLogger.warn('User do not match',doc._user,user._id);
+                couponsLogger.warn('User do not match', doc._user, user._id);
                 return resolver.Promise.reject(resolver.apiError().fn.COUPON_CANNOT_BE_USED('User do not match'));
             }
         }
@@ -656,7 +662,28 @@ function validateCoupon(data) {
     })();
 }
 
+function fetchDiagGuys(data, cb) {
+    return resolver.co(function*() {
+        var rules = {
+            disabled: {
+                $ne: true
+            }
+        };
+        if (data && data.__rules && data.__rules.departments) {
+            rules.departments = data.__rules.departments;
+        }
+        var docs = yield resolver.controllers().user.getAll({
+            userType: 'diag',
+            __rules: rules,
+            __select: 'priority firstName'
+        });
+        cb(null, docs);
+    }).catch(resolver.errorHandler(cb));
+
+}
+
 module.exports = {
+    fetchDiagGuys: fetchDiagGuys,
     getProfileData: getProfileData,
     validateCoupon: validateCoupon,
     createLandlordClient: createLandlordClient,
