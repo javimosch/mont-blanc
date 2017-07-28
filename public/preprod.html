@@ -443,13 +443,16 @@
         function login() {
             var email = document.querySelector('#email').value;
             var password = document.querySelector('#password').value;
+
             reqwest({
-                url: window.location.origin + '/ctrl/User/login',
+                url: window.location.origin + '/api/' + btoa('User') + '/' + btoa('login'),
                 type: 'json',
                 method: 'post',
                 data: {
-                    email: email,
-                    password: password
+                    p: window.btoa(JSON.stringify({
+                        email: email,
+                        password: password
+                    }))
                 },
                 error: function(err) {},
                 success: function(resp) {
@@ -480,7 +483,7 @@
             <label class="">
                 *Use your normal admin credentials
               </label>
-              <label class="">
+            <label class="">
                 *This session will last 20 min
               </label>
             <label id="invalid" class="">
