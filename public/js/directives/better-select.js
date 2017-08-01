@@ -35,9 +35,10 @@ angular.module('betterSelect', []).directive('bselect', ['$log', '$parse', funct
 
 
 
-            //$log.log('INITIAL', $scope.initial);
+            
             var compiledInitialValue = $scope.options.default == undefined ? '' : typeof $scope.options.default === 'function' ? $scope.options.default() : $scope.options.default;
             if (compiledInitialValue) {
+                //$log.log('(betterSelect)', compiledInitialValue);
                 selectByValue(compiledInitialValue);
             }
 

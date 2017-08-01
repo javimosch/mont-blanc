@@ -322,6 +322,16 @@
                     value: 2
                 }],
                 change: function(selectedValue) {
+                    //$log.log('(keysWhereOptions) start',selectedValue,order.address);
+                    
+                    if(!order.address){
+                        var self = this;
+                        //$log.log('(keysWhereOptions) waiting address');
+                        return setTimeout(function(){
+                            self.change(selectedValue);
+                        },200);
+                    }
+                    
                     $rootScope.dom(() => {
                         if (!$scope.keysWhere === 1) {
                             var m = moment(order.start).hours(8);
