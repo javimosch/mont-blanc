@@ -8,7 +8,7 @@ module.exports = {
     bind: (app) => {
         if (resolver.env().DISABLE_CORS) {
             logger.debugTerminal('DISABLED');
-            //return;
+            return;
         }
 
         var origin = process.env.CORS_ORIGIN || "*";

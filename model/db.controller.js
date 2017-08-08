@@ -95,14 +95,32 @@ function create(name, isMongoCollection) {
     return actions;
 }
 
+
+
 function resultAction(modelName) {
     return function(res, options) {
+
+        function errorHandler(err, status, clientError) {
+            resultLogger.error(resolver.errorParser(err));
+            if (err == 401) status = 401;
+            status = status || 400;
+            res.status(status).json({
+                status: status,
+                ok: false,
+                err: clientError ? clientError : err,
+                result: null
+            });
+        }
+
+
         var ctrl = require('./db.controller').create;
         resultLogger = resultLogger || ctrl('Log').createLogger({
             name: "CONTROLLER",
             category: "RESPONSE"
         });
         return function(err, r) {
+            
+            if(err===401) return errorHandler(401);
 
             //||                (Object.keys(err || {}).length === 0 && err !== undefined)
             if (typeof err == 'string') {
@@ -116,7 +134,7 @@ function resultAction(modelName) {
             if (result && typeof result.length !== 'undefined') {
                 result = result.map(o => {
                     if (typeof o.password !== 'undefined') {
-                        o.password = undefined;//Avoid sending password property
+                        o.password = undefined; //Avoid sending password property
                     }
                     return o;
                 });
@@ -124,7 +142,7 @@ function resultAction(modelName) {
 
 
             var rta = {
-                status:200,
+                status: 200,
                 ok: err === undefined || err === null,
                 err: err !== undefined ? err : null,
                 result: result

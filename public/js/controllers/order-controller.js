@@ -53,7 +53,7 @@
                 file: null
             };
             $scope.pdfDownload = (code) => {
-                window.open(db.URL() + '/File/get/' + $scope.item.files[code]._id, '_newtab');
+                window.open(db.URL() + 'File/get/' + $scope.item.files[code]._id, '_newtab');
             };
             $scope.pdfExists = (code) => $scope.item && $scope.item.files && $scope.item.files[code] !== undefined;
             $scope.pdfDelete = (code) => {
@@ -1146,7 +1146,7 @@
                         return $rootScope.warningMessage("File required", 5000);
                     }
                     else {
-                        window.open(db.URL() + '/File/get/' + $scope.item.pdfId, '_newtab');
+                        window.open(db.URL() + 'File/get/' + $scope.item.pdfId, '_newtab');
                     }
                 };
 

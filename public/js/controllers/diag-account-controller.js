@@ -201,7 +201,7 @@
 
             s.validate = () => {
 
-                if (!localSession.logged()) {
+                if (!localSession.isLogged()) {
                     Analytics.trackEvent('diag_account_sign_up_presave_validation', {
                         email: s.item.email,
                         siret: s.item.siret,
@@ -402,7 +402,7 @@
             };
             s.diplomesExists = (_id) => s.item && s.item.diplomes && _.includes(s.item.diplomes, _id);
             s.diplomesDownload = (_id) => {
-                window.open(db.URL() + '/File/get/' + _id, '_newtab');
+                window.open(db.URL() + 'File/get/' + _id, '_newtab');
             };
             s.diplomesNew = () => {
                 if (s.item && s.item.diplomes.length !== Object.keys(s.diplomesData).length) {
@@ -560,34 +560,31 @@
             s.save = function(silent) {
                 silent = silent || false;
 
-                var payload = {
-                    email: s.item.email,
-                    userType: 'diag'
-                };
 
-                db.ctrl('User', 'find', payload).then(function(res) {
-                    if (res.result.length > 0) {
-                        var _item = res.result[0];
-                        if (s.item._id && s.item._id == _item._id) {
-                            _save(); //same diag
+
+                db.ctrl('User', 'isDiagAccount', {
+                    email: s.item.email
+                }).then(function(res) {
+                    if (!res.ok) handleErrors(res.err);
+                    if (res.result) {
+                        if (s.item._id) {
+                            _save();
                         }
                         else {
-                            if (!silent) {
-                                s.warningMessage('Email address in use.');
-                            }
+                            s.warningMessage('Email address in use.');
                         }
                     }
                     else {
-                        _save(); //do not exist.
+                        _save();
                     }
                 }).error(handleErrors);
 
                 function _save() {
                     s.diplomeInfoApply();
-                    db.ctrl('User', 'save', s.item).then((res) => {
+                    db.ctrl('User', 'createOrUpdateDiagAccount', s.item).then((res) => {
                         var _r = res;
 
-                        if (!localSession.logged() && !res.ok) {
+                        if (!localSession.isLogged() && !res.ok) {
                             Analytics.trackEvent('diag_account_sign_up_fail', {
                                 errorMessage: res.err && res.err.message,
                                 code: res.err && res.err.code
@@ -606,7 +603,7 @@
                                 if (s.item && s.item.diplomes && s.item.diplomes.length > 0) {
                                     r.route('login');
 
-                                    if (!localSession.logged()) {
+                                    if (!localSession.isLogged()) {
                                         Analytics.trackEvent('diag_account_sign_up_success', {
                                             email: s.item.email
                                         });

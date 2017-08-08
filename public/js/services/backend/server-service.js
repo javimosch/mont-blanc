@@ -1,15 +1,13 @@
 (function() {
     /*global angular $ $U _ newId*/
-    angular.module('app').service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '$timeout', 'appRouter', '$injector', 'remoteConfig', function(http, localdb, $rootScope, fileUpload, $log, $timeout, appRouter, $injector, remoteConfig) {
+    angular.module('app').service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '$timeout', 'appRouter', '$injector', 'remoteConfig', 'endpointConfig', function(http, localdb, $rootScope, fileUpload, $log, $timeout, appRouter, $injector, remoteConfig, endpointConfig) {
 
-        var URL = 'http://localhost:5000';
+        var ENDPOINT_URL = endpointConfig.URL + endpointConfig.PREFIX;
+        $log.info('Endpoint', ENDPOINT_URL);
+        $U.emitPreserve('server-up');
+
         var globalState = {};
 
-        $.ajax("/serverURL").then(function(r) {
-            URL = r.URL; //updates serverURL from express (node env serverURL);
-            $U.emitPreserve('server-up');
-            //$log.info('serverURL', URL);
-        });
         $.ajax("/serverRawURL").then(function(r) {
             window.__raw_origin = r.URL;
         });
@@ -153,23 +151,9 @@
             //console.warn(err);
         }
 
-        function get(relativeUrl, data, callback) {
-            //        console.warn('URL ' + URL + '/' + relativeUrl);
-            var _log = logger(relativeUrl, data);
-            http({
-                method: 'GET',
-                data: data,
-                url: URL + '/' + relativeUrl
-            }).then(function(res) {
-                _log(res);
-                if (callback) {
-                    callback(res);
-                }
-            }, (err) => handleError(_log, err));
-        }
-        $rootScope.get = get;
+        
 
-        function post(relativeUrl, data, callback, error) {
+        function postRequest(relativeUrl, data, callback, error) {
             data = data || {};
             var _log = logger(relativeUrl, data);
 
@@ -192,7 +176,7 @@
                 http({
                     method: 'POST',
                     data: data,
-                    url: URL + '/' + relativeUrl
+                    url: ENDPOINT_URL + relativeUrl
                 }).then(function(res) {
                     _log(res);
                     if (res.data && res.data.ok == false) {
@@ -218,7 +202,7 @@
             });
         }
 
-        function ctrl(ctrl, action, data) {
+        function controllerRequest(ctrl, action, data) {
             return $U.MyPromise(function(resolve, error) {
 
                 withLocalSession((localSession) => {
@@ -232,7 +216,7 @@
                             };
                         }
 
-                        post('api/' + ctrl + '/' + action, data, function(res) {
+                        postRequest(ctrl + '/' + action, data, function(res) {
 
                             if (res.data && res.data.result) {
                                 localSession.tokenMiddlewareXHREnd(res.data.result).then(() => {
@@ -274,7 +258,7 @@
                     if (stack.promises.length > 0) {
                         stack.flag = true;
                         var d = stack.promises.shift();
-                        ctrl(d.arg1, d.arg2, d.arg3).then(function(res) {
+                        controllerRequest(d.arg1, d.arg2, d.arg3).then(function(res) {
                             stack.flag = false;
                             //                        console.log('stackCtrlPromise-watcher-resolve ' + id + '. left:' + stack.promises.length);
                             $U.emit(id + '-stack-pop');
@@ -299,7 +283,7 @@
         var ws = {
             URL: () => URL,
             http: function(ctrl, action, data) {
-                return http.post(URL + '/' + 'ctrl/' + ctrl + '/' + action, data);
+                return http.post(ENDPOINT_URL + ctrl + '/' + action, data);
             },
             form: (relativeURL, data) => {
                 if (!data.file) throw Error('form: file arg required');
@@ -308,7 +292,7 @@
                     delete data.file;
                     var _log = logger(relativeURL, data);
                     fileUpload.single({
-                        url: URL + '/' + relativeURL,
+                        url: ENDPOINT_URL + relativeURL,
                         file: file,
                         data: data
                     }, res => {
@@ -325,7 +309,7 @@
                 return ws;
             },
             stackCtrl: stackCtrl,
-            ctrl: ctrl,
+            ctrl: controllerRequest,
             $get: (url, config) => {
                 return $U.MyPromise(function(resolve, error) {
                     var _log = logger(url, {});
@@ -364,7 +348,7 @@
             },
             post: function(url, data) {
                 return $U.MyPromise(function(resolve, error) {
-                    post(url, data, function(res) {
+                    postRequest(url, data, function(res) {
                         resolve(res);
                     }, error);
                 });

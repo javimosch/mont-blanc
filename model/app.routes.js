@@ -16,22 +16,21 @@ exports.configure = function(app) {
         category: ""
     });
 
-    /*DEPRECATED?*/
-    app.get('/ctrl/:controller/:action/:data', function(req, res) {
-        var controller = req.params.controller;
-        var action = req.params.action;
-        var data = req.params.data;
-        var actions = dbController.create(controller);
-        if (!actions[action]) {
-            var msg = '<p>Invalid controller ' + controller + " action " + action + '</p>';
-            console.log(msg);
-            console.log('Available for', controller, JSON.stringify(Object.keys(actions)));
-            res.set('Content-Type', 'text/html');
-            res.send(new Buffer(msg));
-        }
-        else {
-            return actions[action](data, actions.result(res), req, res);
-        }
+    app.post('/api/File/save/', (req, res) => {
+        File.save({}, File.result(res), req, res);
+    });
+
+    app.get('/api/File/get/:_id', (req, res) => {
+        File.get({
+            _id: req.params._id
+        }, (err, data) => {
+            if (err) {
+                return res.json(err);
+            }
+            res.setHeader("content-type", "application/pdf");
+            res.setHeader('Content-disposition', ' filename=' + (data.filename || 'file') + '.pdf');
+            data.stream.pipe(res);
+        });
     });
 
     app.post('/api/:controller/:action', function(req, res) {
@@ -74,17 +73,27 @@ exports.configure = function(app) {
             targetType = 'MODEL';
             requireSession = true;
         }
+        handle();
 
-        logger.debugTerminal('XHR (' + targetType + ')', controller, action, requireSession ? '(Auth)' : '');
-        if (requireSession) {
-            resolver.getFacade('session')
-                .authorize(data, controller, action)
-                .then(dispatchRequest)
-                .catch(errorHandler);
+        function bypassAuth() {
+            if (req.url.indexOf('diag-inscription') != -1) return true;
+            return false;
         }
-        else {
-            delete data._token;
-            dispatchRequest();
+
+        function handle() {
+            if (requireSession && bypassAuth()) requireSession = false;
+
+            logger.debugTerminal('XHR (' + targetType + ')', controller, action, requireSession ? '(Auth)' : '');
+            if (requireSession) {
+                resolver.getFacade('session')
+                    .authorize(data, controller, action)
+                    .then(dispatchRequest)
+                    .catch(errorHandler);
+            }
+            else {
+                delete data._token;
+                dispatchRequest();
+            }
         }
 
         function dispatchRequest(customData) {
@@ -99,8 +108,8 @@ exports.configure = function(app) {
 
         function errorHandler(err, status, clientError) {
             logger.error(resolver.errorParser(err));
+            if (err == 401) status = 401;
             status = status || 400;
-            if (err == 401) status = 400;
             res.status(status).json({
                 status: status,
                 ok: false,
@@ -115,21 +124,6 @@ exports.configure = function(app) {
 
 
 
-    app.post('/File/save/', (req, res) => {
-        File.save({}, File.result(res), req, res);
-    });
 
-    app.get('/File/get/:_id', (req, res) => {
-        File.get({
-            _id: req.params._id
-        }, (err, data) => {
-            if (err) {
-                return res.json(err);
-            }
-            res.setHeader("content-type", "application/pdf");
-            res.setHeader('Content-disposition', ' filename=' + (data.filename || 'file') + '.pdf');
-            data.stream.pipe(res);
-        });
-    });
 
 };

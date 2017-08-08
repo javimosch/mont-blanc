@@ -44,7 +44,16 @@
                 });
             },
             getToken: () => {
-                window.localForage.getItem('_token');
+                return $U.MyPromise(function(resolve, error) {
+                    window.localforage.getItem('_token').then(token => {
+                        backendApi.user.isSessionExpired({}).then(res => {
+                            if (res.result == true) return resolve(null);
+                            return resolve(token);
+                        }).catch((err) => {
+                            return error(err);
+                        });
+                    });
+                });
             },
             tokenMiddlewareXHRStart: (data) => {
                 data = data || {};

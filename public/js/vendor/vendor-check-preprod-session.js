@@ -19,7 +19,7 @@
             //check _id
             function checkId(_id, callback) {
                 var x = window.XMLHttpRequest && new window.XMLHttpRequest() || new ActiveXObject("Microsoft.XMLHTTP");
-                x.open('post', window.location.origin + '/ctrl/User/exists', true);
+                x.open('post', window.location.origin + '/api/'+btoa('User')+'/'+btoa('exists'), true);
                 x.onreadystatechange = function() {
                     if (x.readyState == 4) {
                         callback(x.responseText)

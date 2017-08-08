@@ -23,7 +23,7 @@ function configure(app) {
             
             //Dynamc pages
             return resolver.db().model.pages.find().select("content template url").exec().then(pages => {
-                logger.debug('Pages fetch', pages && pages.length || 0);
+                logger.debugTerminal('Pages fetch', pages && pages.length || 0);
                 heData({
                     pages: JSON.stringify(pages.map((p) => {
                         delete p._id;

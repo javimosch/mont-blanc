@@ -1,7 +1,7 @@
 (function() {
     /*global angular*/
     /*global $U*/
-    angular.module('login-feature-module').controller('adminLogin', ['server', '$scope', '$rootScope', 'LoginService', 'Analytics', function(db, s, r, LoginService, Analytics) {
+    angular.module('login-feature-module').controller('adminLogin', ['server', '$scope', '$rootScope', 'LoginService', 'Analytics', 'localSession', function(db, s, r, LoginService, Analytics, localSession) {
         //console.info('app.admin.login:adminLogin');
         r.__hideNavMenu = true;
         r.navShow = true;
@@ -16,6 +16,7 @@
         function onLoginSuccess(user) {
             Analytics.syncUser(user);
             Analytics.incrementUserProperty('login_success_counter');
+            r.__hideNavMenu = false;
             r.route('dashboard');
         }
 
@@ -70,27 +71,41 @@
         }
 
         if (loginFieldsWereFillWithQueryStringParameters()) {
-            return s.login(true);
+            localSession.getToken().then((token) => {
+                if (token) {
+                    return s.login(true);
+                }
+            });
         }
 
 
         if (LoginService.isLogged()) {
-            LoginService.updateSession().then((user) => {
-                onLoginSuccess(user);
-            }).on('validate', msg => {
-                //r.warningMessage(msg);
-                s.show = true;
-            }).error(msg => {
-                //r.errorMessage(msg);
-                s.show = true;
-            }).on('session-lost', () => {
-                s.show = true;
-            });
+
+            localSession.getToken().then((token) => {
+                if (token) {
+                    LoginService.updateSession().then((user) => {
+                        onLoginSuccess(user);
+                    }).on('validate', msg => {
+                        //r.warningMessage(msg);
+                        s.show = true;
+                    }).error(msg => {
+                        //r.errorMessage(msg);
+                        s.show = true;
+                    }).on('session-lost', () => {
+                        s.show = true;
+                    });
+                }
+                else {
+                    s.show = true;
+                }
+            })
+
+
         }
         else {
             s.show = true;
         }
-    }]).controller('adminLoginExternal', ['server', '$scope', '$rootScope', 'LoginService', 'Analytics','appRouter', function(server, $scope, $rootScope, LoginService, Analytics,appRouter) {
+    }]).controller('adminLoginExternal', ['server', '$scope', '$rootScope', 'LoginService', 'Analytics', 'appRouter', 'localSession', function(server, $scope, $rootScope, LoginService, Analytics, appRouter, localSession) {
 
         $scope.handleDiagAccountSignUpButtonClick = () => {
             Analytics.trackEvent('diag_account_sign_up_button_click');
@@ -125,17 +140,25 @@
 
 
         if (LoginService.isLogged()) {
-            LoginService.updateSession().then(() => {
-                $scope.redirect();
-            }).on('validate', msg => {
-                //r.warningMessage(msg);
-                $scope.show = true;
-            }).error(msg => {
-                //r.errorMessage(msg);
-                $scope.show = true;
-            }).on('session-lost', () => {
-                $scope.show = true;
+
+
+            localSession.getToken().then((token) => {
+                if (token) {
+                    LoginService.updateSession().then(() => {
+                        $scope.redirect();
+                    }).on('validate', msg => {
+                        //r.warningMessage(msg);
+                        $scope.show = true;
+                    }).error(msg => {
+                        //r.errorMessage(msg);
+                        $scope.show = true;
+                    }).on('session-lost', () => {
+                        $scope.show = true;
+                    });
+                }
             });
+
+
         }
         else {
             $scope.show = true;

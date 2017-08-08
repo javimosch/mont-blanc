@@ -21,7 +21,7 @@
         'ui.bootstrap.datetimepicker',
 
         'betterSelect',
-        
+
         'remote-config-constant',
 
         'srv.crud',
@@ -46,6 +46,12 @@
         'app.services',
         'app-router'
     ]);
+
+    app.constant('endpointConfig', {
+        "URL":'/',
+        "PREFIX": "api/",
+    });
+
     app.config(function() {
         window.localforage.config({
             //driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()

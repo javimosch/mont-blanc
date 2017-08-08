@@ -117,7 +117,7 @@ angular.module('app').controller('database-files', ['server', '$scope', '$rootSc
                         item: item,
                     });
                     //r.route('settings-pages/' + item._id);
-                    window.open(db.URL() + '/File/get/' + item._id, '_newtab');
+                    window.open(db.URL() + 'File/get/' + item._id, '_newtab');
                 },
                 buttons: [{
                     label: "Rafraîchir",

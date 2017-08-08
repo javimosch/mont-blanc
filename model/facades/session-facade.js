@@ -5,7 +5,7 @@ var logger = resolver.loggerFacade({
     category: "Session"
 });
 
-const SESSION_DURATION_MINUTES = 1; 
+const SESSION_DURATION_MINUTES = 1;
 const SESSION_EXPIRED_ERROR = 401; //This will trigger a 401 response
 
 var sessionFacade = module.exports = {
@@ -21,6 +21,18 @@ var sessionFacade = module.exports = {
                 //logger.debug('Authorized!', controllerName, actionName);
                 delete data._token;
                 return resolver.Promise.resolve(data);
+            }
+        })();
+    },
+    isExpired: (data, controllerName) => {
+        return resolver.coWrap(function*() {
+            if (!data || !data._token) return resolver.Promise.resolve(true);
+            var session = yield getSessionFromToken(data._token);
+            if (isSessionExpired(session, data._token)) {
+                return resolver.Promise.resolve(true);
+            }
+            else {
+                return resolver.Promise.resolve(false);
             }
         })();
     },
@@ -49,7 +61,7 @@ var sessionFacade = module.exports = {
                     token: token,
                     expiresAt
                 };
-               // logger.debug('Session create', payload);
+                // logger.debug('Session create', payload);
                 session = yield resolver.controllers().sessions.model.create(payload);
             }
             user._sessionToken = session.token;

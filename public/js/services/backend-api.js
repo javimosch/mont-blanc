@@ -6,7 +6,7 @@
     var app = angular.module('app').service('backendApi', function($rootScope, server, $log, apiError, $http) {
 
         const CONSTANT = {
-            COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate', 'create', 'findOne', 'generateInvoice','fetchDiagGuys'],
+            COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate', 'create', 'findOne', 'generateInvoice', 'fetchDiagGuys', 'isSessionExpired'],
             COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange', 'deploy', 'sockets', 'ssh', 'gitlab', 'coupons', 'reports', 'user', 'order']
         };
 
@@ -154,7 +154,7 @@
                 var file = payload.file;
                 delete payload.file;
                 singleFilePost({
-                    url: server.URL() + '/ctrl/' + controller + '/' + action,
+                    url: server.URL() + controller + '/' + action,
                     file: file,
                     data: payload
                 }, res => {

@@ -579,6 +579,11 @@ function getProfileData(data, cb) {
     }).catch(err => cb(err.stack || err));
 }
 
+
+function isSessionExpired(data, cb) {
+    resolver.getFacade('session').isExpired(data).then((result) => cb(null, result)).catch(cb);
+}
+
 function login(data, cb) {
     resolver.controllers().user.model.findOne({
         email: data.email,
@@ -679,10 +684,28 @@ function fetchDiagGuys(data, cb) {
         });
         cb(null, docs);
     }).catch(resolver.errorHandler(cb));
+}
 
+function isDiagAccount(data, cb) {
+    return resolver.co(function*() {
+        if (!data.email) return resolver.Promise.reject(resolver.apiError().VALIDATE_FIELD_EMAIL);
+        var count = yield resolver.controllers().user.model.count({
+            userType: 'diag',
+            email: data.email
+        }).exec();
+        cb(null, count>0);
+    }).catch(resolver.errorHandler(cb));
+}
+
+function createOrUpdateDiagAccount(data, cb) {
+    if (data.user_type && data.user_type !== 'diag') cb(401);
+    resolver.controllers().user.save(data, cb);
 }
 
 module.exports = {
+    createOrUpdateDiagAccount: createOrUpdateDiagAccount,
+    isDiagAccount: isDiagAccount,
+    isSessionExpired: isSessionExpired,
     fetchDiagGuys: fetchDiagGuys,
     getProfileData: getProfileData,
     validateCoupon: validateCoupon,
