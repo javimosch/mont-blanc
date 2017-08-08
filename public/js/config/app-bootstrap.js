@@ -47,10 +47,10 @@
         'app-router'
     ]);
 
-    app.constant('endpointConfig', {
-        "URL":'/',
-        "PREFIX": "api/",
-    });
+
+    app.config(['$httpProvider', 'endpointConfig', function($httpProvider, endpointConfig) {
+        $httpProvider.defaults.headers.post['csrf-token'] = endpointConfig.CSRF;
+    }]);
 
     app.config(function() {
         window.localforage.config({
@@ -70,11 +70,25 @@
     });
     moment.locale('fr');
     angular.element(function() {
-        angular.bootstrap(document, ['app']);
-        if (window.__bootTimerStart) {
-            window.__bootTimerMilli = Date.now() - window.__bootTimerStart;
-            window.__bootTimerSeconds = window.__bootTimerMilli / 1000;
-            console.log('Load-time until angular bootstraping', window.__bootTimerSeconds, 'Seconds');
-        }
+
+        $.get('/CXNlcg').then((res) => {
+
+            app.constant('endpointConfig', {
+                "URL": '/',
+                "PREFIX": "api/",
+                "CSRF": res.result
+            });
+
+
+            angular.bootstrap(document, ['app']);
+            if (window.__bootTimerStart) {
+                window.__bootTimerMilli = Date.now() - window.__bootTimerStart;
+                window.__bootTimerSeconds = window.__bootTimerMilli / 1000;
+                console.log('Load-time until angular bootstraping', window.__bootTimerSeconds, 'Seconds');
+            }
+
+        });
+
+
     });
 })();

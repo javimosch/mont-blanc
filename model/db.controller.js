@@ -119,8 +119,8 @@ function resultAction(modelName) {
             category: "RESPONSE"
         });
         return function(err, r) {
-            
-            if(err===401) return errorHandler(401);
+
+            if (err === 401) return errorHandler(401);
 
             //||                (Object.keys(err || {}).length === 0 && err !== undefined)
             if (typeof err == 'string') {
@@ -162,6 +162,12 @@ function resultAction(modelName) {
                 if (rta.result.message) {
                     rta.message = rta.result.message;
                     rta.result = rta.result.result;
+                }
+            }
+
+            if (resolver.env().PROD) {
+                if (rta.result) {
+                    rta.result = resolver.getFacade('encrypt').objectToBase64String(rta.result);
                 }
             }
 

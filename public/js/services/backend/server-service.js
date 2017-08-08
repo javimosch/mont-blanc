@@ -151,7 +151,7 @@
             //console.warn(err);
         }
 
-        
+
 
         function postRequest(relativeUrl, data, callback, error) {
             data = data || {};
@@ -181,6 +181,11 @@
                     _log(res);
                     if (res.data && res.data.ok == false) {
                         $log.warn("ENDPOINT " + relativeUrl, res.data.err || "INVALID RESPONSE FORMAT");
+                    }
+                    else {
+                        if (res.data && res.data.ok && typeof res.data.result == 'string' && remoteConfig.PROD) {
+                            res.data.result = JSON.parse(window.atob(res.data.result));
+                        }
                     }
                     return callback(res);
                 }, (err) => {
@@ -281,7 +286,7 @@
         }
 
         var ws = {
-            URL: () => URL,
+            URL: () => ENDPOINT_URL,
             http: function(ctrl, action, data) {
                 return http.post(ENDPOINT_URL + ctrl + '/' + action, data);
             },

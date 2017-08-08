@@ -17,7 +17,7 @@ const cacheOptions = {
             maxAge: 60,
             sMaxAge: 600
         },
-        '/ctrl/**': false,
+        '/api/**': false,
         '/**': false
     }
 };

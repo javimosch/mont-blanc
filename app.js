@@ -1,6 +1,6 @@
 require('dotenv').config({
-    silent: true,
-    path: process.cwd() + '/.env'
+	silent: true,
+	path: process.cwd() + '/.env'
 });
 var path = require("path");
 var co = require('co');
@@ -9,8 +9,8 @@ co(function*() {
 	yield require(path.join(process.cwd(), 'model/db')).configure();
 	var express = require('express');
 	var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
-	var logger=resolver.loggerFacade({
-		name:"APP"
+	var logger = resolver.loggerFacade({
+		name: "APP"
 	});
 	var app = express();
 	var https = require('https');
@@ -20,11 +20,11 @@ co(function*() {
 	//enviroment variables
 	var PROD = config.PROD;
 	var PORT = config.PORT;
-	require('./model/routes/app-details-route').bind(app);//with CORS
+	require('./model/routes/app-details-route').bind(app); //with CORS
 	//middlewares
 	logger.debugTerminal('Middlewares');
-	require('./model/middlewares/cache-middleware').bind(app);
 	require('./model/middlewares/cors-middleware').bind(app);
+	require('./model/middlewares/cache-middleware').bind(app);
 	require('./model/middlewares/skip-source-maps-middleware').bind(app);
 	require('./model/middlewares/request-parsers-middlewares').bind(app);
 	//routes
@@ -40,7 +40,7 @@ co(function*() {
 		resolver.sockets().configure(server);
 		server.listen(PORT, function() {
 			logger.debugTerminal('Production? ' + (PROD ? 'Oui!' : 'Non!'));
-			logger.debugTerminal('ServerURL', 'http://localhost:'+PORT);
+			logger.debugTerminal('ServerURL', 'http://localhost:' + PORT);
 			logger.debugTerminal('Diagnostical listening on port ' + PORT + '!');
 		});
 	});
