@@ -15,14 +15,25 @@ module.exports = {
         var useragent = require('express-useragent');
 
         app.use(useragent.express());
-        app.use(helmet());
+
+        if (!resolver.env().DISABLE_HELMET) {
+            app.use(helmet());
+        }else{
+            logger.debugTerminal("HELMET DISABLED");
+        }
+
 
         app.use(cookieParser());
-        app.use(csrf({
-            cookie: {
-                key: "CXNlcg"
-            }
-        }));
+
+        if (!resolver.env().DISABLE_CSRF) {
+            app.use(csrf({
+                cookie: {
+                    key: "CXNlcg"
+                }
+            }));
+        }else{
+            logger.debugTerminal("CSRF DISABLED");
+        }
 
         app.get('/CXNlcg', function(req, res) {
             res.json({ result: req.csrfToken() });

@@ -1,3 +1,5 @@
+var path = require('path');
+var resolver = require(path.join(process.cwd(), 'model/facades/resolver-facade'));
 const cache = require('cache-headers');
 const cacheOptions = {
     paths: {
@@ -24,6 +26,8 @@ const cacheOptions = {
 
 module.exports = {
     bind(app) {
-        app.use(cache.middleware(cacheOptions));
+        if(!resolver.env().DISABLE_CACHE){
+            app.use(cache.middleware(cacheOptions));
+        }
     }
 };

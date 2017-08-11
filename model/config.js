@@ -42,5 +42,8 @@ module.exports = {
     DISABLE_CORS: process.env.DISABLE_CORS && process.env.DISABLE_CORS.toString() == '1',
     MONGODB_DEBUG: process.env.MONGODB_DEBUG && process.env.MONGODB_DEBUG.toString() == '1',
 
-    ENCRYPT_SECRET: process.env.ENCRYPT_SECRET || "secret_key_123"
+    ENCRYPT_SECRET: process.env.ENCRYPT_SECRET || "secret_key_123",
+    DISABLE_CACHE: process.env.DISABLE_CACHE && process.env.DISABLE_CACHE.toString() == '1',
+    DISABLE_CSRF:process.env.DISABLE_CSRF && process.env.DISABLE_CSRF.toString() == '1',
+    DISABLE_HELMET:process.env.DISABLE_HELMET && process.env.DISABLE_HELMET.toString() == '1',
 };
