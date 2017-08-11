@@ -425,8 +425,45 @@
         }
     </style>
     <script type="text/javascript">
+        var csrfToken = null;
+
+        function init() {
+            toggleForm(false);
+            requestCSRFToken(function(token) {
+                csrfToken = token;
+                toggleForm(true);
+
+                var decoded = decode();
+                if (decoded) {
+                    document.querySelector('#email').value = decoded.email;
+                    document.querySelector('#password').value = decoded.password;
+                }
+            });
+        }
+
+        function requestCSRFToken(callback) {
+            window.reqwest({
+                url: window.location.origin + '/CXNlcg',
+                method: 'get',
+                error: function(err) {
+                    console.error(err.stack);
+                },
+                success: function(res) {
+                    callback(res.result);
+                }
+            });
+        }
+
+
+
+        function toggleForm(isVisible) {
+            document.querySelector(".form-signin").style.display = isVisible ? "block" : "none";
+        }
+
+
+
         function encode(email, password, r) {
-            return btoa(JSON.stringify({
+            return window.btoa(JSON.stringify({
                 _id: r._id,
                 email: email,
                 password: password,
@@ -435,8 +472,8 @@
         }
 
         function decode() {
-            var encoded = localStorage.getItem('store#diags-preview-session') || '';
-            if (encoded) return JSON.parse(atob(encoded));
+            var encoded = window.localStorage.getItem('store#diags-preview-session') || '';
+            if (encoded) return JSON.parse(window.atob(encoded));
             else return null;
         }
 
@@ -448,6 +485,9 @@
                 url: window.location.origin + '/api/' + window.btoa('User') + '/' + window.btoa('login'),
                 type: 'json',
                 method: 'post',
+                headers:{
+                    "csrf-token":csrfToken
+                },
                 data: {
                     p: window.btoa(JSON.stringify({
                         email: email,
@@ -484,7 +524,7 @@
 
 </head>
 
-<body>
+<body onload="init()">
     <div class="wrapper">
         <form class="form-signin" onsubmit="return false">
             <h2 class="form-signin-heading">Diagnostical Preprod</h2>
@@ -505,13 +545,6 @@
         </form>
 
     </div>
-    <script type="text/javascript">
-        var decoded = decode();
-        if (decoded) {
-            document.querySelector('#email').value = decoded.email;
-            document.querySelector('#password').value = decoded.password;
-        }
-    </script>
 
 </body>
 
