@@ -12,12 +12,12 @@
         body {
             background: #eee !important;
         }
-        
+
         .wrapper {
             margin-top: 80px;
             margin-bottom: 80px;
         }
-        
+
         .form-signin {
             max-width: 380px;
             padding: 15px 35px 45px;
@@ -25,16 +25,16 @@
             background-color: #fff;
             border: 1px solid rgba(0, 0, 0, 0.1);
         }
-        
+
         .form-signin .form-signin-heading,
         .form-signin .checkbox {
             margin-bottom: 30px;
         }
-        
+
         .form-signin .checkbox {
             font-weight: normal;
         }
-        
+
         .form-signin .form-control {
             position: relative;
             font-size: 16px;
@@ -44,17 +44,17 @@
             -moz-box-sizing: border-box;
             box-sizing: border-box;
         }
-        
+
         .form-signin .form-control:focus {
             z-index: 2;
         }
-        
+
         .form-signin input[type="text"] {
             margin-bottom: -1px;
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
         }
-        
+
         .form-signin input[type="password"] {
             margin-bottom: 20px;
             border-top-left-radius: 0;
@@ -419,7 +419,7 @@
         #invalid {
             display: none;
         }
-        
+
         #invalid.show {
             display: block;
         }
@@ -444,8 +444,8 @@
             var email = document.querySelector('#email').value;
             var password = document.querySelector('#password').value;
 
-            reqwest({
-                url: window.location.origin + '/api/' + btoa('User') + '/' + btoa('login'),
+            window.reqwest({
+                url: window.location.origin + '/api/' + window.btoa('User') + '/' + window.btoa('login'),
                 type: 'json',
                 method: 'post',
                 data: {
@@ -454,12 +454,22 @@
                         password: password
                     }))
                 },
-                error: function(err) {},
+                error: function(err) {
+                    console.error(err.stack);
+                },
                 success: function(resp) {
                     console.log(resp);
-                    if (resp.result && resp.result._id) {
-                        localStorage.setItem('store#diags-preview-session', encode(email, password, resp.result));
-                        window.location.href = window.location.origin;
+                    if (resp.result) {
+                        try {
+                            resp.result = JSON.parse(window.atob(resp.result));
+                        }
+                        catch (err) {
+                            console.error(err.stack);
+                        }
+                        if (resp.result._id) {
+                            window.localStorage.setItem('store#diags-preview-session', encode(email, password, resp.result));
+                            window.location.href = window.location.origin;
+                        }
                     }
                     else {
                         document.querySelector('#invalid').className = 'show';
