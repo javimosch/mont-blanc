@@ -42,7 +42,7 @@
         self.inProgress = () => {
             var p = appRouter.params();
             var rta = p && p.bookingInProgress === true;
-            $log.info('Booking: inProgress', rta);
+            $log.log('Booking: inProgress', rta);
             return rta;
         };
 

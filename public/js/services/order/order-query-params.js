@@ -135,7 +135,7 @@
                     time: param('time', ['any']),
                     clientType: param('clientType', orderHelper.CLIENT_TYPES)
                 };
-                $log.info('Defaults are ',defaults);
+                $log.log('Defaults are ',defaults);
                 return defaults;
             }
         };
