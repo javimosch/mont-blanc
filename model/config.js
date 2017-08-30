@@ -1,5 +1,5 @@
 module.exports = {
-
+    
     FILE_LOGGING_LEVEL: process.env.FILE_LOGGING_LEVEL || "DEBUG",
 
     DB_URI: process.env.dbURI,
@@ -46,4 +46,5 @@ module.exports = {
     DISABLE_CACHE: process.env.DISABLE_CACHE && process.env.DISABLE_CACHE.toString() == '1',
     DISABLE_CSRF:process.env.DISABLE_CSRF && process.env.DISABLE_CSRF.toString() == '1',
     DISABLE_HELMET:process.env.DISABLE_HELMET && process.env.DISABLE_HELMET.toString() == '1',
+    DISABLE_BUNDLING:process.env.DISABLE_BUNDLING && process.env.DISABLE_BUNDLING.toString() == '1',
 };

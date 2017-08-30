@@ -452,7 +452,7 @@ function buildTemplates() {
                     try {
                         var rta = hbs.compile(raw)(sgData());
                         //console.log('COMPILE-DEBUG', 'handleNewFileTransform hbs passed');
-                        if (PROD) {
+                        if (PROD && !resolver.env().DISABLE_BUNDLING) {
                             rta = compileVendorJS(rta, path);
                             rta = compileVendorCSS(rta, path);
                             rta = compileSectionBundles(rta, path);

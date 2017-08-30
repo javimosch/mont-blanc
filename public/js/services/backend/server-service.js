@@ -288,7 +288,25 @@
         var ws = {
             URL: () => ENDPOINT_URL,
             http: function(ctrl, action, data) {
-                return http.post(ENDPOINT_URL + ctrl + '/' + action, data);
+                //return controllerRequest(ctrl,action,data);
+
+                if (remoteConfig.PROD) {
+                    ctrl = window.btoa(ctrl);
+                    action = window.btoa(action);
+                    data = {
+                        p: window.btoa(JSON.stringify(data))
+                    };
+                }
+
+                return http.post(ENDPOINT_URL + ctrl + '/' + action, data).then(function(res) {
+
+                    if (res.data && res.data.ok && typeof res.data.result == 'string' && remoteConfig.PROD) {
+                        res.data.result = JSON.parse(window.atob(res.data.result));
+                    }
+
+                    return res;
+
+                });
             },
             form: (relativeURL, data) => {
                 if (!data.file) throw Error('form: file arg required');
