@@ -1207,7 +1207,7 @@
                         }
 
 
-                        //$log.info('uibModalOptions', _.clone(uibModalOptions));
+                        //$log.debug('uibModalOptions', _.clone(uibModalOptions));
                         var modalInstance = $uibModal.open(uibModalOptions);
 
 

@@ -13,8 +13,9 @@
 /*global $D*/
 (function() {
     angular.module('app').controller('booking-iframe-controller', ['server',
-        '$timeout', '$scope', '$rootScope', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'orderQueryParams', 'orderHelper',
-        function(db, $timeout, s, r, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, orderQueryParams, orderHelper) {
+        '$timeout', '$scope', '$rootScope', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'orderQueryParams', 'orderHelper', 'localSession',
+        function(db, $timeout, s, r, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, orderQueryParams, orderHelper, localSession) {
+            
 
             s.warningMsg = (msg, delay) => {
                 r.warningMessage(msg, delay);
@@ -25,7 +26,7 @@
                     if (!window.serverURL) {
                         //    return r.warningMessage('Define serverURL');
                     }
-                    var url = "https://white-house-78-javoche.c9users.io/";
+                    var url = "https://mont-blanc-javoche.c9users.io/";
 
                     if (!r.isDevEnv()) {
                         url = "https://www.diagnostical.fr/";
@@ -107,19 +108,9 @@
                 clientType: 'landlord',
                 info: {}
             };
-            localData().then(function(data) {
-                Object.assign(s, data);
-                s.diags = _.sortBy(s.diags, function(o) {
-                    return o.sort;
-                });
-                s.diag = s.diag || {};
-                s.diags.forEach(diag => {
-                    s.diag[diag.name] = diag;
-                });
-                s.diagSelected = s.diag.dpe;
-                orderQuestion.bindAnswersToDefaultDiags(s);
-                waitForProperties([loadDefaults, r.dom], ['notify']);
-            });
+
+
+
 
             moment.locale('fr')
             var MESSAGES = {
@@ -186,11 +177,29 @@
             }
 
 
+            localSession.waitParentToken().then(loadSettings);
 
-
-            db.ctrl('Settings', 'getAll', {}).then(d => {
-                if (d.ok && d.result.length > 0) s.settings = d.result[0];
-            });
+            function loadSettings() {
+                db.ctrl('Settings', 'getAll', {}).then(d => {
+                    if (d.ok && d.result.length > 0) s.settings = d.result[0];
+                });
+                localData().then(function(data) {
+                    Object.assign(s, data);
+                    s.diags = _.sortBy(s.diags, function(o) {
+                        return o.sort;
+                    });
+                    s.diag = s.diag || {};
+                    s.diags.forEach(diag => {
+                        s.diag[diag.name] = diag;
+                    });
+                    s.diagSelected = s.diag.dpe;
+                    orderQuestion.bindAnswersToDefaultDiags(s);
+                    waitForProperties([loadDefaults, r.dom], ['notify']);
+                });
+                
+                localData.initializeSettings(); //Iframe should initialize settings manually.
+                console.log('(init) iframe loadSettings');
+            }
 
 
 
@@ -270,10 +279,11 @@
 
 
 
-
-
-
         }
+
+
+
+
     ]);
 
 })();

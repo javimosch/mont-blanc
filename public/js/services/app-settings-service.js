@@ -3,8 +3,11 @@
     /*global $U*/
     angular.module('app-settings-service', []).service('appSettings', ['$rootScope', '$log', '$timeout', 'server', function(r, $log, $timeout, server) {
 
+        $log.debug('(init) appSettings', window.location.href.indexOf('iframe') !== -1 ? "(iframe)" : '');
+
         var requested = false;
         var self = {
+            initialize:fetchDatabaseSettings,
             URL: window.location.origin + '/',
             databaseSettings: null,
             parseLocalData: parseLocalData,
@@ -29,14 +32,19 @@
             localData: null
         };
         assignGlobalSettings(self);
-        fetchDatabaseSettings(); //initial and unique fetch
+
+
+        if (window.location.href.indexOf('iframe') == -1) { //Only if not an iframe
+            fetchDatabaseSettings(); //initial and unique fetch
+        }
+
         $U.exposeGlobal('as', self);
         return self;
 
 
         function getDatabaseSettings(resolve) {
             if (self.databaseSettings) {
-                //$log.log('appSettings databaseSettings', 'resolved');
+                //$log.debug('appSettings databaseSettings', 'resolved');
                 return resolve(self.databaseSettings);
             }
             else return setTimeout(() => {

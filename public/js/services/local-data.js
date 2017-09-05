@@ -7,7 +7,7 @@ var app = angular.module('local-data', []).service('localData', ['$rootScope', '
 
     function getData(resolve) {
         if (data) {
-            //$log.log('localData', 'resolve from cache');
+            //$log.debug('localData', 'resolve from cache');
             return resolve(data);
         }
         else return setTimeout(() => {
@@ -17,7 +17,7 @@ var app = angular.module('local-data', []).service('localData', ['$rootScope', '
     var self = () => {
         return $U.MyPromise(function(resolve, error) {
             if (data) {
-                //$log.log('localData', 'resolve from cache');
+                //$log.debug('localData', 'resolve from cache');
                 resolve(data);
             }
             else {
@@ -31,7 +31,7 @@ var app = angular.module('local-data', []).service('localData', ['$rootScope', '
                 $.getJSON('./data.json', function(localData) {
                     appSettings.parseLocalData(localData).then((_data) => {
                         data = _data;
-                        //$log.log('localData', 'resolved');
+                        //$log.debug('localData', 'resolved');
                         resolve(data);
                     });
                 }).fail(function(jqxhr, textStatus, error) {
@@ -43,8 +43,9 @@ var app = angular.module('local-data', []).service('localData', ['$rootScope', '
             }
         });
     };
+    self.initializeSettings = () => appSettings.initialize();
     self.cache = () => data;
-    self().then(()=>$log.log('local-data OK'));
-    $U.exposeGlobal('ld',self);
+    self().then(() => $log.debug('local-data OK'));
+    $U.exposeGlobal('ld', self);
     return self;
 }]);

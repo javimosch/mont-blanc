@@ -107,7 +107,7 @@
 
             $scope.pdfSaveSuccess = () => {
                 if ($scope.item.status == 'prepaid' && $scope.pdfAllPdfUploaded()) {
-                    $log.info('every pdf was uploaded. Turning order to completed.');
+                    $log.debug('every pdf was uploaded. Turning order to completed.');
                     $scope.item.status = 'completed';
                     $scope.save();
                 }
@@ -590,11 +590,11 @@
 
                         var diag = v;
                         if (!prevDiag || prevDiag._id == diag._id) {
-                            $log.log('Revenues recalc skip');
+                            $log.debug('Revenues recalc skip');
                         }
                         else {
                             prevDiag = diag;
-                            $log.log('Revenues recalc');
+                            $log.debug('Revenues recalc');
 
 
                             orderHelper.preparePriceCalculation($scope.item).then(() => {

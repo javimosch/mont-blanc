@@ -1,6 +1,4 @@
-/*global angular*/
-/*global expose*/
-/*global moment*/
+/*global moment angular $ $U expose*/
 (function() {
     var app = angular.module('app', [
         'app.run',
@@ -79,6 +77,8 @@
                 "CSRF": res.result
             });
 
+
+            window.$._getcsrf = () => res.result;
 
             angular.bootstrap(document, ['app']);
             if (window.__bootTimerStart) {

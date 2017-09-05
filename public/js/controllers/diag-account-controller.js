@@ -298,29 +298,29 @@
                         delete s.item.diplomesInfo[k];
                     });
 
-                    $log.info('diplomesUpdate: info to delete', _.clone(infoToDelete));
+                    $log.debug('diplomesUpdate: info to delete', _.clone(infoToDelete));
 
                     db.ctrl('User', 'update', {
                         _id: s.item._id,
                         diplomesInfo: s.item.diplomesInfo
                     });
 
-                    $log.info('diplomesUpdate: looping diplomes');
+                    $log.debug('diplomesUpdate: looping diplomes');
 
                     s.item.diplomes.forEach((_id, k) => {
 
-                        $log.info('diplomesUpdate: fetching file', _id);
+                        $log.debug('diplomesUpdate: fetching file', _id);
                         db.ctrl('File', 'find', {
                             _id: _id
                         }).then(data => {
                             var file = data.result;
                             if (data.ok && file) {
 
-                                $log.info('diplomesUpdate: file', _id);
+                                $log.debug('diplomesUpdate: file', _id);
 
                                 s.item.diplomesInfo = s.item.diplomesInfo || {};
                                 if (!s.item.diplomesInfo[_id]) {
-                                    $log.info('diplomesUpdate: file lack info, creating', _id);
+                                    $log.debug('diplomesUpdate: file lack info, creating', _id);
                                     s.item.diplomesInfo[_id] = {
                                         //obtentionDate: data.info.obtentionDate,
                                         //expirationDate: data.info.expirationDate,
@@ -334,7 +334,7 @@
                                     });
                                 }
                                 else {
-                                    $log.info('diplomesUpdate: file has info, updating name', _id);
+                                    $log.debug('diplomesUpdate: file has info, updating name', _id);
                                     s.item.diplomesInfo[_id].filename = file.filename;
                                 }
 
@@ -449,12 +449,12 @@
                 if (info) {
                     o.info.obtentionDate = isFinite(new Date(info.obtentionDate)) && new Date(info.obtentionDate);
                     o.info.expirationDate = isFinite(new Date(info.expirationDate)) && new Date(info.expirationDate);
-                    $log.info('diplomesDataCreate: from existing info', info);
+                    $log.debug('diplomesDataCreate: from existing info', info);
                 }
                 else {
                     o.info.obtentionDate = new Date();
                     o.info.expirationDate = new Date();
-                    $log.info('diplomesDataCreate: from scratch');
+                    $log.debug('diplomesDataCreate: from scratch');
                 }
 
 

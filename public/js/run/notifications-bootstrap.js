@@ -7,12 +7,12 @@
 
         function request_permission() {
             if (Notification.permission === "granted") {
-                $log.log('Notifications are enabled');
+                $log.debug('Notifications are enabled');
             }
             else if (Notification.permission !== "denied") {
                 Notification.requestPermission(function(permission) {
                     if (permission === "granted") {
-                        $log.log('Notifications are enabled');
+                        $log.debug('Notifications are enabled');
                     }
                     else {
                         $log.warn('Notifications are disabled');

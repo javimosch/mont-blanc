@@ -1,14 +1,17 @@
 (function() {
     /*global angular*/
     /*global $U*/
-    angular.module('login-feature-module').controller('adminLogin', ['server', '$scope', '$rootScope', 'LoginService', 'Analytics', 'localSession', function(db, s, r, LoginService, Analytics, localSession) {
+    angular.module('login-feature-module').controller('adminLogin', ['$scope', '$rootScope', 'LoginService', 'Analytics', 'localSession', '$log', function($scope, $rootScope, LoginService, Analytics, localSession, $log) {
         //console.info('app.admin.login:adminLogin');
-        r.__hideNavMenu = true;
-        r.navShow = true;
-        s.show = false;
+        $rootScope.__hideNavMenu = true;
+        $rootScope.navShow = true;
+        $scope.show = false;
+
+        $log.debug('adminLogin');
+        $U.exposeGlobal('s', $scope);
 
         $U.once('route-exit:login', function(url) {
-            r.__hideNavMenu = false;
+            $rootScope.__hideNavMenu = false;
         });
 
         Analytics.trackView('login');
@@ -16,41 +19,41 @@
         function onLoginSuccess(user) {
             Analytics.syncUser(user);
             Analytics.incrementUserProperty('login_success_counter');
-            r.__hideNavMenu = false;
-            r.route('dashboard');
+            $rootScope.__hideNavMenu = false;
+            $rootScope.route('dashboard');
         }
 
 
-        s.login = function(silent) {
+        $scope.login = function(silent) {
             silent = silent !== undefined ? silent : false;
-            LoginService.login(r._login.email, r._login.password, r._login.rememberPass).then((user) => {
+            LoginService.login($rootScope._login.email, $rootScope._login.password, $rootScope._login.rememberPass).then((user) => {
                 onLoginSuccess(user);
-                r.__hideNavMenu = false;
+                $rootScope.__hideNavMenu = false;
             }).on('validate', msg => {
                 if (!silent) {
-                    r.warningMessage(msg);
+                    $rootScope.warningMessage(msg);
                 }
                 else {
-                    s.show = true;
+                    $scope.show = true;
                 }
             }).error(msg => {
                 if (!silent) {
-                    r.errorMessage(msg);
+                    $rootScope.errorMessage(msg);
                 }
                 else {
-                    s.show = true;
+                    $scope.show = true;
                 }
             });
         };
 
-        s.resetPassword = function() {
+        $scope.resetPassword = function() {
             Analytics.trackEvent("click_login_recover_password_link");
-            LoginService.resetPassword(r._login.email).then((msg) => {
-                r.infoMessage(msg, 10000);
+            LoginService.resetPassword($rootScope._login.email).then((msg) => {
+                $rootScope.infoMessage(msg, 10000);
             }).on('validate', msg => {
-                r.warningMessage(msg);
+                $rootScope.warningMessage(msg);
             }).error(msg => {
-                r.errorMessage(msg);
+                $rootScope.errorMessage(msg);
             });
         };
 
@@ -60,8 +63,8 @@
                 email: $U.getParameterByName('email'),
                 password: ($U.getParameterByName('k')) ? window.atob($U.getParameterByName('k')) : ''
             };
-            if (params.email) r._login.email = params.email;
-            if (params.password) r._login.password = params.password;
+            if (params.email) $rootScope._login.email = params.email;
+            if (params.password) $rootScope._login.password = params.password;
             if (params.email && params.password) {
                 return true;
             }
@@ -72,40 +75,49 @@
 
         if (loginFieldsWereFillWithQueryStringParameters()) {
             localSession.getToken().then((token) => {
-                if (token) {
-                    return s.login(true);
-                }
+                //if (token) {
+                    return $scope.login(true);
+                //}
             });
         }
 
 
         if (LoginService.isLogged()) {
-
+            $log.debug('adminLogin: is logged');
             localSession.getToken().then((token) => {
                 if (token) {
+                    $log.debug('adminLogin: has token');
                     LoginService.updateSession().then((user) => {
+                        $log.debug('adminLogin: session updated');
                         onLoginSuccess(user);
                     }).on('validate', msg => {
                         //r.warningMessage(msg);
-                        s.show = true;
+                        $log.debug('adminLogin: warning');
+                        $scope.show = true;
                     }).error(msg => {
                         //r.errorMessage(msg);
-                        s.show = true;
+                        $log.debug('adminLogin: error');
+                        $scope.show = true;
                     }).on('session-lost', () => {
-                        s.show = true;
+                        $log.debug('adminLogin: session lost');
+                        $scope.show = true;
                     });
                 }
                 else {
-                    s.show = true;
+                    $log.debug('adminLogin: without token');
+                    $scope.show = true;
                 }
             })
 
 
         }
         else {
-            s.show = true;
+            $log.debug('adminLogin: is not logged');
+            $scope.show = true;
         }
-    }]).controller('adminLoginExternal', ['server', '$scope', '$rootScope', 'LoginService', 'Analytics', 'appRouter', 'localSession', function(server, $scope, $rootScope, LoginService, Analytics, appRouter, localSession) {
+    }]).controller('adminLoginExternal', ['server', '$scope', '$rootScope', 'LoginService', 'Analytics', 'appRouter', 'localSession', '$log', function(server, $scope, $rootScope, LoginService, Analytics, appRouter, localSession, $log) {
+
+        $log.debug('adminLoginExternal');
 
         $scope.handleDiagAccountSignUpButtonClick = () => {
             Analytics.trackEvent('diag_account_sign_up_button_click');

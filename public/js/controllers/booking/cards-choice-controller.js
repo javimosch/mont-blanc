@@ -35,7 +35,7 @@
 
                 var autoSelectDiagsCards = cameFromIframe() || hasAutoSelectFlag();
 
-                //$log.info('IFRAME?', cameFromIframe(), 'autoselect flag?', hasAutoSelectFlag());
+                //$log.debug('IFRAME?', cameFromIframe(), 'autoselect flag?', hasAutoSelectFlag());
 
                 if (autoSelectDiagsCards) {
 

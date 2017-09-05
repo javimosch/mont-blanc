@@ -186,7 +186,7 @@
         self.getBookingDetails = () => {
             var m = localSession.getMetadata();
             var data = (m && m.bookingDetails) || {};
-            //$log.info('Booking details are ', _.clone(data));
+            //$log.debug('Booking details are ', _.clone(data));
             return data;
         };
         self.setBookingDetails = (details) => {

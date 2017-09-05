@@ -18,9 +18,32 @@ var __SHARE_FUNCTIONS = {
 
 app.config(function($logProvider) {
     var enabled = __SHARE_FUNCTIONS.isDevEnv();
-    console.info('$log is ', (enabled ? 'enabled' : 'disabled'));
+    console.info('debugEnabled ', enabled);
     $logProvider.debugEnabled(enabled);
 });
+
+app.config(['$provide', function($provide) {
+    $provide.decorator('$log', ['$delegate', function($delegate) {
+        // Keep track of the original debug method, we'll need it later.
+        var origDebug = $delegate.debug;
+        /*
+         * Intercept the call to $log.debug() so we can add on 
+         * our enhancement. We're going to add on a date and 
+         * time stamp to the message that will be logged.
+         */
+        $delegate.debug = function() {
+            var args = [].slice.call(arguments);
+            //args[0] = [new Date().toString(), ': ', args[0]].join('');
+
+            args[0] = ["DEBUG " + moment().format('mmssSS'), args[0]].join(' ');
+
+            // Send on our enhanced message to the original debug method.
+            origDebug.apply(null, args)
+        };
+
+        return $delegate;
+    }]);
+}]);
 
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
@@ -41,7 +64,7 @@ function setupUibModal($rootScope, $uibModalStack, $log) {
     $rootScope.$on('routeChangeStart', handleLocationChange)
 
     function handleLocationChange() {
-        $log.log('modal dismiss all');
+        $log.debug('modal dismiss all');
         $uibModalStack.dismissAll();
     }
 }
@@ -209,16 +232,19 @@ app.run(['$rootScope', '$location', '$window', '$log',
     }
 ]);
 
-app.run(['server', '$timeout', '$rootScope', 'appRouter', 'appSettings', function(db, $timeout, r, appRouter, appSettings, Analytics) {
+app.run(['$timeout', '$rootScope', 'appRouter', 'appSettings', '$log', function($timeout, $rootScope, appRouter, appSettings, $log) {
     //console.info('app.common.root:run');
-    $U.exposeGlobal('r', r);
-    r.getHashParams = $U.getHashParams;
+    $U.exposeGlobal('r', $rootScope);
+    $rootScope.getHashParams = $U.getHashParams;
 
-    r.debug = true;
+    $rootScope.debug = true;
+
+
+    console.log('HAS_$LOG?', $log);
 
 
 
-    r.config = {};
+    $rootScope.config = {};
     var env = {
         APP_NAME: "Diagnostical",
         COMPANY_NAME: "SAS Immocal",
@@ -229,36 +255,36 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'appSettings', functio
     appSettings.syncAll();
 
 
-    r.__cache = {};
-    r.cache = function(n, o) {
+    $rootScope.__cache = {};
+    $rootScope.cache = function(n, o) {
         if (o) {
-            return r.__cache[n] = o;
+            return $rootScope.__cache[n] = o;
         }
         else {
-            if (!_.isUndefined(r.__cache[n]) && !_.isNull(r.__cache[n])) {
+            if (!_.isUndefined($rootScope.__cache[n]) && !_.isNull($rootScope.__cache[n])) {
                 //console.info('CACHE: retrieving ' + n + ' (' + typeof r.__cache[n] + ')');
             }
-            return r.__cache[n] || null;
+            return $rootScope.__cache[n] || null;
         }
     };
 
-    r.momentFormat = (d, f) => (moment(d).format(f));
-    r.momentTime = (d) => moment(d).format('HH[h]mm');
-    r.momentFrenchDateTime = (d) => moment(d).format('DD/MM/YYYY [à] HH[h]mm');
-    r.momentDateTime = (d) => r.momentFrenchDateTime(d); // moment(d).format('DD-MM-YY HH[h]mm');
-    r.momentDateTimeWords = (d, article) => moment(d).format('[' + (article || 'Le') + '] dddd DD MMMM YY [à] HH[h]mm');
-    r.momentDateTimeWords2 = (d) => moment(d).format('dddd DD MMMM YY [à] HH[h]mm');
+    $rootScope.momentFormat = (d, f) => (moment(d).format(f));
+    $rootScope.momentTime = (d) => moment(d).format('HH[h]mm');
+    $rootScope.momentFrenchDateTime = (d) => moment(d).format('DD/MM/YYYY [à] HH[h]mm');
+    $rootScope.momentDateTime = (d) => $rootScope.momentFrenchDateTime(d); // moment(d).format('DD-MM-YY HH[h]mm');
+    $rootScope.momentDateTimeWords = (d, article) => moment(d).format('[' + (article || 'Le') + '] dddd DD MMMM YY [à] HH[h]mm');
+    $rootScope.momentDateTimeWords2 = (d) => moment(d).format('dddd DD MMMM YY [à] HH[h]mm');
 
-    r.dom = function(cb, timeout) {
+    $rootScope.dom = function(cb, timeout) {
         $timeout(function() {
             if (cb) {
                 cb();
             }
-            r.$apply();
+            $rootScope.$apply();
         }, timeout || 0);
     };
-    r.toggleBody = function(val) {
-        r.dom(function() {
+    $rootScope.toggleBody = function(val) {
+        $rootScope.dom(function() {
             var el = document.body;
             el.className = el.className.replace('hidden', '').trim();
             if (!val) {
@@ -268,27 +294,27 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'appSettings', functio
     };
 
     setTimeout(function() {
-        r.$apply(function() {
+        $rootScope.$apply(function() {
             $('.remove-hidden').removeClass('hidden').removeClass('remove-hidden');
         });
     }, 300);
 
 
 
-    r.session = function(data) {
+    $rootScope.session = function(data) {
         var id = env.APP_NAME + '_' + window.location.hostname + env.STORE_SESSION_PREFIX;
         if (data) {
             $U.store.set(id, data);
-            r._session = data;
+            $rootScope._session = data;
         }
-        r._session = $U.store.get(id) || {};
-        if (!r._session) {
+        $rootScope._session = $U.store.get(id) || {};
+        if (!$rootScope._session) {
             $U.store.set(id, {});
-            r._session = {};
+            $rootScope._session = {};
         }
-        return r._session;
+        return $rootScope._session;
     };
-    r.sessionMetadata = function(data, reset) {
+    $rootScope.sessionMetadata = function(data, reset) {
         var id = env.APP_NAME + '_' + window.location.hostname + env.STORE_SESSION_PREFIX + "_METADATA";
         reset = (reset != undefined) ? reset : false;
         if (data) {
@@ -317,82 +343,82 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'appSettings', functio
     //}
 
 
-    r.logged = function() {
-        var ss = r.session();
+    $rootScope.logged = function() {
+        var ss = $rootScope.session();
         return (ss._id && ss.email && ss.password != undefined) || false;
     };
 
 
-    r.__viewAs = (t) => {
-        r.session({
+    $rootScope.__viewAs = (t) => {
+        $rootScope.session({
             userType: t
         });
-        r.dom();
+        $rootScope.dom();
     }
-    r.viewAsClient = () => {
-        return r.__viewAs('client');
+    $rootScope.viewAsClient = () => {
+        return $rootScope.__viewAs('client');
     };
-    r.viewAsDiag = () => {
-        return r.__viewAs('diag');
+    $rootScope.viewAsDiag = () => {
+        return $rootScope.__viewAs('diag');
     };
-    r.viewAsAdmin = () => {
-        return r.__viewAs('admin');
+    $rootScope.viewAsAdmin = () => {
+        return $rootScope.__viewAs('admin');
     };
 
 
-    r._login = {
+    $rootScope._login = {
         email: '',
         password: ''
     };
-    var session = r.session();
+    var session = $rootScope.session();
     _.each(session, function(val, key) {
-        r._login[key] = val;
+        $rootScope._login[key] = val;
     });
-    if (session.password) r._login.password = session.password; //atob(session.password);
-    if (!session.rememberPass) r._login.password = null;
+    if (session.password) $rootScope._login.password = session.password; //atob(session.password);
+    if (!session.rememberPass) $rootScope._login.password = null;
 
 
 
-    r.logout = function() {
-        r.session({
+    $rootScope.logout = function() {
+        $rootScope.session({
             email: null,
             password: null
         });
         $U.url.clear();
-        r.$emit('click_logout');
-        r.route('login');
+        $rootScope.$emit('click_logout');
+        $rootScope.route('login');
     };
 
-    r.admin = function() {
-        r._login.email = 'arancibiajav@gmail.com';
-        r._login.password = 'admin';
-        r.dom();
+    $rootScope.admin = function() {
+        $rootScope._login.email = 'arancibiajav@gmail.com';
+        $rootScope._login.password = 'admin';
+        $rootScope.dom();
     };
 
-    r.routeRelative = function(url, delay) {
+    $rootScope.routeRelative = function(url, delay) {
         setTimeout(function() {
             var path = window.location.origin;
             path += (window.location.pathname + '/' + url).replaceAll('//', '/');
             $U.emit('route-exit:' + $U.url.hashName());
             window.location.href = path;
         }, delay || 0);
-        r.__route = url;
+        $rootScope.__route = url;
         return url;
     }
 
 
 
-    r.routeExternal = function(url) {
+    $rootScope.routeExternal = function(url) {
         window.location.href = url;
     };
-    r.route = function(url, delay) {
+    $rootScope.route = function(url, delay) {
 
         setTimeout(function() {
 
             //ex www.domain.com/admin -> admin
             var routePart = window.location.href.substring(window.location.origin.length + 1);
             $U.emit('route-exit:' + routePart);
-            r.$emit('route-change', url);
+            $rootScope.$emit('route-change', url);
 
             if (url.toString().charAt(0) !== '/') {
                 url = '/' + url;
@@ -400,13 +426,13 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'appSettings', functio
 
             return appRouter.to(url);
         }, delay || 0);
-        r.__route = url;
+        $rootScope.__route = url;
         return url;
     };
 
 
 
-    r.routeIs = (n) => {
+    $rootScope.routeIs = (n) => {
         return appRouter.currentPath == n;
     };
 
@@ -414,30 +440,60 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'appSettings', functio
         $U.emitPreserve('route-change', window.location.href.substring(window.location.origin.length + 1));
     }, 500);
 
-    r.userIs = (arr) => {
-        if (!r.logged()) return false;
-        var type = r.session().userType;
+
+
+
+    function redirectToLogin() {
+        $rootScope.route('login');
+    }
+
+
+    $rootScope.getIframeSrc = () => {
+        var rta = "/iframe?token=" + ($rootScope.getCachedApiToken && $rootScope.getCachedApiToken() || 'XXX') + "&CSRF=" + (window.$._getcsrf && window.$._getcsrf() || 'XXX');;
+        return rta;
+    };
+
+    $rootScope.onlyForLogged = (role) => {
+        $log.debug('onlyForLogged', role);
+        if (!$rootScope.logged()) {
+            $log.debug('onlyForLogged:not logged');
+            redirectToLogin();
+            return false;
+        }
+        var type = $rootScope.session() && $rootScope.session().userType;
+        if (!_.includes([role], type)) {
+            redirectToLogin();
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
+
+    $rootScope.userIs = (arr) => {
+        if (!$rootScope.logged()) return false;
+        var type = $rootScope.session().userType;
         if (typeof arr === 'string') arr = [arr];
         return _.includes(arr, type);
     };
 
-    r.routeParams = (obj) => {
+    $rootScope.routeParams = (obj) => {
         if (obj) {
-            r.params = Object.assign(r.params || {}, obj);
-            r.sessionMetadata({
-                params: r.params
+            $rootScope.params = Object.assign($rootScope.params || {}, obj);
+            $rootScope.sessionMetadata({
+                params: $rootScope.params
             });
         }
-        return r.params;
+        return $rootScope.params;
     };
-    r.routeParams(r.sessionMetadata().params || {});
+    $rootScope.routeParams($rootScope.sessionMetadata().params || {});
 
 
-    r.lookUp = function(scope, property) {
+    $rootScope.lookUp = function(scope, property) {
         if (scope[property]) return scope[property];
         else {
             if (scope.$parent) {
-                return r.lookUp(scope.$parent, property);
+                return $rootScope.lookUp(scope.$parent, property);
             }
             else {
                 return undefined;
@@ -446,10 +502,10 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'appSettings', functio
     };
 
 
-    r.hasMouse = true;
+    $rootScope.hasMouse = true;
 
     if (window.screen.width < 1200) {
-        r.hasMouse = false;
+        $rootScope.hasMouse = false;
     }
 
     /*
@@ -464,6 +520,11 @@ app.run(['server', '$timeout', '$rootScope', 'appRouter', 'appSettings', functio
 
 
 app.run(['server', '$timeout', '$rootScope', 'backendApi', 'appRouter', function(db, $timeout, r, backendApi, appRouter) {
+
+    if (window.location.href.indexOf('iframe') !== -1) {
+        console.log('(Init) User fetch skip (iframe)');
+        return;
+    }
 
     //update current user data
 

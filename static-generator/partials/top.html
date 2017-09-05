@@ -43,7 +43,7 @@
     {{>booking-iframe}}
 {{else}}
     <!-- TEXT EDITOR -->
-    <div ng-if="userIs('admin')" ng-show="htmlEditItem.show">
+    <div ng-if="userIs(['admin'])" ng-show="htmlEditItem.show">
         {{>html-inline-editor}}
     </div>
 

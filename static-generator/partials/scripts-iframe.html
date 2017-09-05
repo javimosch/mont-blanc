@@ -7,6 +7,12 @@
 <script src="/js/common/diagnostical-helpers.js"></script>
 <!-- BOOTSTRAPER -->
 <script src="/js/config/app-iframe-bootstrap.js"></script>
+<!-- CONSTANTS -->
+<script type="text/javascript">
+    angular.module('remote-config-constant', []).constant('remoteConfig', {
+        "PROD": {{PROD}}
+    });
+</script>
 <!-- CONFIG -->
 <script src="/js/config/routes-config.js"></script>
 <script src="/js/config/change-curly-braces-config.js"></script>
@@ -24,6 +30,7 @@
 <script src="/js/services/app-router.js"></script>
 <script src="/js/services/app-settings-service.js"></script>
 <script src="/js/services/local-data.js"></script>
+<script src="/js/services/backend/server-service.js"></script>
 <script src="/js/services/local-session.js"></script>
 <script src="/js/services/api-error.js"></script>
 <script src="/js/services/backend-api-helper.js"></script>

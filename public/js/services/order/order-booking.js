@@ -17,7 +17,7 @@
 
         self.navigate = (url, bookingDetails, params) => {
             //function changeRoutePreserveBookingDetails(url, bookingDetails, delay, params) {
-            //$log.info('navigate to ', url);
+            //$log.debug('navigate to ', url);
             self.resume();
             appRouter.params(params);
             orderHelper.setBookingDetails(bookingDetails);
@@ -42,7 +42,7 @@
         self.inProgress = () => {
             var p = appRouter.params();
             var rta = p && p.bookingInProgress === true;
-            $log.log('Booking: inProgress', rta);
+            $log.debug('Booking: inProgress', rta);
             return rta;
         };
 

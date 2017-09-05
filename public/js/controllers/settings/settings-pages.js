@@ -104,12 +104,12 @@
                     return r.route('settings-pages/-1');
                 };
 
-                $log.log('waiting ace');
+                $log.debug('waiting ace');
                 checkAndInitializeAceEditor(() => {
                     //after ace initialization
-                    $log.log('ace loaded');
+                    $log.debug('ace loaded');
                     if (s.isEdit()) {
-                        $log.log('fetching item');
+                        $log.debug('fetching item');
                         collection('get', {
                             _id: s.params.id
                         }).then(res => {
@@ -185,7 +185,7 @@
                     tinymce.editors[0].setContent(window.decodeURIComponent(s.item.content));
                 };
                 s.copyToTiny();
-                $log.info('tinymce ok', s.tiny);
+                $log.debug('tinymce ok', s.tiny);
             }
 
             /*ACE*/
@@ -229,7 +229,7 @@
             s.initAce = initAce;
 
             function initAce() {
-                $log.info('initAce');
+                $log.debug('initAce');
                 s.editor = window.ace.edit("editor-ace");
                 s.editor.setTheme("ace/theme/monokai");
                 s.editor.getSession().setMode("ace/mode/html");
@@ -265,7 +265,7 @@
                                 iframe.contentWindow.document.close();
                             }
                             catch (err) {
-                                $log.log('DEBUG WARN ace-render', err);
+                                $log.debug('DEBUG WARN ace-render', err);
                             }
                             s.$apply();
                         });
@@ -395,9 +395,9 @@
                 }
                 s.model = {
                     init: () => {
-                        $log.log('is-lvw-?');
+                        $log.debug('is-lvw-?');
                         r.$on('lvw-update', () => {
-                            $log.log('is-lvwl');
+                            $log.debug('is-lvwl');
                             s.model.filter.firstTime();
                         });
                     },

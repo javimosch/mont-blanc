@@ -93,9 +93,9 @@ angular.module('app').controller('database-files', ['server', '$scope', '$rootSc
             }
             s.model = {
                 init: () => {
-                    $log.log('is-lvw-?');
+                    $log.debug('is-lvw-?');
                     r.$on('lvw-update', () => {
-                        $log.log('is-lvwl');
+                        $log.debug('is-lvwl');
                         s.model.filter.firstTime();
                     });
                 },

@@ -186,7 +186,7 @@
                     o.settings = () => _settings;
                     o.setDiag = function(_diag) {
                         if (_diag && _diag._id && _diag._id != _settings._diag) {
-                            $log.info('setDiag: rdv update');
+                            $log.debug('setDiag: rdv update');
                             _settings.diagId = _diag._id;
                             o.init(undefined, _settings);
                         }

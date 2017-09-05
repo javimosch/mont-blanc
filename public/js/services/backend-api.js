@@ -148,7 +148,7 @@
 
 
         function handleMultipartSingleFilePost(controller, action, payload) {
-            $log.info('handleMultipartSingleFilePost', payload);
+            $log.debug('handleMultipartSingleFilePost', payload);
             return $U.MyPromise((r, err) => {
                 if (!payload.file) return err("file required");
                 var file = payload.file;

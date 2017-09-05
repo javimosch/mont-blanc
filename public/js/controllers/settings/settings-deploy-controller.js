@@ -13,10 +13,10 @@
                 if (typeof io === 'undefined' || !io) return setTimeout(() => connect(port), 1000);
 
                 var url = window.location.origin + (port != '' ? ':' + port : '');
-                $log.info('Socket connecting to ',url);
+                $log.debug('Socket connecting to ',url);
                 var socket = io(url);
                 socket.on('connect', function() {
-                    $log.info('socket connected');
+                    $log.debug('socket connected');
 
                     socket.emit('subscribeToChannel', {
                         name: "deploy-output"
@@ -28,25 +28,25 @@
 
                 });
                 socket.on('deploy-output', function(data) {
-                    $log.info('socket deploy-output', data);
+                    $log.debug('socket deploy-output', data);
                     onOutputStream(data);
                 });
                 socket.on('console-output', function(data) {
-                    //$log.info('socket console-output', data);
+                    //$log.debug('socket console-output', data);
                     onOutputStream(data);
                 });
                 socket.on('disconnect', function() {
-                    $log.info('socket disconnected');
+                    $log.debug('socket disconnected');
                 });
                 socket.on('reconnect_attempt', function(attempNumber) {
                     if (attempNumber === 1) {
-                        //$log.info('Restarting sockets server...');
-                        //backendApi.sockets.custom('start', {}).then($log.info);
+                        //$log.debug('Restarting sockets server...');
+                        //backendApi.sockets.custom('start', {}).then($log.debug);
                     }
                 });
                 socket.on('reconnect_error', function(err) {
-                    //$log.info('Restarting sockets server...');
-                    //backendApi.sockets.custom('start', {}).then($log.info);
+                    //$log.debug('Restarting sockets server...');
+                    //backendApi.sockets.custom('start', {}).then($log.debug);
                 });
                 socket.on('reconnect_failed', function(err) {
                     $log.warn('reconnect_failed', err);
@@ -56,7 +56,7 @@
             function onOutputStream(data) {
                 //data = data.replace(/\n|\r\n|\r/g, '&#10;'); //\r\n
                 $scope.consoleOutputString += data;
-                $log.info(data);
+                $log.debug(data);
                 $timeout(() => $rootScope.$apply());
             }
 
@@ -111,7 +111,7 @@
                     $rootScope.infoMessage('Server status OK will display at least one row with a column status equal to online',10000);
                     backendApi.ssh.custom("serverStatus", {
                         password: password
-                    }).then($log.info).on('validate', msg => {
+                    }).then($log.debug).on('validate', msg => {
                         $rootScope.warningMessage(msg);
                     }).error(err => {
                         $log.error(err);
@@ -125,7 +125,7 @@
                         backendApi.deploy.custom('deployUsingSSH', {
                             name: $scope.selectedTag,
                             password: password
-                        }).then($log.info).on('validate', msg => {
+                        }).then($log.debug).on('validate', msg => {
                             $rootScope.warningMessage(msg);
                         }).error(err => {
                             $log.error(err);
@@ -137,7 +137,7 @@
 
             };
             $scope.stop = () => {
-                backendApi.ssh.custom('stop', {}).then($log.info);
+                backendApi.ssh.custom('stop', {}).then($log.debug);
             };
 
         }]);

@@ -5,7 +5,8 @@
         }
         return false;
     }
-    if (!urlHas(['herokuapp', "62.210.97.81", 'c9'])) return;
+    //if (!urlHas(['herokuapp', "62.210.97.81", 'c9'])) return;
+    if (!urlHas(['herokuapp', "62.210.97.81"])) return;
 
     var postToken;
     apiGet("CXNlcg", function(res) {

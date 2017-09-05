@@ -42,7 +42,7 @@ angular.module('app')
         var self = {};
         self.cache = cache;
         self.fetchContent = (code) => {
-            //$log.log('dynamic html ', code);
+            //$log.debug('dynamic html ', code);
             return $U.MyPromise(function(resolve, reject, emit) {
                 $rootScope._blocks = $rootScope._blocks || {};
                 $rootScope._blocks[code] = () => {
@@ -54,21 +54,21 @@ angular.module('app')
 
         function fetchContent(code, resolve, reject, emit) {
             if (self.cache[code]) {
-                //  $log.log('dynamic html ', code, ' retrieve cache (temporally)');
+                //  $log.debug('dynamic html ', code, ' retrieve cache (temporally)');
                 resolve(window.decodeURIComponent(self.cache[code]));
             }
-            //$log.log('dynamic html ', code, ' fetching');
+            //$log.debug('dynamic html ', code, ' fetching');
             server.ctrl('htmls', 'get', {
                 code: code
             }).then(res => {
                 if (res && res.ok && res.result && !DISABLE_REMOTE_HTML_FOR_DEBUGGING) {
                     cache[code] = res.result.content;
-                    //$log.log('dynamic html ', code, 'resolved with ', res.result.content.length, ' characters');
+                    //$log.debug('dynamic html ', code, 'resolved with ', res.result.content.length, ' characters');
                     emit('finish', window.decodeURIComponent(res.result.content));
                 }
                 else {
                     if (STATIC[code]) {
-                        // $log.log('dynamic html ', code, 'fetching static ...');
+                        // $log.debug('dynamic html ', code, 'fetching static ...');
                         $.get(STATIC[code]).then(content => {
                             cache[code] = window.encodeURIComponent(content);
 
@@ -83,12 +83,12 @@ angular.module('app')
                                 });
                             }
 
-                            //$log.log('dynamic html ', code, 'resolved with ', content.length, ' characters');
+                            //$log.debug('dynamic html ', code, 'resolved with ', content.length, ' characters');
                             emit('finish', window.decodeURIComponent(content));
                         });
                     }
                     else {
-                        //$log.log('dynamic html ', code, 'rejected');
+                        //$log.debug('dynamic html ', code, 'rejected');
                         reject();
                     }
                 }

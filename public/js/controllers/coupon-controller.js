@@ -12,7 +12,7 @@
 
         function handleSuccess(res) {
             $rootScope.infoMessage("Operation success");
-            $log.info(res);
+            $log.debug(res);
         }
 
         function fetch() {

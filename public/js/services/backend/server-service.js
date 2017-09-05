@@ -3,7 +3,7 @@
     angular.module('app').service('server', ['$http', 'localdb', '$rootScope', 'fileUpload', '$log', '$timeout', 'appRouter', '$injector', 'remoteConfig', 'endpointConfig', function(http, localdb, $rootScope, fileUpload, $log, $timeout, appRouter, $injector, remoteConfig, endpointConfig) {
 
         var ENDPOINT_URL = endpointConfig.URL + endpointConfig.PREFIX;
-        $log.log('Endpoint', ENDPOINT_URL);
+        $log.debug('Endpoint', ENDPOINT_URL);
         $U.emitPreserve('server-up');
 
         var globalState = {};

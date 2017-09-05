@@ -12,7 +12,7 @@
                 function update() {
                     backendApi.reports.custom('monthlyRevenueWithCoupons', {}).then((res) => {
 
-                        $log.info(res);
+                        $log.debug(res);
                         $scope.model.update(res.result)
 
                     }).catch($log.error).on('validate', $log.warn);

@@ -2,7 +2,7 @@
     /*global angular*/
     angular.module('app').run(function(backendApi, $rootScope, $log, localSession, orderHelper, appRouter,diagnosticalRoutes) {
         appRouter.onChange((currentPath, nextPath) => {
-           // $log.info('resume-booking', 'routing', currentPath, nextPath);
+           // $log.debug('resume-booking', 'routing', currentPath, nextPath);
 
             var paymentRoute = 'payment';
             
@@ -10,7 +10,7 @@
                 //There is a valid order in cache ?
                 var order = orderHelper.getFromSession();
                 if (order && order._id) {
-                    //$log.info('There is a valid order in cache');
+                    //$log.debug('There is a valid order in cache');
 
 
                     $rootScope.openModal({
@@ -37,14 +37,14 @@
 
                 }
                 else {
-                   // $log.info('There is not a valid order', order);
+                   // $log.debug('There is not a valid order', order);
                 }
             }
             else {
-               // $log.info('resume-booking', 'route not satisfied', currentPath, nextPath);
+               // $log.debug('resume-booking', 'route not satisfied', currentPath, nextPath);
             }
 
-            //$log.info('resume-booking', 'Check end');
+            //$log.debug('resume-booking', 'Check end');
 
         });
     });

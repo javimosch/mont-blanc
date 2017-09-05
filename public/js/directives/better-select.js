@@ -38,7 +38,7 @@ angular.module('betterSelect', []).directive('bselect', ['$log', '$parse', funct
             
             var compiledInitialValue = $scope.options.default == undefined ? '' : typeof $scope.options.default === 'function' ? $scope.options.default() : $scope.options.default;
             if (compiledInitialValue) {
-                //$log.log('(betterSelect)', compiledInitialValue);
+                //$log.debug('(betterSelect)', compiledInitialValue);
                 selectByValue(compiledInitialValue);
             }
 
@@ -60,7 +60,7 @@ angular.module('betterSelect', []).directive('bselect', ['$log', '$parse', funct
                 var compiledValue = typeof value === 'function' ? value() : value;
                 if (!compiledValue) $log.warn('BSELECT:', 'Trying to select undefined', value);
                 compiledValue = compiledValue == undefined ? '' : compiledValue;
-                //$log.log('BSELECT: SELECTING', compiledValue);
+                //$log.debug('BSELECT: SELECTING', compiledValue);
                 var found = items.filter(v => {
                     if (typeof v === 'function') {
                         v() == compiledValue;
@@ -76,7 +76,7 @@ angular.module('betterSelect', []).directive('bselect', ['$log', '$parse', funct
                 if ($scope.options.change) {
                     $scope.options.change(selected.value);
                 }
-                //$log.info('BSELECT: SELECTED:', selected);
+                //$log.debug('BSELECT: SELECTED:', selected);
             }
 
             function setModelValue(value) {

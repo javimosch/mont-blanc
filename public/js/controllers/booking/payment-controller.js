@@ -322,11 +322,11 @@
                     value: 2
                 }],
                 change: function(selectedValue) {
-                    //$log.log('(keysWhereOptions) start',selectedValue,order.address);
+                    //$log.debug('(keysWhereOptions) start',selectedValue,order.address);
                     
                     if(!order.address){
                         var self = this;
-                        //$log.log('(keysWhereOptions) waiting address');
+                        //$log.debug('(keysWhereOptions) waiting address');
                         return setTimeout(function(){
                             self.change(selectedValue);
                         },200);

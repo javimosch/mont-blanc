@@ -13,7 +13,7 @@
             $scope.logoUrl = () => $scope.item && $scope.item._logo && '/res/' + $scope.item._logo.type + '/' + $scope.item._logo.fileName;
             $scope.brandLogoChanged = () => {
                 if (!$scope.item) return;
-                $log.info($scope.uploads);
+                $log.debug($scope.uploads);
                 if ($scope.uploads.logo && $scope.uploads.logo.type.indexOf('image') !== -1) {
                     backendApi.uploads.saveImage({
                         file: $scope.uploads.logo,

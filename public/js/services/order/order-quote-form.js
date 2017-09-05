@@ -41,7 +41,7 @@
             open: function(order) {
                 return $U.MyPromise(function(resolve, reject, emit) {
                     open(function(form, closeModal) {
-                        $log.info(form);
+                        $log.debug(form);
 
                         backendApi.orders.sendQuote({
                                 order: order,

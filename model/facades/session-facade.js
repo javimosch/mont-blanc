@@ -5,7 +5,7 @@ var logger = resolver.loggerFacade({
     category: "Session"
 });
 
-const SESSION_DURATION_MINUTES = 1;
+const SESSION_DURATION_MINUTES = 60 * 4;
 const SESSION_EXPIRED_ERROR = 401; //This will trigger a 401 response
 
 var sessionFacade = module.exports = {

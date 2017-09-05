@@ -49,7 +49,7 @@
             }
             self.unsetColdown = Date.now();
             self.userId = null;
-            $log.log('(analytics) unset user');
+            $log.debug('(analytics) unset user');
         };
         self.setUserId = (id, isAlias) => {
             if (isMixpanel()) {

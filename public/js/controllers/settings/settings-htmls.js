@@ -55,12 +55,12 @@
                     return r.route('settings-htmls/-1');
                 };
 
-                $log.log('waiting ace');
+                $log.debug('waiting ace');
                 checkAndInitializeAceEditor(() => {
                     //after ace initialization
-                    $log.log('ace loaded');
+                    $log.debug('ace loaded');
                     if (s.isEdit()) {
-                        $log.log('fetching item');
+                        $log.debug('fetching item');
                         collection('get', {
                             _id: s.params.id
                         }).then(res => {
@@ -230,9 +230,9 @@
                 }
                 s.model = {
                     init: () => {
-                        $log.log('is-lvw-?');
+                        $log.debug('is-lvw-?');
                         r.$on('lvw-update', () => {
-                            $log.log('is-lvwl');
+                            $log.debug('is-lvwl');
                             s.model.filter.firstTime();
                         });
                     },
