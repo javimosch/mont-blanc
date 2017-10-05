@@ -26,6 +26,16 @@ mkdir public/temp
 #-----------
 echo "UPDATING DEPENDENCIES"
 cd $ROOT/$DIR
+. /root/.nvm/nvm.sh
+nvm install 6.9.0
+nvm use 6.9.0
+nvm list
+#---
+npm i -g pm2@latest
+pm2 update
+#---
+rm -rf node_modules
+npm cache clean
 npm install
 #-----------
 echo "UPDATTING ENV"

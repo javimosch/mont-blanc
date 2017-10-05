@@ -131,7 +131,7 @@ function resultAction(modelName) {
 
             var result = (r !== null) ? r : ((r === false) ? false : null);
 
-            if (result && typeof result.length !== 'undefined') {
+            if (result && typeof result == "object"  && typeof result.length !== 'undefined') {
                 result = result.map(o => {
                     if (typeof o.password !== 'undefined') {
                         o.password = undefined; //Avoid sending password property
