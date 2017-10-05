@@ -53,7 +53,7 @@
     "csrf": "^3.0.6",
     "csurf": "^1.9.0",
     "del": "^2.2.2",
-    "dotenv": "^2.0.0",
+    "dotenv": "^4.0.0",
     "es6-promise": "^3.0.2",
     "execute-shell-promise": "^1.0.1",
     "expect": "^1.20.2",
