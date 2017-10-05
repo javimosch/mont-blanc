@@ -9,8 +9,16 @@ module.exports = {
     sendCommand: sendCommand,
     serverLogs: serverLogs,
     serverStatus:serverStatus,
+    serverRestart:serverRestart,
     stop: stop
 };
+
+function serverRestart(data, cb) {
+    return sendCommand({
+        command: "pm2 restart all",
+        password: data.password
+    }).then(r => cb(null, r)).catch(cb);
+}
 
 function serverLogs(data, cb) {
     return sendCommand({

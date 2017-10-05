@@ -105,6 +105,19 @@
                 if (!password) return $rootScope.warningMessage('Password required');
                 handler && handler(password);
             }
+            
+            $scope.restartServer = () => {
+                withPassword((password) => {
+                    $rootScope.infoMessage('Server will process will restart, this may take a couple of seconds.',10000);
+                    backendApi.ssh.custom("serverRestart", {
+                        password: password
+                    }).then($log.debug).on('validate', msg => {
+                        $rootScope.warningMessage(msg);
+                    }).error(err => {
+                        $log.error(err);
+                    });
+                });
+            };
 
             $scope.checkStatus = () => {
                 withPassword((password) => {
@@ -131,7 +144,7 @@
                             $log.error(err);
                         });
                     });
-                })
+                });
 
 
 
