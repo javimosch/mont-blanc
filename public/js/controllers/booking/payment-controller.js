@@ -31,7 +31,7 @@
                     return;
                 }
                 couponCodeIsDirty = false;
-                backendApi.coupons.findByCode($scope.couponCode.toUpperCase()).on('validate', $log.warn).catch($log.error).then(res => {
+                backendApi.coupons.findByCode($scope.couponCode).on('validate', $log.warn).catch($log.error).then(res => {
                     $scope.coupon = res.result && res.result[0];
                     if (!$scope.coupon) return;
                     $scope.order.couponDiscount = $scope.coupon.discount;
