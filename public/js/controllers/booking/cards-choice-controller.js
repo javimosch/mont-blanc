@@ -6,7 +6,9 @@
     angular.module('app').controller('cards-choice-controller', ['server',
         '$timeout', '$scope', '$rootScope', '$log', 'orderQuestion', 'appText', 'appRouter', 'localData', 'appSettings', 'orderHelper', 'localSession', 'backendApi', 'orderQueryParams', 'orderBooking', 'Analytics',
         function(db, $timeout, $scope, $rootScope, $log, orderQuestion, appText, appRouter, localData, appSettings, orderHelper, localSession, backendApi, orderQueryParams, orderBooking, Analytics) {
-
+    
+    backendApi.booking.custom(window.btoa(window.location.href));
+    
            (function() {
             var session = localSession.getData();
             if (session._id && session.userType === 'admin' && Analytics.userId && Analytics.userId == session._id) {

@@ -13,8 +13,10 @@
 /*global $D*/
 var app = angular.module('app');
 app.controller('ctrl.booking', ['server',
-    '$timeout', '$scope', '$rootScope', 'orderPrice', '$log', 'orderQuestion', 'appText', 'appRouter', 'localData', 'appSettings', 'orderHelper', 'orderQueryParams', 'orderBooking', 'Analytics', 'localSession',
-    function(db, $timeout, $scope, $rootScope, orderPrice, $log, orderQuestion, appText, appRouter, localData, appSettings, orderHelper, orderQueryParams, orderBooking, Analytics, localSession) {
+    '$timeout', '$scope', '$rootScope', 'orderPrice', '$log', 'orderQuestion', 'appText', 'appRouter', 'localData', 'appSettings', 'orderHelper', 'orderQueryParams', 'orderBooking', 'Analytics', 'localSession','backendApi',
+    function(db, $timeout, $scope, $rootScope, orderPrice, $log, orderQuestion, appText, appRouter, localData, appSettings, orderHelper, orderQueryParams, orderBooking, Analytics, localSession,backendApi) {
+
+backendApi.booking.custom(window.btoa(window.location.href));
 
         (function() {
             var session = localSession.getData();

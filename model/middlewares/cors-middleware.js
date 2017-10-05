@@ -21,7 +21,16 @@ module.exports = {
         }else{
             logger.debugTerminal("HELMET DISABLED");
         }
+        
+        var cookieSession = require('cookie-session');
+        app.use(cookieSession({
+          name: 'diagnostical',
+          keys: ["bookingId"]
+        }));
+        
 
+        const requestIp = require('request-ip');
+        app.use(requestIp.mw());
 
         app.use(cookieParser());
 

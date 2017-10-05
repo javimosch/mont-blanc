@@ -17,9 +17,11 @@
 
         function fetch() {
             backendApi.coupons.get({
-                _id:$routeParams.id.toString(),
-                __populate:{
-                    _order:"info"
+                _id: $routeParams.id.toString(),
+                __populate: {
+                    _order: "info",
+                    usedByOrders: "info start _id price",
+                    usedByUsers: "email"
                 }
             }).on('validate', handleValidation).then(handleSuccess).catch(handleError).then(res => $scope.item = res.result);
         }
@@ -28,7 +30,24 @@
             $scope.item._user = localSession.getMetadata().selectedClient._id;
         }
 
-        $scope.getOrderLink = () => $scope.item._order && $scope.item._order._id ? "<a class='' href='orders/edit/" + $scope.item._order._id + "'>"+$rootScope.momentDateTime($scope.item._order.start)+' '+$scope.item._order.info.description+"</a>" : false;
+        $scope.recalculateCommissionAmount = () => {
+            if (!$scope.hasOrders()) return 0;
+            if ($scope.item.commission >= 0 && $scope.item.commission <= 100) {
+                var amount = $scope.item.usedByOrders.map(o => o.price).reduce((a, b) => a + b);
+                amount = amount * ($scope.item.commission / 100);
+                amount = amount.toFixed(2);
+                $rootScope.dom(() => $scope.item.commissionAmount = amount);
+            }
+        };
+
+        $scope.hasUsers = () => $scope.item && $scope.item.usedByUsers && $scope.item.usedByUsers.length >= 1;
+        $scope.hasOrders = () => $scope.item && $scope.item.usedByOrders && $scope.item.usedByOrders.length >= 1;
+        $scope.getOrderLink = (orderId) => {
+            if (!orderId) return;
+            if (!$scope.item.usedByOrders) return;
+            var order = $scope.item.usedByOrders.filter(o => o._id == orderId)[0];
+            return "<a class='' href='orders/edit/" + order._id + "'>" + $rootScope.momentDateTime(order.start) + ' ' + order.info.description + "</a>";
+        };
         $scope.getUsed = () => $scope.item.used ? "Yes" : "No";
         $scope.getOwnerEmail = () => localSession.getMetadata().selectedClient && localSession.getMetadata().selectedClient.email;
         $scope.item = {};
@@ -40,10 +59,11 @@
         };
         $scope.save = () => {
             backendApi.coupons.save($scope.item).on('validate', handleValidation).then((res) => {
-                if(!$scope.item._id){
-                    appRouter.to('coupons/edit/'+res.result._id);
+                if (!$scope.item._id) {
+                    appRouter.to('coupons/edit/' + res.result._id);
                     //$scope.item = res.result
-                }else{
+                }
+                else {
                     handleSuccess(res);
                 }
             }).catch(handleError);

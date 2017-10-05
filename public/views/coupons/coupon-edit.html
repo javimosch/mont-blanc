@@ -15,7 +15,7 @@
             </div>
         </div>
         <form name="form" class="row diags-row margin-bottom-two" autocomplete="off">
-            <div class="col-sm-12 col-md-4">
+            <div class="col-sm-12 col-md-6">
 
                 <!--CODE-->
                 <div class="row margin-top-one">
@@ -45,26 +45,49 @@
                     <input ng-disabled="state.working()" ng-model="item.discount" class="diags-input" placeholder="0 to 100" ng-required="true">
                 </div>
 
-                <!--USED-->
+                 <!--COMMISSION %-->
                 <div class="row margin-top-one">
-                    <label>Used</label>
+                    <label>Commission (%)</label>
                 </div>
                 <div class="row  margin-top-half">
-                    <input ng-disabled="true" ng-value="getUsed()" class="diags-input" ng-required="false">
+                    <input ng-disabled="state.working()" ng-model="item.commission" ng-change="recalculateCommissionAmount()" class="diags-input" placeholder="0 to 100" ng-required="false">
+                </div>
+                
+                 <!--COMMISSION AMOUNT-->
+                <div class="row margin-top-one">
+                    <label>Commission Amount (Sum of orders price)</label>
+                </div>
+                <div class="row  margin-top-half">
+                    <input ng-disabled="state.working()" ng-model="item.commissionAmount" class="diags-input" placeholder="" ng-required="false" ng-readonly="true">
                 </div>
 
-                <!--ORDER-->
-                <div class="row margin-top-one" ng-show="getOrderLink()">
-                    <label>Order</label>
+
+
+            </div>
+            <div class="col-sm-12 col-md-6">
+
+                <div ng-show="hasOrders()">
+                    <div class="row margin-top-one" >
+                        <label>Used by Orders</label>
+                    </div>
+                    <div class="row  margin-top-half" ng-repeat="(key,order) in  item.usedByOrders" ng-show="getOrderLink(order._id)" bind-html-compile="getOrderLink(order._id)">
+                    </div>
                 </div>
-                <div class="row  margin-top-half" ng-show="getOrderLink()" bind-html-compile="getOrderLink()">
+                
+                  <div ng-show="hasUsers()">
+                    <div class="row margin-top-one" >
+                        <label>Used by users</label>
+                    </div>
+                    <div class="row  margin-top-half" ng-repeat="(key,doc) in  item.usedByUsers" ng-bind="doc.email">
+                    </div>
                 </div>
 
+                <!--
                 <div class="row margin-top-one dev-block" ng-if="isDevEnv()">
                     <p>This block will appear only in preprod</p>
                     {[{item | json }]}
                 </div>
-
+                -->
             </div>
         </form>
         <div class="row diags-row margin-bottom-two">

@@ -7,7 +7,7 @@
 
         const CONSTANT = {
             COMMON_DATABASE_ACTIONS: ['get', 'getAll', 'save', 'update', 'getById', 'exists', 'removeWhen', 'updateOrPushArrayElement', 'modelCustom', 'aggregate', 'create', 'findOne', 'generateInvoice', 'fetchDiagGuys', 'isSessionExpired'],
-            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange', 'deploy', 'sockets', 'ssh', 'gitlab', 'coupons', 'reports', 'user', 'order']
+            COMMON_DATABASE_CONTROLLERS: ['categories', 'texts', 'pages', 'htmls', 'User', 'Order', 'TimeRange', 'deploy', 'sockets', 'ssh', 'gitlab', 'coupons', 'reports', 'user', 'order',"booking"]
         };
 
         function getLemonwayMessage(res) {
@@ -303,10 +303,10 @@
                 });
             };
 
-            self.findByCode = (code) => {
-                return handlePost(collectionName, 'findByCode', {
+            self.findByCode = (code,extraPayload) => {
+                return handlePost(collectionName, 'findByCode', Object.assign({
                     code: code
-                });
+                },extraPayload||{}));
             };
 
             return self;

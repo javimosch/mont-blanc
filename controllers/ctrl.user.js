@@ -645,9 +645,27 @@ function validateCoupon(data) {
         var user = yield resolver.controllers().user.model.findOne({
             email: data.email
         }).exec();
-        if (!user) return resolver.Promise.reject(resolver.apiError().fn.COUPON_CANNOT_BE_USED('User do not exits ' + data.email));
+
+        if (user) {
+            //User alredy used this coupon
+            let Coupon = resolver.controllers().coupons.model;
+            let alreadyUsed = yield Coupon.findOne({
+                usedByUsers: {
+                    $in: [user._id]
+                }
+            }).exec();
+
+            if (alreadyUsed) {
+                return resolver.Promise.reject(resolver.apiError().COUPON_ALREADY_USED);
+            }
+        }
+
+        //if (!user) return resolver.Promise.reject(resolver.apiError().fn.COUPON_CANNOT_BE_USED('User do not exits ' + data.email));
         var doc = yield resolver.controllers().coupons.model.findById(data._id).exec();
         if (doc) {
+
+            return resolver.Promise.resolve(true); //Coupong exists/
+            /*
             if (doc._user.equals(user._id)) {
                 if (doc.used) {
                     return resolver.Promise.reject(resolver.apiError().COUPON_ALREADY_USED);
@@ -659,7 +677,7 @@ function validateCoupon(data) {
             else {
                 couponsLogger.warn('User do not match', doc._user, user._id);
                 return resolver.Promise.reject(resolver.apiError().fn.COUPON_CANNOT_BE_USED('User do not match'));
-            }
+            }*/
         }
         else {
             return resolver.Promise.reject(resolver.apiError().fn.COUPON_CANNOT_BE_USED('Coupon do not exists'));
@@ -693,7 +711,7 @@ function isDiagAccount(data, cb) {
             userType: 'diag',
             email: data.email
         }).exec();
-        cb(null, count>0);
+        cb(null, count > 0);
     }).catch(resolver.errorHandler(cb));
 }
 

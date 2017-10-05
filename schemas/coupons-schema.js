@@ -22,14 +22,34 @@ module.exports = {
             ref: 'Order',
             required: false
         },
+        usedByOrders: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Order',
+            required: false
+        }],
         discount: {
             type: Number,
             required: true,
+            default: 0
+        },
+         commission: {
+            type: Number,
+            required: false,
+            default: 0
+        },
+         commissionAmount: {
+            type: Number,
+            required: false,
             default: 0
         },
         used: {
             type: Boolean,
             default: false
         },
+        usedByUsers:[{
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: false
+        }]
     }
 };

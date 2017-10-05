@@ -264,6 +264,15 @@
                             emit('validate', 'Email is required');
                             return closeModal();
                         }
+                        
+                        /*//Coupon email restriciton
+                        if(order._coupon && order.couponUserEmail){
+                            if(order.couponUserEmail!==formResponse.clientEmail){
+                                isProcessing = false;
+                                emit('validate', "COUPON_EMAIL_MISTMACH");
+                                return closeModal();
+                            }
+                        }*/
 
                         var clientId = clientLogged() ? localSession.getData()._id : undefined;
 

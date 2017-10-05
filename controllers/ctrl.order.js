@@ -243,12 +243,30 @@ function payUsingCheque(data, routeCallback) {
                 paymentType: 'cheque',
                 coupon: data.coupon
             }, function(_err, res) {
+
+                if (data.coupon) associateOrderToCoupon(data.coupon, data.orderId);
+
                 //paymentLogger.debug('Cheque to prepaid');
                 return cb(err, true);
             });
 
         });
     });
+}
+
+function associateOrderToCoupon(couponId, orderId) {
+    return resolver.coWrap(function*() {
+        let Coupon = resolver.controllers().coupons.model;
+        var orderDoc = yield resolver.controllers().Order.model.findOne({
+            _id: orderId
+        }).exec();
+        yield Coupon.update({ _id: couponId }, {
+            $addToSet: {
+                usedByUsers: orderDoc._client,
+                usedByOrders: orderDoc._id
+            }
+        }).exec();
+    })();
 }
 
 function payUsingChequeAllowPayment(data, routeCallback) {
@@ -264,10 +282,10 @@ function payUsingCard(data, routeCallback) {
     if (!data.orderId) return routeCallback('orderId field required (1)');
     if (!data.p2pDiag) return routeCallback('p2pDiag field required');
     if (!data.secret) return routeCallback('secret field required');
-    
+
     //var secretData = decodePayload(data.secret);
     var secretData = data.secret;
-    
+
     if (!secretData.creditCardOwner) return routeCallback('credit card owner required');
     if (!secretData.clientEmail) return routeCallback('clientId or clientEmail required');
 
@@ -279,7 +297,7 @@ function payUsingCard(data, routeCallback) {
         secretData.wallet = data.masterWallet; //we use this wallet for the client payment move.
         data.p2pDiag.debitWallet = data.masterWallet; //we use this wallet for the diag p2p movement.
     }
-    
+
     if (!data.orderId) return routeCallback('orderId field required (2)');
 
 
@@ -302,7 +320,7 @@ function payUsingCard(data, routeCallback) {
             return payUsingCardAllowPayment(data, routeCallback);
         }
     }
-    
+
     if (!data.orderId) return routeCallback('orderId field required (3)');
 
     //QUEUE
@@ -314,9 +332,9 @@ function payUsingCard(data, routeCallback) {
 
     //OK
     PaymentHelper.updateDetailsAsync(data.orderId, secretData.creditCardOwner, secretData.billingAddress);
-    
+
     if (!data.orderId) return routeCallback('orderId field required (4)');
-    
+
     PaymentHelper.associateClient(data.orderId, secretData).then(() => {
         getNextInvoiceNumber({
             _id: data.orderId
@@ -346,6 +364,9 @@ function payUsingCard(data, routeCallback) {
                     var p2pPayload = data.p2pDiag;
                     p2pPayload.message = "Order #" + invoiceNumber;
                     ctrl('Lemonway').sendPayment(p2pPayload, function(err, res) {
+
+                        if (data.coupon) associateOrderToCoupon(data.coupon, data.orderId);
+
                         return cb(err, true);
                     });
                 });

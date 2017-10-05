@@ -467,9 +467,14 @@ exports.create = function(modelName, m) {
     }
 
     function findByCode(data, cb) {
-        return getAll({
-            code: data.code
-        }, cb);
+        if(!data.code) return cb('code required');
+        var payload = {code:data.code};
+        Object.keys(data).forEach(key=>{
+            if(key.charAt(0)==='_'&&key.charAt(1)==='_'){
+                payload[key]=data[key];
+            }
+        })
+        return getAll(payload, cb);
     }
 
     var rta = {

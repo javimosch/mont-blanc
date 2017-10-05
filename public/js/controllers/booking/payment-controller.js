@@ -6,7 +6,9 @@
     angular.module('app').controller('payment-controller', ['server',
         '$timeout', '$scope', '$rootScope', '$uibModal', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'appSettings', 'orderHelper', 'localSession', 'backendApi', 'orderQuoteForm', 'apiError', 'orderBooking', 'Analytics',
         function(db, $timeout, $scope, $rootScope, $uibModal, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, appSettings, orderHelper, localSession, backendApi, orderQuoteForm, apiError, orderBooking, Analytics) {
-
+            
+            backendApi.booking.custom(window.btoa(window.location.href));
+            
             (function() {
                 var session = localSession.getData();
                 if (session._id && session.userType === 'admin' && Analytics.userId && Analytics.userId == session._id) {
@@ -31,11 +33,16 @@
                     return;
                 }
                 couponCodeIsDirty = false;
-                backendApi.coupons.findByCode($scope.couponCode).on('validate', $log.warn).catch($log.error).then(res => {
+                backendApi.coupons.findByCode($scope.couponCode,{
+                    __populate:{
+                        _user:"email"
+                    }
+                }).on('validate', $log.warn).catch($log.error).then(res => {
                     $scope.coupon = res.result && res.result[0];
                     if (!$scope.coupon) return;
                     $scope.order.couponDiscount = $scope.coupon.discount;
                     $scope.order._coupon = $scope.coupon._id;
+                    $scope.order.couponUserEmail = $scope.coupon._user.email;
                     createFromCache($scope.order); //this will regenerate the order with new price
                 });
             };
@@ -150,6 +157,11 @@
                                     window.location.reload();
                                 }, 1500);
                                 return;
+                            }
+                            
+                            if(msg === "COUPON_EMAIL_MISTMACH"){
+                                $rootScope.infoMessage("Le coupon appliqué n&#39;est pas associé au courrier électronique que vous avez entré");
+                                return createFromCache(order);
                             }
 
                             Analytics.trackEvent('booking_payment_' + order.paymentType + '_fail', analyticEvent({

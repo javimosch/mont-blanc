@@ -13,9 +13,10 @@
 /*global $D*/
 (function() {
     angular.module('app').controller('booking-iframe-controller', ['server',
-        '$timeout', '$scope', '$rootScope', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'orderQueryParams', 'orderHelper', 'localSession',
-        function(db, $timeout, s, r, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, orderQueryParams, orderHelper, localSession) {
+        '$timeout', '$scope', '$rootScope', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'orderQueryParams', 'orderHelper', 'localSession','backendApi',
+        function(db, $timeout, s, r, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, orderQueryParams, orderHelper, localSession,backendApi) {
             
+            backendApi.booking.custom(window.btoa(window.location.href));
 
             s.warningMsg = (msg, delay) => {
                 r.warningMessage(msg, delay);

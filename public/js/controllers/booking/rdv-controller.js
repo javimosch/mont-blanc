@@ -7,6 +7,7 @@
         '$timeout', '$scope', '$rootScope', 'rdvSlotService', 'orderPrice', '$log', 'orderPaymentForm', 'orderQuestion', 'appText', 'appRouter', 'localData', 'appSettings', 'orderHelper', 'localSession', 'backendApi', 'Analytics',
         function(db, $timeout, $scope, $rootScope, rdvSlotService, orderPrice, $log, orderPaymentForm, orderQuestion, appText, appRouter, localData, appSettings, orderHelper, localSession, backendApi, Analytics) {
 
+backendApi.booking.custom(window.btoa(window.location.href));
 
             (function() {
                 var session = localSession.getData();

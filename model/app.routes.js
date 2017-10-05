@@ -32,6 +32,8 @@ exports.configure = function(app) {
             data.stream.pipe(res);
         });
     });
+    
+    resolver.getFacade('session').configure(app);
 
     app.post('/api/:controller/:action', function(req, res) {
         var controller = req.params.controller;
@@ -86,7 +88,7 @@ exports.configure = function(app) {
             logger.debugTerminal('XHR (' + targetType + ')', controller, action, requireSession ? '(Auth)' : '');
             if (requireSession) {
                 resolver.getFacade('session')
-                    .authorize(data, controller, action)
+                    .authorize(data, controller, action,req)
                     .then(dispatchRequest)
                     .catch(errorHandler);
             }
