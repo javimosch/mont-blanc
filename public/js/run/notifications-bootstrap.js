@@ -20,6 +20,6 @@
                 });
             }
         }
-        request_permission();
+        //request_permission(); //Problems on IOS!
     });
 })();
